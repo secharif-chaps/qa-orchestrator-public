@@ -292,3 +292,42 @@ class TestWebSearchQuery:
 
         with pytest.raises(Exception, match="Connection timeout"):
             await web_search_query(system_prompt="test", user_query="query", agent_name="profile")
+
+    @pytest.mark.asyncio
+    @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
+    @patch("app.agents.tools.web_search.get_responses_client")
+    async def test_structured_output_fallback_retries_without_text(
+        self, mock_get_client, mock_sem, mock_client, mock_response
+    ):
+        """When API rejects text.format, retries without it and succeeds."""
+        from app.agents.schemas import ProfileAgentOutput
+
+        mock_get_client.return_value = mock_client
+
+        success_resp = mock_response(
+            text='{"insights": "test", "groupName": {"value": "Acme", "source": "https://acme.com"}}'
+        )
+
+        call_count = 0
+
+        async def side_effect(**kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                assert "text" in kwargs, "First call should include text format"
+                raise Exception("text format is not supported for this model")
+            # Second call should NOT have text key
+            assert "text" not in kwargs, "Second call should not include text format"
+            return success_resp
+
+        mock_client.responses.create = AsyncMock(side_effect=side_effect)
+
+        result = await web_search_query(
+            system_prompt="test",
+            user_query="query",
+            agent_name="profile",
+            output_schema=ProfileAgentOutput,
+        )
+
+        assert result["data"]["insights"] == "test"
+        assert mock_client.responses.create.call_count == 2

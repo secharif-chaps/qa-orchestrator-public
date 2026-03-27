@@ -8,6 +8,7 @@ import time
 from typing import Any
 
 from openai import RateLimitError
+from pydantic import BaseModel
 
 from app.core.config import settings
 from app.core.llm import get_responses_client
@@ -76,6 +77,37 @@ def _extract_urls_from_data(data: Any, urls: set[str] | None = None) -> set[str]
     return urls
 
 
+def _build_text_format(output_schema: type[BaseModel] | None) -> dict[str, Any] | None:
+    """Build OpenAI text.format config from a Pydantic schema.
+
+    Returns None if no schema provided.
+    """
+    if output_schema is None:
+        return None
+
+    json_schema = output_schema.model_json_schema()
+    return {
+        "format": {
+            "type": "json_schema",
+            "name": output_schema.__name__,
+            "schema": json_schema,
+            "strict": True,
+        }
+    }
+
+
+def _validate_with_schema(data: dict, output_schema: type[BaseModel] | None, agent_name: str) -> dict:
+    """Validate parsed data against Pydantic schema and return clean dict.
+
+    Raises ValidationError on failure — caught by run_agent() in base.py.
+    """
+    if output_schema is None:
+        return data
+
+    validated = output_schema.model_validate(data)
+    return validated.model_dump(exclude_none=True)
+
+
 async def web_search_query(
     system_prompt: str,
     user_query: str,
@@ -83,6 +115,7 @@ async def web_search_query(
     country_code: str | None = None,
     allowed_domains: list[str] | None = None,
     search_context_size: str = "medium",
+    output_schema: type[BaseModel] | None = None,
 ) -> dict:
     """Execute a web search query via Azure AI Foundry Responses API.
 
@@ -93,6 +126,7 @@ async def web_search_query(
         country_code: Optional country code for search localization
         allowed_domains: Optional domain whitelist for filtering results
         search_context_size: Size of search context: "low", "medium", "high"
+        output_schema: Optional Pydantic model to enforce structured output
 
     Returns:
         dict with keys: data, sources, input_tokens, output_tokens, duration_ms
@@ -110,6 +144,9 @@ async def web_search_query(
     if allowed_domains:
         tool_config["filters"] = {"allowed_domains": allowed_domains}
 
+    # Build structured output text format
+    text_format = _build_text_format(output_schema)
+
     start_time = time.monotonic()
 
     # Exponential backoff with jitter on 429
@@ -121,23 +158,29 @@ async def web_search_query(
         try:
             async with semaphore:
                 try:
-                    response = await client.responses.create(
-                        model=settings.LLM_MODEL,
-                        instructions=system_prompt,
-                        tools=[tool_config],
-                        input=user_query,
-                    )
+                    create_kwargs: dict[str, Any] = {
+                        "model": settings.LLM_MODEL,
+                        "instructions": system_prompt,
+                        "tools": [tool_config],
+                        "input": user_query,
+                    }
+                    if text_format:
+                        create_kwargs["text"] = text_format
+
+                    response = await client.responses.create(**create_kwargs)
                 except Exception as e:
                     # Fall back to web_search_preview if web_search unavailable
                     if "web_search" in str(e).lower() and attempt == 0:
                         tool_config["type"] = "web_search_preview"
                         logger.info(f"Falling back to web_search_preview for {agent_name}")
-                        response = await client.responses.create(
-                            model=settings.LLM_MODEL,
-                            instructions=system_prompt,
-                            tools=[tool_config],
-                            input=user_query,
-                        )
+                        create_kwargs["tools"] = [tool_config]
+                        response = await client.responses.create(**create_kwargs)
+                    elif text_format and "text" in str(e).lower() and attempt == 0:
+                        # Structured output not supported, retry without it
+                        logger.info(f"Structured output not supported for {agent_name}, retrying without")
+                        create_kwargs.pop("text", None)
+                        text_format = None
+                        response = await client.responses.create(**create_kwargs)
                     else:
                         raise
 
@@ -176,6 +219,9 @@ async def web_search_query(
 
     full_text = "\n".join(text_parts)
     data = _parse_json_response(full_text)
+
+    # Validate against schema if provided (belt and suspenders)
+    data = _validate_with_schema(data, output_schema, agent_name)
 
     # Extract additional URLs from the data itself
     data_urls = _extract_urls_from_data(data)

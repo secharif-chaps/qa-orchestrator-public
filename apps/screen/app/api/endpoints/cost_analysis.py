@@ -154,17 +154,18 @@ async def get_cost_by_organization(
     # Format results
     organizations_data = []
     for org in organization_results:
-
-        organizations_data.append(OrganizationCostItem(
-            organization_id=org.organization_id,
-            company_count=org.company_count or 0,
-            task_count=org.task_count or 0,
-            total_input_tokens=org.total_input_tokens or 0,
-            total_output_tokens=org.total_output_tokens or 0,
-            total_cost=float(org.total_cost or 0),
-            avg_cost_per_task=float(org.avg_cost_per_task or 0),
-            avg_cost_per_company=float(org.total_cost or 0) / org.company_count if org.company_count else 0,
-        ))
+        organizations_data.append(
+            OrganizationCostItem(
+                organization_id=org.organization_id,
+                company_count=org.company_count or 0,
+                task_count=org.task_count or 0,
+                total_input_tokens=org.total_input_tokens or 0,
+                total_output_tokens=org.total_output_tokens or 0,
+                total_cost=float(org.total_cost or 0),
+                avg_cost_per_task=float(org.avg_cost_per_task or 0),
+                avg_cost_per_company=float(org.total_cost or 0) / org.company_count if org.company_count else 0,
+            )
+        )
 
     # Calculate totals
     total_cost = sum(org.total_cost for org in organizations_data)
@@ -231,26 +232,24 @@ async def get_cost_by_task_type(
 
     # Apply organization filter if provided
     if organization_id:
-        query = query.join(
-            Company, Task.company_id == Company.id
-        ).filter(
-            Company.organization_id == organization_id
-        )
+        query = query.join(Company, Task.company_id == Company.id).filter(Company.organization_id == organization_id)
     task_type_results = query.all()
 
     # Format results
     task_types_data = []
     for tt in task_type_results:
-        task_types_data.append(TaskTypeCostItem(
-            task_type=tt.task_type.value if hasattr(tt.task_type, 'value') else tt.task_type,
-            task_count=tt.task_count or 0,
-            total_input_tokens=tt.total_input_tokens or 0,
-            total_output_tokens=tt.total_output_tokens or 0,
-            total_cost=float(tt.total_cost or 0),
-            avg_cost_per_task=float(tt.avg_cost_per_task or 0),
-            avg_input_tokens=float(tt.avg_input_tokens or 0),
-            avg_output_tokens=float(tt.avg_output_tokens or 0),
-        ))
+        task_types_data.append(
+            TaskTypeCostItem(
+                task_type=tt.task_type.value if hasattr(tt.task_type, "value") else tt.task_type,
+                task_count=tt.task_count or 0,
+                total_input_tokens=tt.total_input_tokens or 0,
+                total_output_tokens=tt.total_output_tokens or 0,
+                total_cost=float(tt.total_cost or 0),
+                avg_cost_per_task=float(tt.avg_cost_per_task or 0),
+                avg_input_tokens=float(tt.avg_input_tokens or 0),
+                avg_output_tokens=float(tt.avg_output_tokens or 0),
+            )
+        )
 
     # Calculate totals
     total_cost = sum(tt.total_cost for tt in task_types_data)
@@ -267,7 +266,9 @@ async def get_cost_by_task_type(
             total_task_types=len(task_types_data),
             total_cost=total_cost,
             total_tasks=total_tasks,
-            most_expensive_type=max(task_types_data, key=lambda x: x.avg_cost_per_task).task_type if task_types_data else None,
+            most_expensive_type=max(task_types_data, key=lambda x: x.avg_cost_per_task).task_type
+            if task_types_data
+            else None,
             most_frequent_type=max(task_types_data, key=lambda x: x.task_count).task_type if task_types_data else None,
         ),
     )
@@ -305,7 +306,7 @@ async def get_cost_trends(
     elif granularity == "weekly":
         date_trunc = func.date_trunc("week", Task.created_at)
     else:  # daily
-        date_trunc = func.date_trunc('day', Task.created_at)
+        date_trunc = func.date_trunc("day", Task.created_at)
     # Build base query
     query = (
         db.query(
@@ -322,23 +323,21 @@ async def get_cost_trends(
 
     # Apply organization filter if provided
     if organization_id:
-        query = query.join(
-            Company, Task.company_id == Company.id
-        ).filter(
-            Company.organization_id == organization_id
-        )
+        query = query.join(Company, Task.company_id == Company.id).filter(Company.organization_id == organization_id)
     trend_results = query.all()
 
     # Format results
     trends_data = []
     for trend in trend_results:
-        trends_data.append(TrendDataPoint(
-            period=trend.period.date().isoformat(),
-            task_count=trend.task_count or 0,
-            total_input_tokens=trend.total_input_tokens or 0,
-            total_output_tokens=trend.total_output_tokens or 0,
-            total_cost=float(trend.total_cost or 0),
-        ))
+        trends_data.append(
+            TrendDataPoint(
+                period=trend.period.date().isoformat(),
+                task_count=trend.task_count or 0,
+                total_input_tokens=trend.total_input_tokens or 0,
+                total_output_tokens=trend.total_output_tokens or 0,
+                total_cost=float(trend.total_cost or 0),
+            )
+        )
     # Calculate summary statistics
     if trends_data:
         total_cost = sum(t.total_cost for t in trends_data)
@@ -393,7 +392,4 @@ async def refresh_materialized_views(
         )
     except Exception as e:
         db.rollback()
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to refresh materialized views: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to refresh materialized views: {str(e)}")

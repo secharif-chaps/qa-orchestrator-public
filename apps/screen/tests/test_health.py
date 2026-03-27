@@ -8,8 +8,8 @@ Covers:
 - Endpoints are accessible without authentication
 """
 
-import re
 import os
+import re
 
 import pytest
 
@@ -25,6 +25,7 @@ HEX16_REGEX = re.compile(r"^[0-9a-f]{16}$")
 def client():
     """Create a test client for the screen app."""
     from fastapi.testclient import TestClient
+
     from app.main import app
 
     return TestClient(app)
@@ -66,9 +67,7 @@ class TestHealthReady:
 
     def test_openapi_hash_is_16_char_hex(self, client):
         data = client.get("/health/ready").json()
-        assert HEX16_REGEX.match(data["openapi_hash"]), (
-            f"Expected 16-char hex string, got: {data['openapi_hash']}"
-        )
+        assert HEX16_REGEX.match(data["openapi_hash"]), f"Expected 16-char hex string, got: {data['openapi_hash']}"
 
     def test_openapi_hash_is_deterministic(self, client):
         """Multiple calls should return the same hash (cached)."""
@@ -94,9 +93,7 @@ class TestHealthHashCache:
         """_get_openapi_hash should return cached value for same schema."""
         from app.api.endpoints.health import _get_openapi_hash
 
-        mock_app = type("MockApp", (), {
-            "openapi": lambda self: {"openapi": "3.0.0", "paths": {}}
-        })()
+        mock_app = type("MockApp", (), {"openapi": lambda self: {"openapi": "3.0.0", "paths": {}}})()
 
         hash1 = _get_openapi_hash(mock_app)
         hash2 = _get_openapi_hash(mock_app)
@@ -118,6 +115,7 @@ class TestHealthHashCache:
         class MockApp:
             def __init__(self, schema):
                 self._schema = schema
+
             def openapi(self):
                 return self._schema
 

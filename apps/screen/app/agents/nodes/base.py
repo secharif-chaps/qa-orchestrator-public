@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 
 from app.agents.config import AGENT_PROMPTS, AGENT_TIMEOUT_SECONDS
 from app.agents.prompts.domains import AGENT_ALLOWED_DOMAINS
+from app.agents.schemas import AGENT_OUTPUT_SCHEMAS
 from app.agents.state import AgentResult
 from app.agents.tools.web_search import web_search_query
 from app.core.logging_config import get_logger
@@ -106,6 +107,7 @@ async def run_agent(
     """
     system_prompt = AGENT_PROMPTS.get(agent_name, "")
     company_domain = _extract_domain(website)
+    output_schema = AGENT_OUTPUT_SCHEMAS.get(agent_name)
 
     if not country_code:
         country_code = _infer_country_code(website)
@@ -129,6 +131,7 @@ async def run_agent(
                 agent_name=agent_name,
                 country_code=country_code,
                 allowed_domains=allowed_domains,
+                output_schema=output_schema,
             ),
             timeout=AGENT_TIMEOUT_SECONDS,
         )

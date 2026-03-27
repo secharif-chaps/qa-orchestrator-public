@@ -388,11 +388,7 @@ class CompanyService:
         Returns:
             List of CompanyResponse objects
         """
-        query = (
-            self.db.query(Company)
-            .filter(Company.organization_id == organization_id)
-            .filter(~Company.is_deleted)
-        )
+        query = self.db.query(Company).filter(Company.organization_id == organization_id).filter(~Company.is_deleted)
 
         if accessible_company_ids is not None:
             if not accessible_company_ids:
