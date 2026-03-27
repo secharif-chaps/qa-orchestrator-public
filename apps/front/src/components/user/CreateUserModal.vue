@@ -266,9 +266,9 @@ function touchField(field: keyof typeof touched) {
 // Form validation
 const isFormValid = computed(() => {
   return (
-    form.username.trim() !== '' &&
+    form.username.trim().length >= 3 &&
     form.email.trim() !== '' &&
-    form.temporaryPassword.trim() !== '' &&
+    form.temporaryPassword.trim().length >= 8 &&
     isValidEmail(form.email) &&
     selectedRoleId.value !== ''
   )
