@@ -84,9 +84,7 @@ def _has_credits_access(user: OIDCUser, org_context: OrganizationContext, organi
     return is_org_admin or (has_manage_role and is_org_member)
 
 
-def _get_date_range(
-    period: str, start_date: datetime | None, end_date: datetime | None
-) -> tuple[datetime, datetime]:
+def _get_date_range(period: str, start_date: datetime | None, end_date: datetime | None) -> tuple[datetime, datetime]:
     """Calculate date range from period preset or custom dates.
 
     Args:

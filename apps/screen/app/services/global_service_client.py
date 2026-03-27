@@ -457,7 +457,6 @@ class GlobalServiceClient:
                 detail="Token service temporarily unavailable",
             )
 
-
     async def get_accessible_company_ids(
         self,
         org_id: str,
@@ -615,7 +614,6 @@ class GlobalServiceClient:
                 detail="Folder service temporarily unavailable",
             )
 
-
     async def get_company_folder_id(
         self,
         org_id: str,
@@ -637,10 +635,7 @@ class GlobalServiceClient:
         Returns:
             Folder ID as string, or None if company is not in any folder
         """
-        url = (
-            f"{self.base_url}/internal/organizations/{org_id}"
-            f"/folders/company/{company_id}/folder-id"
-        )
+        url = f"{self.base_url}/internal/organizations/{org_id}/folders/company/{company_id}/folder-id"
 
         token = self._create_internal_token(
             user_id=user_id,

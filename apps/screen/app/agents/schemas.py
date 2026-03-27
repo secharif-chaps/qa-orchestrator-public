@@ -1,0 +1,369 @@
+"""Pydantic output schemas for agent structured outputs.
+
+These schemas serve as the single source of truth for:
+1. OpenAI structured output enforcement (text.format.json_schema)
+2. Prompt output format generation (auto-generated from schemas)
+3. Post-parse validation (belt and suspenders)
+
+Key design decisions:
+- All fields Optional (LLM may not find data)
+- extra="forbid" generates additionalProperties: false (required by OpenAI)
+- Field names match what writers in company_section_service.py ALREADY expect
+- Enum values match DB enums exactly (no mapping needed)
+"""
+
+from enum import StrEnum
+
+from pydantic import BaseModel, ConfigDict
+
+# =============================================================================
+# SHARED MODELS
+# =============================================================================
+
+
+class SourcedValue(BaseModel):
+    """A value with its source URL."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    value: str | None = None
+    source: str | None = None
+
+
+# =============================================================================
+# PROFILE AGENT
+# =============================================================================
+
+
+class ProfileAgentOutput(BaseModel):
+    """Output schema for the profile agent.
+
+    Field names use camelCase to match what save_profile_data() reads
+    via _get_sourced_value(data, "groupName"), etc.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    insights: str | None = None
+    groupName: SourcedValue | None = None
+    businessLine: SourcedValue | None = None
+    catchphrase: SourcedValue | None = None
+    establishmentYear: SourcedValue | None = None
+    employeeCount: SourcedValue | None = None
+    revenue: SourcedValue | None = None
+    ceo: SourcedValue | None = None
+    hq: SourcedValue | None = None
+
+
+# =============================================================================
+# DIGITAL AGENT
+# =============================================================================
+
+
+class DigitalStrategyItem(BaseModel):
+    """Individual digital strategy field."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    overall_strategy: SourcedValue | None = None
+    digital_transformation: SourcedValue | None = None
+    e_commerce_capabilities: SourcedValue | None = None
+    mobile_strategy: SourcedValue | None = None
+    digital_marketing_approach: SourcedValue | None = None
+
+
+class SocialMediaAccount(BaseModel):
+    """Social media account entry."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    platform: str | None = None
+    url: str | None = None
+    followers: str | None = None
+    source: str | None = None
+
+
+class OnlineService(BaseModel):
+    """Online service entry."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: str | None = None
+    description: str | None = None
+    source: str | None = None
+
+
+class LoyaltyProgram(BaseModel):
+    """Loyalty program entry."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: SourcedValue | None = None
+    description: SourcedValue | None = None
+
+
+class DigitalAgentOutput(BaseModel):
+    """Output schema for the digital agent.
+
+    Field names use snake_case to match what save_digital_data() reads:
+    - social_media_accounts (not socialMedia)
+    - online_services (not onlineServices)
+    - digital_strategy (nested object)
+    - loyalty_programs (list)
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    insights: str | None = None
+    social_media_accounts: list[SocialMediaAccount] | None = None
+    online_services: list[OnlineService] | None = None
+    digital_strategy: DigitalStrategyItem | None = None
+    loyalty_programs: list[LoyaltyProgram] | None = None
+
+
+# =============================================================================
+# PRESS AGENT
+# =============================================================================
+
+
+class PressItemTypeEnum(StrEnum):
+    """Press item types matching DB enum PressItemType."""
+
+    article = "article"
+    press_release = "press_release"
+    media_mention = "media_mention"
+    award = "award"
+    product_launch = "product_launch"
+    interview = "interview"
+    financial = "financial"
+    partnership = "partnership"
+
+
+class PressItem(BaseModel):
+    """Unified press item with type field."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    type: PressItemTypeEnum | None = None
+    value: str | None = None
+    source: str | None = None
+
+
+class PressAgentOutput(BaseModel):
+    """Output schema for the press agent.
+
+    Uses unified items list with type field instead of 8 separate arrays.
+    This matches the updated _save_press_items() writer.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    insights: str | None = None
+    items: list[PressItem] | None = None
+
+
+# =============================================================================
+# JOBS AGENT
+# =============================================================================
+
+
+class JobsInsightsData(BaseModel):
+    """Structured job market insights."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    total_openings: SourcedValue | None = None
+    top_departments: SourcedValue | None = None
+    hiring_focus: SourcedValue | None = None
+    growth_indicators: SourcedValue | None = None
+
+
+class JobOffer(BaseModel):
+    """Job offer entry."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: SourcedValue | None = None
+    location: SourcedValue | None = None
+    department: SourcedValue | None = None
+    description: SourcedValue | None = None
+    requirements: SourcedValue | None = None
+    posted_date: SourcedValue | None = None
+
+
+class JobsAgentOutput(BaseModel):
+    """Output schema for the jobs agent.
+
+    Already works — field names match what save_jobs_data() expects.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    insights: str | None = None
+    insights_data: JobsInsightsData | None = None
+    offers: list[JobOffer] | None = None
+
+
+# =============================================================================
+# PRODUCTS AGENT
+# =============================================================================
+
+
+class ProductItem(BaseModel):
+    """Product item entry (for range, partner_brands, private_labels)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: SourcedValue | None = None
+
+
+class ProductCategory(BaseModel):
+    """Product category with items list."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: str | None = None
+    items: list[str] | None = None
+
+
+class ProductsAgentOutput(BaseModel):
+    """Output schema for the products agent.
+
+    Field names match what save_products_data() and _save_product_items() expect:
+    - range, partner_brands, private_labels (typed arrays)
+    - categories (list of {name, items})
+    - customer_type, marketing_positioning (SourcedValue)
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    insights: str | None = None
+    customer_type: SourcedValue | None = None
+    marketing_positioning: SourcedValue | None = None
+    range: list[ProductItem] | None = None
+    partner_brands: list[ProductItem] | None = None
+    private_labels: list[ProductItem] | None = None
+    categories: list[ProductCategory] | None = None
+
+
+# =============================================================================
+# TIMELINE AGENT
+# =============================================================================
+
+
+class TimelineEvent(BaseModel):
+    """Timeline event entry."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    date: SourcedValue | None = None
+    title: SourcedValue | None = None
+    description: SourcedValue | None = None
+    category: SourcedValue | None = None
+    location: SourcedValue | None = None
+    impact: SourcedValue | None = None
+
+
+class TimelineAgentOutput(BaseModel):
+    """Output schema for the timeline agent.
+
+    Already works — field names match what save_timeline_data() expects.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    insights: str | None = None
+    events: list[TimelineEvent] | None = None
+
+
+# =============================================================================
+# CSR AGENT
+# =============================================================================
+
+
+class CsrInitiativeTypeEnum(StrEnum):
+    """CSR initiative types matching DB enum CsrInitiativeType."""
+
+    responsibility = "responsibility"
+    charity = "charity"
+    sustainability = "sustainability"
+    community = "community"
+    diversity = "diversity"
+    ethics = "ethics"
+    awards = "awards"
+
+
+class CsrInitiative(BaseModel):
+    """CSR initiative with type field matching DB enum."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    type: CsrInitiativeTypeEnum | None = None
+    value: str | None = None
+    source: str | None = None
+
+
+class CsrAgentOutput(BaseModel):
+    """Output schema for the CSR agent.
+
+    Uses DB enum values (sustainability, not environmental).
+    The initiatives list with type field matches _save_csr_initiatives().
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    insights: str | None = None
+    responsibility: SourcedValue | None = None
+    initiatives: list[CsrInitiative] | None = None
+
+
+# =============================================================================
+# TEAM AGENT
+# =============================================================================
+
+
+class TeamMember(BaseModel):
+    """Team member with hierarchy support.
+
+    Field names match what _save_team_members_recursive() expects:
+    - first_name, last_name (not name)
+    - position (not title)
+    - linkedin_url (not linkedin)
+    - subordinates (recursive)
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    first_name: str | None = None
+    last_name: str | None = None
+    position: str | None = None
+    linkedin_url: str | None = None
+    subordinates: list["TeamMember"] | None = None
+
+
+class TeamAgentOutput(BaseModel):
+    """Output schema for the team agent.
+
+    Uses "team" key matching what save_team_data() looks for.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    insights: str | None = None
+    team: list[TeamMember] | None = None
+
+
+# =============================================================================
+# REGISTRY
+# =============================================================================
+
+AGENT_OUTPUT_SCHEMAS: dict[str, type[BaseModel]] = {
+    "profile": ProfileAgentOutput,
+    "digital": DigitalAgentOutput,
+    "press": PressAgentOutput,
+    "jobs": JobsAgentOutput,
+    "products": ProductsAgentOutput,
+    "timeline": TimelineAgentOutput,
+    "csr": CsrAgentOutput,
+    "team": TeamAgentOutput,
+}

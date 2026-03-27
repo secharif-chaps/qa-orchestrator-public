@@ -1,6 +1,5 @@
 """Pydantic response schemas for cost analysis endpoints."""
 
-
 from pydantic import BaseModel, Field
 
 

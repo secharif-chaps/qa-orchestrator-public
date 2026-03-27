@@ -128,9 +128,7 @@ async def get_company(
 
         company = service.get_company(company_id, include_archived=archived)
         if not company:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Company not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found")
 
         verify_company_organization_access(company, org_context)
 

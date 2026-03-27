@@ -21,9 +21,7 @@ router = APIRouter(prefix="/security", tags=["security"])
 
 
 @router.get("/stats", response_model=SecurityStatsResponse)
-async def get_security_stats(
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))
-):
+async def get_security_stats(user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))):
     """Get security statistics (admin only).
 
     Requires admin role for access.
@@ -46,10 +44,5 @@ async def security_health_check():
         status="secure",
         timestamp=datetime.now(UTC).isoformat(),
         security_level="high",
-        features=[
-            "authentication",
-            "authorization",
-            "input_validation",
-            "rate_limiting"
-        ]
+        features=["authentication", "authorization", "input_validation", "rate_limiting"],
     )

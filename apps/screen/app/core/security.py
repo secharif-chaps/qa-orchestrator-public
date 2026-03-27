@@ -2,7 +2,6 @@
 Security utilities for authorization and access control
 """
 
-
 from fastapi import HTTPException, status
 
 from app.core.organization import OrganizationContext

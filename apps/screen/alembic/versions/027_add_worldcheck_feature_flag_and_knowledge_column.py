@@ -11,7 +11,6 @@ credentials (API Key + API Secret) for due diligence screening data
 (sanctions, PEP, adverse media).
 """
 
-
 from alembic import op
 
 # revision identifiers, used by Alembic.

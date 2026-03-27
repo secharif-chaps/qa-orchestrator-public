@@ -706,25 +706,45 @@ def _save_product_items(db: Session, company_id: int, products_data: dict) -> No
     db.flush()
 
 
-def _save_product_categories(db: Session, company_id: int, categories: dict) -> None:
-    """Save product categories to normalized table."""
+def _save_product_categories(db: Session, company_id: int, categories: dict | list) -> None:
+    """Save product categories to normalized table.
+
+    Supports two formats:
+    1. List format: [{"name": "Category", "items": ["item1", "item2"]}]
+    2. Legacy dict format: {"Category": ["item1", "item2"]}
+    """
     # Delete existing categories
     db.query(CompanyProductCategory).filter(CompanyProductCategory.company_id == company_id).delete()
 
-    if not isinstance(categories, dict):
-        return
-
-    for category_name, items in categories.items():
-        if not isinstance(items, list):
-            items = [items] if items else []
-
-        db.add(
-            CompanyProductCategory(
-                company_id=company_id,
-                category_name=category_name,
-                items=items,
+    if isinstance(categories, list):
+        # New list format from schema
+        for cat in categories:
+            if not isinstance(cat, dict):
+                continue
+            category_name = cat.get("name")
+            items = cat.get("items", [])
+            if not isinstance(items, list):
+                items = [items] if items else []
+            if category_name:
+                db.add(
+                    CompanyProductCategory(
+                        company_id=company_id,
+                        category_name=category_name,
+                        items=items,
+                    )
+                )
+    elif isinstance(categories, dict):
+        # Legacy dict format
+        for category_name, items in categories.items():
+            if not isinstance(items, list):
+                items = [items] if items else []
+            db.add(
+                CompanyProductCategory(
+                    company_id=company_id,
+                    category_name=category_name,
+                    items=items,
+                )
             )
-        )
 
     db.flush()
 
@@ -1153,34 +1173,33 @@ def save_press_data(db: Session, company_id: int, data: dict) -> None:
 
 
 def _save_press_items(db: Session, company_id: int, press_data: dict) -> None:
-    """Save press items to normalized table."""
+    """Save press items to normalized table.
+
+    Supports two formats:
+    1. Unified items list: {"items": [{"type": "article", "value": "...", "source": "..."}]}
+    2. Legacy type-named keys: {"articles": [...], "press_releases": [...]}
+    """
     # Delete existing items
     db.query(CompanyPressItem).filter(CompanyPressItem.company_id == company_id).delete()
 
-    # Map of field names to press types
-    type_mapping = {
-        "articles": PressItemType.article,
-        "press_releases": PressItemType.press_release,
-        "media_mentions": PressItemType.media_mention,
-        "awards_recognition": PressItemType.award,
-        "product_launches": PressItemType.product_launch,
-        "executive_interviews": PressItemType.interview,
-        "financial_news": PressItemType.financial,
-        "partnership_announcements": PressItemType.partnership,
-    }
+    # Type string to enum mapping
+    type_str_mapping = {t.value: t for t in PressItemType}
 
-    for field_name, item_type in type_mapping.items():
-        items = press_data.get(field_name, [])
-        if not isinstance(items, list):
-            continue
-
+    # Try unified items list first (new schema format)
+    items = press_data.get("items", [])
+    if isinstance(items, list) and items:
         for item in items:
-            if isinstance(item, dict):
-                value = item.get("value")
-                source = item.get("source")
-            else:
-                value = item
-                source = None
+            if not isinstance(item, dict):
+                continue
+
+            type_str = item.get("type", "")
+            item_type = type_str_mapping.get(type_str)
+            if not item_type:
+                logger.warning(f"Unknown press item type: {type_str}")
+                continue
+
+            value = item.get("value")
+            source = item.get("source")
 
             if value:
                 db.add(
@@ -1191,6 +1210,41 @@ def _save_press_items(db: Session, company_id: int, press_data: dict) -> None:
                         value_source=source,
                     )
                 )
+    else:
+        # Fallback: legacy type-named keys
+        legacy_type_mapping = {
+            "articles": PressItemType.article,
+            "press_releases": PressItemType.press_release,
+            "media_mentions": PressItemType.media_mention,
+            "awards_recognition": PressItemType.award,
+            "product_launches": PressItemType.product_launch,
+            "executive_interviews": PressItemType.interview,
+            "financial_news": PressItemType.financial,
+            "partnership_announcements": PressItemType.partnership,
+        }
+
+        for field_name, item_type in legacy_type_mapping.items():
+            legacy_items = press_data.get(field_name, [])
+            if not isinstance(legacy_items, list):
+                continue
+
+            for item in legacy_items:
+                if isinstance(item, dict):
+                    value = item.get("value")
+                    source = item.get("source")
+                else:
+                    value = item
+                    source = None
+
+                if value:
+                    db.add(
+                        CompanyPressItem(
+                            company_id=company_id,
+                            type=item_type,
+                            value=value,
+                            value_source=source,
+                        )
+                    )
 
     db.flush()
 

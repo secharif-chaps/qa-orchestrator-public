@@ -1,6 +1,5 @@
 """Pydantic schemas for data source configuration."""
 
-
 from pydantic import BaseModel
 
 
