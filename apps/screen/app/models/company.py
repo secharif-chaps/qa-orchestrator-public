@@ -112,5 +112,8 @@ class Company(Base):
     press_items = relationship("CompanyPressItem", back_populates="company", cascade="all, delete-orphan")
     team_members = relationship("CompanyTeamMember", back_populates="company", cascade="all, delete-orphan")
 
+    # Enrichment data from external APIs (1:N)
+    enrichments = relationship("CompanyEnrichment", back_populates="company", cascade="all, delete-orphan")
+
     # Translations relationship (1:N)
     translations = relationship("Translation", back_populates="company", cascade="all, delete-orphan")

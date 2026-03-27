@@ -1,6 +1,6 @@
 """State definitions for the company analysis graph."""
 
-from typing import Annotated, TypedDict
+from typing import Annotated, Any, TypedDict
 
 
 class AgentResult(TypedDict):
@@ -39,6 +39,7 @@ class CompanyAnalysisState(TypedDict):
     owner_id: str
     country_code: str | None
     company_brief: str | None
+    enrichment_data: dict[str, dict[str, Any]]
     agents_to_run: list[str]
     agent_results: Annotated[list[AgentResult], _merge_agent_results]
     quality_issues: list[str]

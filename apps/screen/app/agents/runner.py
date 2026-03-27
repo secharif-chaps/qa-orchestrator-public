@@ -76,6 +76,7 @@ class CompanyAnalysisRunner:
             "owner_id": owner_id,
             "country_code": None,
             "company_brief": None,
+            "enrichment_data": {},
             "agents_to_run": [],
             "agent_results": [],
             "quality_issues": [],
@@ -95,7 +96,17 @@ class CompanyAnalysisRunner:
             async def _stream_graph() -> None:
                 """Stream events for progressive persistence."""
                 async for event in graph.astream_events(initial_state, config=config, version="v2"):
-                    if event["event"] == "on_chain_end" and event["name"].startswith("agent_"):
+                    if event["event"] == "on_chain_end" and event["name"] == "data_collector":
+                        enrichment_output = event.get("data", {}).get("output", {})
+                        enrichment_keys = list(enrichment_output.get("enrichment_data", {}).keys())
+                        logger.info(
+                            "Data collector completed",
+                            extra={
+                                "company_id": company_id,
+                                "enrichment_sources": enrichment_keys,
+                            },
+                        )
+                    elif event["event"] == "on_chain_end" and event["name"].startswith("agent_"):
                         agent_name = event["name"].replace("agent_", "")
                         result = self._extract_result(event, agent_name)
                         if result:
@@ -192,10 +203,30 @@ class CompanyAnalysisRunner:
         )
 
         try:
+            # Load enrichment sources from DB for agents that support them
+            enrichment_sources = None
+            company_id_for_tool = None
+            if agent_name in ("profile", "team"):
+                from app.models.company_enrichment import CompanyEnrichment
+
+                enrichments = (
+                    db.query(CompanyEnrichment)
+                    .filter(
+                        CompanyEnrichment.company_id == company.id,
+                        CompanyEnrichment.status == "success",
+                    )
+                    .all()
+                )
+                if enrichments:
+                    enrichment_sources = [e.source for e in enrichments]
+                    company_id_for_tool = company.id
+
             result = await run_agent(
                 agent_name=agent_name,
                 company_name=company.name,
                 website=company.website,
+                enrichment_sources=enrichment_sources,
+                company_id=company_id_for_tool,
             )
 
             await self._persist_agent_result(db, company.id, agent_name, result)

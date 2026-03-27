@@ -1,10 +1,11 @@
-"""OpenAI Responses API wrapper with web_search tool."""
+"""OpenAI Responses API wrapper with web_search tool and function tool support."""
 
 import asyncio
 import json
 import random
 import re
 import time
+from collections.abc import Callable
 from typing import Any
 
 from openai import RateLimitError
@@ -15,6 +16,9 @@ from app.core.llm import get_responses_client
 from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
+
+# Maximum iterations for function tool call loop
+MAX_FUNCTION_CALL_ITERATIONS = 3
 
 _semaphore: asyncio.Semaphore | None = None
 
@@ -77,6 +81,29 @@ def _extract_urls_from_data(data: Any, urls: set[str] | None = None) -> set[str]
     return urls
 
 
+def _extract_function_calls(response) -> list[dict]:
+    """Extract function call items from a Responses API response.
+
+    Returns:
+        List of dicts with keys: call_id, name, arguments
+    """
+    calls = []
+    for item in response.output:
+        if item.type == "function_call":
+            try:
+                arguments = json.loads(item.arguments) if isinstance(item.arguments, str) else item.arguments
+            except (json.JSONDecodeError, TypeError):
+                arguments = {}
+            calls.append(
+                {
+                    "call_id": item.call_id,
+                    "name": item.name,
+                    "arguments": arguments,
+                }
+            )
+    return calls
+
+
 def _build_text_format(output_schema: type[BaseModel] | None) -> dict[str, Any] | None:
     """Build OpenAI text.format config from a Pydantic schema.
 
@@ -115,6 +142,8 @@ async def web_search_query(
     country_code: str | None = None,
     allowed_domains: list[str] | None = None,
     search_context_size: str = "medium",
+    function_tools: list[dict] | None = None,
+    function_handler: Callable[[dict], str] | None = None,
     output_schema: type[BaseModel] | None = None,
 ) -> dict:
     """Execute a web search query via Azure AI Foundry Responses API.
@@ -126,6 +155,8 @@ async def web_search_query(
         country_code: Optional country code for search localization
         allowed_domains: Optional domain whitelist for filtering results
         search_context_size: Size of search context: "low", "medium", "high"
+        function_tools: Optional list of function tool definitions to provide to the model
+        function_handler: Optional handler for function tool calls (receives arguments dict, returns string)
         output_schema: Optional Pydantic model to enforce structured output
 
     Returns:
@@ -134,15 +165,19 @@ async def web_search_query(
     client = get_responses_client()
     semaphore = _get_semaphore()
 
-    # Build tool config
-    tool_config: dict[str, Any] = {
+    # Build tool configs
+    web_search_config: dict[str, Any] = {
         "type": "web_search",
         "search_context_size": search_context_size,
     }
     if country_code:
-        tool_config["user_location"] = {"type": "approximate", "country": country_code}
+        web_search_config["user_location"] = {"type": "approximate", "country": country_code}
     if allowed_domains:
-        tool_config["filters"] = {"allowed_domains": allowed_domains}
+        web_search_config["filters"] = {"allowed_domains": allowed_domains}
+
+    tools: list[dict] = [web_search_config]
+    if function_tools:
+        tools.extend(function_tools)
 
     # Build structured output text format
     text_format = _build_text_format(output_schema)
@@ -161,7 +196,7 @@ async def web_search_query(
                     create_kwargs: dict[str, Any] = {
                         "model": settings.LLM_MODEL,
                         "instructions": system_prompt,
-                        "tools": [tool_config],
+                        "tools": tools,
                         "input": user_query,
                     }
                     if text_format:
@@ -171,9 +206,10 @@ async def web_search_query(
                 except Exception as e:
                     # Fall back to web_search_preview if web_search unavailable
                     if "web_search" in str(e).lower() and attempt == 0:
-                        tool_config["type"] = "web_search_preview"
+                        web_search_config["type"] = "web_search_preview"
+                        tools[0] = web_search_config
                         logger.info(f"Falling back to web_search_preview for {agent_name}")
-                        create_kwargs["tools"] = [tool_config]
+                        create_kwargs["tools"] = tools
                         response = await client.responses.create(**create_kwargs)
                     elif text_format and "text" in str(e).lower() and attempt == 0:
                         # Structured output not supported, retry without it
@@ -200,9 +236,56 @@ async def web_search_query(
             )
             await asyncio.sleep(delay)
 
+    # Accumulate tokens across function call iterations
+    total_input_tokens = getattr(response.usage, "input_tokens", 0) if response.usage else 0
+    total_output_tokens = getattr(response.usage, "output_tokens", 0) if response.usage else 0
+
+    # Handle function tool calls in a conversation loop
+    if function_handler:
+        for iteration in range(MAX_FUNCTION_CALL_ITERATIONS):
+            function_calls = _extract_function_calls(response)
+            if not function_calls:
+                break
+
+            logger.info(
+                f"Processing {len(function_calls)} function call(s) for {agent_name} (iteration {iteration + 1})",
+                extra={"agent_name": agent_name, "calls": [fc["name"] for fc in function_calls]},
+            )
+
+            # Execute each function call and build output items
+            function_outputs = []
+            for fc in function_calls:
+                try:
+                    result_str = function_handler(fc["arguments"])
+                except Exception as e:
+                    logger.error(f"Function handler error for {fc['name']}: {e}")
+                    result_str = json.dumps({"error": str(e)})
+
+                function_outputs.append(
+                    {
+                        "type": "function_call_output",
+                        "call_id": fc["call_id"],
+                        "output": result_str,
+                    }
+                )
+
+            # Continue the conversation with function outputs
+            async with semaphore:
+                response = await client.responses.create(
+                    model=settings.LLM_MODEL,
+                    previous_response_id=response.id,
+                    input=function_outputs,
+                    tools=tools,
+                )
+
+            # Accumulate tokens
+            if response.usage:
+                total_input_tokens += getattr(response.usage, "input_tokens", 0)
+                total_output_tokens += getattr(response.usage, "output_tokens", 0)
+
     duration_ms = int((time.monotonic() - start_time) * 1000)
 
-    # Extract text and sources from response
+    # Extract text and sources from final response
     text_parts = []
     sources = set()
 
@@ -227,16 +310,12 @@ async def web_search_query(
     data_urls = _extract_urls_from_data(data)
     sources.update(data_urls)
 
-    # Get token usage
-    input_tokens = getattr(response.usage, "input_tokens", 0) if response.usage else 0
-    output_tokens = getattr(response.usage, "output_tokens", 0) if response.usage else 0
-
     logger.info(
         f"Web search completed for {agent_name}",
         extra={
             "agent_name": agent_name,
-            "input_tokens": input_tokens,
-            "output_tokens": output_tokens,
+            "input_tokens": total_input_tokens,
+            "output_tokens": total_output_tokens,
             "duration_ms": duration_ms,
             "sources_count": len(sources),
         },
@@ -245,7 +324,7 @@ async def web_search_query(
     return {
         "data": data,
         "sources": sorted(sources),
-        "input_tokens": input_tokens,
-        "output_tokens": output_tokens,
+        "input_tokens": total_input_tokens,
+        "output_tokens": total_output_tokens,
         "duration_ms": duration_ms,
     }

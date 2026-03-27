@@ -7,6 +7,7 @@ from app.agents.config import AGENT_PROMPTS, AGENT_TIMEOUT_SECONDS
 from app.agents.prompts.domains import AGENT_ALLOWED_DOMAINS
 from app.agents.schemas import AGENT_OUTPUT_SCHEMAS
 from app.agents.state import AgentResult
+from app.agents.tools.enrichment_lookup import build_enrichment_tool
 from app.agents.tools.web_search import web_search_query
 from app.core.logging_config import get_logger
 
@@ -92,6 +93,8 @@ async def run_agent(
     website: str,
     company_brief: str | None = None,
     country_code: str | None = None,
+    enrichment_sources: list[str] | None = None,
+    company_id: int | None = None,
 ) -> AgentResult:
     """Execute a single research agent.
 
@@ -101,6 +104,8 @@ async def run_agent(
         website: Company website URL
         company_brief: Optional brief from planner node
         country_code: Optional country code for search localization
+        enrichment_sources: Optional list of available enrichment sources (e.g., ["pappers", "worldcheck"])
+        company_id: Optional company ID for enrichment DB lookups (required if enrichment_sources is set)
 
     Returns:
         AgentResult with data, sources, tokens, and timing
@@ -123,6 +128,14 @@ async def run_agent(
     user_query = "\n".join(query_parts)
     allowed_domains = _build_allowed_domains(agent_name, company_domain)
 
+    # Build enrichment function tool if sources are available
+    function_tools = None
+    function_handler = None
+    if enrichment_sources and company_id:
+        tool_def, handler = build_enrichment_tool(company_id, enrichment_sources)
+        function_tools = [tool_def]
+        function_handler = handler
+
     try:
         result = await asyncio.wait_for(
             web_search_query(
@@ -131,6 +144,8 @@ async def run_agent(
                 agent_name=agent_name,
                 country_code=country_code,
                 allowed_domains=allowed_domains,
+                function_tools=function_tools,
+                function_handler=function_handler,
                 output_schema=output_schema,
             ),
             timeout=AGENT_TIMEOUT_SECONDS,
