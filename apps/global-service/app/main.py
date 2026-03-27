@@ -10,6 +10,7 @@ from app.core.config import settings
 from app.core.correlation import CorrelationIdMiddleware
 from app.core.keycloak import get_idp
 from app.core.logging_config import get_logger, setup_logging
+from app.core.openapi_merge import setup_merged_openapi
 from app.grpc_server import create_grpc_server
 from app.health import close_health_http_client, run_readiness_checks
 from app.proxy.client import close_proxy_client, get_proxy_client
@@ -57,12 +58,13 @@ async def lifespan(app: FastAPI):
         await keycloak_admin_service.close()
 
 
-# App initialization
+# App initialization — disable docs endpoints when ENABLE_DOCS=false
 app = FastAPI(
     title="Global Service",
     description="Centralized organization-scoped resources service",
     version="0.1.0",
     lifespan=lifespan,
+    **({"docs_url": None, "redoc_url": None, "openapi_url": None} if not settings.ENABLE_DOCS else {}),
 )
 # Parse CORS origins from comma-separated config (no rebuild needed to change)
 cors_origins = [
@@ -115,3 +117,7 @@ app.include_router(api_router, prefix="/api")
 # Register proxy router - forwards all /api/* requests to the backend monolith
 # This MUST be registered last to act as a catch-all for /api/* routes
 app.include_router(proxy_router, prefix="/api", tags=["proxy"])
+
+# Activate unified OpenAPI docs (lazily fetches screen schema on first /docs access)
+if settings.ENABLE_DOCS:
+    setup_merged_openapi(app)
