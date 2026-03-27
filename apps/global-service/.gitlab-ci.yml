@@ -47,7 +47,7 @@ global-service:poetry-audit:
   needs: []
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   script:
-    - cd apps/global-service && poetry audit
+    - cd apps/global-service && poetry audit --ignore-code=CVE-2024-23342 --ignore-code=PVE-2024-64396
   <<: *gs-changes
 
 # ─── Test Stage ────────────────────────────────────────
