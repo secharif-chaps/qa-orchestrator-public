@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8001
     SCREEN_BASE_URL: str = "http://screen:8000"  # Internal Docker service name for screen backend
+    KEYCLOAK_PUBLIC_URL: str = "http://localhost:8080"  # Public Keycloak URL for Swagger UI OAuth
 
     # GRPC settings
     GRPC_PORT: int = 50051
@@ -39,6 +40,9 @@ class Settings(BaseSettings):
 
     # Health check settings
     HEALTH_CHECK_KEYCLOAK_ENABLED: bool = False
+
+    # OpenAPI docs — active by default, disable with ENABLE_DOCS=false if needed
+    ENABLE_DOCS: bool = True
 
     # Internal JWT for service-to-service communication
     # Must be the same value in all services (gateway + backends)
