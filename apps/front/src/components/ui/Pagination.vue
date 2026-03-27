@@ -4,7 +4,7 @@
     <div class="flex flex-col gap-2">
       <div class="flex items-center gap-2">
         <label class="text-secondary sr-only text-sm whitespace-nowrap">{{
-          $t('pagination.show')
+          $t('common.pagination.show')
         }}</label>
         <select
           :value="meta.per_page"
@@ -82,7 +82,7 @@
     <!-- Right: Direct page input -->
     <div class="flex items-center justify-end gap-2">
       <label class="text-secondary text-sm whitespace-nowrap">{{
-        $t('pagination.page', 'Page:')
+        $t('common.pagination.page', 'Page:')
       }}</label>
       <input
         v-model.number="pageInput"
@@ -95,7 +95,7 @@
         :placeholder="String(meta.current_page)"
       />
       <span class="text-secondary text-sm whitespace-nowrap"
-        >{{ $t('pagination.of', 'of') }} {{ meta.last_page }}</span
+        >{{ $t('common.pagination.of', 'of') }} {{ meta.last_page }}</span
       >
     </div>
   </div>
@@ -142,7 +142,7 @@ const resultText = computed(() => {
   const start = (props.meta.current_page - 1) * props.meta.per_page + 1
   const end = Math.min(props.meta.current_page * props.meta.per_page, props.meta.total)
 
-  return t('pagination.displaying', {
+  return t('common.pagination.displaying', {
     start,
     end,
     total: props.meta.total,

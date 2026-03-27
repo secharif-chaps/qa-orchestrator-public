@@ -2,7 +2,7 @@
   <div
     id="watchFileStatus"
     class="shrink-0 text-sm font-medium"
-    :aria-label="t('watch_files.header_section.status.label')"
+    :aria-label="t('target.watchFiles.header_section.status.label')"
   >
     <Select
       v-if="!isReadOnly"
@@ -97,10 +97,10 @@ const isDisabledStatus = (status: WatchFileStatus) => {
 
 const disabledStatusTooltip = computed(() => {
   if (!hasActiveSources.value) {
-    return t('watch_files.status_change.enabled.disabled_tooltip.sources')
+    return t('target.watchFiles.status_change.enabled.disabled_tooltip.sources')
   }
   if (!watchFile.referenceSubject) {
-    return t('watch_files.status_change.enabled.disabled_tooltip.reference_subject')
+    return t('target.watchFiles.status_change.enabled.disabled_tooltip.reference_subject')
   }
   return ''
 })
@@ -115,11 +115,11 @@ watch(
 function statusLabel(status: WatchFileStatus) {
   switch (status) {
     case WATCH_FILE_STATUS.DRAFT:
-      return t('watch_files.header_section.status.draft')
+      return t('target.watchFiles.header_section.status.draft')
     case WATCH_FILE_STATUS.ENABLED:
-      return t('watch_files.header_section.status.enabled')
+      return t('target.watchFiles.header_section.status.enabled')
     case WATCH_FILE_STATUS.ARCHIVED:
-      return t('watch_files.header_section.status.archived')
+      return t('target.watchFiles.header_section.status.archived')
   }
 }
 

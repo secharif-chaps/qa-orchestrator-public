@@ -1,7 +1,7 @@
 <template>
   <Drawer
     v-model="isOpen"
-    :title="t('watch_files.activity.sources.history.drawer_title')"
+    :title="t('target.watchFiles.activity.sources.history.drawer_title')"
     position="right"
     to="#watchfile-layout"
   >

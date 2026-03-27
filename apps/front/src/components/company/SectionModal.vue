@@ -32,7 +32,7 @@
             <component :is="sectionComponent" v-if="sectionComponent" />
             <div v-else class="text-secondary py-12 text-center">
               <i class="fas fa-exclamation-triangle mb-4 text-4xl"></i>
-              <p>{{ t('company.sections.notAvailable', 'Section not available') }}</p>
+              <p>{{ t('screen.company.sections.notAvailable', 'Section not available') }}</p>
             </div>
           </div>
         </div>
@@ -98,69 +98,69 @@ const route = useRoute()
 // Section configurations
 const sections: Record<TaskType, SectionConfig> = {
   profile: {
-    name: t('company.analysisCards.profile.title', 'Company Profile'),
+    name: t('screen.company.analysisCards.profile.title', 'Company Profile'),
     description: t(
-      'company.analysisCards.profile.description',
+      'screen.company.analysisCards.profile.description',
       'View detailed company information, business lines, and key metrics',
     ),
     icon: 'fas fa-building',
     component: ProfilePage,
   },
   timeline: {
-    name: t('company.analysisCards.timeline.title', 'Timeline & History'),
+    name: t('screen.company.analysisCards.timeline.title', 'Timeline & History'),
     description: t(
-      'company.analysisCards.timeline.description',
+      'screen.company.analysisCards.timeline.description',
       'Company history, milestones, and key events over time',
     ),
     icon: 'fas fa-calendar-days',
     component: TimelinePage,
   },
   products: {
-    name: t('company.analysisCards.products.title', 'Products & Services'),
+    name: t('screen.company.analysisCards.products.title', 'Products & Services'),
     description: t(
-      'company.analysisCards.products.description',
+      'screen.company.analysisCards.products.description',
       'Browse products, services, and offerings',
     ),
     icon: 'fas fa-box',
     component: ProductsPage,
   },
   team: {
-    name: t('company.analysisCards.team.title', 'Team & Management'),
+    name: t('screen.company.analysisCards.team.title', 'Team & Management'),
     description: t(
-      'company.analysisCards.team.description',
+      'screen.company.analysisCards.team.description',
       'Leadership team, organizational structure, and key personnel',
     ),
     icon: 'fas fa-users',
     component: TeamPage,
   },
   jobs: {
-    name: t('company.analysisCards.jobs.title', 'Job Offers'),
+    name: t('screen.company.analysisCards.jobs.title', 'Job Offers'),
     description: t(
-      'company.analysisCards.jobs.description',
+      'screen.company.analysisCards.jobs.description',
       'Current job openings and career opportunities',
     ),
     icon: 'fas fa-briefcase',
     component: JobsPage,
   },
   press: {
-    name: t('company.analysisCards.press.title', 'Press & Media'),
+    name: t('screen.company.analysisCards.press.title', 'Press & Media'),
     description: t(
-      'company.analysisCards.press.description',
+      'screen.company.analysisCards.press.description',
       'Press releases, news articles, and media coverage',
     ),
     icon: 'fas fa-newspaper',
     component: PressPage,
   },
   digital: {
-    name: t('company.onlinePresence.title', 'Online Presence'),
-    description: t('company.onlinePresence.socialMedia', 'Social Media Presence'),
+    name: t('screen.company.onlinePresence.title', 'Online Presence'),
+    description: t('screen.company.onlinePresence.socialMedia', 'Social Media Presence'),
     icon: 'fas fa-globe',
     component: ProfilePage, // Included in profile
   },
   csr: {
-    name: t('company.analysisCards.csr.title', 'Corporate Social Responsibility'),
+    name: t('screen.company.analysisCards.csr.title', 'Corporate Social Responsibility'),
     description: t(
-      'company.analysisCards.csr.description',
+      'screen.company.analysisCards.csr.description',
       'CSR initiatives, sustainability programs, and social impact',
     ),
     icon: 'fas fa-leaf',

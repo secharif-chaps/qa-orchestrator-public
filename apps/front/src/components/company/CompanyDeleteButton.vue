@@ -5,7 +5,7 @@
       variant="tertiary"
       intent="danger"
       icon="fa fa-trash"
-      :label="t('company.delete.button')"
+      :label="t('screen.company.delete.button')"
       @click="showModal = true"
     />
 

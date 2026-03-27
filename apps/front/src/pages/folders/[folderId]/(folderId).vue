@@ -7,7 +7,7 @@
           class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
         ></div>
         <p class="text-secondary">
-          {{ $t('folder.loading', 'Loading folder...') }}
+          {{ $t('common.folder.loading', 'Loading folder...') }}
         </p>
       </div>
 
@@ -15,8 +15,8 @@
       <Alert
         v-else-if="status === 'error'"
         variant="danger"
-        :title="$t('folder.detail.error.title', 'Error')"
-        :description="$t('folder.detail.error.description', 'Failed to load folder')"
+        :title="$t('common.folder.detail.error.title', 'Error')"
+        :description="$t('common.folder.detail.error.description', 'Failed to load folder')"
         icon="fa fa-exclamation-triangle"
       />
 
@@ -62,11 +62,13 @@
             <!-- Table Header -->
             <div class="border-primary-stroke bg-base-200 border-b px-6 py-4">
               <div class="text-secondary grid grid-cols-12 gap-4 text-sm font-medium">
-                <div class="col-span-4">{{ $t('folder.item.name', 'Name') }}</div>
-                <div class="col-span-2">{{ $t('folder.item.type', 'Type') }}</div>
-                <div class="col-span-2">{{ $t('folder.item.created', 'Created') }}</div>
-                <div class="col-span-2">{{ $t('folder.item.owner', 'Owner') }}</div>
-                <div class="col-span-2 text-right">{{ $t('folder.item.actions', 'Actions') }}</div>
+                <div class="col-span-4">{{ $t('common.folder.item.name', 'Name') }}</div>
+                <div class="col-span-2">{{ $t('common.folder.item.type', 'Type') }}</div>
+                <div class="col-span-2">{{ $t('common.folder.item.created', 'Created') }}</div>
+                <div class="col-span-2">{{ $t('common.folder.item.owner', 'Owner') }}</div>
+                <div class="col-span-2 text-right">
+                  {{ $t('common.folder.item.actions', 'Actions') }}
+                </div>
               </div>
             </div>
 
@@ -130,7 +132,7 @@
                         variant="tertiary"
                         size="sm"
                         icon="fa fa-external-link-alt"
-                        :label="$t('folder.item.view', 'View')"
+                        :label="$t('common.folder.item.view', 'View')"
                         @click.stop="navigateToItem(item)"
                         :hidden="companyFilter === 'archived'"
                       />
@@ -142,7 +144,7 @@
                         size="sm"
                         icon="fa fa-exchange-alt"
                         icon-only
-                        :title="$t('folder.moveCompany.button', 'Move Company')"
+                        :title="$t('common.folder.moveCompany.button', 'Move Company')"
                         @click.stop="confirmMoveCompany(item)"
                       />
                       <Button
@@ -154,8 +156,8 @@
                         icon-only
                         :title="
                           companyFilter === 'archived'
-                            ? $t('company.restore.title', 'Restore Company')
-                            : $t('company.delete.title', 'Archive Company')
+                            ? $t('screen.company.restore.title', 'Restore Company')
+                            : $t('screen.company.delete.title', 'Archive Company')
                         "
                         @click.stop="confirmArchiveCompany(item)"
                       />
@@ -164,7 +166,7 @@
                         v-if="companyFilter === 'archived'"
                         class="ml-2 inline-block rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-600"
                       >
-                        {{ $t('folder.item.deleted', 'Deleted') }}
+                        {{ $t('common.folder.item.deleted', 'Deleted') }}
                       </span>
                     </div>
                   </div>
@@ -180,8 +182,8 @@
           variant="info"
           icon="fa fa-folder-open"
           class="py-6"
-          :title="$t('folder.empty.title', 'No companies found')"
-          :description="$t('folder.empty.description', 'Add companies to this folder')"
+          :title="$t('common.folder.empty.title', 'No companies found')"
+          :description="$t('common.folder.empty.description', 'Add companies to this folder')"
         >
         </Alert>
 
@@ -190,13 +192,13 @@
           variant="info"
           icon="fa fa-folder-open"
           class="py-6"
-          :title="$t('folder.empty.noResults', 'No results found')"
-          :description="$t('folder.empty.tryDifferentSearch', 'Try a different search term')"
+          :title="$t('common.folder.empty.noResults', 'No results found')"
+          :description="$t('common.folder.empty.tryDifferentSearch', 'Try a different search term')"
         >
           <template #actions>
             <Button
               variant="secondary"
-              :label="$t('folder.clearSearch', 'Clear Search')"
+              :label="$t('common.folder.clearSearch', 'Clear Search')"
               @click="searchTerm = ''"
             />
           </template>
@@ -342,7 +344,7 @@ const formatDate = (dateString: string) => {
 // Helper to format item type
 const formatItemType = (type: string): string => {
   if (type === 'company') {
-    return t('folder.itemTypes.company', 'Company')
+    return t('common.folder.itemTypes.company', 'Company')
   }
   return type.charAt(0).toUpperCase() + type.slice(1)
 }

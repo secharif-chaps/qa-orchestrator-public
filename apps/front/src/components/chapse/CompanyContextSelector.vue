@@ -3,7 +3,7 @@
     <!-- Trigger Button -->
     <Button variant="secondary" size="sm" :disabled="disabled" @click="toggleDropdown">
       <Icon icon="fa-plus" class="text-xs" />
-      <span>{{ $t('sidebar.chapse.addCompany', 'Add company') }}</span>
+      <span>{{ $t('common.sidebar.chapse.addCompany', 'Add company') }}</span>
       <span v-if="showLimit" class="text-sage-400">({{ contextCount }}/{{ maxCompanies }})</span>
     </Button>
 
@@ -31,7 +31,7 @@
               ref="searchInputRef"
               v-model="searchQuery"
               type="text"
-              :placeholder="$t('sidebar.chapse.searchCompanies', 'Search companies...')"
+              :placeholder="$t('common.sidebar.chapse.searchCompanies', 'Search companies...')"
               class="bg-sage-900 text-sage-100 placeholder-sage-500 focus:ring-primary/50 w-full rounded-lg py-1.5 pr-2 pl-7 text-xs focus:ring-2 focus:outline-none"
               @input="handleSearch"
             />
@@ -51,7 +51,7 @@
             class="px-2 py-4 text-center"
           >
             <p class="text-sage-400 text-xs">
-              {{ $t('sidebar.chapse.noCompaniesFound', 'No companies found') }}
+              {{ $t('common.sidebar.chapse.noCompaniesFound', 'No companies found') }}
             </p>
           </div>
 
@@ -61,7 +61,7 @@
             class="px-2 py-4 text-center"
           >
             <p class="text-sage-400 text-xs">
-              {{ $t('sidebar.chapse.typeToSearch', 'Type to search companies') }}
+              {{ $t('common.sidebar.chapse.typeToSearch', 'Type to search companies') }}
             </p>
           </div>
 

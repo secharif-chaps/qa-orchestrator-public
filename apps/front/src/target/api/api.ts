@@ -90,7 +90,7 @@ function createApi() {
 
       const data = response._data
       if (!data && method !== 'DELETE' && response.status !== 204) {
-        throw new ApiError(t('errors.no_data'), response.status, null)
+        throw new ApiError(t('common.errors.no_data'), response.status, null)
       }
 
       const apiResponse: ApiResponse<T> = {

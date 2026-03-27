@@ -53,7 +53,7 @@ const goToHome = async () => {
 
 watch(error, (newError) => {
   if (newError) {
-    toast.error(t('watch_files.toast.error.load'))
+    toast.error(t('target.watchFiles.toast.error.load'))
   }
 })
 

@@ -6,13 +6,13 @@
     :lib="iconFilled"
     :title="
       watchFile.isFavorite
-        ? $t('watch_files.actions.remove_favorite')
-        : $t('watch_files.actions.add_favorite')
+        ? $t('target.watchFiles.actions.remove_favorite')
+        : $t('target.watchFiles.actions.add_favorite')
     "
     :aria-label="
       watchFile.isFavorite
-        ? $t('watch_files.actions.remove_favorite')
-        : $t('watch_files.actions.add_favorite')
+        ? $t('target.watchFiles.actions.remove_favorite')
+        : $t('target.watchFiles.actions.add_favorite')
     "
     :loading="isLoading"
     @click="toggleFavorite(watchFile)"

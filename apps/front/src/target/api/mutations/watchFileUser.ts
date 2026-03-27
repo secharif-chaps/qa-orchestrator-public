@@ -22,7 +22,7 @@ export const useAddWatchFileUsers = (options?: CallbackMutations<WatchFileUser[]
   const { t } = useI18n()
 
   const defaultErrorMessage = {
-    title: t('watch_files.toast.error.addUsers'),
+    title: t('target.watchFiles.toast.error.addUsers'),
   }
 
   const { mutate, ...mutation } = useMutation({
@@ -44,7 +44,7 @@ export const useAddWatchFileUsers = (options?: CallbackMutations<WatchFileUser[]
       options?.onSuccess?.(data.member)
 
       toast.success(
-        t('watch_files.toast.success.addUsers', {
+        t('target.watchFiles.toast.success.addUsers', {
           count: data.member.length,
         }),
       )
@@ -64,7 +64,7 @@ export const useRemoveWatchFileUser = defineMutation(() => {
   const { t } = useI18n()
 
   const defaultErrorMessage = {
-    title: t('watch_files.toast.error.removeUser'),
+    title: t('target.watchFiles.toast.error.removeUser'),
   }
 
   const { mutate, ...mutation } = useMutation({
@@ -79,7 +79,7 @@ export const useRemoveWatchFileUser = defineMutation(() => {
 
     onSuccess(_, { watchFileId, displayName }) {
       toast.success(
-        t('watch_files.toast.success.removeUser', {
+        t('target.watchFiles.toast.success.removeUser', {
           user: displayName,
         }),
       )
@@ -113,7 +113,7 @@ export const useUpdateWatchFileUserRole = (options?: CallbackMutations<WatchFile
       role: WatchFileUserRole
     }) => {
       const defaultErrorMessage = {
-        title: t('watch_files.toast.error.changeRole', {
+        title: t('target.watchFiles.toast.error.changeRole', {
           user: user.displayName,
           role: roleLabel(role),
         }),
@@ -129,7 +129,7 @@ export const useUpdateWatchFileUserRole = (options?: CallbackMutations<WatchFile
       options?.onSuccess?.(data.member)
 
       toast.success(
-        t('watch_files.toast.success.changeRole', {
+        t('target.watchFiles.toast.success.changeRole', {
           user: user.displayName,
           role: roleLabel(role),
         }),

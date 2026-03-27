@@ -22,7 +22,7 @@
           <i class="fa fa-clock"></i>
           <span>{{ time }}</span>
         </span>
-        <span>{{ $t('home.recentActivities.by', { username: '@' + username }) }}</span>
+        <span>{{ $t('dashboard.home.recentActivities.by', { username: '@' + username }) }}</span>
       </div>
     </div>
   </RouterLink>

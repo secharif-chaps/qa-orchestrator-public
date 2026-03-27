@@ -3,7 +3,7 @@
     <div class="mb-3 flex shrink-0 items-center gap-2 pl-3">
       <Icon icon="fa-clock-rotate-left" class="text-medium text-gray-600" />
       <div class="text-medium text-gray-900">
-        {{ t('watch_files.activity.history.title') }}
+        {{ t('target.watchFiles.activity.history.title') }}
       </div>
     </div>
     <div class="min-h-0 flex-1 overflow-y-auto">
@@ -157,7 +157,7 @@ const getActivityButton = (activity: WatchFileActivity) => {
     case WatchFileEventType.WATCHFILE_ACTOR_ADDED:
     case WatchFileEventType.WATCHFILE_ACTOR_STATUS_CHANGED:
       return {
-        text: t('watch_files.activity.history.view_actors_added'),
+        text: t('target.watchFiles.activity.history.view_actors_added'),
         action: () => {
           eventType.value = activityEventType
           actorEventId.value = activity.id
@@ -169,7 +169,7 @@ const getActivityButton = (activity: WatchFileActivity) => {
     case WatchFileEventType.WATCHFILE_SOURCE_ADDED:
     case WatchFileEventType.WATCHFILE_SOURCE_STATUS_CHANGED:
       return {
-        text: t('watch_files.activity.history.view_sources_added'),
+        text: t('target.watchFiles.activity.history.view_sources_added'),
         action: () => {
           eventType.value = activityEventType
           sourceEventId.value = activity.id

@@ -50,7 +50,7 @@ describe('useTypingIndicatorPhrases', () => {
     const { typingIndicatorPhrase } = useTypingIndicatorPhrases(() => showReassurance.value)
 
     // 0.25 * 20 = 5, so index should be 5
-    expect(typingIndicatorPhrase.value).toBe('watch_files.chat.typing_indicator.5')
+    expect(typingIndicatorPhrase.value).toBe('target.watchFiles.chat.typing_indicator.5')
   })
 
   it('rotates to a different phrase after 60 seconds', async () => {
@@ -65,12 +65,12 @@ describe('useTypingIndicatorPhrases', () => {
     const showReassurance = ref(false)
     const { typingIndicatorPhrase } = useTypingIndicatorPhrases(() => showReassurance.value)
 
-    expect(typingIndicatorPhrase.value).toBe('watch_files.chat.typing_indicator.2')
+    expect(typingIndicatorPhrase.value).toBe('target.watchFiles.chat.typing_indicator.2')
 
     // Advance time by 60 seconds
     vi.advanceTimersByTime(60_000)
 
-    expect(typingIndicatorPhrase.value).toBe('watch_files.chat.typing_indicator.8')
+    expect(typingIndicatorPhrase.value).toBe('target.watchFiles.chat.typing_indicator.8')
   })
 
   it('shows reassurance phrase when showReassurance is true', async () => {
@@ -92,7 +92,7 @@ describe('useTypingIndicatorPhrases', () => {
     await nextTick()
 
     // Should now show reassurance phrase (new random index 10 when switching)
-    expect(reassurancePhrase.value).toBe('watch_files.chat.reassurance_message.10')
+    expect(reassurancePhrase.value).toBe('target.watchFiles.chat.reassurance_message.10')
   })
 
   it('rotates reassurance phrases when in reassurance mode', async () => {
@@ -110,17 +110,17 @@ describe('useTypingIndicatorPhrases', () => {
     )
 
     // Initial reassurance phrase (new random when switching to reassurance mode)
-    expect(reassurancePhrase.value).toBe('watch_files.chat.reassurance_message.10')
+    expect(reassurancePhrase.value).toBe('target.watchFiles.chat.reassurance_message.10')
 
     // Typing indicator should still show its phrase
-    expect(typingIndicatorPhrase.value).toBe('watch_files.chat.typing_indicator.2')
+    expect(typingIndicatorPhrase.value).toBe('target.watchFiles.chat.typing_indicator.2')
 
     // Advance time by 60 seconds - should rotate reassurance, not typing indicator
     vi.advanceTimersByTime(60_000)
 
-    expect(reassurancePhrase.value).toBe('watch_files.chat.reassurance_message.14')
+    expect(reassurancePhrase.value).toBe('target.watchFiles.chat.reassurance_message.14')
     // Typing indicator unchanged
-    expect(typingIndicatorPhrase.value).toBe('watch_files.chat.typing_indicator.2')
+    expect(typingIndicatorPhrase.value).toBe('target.watchFiles.chat.typing_indicator.2')
   })
 
   it('avoids selecting the same phrase index when rotating', async () => {
@@ -137,13 +137,13 @@ describe('useTypingIndicatorPhrases', () => {
     const showReassurance = ref(false)
     const { typingIndicatorPhrase } = useTypingIndicatorPhrases(() => showReassurance.value)
 
-    expect(typingIndicatorPhrase.value).toBe('watch_files.chat.typing_indicator.5')
+    expect(typingIndicatorPhrase.value).toBe('target.watchFiles.chat.typing_indicator.5')
 
     // Advance time by 60 seconds
     vi.advanceTimersByTime(60_000)
 
     // Should have retried until getting a different index
-    expect(typingIndicatorPhrase.value).toBe('watch_files.chat.typing_indicator.10')
+    expect(typingIndicatorPhrase.value).toBe('target.watchFiles.chat.typing_indicator.10')
   })
 
   it('cleans up interval on unmount', async () => {
@@ -174,7 +174,7 @@ describe('useTypingIndicatorPhrases', () => {
     )
 
     const initialPhrase = typingIndicatorPhrase.value
-    expect(initialPhrase).toBe('watch_files.chat.typing_indicator.3')
+    expect(initialPhrase).toBe('target.watchFiles.chat.typing_indicator.3')
 
     // Switch to reassurance mode
     showReassurance.value = true
@@ -183,7 +183,7 @@ describe('useTypingIndicatorPhrases', () => {
     // Typing indicator phrase should remain the same
     expect(typingIndicatorPhrase.value).toBe(initialPhrase)
     // Reassurance phrase should now be shown
-    expect(reassurancePhrase.value).toBe('watch_files.chat.reassurance_message.12')
+    expect(reassurancePhrase.value).toBe('target.watchFiles.chat.reassurance_message.12')
   })
 
   it('multiple rotations work correctly', async () => {
@@ -199,15 +199,15 @@ describe('useTypingIndicatorPhrases', () => {
     const showReassurance = ref(false)
     const { typingIndicatorPhrase } = useTypingIndicatorPhrases(() => showReassurance.value)
 
-    expect(typingIndicatorPhrase.value).toBe('watch_files.chat.typing_indicator.0')
+    expect(typingIndicatorPhrase.value).toBe('target.watchFiles.chat.typing_indicator.0')
 
     vi.advanceTimersByTime(60_000)
-    expect(typingIndicatorPhrase.value).toBe('watch_files.chat.typing_indicator.5')
+    expect(typingIndicatorPhrase.value).toBe('target.watchFiles.chat.typing_indicator.5')
 
     vi.advanceTimersByTime(60_000)
-    expect(typingIndicatorPhrase.value).toBe('watch_files.chat.typing_indicator.10')
+    expect(typingIndicatorPhrase.value).toBe('target.watchFiles.chat.typing_indicator.10')
 
     vi.advanceTimersByTime(60_000)
-    expect(typingIndicatorPhrase.value).toBe('watch_files.chat.typing_indicator.15')
+    expect(typingIndicatorPhrase.value).toBe('target.watchFiles.chat.typing_indicator.15')
   })
 })

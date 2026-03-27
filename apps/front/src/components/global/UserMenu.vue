@@ -61,7 +61,7 @@
           @click="handleLogout(close)"
         >
           <Icon icon="fa-arrow-right-from-bracket" class="w-4 text-center" />
-          <span>{{ t('logout.confirm') }}</span>
+          <span>{{ t('common.logout.confirm') }}</span>
         </button>
       </div>
     </template>

@@ -20,11 +20,11 @@
         :domain="source.primaryDomain"
         :url="source.url"
         :alt="source.name"
-        :label="t('watch_files.sources.link_label')"
+        :label="t('target.watchFiles.sources.link_label')"
         class="text-base-alt"
       />
       <div v-if="source.actor" class="text-base-alt text-sm">
-        {{ t('watch_files.sources.actor', { label: source.actor.label }) }}
+        {{ t('target.watchFiles.sources.actor', { label: source.actor.label }) }}
       </div>
     </template>
 
@@ -35,7 +35,7 @@
         icon="fa-magnifying-glass-waveform"
         @click="onMonitoringClick"
       >
-        {{ t('watch_files.activity.sources.action.monitoring') }}
+        {{ t('target.watchFiles.activity.sources.action.monitoring') }}
       </Button>
       <SourceCardDrawer v-model="isDrawerOpen" :source="source" />
     </template>
@@ -66,11 +66,11 @@ const { source, variant = undefined } = defineProps<Props>()
 
 const statusText = computed(() => {
   const statusMap: Record<string, string> = {
-    running: t('watch_files.activity.sources.status.running'),
-    error: t('watch_files.activity.sources.status.error'),
-    stopped: t('watch_files.activity.sources.status.stopped'),
+    running: t('target.watchFiles.activity.sources.status.running'),
+    error: t('target.watchFiles.activity.sources.status.error'),
+    stopped: t('target.watchFiles.activity.sources.status.stopped'),
   }
-  return statusMap[source.collectStatus] || t('watch_files.activity.sources.status.stopped')
+  return statusMap[source.collectStatus] || t('target.watchFiles.activity.sources.status.stopped')
 })
 
 const sourceColor = computed(() => {

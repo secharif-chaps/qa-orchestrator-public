@@ -9,7 +9,7 @@
             class="text-almond-600 transition-colors hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
           >
             <Icon icon="fa-home" class="text-lg" aria-hidden="true" />
-            <span class="sr-only">{{ t('sidebar.home') }}</span>
+            <span class="sr-only">{{ t('common.sidebar.home') }}</span>
           </RouterLink>
         </div>
       </li>

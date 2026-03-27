@@ -68,7 +68,7 @@ export function useChapseChat() {
 
     const accessToken = authStore.accessToken
     if (!accessToken) {
-      store.setError(t('chapse.errors.notAuthenticated'))
+      store.setError(t('screen.chapse.errors.notAuthenticated'))
       return
     }
 
@@ -164,7 +164,7 @@ export function useChapseChat() {
       }
     } catch (err: unknown) {
       console.error('Error sending message:', err)
-      const errorMessage = t('chapse.errors.sendMessageFailed')
+      const errorMessage = t('screen.chapse.errors.sendMessageFailed')
       store.setError(errorMessage)
 
       // Update the streaming message with error
@@ -195,7 +195,7 @@ export function useChapseChat() {
       }
     } catch (err) {
       console.error('Error loading conversations:', err)
-      store.setError(t('chapse.errors.loadConversationsFailed'))
+      store.setError(t('screen.chapse.errors.loadConversationsFailed'))
     } finally {
       store.setConversationsLoading(false)
     }
@@ -232,7 +232,7 @@ export function useChapseChat() {
       console.error('Error loading conversation:', err)
       // Only show error if we don't have cached messages to display
       if (!hadCachedMessages) {
-        store.setError(t('chapse.errors.loadConversationFailed'))
+        store.setError(t('screen.chapse.errors.loadConversationFailed'))
       }
     } finally {
       store.setLoading(false)
@@ -247,7 +247,7 @@ export function useChapseChat() {
       return true
     } catch (err) {
       console.error('Error deleting conversation:', err)
-      store.setError(t('chapse.errors.deleteConversationFailed'))
+      store.setError(t('screen.chapse.errors.deleteConversationFailed'))
       return false
     }
   }

@@ -22,7 +22,7 @@
         <div class="text-center">
           <Icon icon="fa-spinner-third" class="text-primary-600 animate-spin text-3xl" />
           <p class="text-sm text-gray-600">
-            {{ t('watch_files.chat.loading_older_messages') }}
+            {{ t('target.watchFiles.chat.loading_older_messages') }}
           </p>
         </div>
       </div>
@@ -47,7 +47,7 @@
             class="border-primary-600 mx-auto mb-2 h-8 w-8 animate-spin rounded-full border-b-2"
           ></div>
           <p class="text-sm text-gray-500">
-            {{ t('watch_files.chat.loading_messages') }}
+            {{ t('target.watchFiles.chat.loading_messages') }}
           </p>
         </div>
       </div>
@@ -57,7 +57,7 @@
         class="flex h-full items-center justify-center"
       >
         <div class="text-center">
-          <p class="text-gray-500">{{ t('watch_files.chat.no_messages') }}</p>
+          <p class="text-gray-500">{{ t('target.watchFiles.chat.no_messages') }}</p>
         </div>
       </div>
 
@@ -72,7 +72,7 @@
           class="cursor-pointer shadow-lg"
           @click="handleNewMessageClick"
         >
-          {{ t('watch_files.chat.new_message') }}
+          {{ t('target.watchFiles.chat.new_message') }}
         </Button>
       </div>
     </div>

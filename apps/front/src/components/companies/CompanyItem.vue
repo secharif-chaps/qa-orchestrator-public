@@ -68,9 +68,9 @@
     <!-- Footer with creation date and owner -->
     <div class="border-primary-stroke mt-4 border-t pt-3">
       <div class="text-secondary flex items-center justify-between text-xs">
-        <span>{{ t('company.item.created') }} {{ formatFullDate(company.created_at) }}</span>
+        <span>{{ t('screen.company.item.created') }} {{ formatFullDate(company.created_at) }}</span>
         <span v-if="company.owner_username"
-          >{{ t('company.item.by') }} {{ company.owner_username }}</span
+          >{{ t('screen.company.item.by') }} {{ company.owner_username }}</span
         >
       </div>
     </div>
@@ -144,7 +144,7 @@
             variant="tertiary"
             size="sm"
             icon="fa fa-eye"
-            :title="$t('cards.actions.view')"
+            :title="$t('screen.cards.actions.view')"
             @click.stop="$emit('viewCompany', company.id)"
           />
           <Button
@@ -152,7 +152,7 @@
             variant="tertiary"
             size="sm"
             icon="fa fa-trash"
-            :title="$t('cards.actions.delete')"
+            :title="$t('screen.cards.actions.delete')"
             @click.stop="$emit('deleteCompany', company)"
           />
         </div>
@@ -223,16 +223,16 @@ const formatWebsiteDisplay = (website: string) => {
 }
 
 const getTaskStatusText = (tasks: Array<{ status: string }>) => {
-  if (!tasks || tasks.length === 0) return t('company.item.tasks.status.new', 'New')
+  if (!tasks || tasks.length === 0) return t('screen.company.item.tasks.status.new', 'New')
 
   const running = tasks.filter((t) => t.status === 'running' || t.status === 'pending').length
   const failed = tasks.filter((t) => t.status === 'error' || t.status === 'failed').length
   const succeeded = tasks.filter((t) => t.status === 'succeeded').length
 
-  if (running > 0) return t('company.item.tasks.status.processing', 'Processing')
-  if (failed > 0) return t('company.item.tasks.status.issues', 'Issues')
-  if (succeeded === tasks.length) return t('company.item.tasks.status.complete', 'Complete')
-  return t('company.item.tasks.status.partial', 'Partial')
+  if (running > 0) return t('screen.company.item.tasks.status.processing', 'Processing')
+  if (failed > 0) return t('screen.company.item.tasks.status.issues', 'Issues')
+  if (succeeded === tasks.length) return t('screen.company.item.tasks.status.complete', 'Complete')
+  return t('screen.company.item.tasks.status.partial', 'Partial')
 }
 
 const getTaskStatusVariant = (tasks: Array<{ status: string }>): BadgeVariant => {

@@ -86,14 +86,14 @@ export const useArchiveCompany = defineMutation(() => {
       deleteCompany(companyId),
 
     onError: (_error: Error, { companyName }: { companyId: string; companyName: string }) => {
-      toast.error(t('company.archive.error', { name: companyName }))
+      toast.error(t('screen.company.archive.error', { name: companyName }))
     },
 
     onSuccess: (_data: void, { companyName }: { companyId: string; companyName: string }) => {
       // Invalidate folder caches to refetch fresh data
       queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
-      toast.success(t('company.archive.success', { name: companyName }))
+      toast.success(t('screen.company.archive.success', { name: companyName }))
     },
   })
 
@@ -118,14 +118,14 @@ export const useDeleteCompany = defineMutation(() => {
       deleteCompany(companyId),
 
     onError: (_error: Error, { companyName }: { companyId: string; companyName: string }) => {
-      toast.error(t('company.delete.error', { name: companyName }))
+      toast.error(t('screen.company.delete.error', { name: companyName }))
     },
 
     onSuccess: (_data: void, { companyName }: { companyId: string; companyName: string }) => {
       // Invalidate folder caches to refetch fresh data
       queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
-      toast.success(t('company.delete.success', { name: companyName }))
+      toast.success(t('screen.company.delete.success', { name: companyName }))
     },
   })
 
@@ -150,14 +150,14 @@ export const useRestoreCompany = defineMutation(() => {
       restoreCompany(companyId),
 
     onError: (_error: Error, { companyName }: { companyId: string; companyName: string }) => {
-      toast.error(t('company.restore.error', { name: companyName }))
+      toast.error(t('screen.company.restore.error', { name: companyName }))
     },
 
     onSuccess: (_data, { companyName }: { companyId: string; companyName: string }) => {
       // Invalidate folder caches to refetch fresh data
       queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
-      toast.success(t('company.restore.success', { name: companyName }))
+      toast.success(t('screen.company.restore.success', { name: companyName }))
     },
   })
 
@@ -182,7 +182,7 @@ export const useRefreshCompany = defineMutation(() => {
       refreshCompany(companyId),
 
     onError: (_error, { companyName }) => {
-      toast.error(t('company.refresh.error', { name: companyName }))
+      toast.error(t('screen.company.refresh.error', { name: companyName }))
     },
 
     onSuccess: (_data, { companyName, companyId }) => {
@@ -192,7 +192,7 @@ export const useRefreshCompany = defineMutation(() => {
       queryCache.invalidateQueries({ key: TASK_QUERY_KEYS.byCompanyId(companyId) })
       // Invalidate token balance since 35 tokens were consumed
       queryCache.invalidateQueries({ key: ORGANIZATION_TOKEN_KEYS.root })
-      toast.success(t('company.refresh.success', { name: companyName }))
+      toast.success(t('screen.company.refresh.success', { name: companyName }))
     },
   })
 

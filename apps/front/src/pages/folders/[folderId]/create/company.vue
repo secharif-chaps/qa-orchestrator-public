@@ -4,8 +4,8 @@
     <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-semibold">{{ $t('search.title') }}</h1>
-          <p class="text-secondary">{{ $t('search.companyIdentity') }}</p>
+          <h1 class="text-3xl font-semibold">{{ $t('screen.search.title') }}</h1>
+          <p class="text-secondary">{{ $t('screen.search.companyIdentity') }}</p>
         </div>
 
         <!-- Token Counter -->
@@ -13,7 +13,7 @@
           <div class="text-right">
             <TokenCounter
               :token-count="tokenBalance"
-              :label="$t('tokens.balance', 'Token Balance')"
+              :label="$t('settings.tokens.balance', 'Token Balance')"
               :is-loading="tokenDataLoading || !currentOrganization?.id"
               :is-refreshing="isRefreshingTokens"
               show-label
@@ -39,7 +39,7 @@
     <!-- Search Form Card -->
     <div
       class="bg-base-100 border-primary-stroke rounded-lg border p-6"
-      :title="$t('search.companyIdentity')"
+      :title="$t('screen.search.companyIdentity')"
     >
       <form @submit.prevent="submit" class="flex flex-col gap-6">
         <!-- Form Fields -->
@@ -47,22 +47,22 @@
           <Input
             id="company"
             v-model="company"
-            :placeholder="$t('search.fields.companyName.placeholder')"
+            :placeholder="$t('screen.search.fields.companyName.placeholder')"
             :error="companyError"
             data-cy="company-name-input"
             required
-            :label="$t('search.fields.companyName.label')"
+            :label="$t('screen.search.fields.companyName.label')"
             icon="fa-building"
           />
 
           <Input
             id="website"
             v-model="website"
-            :placeholder="$t('search.fields.website.placeholder')"
+            :placeholder="$t('screen.search.fields.website.placeholder')"
             :error="websiteError"
             data-cy="website-input"
             required
-            :label="$t('search.fields.website.label')"
+            :label="$t('screen.search.fields.website.label')"
             icon="fa-globe"
           />
         </div>
@@ -72,14 +72,14 @@
           <Button
             variant="tertiary"
             icon="fa fa-upload"
-            :label="$t('csv.upload.button', 'Upload CSV')"
+            :label="$t('screen.csv.upload.button', 'Upload CSV')"
             @click="goToCSVUpload"
           />
 
           <Button
             variant="primary"
             icon="fa fa-search"
-            :label="$t('search.actions.launchSearch')"
+            :label="$t('screen.search.actions.launchSearch')"
             :loading="mutationLoading"
             :disabled="mutationLoading || !isFormValid || !canPerformSearch"
             @click="submit"
@@ -234,12 +234,12 @@ watch([company, website], ([newCompany, newWebsite]) => {
 
   // Validate company name
   if (newCompany && !validateCompany(newCompany)) {
-    companyError.value = t('search.fields.companyName.error')
+    companyError.value = t('screen.search.fields.companyName.error')
   }
 
   // Validate website URL
   if (newWebsite && !validateWebsite(newWebsite)) {
-    websiteError.value = t('search.fields.website.error')
+    websiteError.value = t('screen.search.fields.website.error')
   }
 })
 
@@ -272,23 +272,29 @@ const goToCSVUpload = () => {
 const submit = async () => {
   // Check if organization data is loaded
   if (!currentOrganization.value?.id) {
-    companyError.value = t('company.validation.loadingorganization', 'Loading organization...')
+    companyError.value = t(
+      'screen.company.validation.loadingorganization',
+      'Loading organization...',
+    )
     return
   }
 
   // Check if token data is still loading
   if (tokenDataLoading.value) {
-    companyError.value = t('company.validation.loadingTokens', 'Loading tokens...')
+    companyError.value = t('screen.company.validation.loadingTokens', 'Loading tokens...')
     return
   }
 
   // Check token availability
   if (!canPerformSearch.value) {
     if (!screenModuleEnabled.value) {
-      companyError.value = t('company.validation.moduleDisabled', 'The Screen module is disabled')
+      companyError.value = t(
+        'screen.company.validation.moduleDisabled',
+        'The Screen module is disabled',
+      )
     } else {
       companyError.value = t(
-        'company.validation.insufficientTokens',
+        'screen.company.validation.insufficientTokens',
         'Insufficient tokens. You need at least 35 tokens to create a company.',
       )
     }
@@ -296,12 +302,12 @@ const submit = async () => {
   }
 
   if (!validateCompany(company.value)) {
-    companyError.value = t('search.fields.companyName.error')
+    companyError.value = t('screen.search.fields.companyName.error')
     return
   }
 
   if (!validateWebsite(website.value)) {
-    websiteError.value = t('search.fields.website.error')
+    websiteError.value = t('screen.search.fields.website.error')
     return
   }
 
@@ -336,7 +342,7 @@ const submit = async () => {
     // Handle insufficient tokens error
     if (error instanceof InsufficientTokensError) {
       companyError.value = t(
-        'company.validation.insufficientTokens',
+        'screen.company.validation.insufficientTokens',
         'Insufficient tokens. You need at least 35 tokens to create a company.',
       )
       // Refresh token data to get current counts
@@ -350,27 +356,33 @@ const submit = async () => {
       // Extract meaningful error message
       if (message.includes('Validation error')) {
         companyError.value = t(
-          'company.validation.invalidNameFormat',
+          'screen.company.validation.invalidNameFormat',
           'Company name must contain at least 2 alphabetic characters',
         )
         websiteError.value = t(
-          'company.validation.invalidWebsiteFormat',
+          'screen.company.validation.invalidWebsiteFormat',
           'Please enter a valid website URL',
         )
       } else if (message.includes('Invalid input')) {
-        companyError.value = t('company.validation.nameRequired', 'Company name is required')
-        websiteError.value = t('company.validation.websiteRequired', 'Website URL is required')
+        companyError.value = t('screen.company.validation.nameRequired', 'Company name is required')
+        websiteError.value = t(
+          'screen.company.validation.websiteRequired',
+          'Website URL is required',
+        )
       } else if (message.includes('unauthorized') || message.includes('401')) {
         // Authentication error - will be handled by navigateTo('/login') in API service
       } else {
         // Generic error
         companyError.value = t(
-          'company.validation.createError',
+          'screen.company.validation.createError',
           'An error occurred while creating the company',
         )
       }
     } else {
-      companyError.value = t('company.validation.networkError', 'Network error - please try again')
+      companyError.value = t(
+        'screen.company.validation.networkError',
+        'Network error - please try again',
+      )
     }
   }
 }

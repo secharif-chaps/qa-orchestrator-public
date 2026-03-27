@@ -1,27 +1,28 @@
 <template>
   <Modal
     v-model:display-modal="isOpen"
-    :title="t('company.export.modal.title')"
+    :title="t('screen.company.export.modal.title')"
     size="xl"
     icon="fas fa-download"
     color="sage"
   >
     <template #description>
-      {{ t('company.export.modal.description') }}
+      {{ t('screen.company.export.modal.description') }}
     </template>
 
     <div class="flex flex-col gap-4">
       <!-- Select All / None toggle -->
       <div class="flex items-center justify-between">
         <span v-if="showSavedMessage" class="text-secondary animate-fade-out text-xs">
-          <i class="fa fa-check-circle mr-1"></i>{{ t('company.export.modal.preferencesSaved') }}
+          <i class="fa fa-check-circle mr-1"></i
+          >{{ t('screen.company.export.modal.preferencesSaved') }}
         </span>
         <Button
           variant="tertiary"
           :label="
             allSelected
-              ? t('company.export.modal.deselectAll')
-              : t('company.export.modal.selectAll')
+              ? t('screen.company.export.modal.deselectAll')
+              : t('screen.company.export.modal.selectAll')
           "
           size="sm"
           @click="toggleAll"
@@ -51,10 +52,10 @@
     </div>
 
     <template #footer>
-      <Button variant="secondary" :label="t('company.export.modal.cancel')" @click="close" />
+      <Button variant="secondary" :label="t('screen.company.export.modal.cancel')" @click="close" />
       <Button
         variant="primary"
-        :label="t('company.export.modal.export')"
+        :label="t('screen.company.export.modal.export')"
         icon="fa fa-download"
         @click="exportPPT"
       />
@@ -111,8 +112,9 @@ const optionIds = [
 ] as const
 
 // Helper to get translated option
-const getOptionLabel = (id: string) => t(`company.export.modal.options.${id}.label`)
-const getOptionDescription = (id: string) => t(`company.export.modal.options.${id}.description`)
+const getOptionLabel = (id: string) => t(`screen.company.export.modal.options.${id}.label`)
+const getOptionDescription = (id: string) =>
+  t(`screen.company.export.modal.options.${id}.description`)
 
 // Default export options with dynamic labels
 const createDefaultOptions = () =>

@@ -26,7 +26,7 @@
               <!-- Shared with me badge -->
               <Tag
                 v-if="isSharedWithMe"
-                :label="$t('folder.shared.badge', 'Shared')"
+                :label="$t('common.folder.shared.badge', 'Shared')"
                 intent="info"
                 class="mr-0 ml-auto"
                 size="xs"
@@ -41,8 +41,8 @@
                 ]"
                 :title="
                   folder.is_favorite
-                    ? $t('folder.actions.removeFromFavorites')
-                    : $t('folder.actions.addToFavorites')
+                    ? $t('common.folder.actions.removeFromFavorites')
+                    : $t('common.folder.actions.addToFavorites')
                 "
                 :disabled="isTogglingFavorite"
               >
@@ -60,7 +60,7 @@
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <span class="text-secondary text-sm">
-                {{ $t('folder.itemCount', itemCount) }}
+                {{ $t('common.folder.itemCount', itemCount) }}
               </span>
               <!-- Share role indicator -->
               <Tag
@@ -130,7 +130,7 @@
                   <i class="fas fa-plus text-secondary text-sm"></i>
                 </span>
                 <span class="text-secondary text-sm">{{
-                  $t('folder.addItems.company', 'Add Company')
+                  $t('common.folder.addItems.company', 'Add Company')
                 }}</span>
               </div>
             </div>
@@ -142,7 +142,7 @@
           >
             <div class="flex h-full items-center justify-center">
               <span class="text-secondary text-sm">{{
-                $t('folder.empty.readOnly', 'No items in this folder')
+                $t('common.folder.empty.readOnly', 'No items in this folder')
               }}</span>
             </div>
           </div>
@@ -153,13 +153,13 @@
     <!-- Footer with creation date and owner -->
     <div>
       <div class="text-secondary flex items-center justify-between text-xs">
-        <span>{{ $t('folder.grid.created') }} {{ formatDate(folder.created_at) }}</span>
+        <span>{{ $t('common.folder.grid.created') }} {{ formatDate(folder.created_at) }}</span>
         <span>
           <!-- Show "by @owner" for shared folders, or just owner for owned folders -->
           <template v-if="isSharedWithMe">
-            {{ $t('folder.grid.owner', 'Owner:') }} @{{ folder.owner }}
+            {{ $t('common.folder.grid.owner', 'Owner:') }} @{{ folder.owner }}
           </template>
-          <template v-else> {{ $t('folder.grid.by') }} @{{ folder.owner }} </template>
+          <template v-else> {{ $t('common.folder.grid.by') }} @{{ folder.owner }} </template>
         </span>
       </div>
     </div>
@@ -208,8 +208,8 @@ const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } 
 const shareRoleLabel = computed(() => {
   if (!props.folder.share_role) return ''
   return props.folder.share_role === 'writer'
-    ? t('folder.share.writer', 'Writer')
-    : t('folder.share.reader', 'Reader')
+    ? t('common.folder.share.writer', 'Writer')
+    : t('common.folder.share.reader', 'Reader')
 })
 
 // Compute folder color classes based on the color prop

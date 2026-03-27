@@ -6,7 +6,7 @@
         <h2>
           {{ getSourcedValue(company?.profile?.employeeCount) ?? $t('common.notFound') }}
         </h2>
-        <div>{{ $t('profile.sections.metrics.employees') }}</div>
+        <div>{{ $t('screen.profile.sections.metrics.employees') }}</div>
       </div>
 
       <div class="absolute top-0 right-0">

@@ -17,9 +17,9 @@
         <div class="flex justify-between gap-12">
           <div>
             <h2 class="text-xl font-bold">
-              {{ t('watch_files.analysis.title') }}
+              {{ t('target.watchFiles.analysis.title') }}
             </h2>
-            <p class="text-xs">{{ t('watch_files.analysis.subTitle') }}</p>
+            <p class="text-xs">{{ t('target.watchFiles.analysis.subTitle') }}</p>
           </div>
           <Toggle
             v-model="selectedView"
@@ -126,11 +126,11 @@ const filterPanelWidth = computed(() => {
 const options = computed(() => [
   {
     value: RouteNames.WATCH_FILES_RADAR_TIMELINE,
-    label: t('watch_files.analysis.toggle.timeline'),
+    label: t('target.watchFiles.analysis.toggle.timeline'),
   },
   {
     value: RouteNames.WATCH_FILES_RADAR_GRAPH,
-    label: t('watch_files.analysis.toggle.graph'),
+    label: t('target.watchFiles.analysis.toggle.graph'),
   },
 ])
 </script>

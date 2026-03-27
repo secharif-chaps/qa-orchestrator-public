@@ -11,7 +11,7 @@
     <!-- No Data State -->
     <NoData v-else-if="!hasAnyPressData">
       <p class="text-secondary text-lg font-medium">
-        {{ $t('profile.sections.press.noData') }}
+        {{ $t('screen.profile.sections.press.noData') }}
       </p>
     </NoData>
 
@@ -19,7 +19,7 @@
     <div v-else class="mx-auto">
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div v-if="company?.press?.insights" class="lg:col-span-3">
-          <ChapseAlert variant="mage" :title="$t('profile.sections.press.insights.title')">
+          <ChapseAlert variant="mage" :title="$t('screen.profile.sections.press.insights.title')">
             {{ company.press.insights }}
           </ChapseAlert>
         </div>
@@ -31,7 +31,7 @@
           <div v-if="company?.press?.financial_news?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-chart-line"></i>
-              {{ $t('profile.sections.press.categories.financialNews', 'Financial News') }}
+              {{ $t('screen.profile.sections.press.categories.financialNews', 'Financial News') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -49,7 +49,9 @@
           <div v-if="company?.press?.product_launches?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-rocket"></i>
-              {{ $t('profile.sections.press.categories.productLaunches', 'Product Launches') }}
+              {{
+                $t('screen.profile.sections.press.categories.productLaunches', 'Product Launches')
+              }}
             </h2>
             <div class="space-y-3">
               <div
@@ -71,7 +73,10 @@
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-microphone"></i>
               {{
-                $t('profile.sections.press.categories.executiveInterviews', 'Executive Interviews')
+                $t(
+                  'screen.profile.sections.press.categories.executiveInterviews',
+                  'Executive Interviews',
+                )
               }}
             </h2>
             <div class="space-y-3">
@@ -90,7 +95,7 @@
           <div v-if="company?.press?.media_mentions?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-newspaper"></i>
-              {{ $t('profile.sections.press.categories.mediaMentions', 'Media Mentions') }}
+              {{ $t('screen.profile.sections.press.categories.mediaMentions', 'Media Mentions') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -108,7 +113,7 @@
           <div v-if="company?.press?.press_releases?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-file-alt"></i>
-              {{ $t('profile.sections.press.categories.pressReleases', 'Press Releases') }}
+              {{ $t('screen.profile.sections.press.categories.pressReleases', 'Press Releases') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -126,7 +131,7 @@
           <div v-if="company?.press?.articles?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-newspaper"></i>
-              {{ $t('profile.sections.press.categories.articles', 'Articles') }}
+              {{ $t('screen.profile.sections.press.categories.articles', 'Articles') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -152,7 +157,7 @@
               <i class="fa fa-handshake"></i>
               {{
                 $t(
-                  'profile.sections.press.categories.partnershipAnnouncements',
+                  'screen.profile.sections.press.categories.partnershipAnnouncements',
                   'Partnership Announcements',
                 )
               }}
@@ -174,7 +179,10 @@
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-lg font-semibold">
               <i class="fa fa-trophy"></i>
               {{
-                $t('profile.sections.press.categories.awardsRecognition', 'Awards & Recognition')
+                $t(
+                  'screen.profile.sections.press.categories.awardsRecognition',
+                  'Awards & Recognition',
+                )
               }}
             </h2>
             <div class="space-y-3">
@@ -192,12 +200,12 @@
           <!-- Quick Stats -->
           <div class="bg-base-100 rounded-lg p-6">
             <h3 class="text-secondary mb-4 text-lg font-semibold">
-              {{ $t('profile.sections.press.stats.title', 'Press Coverage Stats') }}
+              {{ $t('screen.profile.sections.press.stats.title', 'Press Coverage Stats') }}
             </h3>
             <div class="space-y-3">
               <div class="flex items-center justify-between">
                 <span class="text-secondary text-sm">{{
-                  $t('profile.sections.press.categories.financialNews', 'Financial News')
+                  $t('screen.profile.sections.press.categories.financialNews', 'Financial News')
                 }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.financial_news?.length || 0
@@ -205,7 +213,7 @@
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-secondary text-sm">{{
-                  $t('profile.sections.press.categories.productLaunches', 'Product Launches')
+                  $t('screen.profile.sections.press.categories.productLaunches', 'Product Launches')
                 }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.product_launches?.length || 0
@@ -213,7 +221,7 @@
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-secondary text-sm">{{
-                  $t('profile.sections.press.categories.mediaMentions', 'Media Mentions')
+                  $t('screen.profile.sections.press.categories.mediaMentions', 'Media Mentions')
                 }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.media_mentions?.length || 0
@@ -221,7 +229,7 @@
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-secondary text-sm">{{
-                  $t('profile.sections.press.categories.pressReleases', 'Press Releases')
+                  $t('screen.profile.sections.press.categories.pressReleases', 'Press Releases')
                 }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.press_releases?.length || 0
@@ -230,7 +238,7 @@
               <div class="flex items-center justify-between">
                 <span class="text-secondary text-sm">{{
                   $t(
-                    'profile.sections.press.categories.executiveInterviews',
+                    'screen.profile.sections.press.categories.executiveInterviews',
                     'Executive Interviews',
                   )
                 }}</span>

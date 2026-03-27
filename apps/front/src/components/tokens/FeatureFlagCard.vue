@@ -9,8 +9,8 @@
             :intent="isEnabled ? 'success' : 'danger'"
             :label="
               isEnabled
-                ? $t('featureFlags.enabled', 'Enabled')
-                : $t('featureFlags.disabled', 'Disabled')
+                ? $t('settings.featureFlags.enabled', 'Enabled')
+                : $t('settings.featureFlags.disabled', 'Disabled')
             "
             :icon="flagIcon"
             variant="secondary"
@@ -43,8 +43,10 @@
           id="discover-url-input"
           v-model="urlInput"
           type="url"
-          :label="$t('featureFlags.discover.urlLabel', 'External URL')"
-          :placeholder="$t('featureFlags.discover.urlPlaceholder', 'https://discover.example.com')"
+          :label="$t('settings.featureFlags.discover.urlLabel', 'External URL')"
+          :placeholder="
+            $t('settings.featureFlags.discover.urlPlaceholder', 'https://discover.example.com')
+          "
           :error="urlError"
           :disabled="isSavingUrl"
           icon="fa fa-external-link"
@@ -52,7 +54,10 @@
         />
         <p class="text-secondary text-xs">
           {{
-            $t('featureFlags.discover.urlHint', 'Enter the HTTPS URL for the Discover dashboard.')
+            $t(
+              'settings.featureFlags.discover.urlHint',
+              'Enter the HTTPS URL for the Discover dashboard.',
+            )
           }}
         </p>
       </div>
@@ -151,7 +156,7 @@ const handleUrlBlur = async () => {
 
   // Validate URL format
   if (trimmedUrl && !validateHttpsUrl(trimmedUrl)) {
-    urlError.value = t('featureFlags.discover.urlError', 'Please enter a valid HTTPS URL')
+    urlError.value = t('settings.featureFlags.discover.urlError', 'Please enter a valid HTTPS URL')
     return
   }
 
@@ -176,7 +181,7 @@ const handleUrlBlur = async () => {
     emit('refresh')
   } catch (error) {
     console.error('Failed to save URL config:', error)
-    urlError.value = t('featureFlags.discover.saveError', 'Failed to save URL')
+    urlError.value = t('settings.featureFlags.discover.saveError', 'Failed to save URL')
   } finally {
     isSavingUrl.value = false
   }

@@ -19,14 +19,14 @@
           size="sm"
           :domain="actor.actor.primaryDomain ?? undefined"
           :alt="actor.actor.label"
-          :label="t('watch_files.actors.link_label')"
+          :label="t('target.watchFiles.actors.link_label')"
           class="text-base-alt"
         />
       </div>
       <div class="gap-xs flex">
         <Tag v-if="actor.sourcesCount !== undefined" size="sm">
           {{
-            $t('watch_files.actors.sources_count', {
+            $t('target.watchFiles.actors.sources_count', {
               count: actor.sourcesCount,
             })
           }}
@@ -39,7 +39,7 @@
 
     <template v-if="variant !== 'minimal'" #action>
       <Button variant="tertiary" size="sm" icon="fa-memo" @click="handleCardClick">
-        {{ $t('watch_files.actors.see_more') }}
+        {{ $t('target.watchFiles.actors.see_more') }}
       </Button>
       <ActorDetailsModal
         v-if="!overrideDefaultAction"
@@ -120,7 +120,7 @@ const buttonStatus = computed({
 })
 
 const actorTypeLabel = computed(() => {
-  return t('watch_files.actors.type.' + actor.type)
+  return t('target.watchFiles.actors.type.' + actor.type)
 })
 
 const handleCardClick = () => {

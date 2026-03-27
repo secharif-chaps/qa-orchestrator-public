@@ -19,16 +19,16 @@
         />
         <div class="flex flex-col gap-2">
           <h3 class="text-xl font-semibold">
-            {{ $t('aiPreferences.settings.notConfigured') }}
+            {{ $t('settings.aiPreferences.settings.notConfigured') }}
           </h3>
           <p class="text-secondary">
-            {{ $t('aiPreferences.settings.setUpDescription') }}
+            {{ $t('settings.aiPreferences.settings.setUpDescription') }}
           </p>
         </div>
         <Button
           variant="primary"
           icon="fa fa-magic"
-          :label="$t('aiPreferences.settings.setUpButton')"
+          :label="$t('settings.aiPreferences.settings.setUpButton')"
           @click="goToSetup"
         />
       </div>
@@ -39,7 +39,7 @@
       <!-- Last Updated Info -->
       <div v-if="lastUpdated" class="text-secondary mb-6 flex items-center gap-2 text-sm">
         <i class="fas fa-clock"></i>
-        <span>{{ $t('aiPreferences.settings.lastUpdated', { date: lastUpdated }) }}</span>
+        <span>{{ $t('settings.aiPreferences.settings.lastUpdated', { date: lastUpdated }) }}</span>
       </div>
 
       <form @submit.prevent="handleSubmit" class="flex flex-col gap-6">
@@ -47,8 +47,8 @@
         <Input
           id="role"
           v-model="form.role"
-          :label="$t('aiPreferences.setup.fields.role.label')"
-          :placeholder="$t('aiPreferences.setup.fields.role.placeholder')"
+          :label="$t('settings.aiPreferences.setup.fields.role.label')"
+          :placeholder="$t('settings.aiPreferences.setup.fields.role.placeholder')"
           :error="errors.role"
           icon="fa fa-user-tie"
           required
@@ -57,14 +57,14 @@
         <!-- Goals Field -->
         <div class="relative flex flex-col">
           <label for="goals">
-            {{ $t('aiPreferences.setup.fields.goals.label') }}
+            {{ $t('settings.aiPreferences.setup.fields.goals.label') }}
             <span class="text-warning ml-1">*</span>
           </label>
           <Textarea
             id="goals"
             v-model="form.goals_text"
-            :label="$t('aiPreferences.setup.fields.goals.label')"
-            :placeholder="$t('aiPreferences.setup.fields.goals.placeholder')"
+            :label="$t('settings.aiPreferences.setup.fields.goals.label')"
+            :placeholder="$t('settings.aiPreferences.setup.fields.goals.placeholder')"
             :error="errors.goals_text"
             :maxlength="2000"
             :rows="4"
@@ -75,14 +75,14 @@
         <!-- Desired Output Field -->
         <div>
           <label for="desiredOutput">
-            {{ $t('aiPreferences.setup.fields.desiredOutput.label') }}
+            {{ $t('settings.aiPreferences.setup.fields.desiredOutput.label') }}
             <span class="text-warning ml-1">*</span>
           </label>
           <Textarea
             id="desired-output"
             v-model="form.desired_output_text"
-            :label="$t('aiPreferences.setup.fields.desiredOutput.label')"
-            :placeholder="$t('aiPreferences.setup.fields.desiredOutput.placeholder')"
+            :label="$t('settings.aiPreferences.setup.fields.desiredOutput.label')"
+            :placeholder="$t('settings.aiPreferences.setup.fields.desiredOutput.placeholder')"
             :error="errors.desired_output_text"
             :maxlength="2000"
             :rows="4"
@@ -93,16 +93,16 @@
         <!-- Documentation Field (Optional) -->
         <div>
           <label for="documentation">
-            {{ $t('aiPreferences.setup.fields.documentation.label') }}
+            {{ $t('settings.aiPreferences.setup.fields.documentation.label') }}
             <span class="text-secondary ml-2 text-sm font-normal"
-              >({{ $t('aiPreferences.setup.optional') }})</span
+              >({{ $t('settings.aiPreferences.setup.optional') }})</span
             >
           </label>
           <Textarea
             id="documentation"
             v-model="form.documentation_text"
-            :label="$t('aiPreferences.setup.fields.documentation.label')"
-            :placeholder="$t('aiPreferences.setup.fields.documentation.placeholder')"
+            :label="$t('settings.aiPreferences.setup.fields.documentation.label')"
+            :placeholder="$t('settings.aiPreferences.setup.fields.documentation.placeholder')"
             :maxlength="5000"
             :rows="4"
           />
@@ -111,7 +111,7 @@
         <Alert
           v-if="successMessage"
           variant="success"
-          :title="$t('aiPreferences.settings.success.title')"
+          :title="$t('settings.aiPreferences.settings.success.title')"
           :description="successMessage"
           icon="fa fa-check-circle"
         />
@@ -120,7 +120,7 @@
         <Alert
           v-if="errorMessage"
           variant="danger"
-          :title="$t('aiPreferences.settings.error.title')"
+          :title="$t('settings.aiPreferences.settings.error.title')"
           :description="errorMessage"
           icon="fa fa-exclamation-circle"
         />
@@ -130,7 +130,7 @@
           <Button
             type="submit"
             variant="primary"
-            :label="$t('aiPreferences.settings.actions.save')"
+            :label="$t('settings.aiPreferences.settings.actions.save')"
             :loading="isSaving"
             icon="fa fa-check"
           />
@@ -207,7 +207,7 @@ async function loadPreferences() {
       hasPreferences.value = false
     } else {
       console.error('Failed to load preferences:', error)
-      errorMessage.value = t('aiPreferences.settings.messages.loadError')
+      errorMessage.value = t('settings.aiPreferences.settings.messages.loadError')
     }
   } finally {
     isLoading.value = false
@@ -227,28 +227,28 @@ function validateForm(): boolean {
 
   // Validate role
   if (!form.role.trim()) {
-    errors.role = t('aiPreferences.setup.role.required')
+    errors.role = t('settings.aiPreferences.setup.role.required')
     isValid = false
   } else if (form.role.length > 255) {
-    errors.role = t('aiPreferences.setup.role.tooLong')
+    errors.role = t('settings.aiPreferences.setup.role.tooLong')
     isValid = false
   }
 
   // Validate goals
   if (!form.goals_text.trim()) {
-    errors.goals_text = t('aiPreferences.setup.goals.required')
+    errors.goals_text = t('settings.aiPreferences.setup.goals.required')
     isValid = false
   } else if (form.goals_text.length > 2000) {
-    errors.goals_text = t('aiPreferences.setup.goals.tooLong')
+    errors.goals_text = t('settings.aiPreferences.setup.goals.tooLong')
     isValid = false
   }
 
   // Validate desired output
   if (!form.desired_output_text.trim()) {
-    errors.desired_output_text = t('aiPreferences.setup.desiredOutput.required')
+    errors.desired_output_text = t('settings.aiPreferences.setup.desiredOutput.required')
     isValid = false
   } else if (form.desired_output_text.length > 2000) {
-    errors.desired_output_text = t('aiPreferences.setup.desiredOutput.tooLong')
+    errors.desired_output_text = t('settings.aiPreferences.setup.desiredOutput.tooLong')
     isValid = false
   }
 
@@ -265,7 +265,7 @@ async function handleSubmit() {
 
   // Validate form
   if (!validateForm()) {
-    errorMessage.value = t('aiPreferences.setup.validation.formInvalid')
+    errorMessage.value = t('settings.aiPreferences.setup.validation.formInvalid')
     return
   }
 
@@ -276,7 +276,7 @@ async function handleSubmit() {
     await saveAiPreferences(form)
 
     // Show success message
-    successMessage.value = t('aiPreferences.settings.success.message')
+    successMessage.value = t('settings.aiPreferences.settings.success.message')
 
     // Update last updated date
     const now = new Date()
@@ -295,9 +295,9 @@ async function handleSubmit() {
     const httpError = error as { status?: number; message?: string }
 
     if (httpError.status === 401) {
-      errorMessage.value = t('aiPreferences.settings.messages.authError')
+      errorMessage.value = t('settings.aiPreferences.settings.messages.authError')
     } else {
-      errorMessage.value = httpError.message || t('aiPreferences.settings.error.message')
+      errorMessage.value = httpError.message || t('settings.aiPreferences.settings.error.message')
     }
   } finally {
     isSaving.value = false

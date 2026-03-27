@@ -1,5 +1,5 @@
 <template>
-  <i18n-t scope="global" keypath="watch_files.activity.history.status_changed" tag="span">
+  <i18n-t scope="global" keypath="target.watchFiles.activity.history.status_changed" tag="span">
     <template #userName>
       <span class="font-semibold">{{ userName }}</span>
     </template>

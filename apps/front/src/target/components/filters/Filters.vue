@@ -262,7 +262,7 @@ const accordionFilters = computed<DocumentFilter[]>(() => {
 
   if ('validationStatuses' in facets) {
     filters.push({
-      title: t('watch_files.filters.type.validations'),
+      title: t('target.watchFiles.filters.type.validations'),
       value: 'validations',
       icon: 'fa-file-lines',
       count: status.value.length,
@@ -271,7 +271,7 @@ const accordionFilters = computed<DocumentFilter[]>(() => {
   }
 
   filters.push({
-    title: t('watch_files.filters.type.dates'),
+    title: t('target.watchFiles.filters.type.dates'),
     value: 'dates',
     icon: 'fa-calendar',
     count: datesFilterCount.value,
@@ -280,7 +280,7 @@ const accordionFilters = computed<DocumentFilter[]>(() => {
 
   if ('actors' in facets) {
     filters.push({
-      title: t('watch_files.filters.type.actors'),
+      title: t('target.watchFiles.filters.type.actors'),
       value: 'actors',
       icon: 'fa-user',
       count: actors.value.length,
@@ -290,7 +290,7 @@ const accordionFilters = computed<DocumentFilter[]>(() => {
 
   if ('sources' in facets) {
     filters.push({
-      title: t('watch_files.filters.type.sources'),
+      title: t('target.watchFiles.filters.type.sources'),
       value: 'sources',
       icon: 'fa-link',
       count: sources.value.length,
@@ -300,7 +300,7 @@ const accordionFilters = computed<DocumentFilter[]>(() => {
 
   if ('eventTypes' in facets) {
     filters.push({
-      title: t('watch_files.filters.type.event_types'),
+      title: t('target.watchFiles.filters.type.event_types'),
       value: 'eventTypes',
       icon: 'fa-bullhorn',
       count: eventTypes.value.length,

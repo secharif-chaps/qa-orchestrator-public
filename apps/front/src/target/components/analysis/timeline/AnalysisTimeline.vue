@@ -23,7 +23,7 @@
       <template #cell(action)="{ item }">
         <td class="border-sage-200 border-l px-4 py-3">
           <Button variant="tertiary" size="sm" icon="fa-file" @click="handleViewDocuments(item)">
-            {{ t('watch_files.analysis.timeline.event.actor.action') }}
+            {{ t('target.watchFiles.analysis.timeline.event.actor.action') }}
           </Button>
         </td>
       </template>
@@ -99,13 +99,13 @@ const eventDescription = computed(() => {
 })
 
 const eventTypeLabel = computed(() => {
-  return t(`watch_files.analysis.event.type.${watchFileEvent.eventType}`)
+  return t(`target.watchFiles.analysis.event.type.${watchFileEvent.eventType}`)
 })
 
 const columns = computed(() => [
   {
     key: 'name',
-    label: t('watch_files.analysis.timeline.event.actor.name'),
+    label: t('target.watchFiles.analysis.timeline.event.actor.name'),
     class: 'w-2/3',
   },
   {
@@ -121,14 +121,14 @@ const eventDateLabel = computed<string | null>(() => {
     const startDate = new Date(watchFileEvent.startDate)
 
     if (startDate.getTime() !== endDate.getTime()) {
-      return t('watch_files.analysis.event.date', {
+      return t('target.watchFiles.analysis.event.date', {
         startDate: d(startDate, 'eventDateTime'),
         endDate: d(endDate, 'eventDateTime'),
       })
     }
     return d(startDate, 'eventDateTime')
   } catch {
-    return t('watch_files.analysis.event.unknown_date')
+    return t('target.watchFiles.analysis.event.unknown_date')
   }
 })
 

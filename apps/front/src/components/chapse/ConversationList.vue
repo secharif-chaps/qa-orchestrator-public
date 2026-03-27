@@ -5,13 +5,13 @@
       class="border-sage-300 dark:border-sage-700 flex items-center justify-between border-b px-4 py-3.5"
     >
       <h3 class="dark:text-sage-100 text-sm font-semibold text-black">
-        {{ $t('chapse.conversations', 'Conversations') }}
+        {{ $t('screen.chapse.conversations', 'Conversations') }}
       </h3>
       <Button
         variant="tertiary"
         icon="fa fa-plus"
         size="sm"
-        :title="$t('chapse.newConversation', 'New conversation')"
+        :title="$t('screen.chapse.newConversation', 'New conversation')"
         @click="$emit('new-conversation')"
       />
     </div>
@@ -37,10 +37,10 @@
           <Icon icon="fa-comments" class="text-sage-900 dark:text-sage-300" />
         </div>
         <p class="text-sage-900 dark:text-sage-300 text-sm">
-          {{ $t('chapse.noConversations', 'No conversations yet') }}
+          {{ $t('screen.chapse.noConversations', 'No conversations yet') }}
         </p>
         <p class="text-sage-700 dark:text-sage-200 mt-1 text-xs">
-          {{ $t('chapse.startConversation', 'Start a new conversation to begin') }}
+          {{ $t('screen.chapse.startConversation', 'Start a new conversation to begin') }}
         </p>
       </div>
 
@@ -67,7 +67,7 @@
             variant="tertiary"
             size="sm"
             :loading="loading"
-            :label="$t('sidebar.chapse.loadMore')"
+            :label="$t('common.sidebar.chapse.loadMore')"
             block
             @click="$emit('load-more')"
           />
@@ -145,25 +145,28 @@ const groupedConversations = computed<ConversationGroup[]>(() => {
   const result: ConversationGroup[] = []
 
   if (groups.today.length > 0) {
-    result.push({ label: t('sidebar.chapse.dateGroups.today'), conversations: groups.today })
+    result.push({ label: t('common.sidebar.chapse.dateGroups.today'), conversations: groups.today })
   }
   if (groups.yesterday.length > 0) {
     result.push({
-      label: t('sidebar.chapse.dateGroups.yesterday'),
+      label: t('common.sidebar.chapse.dateGroups.yesterday'),
       conversations: groups.yesterday,
     })
   }
   if (groups.lastWeek.length > 0) {
-    result.push({ label: t('sidebar.chapse.dateGroups.lastWeek'), conversations: groups.lastWeek })
+    result.push({
+      label: t('common.sidebar.chapse.dateGroups.lastWeek'),
+      conversations: groups.lastWeek,
+    })
   }
   if (groups.lastMonth.length > 0) {
     result.push({
-      label: t('sidebar.chapse.dateGroups.lastMonth'),
+      label: t('common.sidebar.chapse.dateGroups.lastMonth'),
       conversations: groups.lastMonth,
     })
   }
   if (groups.older.length > 0) {
-    result.push({ label: t('sidebar.chapse.dateGroups.older'), conversations: groups.older })
+    result.push({ label: t('common.sidebar.chapse.dateGroups.older'), conversations: groups.older })
   }
 
   return result

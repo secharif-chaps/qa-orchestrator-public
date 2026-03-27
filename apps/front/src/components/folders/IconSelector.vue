@@ -1,7 +1,7 @@
 <template>
   <div>
     <label class="mb-2 block text-sm font-medium">
-      {{ $t('folder.form.icon', 'Icon') }}
+      {{ $t('common.folder.form.icon', 'Icon') }}
     </label>
     <div class="relative">
       <button

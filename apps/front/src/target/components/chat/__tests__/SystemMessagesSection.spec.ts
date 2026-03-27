@@ -11,10 +11,10 @@ import { defaultGlobalConfig, buttonStub } from '@/test-utils/mount-config'
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
     t: (key: string, _params?: Record<string, unknown>, count?: number) => {
-      if (key === 'watch_files.chat.system_messages.view_older') {
+      if (key === 'target.watchFiles.chat.system_messages.view_older') {
         return `View ${count} older actions`
       }
-      if (key === 'watch_files.chat.system_messages.hide_older') {
+      if (key === 'target.watchFiles.chat.system_messages.hide_older') {
         return 'Hide older actions'
       }
       return key

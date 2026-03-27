@@ -10,7 +10,7 @@
     <!-- No Data State -->
     <NoData v-else-if="!hasTimelineData">
       <p class="text-secondary text-lg font-medium">
-        {{ $t('profile.sections.timeline.noData') }}
+        {{ $t('screen.profile.sections.timeline.noData') }}
       </p>
     </NoData>
 
@@ -20,7 +20,7 @@
       <div class="bg-base-100 rounded-lg p-4">
         <div class="mb-6 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="text-lg font-semibold">{{ $t('timeline.title') }}</span>
+            <span class="text-lg font-semibold">{{ $t('screen.timeline.title') }}</span>
           </div>
           <div class="flex items-center gap-2">
             <Button
@@ -28,21 +28,23 @@
               :icon="sortAscending ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"
               size="sm"
               :title="
-                sortAscending ? $t('timeline.sort.oldestFirst') : $t('timeline.sort.newestFirst')
+                sortAscending
+                  ? $t('screen.timeline.sort.oldestFirst')
+                  : $t('screen.timeline.sort.newestFirst')
               "
               @click="toggleSortOrder"
             >
               {{
                 sortAscending
-                  ? $t('timeline.sort.oldestFirst', 'Oldest first')
-                  : $t('timeline.sort.newestFirst', 'Newest first')
+                  ? $t('screen.timeline.sort.oldestFirst', 'Oldest first')
+                  : $t('screen.timeline.sort.newestFirst', 'Newest first')
               }}
             </Button>
             <div class="w-64">
               <Searchbar
                 id="timeline-search"
                 v-model="searchQuery"
-                :placeholder="$t('timeline.search.placeholder')"
+                :placeholder="$t('screen.timeline.search.placeholder')"
               />
             </div>
           </div>
@@ -55,7 +57,7 @@
         <div v-if="filteredEvents.length === 0 && searchQuery">
           <NoData>
             <p class="text-secondary text-lg font-medium">
-              {{ $t('timeline.search.noResults', { query: searchQuery }) }}
+              {{ $t('screen.timeline.search.noResults', { query: searchQuery }) }}
             </p>
           </NoData>
         </div>

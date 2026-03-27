@@ -4,8 +4,8 @@
     <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-semibold">{{ $t('search.title') }}</h1>
-          <p class="text-secondary">{{ $t('search.companyIdentity') }}</p>
+          <h1 class="text-3xl font-semibold">{{ $t('screen.search.title') }}</h1>
+          <p class="text-secondary">{{ $t('screen.search.companyIdentity') }}</p>
         </div>
 
         <!-- Token Counter -->
@@ -13,7 +13,7 @@
           <div class="text-right">
             <TokenCounter
               :token-count="tokenBalance"
-              :label="$t('tokens.balance', 'Token Balance')"
+              :label="$t('settings.tokens.balance', 'Token Balance')"
               :is-loading="tokenDataLoading || !currentOrganization?.id"
               :is-refreshing="isRefreshingTokens"
               show-label
@@ -26,7 +26,7 @@
 
       <!-- Folder context description (when folder ID in route) -->
       <p v-if="routeFolderId && folderData" class="text-sm text-gray-600 dark:text-gray-400">
-        {{ $t('company.create.inFolder', 'Create a new company screen in folder') }}
+        {{ $t('screen.company.create.inFolder', 'Create a new company screen in folder') }}
         <strong>{{ folderData.name }}</strong>
       </p>
     </div>
@@ -49,7 +49,7 @@
     >
       <div class="flex items-center justify-center py-8">
         <div class="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
-        <p class="text-secondary ml-4">{{ $t('folder.loading', 'Loading folders...') }}</p>
+        <p class="text-secondary ml-4">{{ $t('common.folder.loading', 'Loading folders...') }}</p>
       </div>
     </div>
 
@@ -62,15 +62,15 @@
     >
       <Alert
         variant="info"
-        :title="$t('company.create.noFolders.title', 'No folders available')"
+        :title="$t('screen.company.create.noFolders.title', 'No folders available')"
         :description="
           $t(
-            'company.create.noFolders.message',
+            'screen.company.create.noFolders.message',
             'You need to create a folder before creating a company screen',
           )
         "
         icon="fa-folder-plus"
-        :action="$t('company.create.noFolders.action', 'Create Folder')"
+        :action="$t('screen.company.create.noFolders.action', 'Create Folder')"
         @click="navigateToFolderCreate"
       />
     </div>
@@ -79,19 +79,19 @@
     <div
       v-if="!needsFolderSelection || hasFoldersAvailable"
       class="bg-base-100 border-primary-stroke rounded-lg border p-6"
-      :title="$t('search.companyIdentity')"
+      :title="$t('screen.search.companyIdentity')"
     >
       <form @submit.prevent="submit" class="flex flex-col gap-6">
         <!-- Folder Selection (when no folder ID in route) -->
         <div v-if="needsFolderSelection" class="flex flex-col gap-2">
           <label for="folder-select" class="text-sm font-medium">
-            {{ $t('company.create.selectFolder', 'Select Folder') }}
+            {{ $t('screen.company.create.selectFolder', 'Select Folder') }}
             <span class="text-error">*</span>
           </label>
           <Select
             v-model="selectedFolderOption"
             :groups="folderGroups"
-            :placeholder="$t('company.create.chooseFolderPlaceholder', 'Choose a folder...')"
+            :placeholder="$t('screen.company.create.chooseFolderPlaceholder', 'Choose a folder...')"
             :icon="selectedFolderOption?.icon || 'fa fa-folder'"
           >
             <template #groups="{ groups }">
@@ -130,11 +130,11 @@
           <FormInput
             id="company"
             v-model="company"
-            :placeholder="$t('search.fields.companyName.placeholder')"
+            :placeholder="$t('screen.search.fields.companyName.placeholder')"
             :error="companyError"
             data-cy="company-name-input"
             required
-            :label="$t('search.fields.companyName.label')"
+            :label="$t('screen.search.fields.companyName.label')"
             icon="fa-building"
             @blur="handleCompanyBlur"
           />
@@ -142,11 +142,11 @@
           <FormInput
             id="website"
             v-model="website"
-            :placeholder="$t('search.fields.website.placeholder')"
+            :placeholder="$t('screen.search.fields.website.placeholder')"
             :error="websiteError"
             data-cy="website-input"
             required
-            :label="$t('search.fields.website.label')"
+            :label="$t('screen.search.fields.website.label')"
             icon="fa-globe"
             @blur="handleWebsiteBlur"
           />
@@ -157,7 +157,7 @@
           <Button
             variant="tertiary"
             icon="fa fa-upload"
-            :label="$t('csv.upload.button', 'Upload CSV')"
+            :label="$t('screen.csv.upload.button', 'Upload CSV')"
             @click="goToCSVUpload"
             :disabled="!targetFolderId"
           />
@@ -165,7 +165,7 @@
           <Button
             variant="primary"
             icon="fa fa-search"
-            :label="$t('search.actions.launchSearch')"
+            :label="$t('screen.search.actions.launchSearch')"
             :loading="mutationLoading"
             :disabled="!canSubmit"
             @click="submit"
@@ -323,7 +323,7 @@ const formatFolderCreationInfo = (option: FolderOption) => {
     hour: '2-digit',
     minute: '2-digit',
   })
-  return t('folder.tooltip.createdBy', {
+  return t('common.folder.tooltip.createdBy', {
     username: option.ownerUsername,
     date: formattedDate,
     time: formattedTime,
@@ -341,14 +341,14 @@ const folderGroups = computed<FolderGroup[]>(() => {
 
   if (myFolders.length > 0) {
     groups.push({
-      label: t('folder.groups.mine', 'My Folders'),
+      label: t('common.folder.groups.mine', 'My Folders'),
       options: myFolders,
     })
   }
 
   if (sharedFolders.length > 0) {
     groups.push({
-      label: t('folder.groups.shared', 'Shared with me'),
+      label: t('common.folder.groups.shared', 'Shared with me'),
       options: sharedFolders,
     })
   }
@@ -537,7 +537,7 @@ const handleCompanyBlur = () => {
 
   // Validate and set error if invalid
   if (!validateCompany(trimmed)) {
-    companyError.value = t('search.fields.companyName.error')
+    companyError.value = t('screen.search.fields.companyName.error')
   } else {
     companyError.value = ''
   }
@@ -555,7 +555,7 @@ const handleWebsiteBlur = () => {
 
   // Validate and set error if invalid
   if (!validateWebsite(trimmed)) {
-    websiteError.value = t('search.fields.website.error')
+    websiteError.value = t('screen.search.fields.website.error')
   } else {
     websiteError.value = ''
   }
@@ -565,10 +565,10 @@ const handleWebsiteBlur = () => {
 watch(locale, () => {
   // Re-translate error messages if they exist
   if (companyError.value) {
-    companyError.value = t('search.fields.companyName.error')
+    companyError.value = t('screen.search.fields.companyName.error')
   }
   if (websiteError.value) {
-    websiteError.value = t('search.fields.website.error')
+    websiteError.value = t('screen.search.fields.website.error')
   }
 })
 
@@ -595,23 +595,29 @@ const dismissTokenAlert = () => {
 const submit = async () => {
   // Check organization data
   if (!currentOrganization.value?.id) {
-    companyError.value = t('company.validation.loadingorganization', 'Loading organization...')
+    companyError.value = t(
+      'screen.company.validation.loadingorganization',
+      'Loading organization...',
+    )
     return
   }
 
   // Check token data
   if (tokenDataLoading.value) {
-    companyError.value = t('company.validation.loadingTokens', 'Loading tokens...')
+    companyError.value = t('screen.company.validation.loadingTokens', 'Loading tokens...')
     return
   }
 
   // Check token availability
   if (!canPerformSearch.value) {
     if (!screenModuleEnabled.value) {
-      companyError.value = t('company.validation.moduleDisabled', 'The Screen module is disabled')
+      companyError.value = t(
+        'screen.company.validation.moduleDisabled',
+        'The Screen module is disabled',
+      )
     } else {
       companyError.value = t(
-        'company.validation.insufficientTokens',
+        'screen.company.validation.insufficientTokens',
         'Insufficient tokens. You need at least 35 tokens to create a company.',
       )
     }
@@ -620,18 +626,18 @@ const submit = async () => {
 
   // Validate form
   if (!validateCompany(company.value)) {
-    companyError.value = t('search.fields.companyName.error')
+    companyError.value = t('screen.search.fields.companyName.error')
     return
   }
 
   if (!validateWebsite(website.value)) {
-    websiteError.value = t('search.fields.website.error')
+    websiteError.value = t('screen.search.fields.website.error')
     return
   }
 
   // Check target folder
   if (!targetFolderId.value) {
-    companyError.value = t('company.validation.folderRequired', 'Please select a folder')
+    companyError.value = t('screen.company.validation.folderRequired', 'Please select a folder')
     return
   }
 
@@ -664,7 +670,7 @@ const submit = async () => {
 
     if (error instanceof InsufficientTokensError) {
       companyError.value = t(
-        'company.validation.insufficientTokens',
+        'screen.company.validation.insufficientTokens',
         'Insufficient tokens. You need at least 35 tokens to create a company.',
       )
       await refreshTokenData()
@@ -675,24 +681,30 @@ const submit = async () => {
     if (message) {
       if (message.includes('Validation error')) {
         companyError.value = t(
-          'company.validation.invalidNameFormat',
+          'screen.company.validation.invalidNameFormat',
           'Company name must contain at least 2 alphabetic characters',
         )
         websiteError.value = t(
-          'company.validation.invalidWebsiteFormat',
+          'screen.company.validation.invalidWebsiteFormat',
           'Please enter a valid website URL',
         )
       } else if (message.includes('Invalid input')) {
-        companyError.value = t('company.validation.nameRequired', 'Company name is required')
-        websiteError.value = t('company.validation.websiteRequired', 'Website URL is required')
+        companyError.value = t('screen.company.validation.nameRequired', 'Company name is required')
+        websiteError.value = t(
+          'screen.company.validation.websiteRequired',
+          'Website URL is required',
+        )
       } else {
         companyError.value = t(
-          'company.validation.createError',
+          'screen.company.validation.createError',
           'An error occurred while creating the company',
         )
       }
     } else {
-      companyError.value = t('company.validation.networkError', 'Network error - please try again')
+      companyError.value = t(
+        'screen.company.validation.networkError',
+        'Network error - please try again',
+      )
     }
   }
 }

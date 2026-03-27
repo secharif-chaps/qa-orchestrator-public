@@ -5,11 +5,14 @@
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-semibold">
-            {{ $t('csv.upload.title', 'Import Companies from CSV') }}
+            {{ $t('screen.csv.upload.title', 'Import Companies from CSV') }}
           </h1>
           <p class="text-secondary">
             {{
-              $t('csv.upload.description', 'Upload a CSV file to create multiple companies at once')
+              $t(
+                'screen.csv.upload.description',
+                'Upload a CSV file to create multiple companies at once',
+              )
             }}
           </p>
         </div>
@@ -19,7 +22,7 @@
           <div class="text-right">
             <TokenCounter
               :token-count="tokenBalance"
-              :label="$t('tokens.balance', 'Token Balance')"
+              :label="$t('settings.tokens.balance', 'Token Balance')"
               :is-loading="tokenDataLoading || !currentOrganization?.id"
               :is-refreshing="isRefreshingTokens"
               show-label
@@ -46,7 +49,9 @@
     <div class="bg-base-100 border-primary-stroke flex flex-col gap-6 rounded-lg border p-6">
       <!-- File Upload -->
       <div class="flex flex-col gap-4">
-        <h2 class="text-lg font-medium">{{ $t('csv.upload.step1', 'Step 1: Upload CSV File') }}</h2>
+        <h2 class="text-lg font-medium">
+          {{ $t('screen.csv.upload.step1', 'Step 1: Upload CSV File') }}
+        </h2>
 
         <div class="flex flex-col gap-4">
           <!-- File Input -->
@@ -63,11 +68,11 @@
               <i class="fa fa-upload text-secondary text-3xl"></i>
               <div>
                 <p class="text-secondary">
-                  {{ $t('csv.upload.dragDrop', 'Drag and drop your CSV file here, or') }}
+                  {{ $t('screen.csv.upload.dragDrop', 'Drag and drop your CSV file here, or') }}
                 </p>
                 <Button
                   variant="tertiary"
-                  :label="$t('csv.upload.chooseFile', 'Choose File')"
+                  :label="$t('screen.csv.upload.chooseFile', 'Choose File')"
                   @click="fileInput?.click()"
                 />
               </div>
@@ -83,7 +88,7 @@
                 variant="tertiary"
                 color="danger"
                 icon="fa fa-times"
-                :label="$t('csv.upload.remove', 'Remove')"
+                :label="$t('screen.csv.upload.remove', 'Remove')"
                 @click="removeFile"
               />
             </div>
@@ -93,22 +98,29 @@
           <div class="bg-info/5 border-info/20 rounded-lg border p-4">
             <h3 class="text-info mb-2 font-medium">
               <i class="fa fa-info-circle mr-2"></i>
-              {{ $t('csv.upload.formatTitle', 'CSV Format Requirements') }}
+              {{ $t('screen.csv.upload.formatTitle', 'CSV Format Requirements') }}
             </h3>
             <ul class="text-info ml-6 flex flex-col gap-1 text-sm">
-              <li>{{ $t('csv.upload.format1', 'Include a header row with column names') }}</li>
+              <li>
+                {{ $t('screen.csv.upload.format1', 'Include a header row with column names') }}
+              </li>
               <li>
                 {{
                   $t(
-                    'csv.upload.format2',
+                    'screen.csv.upload.format2',
                     'Company name column: Name, Company, Nom, Entreprise, etc.',
                   )
                 }}
               </li>
               <li>
-                {{ $t('csv.upload.format3', 'Website column: Website, URL, Site, Domain, etc.') }}
+                {{
+                  $t(
+                    'screen.csv.upload.format3',
+                    'Website column: Website, URL, Site, Domain, etc.',
+                  )
+                }}
               </li>
-              <li>{{ $t('csv.upload.format4', 'Use commas to separate columns') }}</li>
+              <li>{{ $t('screen.csv.upload.format4', 'Use commas to separate columns') }}</li>
             </ul>
           </div>
         </div>
@@ -117,7 +129,7 @@
       <!-- Parse Results -->
       <div v-if="parseResult" class="flex flex-col gap-4">
         <h2 class="text-lg font-medium">
-          {{ $t('csv.upload.step2', 'Step 2: Review Parsed Data') }}
+          {{ $t('screen.csv.upload.step2', 'Step 2: Review Parsed Data') }}
         </h2>
 
         <!-- Parse Errors -->
@@ -143,11 +155,13 @@
         <div v-if="parseResult.companies.length > 0" class="flex flex-col gap-4">
           <div class="flex items-center justify-between">
             <p class="text-secondary text-sm">
-              {{ $t('csv.upload.companiesFoundCount', { count: parseResult.companies.length }) }}
+              {{
+                $t('screen.csv.upload.companiesFoundCount', { count: parseResult.companies.length })
+              }}
             </p>
             <Button
               variant="secondary"
-              :label="$t('csv.upload.validateData', 'Validate Data')"
+              :label="$t('screen.csv.upload.validateData', 'Validate Data')"
               icon="fa fa-check"
               :loading="isValidating"
               :disabled="isValidating || parseResult.companies.length === 0"
@@ -163,17 +177,17 @@
                   <th
                     class="text-secondary px-4 py-3 text-left text-xs font-medium tracking-wider uppercase"
                   >
-                    {{ $t('csv.upload.table.row', 'Row') }}
+                    {{ $t('screen.csv.upload.table.row', 'Row') }}
                   </th>
                   <th
                     class="text-secondary px-4 py-3 text-left text-xs font-medium tracking-wider uppercase"
                   >
-                    {{ $t('csv.upload.table.companyName', 'Company Name') }}
+                    {{ $t('screen.csv.upload.table.companyName', 'Company Name') }}
                   </th>
                   <th
                     class="text-secondary px-4 py-3 text-left text-xs font-medium tracking-wider uppercase"
                   >
-                    {{ $t('csv.upload.table.website', 'Website') }}
+                    {{ $t('screen.csv.upload.table.website', 'Website') }}
                   </th>
                 </tr>
               </thead>
@@ -189,7 +203,7 @@
               v-if="parseResult.companies.length > 5"
               class="text-secondary bg-base-200 px-4 py-3 text-sm"
             >
-              {{ $t('csv.upload.moreRows', { count: parseResult.companies.length - 5 }) }}
+              {{ $t('screen.csv.upload.moreRows', { count: parseResult.companies.length - 5 }) }}
             </div>
           </div>
         </div>
@@ -198,26 +212,26 @@
       <!-- Validation Results -->
       <div v-if="validationResult" class="flex flex-col gap-4">
         <h2 class="text-lg font-medium">
-          {{ $t('csv.upload.step3', 'Step 3: Validation Results') }}
+          {{ $t('screen.csv.upload.step3', 'Step 3: Validation Results') }}
         </h2>
 
         <!-- Token Info -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div class="bg-success/10 border-success/20 rounded-lg border p-4">
             <div class="text-success text-sm">
-              {{ $t('csv.upload.validation.validCompaniesLabel', 'Valid Companies') }}
+              {{ $t('screen.csv.upload.validation.validCompaniesLabel', 'Valid Companies') }}
             </div>
             <div class="text-success text-2xl font-bold">{{ validationResult.valid_count }}</div>
           </div>
           <div class="bg-error/10 border-error/20 rounded-lg border p-4">
             <div class="text-error text-sm">
-              {{ $t('csv.upload.validation.invalidCompaniesLabel', 'Invalid Companies') }}
+              {{ $t('screen.csv.upload.validation.invalidCompaniesLabel', 'Invalid Companies') }}
             </div>
             <div class="text-error text-2xl font-bold">{{ validationResult.error_count }}</div>
           </div>
           <div class="bg-info/10 border-info/20 rounded-lg border p-4">
             <div class="text-info text-sm">
-              {{ $t('csv.upload.tokens.tokensRequiredLabel', 'Tokens Required') }}
+              {{ $t('screen.csv.upload.tokens.tokensRequiredLabel', 'Tokens Required') }}
             </div>
             <div class="text-info text-2xl font-bold">{{ validationResult.tokens_required }}</div>
           </div>
@@ -227,9 +241,9 @@
         <Alert
           v-if="!validationResult.has_sufficient_tokens"
           variant="danger"
-          :title="$t('csv.upload.tokens.insufficient', 'Insufficient tokens')"
+          :title="$t('screen.csv.upload.tokens.insufficient', 'Insufficient tokens')"
           :description="
-            $t('csv.upload.tokens.insufficientMessage', {
+            $t('screen.csv.upload.tokens.insufficientMessage', {
               required: validationResult.tokens_required,
               available: validationResult.tokens_available,
             })
@@ -240,7 +254,7 @@
         <!-- Validation Errors -->
         <div v-if="validationResult.errors.length > 0" class="flex flex-col gap-4">
           <h3 class="text-error font-medium">
-            {{ $t('csv.upload.validation.errorsTitle', 'Validation Errors') }}
+            {{ $t('screen.csv.upload.validation.errorsTitle', 'Validation Errors') }}
           </h3>
           <div class="flex max-h-60 flex-col gap-2 overflow-y-auto">
             <div
@@ -255,10 +269,10 @@
 
           <Alert
             variant="warning"
-            :title="$t('csv.upload.validation.errorsFound', 'Validation Errors Found')"
+            :title="$t('screen.csv.upload.validation.errorsFound', 'Validation Errors Found')"
             :message="
               $t(
-                'csv.upload.validation.errorsFoundMessage',
+                'screen.csv.upload.validation.errorsFoundMessage',
                 'You can either fix the errors in your CSV file and re-upload, or proceed with import which will skip invalid rows.',
               )
             "
@@ -271,7 +285,9 @@
             variant="primary"
             icon="fa fa-upload"
             :label="
-              $t('csv.upload.actions.importCompanies', { count: validationResult.valid_count })
+              $t('screen.csv.upload.actions.importCompanies', {
+                count: validationResult.valid_count,
+              })
             "
             :loading="isImporting"
             :disabled="isImporting || !validationResult.has_sufficient_tokens"
@@ -281,7 +297,7 @@
           <Button
             variant="secondary"
             icon="fa fa-edit"
-            :label="$t('csv.upload.actions.fixAndReupload', 'Fix CSV and Re-upload')"
+            :label="$t('screen.csv.upload.actions.fixAndReupload', 'Fix CSV and Re-upload')"
             @click="resetUpload"
           />
         </div>
@@ -289,24 +305,24 @@
 
       <!-- Import Results -->
       <div v-if="importResult" class="flex flex-col gap-4">
-        <h2 class="text-lg font-medium">{{ $t('csv.upload.results', 'Import Results') }}</h2>
+        <h2 class="text-lg font-medium">{{ $t('screen.csv.upload.results', 'Import Results') }}</h2>
 
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div class="bg-success/10 border-success/20 rounded-lg border p-4">
             <div class="text-success text-sm">
-              {{ $t('csv.upload.results.successful', 'Successful') }}
+              {{ $t('screen.csv.upload.results.successful', 'Successful') }}
             </div>
             <div class="text-success text-2xl font-bold">{{ importResult.successful }}</div>
           </div>
           <div class="bg-error/10 border-error/20 rounded-lg border p-4">
             <div class="text-error text-sm">
-              {{ $t('csv.upload.results.failedLabel', 'Failed') }}
+              {{ $t('screen.csv.upload.results.failedLabel', 'Failed') }}
             </div>
             <div class="text-error text-2xl font-bold">{{ importResult.failed }}</div>
           </div>
           <div class="bg-info/10 border-info/20 rounded-lg border p-4">
             <div class="text-info text-sm">
-              {{ $t('csv.upload.results.totalProcessed', 'Total Processed') }}
+              {{ $t('screen.csv.upload.results.totalProcessed', 'Total Processed') }}
             </div>
             <div class="text-info text-2xl font-bold">{{ importResult.total_rows }}</div>
           </div>
@@ -315,7 +331,7 @@
         <!-- Import Details -->
         <div v-if="importResult.failed > 0" class="flex max-h-60 flex-col gap-2 overflow-y-auto">
           <h3 class="text-error font-medium">
-            {{ $t('csv.upload.results.failedImportsTitle', 'Failed Imports') }}
+            {{ $t('screen.csv.upload.results.failedImportsTitle', 'Failed Imports') }}
           </h3>
           <div
             v-for="result in importResult.results.filter((r) => !r.success)"
@@ -332,14 +348,14 @@
           <Button
             variant="primary"
             icon="fa fa-folder"
-            :label="$t('csv.upload.actions.goToFolder', 'Go to Folder')"
+            :label="$t('screen.csv.upload.actions.goToFolder', 'Go to Folder')"
             @click="goToFolder"
           />
 
           <Button
             variant="secondary"
             icon="fa fa-upload"
-            :label="$t('csv.upload.actions.uploadAnother', 'Upload Another CSV')"
+            :label="$t('screen.csv.upload.actions.uploadAnother', 'Upload Another CSV')"
             @click="resetUpload"
           />
         </div>
@@ -503,7 +519,10 @@ const validateCompanies = async () => {
     })
   } catch (error: unknown) {
     console.error('Validation error:', error)
-    validationError.value = t('csv.upload.validationFailed', 'Validation failed. Please try again.')
+    validationError.value = t(
+      'screen.csv.upload.validationFailed',
+      'Validation failed. Please try again.',
+    )
   } finally {
     isValidating.value = false
   }

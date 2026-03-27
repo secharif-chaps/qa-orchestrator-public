@@ -5,9 +5,9 @@ export function useRole() {
   const { t } = useI18n()
   function roleLabel(role: WatchFileUserRole): string {
     const roleOptions: Record<WatchFileUserRole, string> = {
-      [WATCH_FILE_USER_ROLE.VIEWER]: t('watch_files.shareDialog.role.viewer'),
-      [WATCH_FILE_USER_ROLE.EDITOR]: t('watch_files.shareDialog.role.editor'),
-      [WATCH_FILE_USER_ROLE.OWNER]: t('watch_files.shareDialog.role.owner'),
+      [WATCH_FILE_USER_ROLE.VIEWER]: t('target.watchFiles.shareDialog.role.viewer'),
+      [WATCH_FILE_USER_ROLE.EDITOR]: t('target.watchFiles.shareDialog.role.editor'),
+      [WATCH_FILE_USER_ROLE.OWNER]: t('target.watchFiles.shareDialog.role.owner'),
     }
 
     return roleOptions[role] || role

@@ -2,10 +2,10 @@
   <div v-if="show" class="flex flex-col gap-4">
     <Alert
       variant="warning"
-      :title="$t('tokens.insufficientTitle', 'Out of Search Tokens')"
+      :title="$t('settings.tokens.insufficientTitle', 'Out of Search Tokens')"
       :description="
         $t(
-          'tokens.insufficientMessage',
+          'settings.tokens.insufficientMessage',
           'You need tokens to search for companies. Contact your administrator to get more tokens and continue searching.',
         )
       "
@@ -19,7 +19,7 @@
       <div class="flex items-center gap-3">
         <i class="fa fa-coins text-warning"></i>
         <span class="text-warning-light-content text-sm font-medium">{{
-          $t('tokens.currentTokens')
+          $t('settings.tokens.currentTokens')
         }}</span>
         <span class="text-warning-light-content text-xl font-bold">{{ currentTokens }}</span>
       </div>
@@ -29,7 +29,7 @@
           v-if="showContactAdmin"
           variant="primary"
           icon="fa-user-tie"
-          :label="$t('tokens.contactAdmin', 'Contact Admin')"
+          :label="$t('settings.tokens.contactAdmin', 'Contact Admin')"
           size="sm"
           @click="$emit('contact-admin')"
         />
@@ -38,7 +38,7 @@
           v-if="showRefresh"
           variant="secondary"
           icon="fa-refresh"
-          :label="$t('tokens.refresh', 'Refresh')"
+          :label="$t('settings.tokens.refresh', 'Refresh')"
           size="sm"
           :loading="isRefreshing"
           :disabled="isRefreshing"

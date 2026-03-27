@@ -41,7 +41,7 @@
         variant="tertiary"
         icon="fa-pen"
         size="sm"
-        :aria-label="$t('watch_files.title.aria_label_edit_button')"
+        :aria-label="$t('target.watchFiles.title.aria_label_edit_button')"
         :disabled="disabled"
         @click.stop="titleManager.enterEditMode"
       />
@@ -53,7 +53,7 @@
           id="watch-file-title-input"
           v-model="titleManager.editValue.value"
           class="max-w-112 min-w-96"
-          :placeholder="$t('watch_files.title.placeholder')"
+          :placeholder="$t('target.watchFiles.title.placeholder')"
           :disabled="titleManager.isSaving.value"
           @keydown="titleManager.handleKeydown"
         />
@@ -61,14 +61,14 @@
           icon="fa-check"
           size="sm"
           class="shrink-0"
-          :aria-label="$t('watch_files.title.aria_label_confirm_button')"
+          :aria-label="$t('target.watchFiles.title.aria_label_confirm_button')"
           :loading="titleManager.isSaving.value"
           :disabled="!titleManager.isValidTitle.value || titleManager.isSaving.value"
           @click="titleManager.saveTitle"
         />
       </div>
       <div v-if="!titleManager.error.value" class="text-sm text-gray-600">
-        {{ $t('watch_files.title.edit_helper') }}
+        {{ $t('target.watchFiles.title.edit_helper') }}
       </div>
       <div v-if="titleManager.error.value" class="text-sm text-red-400">
         {{ titleManager.error.value }}

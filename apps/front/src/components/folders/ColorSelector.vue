@@ -1,7 +1,7 @@
 <template>
   <div>
     <label class="mb-2 block text-sm font-medium">
-      {{ $t('folder.form.color') }}
+      {{ $t('common.folder.form.color') }}
     </label>
     <div class="relative">
       <button
@@ -10,7 +10,7 @@
         @click="showDropdown = !showDropdown"
       >
         <div class="h-6 w-6 rounded-lg" :class="getColorPreviewClasses()"></div>
-        <span class="flex-1 text-left">{{ t(`folder.form.colors.${selectedColor}`) }}</span>
+        <span class="flex-1 text-left">{{ t(`common.folder.form.colors.${selectedColor}`) }}</span>
         <i class="fas fa-chevron-down text-secondary"></i>
       </button>
 
@@ -33,7 +33,7 @@
               selectedColor === color ? 'border-primary' : 'border-transparent',
             ]"
             @click="selectColor(color)"
-            :title="t(`folder.form.colors.${color}`)"
+            :title="t(`common.folder.form.colors.${color}`)"
           ></button>
         </div>
       </div>

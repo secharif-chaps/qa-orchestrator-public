@@ -1,10 +1,10 @@
 <template>
   <div class="space-y-6">
     <div class="flex items-center gap-6">
-      <p class="font-medium">{{ t('watch_files.analysis.graph.legend') }}</p>
+      <p class="font-medium">{{ t('target.watchFiles.analysis.graph.legend') }}</p>
       <div class="flex items-center gap-3 text-xs">
         <div class="bg-almond-400 h-2 w-7.5 rounded" />
-        <span>{{ t('watch_files.analysis.graph.legend.event.basic') }}</span>
+        <span>{{ t('target.watchFiles.analysis.graph.legend.event.basic') }}</span>
       </div>
       <div class="flex items-center gap-3 text-xs">
         <div class="h-2 w-7.5 overflow-hidden rounded">
@@ -14,7 +14,7 @@
           <div class="bg-almond-500 h-1 w-32 -translate-x-1.5 -translate-y-6 -rotate-24" />
           <div class="bg-almond-400 h-1 w-32 -translate-x-1.5 -translate-y-6 -rotate-24" />
         </div>
-        <span>{{ t('watch_files.analysis.graph.legend.event.starred') }}</span>
+        <span>{{ t('target.watchFiles.analysis.graph.legend.event.starred') }}</span>
       </div>
     </div>
     <div v-if="isLoading">
@@ -54,7 +54,7 @@
       v-model="displayDrawer"
       :title="
         selectedEvent
-          ? t('watch_files.analysis.event.title', {
+          ? t('target.watchFiles.analysis.event.title', {
               from: d(new Date(selectedEvent.start), 'eventDate'),
             })
           : ''
@@ -248,7 +248,7 @@ const drawChart = (canvas: HTMLCanvasElement) => {
 
             const labelTexts = [
               t(
-                'watch_files.analysis.graph.legend.axis.y',
+                'target.watchFiles.analysis.graph.legend.axis.y',
                 { nb: context.raw },
                 Number(context.raw),
               ),
@@ -257,7 +257,7 @@ const drawChart = (canvas: HTMLCanvasElement) => {
             if (nbEvents > 0) {
               labelTexts.push(
                 t(
-                  'watch_files.analysis.graph.legend.event.count',
+                  'target.watchFiles.analysis.graph.legend.event.count',
                   { nb: nbEvents },
                   Number(nbEvents),
                 ),
@@ -289,7 +289,7 @@ const drawChart = (canvas: HTMLCanvasElement) => {
           textStrokeColor: '#000000',
           backdropColor: '#000000',
           callback: function (value: string | number) {
-            return t('watch_files.analysis.graph.legend.axis.y', { nb: value }, Number(value))
+            return t('target.watchFiles.analysis.graph.legend.axis.y', { nb: value }, Number(value))
           },
           precision: 0,
         },

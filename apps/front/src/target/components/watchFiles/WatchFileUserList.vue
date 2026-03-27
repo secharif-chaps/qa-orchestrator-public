@@ -4,7 +4,7 @@
       v-if="watchFileUsers.length > 0 || isLoading"
       class="text-secondary-font mb-1 pt-4 text-sm"
     >
-      {{ $t('watch_files.shareDialog.accessListTitle') }}
+      {{ $t('target.watchFiles.shareDialog.accessListTitle') }}
     </div>
     <div v-if="isLoading" class="scrollable max-h-60 divide-y divide-gray-200 rounded-md">
       <div
@@ -39,7 +39,7 @@
           />
           <span class="flex-1">{{ watchFileUser.user.displayName }}</span>
           <span v-if="watchFileUser.role === 'owner'" class="text-secondary-font ml-2 text-sm">{{
-            $t('watch_files.shareDialog.owner')
+            $t('target.watchFiles.shareDialog.owner')
           }}</span>
           <div v-else class="flex items-center gap-2">
             <Select
@@ -125,8 +125,8 @@ watch(
 
 async function onRemoveUser(watchFileUser: WatchFileUser) {
   showConfirmModal({
-    title: t('watch_files.shareDialog.removeUserTitle'),
-    message: t('watch_files.shareDialog.removeUserMessage', {
+    title: t('target.watchFiles.shareDialog.removeUserTitle'),
+    message: t('target.watchFiles.shareDialog.removeUserMessage', {
       user: watchFileUser.user.displayName,
     }),
     confirmLabel: t('common.button.confirm'),
@@ -152,8 +152,8 @@ function onChangeRole(watchFileUser: WatchFileUser, role: WatchFileUserRole) {
   const originalRole = originalRoles.value[watchFileUser.id]
   if (originalRole === role) return
   showConfirmModal({
-    title: t('watch_files.shareDialog.changeRoleTitle'),
-    message: t('watch_files.shareDialog.changeRoleMessage', {
+    title: t('target.watchFiles.shareDialog.changeRoleTitle'),
+    message: t('target.watchFiles.shareDialog.changeRoleMessage', {
       user: watchFileUser.user.displayName,
       role: roleLabel(role),
     }),

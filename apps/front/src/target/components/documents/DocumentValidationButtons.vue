@@ -49,14 +49,14 @@ watch(
 const options = computed<ToggleGroupOption[]>(() => [
   {
     icon: 'fa-thumbs-up',
-    label: t('documents.validation.accept'),
+    label: t('target.documents.validation.accept'),
     value: 'accept',
     kind: 'accepted',
     iconOnly,
   },
   {
     icon: 'fa-thumbs-down',
-    label: t('documents.validation.reject'),
+    label: t('target.documents.validation.reject'),
     value: 'refuse',
     kind: 'refused',
     iconOnly,

@@ -4,8 +4,8 @@
       <AnalysisTimelineSkeleton v-if="isInitialLoading" />
       <EmptyState
         v-else-if="!allEvents.length"
-        :title="t('watch_files.analysis.timeline.empty.title')"
-        :description="t('watch_files.analysis.timeline.empty.description')"
+        :title="t('target.watchFiles.analysis.timeline.empty.title')"
+        :description="t('target.watchFiles.analysis.timeline.empty.description')"
         icon="fa-clock"
         vertical-align="center"
       />
@@ -35,14 +35,14 @@
         </div>
         <div v-if="allEvents.length > 0" class="flex justify-center py-4">
           <Button v-if="hasMore && !isLoadingMore" variant="secondary" @click="loadMoreEvents">
-            {{ t('watch_files.analysis.timeline.loadMore') }}
+            {{ t('target.watchFiles.analysis.timeline.loadMore') }}
           </Button>
           <div v-else-if="isLoadingMore" class="flex items-center gap-2 text-sm text-gray-600">
             <Icon icon="fa-spinner" class="animate-spin" />
             <span>{{ t('common.action.loading') }}</span>
           </div>
           <p v-else-if="!hasMore && !isLoadingMore" class="text-sm text-gray-600">
-            {{ t('watch_files.analysis.timeline.allEventsLoaded') }}
+            {{ t('target.watchFiles.analysis.timeline.allEventsLoaded') }}
           </p>
         </div>
       </div>

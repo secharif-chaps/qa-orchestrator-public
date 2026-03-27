@@ -24,11 +24,11 @@ export const useCreateFolderShare = defineMutation(() => {
     onSuccess: (_data, { folderId }) => {
       // Invalidate folder shares query to refetch the list
       queryCache.invalidateQueries({ key: FOLDER_SHARE_QUERY_KEYS.byFolderId(folderId) })
-      toast.success(t('folder.share.added', 'User added to folder'))
+      toast.success(t('common.folder.share.added', 'User added to folder'))
     },
 
     onError: () => {
-      toast.error(t('folder.share.addError', 'Failed to share folder'))
+      toast.error(t('common.folder.share.addError', 'Failed to share folder'))
     },
   })
 
@@ -80,11 +80,11 @@ export const useUpdateFolderShare = defineMutation(() => {
       if (context?.previousShares && context?.queryKey) {
         queryCache.setQueryData(context.queryKey, context.previousShares)
       }
-      toast.error(t('folder.share.updateError', 'Failed to update share role'))
+      toast.error(t('common.folder.share.updateError', 'Failed to update share role'))
     },
 
     onSuccess: () => {
-      toast.success(t('folder.share.updated', 'Share role updated'))
+      toast.success(t('common.folder.share.updated', 'Share role updated'))
     },
 
     onSettled: (_data, _error, { folderId }) => {
@@ -132,11 +132,11 @@ export const useDeleteFolderShare = defineMutation(() => {
       if (context?.previousShares && context?.queryKey) {
         queryCache.setQueryData(context.queryKey, context.previousShares)
       }
-      toast.error(t('folder.share.removeError', 'Failed to remove share'))
+      toast.error(t('common.folder.share.removeError', 'Failed to remove share'))
     },
 
     onSuccess: () => {
-      toast.success(t('folder.share.removed', 'User removed from folder'))
+      toast.success(t('common.folder.share.removed', 'User removed from folder'))
     },
 
     onSettled: (_data, _error, { folderId }) => {

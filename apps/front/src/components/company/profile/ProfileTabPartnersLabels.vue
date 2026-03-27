@@ -3,7 +3,7 @@
     <!-- Partner Brands -->
     <div v-if="company?.products?.partnerBrands?.length">
       <h4 class="text-secondary mb-2 flex items-center gap-2 font-medium">
-        {{ $t('profile.sections.products.partnerBrands') }}
+        {{ $t('screen.profile.sections.products.partnerBrands') }}
       </h4>
       <div class="grid grid-cols-2 gap-2">
         <div
@@ -20,7 +20,7 @@
     <!-- Private Labels -->
     <div v-if="company?.products?.privateLabels?.length">
       <h4 class="text-secondary mb-2 flex items-center gap-2 font-medium">
-        {{ $t('profile.sections.products.privateLabels', { company: company?.name }) }}
+        {{ $t('screen.profile.sections.products.privateLabels', { company: company?.name }) }}
       </h4>
       <div class="grid grid-cols-2 gap-2">
         <div

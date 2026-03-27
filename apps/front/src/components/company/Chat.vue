@@ -9,7 +9,7 @@
     >
       <div class="flex items-center gap-4">
         <i class="fa fa-chevrons-right icon-secondary cursor-pointer" @click="$emit('hide')"></i>
-        <span class="text-sm">{{ t('company.chat.askOurAi') }}</span>
+        <span class="text-sm">{{ t('screen.company.chat.askOurAi') }}</span>
       </div>
       <div class="from-bg1 absolute -bottom-6 h-6 w-full bg-gradient-to-b to-transparent">
         <!-- <i class="fa fa-up-right-and-down-left-from-center"></i> -->
@@ -40,7 +40,7 @@
       </div>
       <div v-if="isLoading">
         <div class="bg-base-300 mr-auto inline-block rounded-xl p-4 text-xs">
-          <i class="fa fa-spinner fa-spin"></i> {{ t('company.chat.thinking') }}
+          <i class="fa fa-spinner fa-spin"></i> {{ t('screen.company.chat.thinking') }}
         </div>
       </div>
     </div>
@@ -48,7 +48,7 @@
       <textarea
         @keyup.enter="sendMessage"
         v-model="question"
-        :placeholder="t('company.chat.placeholder')"
+        :placeholder="t('screen.company.chat.placeholder')"
         class="bg-base-300 border-primary-stroke focus-within:outline-primary w-full rounded-lg border p-2 text-sm dark:border-slate-700 dark:bg-slate-900"
         :class="isFloating ? 'h-20' : 'h-32'"
         @keydown.enter.ctrl.prevent="sendMessage"
@@ -91,7 +91,7 @@ const route = useRoute()
 // Chat state
 const messages = ref([
   {
-    text: t('company.chat.welcomeMessage'),
+    text: t('screen.company.chat.welcomeMessage'),
     from: 'ai',
   },
 ])
@@ -156,7 +156,7 @@ const sendMessage = async () => {
     })
 
     // Parse the response to extract actual content from stringified format
-    let responseText = response.response || t('company.chat.noResponse')
+    let responseText = response.response || t('screen.company.chat.noResponse')
 
     // Check if response contains stringified JSON with 'output' field
     if (
@@ -184,7 +184,7 @@ const sendMessage = async () => {
   } catch (error) {
     console.error('Error sending message to backend:', error)
     messages.value.push({
-      text: t('company.chat.errorMessage'),
+      text: t('screen.company.chat.errorMessage'),
       from: 'ai',
     })
   } finally {

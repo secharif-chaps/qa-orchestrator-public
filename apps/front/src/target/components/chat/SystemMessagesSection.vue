@@ -94,10 +94,10 @@ const groupTimeDisplay = computed(() => {
 
 const showOlderMessagesLabel = computed(() => {
   if (showOlderMessages.value) {
-    return t('watch_files.chat.system_messages.hide_older')
+    return t('target.watchFiles.chat.system_messages.hide_older')
   }
   return t(
-    'watch_files.chat.system_messages.view_older',
+    'target.watchFiles.chat.system_messages.view_older',
     {
       count: hiddenCount.value,
       time: groupTimeDisplay.value,

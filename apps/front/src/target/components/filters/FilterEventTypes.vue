@@ -4,7 +4,7 @@
       v-if="eventTypes.length > 5"
       id="searchbar-filter-eventTypes"
       v-model="searchInput"
-      :placeholder="t('watch_files.filters.type.event_types.placeholder')"
+      :placeholder="t('target.watchFiles.filters.type.event_types.placeholder')"
       size="sm"
     />
     <div v-if="eventTypes.length" class="flex flex-col items-start gap-1.5">
@@ -17,14 +17,14 @@
         name="filter-eventTypes"
       >
         <label v-if="eventType" :for="eventType" class="flex items-center gap-2 pl-2">
-          <span>{{ $t(`watch_files.analysis.event.type.${eventType}`) }}</span>
+          <span>{{ $t(`target.watchFiles.analysis.event.type.${eventType}`) }}</span>
           <span class="text-gray-800"> ({{ count }}) </span>
         </label>
       </Checkbox>
     </div>
     <div v-else>
       <p class="text-sm text-gray-800">
-        {{ t('watch_files.filters.empty') }}
+        {{ t('target.watchFiles.filters.empty') }}
       </p>
     </div>
     <Button
@@ -33,7 +33,11 @@
       variant="tertiary"
       @click="displayAllEventTypes = !displayAllEventTypes"
     >
-      {{ t(`watch_files.filters.type.event_types.see.${displayAllEventTypes ? 'less' : 'more'}`) }}
+      {{
+        t(
+          `target.watchFiles.filters.type.event_types.see.${displayAllEventTypes ? 'less' : 'more'}`,
+        )
+      }}
     </Button>
     <Button
       v-if="selectedEventTypes.length"
@@ -44,8 +48,8 @@
       @click="handleReset"
     >
       {{
-        t('watch_files.filters.type.reset', {
-          name: t('watch_files.filters.type.event_types'),
+        t('target.watchFiles.filters.type.reset', {
+          name: t('target.watchFiles.filters.type.event_types'),
         })
       }}
     </Button>

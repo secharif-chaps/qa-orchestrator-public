@@ -5,12 +5,12 @@
       <div>
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 class="text-2xl font-bold">{{ $t('folder.title', 'Folders') }}</h1>
+            <h1 class="text-2xl font-bold">{{ $t('common.folder.title', 'Folders') }}</h1>
             <p class="text-secondary mt-1">
               {{
                 isGlobalView
-                  ? $t('folder.descriptionGlobal', 'All folders in your organization')
-                  : $t('folder.description', 'Organize your companies into folders')
+                  ? $t('common.folder.descriptionGlobal', 'All folders in your organization')
+                  : $t('common.folder.description', 'Organize your companies into folders')
               }}
             </p>
           </div>
@@ -38,8 +38,8 @@
       <Alert
         v-if="currentStatus === 'error'"
         variant="danger"
-        :title="$t('folder.list.error.title', 'Error')"
-        :description="$t('folder.list.error.description', 'Failed to load folders')"
+        :title="$t('common.folder.list.error.title', 'Error')"
+        :description="$t('common.folder.list.error.description', 'Failed to load folders')"
         icon="fa fa-exclamation-triangle"
       />
 
@@ -49,7 +49,7 @@
           class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
         ></div>
         <p class="text-secondary">
-          {{ $t('folder.loading', 'Loading folders...') }}
+          {{ $t('common.folder.loading', 'Loading folders...') }}
         </p>
       </div>
 
@@ -74,10 +74,10 @@
             <h3
               class="group-hover:text-secondary mb-2 text-center text-lg font-semibold transition-colors"
             >
-              {{ $t('folder.create.title', 'Create New Folder') }}
+              {{ $t('common.folder.create.title', 'Create New Folder') }}
             </h3>
             <p class="text-secondary text-center text-sm">
-              {{ $t('folder.create.description', 'Organize your companies into folders') }}
+              {{ $t('common.folder.create.description', 'Organize your companies into folders') }}
             </p>
           </div>
 
@@ -108,10 +108,12 @@
               </div>
               <div class="flex-1">
                 <h3 class="text-secondary font-medium">
-                  {{ $t('folder.create.title', 'Create New Folder') }}
+                  {{ $t('common.folder.create.title', 'Create New Folder') }}
                 </h3>
                 <p class="text-secondary mt-1 text-xs">
-                  {{ $t('folder.create.description', 'Organize your companies into folders') }}
+                  {{
+                    $t('common.folder.create.description', 'Organize your companies into folders')
+                  }}
                 </p>
               </div>
               <i class="fas fa-chevron-right text-secondary"></i>
@@ -127,13 +129,15 @@
                   : 'text-secondary grid grid-cols-12 gap-4 text-sm font-medium'
               "
             >
-              <div class="col-span-5">{{ $t('folder.table.name', 'Name') }}</div>
+              <div class="col-span-5">{{ $t('common.folder.table.name', 'Name') }}</div>
               <div v-if="isGlobalView" class="col-span-2">
-                {{ $t('folder.table.owner', 'Owner') }}
+                {{ $t('common.folder.table.owner', 'Owner') }}
               </div>
-              <div class="col-span-2">{{ $t('folder.table.items', 'Items') }}</div>
-              <div class="col-span-1">{{ $t('folder.table.created', 'Created') }}</div>
-              <div class="col-span-2 text-right">{{ $t('folder.table.actions', 'Actions') }}</div>
+              <div class="col-span-2">{{ $t('common.folder.table.items', 'Items') }}</div>
+              <div class="col-span-1">{{ $t('common.folder.table.created', 'Created') }}</div>
+              <div class="col-span-2 text-right">
+                {{ $t('common.folder.table.actions', 'Actions') }}
+              </div>
             </div>
           </div>
 
@@ -160,7 +164,7 @@
             v-model:current-page="foldersStore.page"
             :meta="paginationMeta"
             :page-size-options="pageSizeOptions"
-            :item-name="$t('folder.itemName')"
+            :item-name="$t('common.folder.itemName')"
             @update-per-page="updatePerPage"
           />
         </div>
@@ -172,21 +176,21 @@
         <h3 class="mb-2 text-lg font-medium">
           {{
             foldersStore.filterName
-              ? $t('folder.empty.noResults', 'No folders found')
-              : $t('folder.emptyList.title', 'No folders yet')
+              ? $t('common.folder.empty.noResults', 'No folders found')
+              : $t('common.folder.emptyList.title', 'No folders yet')
           }}
         </h3>
         <p class="text-secondary mb-6">
           {{
             foldersStore.filterName
-              ? $t('folder.empty.tryDifferentSearch', 'Try a different search term')
+              ? $t('common.folder.empty.tryDifferentSearch', 'Try a different search term')
               : canCreateFolder
                 ? $t(
-                    'folder.emptyList.description',
+                    'common.folder.emptyList.description',
                     'Create your first folder to organize your companies',
                   )
                 : $t(
-                    'folder.emptyList.descriptionReadOnly',
+                    'common.folder.emptyList.descriptionReadOnly',
                     'No folders have been shared with you yet',
                   )
           }}
@@ -194,14 +198,14 @@
         <Button
           v-if="!foldersStore.filterName && canCreateFolder"
           @click="$router.push('/folders/create')"
-          :label="$t('folder.create.button', 'Create Folder')"
+          :label="$t('common.folder.create.button', 'Create Folder')"
           variant="primary"
           icon="fa fa-plus"
         />
         <Button
           v-else-if="foldersStore.filterName"
           @click="foldersStore.filterName = ''"
-          :label="$t('folder.clearSearch', 'Clear Search')"
+          :label="$t('common.folder.clearSearch', 'Clear Search')"
           variant="secondary"
         />
       </div>
@@ -275,17 +279,17 @@ const filterOptions = computed(() => [
   {
     value: 'all',
     icon: 'fas fa-folder',
-    label: $t('folder.filter.allLabel', 'All'),
+    label: $t('common.folder.filter.allLabel', 'All'),
   },
   {
     value: 'favorites',
     icon: 'fas fa-star',
-    label: $t('folder.filter.favoritesLabel', 'Favorites'),
+    label: $t('common.folder.filter.favoritesLabel', 'Favorites'),
   },
   {
     value: 'archived',
     icon: 'fas fa-archive',
-    label: $t('folder.filter.archivedLabel', 'Archived'),
+    label: $t('common.folder.filter.archivedLabel', 'Archived'),
   },
 ])
 
@@ -293,12 +297,12 @@ const filterOptions = computed(() => [
 const viewModeOptions = computed(() => [
   {
     value: 'table',
-    label: $t('folder.viewMode.table', 'Table'),
+    label: $t('common.folder.viewMode.table', 'Table'),
     icon: 'fa fa-list',
   },
   {
     value: 'grid',
-    label: $t('folder.viewMode.grid', 'Grid'),
+    label: $t('common.folder.viewMode.grid', 'Grid'),
     icon: 'fa fa-th-large',
   },
 ])
@@ -307,12 +311,12 @@ const viewModeOptions = computed(() => [
 const viewScopeOptions = computed(() => [
   {
     value: 'my',
-    label: $t('folder.viewScope.myFolders', 'My Folders'),
+    label: $t('common.folder.viewScope.myFolders', 'My Folders'),
     icon: 'fa fa-user',
   },
   {
     value: 'all',
-    label: $t('folder.viewScope.allFolders', 'All Folders'),
+    label: $t('common.folder.viewScope.allFolders', 'All Folders'),
     icon: 'fa fa-users',
   },
 ])

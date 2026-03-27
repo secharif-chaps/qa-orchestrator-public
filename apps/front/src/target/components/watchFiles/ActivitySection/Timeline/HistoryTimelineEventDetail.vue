@@ -83,21 +83,21 @@ const isError = computed(() => errorActors.value || errorSources.value)
 
 const errorTitle = computed(() =>
   actorEventId
-    ? t('watch_files.activity.history.event.error.actors')
-    : t('watch_files.activity.history.event.error.sources'),
+    ? t('target.watchFiles.activity.history.event.error.actors')
+    : t('target.watchFiles.activity.history.event.error.sources'),
 )
 
 const emptyTitle = computed(() =>
   actorEventId
-    ? t('watch_files.activity.history.event.empty.actors.title')
-    : t('watch_files.activity.history.event.empty.sources.title'),
+    ? t('target.watchFiles.activity.history.event.empty.actors.title')
+    : t('target.watchFiles.activity.history.event.empty.sources.title'),
 )
 
 const emptyDescription = computed(() =>
   actorEventId
-    ? t('watch_files.activity.history.event.empty.actors.description')
-    : t('watch_files.activity.history.event.empty.sources.description'),
+    ? t('target.watchFiles.activity.history.event.empty.actors.description')
+    : t('target.watchFiles.activity.history.event.empty.sources.description'),
 )
 
-const drawerTitle = computed(() => t(`watch_files.activity.history.event.${eventType}`))
+const drawerTitle = computed(() => t(`target.watchFiles.activity.history.event.${eventType}`))
 </script>

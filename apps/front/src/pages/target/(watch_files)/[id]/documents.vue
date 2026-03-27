@@ -9,7 +9,7 @@
           <Searchbar
             id="document-search-input"
             v-model="searchInput"
-            :placeholder="$t('watch_files.documents.search.placeholder')"
+            :placeholder="$t('target.watchFiles.documents.search.placeholder')"
             class="w-74"
             size="sm"
           >
@@ -34,7 +34,7 @@
           >
             <div>
               <div class="text-sage-800 p-2 text-xs">
-                {{ $t('watch_files.sort.sort_by') }}
+                {{ $t('target.watchFiles.sort.sort_by') }}
               </div>
               <div class="flex flex-col items-start">
                 <div
@@ -54,7 +54,7 @@
                           :icon="sortOrder === 'ASC' ? 'fa-arrow-up' : 'fa-arrow-down'"
                           class="text-primary-500 text-base"
                         />
-                        {{ $t('watch_files.filters.type.dates.publication') }}
+                        {{ $t('target.watchFiles.filters.type.dates.publication') }}
                       </span>
                     </label>
                   </ORadio>
@@ -76,7 +76,7 @@
                           :icon="sortOrder === 'ASC' ? 'fa-arrow-up' : 'fa-arrow-down'"
                           class="text-primary-500 text-base"
                         />
-                        {{ $t('watch_files.filters.type.dates.collection') }}
+                        {{ $t('target.watchFiles.filters.type.dates.collection') }}
                       </span>
                     </label>
                   </ORadio>
@@ -126,7 +126,7 @@
             class="absolute bottom-0 left-0 flex w-full items-center justify-center bg-linear-to-t from-white to-white/30 py-7 backdrop-blur-[2px]"
           >
             <Button variant="accent" icon="fa-eye" @click="consultDocument">
-              {{ $t('documents.detail.consultDocument') }}
+              {{ $t('target.documents.detail.consultDocument') }}
             </Button>
           </div>
           <DocumentDetail :is-loading="isLoading" :document="selectedDocument" />

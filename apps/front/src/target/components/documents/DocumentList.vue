@@ -25,22 +25,22 @@
     />
     <EmptyState
       v-else-if="hasNoDocuments && (filtersCounts || searchQuery)"
-      :title="$t('documents.empty.title')"
-      :description="$t('documents.empty.description')"
+      :title="$t('target.documents.empty.title')"
+      :description="$t('target.documents.empty.description')"
       icon="fa-magnifying-glass"
       vertical-align="center"
     />
     <InformationMessage
       v-else-if="hasNoDocuments && !isWatchFileActive"
-      :title="$t('documents.inactive.title')"
-      :description="$t('documents.inactive.subtitle')"
+      :title="$t('target.documents.inactive.title')"
+      :description="$t('target.documents.inactive.subtitle')"
       color="error"
       width="full"
     />
     <InformationMessage
       v-else-if="hasNoDocuments && isWatchFileActive"
-      :title="$t('documents.loading.title')"
-      :description="$t('documents.loading.subtitle')"
+      :title="$t('target.documents.loading.title')"
+      :description="$t('target.documents.loading.subtitle')"
       color="info"
       icon="fa-spinner"
       vertical-align="center"
@@ -49,10 +49,10 @@
     <template v-else>
       <div v-if="!isLoading && searchQuery" class="flex items-center gap-4">
         <p class="text-sm font-bold">
-          {{ t('watch_files.documents.search.nb_results', { nb: totalItems }, totalItems) }}
+          {{ t('target.watchFiles.documents.search.nb_results', { nb: totalItems }, totalItems) }}
         </p>
         <Button variant="secondary" size="sm" icon="fa-xmark" @click="searchQuery = ''">
-          {{ $t('watch_files.documents.search.delete') }}
+          {{ $t('target.watchFiles.documents.search.delete') }}
         </Button>
       </div>
       <div class="scrollable min-h-0 flex-1">
@@ -89,7 +89,7 @@
           :total="totalItems"
         >
           <template #result>
-            {{ $t('documents.pagination.items_per_page') }}
+            {{ $t('target.documents.pagination.items_per_page') }}
           </template>
         </Pagination>
       </div>
@@ -194,7 +194,7 @@ watch(currentPage, () => {
 })
 
 const search = () => {
-  emit('search')
+  emit('screen.search')
   currentPage.value = 1
 }
 
@@ -220,8 +220,8 @@ const validateSelectedDocuments = () => {
   const count = selectedDocuments.value.length
 
   showConfirmModal({
-    title: t('watch_files.documents.batch_validate.modal.title'),
-    message: t('watch_files.documents.batch_validate.modal.message', { count }, count),
+    title: t('target.watchFiles.documents.batch_validate.modal.title'),
+    message: t('target.watchFiles.documents.batch_validate.modal.message', { count }, count),
     confirmLabel: t('common.button.confirm'),
     cancelLabel: t('common.button.cancel'),
     onConfirm: () => {
@@ -241,8 +241,8 @@ const rejectSelectedDocuments = () => {
   const count = selectedDocuments.value.length
 
   showConfirmModal({
-    title: t('watch_files.documents.batch_reject.modal.title'),
-    message: t('watch_files.documents.batch_reject.modal.message', { count }, count),
+    title: t('target.watchFiles.documents.batch_reject.modal.title'),
+    message: t('target.watchFiles.documents.batch_reject.modal.message', { count }, count),
     confirmLabel: t('common.button.confirm'),
     cancelLabel: t('common.button.cancel'),
     onConfirm: () => {

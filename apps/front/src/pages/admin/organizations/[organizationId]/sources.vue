@@ -4,12 +4,12 @@
       <div class="mb-6 flex items-center justify-between">
         <div>
           <h2 class="text-xl font-semibold">
-            {{ $t('dataSources.title', 'Data Sources') }}
+            {{ $t('screen.dataSources.title', 'Data Sources') }}
           </h2>
           <p class="text-secondary mt-1">
             {{
               $t(
-                'dataSources.description',
+                'screen.dataSources.description',
                 'Configure external data providers for company screening',
               )
             }}
@@ -45,18 +45,18 @@ const organizationIdValue = computed(() => organizationId?.value || '')
 const availableSources = computed<DataSourceInfo[]>(() => [
   {
     source: 'pappers',
-    name: t('dataSources.pappers.name', 'Pappers'),
+    name: t('screen.dataSources.pappers.name', 'Pappers'),
     description: t(
-      'dataSources.pappers.description',
+      'screen.dataSources.pappers.description',
       'French company data provider (legal info, financials, officers)',
     ),
     logo: '/src/assets/logos/pappers.svg',
   },
   {
     source: 'worldcheck',
-    name: t('dataSources.worldcheck.name', 'WorldCheck'),
+    name: t('screen.dataSources.worldcheck.name', 'WorldCheck'),
     description: t(
-      'dataSources.worldcheck.description',
+      'screen.dataSources.worldcheck.description',
       'LSEG WorldCheck screening for sanctions, PEP, and adverse media',
     ),
     logo: '/src/assets/logos/worldcheck.svg',

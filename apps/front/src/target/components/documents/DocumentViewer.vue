@@ -47,7 +47,7 @@
         >
           <DocumentViewerSkeleton v-if="isLoading" :key="'skeleton'" />
           <div v-else-if="error" :key="'error'" class="flex flex-1 items-center justify-center">
-            <ErrorMessage :title="$t('document.viewer.error.title')" :fill="true" />
+            <ErrorMessage :title="$t('target.document.viewer.error.title')" :fill="true" />
           </div>
           <div v-else :key="'content'" class="flex flex-1 overflow-hidden p-6">
             <!-- Left Pane - Main Content with Header -->

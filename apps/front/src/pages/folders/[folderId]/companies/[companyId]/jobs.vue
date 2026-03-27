@@ -11,7 +11,7 @@
     <!-- No Data State -->
     <NoData v-else-if="!hasJobsData">
       <p class="text-secondary text-lg font-medium">
-        {{ $t('profile.sections.jobs.noData') }}
+        {{ $t('screen.profile.sections.jobs.noData') }}
       </p>
     </NoData>
 
@@ -20,17 +20,17 @@
       <!-- Insights Section -->
       <div class="rounded-lg p-4" v-if="jobOffersInsights">
         <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
-          <span>{{ $t('jobs.insights.title') }}</span>
+          <span>{{ $t('screen.jobs.insights.title') }}</span>
         </h2>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div class="bg-sage-light border-base-300 rounded-lg border p-4">
-            <h4 class="text-sm font-semibold">{{ $t('jobs.insights.totalOpenings') }}</h4>
+            <h4 class="text-sm font-semibold">{{ $t('screen.jobs.insights.totalOpenings') }}</h4>
             <p class="text-secondary text-2xl font-bold">
               {{ getSourcedValue(company?.jobs?.insights?.total_openings) }}
             </p>
           </div>
           <div class="bg-sage-light border-base-300 rounded-lg border p-4">
-            <h4 class="text-sm font-semibold">{{ $t('jobs.insights.topDepartments') }}</h4>
+            <h4 class="text-sm font-semibold">{{ $t('screen.jobs.insights.topDepartments') }}</h4>
             <div class="text-secondary text-sm">
               <ul class="list-inside list-disc space-y-1">
                 <li v-for="department in topDepartmentsList" :key="department">
@@ -41,13 +41,13 @@
             </div>
           </div>
           <div class="bg-sage-light border-base-300 rounded-lg border p-4">
-            <h4 class="text-sm font-semibold">{{ $t('jobs.insights.hiringFocus') }}</h4>
+            <h4 class="text-sm font-semibold">{{ $t('screen.jobs.insights.hiringFocus') }}</h4>
             <p class="text-secondary text-sm">
               {{ getSourcedValue(company?.jobs?.insights?.hiring_focus) }}
             </p>
           </div>
           <div class="bg-sage-light border-base-300 rounded-lg border p-4">
-            <h4 class="text-sm font-semibold">{{ $t('jobs.insights.growthIndicators') }}</h4>
+            <h4 class="text-sm font-semibold">{{ $t('screen.jobs.insights.growthIndicators') }}</h4>
             <p class="text-secondary text-sm">
               {{ getSourcedValue(company?.jobs?.insights?.growth_indicators) }}
             </p>
@@ -59,13 +59,13 @@
       <div class="rounded-lg p-4">
         <div class="mb-6 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="text-lg font-semibold">{{ $t('jobs.listings.title') }}</span>
+            <span class="text-lg font-semibold">{{ $t('screen.jobs.listings.title') }}</span>
           </div>
           <div class="w-64">
             <Searchbar
               id="jobs-search"
               v-model="searchQuery"
-              :placeholder="$t('jobs.listings.search.placeholder')"
+              :placeholder="$t('screen.jobs.listings.search.placeholder')"
             />
           </div>
         </div>
@@ -86,7 +86,7 @@
           >
             <NoData>
               <p class="text-secondary text-lg font-medium">
-                {{ $t('jobs.listings.noResults', { query: searchQuery }) }}
+                {{ $t('screen.jobs.listings.noResults', { query: searchQuery }) }}
               </p>
             </NoData>
           </div>

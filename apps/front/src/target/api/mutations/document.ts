@@ -30,7 +30,7 @@ export const useMarkDocumentAsSeen = () => {
 
   const defaultErrorMessage = {
     title: t('common.error.title'),
-    description: t('documents.mark_as_seen.error'),
+    description: t('target.documents.mark_as_seen.error'),
   }
 
   const { mutate, ...mutation } = useMutation({
@@ -77,7 +77,7 @@ export const useDocumentValidation = (options?: CallbackMutations<DocumentValida
   const watchFileDocumentsStore = useWatchFileDocumentsStore()
 
   const defaultErrorMessage = {
-    title: t('watch_files.documents.status_change.error'),
+    title: t('target.watchFiles.documents.status_change.error'),
   }
 
   const { mutate, ...mutation } = useMutation({
@@ -187,7 +187,7 @@ export const useDocumentValidation = (options?: CallbackMutations<DocumentValida
       }
 
       options?.onSuccess?.(data)
-      toast.success(t('watch_files.documents.status_change.success_' + action))
+      toast.success(t('target.watchFiles.documents.status_change.success_' + action))
     },
   })
   return {
@@ -214,7 +214,7 @@ export const useBatchDocumentValidation = (
       action: DocumentValidationAction
     }): Promise<BatchValidationResponse> => {
       const defaultErrorMessage = {
-        title: t('watch_files.documents.batch_status_change.error_' + action),
+        title: t('target.watchFiles.documents.batch_status_change.error_' + action),
       }
       return batchDocumentValidation(documentIds, action, defaultErrorMessage)
     },
@@ -300,7 +300,7 @@ export const useBatchDocumentValidation = (
       if (data.failed_count > 0) {
         toast.warning(
           t(
-            'watch_files.documents.batch_status_change.partial_success_' + action,
+            'target.watchFiles.documents.batch_status_change.partial_success_' + action,
             {
               success: data.validated_count,
               failed: data.failed_count,
@@ -311,7 +311,7 @@ export const useBatchDocumentValidation = (
       } else {
         toast.success(
           t(
-            'watch_files.documents.batch_status_change.success_' + action,
+            'target.watchFiles.documents.batch_status_change.success_' + action,
             { count: data.validated_count },
             data.validated_count,
           ),

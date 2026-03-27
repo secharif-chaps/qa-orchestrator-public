@@ -11,7 +11,7 @@
         name="filter-validations"
       >
         <label :for="status" class="pl-2">
-          <span>{{ $t(`watch_files.documents.status.${status}`) }}</span>
+          <span>{{ $t(`target.watchFiles.documents.status.${status}`) }}</span>
           <span class="text-gray-800"> ({{ count }}) </span>
         </label>
       </Checkbox>
@@ -25,8 +25,8 @@
       @click="handleReset"
     >
       {{
-        t('watch_files.filters.type.reset', {
-          name: t('watch_files.filters.type.validations'),
+        t('target.watchFiles.filters.type.reset', {
+          name: t('target.watchFiles.filters.type.validations'),
         })
       }}
     </Button>

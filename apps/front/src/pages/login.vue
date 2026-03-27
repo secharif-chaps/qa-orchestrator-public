@@ -6,7 +6,7 @@
           <i class="fa-solid fa-leaf text-secondary text-7xl"></i>
         </div>
         <h2 class="mt-6 text-center text-3xl font-extrabold">
-          {{ $t('login.heading', 'Sign in to your account') }}
+          {{ $t('common.login.heading', 'Sign in to your account') }}
         </h2>
       </div>
       <div class="mt-8 space-y-4">
@@ -20,8 +20,8 @@
             :disabled="isLoading"
             :label="
               isLoading
-                ? $t('login.signingIn', 'Signing in...')
-                : $t('login.signInButton', 'Sign in with Keycloak')
+                ? $t('common.login.signingIn', 'Signing in...')
+                : $t('common.login.signInButton', 'Sign in with Keycloak')
             "
             :loading="isLoading"
             variant="primary"
@@ -54,7 +54,7 @@ const handleLogin = async () => {
     await signIn()
   } catch (err) {
     console.error('Login error:', err)
-    error.value = t('login.errors.genericError', 'An error occurred during login')
+    error.value = t('common.login.errors.genericError', 'An error occurred during login')
     isLoading.value = false
   }
 }

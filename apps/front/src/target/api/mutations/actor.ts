@@ -17,7 +17,7 @@ export const useChangeActorStatus = (options?: CallbackMutations<unknown>) => {
   const { t } = useI18n()
 
   const defaultErrorMessage = {
-    title: t('watch_files.actors.deactivation_modal.error'),
+    title: t('target.watchFiles.actors.deactivation_modal.error'),
   }
 
   const { mutate, ...mutation } = useMutation({
@@ -68,14 +68,14 @@ export const useRemoveWatchFileActor = defineMutation(() => {
   const { t } = useI18n()
 
   const defaultErrorMessage = {
-    title: t('watch_files.actors.remove.error'),
+    title: t('target.watchFiles.actors.remove.error'),
   }
 
   const { mutate, ...mutation } = useMutation({
     mutation: ({ watchFileId, actorId }: { watchFileId: string; actorId: string }) =>
       removeWatchFileActor(watchFileId, actorId, defaultErrorMessage),
     onSuccess(_, { watchFileId }) {
-      toast.success(t('watch_files.actors.remove.success'))
+      toast.success(t('target.watchFiles.actors.remove.success'))
 
       queryCache.invalidateQueries({
         key: ACTOR_QUERY_KEYS.byWatchFile(watchFileId),
@@ -95,7 +95,7 @@ export const useBatchChangeActorStatus = (options?: CallbackMutations<unknown>) 
   const { t } = useI18n()
 
   const defaultErrorMessage = {
-    title: t('watch_files.actors.batch_change.error'),
+    title: t('target.watchFiles.actors.batch_change.error'),
   }
 
   const { mutate, ...mutation } = useMutation({
@@ -118,11 +118,11 @@ export const useBatchChangeActorStatus = (options?: CallbackMutations<unknown>) 
       const failedCount = data.failed
 
       if (data.success || successCount > 0) {
-        toast.success(t('watch_files.actors.batch_change.success', successCount))
+        toast.success(t('target.watchFiles.actors.batch_change.success', successCount))
       }
 
       if (failedCount > 0) {
-        toast.error(t('watch_files.actors.batch_change.partial_error', failedCount))
+        toast.error(t('target.watchFiles.actors.batch_change.partial_error', failedCount))
       }
 
       queryCache.invalidateQueries({

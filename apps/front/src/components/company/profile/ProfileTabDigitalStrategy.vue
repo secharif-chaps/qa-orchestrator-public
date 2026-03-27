@@ -7,11 +7,13 @@
 
     <!-- Digital Strategy - detailed breakdown -->
     <div v-if="company?.digital?.digitalStrategy" class="flex flex-col gap-3">
-      <h4 class="text-secondary font-medium">{{ $t('profile.sections.digital.strategy') }}</h4>
+      <h4 class="text-secondary font-medium">
+        {{ $t('screen.profile.sections.digital.strategy') }}
+      </h4>
 
       <div v-if="digitalStrategy?.overallStrategy" class="text-sm">
         <h5 class="text-secondary mb-1 font-medium">
-          {{ $t('profile.sections.digital.overallStrategy', 'Overall Strategy') }}
+          {{ $t('screen.profile.sections.digital.overallStrategy', 'Overall Strategy') }}
         </h5>
         <p class="text-secondary">
           {{ getSourcedValue(digitalStrategy.overallStrategy) }}
@@ -21,7 +23,9 @@
 
       <div v-if="digitalStrategy?.digitalTransformation" class="text-sm">
         <h5 class="text-secondary mb-1 font-medium">
-          {{ $t('profile.sections.digital.digitalTransformation', 'Digital Transformation') }}
+          {{
+            $t('screen.profile.sections.digital.digitalTransformation', 'Digital Transformation')
+          }}
         </h5>
         <p class="text-secondary">
           {{ getSourcedValue(digitalStrategy.digitalTransformation) }}
@@ -31,7 +35,9 @@
 
       <div v-if="digitalStrategy?.eCommerceCapabilities" class="text-sm">
         <h5 class="text-secondary mb-1 font-medium">
-          {{ $t('profile.sections.digital.eCommerceCapabilities', 'E-Commerce Capabilities') }}
+          {{
+            $t('screen.profile.sections.digital.eCommerceCapabilities', 'E-Commerce Capabilities')
+          }}
         </h5>
         <p class="text-secondary">
           {{ getSourcedValue(digitalStrategy.eCommerceCapabilities) }}
@@ -41,7 +47,7 @@
 
       <div v-if="digitalStrategy?.mobileStrategy" class="text-sm">
         <h5 class="text-secondary mb-1 font-medium">
-          {{ $t('profile.sections.digital.mobileStrategy', 'Mobile Strategy') }}
+          {{ $t('screen.profile.sections.digital.mobileStrategy', 'Mobile Strategy') }}
         </h5>
         <p class="text-secondary">
           {{ getSourcedValue(digitalStrategy.mobileStrategy) }}
@@ -52,7 +58,10 @@
       <div v-if="digitalStrategy?.digitalMarketingApproach" class="text-sm">
         <h5 class="text-secondary mb-1 font-medium">
           {{
-            $t('profile.sections.digital.digitalMarketingApproach', 'Digital Marketing Approach')
+            $t(
+              'screen.profile.sections.digital.digitalMarketingApproach',
+              'Digital Marketing Approach',
+            )
           }}
         </h5>
         <p class="text-secondary">
@@ -65,7 +74,7 @@
     <!-- Online Services -->
     <div v-if="onlineServices?.length">
       <h4 class="text-secondary mb-2 font-medium">
-        {{ $t('profile.sections.digital.onlineServices') }}
+        {{ $t('screen.profile.sections.digital.onlineServices') }}
       </h4>
       <div class="flex flex-col gap-2">
         <div v-for="service in onlineServices" :key="service.name" class="bg-base-200 rounded p-3">
@@ -79,7 +88,7 @@
     <!-- Loyalty Program -->
     <div v-if="company?.digital?.loyaltyProgram">
       <h4 class="text-secondary mb-2 font-medium">
-        {{ $t('profile.sections.digital.loyaltyProgram') }}
+        {{ $t('screen.profile.sections.digital.loyaltyProgram') }}
       </h4>
       <p class="text-secondary text-sm">
         {{ getSourcedValue(company.digital.loyaltyProgram) || $t('common.notFound') }}

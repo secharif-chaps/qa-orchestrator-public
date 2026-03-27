@@ -4,12 +4,12 @@
       <div class="mb-8">
         <h1 class="text-secondary text-6xl font-bold">404</h1>
         <h2 class="mt-4 text-2xl font-semibold">
-          {{ $t('errors.notFound.title', 'Page Not Found') }}
+          {{ $t('common.errors.notFound.title', 'Page Not Found') }}
         </h2>
         <p class="text-secondary mt-2">
           {{
             $t(
-              'errors.notFound.message',
+              'common.errors.notFound.message',
               "The page you're looking for doesn't exist or has been moved.",
             )
           }}
@@ -18,12 +18,12 @@
 
       <div class="flex space-x-4">
         <Button
-          :label="$t('errors.notFound.goHome', 'Go to Home')"
+          :label="$t('common.errors.notFound.goHome', 'Go to Home')"
           variant="primary"
           @click="$router.push('/')"
         />
         <Button
-          :label="$t('errors.notFound.goBack', 'Go Back')"
+          :label="$t('common.errors.notFound.goBack', 'Go Back')"
           variant="secondary"
           @click="$router.back()"
         />
@@ -33,7 +33,7 @@
         <p>
           {{
             $t(
-              'errors.notFound.help',
+              'common.errors.notFound.help',
               'If you believe this page should exist, please contact support.',
             )
           }}

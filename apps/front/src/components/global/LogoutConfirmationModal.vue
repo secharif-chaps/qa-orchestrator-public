@@ -1,18 +1,18 @@
 <template>
   <Modal
     v-model:display-modal="showModal"
-    :title="t('logout.title')"
+    :title="t('common.logout.title')"
     icon="fa fa-arrow-right-from-bracket"
     size="md"
     color=""
   >
     <template #description>
-      {{ t('logout.subtitle') }}
+      {{ t('common.logout.subtitle') }}
     </template>
 
     <div class="flex flex-col gap-4">
       <p class="text-secondary text-sm">
-        {{ t('logout.message') }}
+        {{ t('common.logout.message') }}
       </p>
     </div>
 
@@ -21,12 +21,12 @@
         variant="primary"
         intent="danger"
         icon="fa fa-arrow-right-from-bracket"
-        :label="t('logout.confirm')"
+        :label="t('common.logout.confirm')"
         :loading="isLoading"
         :disabled="isLoading"
         @click="$emit('confirm')"
       />
-      <Button variant="tertiary" :label="t('logout.cancel')" @click="showModal = false" />
+      <Button variant="tertiary" :label="t('common.logout.cancel')" @click="showModal = false" />
     </template>
   </Modal>
 </template>

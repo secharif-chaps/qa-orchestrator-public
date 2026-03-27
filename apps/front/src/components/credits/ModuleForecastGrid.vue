@@ -1,7 +1,7 @@
 <template>
   <Card padding="p-6">
     <h3 class="text-lg font-semibold">
-      {{ $t('credits.forecast.title', 'Capacité restante') }}
+      {{ $t('settings.credits.forecast.title', 'Capacité restante') }}
     </h3>
 
     <!-- Loading state -->

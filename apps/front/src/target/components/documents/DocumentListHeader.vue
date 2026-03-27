@@ -34,7 +34,7 @@
             :disabled="isBatchProcessing"
             @click="validateSelectedDocuments"
           >
-            {{ $t('documents.validation.accept') }}
+            {{ $t('target.documents.validation.accept') }}
           </Button>
           <Button
             variant="tertiary"
@@ -43,7 +43,7 @@
             :disabled="isBatchProcessing"
             @click="rejectSelectedDocuments"
           >
-            {{ $t('documents.validation.reject') }}
+            {{ $t('target.documents.validation.reject') }}
           </Button>
         </div>
       </div>

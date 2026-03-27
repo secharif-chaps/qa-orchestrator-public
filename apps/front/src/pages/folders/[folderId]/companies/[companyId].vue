@@ -26,7 +26,7 @@
         <div class="flex flex-col gap-1">
           <h1 class="text-2xl font-bold">{{ company?.name }}</h1>
           <span v-if="company?.created_at" class="text-secondary text-sm">
-            {{ t('company.createdAt') }} {{ formatFullDate(company.created_at) }}
+            {{ t('screen.company.createdAt') }} {{ formatFullDate(company.created_at) }}
           </span>
         </div>
       </div>
@@ -39,7 +39,7 @@
           <Button
             variant="tertiary"
             icon="fa fa-refresh"
-            :label="t('company.refresh.button')"
+            :label="t('screen.company.refresh.button')"
             :disabled="hasRunningTasks || !allTasksSucceeded || !hasEnoughTokens"
             :loading="isRefreshing"
             @click="openRefreshModal"
@@ -52,7 +52,7 @@
           size="sm"
           icon="fa fa-bug"
           icon-only
-          :title="t('company.debug.workflowTitle')"
+          :title="t('screen.company.debug.workflowTitle')"
           @click="showTasksModal = true"
         />
       </div>
@@ -150,9 +150,9 @@ const tokenBalance = computed(() => tokenBalanceData.value?.balance ?? 0)
 const hasEnoughTokens = computed(() => tokenBalance.value >= 35)
 
 const refreshButtonTooltip = computed(() => {
-  if (hasRunningTasks.value) return t('company.refresh.tooltip.tasksRunning')
-  if (!allTasksSucceeded.value) return t('company.refresh.tooltip.waitForTasks')
-  if (!hasEnoughTokens.value) return t('company.refresh.tooltip.insufficientTokens')
+  if (hasRunningTasks.value) return t('screen.company.refresh.tooltip.tasksRunning')
+  if (!allTasksSucceeded.value) return t('screen.company.refresh.tooltip.waitForTasks')
+  if (!hasEnoughTokens.value) return t('screen.company.refresh.tooltip.insufficientTokens')
   return ''
 })
 

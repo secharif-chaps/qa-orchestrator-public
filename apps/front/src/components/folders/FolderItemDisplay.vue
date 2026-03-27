@@ -48,7 +48,7 @@
           variant="tertiary"
           icon="fa fa-eye"
           icon-only
-          :title="$t('folder.item.actions.view', 'View Item')"
+          :title="$t('common.folder.item.actions.view', 'View Item')"
           @click.stop="handleClick"
         />
         <Button
@@ -56,7 +56,7 @@
           variant="tertiary"
           icon="fa fa-exchange-alt"
           icon-only
-          :title="$t('folder.moveCompany.button', 'Move to Folder')"
+          :title="$t('common.folder.moveCompany.button', 'Move to Folder')"
           @click.stop="$emit('moveCompany', item)"
         />
         <Button
@@ -66,8 +66,8 @@
           icon-only
           :title="
             isArchived
-              ? $t('company.restore.title', 'Restore Company')
-              : $t('company.delete.title', 'Delete Company')
+              ? $t('screen.company.restore.title', 'Restore Company')
+              : $t('screen.company.delete.title', 'Delete Company')
           "
           @click.stop="$emit('deleteCompany', item)"
         />
@@ -75,8 +75,10 @@
     </div>
 
     <div class="text-secondary flex items-center justify-between text-sm">
-      <span>{{ $t('folder.item.created', 'Created') }} {{ formatDate(item.created_at) }}</span>
-      <span v-if="item.owner">{{ $t('folder.grid.by') }} @{{ item.owner }}</span>
+      <span
+        >{{ $t('common.folder.item.created', 'Created') }} {{ formatDate(item.created_at) }}</span
+      >
+      <span v-if="item.owner">{{ $t('common.folder.grid.by') }} @{{ item.owner }}</span>
     </div>
   </Card>
 
@@ -150,7 +152,7 @@ const getLogoUrl = (website?: string) => {
 
 function formatType(type: string): string {
   if (type === 'company') {
-    return t('folder.itemTypes.company')
+    return t('common.folder.itemTypes.company')
   }
   return type.charAt(0).toUpperCase() + type.slice(1)
 }

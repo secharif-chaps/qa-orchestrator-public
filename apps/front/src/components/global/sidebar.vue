@@ -29,14 +29,16 @@
           @click="$router.push('/settings')"
         >
           <Icon icon="fa-cog" class="text-lg" />
-          <span class="text-xs">{{ $t('sidebar.footer.settings', 'Settings') }}</span>
+          <span class="text-xs">{{ $t('common.sidebar.footer.settings', 'Settings') }}</span>
         </button>
         <button
           class="text-sage-700 dark:text-sage-300 hover:text-sage-950 flex flex-col items-center gap-1 transition-colors dark:hover:text-white"
           @click="toggleAccessibilityMode()"
         >
           <Icon icon="fa-universal-access" class="text-lg" />
-          <span class="text-xs">{{ $t('sidebar.footer.accessibility', 'Accessibility') }}</span>
+          <span class="text-xs">{{
+            $t('common.sidebar.footer.accessibility', 'Accessibility')
+          }}</span>
         </button>
       </div>
     </div>

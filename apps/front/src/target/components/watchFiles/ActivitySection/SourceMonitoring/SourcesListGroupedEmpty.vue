@@ -4,11 +4,11 @@
       <Icon icon="fa-folder" class="text-3xl text-gray-600" />
     </div>
     <h3 class="text-md mb-6 text-center font-medium text-gray-700">
-      {{ t('watch_files.activity.sources.empty.title') }}
+      {{ t('target.watchFiles.activity.sources.empty.title') }}
     </h3>
     <Button
       icon="fa-plus"
-      :label="t('watch_files.activity.sources.empty.add_button')"
+      :label="t('target.watchFiles.activity.sources.empty.add_button')"
       @click="onAddSource"
     />
   </div>

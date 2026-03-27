@@ -8,7 +8,7 @@
           class="bg-success-500 h-full transition-all duration-500 ease-out"
           :style="{ width: `${completedPercentage}%` }"
           :title="
-            t('company.tasks.completed', {
+            t('screen.company.tasks.completed', {
               count: completedCount,
               percentage: Math.round(completedPercentage),
             })
@@ -21,7 +21,7 @@
           class="bg-info-500 h-full transition-all duration-500 ease-out"
           :style="{ width: `${runningPercentage}%` }"
           :title="
-            t('company.tasks.running', {
+            t('screen.company.tasks.running', {
               count: runningCount,
               percentage: Math.round(runningPercentage),
             })
@@ -34,7 +34,10 @@
           class="bg-error-500 h-full transition-all duration-500 ease-out"
           :style="{ width: `${errorPercentage}%` }"
           :title="
-            t('company.tasks.error', { count: errorCount, percentage: Math.round(errorPercentage) })
+            t('screen.company.tasks.error', {
+              count: errorCount,
+              percentage: Math.round(errorPercentage),
+            })
           "
         ></div>
 
@@ -44,7 +47,7 @@
           class="bg-sage-200 h-full transition-all duration-500 ease-out"
           :style="{ width: `${pendingPercentage}%` }"
           :title="
-            t('company.tasks.pending', {
+            t('screen.company.tasks.pending', {
               count: pendingCount,
               percentage: Math.round(pendingPercentage),
             })
@@ -62,7 +65,7 @@
         >
           <div class="text-secondary flex items-center gap-3 text-base">
             <i class="fas fa-spinner fa-spin text-xl"></i>
-            <span>{{ t('company.analysis.loading', 'Loading analysis...') }}</span>
+            <span>{{ t('screen.company.analysis.loading', 'Loading analysis...') }}</span>
           </div>
         </div>
         <div class="flex items-start gap-6">
@@ -73,7 +76,7 @@
                 {{ getSourcedValue(company.profile.businessLine) }}
               </h3>
               <h3 class="font-bold" v-else>
-                {{ t('company.fields.notSpecified', 'Not specified') }}
+                {{ t('screen.company.fields.notSpecified', 'Not specified') }}
               </h3>
             </div>
             <div v-else>
@@ -93,7 +96,7 @@
                 :label="item.label"
                 :value="item.value"
                 :loading="isTaskRunning('profile')"
-                :placeholder="t('company.fields.notSpecified', 'Not specified')"
+                :placeholder="t('screen.company.fields.notSpecified', 'Not specified')"
               />
             </div>
 
@@ -109,10 +112,10 @@
         >
           <div class="text-secondary flex items-center gap-3 text-base">
             <i class="fas fa-spinner fa-spin text-xl"></i>
-            <span>{{ t('company.analysis.loading', 'Loading analysis...') }}</span>
+            <span>{{ t('screen.company.analysis.loading', 'Loading analysis...') }}</span>
           </div>
         </div>
-        <p>{{ t('company.onlinePresence.title', 'Online Presence') }}</p>
+        <p>{{ t('screen.company.onlinePresence.title', 'Online Presence') }}</p>
         <a
           v-if="company?.website"
           :href="formatWebsiteUrl(company.website)"
@@ -123,7 +126,7 @@
           <i class="fa-solid fa-link fa-fw text-secondary"></i>
           <div class="flex w-44 flex-col gap-1">
             <span class="truncate text-sm">
-              {{ t('company.onlinePresence.website', 'Website') }}
+              {{ t('screen.company.onlinePresence.website', 'Website') }}
             </span>
             <span class="text-secondary truncate text-xs underline">
               {{ company.website }}
@@ -135,14 +138,14 @@
           <i class="fa-solid fa-link fa-fw text-secondary"></i>
           <div class="flex w-44 flex-col gap-1">
             <span class="truncate text-sm">
-              {{ t('company.onlinePresence.website', 'Website') }}
+              {{ t('screen.company.onlinePresence.website', 'Website') }}
             </span>
             <span class="text-secondary truncate text-xs">
-              {{ t('company.fields.notSpecified', 'Not specified') }}
+              {{ t('screen.company.fields.notSpecified', 'Not specified') }}
             </span>
           </div>
         </div>
-        <p>{{ t('company.onlinePresence.socialMedia', 'Social Media Presence') }}</p>
+        <p>{{ t('screen.company.onlinePresence.socialMedia', 'Social Media Presence') }}</p>
         <div>
           <!-- Loading state -->
           <div v-if="isTaskRunning('digital')" class="flex flex-wrap gap-2">
@@ -168,7 +171,7 @@
           </div>
           <!-- No data -->
           <span v-else class="text-secondary text-xs">
-            {{ t('company.fields.notSpecified', 'Not specified') }}
+            {{ t('screen.company.fields.notSpecified', 'Not specified') }}
           </span>
         </div>
       </Card>
@@ -189,7 +192,7 @@
     />
 
     <div>
-      <h4 class="font-semibold">{{ t('company.sections.analyses', 'Analyses') }}</h4>
+      <h4 class="font-semibold">{{ t('screen.company.sections.analyses', 'Analyses') }}</h4>
     </div>
 
     <!-- Analysis Cards Grid -->
@@ -214,7 +217,7 @@
     <!-- Footer -->
     <div v-if="company" class="text-secondary text-center text-xs italic">
       {{
-        t('company.footer.createdBy', {
+        t('screen.company.footer.createdBy', {
           username: company.owner_username,
           date: formatFullDate(company.created_at),
         })
@@ -334,22 +337,22 @@ const getTaskId = (taskType: TaskType): number | null => {
 const companyInfoItems = computed(() => [
   {
     icon: 'fa fa-users',
-    label: t('company.fields.employeeCount', 'Employee Count'),
+    label: t('screen.company.fields.employeeCount', 'Employee Count'),
     value: company.value?.profile?.employeeCount?.value,
   },
   {
     icon: 'fa fa-map-marker',
-    label: t('company.fields.headquarters', 'Headquarters'),
+    label: t('screen.company.fields.headquarters', 'Headquarters'),
     value: company.value?.profile?.hq?.value,
   },
   {
     icon: 'fa fa-user-tie',
-    label: t('company.fields.ceo', 'CEO'),
+    label: t('screen.company.fields.ceo', 'CEO'),
     value: company.value?.profile?.ceo?.value,
   },
   {
     icon: 'fa fa-money-bill',
-    label: t('company.fields.revenue', 'Revenue'),
+    label: t('screen.company.fields.revenue', 'Revenue'),
     value: company.value?.profile?.revenue?.value,
   },
 ])
@@ -359,9 +362,9 @@ const analysisCards = computed(() => {
   return [
     {
       section: 'profile' as TaskType,
-      title: t('company.analysisCards.profile.title', 'Company Profile'),
+      title: t('screen.company.analysisCards.profile.title', 'Company Profile'),
       description: t(
-        'company.analysisCards.profile.description',
+        'screen.company.analysisCards.profile.description',
         'View detailed company information, business lines, and key metrics',
       ),
       icon: 'fas fa-building',
@@ -374,14 +377,14 @@ const analysisCards = computed(() => {
     },
     {
       section: 'timeline' as TaskType,
-      title: t('company.analysisCards.timeline.title', 'Timeline & History'),
+      title: t('screen.company.analysisCards.timeline.title', 'Timeline & History'),
       description: t(
-        'company.analysisCards.timeline.description',
+        'screen.company.analysisCards.timeline.description',
         'Company history, milestones, and key events over time',
       ),
       icon: 'fas fa-calendar-days',
       insights: t(
-        'company.analysisCards.timeline.insights',
+        'screen.company.analysisCards.timeline.insights',
         'Discover the company history and key events',
       ),
       taskStatus: getTaskStatus('timeline'),
@@ -392,15 +395,18 @@ const analysisCards = computed(() => {
     },
     {
       section: 'products' as TaskType,
-      title: t('company.analysisCards.products.title', 'Products & Services'),
+      title: t('screen.company.analysisCards.products.title', 'Products & Services'),
       description: t(
-        'company.analysisCards.products.description',
+        'screen.company.analysisCards.products.description',
         'Browse products, services, and offerings',
       ),
       icon: 'fas fa-box',
       insights:
         company.value?.products?.insights ||
-        t('company.analysisCards.products.insights', 'Discover the company products and services'),
+        t(
+          'screen.company.analysisCards.products.insights',
+          'Discover the company products and services',
+        ),
       taskStatus: getTaskStatus('products'),
       errorDetails: getTaskErrorDetails('products'),
       taskId: getTaskId('products'),
@@ -409,14 +415,14 @@ const analysisCards = computed(() => {
     },
     {
       section: 'team' as TaskType,
-      title: t('company.analysisCards.team.title', 'Team & Management'),
+      title: t('screen.company.analysisCards.team.title', 'Team & Management'),
       description: t(
-        'company.analysisCards.team.description',
+        'screen.company.analysisCards.team.description',
         'Leadership team, organizational structure, and key personnel',
       ),
       icon: 'fas fa-users',
       insights: t(
-        'company.analysisCards.team.insights',
+        'screen.company.analysisCards.team.insights',
         'Discover the organizational structure and key members',
       ),
       taskStatus: getTaskStatus('team'),
@@ -427,9 +433,9 @@ const analysisCards = computed(() => {
     },
     {
       section: 'jobs' as TaskType,
-      title: t('company.analysisCards.jobs.title', 'Job Offers'),
+      title: t('screen.company.analysisCards.jobs.title', 'Job Offers'),
       description: t(
-        'company.analysisCards.jobs.description',
+        'screen.company.analysisCards.jobs.description',
         'Current job openings and career opportunities',
       ),
       icon: 'fas fa-briefcase',
@@ -442,9 +448,9 @@ const analysisCards = computed(() => {
     },
     {
       section: 'press' as TaskType,
-      title: t('company.analysisCards.press.title', 'Press & Media'),
+      title: t('screen.company.analysisCards.press.title', 'Press & Media'),
       description: t(
-        'company.analysisCards.press.description',
+        'screen.company.analysisCards.press.description',
         'Press releases, news articles, and media coverage',
       ),
       icon: 'fas fa-newspaper',
@@ -457,9 +463,9 @@ const analysisCards = computed(() => {
     },
     {
       section: 'csr' as TaskType,
-      title: t('company.analysisCards.csr.title', 'Corporate Social Responsibility'),
+      title: t('screen.company.analysisCards.csr.title', 'Corporate Social Responsibility'),
       description: t(
-        'company.analysisCards.csr.description',
+        'screen.company.analysisCards.csr.description',
         'CSR initiatives, sustainability programs, and social impact',
       ),
       icon: 'fas fa-leaf',
@@ -472,9 +478,9 @@ const analysisCards = computed(() => {
     },
     {
       section: 'digital' as TaskType,
-      title: t('company.analysisCards.communications.title', 'Corporate Communications'),
+      title: t('screen.company.analysisCards.communications.title', 'Corporate Communications'),
       description: t(
-        'company.analysisCards.communications.description',
+        'screen.company.analysisCards.communications.description',
         'Press releases, public statements, and official communications',
       ),
       icon: 'fas fa-bullhorn',

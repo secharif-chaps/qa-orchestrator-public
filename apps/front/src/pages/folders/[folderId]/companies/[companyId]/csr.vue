@@ -11,7 +11,7 @@
     <!-- No Data State -->
     <NoData v-else-if="!hasCsrData">
       <p class="text-secondary text-lg font-medium">
-        {{ $t('profile.sections.csr.noData') }}
+        {{ $t('screen.profile.sections.csr.noData') }}
       </p>
     </NoData>
 
@@ -25,7 +25,7 @@
       <!-- CSR Responsibility Statement -->
       <div v-if="responsibilityValue" class="bg-base-100 rounded-lg p-6">
         <h4 class="text-secondary mb-3 font-semibold">
-          {{ $t('profile.sections.csr.responsibility') }}
+          {{ $t('screen.profile.sections.csr.responsibility') }}
         </h4>
         <p class="text-secondary text-sm leading-relaxed">
           {{ responsibilityValue }}
@@ -42,7 +42,7 @@
         <div class="bg-base-100 rounded-lg p-6">
           <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-handshake"></i>
-            {{ $t('profile.sections.csr.responsibility_initiatives') }}
+            {{ $t('screen.profile.sections.csr.responsibility_initiatives') }}
           </h4>
           <ul class="space-y-2">
             <li
@@ -69,7 +69,7 @@
         <div class="bg-base-100 rounded-lg p-6">
           <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-heart"></i>
-            {{ $t('profile.sections.csr.charity') }}
+            {{ $t('screen.profile.sections.csr.charity') }}
           </h4>
           <ul class="space-y-2">
             <li
@@ -93,7 +93,7 @@
         <div class="bg-base-100 rounded-lg p-6">
           <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-leaf"></i>
-            {{ $t('profile.sections.csr.sustainability') }}
+            {{ $t('screen.profile.sections.csr.sustainability') }}
           </h4>
           <ul class="space-y-2">
             <li
@@ -120,7 +120,7 @@
         <div class="bg-base-100 rounded-lg p-6">
           <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-users"></i>
-            {{ $t('profile.sections.csr.community') }}
+            {{ $t('screen.profile.sections.csr.community') }}
           </h4>
           <ul class="space-y-2">
             <li
@@ -147,7 +147,7 @@
         <div class="bg-base-100 rounded-lg p-6">
           <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-people-group"></i>
-            {{ $t('profile.sections.csr.diversity') }}
+            {{ $t('screen.profile.sections.csr.diversity') }}
           </h4>
           <ul class="space-y-2">
             <li
@@ -174,7 +174,7 @@
         <div class="bg-base-100 rounded-lg p-6">
           <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-scale-balanced"></i>
-            {{ $t('profile.sections.csr.ethics') }}
+            {{ $t('screen.profile.sections.csr.ethics') }}
           </h4>
           <ul class="space-y-2">
             <li
@@ -201,7 +201,7 @@
         <div class="bg-base-100 rounded-lg p-6 md:col-span-2">
           <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-award"></i>
-            {{ $t('profile.sections.csr.awards') }}
+            {{ $t('screen.profile.sections.csr.awards') }}
           </h4>
           <ul class="space-y-2">
             <li

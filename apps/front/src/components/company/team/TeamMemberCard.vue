@@ -34,7 +34,7 @@
           @click="openLinkedIn"
           variant="tertiary"
           icon="fab fa-linkedin"
-          :title="$t('team.viewLinkedIn', 'View LinkedIn Profile')"
+          :title="$t('screen.team.viewLinkedIn', 'View LinkedIn Profile')"
           icon-only
           size="sm"
           class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
@@ -45,7 +45,7 @@
           @click="$emit('viewInHierarchy', member)"
           variant="tertiary"
           icon="fa fa-sitemap"
-          :title="$t('team.viewInHierarchy', 'View in Hierarchy')"
+          :title="$t('screen.team.viewInHierarchy', 'View in Hierarchy')"
           icon-only
           size="sm"
         />
@@ -58,7 +58,7 @@
         <i class="fa fa-users"></i>
         <span>{{
           $t(
-            'team.managingCount',
+            'screen.team.managingCount',
             `Managing ${subordinatesCount} ${subordinatesCount === 1 ? 'person' : 'people'}`,
           )
         }}</span>

@@ -1,13 +1,13 @@
 <template>
   <Modal
     v-model:displayModal="isOpen"
-    :title="$t('folder.moveCompany.title', 'Move Company to Folder')"
+    :title="$t('common.folder.moveCompany.title', 'Move Company to Folder')"
     icon="fa-exchange-alt"
     size="2xl"
     @close="handleClose"
   >
     <template #description>
-      {{ $t('folder.moveCompany.selectFolder', 'Select a destination folder') }}
+      {{ $t('common.folder.moveCompany.selectFolder', 'Select a destination folder') }}
 
       <div class="mt-4 flex flex-col gap-6">
         <!-- Company Info Display -->
@@ -34,13 +34,13 @@
         <!-- Search Input -->
         <div class="flex flex-col gap-3">
           <Label id="folder-search">
-            {{ $t('folder.moveCompany.searchPlaceholder', 'Search folders...') }}
+            {{ $t('common.folder.moveCompany.searchPlaceholder', 'Search folders...') }}
           </Label>
 
           <Searchbar
             id="folder-search-input"
             v-model="searchQuery"
-            :placeholder="$t('folder.moveCompany.searchPlaceholder', 'Search folders...')"
+            :placeholder="$t('common.folder.moveCompany.searchPlaceholder', 'Search folders...')"
           />
         </div>
 
@@ -58,7 +58,7 @@
             class="bg-error-light text-error-light-content border-error-stroke rounded-lg border p-4 text-sm"
           >
             <i class="fa fa-exclamation-triangle mr-2"></i>
-            {{ $t('folder.moveCompany.loadError', 'Failed to load folders') }}
+            {{ $t('common.folder.moveCompany.loadError', 'Failed to load folders') }}
           </div>
 
           <!-- Empty state -->
@@ -67,7 +67,7 @@
             class="text-secondary bg-base-200 rounded-lg py-8 text-center"
           >
             <i class="fa fa-folder-open mb-3 text-3xl opacity-50"></i>
-            <p>{{ $t('folder.moveCompany.noFolders', 'No writable folders available') }}</p>
+            <p>{{ $t('common.folder.moveCompany.noFolders', 'No writable folders available') }}</p>
           </div>
 
           <!-- Folder list -->
@@ -95,7 +95,7 @@
                 <div>
                   <div class="font-medium">{{ folder.name }}</div>
                   <div class="text-secondary text-xs">
-                    {{ folder.items?.length || 0 }} {{ $t('folder.items', 'items') }}
+                    {{ folder.items?.length || 0 }} {{ $t('common.folder.items', 'items') }}
                   </div>
                 </div>
               </div>
@@ -109,13 +109,13 @@
 
                 <Tag
                   v-if="folder.is_owner"
-                  :label="$t('folder.permissions.owner', 'Owner')"
+                  :label="$t('common.folder.permissions.owner', 'Owner')"
                   intent="success"
                   size="xs"
                 />
                 <Tag
                   v-else-if="folder.share_role === 'writer'"
-                  :label="$t('folder.permissions.writer', 'Writer')"
+                  :label="$t('common.folder.permissions.writer', 'Writer')"
                   intent="info"
                   size="xs"
                 />
@@ -131,7 +131,7 @@
         <Button variant="secondary" :label="$t('common.cancel', 'Cancel')" @click="handleClose" />
         <Button
           variant="primary"
-          :label="$t('folder.moveCompany.move', 'Move')"
+          :label="$t('common.folder.moveCompany.move', 'Move')"
           :disabled="!selectedFolderId || isMoving"
           :loading="isMoving"
           @click="handleMove"

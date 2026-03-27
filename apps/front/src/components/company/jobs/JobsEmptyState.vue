@@ -17,7 +17,7 @@
       <div v-if="type === 'loading'" class="flex justify-center">
         <div class="text-secondary flex items-center gap-3">
           <i class="fa fa-spinner animate-spin"></i>
-          <span>{{ $t('jobs.loading', 'Analyzing job market and opportunities...') }}</span>
+          <span>{{ $t('screen.jobs.loading', 'Analyzing job market and opportunities...') }}</span>
         </div>
       </div>
 
@@ -28,7 +28,7 @@
           <div v-if="type === 'no-data'" class="text-secondary text-sm">
             {{
               $t(
-                'jobs.emptyState.hint',
+                'screen.jobs.emptyState.hint',
                 'Job listings and hiring insights will appear here once available',
               )
             }}

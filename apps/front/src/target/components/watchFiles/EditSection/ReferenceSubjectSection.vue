@@ -2,8 +2,8 @@
   <section>
     <div class="border-sage-100 space-y-4 rounded border p-6 shadow">
       <SectionListHeader
-        :title="$t('watch_files.reference_subject.title')"
-        :sub-title="$t('watch_files.reference_subject.sub_title')"
+        :title="$t('target.watchFiles.reference_subject.title')"
+        :sub-title="$t('target.watchFiles.reference_subject.sub_title')"
         :readonly="true"
         :last-update="watchFile?.referenceSubject ? watchFile?.updatedAt : undefined"
       />
@@ -31,8 +31,8 @@
       <InformationMessage
         v-else
         width="full"
-        :title="$t('watch_files.reference_subject.loading')"
-        :description="$t('watch_files.reference_subject.loading_subtitle')"
+        :title="$t('target.watchFiles.reference_subject.loading')"
+        :description="$t('target.watchFiles.reference_subject.loading_subtitle')"
       />
     </div>
   </section>

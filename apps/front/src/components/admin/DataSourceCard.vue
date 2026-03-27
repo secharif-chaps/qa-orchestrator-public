@@ -27,8 +27,8 @@
       >
         {{
           config?.enabled
-            ? $t('dataSources.enabled', 'Enabled')
-            : $t('dataSources.disabled', 'Disabled')
+            ? $t('screen.dataSources.enabled', 'Enabled')
+            : $t('screen.dataSources.disabled', 'Disabled')
         }}
       </span>
     </div>
@@ -41,11 +41,12 @@
           <!-- API Key row -->
           <div class="flex flex-col gap-1">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('dataSources.apiKey.label', 'API Key') }}
+              {{ $t('screen.dataSources.apiKey.label', 'API Key') }}
             </label>
             <code class="bg-base-200 rounded px-3 py-2 text-sm">
               {{
-                config?.api_key_masked || $t('dataSources.apiKey.notConfigured', 'Not configured')
+                config?.api_key_masked ||
+                $t('screen.dataSources.apiKey.notConfigured', 'Not configured')
               }}
             </code>
           </div>
@@ -53,12 +54,12 @@
           <!-- API Secret row (dual credential only) -->
           <div v-if="source.isDualCredential" class="flex flex-col gap-1">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('dataSources.apiSecret.label', 'API Secret') }}
+              {{ $t('screen.dataSources.apiSecret.label', 'API Secret') }}
             </label>
             <code class="bg-base-200 rounded px-3 py-2 text-sm">
               {{
                 config?.api_secret_masked ||
-                $t('dataSources.apiSecret.notConfigured', 'Not configured')
+                $t('screen.dataSources.apiSecret.notConfigured', 'Not configured')
               }}
             </code>
           </div>
@@ -67,7 +68,7 @@
             <Button
               variant="secondary"
               size="sm"
-              :label="$t('dataSources.edit', 'Edit')"
+              :label="$t('screen.dataSources.edit', 'Edit')"
               icon="fas fa-pencil"
               @click="startEditing"
             />
@@ -78,25 +79,25 @@
         <div v-else class="flex flex-col gap-3">
           <div class="flex flex-col gap-1">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('dataSources.apiKey.label', 'API Key') }}
+              {{ $t('screen.dataSources.apiKey.label', 'API Key') }}
             </label>
             <Input
               id="input-api-key"
               v-model="newApiKey"
               type="password"
-              :placeholder="$t('dataSources.apiKey.placeholder', 'Enter API key...')"
+              :placeholder="$t('screen.dataSources.apiKey.placeholder', 'Enter API key...')"
             />
           </div>
 
           <div v-if="source.isDualCredential" class="flex flex-col gap-1">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('dataSources.apiSecret.label', 'API Secret') }}
+              {{ $t('screen.dataSources.apiSecret.label', 'API Secret') }}
             </label>
             <Input
               id="input-api-secret"
               v-model="newApiSecret"
               type="password"
-              :placeholder="$t('dataSources.apiSecret.placeholder', 'Enter API secret...')"
+              :placeholder="$t('screen.dataSources.apiSecret.placeholder', 'Enter API secret...')"
             />
           </div>
 
@@ -104,7 +105,7 @@
             <Button
               variant="primary"
               size="sm"
-              :label="$t('dataSources.save', 'Save')"
+              :label="$t('screen.dataSources.save', 'Save')"
               :loading="updateMutation.isLoading.value"
               :disabled="isSaveDisabled"
               @click="saveCredentials"
@@ -112,7 +113,7 @@
             <Button
               variant="tertiary"
               size="sm"
-              :label="$t('dataSources.cancel', 'Cancel')"
+              :label="$t('screen.dataSources.cancel', 'Cancel')"
               :disabled="updateMutation.isLoading.value"
               @click="cancelEditing"
             />
@@ -122,10 +123,12 @@
         <!-- Timestamps -->
         <div v-if="config?.enabled_at || config?.updated_at" class="text-secondary text-xs">
           <span v-if="config?.enabled_at">
-            {{ $t('dataSources.enabledAt', 'Enabled') }}: {{ formatDateTime(config.enabled_at) }}
+            {{ $t('screen.dataSources.enabledAt', 'Enabled') }}:
+            {{ formatDateTime(config.enabled_at) }}
           </span>
           <span v-if="config?.updated_at" class="ml-3">
-            {{ $t('dataSources.lastUpdated', 'Updated') }}: {{ formatDateTime(config.updated_at) }}
+            {{ $t('screen.dataSources.lastUpdated', 'Updated') }}:
+            {{ formatDateTime(config.updated_at) }}
           </span>
         </div>
       </div>

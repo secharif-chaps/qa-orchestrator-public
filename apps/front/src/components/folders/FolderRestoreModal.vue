@@ -13,11 +13,14 @@
           </div>
           <div>
             <h3 class="text-base text-lg font-semibold">
-              {{ $t('folder.restore.title', 'Restore Folder') }}
+              {{ $t('common.folder.restore.title', 'Restore Folder') }}
             </h3>
             <p class="text-secondary text-sm">
               {{
-                $t('folder.restore.subtitle', 'This will move the folder back to the active list.')
+                $t(
+                  'common.folder.restore.subtitle',
+                  'This will move the folder back to the active list.',
+                )
               }}
             </p>
           </div>
@@ -29,7 +32,7 @@
         <p class="text-secondary mb-4 text-sm">
           {{
             $t(
-              'folder.restore.warning.message',
+              'common.folder.restore.warning.message',
               'Restoring a folder will make it visible again in the main list.',
             )
           }}
@@ -38,11 +41,11 @@
         <!-- Folder Details -->
         <div class="bg-base-200 mb-6 rounded-lg p-4">
           <h4 class="mb-3 text-base font-medium">
-            {{ $t('folder.restore.details', 'Folder Details') }}
+            {{ $t('common.folder.restore.details', 'Folder Details') }}
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('folder.name', 'Name') }}:</span>
+              <span class="text-secondary">{{ $t('common.folder.name', 'Name') }}:</span>
               <span class="font-medium">{{ folderToRestore.name }}</span>
             </div>
           </div>
@@ -59,7 +62,7 @@
         <Button
           variant="primary"
           icon="fa fa-undo"
-          :label="$t('folder.restore.confirm.button', 'Restore Folder')"
+          :label="$t('common.folder.restore.confirm.button', 'Restore Folder')"
           :loading="isLoading"
           :disabled="isLoading"
           @click="handleRestore"

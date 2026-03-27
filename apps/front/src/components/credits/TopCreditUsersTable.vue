@@ -55,7 +55,7 @@
         <span
           class="bg-primary-light text-primary inline-flex items-center rounded-full px-3 py-1 text-sm font-medium"
         >
-          {{ item.creditsConsumed.toLocaleString() }} {{ $t('credits.usedCredits') }}
+          {{ item.creditsConsumed.toLocaleString() }} {{ $t('settings.credits.usedCredits') }}
         </span>
       </td>
     </template>
@@ -65,7 +65,7 @@
       <div class="p-8 text-center">
         <i class="fa fa-users text-secondary mb-2 text-2xl"></i>
         <p class="text-secondary text-sm">
-          {{ $t('credits.topUsers.noData', 'Aucun utilisateur trouvé') }}
+          {{ $t('settings.credits.topUsers.noData', 'Aucun utilisateur trouvé') }}
         </p>
       </div>
     </template>
@@ -90,9 +90,9 @@ defineProps<Props>()
 const { t } = useI18n()
 
 const fields = computed(() => [
-  { key: 'rank', label: t('credits.topUsers.rank', 'Rang'), class: 'w-16 text-center' },
-  { key: 'user', label: t('credits.topUsers.user', 'Utilisateur') },
-  { key: 'credits', label: t('credits.topUsers.credits', 'Crédits'), class: 'text-right' },
+  { key: 'rank', label: t('settings.credits.topUsers.rank', 'Rang'), class: 'w-16 text-center' },
+  { key: 'user', label: t('settings.credits.topUsers.user', 'Utilisateur') },
+  { key: 'credits', label: t('settings.credits.topUsers.credits', 'Crédits'), class: 'text-right' },
 ])
 
 // Medal background and text colors for top 3

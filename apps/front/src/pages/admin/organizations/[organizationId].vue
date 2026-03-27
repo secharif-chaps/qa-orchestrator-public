@@ -4,7 +4,7 @@
     <div v-if="isLoading" class="bg-base-100 rounded-lg p-8 text-center shadow-sm">
       <div class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
       <p class="text-secondary">
-        {{ $t('organization.loading') }}
+        {{ $t('admin.organization.loading') }}
       </p>
     </div>
 
@@ -23,7 +23,7 @@
         <div>
           <h1 class="text-2xl font-bold">{{ organization.name }}</h1>
           <p class="text-secondary mt-1">
-            {{ $t('organization.detail.description') }}
+            {{ $t('admin.organization.detail.description') }}
           </p>
         </div>
 
@@ -94,22 +94,22 @@ const sectionOptions = computed(() => [
   {
     value: 'profile',
     icon: 'fas fa-building',
-    label: t('organization.tabs.profile'),
+    label: t('admin.organization.tabs.profile'),
   },
   {
     value: 'tokens',
     icon: 'fas fa-coins',
-    label: t('organization.tabs.tokens'),
+    label: t('admin.organization.tabs.tokens'),
   },
   {
     value: 'members',
     icon: 'fas fa-users',
-    label: t('organization.tabs.members'),
+    label: t('admin.organization.tabs.members'),
   },
   {
     value: 'sources',
     icon: 'fas fa-plug',
-    label: t('organization.tabs.sources'),
+    label: t('admin.organization.tabs.sources'),
   },
 ])
 

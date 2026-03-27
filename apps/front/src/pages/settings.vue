@@ -87,7 +87,7 @@ const sections = computed(() => {
     {
       id: 'ai-preferences',
       title: t('settings.tabs.ai-preferences'),
-      description: t('aiPreferences.settings.description'),
+      description: t('settings.aiPreferences.settings.description'),
       icon: 'fas fa-magic',
       bgColor: 'bg-accent-light',
       iconColor: 'text-accent-light-content',

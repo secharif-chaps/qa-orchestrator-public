@@ -13,12 +13,12 @@
           </div>
           <div>
             <h3 class="text-base text-lg font-semibold">
-              {{ $t('company.restore.title', 'Restore Company') }}
+              {{ $t('screen.company.restore.title', 'Restore Company') }}
             </h3>
             <p class="text-secondary text-sm">
               {{
                 $t(
-                  'company.restore.subtitle',
+                  'screen.company.restore.subtitle',
                   'This will move the company back to the active list.',
                 )
               }}
@@ -32,7 +32,7 @@
         <p class="text-secondary mb-4 text-sm">
           {{
             $t(
-              'company.restore.warning.message',
+              'screen.company.restore.warning.message',
               'Restoring a company will make it visible again in the main list.',
             )
           }}
@@ -41,15 +41,15 @@
         <!-- Company Details -->
         <div class="bg-base-200 mb-6 rounded-lg p-4">
           <h4 class="mb-3 text-base font-medium">
-            {{ $t('company.restore.details', 'Company Details') }}
+            {{ $t('screen.company.restore.details', 'Company Details') }}
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('company.name', 'Name') }}:</span>
+              <span class="text-secondary">{{ $t('screen.company.name', 'Name') }}:</span>
               <span class="font-medium">{{ companyToRestore.name }}</span>
             </div>
             <div v-if="companyToRestore.website" class="flex justify-between">
-              <span class="text-secondary">{{ $t('company.website', 'Website') }}:</span>
+              <span class="text-secondary">{{ $t('screen.company.website', 'Website') }}:</span>
               <span class="text-xs">{{ companyToRestore.website }}</span>
             </div>
           </div>
@@ -66,7 +66,7 @@
         <Button
           variant="primary"
           icon="fa fa-undo"
-          :label="$t('company.restore.confirm.button', 'Restore Company')"
+          :label="$t('screen.company.restore.confirm.button', 'Restore Company')"
           :loading="isLoading"
           :disabled="isLoading"
           @click="handleRestore"

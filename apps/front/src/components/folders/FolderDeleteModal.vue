@@ -13,9 +13,11 @@
           <i class="fas fa-trash text-xl text-red-600 dark:text-red-400"></i>
         </div>
         <div>
-          <h3 class="text-lg font-semibold">{{ $t('folder.delete.title', 'Delete Folder') }}</h3>
+          <h3 class="text-lg font-semibold">
+            {{ $t('common.folder.delete.title', 'Delete Folder') }}
+          </h3>
           <p class="text-secondary text-sm">
-            {{ $t('folder.delete.subtitle', 'This action cannot be undone') }}
+            {{ $t('common.folder.delete.subtitle', 'This action cannot be undone') }}
           </p>
         </div>
       </div>
@@ -23,7 +25,7 @@
       <!-- Warning Message -->
       <div class="mb-6">
         <p class="text-secondary mb-3">
-          {{ $t('folder.delete.message', 'Are you sure you want to delete this folder?') }}
+          {{ $t('common.folder.delete.message', 'Are you sure you want to delete this folder?') }}
         </p>
 
         <div class="bg-base-200 border-primary-stroke rounded-lg border p-4">
@@ -38,7 +40,7 @@
               <div class="font-medium">{{ folderToDelete?.name }}</div>
               <div class="text-secondary text-sm">
                 {{
-                  $t('folder.itemCount', {
+                  $t('common.folder.itemCount', {
                     count: folderToDelete?.items?.length || folderToDelete?.items_count || 0,
                   })
                 }}
@@ -50,10 +52,10 @@
         <Alert
           v-if="folderToDelete?.items && folderToDelete.items.length > 0"
           variant="warning"
-          :title="$t('folder.delete.warning.title', 'Items will not be deleted')"
+          :title="$t('common.folder.delete.warning.title', 'Items will not be deleted')"
           :description="
             $t(
-              'folder.delete.warning.message',
+              'common.folder.delete.warning.message',
               'Companies in this folder will remain accessible but will no longer be organized in this folder.',
             )
           "
@@ -65,14 +67,14 @@
       <div class="flex justify-end gap-3">
         <Button
           variant="secondary"
-          :label="$t('folder.delete.cancel', 'Cancel')"
+          :label="$t('common.folder.delete.cancel', 'Cancel')"
           @click="$emit('update:modelValue', false)"
           :disabled="isDeleting"
         />
         <Button
           variant="primary"
           color="danger"
-          :label="$t('folder.delete.confirm', 'Delete Folder')"
+          :label="$t('common.folder.delete.confirm', 'Delete Folder')"
           :loading="isDeleting"
           @click="handleDelete"
         />

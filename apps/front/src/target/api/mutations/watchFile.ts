@@ -48,8 +48,8 @@ export const useUpdateWatchFile = defineMutation(() => {
   const queryCache = useQueryCache()
   const watchFileStore = useWatchFileStore()
   const defaultErrorMessage = {
-    title: t('watch_files.title.error.toast_title'),
-    description: t('watch_files.title.error.generic'),
+    title: t('target.watchFiles.title.error.toast_title'),
+    description: t('target.watchFiles.title.error.generic'),
   }
 
   const { mutate, ...mutation } = useMutation({
@@ -57,7 +57,7 @@ export const useUpdateWatchFile = defineMutation(() => {
       updateWatchFile(id, data, defaultErrorMessage),
     onError() {},
     onSuccess({ id }) {
-      toast.success(t('watch_files.title.success.updated'))
+      toast.success(t('target.watchFiles.title.success.updated'))
       queryCache.invalidateQueries({
         key: WATCH_FILE_QUERY_KEYS.withFilters(watchFileStore.filters),
       })
@@ -78,7 +78,7 @@ export const useDeleteWatchFile = defineMutation(() => {
   const { mutate, ...mutation } = useMutation({
     mutation: (id: string) => deleteWatchFile(id),
     onSuccess() {
-      toast.success(t('watch_files.delete.success'))
+      toast.success(t('target.watchFiles.delete.success'))
       queryCache.invalidateQueries({
         key: WATCH_FILE_QUERY_KEYS.withFilters(watchFileStore.filters),
       })
@@ -94,7 +94,7 @@ export const useChangeWatchFileStatus = (watchFile: WatchFile) => {
   const watchFileStore = useWatchFileStore()
   const statusValue = ref(watchFile.status)
   const defaultErrorMessage = {
-    title: t('watch_files.header_section.status.change.error'),
+    title: t('target.watchFiles.header_section.status.change.error'),
   }
 
   const { mutate, ...mutation } = useMutation({
@@ -104,7 +104,7 @@ export const useChangeWatchFileStatus = (watchFile: WatchFile) => {
       statusValue.value = watchFile.status
     },
     onSuccess(_, { id }) {
-      toast.success(t(`watch_files.header_section.status.change.success`))
+      toast.success(t(`target.watchFiles.header_section.status.change.success`))
       queryCache.invalidateQueries({
         key: WATCH_FILE_QUERY_KEYS.withFilters(watchFileStore.filters),
       })
@@ -125,7 +125,7 @@ export const useToggleWatchFileFavorite = () => {
   const { mutate, ...mutation } = useMutation({
     mutation: (watchFile: WatchFile) => {
       const defaultErrorMessage = {
-        title: t('watch_files.status_change.error_' + !!watchFile.isFavorite),
+        title: t('target.watchFiles.status_change.error_' + !!watchFile.isFavorite),
       }
       return toggleWatchFileFavorite(watchFile.id, !!watchFile.isFavorite, defaultErrorMessage)
     },
@@ -171,7 +171,7 @@ export const useToggleWatchFileFavorite = () => {
     },
     onSuccess(_, { isFavorite, name }) {
       toast.success(
-        t('watch_files.status_change.success_' + isFavorite, {
+        t('target.watchFiles.status_change.success_' + isFavorite, {
           name,
         }),
       )

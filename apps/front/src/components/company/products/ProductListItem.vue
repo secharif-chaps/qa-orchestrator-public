@@ -5,7 +5,7 @@
       <div class="flex-1">
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
         <p class="text-secondary text-sm">
-          {{ t('products.countInCategory', { count: productList.length }) }}
+          {{ t('screen.products.countInCategory', { count: productList.length }) }}
         </p>
       </div>
       <Tag :label="productList.length.toString()" variant="slate" size="sm" />
@@ -20,7 +20,7 @@
         <span class="text-secondary flex-1 capitalize">{{ product }}</span>
         <Tag v-if="isNewProduct(product)" variant="success" size="xs">
           <i class="fa-solid fa-star"></i>
-          {{ t('products.badges.new') }}
+          {{ t('screen.products.badges.new') }}
         </Tag>
       </div>
     </div>

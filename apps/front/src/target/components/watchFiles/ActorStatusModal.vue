@@ -92,7 +92,7 @@
           </Table>
         </div>
         <div v-else class="py-8 text-center text-gray-500">
-          {{ $t('watch_files.actors.no_sources_found') }}
+          {{ $t('target.watchFiles.actors.no_sources_found') }}
         </div>
       </div>
     </template>
@@ -100,7 +100,7 @@
     <template #footer>
       <div class="flex justify-end gap-2">
         <Button variant="secondary" @click="handleClose">
-          {{ $t('watch_files.actors.deactivation_modal.cancel') }}
+          {{ $t('target.watchFiles.actors.deactivation_modal.cancel') }}
         </Button>
         <Button :loading="isLoading" @click="handleConfirm">
           {{ confirmButtonLabel }}
@@ -225,8 +225,8 @@ const disabledSourceTooltipText = computed(() => {
   if (!actor) return ''
 
   return actor.status !== ActorStatus.ACTIVE
-    ? t('watch_files.actors.deactivation_modal.source_already_active')
-    : t('watch_files.actors.deactivation_modal.source_already_inactive')
+    ? t('target.watchFiles.actors.deactivation_modal.source_already_active')
+    : t('target.watchFiles.actors.deactivation_modal.source_already_inactive')
 })
 
 const selectAll = ref<boolean | 'indeterminate'>(false)
@@ -334,10 +334,10 @@ const modalTitle = computed(() => {
   const actorName = actor.actor.label
 
   return isActivating
-    ? t('watch_files.actors.deactivation_modal.activation_modal.title', {
+    ? t('target.watchFiles.actors.deactivation_modal.activation_modal.title', {
         actor: actorName,
       })
-    : t('watch_files.actors.deactivation_modal.title', { actor: actorName })
+    : t('target.watchFiles.actors.deactivation_modal.title', { actor: actorName })
 })
 
 const modalDescription = computed(() => {
@@ -346,8 +346,8 @@ const modalDescription = computed(() => {
   const isActivating = actor.status !== ActorStatus.ACTIVE
 
   return isActivating
-    ? t('watch_files.actors.deactivation_modal.activation_modal.description')
-    : t('watch_files.actors.deactivation_modal.description')
+    ? t('target.watchFiles.actors.deactivation_modal.activation_modal.description')
+    : t('target.watchFiles.actors.deactivation_modal.description')
 })
 
 const confirmButtonLabel = computed(() => {
@@ -378,13 +378,13 @@ const tableColumns = computed(() => {
     },
     {
       key: 'name',
-      label: t('watch_files.actors.deactivation_modal.source_name'),
+      label: t('target.watchFiles.actors.deactivation_modal.source_name'),
       sortable: true,
       class: 'w-4/6',
     },
     {
       key: 'type',
-      label: t('watch_files.actors.deactivation_modal.type'),
+      label: t('target.watchFiles.actors.deactivation_modal.type'),
       sortable: true,
       class: 'w-1/4',
     },
@@ -428,10 +428,10 @@ const getSourceTypeLabel = (type: string | undefined): string => {
   if (!type) return 'Unknown'
 
   if (type.startsWith('social_media:')) {
-    return t('source_types.social_media')
+    return t('target.sourceTypes.social_media')
   }
 
-  const translation = t(`source_types.${type}`)
+  const translation = t(`target.sourceTypes.${type}`)
   if (translation !== `source_types.${type}`) {
     return translation
   }
@@ -467,7 +467,7 @@ const handleConfirm = async () => {
     })
   } catch (error) {
     console.error('Error updating actor status:', error)
-    toast.error(t('watch_files.actors.deactivation_modal.error'))
+    toast.error(t('target.watchFiles.actors.deactivation_modal.error'))
   } finally {
     isLoading.value = false
   }

@@ -11,10 +11,10 @@
         />
       </div>
       <h1 class="text-primary mb-3 text-3xl font-bold">
-        {{ $t('aiPreferences.setup.title') }}
+        {{ $t('settings.aiPreferences.setup.title') }}
       </h1>
       <p class="text-secondary mx-auto max-w-2xl text-base">
-        {{ $t('aiPreferences.setup.description') }}
+        {{ $t('settings.aiPreferences.setup.description') }}
       </p>
     </div>
 
@@ -25,8 +25,8 @@
         <Input
           id="role"
           v-model="form.role"
-          :label="$t('aiPreferences.setup.fields.role.label')"
-          :placeholder="$t('aiPreferences.setup.fields.role.placeholder')"
+          :label="$t('settings.aiPreferences.setup.fields.role.label')"
+          :placeholder="$t('settings.aiPreferences.setup.fields.role.placeholder')"
           :error="errors.role"
           icon="fa-user-tie"
           required
@@ -35,13 +35,13 @@
         <!-- Goals Field -->
         <div class="space-y-2">
           <label for="goals" class="block text-sm font-medium">
-            {{ $t('aiPreferences.setup.fields.goals.label') }}
+            {{ $t('settings.aiPreferences.setup.fields.goals.label') }}
             <span class="text-warning ml-1">*</span>
           </label>
           <textarea
             id="goals"
             v-model="form.goals_text"
-            :placeholder="$t('aiPreferences.setup.fields.goals.placeholder')"
+            :placeholder="$t('settings.aiPreferences.setup.fields.goals.placeholder')"
             :class="[
               'w-full rounded-lg border px-4 py-3 transition-all duration-200',
               'focus:ring-primary-200 focus:border-primary-200 focus:ring-2 focus:outline-none',
@@ -60,7 +60,7 @@
               <span>{{ errors.goals_text }}</span>
             </div>
             <div v-else class="text-secondary text-xs">
-              {{ $t('aiPreferences.setup.fields.goals.helper') }}
+              {{ $t('settings.aiPreferences.setup.fields.goals.helper') }}
             </div>
             <div class="text-secondary text-xs">{{ form.goals_text.length }}/2000</div>
           </div>
@@ -69,13 +69,13 @@
         <!-- Desired Output Field -->
         <div class="space-y-2">
           <label for="desired-output" class="block text-sm font-medium">
-            {{ $t('aiPreferences.setup.fields.desiredOutput.label') }}
+            {{ $t('settings.aiPreferences.setup.fields.desiredOutput.label') }}
             <span class="text-warning ml-1">*</span>
           </label>
           <textarea
             id="desired-output"
             v-model="form.desired_output_text"
-            :placeholder="$t('aiPreferences.setup.fields.desiredOutput.placeholder')"
+            :placeholder="$t('settings.aiPreferences.setup.fields.desiredOutput.placeholder')"
             :class="[
               'w-full rounded-lg border px-4 py-3 transition-all duration-200',
               'focus:ring-primary-200 focus:border-primary-200 focus:ring-2 focus:outline-none',
@@ -99,7 +99,7 @@
               <span>{{ errors.desired_output_text }}</span>
             </div>
             <div v-else class="text-secondary text-xs">
-              {{ $t('aiPreferences.setup.fields.desiredOutput.helper') }}
+              {{ $t('settings.aiPreferences.setup.fields.desiredOutput.helper') }}
             </div>
             <div class="text-secondary text-xs">{{ form.desired_output_text.length }}/2000</div>
           </div>
@@ -108,22 +108,22 @@
         <!-- Documentation Field (Optional) -->
         <div class="space-y-2">
           <label for="documentation" class="block text-sm font-medium">
-            {{ $t('aiPreferences.setup.fields.documentation.label') }}
+            {{ $t('settings.aiPreferences.setup.fields.documentation.label') }}
             <span class="text-secondary ml-2 text-sm font-normal"
-              >({{ $t('aiPreferences.setup.optional') }})</span
+              >({{ $t('settings.aiPreferences.setup.optional') }})</span
             >
           </label>
           <textarea
             id="documentation"
             v-model="form.documentation_text"
-            :placeholder="$t('aiPreferences.setup.fields.documentation.placeholder')"
+            :placeholder="$t('settings.aiPreferences.setup.fields.documentation.placeholder')"
             class="focus:ring-primary-200 focus:border-primary-200 dark:focus:ring-primary-700 dark:focus:border-primary-700 bg-base-100 border-primary-stroke placeholder:text-secondary/60 dark:placeholder:text-sage-300 w-full resize-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:outline-none"
             rows="4"
             maxlength="5000"
           ></textarea>
           <div class="flex items-center justify-between">
             <div class="text-secondary text-xs">
-              {{ $t('aiPreferences.setup.fields.documentation.helper') }}
+              {{ $t('settings.aiPreferences.setup.fields.documentation.helper') }}
             </div>
             <div class="text-secondary text-xs">
               {{ form.documentation_text?.length || 0 }}/5000
@@ -135,7 +135,7 @@
         <Alert
           v-if="successMessage"
           variant="success"
-          :title="$t('aiPreferences.setup.success.title')"
+          :title="$t('settings.aiPreferences.setup.success.title')"
           :description="successMessage"
           icon="fa-check-circle"
         />
@@ -144,7 +144,7 @@
         <Alert
           v-if="errorMessage"
           variant="danger"
-          :title="$t('aiPreferences.setup.error.title')"
+          :title="$t('settings.aiPreferences.setup.error.title')"
           :description="errorMessage"
           icon="fa-exclamation-circle"
         />
@@ -160,7 +160,7 @@
           <Button
             type="submit"
             variant="primary"
-            :label="$t('aiPreferences.setup.actions.save')"
+            :label="$t('settings.aiPreferences.setup.actions.save')"
             :loading="isSaving"
             icon="fa fa-check"
           />
@@ -176,20 +176,20 @@
         </div>
         <div>
           <h3 class="text-info-light-content mb-2 text-base font-semibold">
-            {{ $t('aiPreferences.setup.help.title') }}
+            {{ $t('settings.aiPreferences.setup.help.title') }}
           </h3>
           <ul class="text-info-light-content space-y-2 text-sm">
             <li class="flex items-start gap-2">
               <i class="fa fa-check mt-1 text-xs"></i>
-              <span>{{ $t('aiPreferences.setup.help.tip1') }}</span>
+              <span>{{ $t('settings.aiPreferences.setup.help.tip1') }}</span>
             </li>
             <li class="flex items-start gap-2">
               <i class="fa fa-check mt-1 text-xs"></i>
-              <span>{{ $t('aiPreferences.setup.help.tip2') }}</span>
+              <span>{{ $t('settings.aiPreferences.setup.help.tip2') }}</span>
             </li>
             <li class="flex items-start gap-2">
               <i class="fa fa-check mt-1 text-xs"></i>
-              <span>{{ $t('aiPreferences.setup.help.tip3') }}</span>
+              <span>{{ $t('settings.aiPreferences.setup.help.tip3') }}</span>
             </li>
           </ul>
         </div>
@@ -242,28 +242,28 @@ function validateForm(): boolean {
 
   // Validate role
   if (!form.role.trim()) {
-    errors.role = t('aiPreferences.setup.role.required')
+    errors.role = t('settings.aiPreferences.setup.role.required')
     isValid = false
   } else if (form.role.length > 255) {
-    errors.role = t('aiPreferences.setup.role.tooLong')
+    errors.role = t('settings.aiPreferences.setup.role.tooLong')
     isValid = false
   }
 
   // Validate goals
   if (!form.goals_text.trim()) {
-    errors.goals_text = t('aiPreferences.setup.goals.required')
+    errors.goals_text = t('settings.aiPreferences.setup.goals.required')
     isValid = false
   } else if (form.goals_text.length > 2000) {
-    errors.goals_text = t('aiPreferences.setup.goals.tooLong')
+    errors.goals_text = t('settings.aiPreferences.setup.goals.tooLong')
     isValid = false
   }
 
   // Validate desired output
   if (!form.desired_output_text.trim()) {
-    errors.desired_output_text = t('aiPreferences.setup.desiredOutput.required')
+    errors.desired_output_text = t('settings.aiPreferences.setup.desiredOutput.required')
     isValid = false
   } else if (form.desired_output_text.length > 2000) {
-    errors.desired_output_text = t('aiPreferences.setup.desiredOutput.tooLong')
+    errors.desired_output_text = t('settings.aiPreferences.setup.desiredOutput.tooLong')
     isValid = false
   }
 
@@ -280,7 +280,7 @@ async function handleSubmit() {
 
   // Validate form
   if (!validateForm()) {
-    errorMessage.value = t('aiPreferences.setup.validation.formInvalid')
+    errorMessage.value = t('settings.aiPreferences.setup.validation.formInvalid')
     return
   }
 
@@ -291,7 +291,7 @@ async function handleSubmit() {
     await saveAiPreferences(form)
 
     // Show success message
-    successMessage.value = t('aiPreferences.setup.success.message')
+    successMessage.value = t('settings.aiPreferences.setup.success.message')
 
     // Redirect after 2 seconds
     setTimeout(() => {
@@ -302,9 +302,9 @@ async function handleSubmit() {
     const httpError = error as { status?: number; message?: string }
 
     if (httpError.status === 401) {
-      errorMessage.value = t('aiPreferences.settings.messages.authError')
+      errorMessage.value = t('settings.aiPreferences.settings.messages.authError')
     } else {
-      errorMessage.value = httpError.message || t('aiPreferences.setup.error.message')
+      errorMessage.value = httpError.message || t('settings.aiPreferences.setup.error.message')
     }
   } finally {
     isSaving.value = false

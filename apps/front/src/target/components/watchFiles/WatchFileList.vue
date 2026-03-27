@@ -3,11 +3,11 @@
     <div class="mb-6 flex items-center justify-between">
       <div class="flex items-center gap-4">
         <h1 class="text-2xl font-bold text-gray-900">
-          {{ $t('watch_files.list.title') }}
+          {{ $t('target.watchFiles.list.title') }}
         </h1>
         <RouterLink :to="{ name: RouteNames.WATCH_FILES_NEW }">
           <Button icon="fa-plus">
-            {{ $t('watch_files.new') }}
+            {{ $t('target.watchFiles.new') }}
           </Button>
         </RouterLink>
       </div>
@@ -16,7 +16,7 @@
           id="watch-files-search"
           v-model="searchQuery"
           icon="fa-magnifying-glass"
-          :placeholder="$t('watch_files.list.search_placeholder')"
+          :placeholder="$t('target.watchFiles.list.search_placeholder')"
           class="w-64"
         >
           <button
@@ -41,7 +41,7 @@
         >
           <div>
             <div class="text-sage-800 p-2 text-xs">
-              {{ $t('watch_files.sort.sort_by') }}
+              {{ $t('target.watchFiles.sort.sort_by') }}
             </div>
             <div class="flex flex-col items-start text-sm">
               <div
@@ -72,7 +72,7 @@
           </div>
           <div class="border-t border-gray-100">
             <div class="text-sage-800 p-2 text-xs">
-              {{ $t('watch_files.sort.filter') }}
+              {{ $t('target.watchFiles.sort.filter') }}
             </div>
             <div class="flex flex-col items-start text-sm">
               <div
@@ -87,7 +87,7 @@
                 >
                   <label for="checkbox-favorite-sort" class="flex items-center gap-2 pl-2">
                     <Icon icon="fa-star" class="text-gray-700" />
-                    <span>{{ $t('watch_files.sort.favorites') }}</span>
+                    <span>{{ $t('target.watchFiles.sort.favorites') }}</span>
                   </label>
                 </Checkbox>
               </div>
@@ -103,7 +103,7 @@
                 >
                   <label for="checkbox-archived-sort" class="flex items-center gap-2 pl-2">
                     <Icon icon="fa-box-archive" class="text-gray-700" />
-                    <span>{{ $t('watch_files.sort.archived') }}</span>
+                    <span>{{ $t('target.watchFiles.sort.archived') }}</span>
                   </label>
                 </Checkbox>
               </div>
@@ -117,7 +117,7 @@
       class="flex flex-col items-center justify-center py-16"
     >
       <Icon icon="fa-folder-open" class="mb-4 text-4xl text-gray-300" />
-      <span class="mb-2 text-gray-500">{{ $t('watch_files.empty') }}</span>
+      <span class="mb-2 text-gray-500">{{ $t('target.watchFiles.empty') }}</span>
     </div>
     <div v-else class="space-y-6">
       <div class="shadow-2 border-sage-100 rounded-2xl border bg-white p-6 sm:px-6">
@@ -175,10 +175,10 @@
                 @click.stop
               >
                 {{ item.newContentCount }}
-                {{ $t('watch_files.new_content.documents') }}
+                {{ $t('target.watchFiles.new_content.documents') }}
               </RouterLink>
               <span v-else class="text-sm text-gray-400"
-                >0 {{ $t('watch_files.new_content.documents') }}</span
+                >0 {{ $t('target.watchFiles.new_content.documents') }}</span
               >
             </td>
           </template>
@@ -186,7 +186,7 @@
             <td class="px-2 py-3 text-sm text-gray-900">
               <div class="flex items-center gap-1">
                 <Icon :icon="statusIcon(item.status)" />
-                {{ t(`watch_files.status.${item.status}`) }}
+                {{ t(`target.watchFiles.status.${item.status}`) }}
               </div>
             </td>
           </template>
@@ -217,7 +217,7 @@
           :total="watchFilesTotalItems"
         >
           <template #result>
-            {{ $t('watch_files.pagination.items_per_page') }}
+            {{ $t('target.watchFiles.pagination.items_per_page') }}
           </template>
         </Pagination>
       </div>
@@ -309,16 +309,21 @@ const columns: TableColumn[] = [
   set third argument to true to make the column sortable
   set fourth argument if sort label not the same than column label
   */
-  createColumn('name', t('watch_files.list.columns.name'), true),
-  createColumn('updatedAt', t('watch_files.list.columns.updated_at'), true),
+  createColumn('name', t('target.watchFiles.list.columns.name'), true),
+  createColumn('updatedAt', t('target.watchFiles.list.columns.updated_at'), true),
   createColumn(
     'countAccess',
-    t('watch_files.list.columns.access'),
+    t('target.watchFiles.list.columns.access'),
     true,
-    t('watch_files.sort.access_count'),
+    t('target.watchFiles.sort.access_count'),
   ),
-  //createColumn('newContent', t('watch_files.list.columns.new_content')),
-  createColumn('status', t('watch_files.list.columns.status'), true, t('watch_files.sort.status')),
+  //createColumn('newContent', t('target.watchFiles.list.columns.new_content')),
+  createColumn(
+    'status',
+    t('target.watchFiles.list.columns.status'),
+    true,
+    t('target.watchFiles.sort.status'),
+  ),
   createColumn('actions', ''),
 ]
 
@@ -359,7 +364,7 @@ const {
 watch(error, () => {
   if (error.value) {
     console.error('Error fetching watch files:', error)
-    toast.error(t('watch_files.toast.error.load'))
+    toast.error(t('target.watchFiles.toast.error.load'))
   }
 })
 

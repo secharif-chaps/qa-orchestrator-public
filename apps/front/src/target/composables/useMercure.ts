@@ -115,7 +115,7 @@ export function useMercure() {
     connectionTimer = setTimeout(() => {
       connectionTimer = null
       mercureStore.setDisconnected()
-      toast.warning(t('watch_files.chat.connection_lost'))
+      toast.warning(t('target.watchFiles.chat.connection_lost'))
       hasShownDisconnectToast.value = true
     }, CONNECTION_LOST_DELAY_MS)
   }
@@ -131,7 +131,7 @@ export function useMercure() {
       mercureStore.setConnected()
 
       if (hasShownDisconnectToast.value) {
-        toast.info(t('watch_files.chat.connection_restored'))
+        toast.info(t('target.watchFiles.chat.connection_restored'))
         hasShownDisconnectToast.value = false
       }
     }, CONNECTION_LOST_DELAY_MS)

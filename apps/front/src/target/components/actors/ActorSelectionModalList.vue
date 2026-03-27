@@ -26,7 +26,7 @@
           v-model="typeFilter"
           :options="typeOptions"
           :display-value="typeDisplayValue"
-          :placeholder="$t('watch_files.actors.filters.type')"
+          :placeholder="$t('target.watchFiles.actors.filters.type')"
           :disabled="noActorsToDisplay || !typeOptions.length"
           multiple
           class="h-full"

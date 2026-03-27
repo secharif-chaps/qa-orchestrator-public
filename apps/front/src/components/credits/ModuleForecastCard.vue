@@ -29,7 +29,7 @@
         <button v-if="forecast.enabled" class="text-secondary hover:text-primary transition-colors">
           <i class="fa fa-rotate-right"></i>
         </button>
-        <Tag v-else variant="secondary" size="sm" :label="$t('credits.module.disabled')" />
+        <Tag v-else variant="secondary" size="sm" :label="$t('settings.credits.module.disabled')" />
       </div>
 
       <!-- Enabled state with count -->
@@ -38,7 +38,7 @@
         <div v-if="forecast.cost" class="text-secondary flex items-center gap-2 text-sm">
           <i class="fa fa-circle-info"></i>
           <span>{{
-            $t('credits.module.costPerItem', {
+            $t('settings.credits.module.costPerItem', {
               cost: forecast.cost,
               item: itemLabel,
             })
@@ -46,7 +46,7 @@
         </div>
 
         <!-- Remaining info -->
-        <div class="text-secondary text-sm">{{ $t('credits.module.canCreate') }} :</div>
+        <div class="text-secondary text-sm">{{ $t('settings.credits.module.canCreate') }} :</div>
 
         <!-- Remaining count pill - smaller with white background -->
         <div

@@ -3,7 +3,7 @@
     <template #title>
       <div class="flex w-full items-center justify-between">
         <span class="text-lg text-gray-900">
-          {{ $t('watch_files.sources.selection_modal.title') }}
+          {{ $t('target.watchFiles.sources.selection_modal.title') }}
         </span>
         <button
           class="flex cursor-pointer items-center p-1 text-gray-500 transition-colors hover:text-gray-700"
@@ -33,7 +33,7 @@
       <div class="flex flex-row-reverse gap-3">
         <Button v-if="selectedSources.length > 0" color="primary" @click="confirmSelection">
           {{
-            $t('watch_files.sources.selection_modal.add_sources', {
+            $t('target.watchFiles.sources.selection_modal.add_sources', {
               count: selectedSources.length,
             })
           }}
