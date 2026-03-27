@@ -1,41 +1,37 @@
 <template>
   <div
-    class="group flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 transition-colors"
-    :class="[isActive ? 'bg-sage-700 text-white' : 'hover:bg-sage-800/50 text-sage-200']"
+    class="group text-sage-900 inset-ring-sage-300 flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 inset-ring transition-colors"
+    :class="[
+      isActive
+        ? 'dark:bg-sage-700 bg-sage-50 dark:text-white'
+        : 'dark:hover:bg-sage-800/50 dark:text-sage-200 bg-white hover:inset-ring-2',
+    ]"
     @click="$emit('select', conversation.id)"
   >
-    <!-- Conversation Icon -->
-    <div class="bg-sage-600 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full">
-      <i class="fa fa-comment text-sage-200 text-xs"></i>
-    </div>
+    <Badge icon="fa-comment" fill size="sm" />
 
     <!-- Conversation Info -->
     <div class="min-w-0 flex-1">
       <p class="truncate text-sm font-medium">
         {{ conversation.name || $t('screen.chapse.untitledConversation', 'New conversation') }}
       </p>
-      <p v-if="showDate" class="text-sage-400 truncate text-xs">
+      <p v-if="showDate" class="text-sage-800 dark:text-sage-400 truncate text-xs">
         {{ formattedDate }}
       </p>
     </div>
 
     <!-- Company Context Indicator -->
-    <div
+    <Badge
       v-if="conversation.companies && conversation.companies.length > 0"
-      class="flex flex-shrink-0 items-center gap-1"
-    >
-      <span
-        class="bg-sage-600 text-sage-200 inline-flex h-5 w-5 items-center justify-center rounded-full text-xs"
-        :title="companyNames"
-      >
-        {{ conversation.companies.length }}
-      </span>
-    </div>
+      :number="String(conversation.companies.length)"
+      fill
+      size="sm"
+    />
 
     <!-- Delete Button (visible on hover) -->
     <button
       v-if="deletable"
-      class="hover:bg-error/20 hover:text-error flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full opacity-0 transition-all group-hover:opacity-100"
+      class="bg-error-800 dark:hover:bg-error/20 dark:hover:text-error flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white opacity-0 transition-all group-hover:opacity-100"
       :title="$t('screen.chapse.deleteConversation', 'Delete conversation')"
       @click.stop="$emit('delete', conversation.id)"
     >
@@ -45,8 +41,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { ChapseConversation } from '@/api/chapse'
+import { Badge } from '@owlint/feathers-vue'
+import { computed } from 'vue'
 
 interface Props {
   conversation: ChapseConversation
@@ -80,12 +77,5 @@ const formattedDate = computed(() => {
   } else {
     return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
   }
-})
-
-const companyNames = computed(() => {
-  if (!props.conversation.companies || props.conversation.companies.length === 0) {
-    return ''
-  }
-  return props.conversation.companies.map((c) => c.name).join(', ')
 })
 </script>

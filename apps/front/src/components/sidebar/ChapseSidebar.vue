@@ -327,7 +327,7 @@ interface Suggestion {
 
 const suggestions = computed<Suggestion[]>(() => {
   const routeName = route.name as string
-  const suggestionsTranslationPrefix = 'sidebar.chapse.suggestions'
+  const suggestionsTranslationPrefix = 'common.sidebar.chapse.suggestions'
 
   if (routeName === '/(home)') {
     return [
