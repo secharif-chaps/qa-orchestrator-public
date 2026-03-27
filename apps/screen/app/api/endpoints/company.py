@@ -6,6 +6,8 @@ This module provides endpoints for:
 - CSV import/validation
 """
 
+import asyncio
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
 from pydantic import ValidationError
@@ -67,11 +69,34 @@ async def get_recent_companies(
         username=org_context.username,
     )
 
-    return service.get_recent_companies(
+    companies = service.get_recent_companies(
         organization_id=org_context.organization_id,
         limit=limit,
         accessible_company_ids=accessible_company_ids,
     )
+
+    # Enrich companies with folder info from global-service (parallel calls)
+    async def fetch_folder_id(company: CompanyResponse) -> tuple[int | None, str | None]:
+        if company.id is None:
+            return None, None
+        folder_id = await global_service.get_company_folder_id(
+            org_id=org_context.organization_id,
+            company_id=company.id,
+            user_id=org_context.user_id,
+            username=org_context.username,
+        )
+        return company.id, folder_id
+
+    folder_results = await asyncio.gather(
+        *(fetch_folder_id(c) for c in companies)
+    )
+    folder_map = {cid: fid for cid, fid in folder_results if cid is not None}
+
+    for company in companies:
+        if company.id in folder_map:
+            company.folder_id = folder_map[company.id]
+
+    return companies
 
 
 @router.get("/", response_model=PaginatedResponse[CompanyResponse])
