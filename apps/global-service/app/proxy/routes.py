@@ -1,7 +1,9 @@
 """
-Proxy routes for forwarding /api/* requests to the monolith (Screen service).
+Proxy routes for forwarding /api/* requests to backend services.
 
 This module implements a transparent proxy that:
+- Resolves the target backend via ModuleRegistry (OpenAPI-based autodiscovery)
+- Falls back to Screen for unresolved routes (transition period)
 - Validates user JWT tokens at the gateway using Keycloak
 - Creates short-lived internal JWTs for secure backend communication
 - Forwards all /api/* requests with internal Authorization header
@@ -9,13 +11,14 @@ This module implements a transparent proxy that:
 - Preserves response status, headers, body
 - Streams request AND response bodies (bidirectional streaming, memory-efficient)
 - Handles streaming responses (SSE, NDJSON, JSON streaming) with dedicated client
-- Logs requests/responses for debugging
 
 Security:
 - External JWT validated against Keycloak public key
 - Internal JWT (60s TTL) signed with shared secret
 - Backend verifies internal JWT, no re-validation with Keycloak needed
 """
+
+from __future__ import annotations
 
 import re
 import time
@@ -26,11 +29,63 @@ from fastapi import APIRouter, Request, Response
 from fastapi.responses import StreamingResponse
 
 from app.core.auth_middleware import auth_middleware, extract_organization_info
+from app.core.config import settings
 from app.core.correlation import CORRELATION_HEADER
 from app.core.logging_config import get_logger
 from app.proxy.client import get_proxy_client, get_streaming_client
+from app.proxy.registry import ModuleDefinition, ModuleName, ModuleRegistry
 
 logger = get_logger(__name__)
+
+# Module registry — initialized at startup via init_module_registry()
+_registry: ModuleRegistry | None = None
+
+
+def get_module_registry() -> ModuleRegistry | None:
+    """Get the global module registry (None if not yet initialized)."""
+    return _registry
+
+
+async def init_module_registry() -> ModuleRegistry:
+    """Initialize the module registry with configured backends.
+
+    Called at startup from main.py. Discovers all backend schemas.
+    """
+    global _registry
+    backends = {"screen": settings.SCREEN_BASE_URL}
+    _registry = ModuleRegistry(backends=backends)
+    await _registry.discover_all()
+    return _registry
+
+
+# Pre-computed fallback module to avoid allocating a dataclass per request
+_screen_fallback: ModuleDefinition | None = None
+
+
+def _get_screen_fallback() -> ModuleDefinition:
+    """Return a cached screen fallback module (lazy init)."""
+    global _screen_fallback
+    if _screen_fallback is None:
+        _screen_fallback = ModuleDefinition(
+            name=ModuleName.SCREEN,
+            backend_url=settings.SCREEN_BASE_URL.rstrip("/"),
+        )
+    return _screen_fallback
+
+
+def _resolve_backend(registry: ModuleRegistry | None, path: str, method: str) -> tuple[ModuleDefinition, str]:
+    """Resolve which backend should handle this request.
+
+    Tries the registry first. If no match, falls back to screen
+    (catch-all during transition period).
+    """
+    if registry:
+        result = registry.resolve(path, method)
+        if result:
+            return result
+
+    return _get_screen_fallback(), f"/api/{path}"
+
 
 router = APIRouter()
 
@@ -75,20 +130,12 @@ EXCLUDED_RESPONSE_HEADERS = {
 
 def filter_request_headers(headers: dict) -> dict:
     """Filter out hop-by-hop headers from request."""
-    return {
-        key: value
-        for key, value in headers.items()
-        if key.lower() not in EXCLUDED_REQUEST_HEADERS
-    }
+    return {key: value for key, value in headers.items() if key.lower() not in EXCLUDED_REQUEST_HEADERS}
 
 
 def filter_response_headers(headers: httpx.Headers) -> dict:
     """Filter out hop-by-hop headers from response."""
-    return {
-        key: value
-        for key, value in headers.items()
-        if key.lower() not in EXCLUDED_RESPONSE_HEADERS
-    }
+    return {key: value for key, value in headers.items() if key.lower() not in EXCLUDED_RESPONSE_HEADERS}
 
 
 def has_request_body(request: Request) -> bool:
@@ -106,9 +153,9 @@ def has_request_body(request: Request) -> bool:
 
 # Content types that require streaming with dedicated client (long-lived connections)
 STREAMING_CONTENT_TYPES = {
-    "text/event-stream",      # Server-Sent Events (SSE)
-    "application/x-ndjson",   # Newline Delimited JSON (used by OpenAI, etc.)
-    "application/stream+json", # JSON streaming
+    "text/event-stream",  # Server-Sent Events (SSE)
+    "application/x-ndjson",  # Newline Delimited JSON (used by OpenAI, etc.)
+    "application/stream+json",  # JSON streaming
 }
 
 
@@ -198,16 +245,20 @@ async def _check_company_folder_access(path: str, method: str, user) -> Response
 )
 async def proxy_request(request: Request, path: str) -> Response:
     """
-    Proxy all requests to the backend monolith.
+    Proxy requests to the appropriate backend service.
 
-    This endpoint:
-    1. Validates JWT token at the gateway (returns 401 if invalid)
-    2. Adds internal trust headers for the backend
-    3. Forwards all HTTP methods to the backend service
-    4. Preserves headers, body, query parameters
-    5. Handles streaming responses (SSE)
+    Pipeline:
+    1. Resolve backend via ModuleRegistry (fallback: screen)
+    2. Validate JWT token at the gateway (returns 401 if invalid)
+    3. Add internal trust headers for the backend
+    4. Forward request preserving headers, body, query parameters
+    5. Handle streaming responses (SSE)
     """
     start_time = time.time()
+
+    # Phase 0: Resolve which backend handles this path
+    module, backend_path = _resolve_backend(_registry, path, request.method)
+    backend_url = module.backend_url
 
     # Phase 1: Validate JWT at gateway
     is_valid, user, internal_headers = await auth_middleware.validate_request(request, path)
@@ -226,8 +277,8 @@ async def proxy_request(request: Request, path: str) -> Response:
     # Log authenticated request
     username = user.preferred_username if user else "anonymous"
     logger.info(
-        f"🔐 AUTH OK: {username} → {request.method} /api/{path}",
-        extra={"path": path, "method": request.method, "user": username},
+        f"🔐 AUTH OK: {username} → {request.method} /api/{path} → {module.name}",
+        extra={"path": path, "method": request.method, "user": username, "backend": module.name},
     )
 
     # Folder-based access control at the gateway (before proxying to screen)
@@ -236,18 +287,17 @@ async def proxy_request(request: Request, path: str) -> Response:
         return denied
 
     # Build the target URL
-    target_path = f"/api/{path}"
+    target_path = backend_path
     if request.url.query:
         target_path = f"{target_path}?{request.url.query}"
 
     # Prepare headers: filter hop-by-hop + add internal trust headers
     headers = filter_request_headers(dict(request.headers))
     # Remove any existing Authorization header (case-insensitive) before adding internal JWT
-    # Python dicts are case-sensitive, but HTTP headers are case-insensitive
     for key in list(headers.keys()):
         if key.lower() == "authorization":
             del headers[key]
-    headers.update(internal_headers)  # Add gateway internal headers with correct case
+    headers.update(internal_headers)
 
     # Propagate correlation ID to backend
     correlation_id = getattr(request.state, "correlation_id", None)
@@ -257,36 +307,38 @@ async def proxy_request(request: Request, path: str) -> Response:
     # Check if request has body (without reading it into memory)
     request_has_body = has_request_body(request)
 
-    # Check if streaming request (SSE, NDJSON, etc.) - cache result to avoid double check
+    # Check if streaming request (SSE, NDJSON, etc.)
     is_streaming = is_streaming_request(request)
 
     # Log the request
     logger.info(
-        f"🔄 PROXY → {request.method} {target_path}",
+        f"🔄 PROXY → {module.name} {request.method} {target_path}",
         extra={
             "method": request.method,
             "path": target_path,
+            "backend": module.name,
+            "backend_url": backend_url,
             "has_body": request_has_body,
             "is_streaming": is_streaming,
         },
     )
 
     try:
-        # Handle streaming requests with dedicated client (long-lived connection)
         if is_streaming:
             return await _handle_streaming_request(
                 request=request,
                 target_path=target_path,
-                headers=headers,  # Already includes internal headers
+                headers=headers,
                 start_time=start_time,
+                backend_url=backend_url,
             )
 
-        # Regular request with bidirectional streaming (request + response bodies streamed)
         return await _handle_regular_request(
             request=request,
             target_path=target_path,
             headers=headers,
             start_time=start_time,
+            backend_url=backend_url,
         )
 
     except httpx.TimeoutException as e:
@@ -331,6 +383,7 @@ async def _handle_regular_request(
     target_path: str,
     headers: dict,
     start_time: float,
+    backend_url: str | None = None,
 ) -> Response:
     """
     Handle regular requests with full bidirectional streaming.
@@ -338,7 +391,7 @@ async def _handle_regular_request(
     Both request and response bodies are streamed without loading into RAM.
     This is memory-efficient for large file uploads AND large file downloads.
     """
-    client = await get_proxy_client()
+    client = await get_proxy_client(backend_url)
 
     # Build the httpx request with streaming body
     backend_request = client.build_request(
@@ -385,6 +438,7 @@ async def _handle_streaming_request(
     target_path: str,
     headers: dict,
     start_time: float,
+    backend_url: str | None = None,
 ) -> Response:
     """
     Handle streaming requests (SSE, NDJSON, etc.) with dedicated client.
@@ -409,7 +463,7 @@ async def _handle_streaming_request(
 
     async def stream_generator() -> AsyncGenerator[bytes, None]:
         """Generate streaming events from backend."""
-        async with get_streaming_client() as client:
+        async with get_streaming_client(backend_url) as client:
             try:
                 async with client.stream(
                     method=request.method,
