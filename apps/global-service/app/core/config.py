@@ -1,4 +1,3 @@
-
 from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 
@@ -10,20 +9,26 @@ class Settings(BaseSettings):
     SCREEN_BASE_URL: str = "http://screen:8000"  # Internal Docker service name for screen backend
     KEYCLOAK_PUBLIC_URL: str = "http://localhost:8080"  # Public Keycloak URL for Swagger UI OAuth
 
+    # Public Keycloak URL for Swagger UI OAuth flows
+    KEYCLOAK_PUBLIC_URL: str = "http://localhost:8080"
+
+    # Token lock timeout (seconds) for the lock/unlock pattern
+    TOKEN_LOCK_TIMEOUT_SECONDS: int = 30
+
     # GRPC settings
     GRPC_PORT: int = 50051
-    
+
     # Logging settings
     LOG_LEVEL: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
     # Database settings
     DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/global_db"
-    
+
     # CORS settings (comma-separated list of allowed origins)
     CORS_ORIGINS: str = "http://localhost"
-    
+
     # Keycloak settings
-    
+
     KEYCLOAK_SERVER_URL: str = "https://keycloak.preprod.chapsmind.com"
     KEYCLOAK_REALM: str = "mint-preprod"
     KEYCLOAK_CLIENT_ID: str = "mint-back"
@@ -31,7 +36,7 @@ class Settings(BaseSettings):
     KEYCLOAK_CALLBACK_URI: str = "http://localhost/callback"
     KEYCLOAK_ADMIN_CLIENT_ID: str = "admin-cli"
     KEYCLOAK_ADMIN_CLIENT_SECRET: str = "admin-cli-secret"
-    
+
     # SQLAlchemy tuning
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 20
