@@ -60,7 +60,7 @@ function createEngine(projectId) {
 async function cli() {
   const args = parseArgs(process.argv.slice(2));
 
-  if (args.help || (!args.agent && !args.workflow)) {
+  if (args.help || (!args.agent && !args.workflow && !args["list-agents"] && !args["list-workflows"])) {
     console.log(`
 QA Orchestrator — Agentic QA Testing System
 
@@ -181,4 +181,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { createEngine, PROJECTS, ALL_AGENTS, workflows };
+module.exports = { createEngine, PROJECTS, ALL_AGENTS, workflows, cli };
