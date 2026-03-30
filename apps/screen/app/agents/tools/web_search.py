@@ -104,6 +104,40 @@ def _extract_function_calls(response) -> list[dict]:
     return calls
 
 
+def _make_strict_compatible(schema: dict[str, Any]) -> dict[str, Any]:
+    """Recursively patch a JSON schema for OpenAI strict mode.
+
+    OpenAI strict structured outputs require:
+    - Every object must have "required" listing ALL properties
+    - Every object must have "additionalProperties": false
+    - No "default" or "title" keys (unsupported by strict mode)
+    These rules apply at every nesting level, including $defs.
+    """
+    if isinstance(schema, dict):
+        # Strip keys unsupported by OpenAI strict mode
+        for unsupported in ("default", "title"):
+            schema.pop(unsupported, None)
+
+        if schema.get("type") == "object" and "properties" in schema:
+            schema["required"] = list(schema["properties"].keys())
+            schema["additionalProperties"] = False
+            for prop in schema["properties"].values():
+                _make_strict_compatible(prop)
+        # Handle anyOf / oneOf (Pydantic uses these for Optional types)
+        for key in ("anyOf", "oneOf", "allOf"):
+            if key in schema:
+                for variant in schema[key]:
+                    _make_strict_compatible(variant)
+        # Handle items in arrays
+        if "items" in schema:
+            _make_strict_compatible(schema["items"])
+        # Handle $defs (shared model definitions)
+        if "$defs" in schema:
+            for definition in schema["$defs"].values():
+                _make_strict_compatible(definition)
+    return schema
+
+
 def _build_text_format(output_schema: type[BaseModel] | None) -> dict[str, Any] | None:
     """Build OpenAI text.format config from a Pydantic schema.
 
@@ -113,6 +147,7 @@ def _build_text_format(output_schema: type[BaseModel] | None) -> dict[str, Any] 
         return None
 
     json_schema = output_schema.model_json_schema()
+    _make_strict_compatible(json_schema)
     return {
         "format": {
             "type": "json_schema",
@@ -179,8 +214,14 @@ async def web_search_query(
     if function_tools:
         tools.extend(function_tools)
 
-    # Build structured output text format
-    text_format = _build_text_format(output_schema)
+    # Skip structured output when function tools present (OpenAI API limitation:
+    # text.format json_schema conflicts with function tool definitions)
+    if function_tools:
+        text_format = None
+    elif output_schema:
+        text_format = _build_text_format(output_schema)
+    else:
+        text_format = None
 
     start_time = time.monotonic()
 
@@ -212,7 +253,8 @@ async def web_search_query(
                         create_kwargs["tools"] = tools
                         response = await client.responses.create(**create_kwargs)
                     elif text_format and "text" in str(e).lower() and attempt == 0:
-                        # Structured output not supported, retry without it
+                        # Safety net: structured output rejected by API, retry without it.
+                        # Primary guard is the upfront skip when function_tools are present.
                         logger.info(f"Structured output not supported for {agent_name}, retrying without")
                         create_kwargs.pop("text", None)
                         text_format = None
@@ -239,6 +281,10 @@ async def web_search_query(
     # Accumulate tokens across function call iterations
     total_input_tokens = getattr(response.usage, "input_tokens", 0) if response.usage else 0
     total_output_tokens = getattr(response.usage, "output_tokens", 0) if response.usage else 0
+
+    # Track sources from intermediate responses (tool loop) so they aren't lost
+    # when the reformatting pass replaces the final response object
+    intermediate_sources: set[str] = set()
 
     # Handle function tool calls in a conversation loop
     if function_handler:
@@ -283,6 +329,38 @@ async def web_search_query(
                 total_input_tokens += getattr(response.usage, "input_tokens", 0)
                 total_output_tokens += getattr(response.usage, "output_tokens", 0)
 
+            # Collect source URLs from intermediate responses before they're replaced
+            for item in response.output:
+                if item.type == "message":
+                    for content in item.content:
+                        if content.type == "output_text" and hasattr(content, "annotations") and content.annotations:
+                            for annotation in content.annotations:
+                                if hasattr(annotation, "url") and annotation.url:
+                                    intermediate_sources.add(annotation.url)
+
+    # Reformatting pass: enforce structured output after function tool loop.
+    # With no tools param, text.format works without conflict.
+    if function_tools and output_schema:
+        reformat_text = _build_text_format(output_schema)
+        logger.info(
+            f"Running reformatting pass for {agent_name} to enforce structured output",
+            extra={"agent_name": agent_name},
+        )
+        async with semaphore:
+            response = await client.responses.create(
+                model=settings.LLM_MODEL,
+                previous_response_id=response.id,
+                input=(
+                    "Based on all the research you have gathered, produce your final answer "
+                    "as a JSON object strictly matching the required schema. "
+                    "Include only the JSON, no other text."
+                ),
+                text=reformat_text,
+            )
+        if response.usage:
+            total_input_tokens += getattr(response.usage, "input_tokens", 0)
+            total_output_tokens += getattr(response.usage, "output_tokens", 0)
+
     duration_ms = int((time.monotonic() - start_time) * 1000)
 
     # Extract text and sources from final response
@@ -309,6 +387,9 @@ async def web_search_query(
     # Extract additional URLs from the data itself
     data_urls = _extract_urls_from_data(data)
     sources.update(data_urls)
+
+    # Merge sources collected during the function tool loop
+    sources.update(intermediate_sources)
 
     logger.info(
         f"Web search completed for {agent_name}",

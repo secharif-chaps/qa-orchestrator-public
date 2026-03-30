@@ -173,7 +173,7 @@ class ModuleRegistry:
         logger.info(
             "Discovered module",
             extra={
-                "module": name,
+                "module_name": name,
                 "routes": len(module_def.routes),
                 "url": backend_url,
             },

@@ -11,6 +11,7 @@ from openai import RateLimitError
 
 from app.agents.tools.web_search import (
     _extract_urls_from_data,
+    _make_strict_compatible,
     _parse_json_response,
     web_search_query,
 )
@@ -133,6 +134,147 @@ class TestExtractUrlsFromData:
         urls = _extract_urls_from_data(data)
         assert "http://plain.com" in urls
         assert "https://secure.com" in urls
+
+
+# ---------------------------------------------------------------------------
+# TestMakeStrictCompatible
+# ---------------------------------------------------------------------------
+
+
+class TestMakeStrictCompatible:
+    """Tests for _make_strict_compatible JSON schema patching."""
+
+    def test_adds_required_for_all_properties(self):
+        schema = {
+            "type": "object",
+            "properties": {"a": {"type": "string"}, "b": {"type": "integer"}},
+        }
+        result = _make_strict_compatible(schema)
+        assert set(result["required"]) == {"a", "b"}
+        assert result["additionalProperties"] is False
+
+    def test_patches_nested_defs(self):
+        schema = {
+            "type": "object",
+            "properties": {"x": {"$ref": "#/$defs/Inner"}},
+            "$defs": {
+                "Inner": {
+                    "type": "object",
+                    "properties": {"val": {"type": "string"}, "src": {"type": "string"}},
+                }
+            },
+        }
+        result = _make_strict_compatible(schema)
+        inner = result["$defs"]["Inner"]
+        assert set(inner["required"]) == {"val", "src"}
+        assert inner["additionalProperties"] is False
+
+    def test_patches_array_items(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {"name": {"type": "string"}},
+                    },
+                }
+            },
+        }
+        result = _make_strict_compatible(schema)
+        assert result["properties"]["items"]["items"]["required"] == ["name"]
+
+    def test_strips_default_and_title(self):
+        """OpenAI strict mode rejects 'default' and 'title' keys."""
+        schema = {
+            "title": "MyModel",
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "default": "unknown", "title": "Name"},
+                "nested": {
+                    "type": "object",
+                    "title": "Nested",
+                    "properties": {
+                        "val": {"type": "string", "default": None, "title": "Val"},
+                    },
+                },
+            },
+            "$defs": {
+                "Inner": {
+                    "title": "Inner",
+                    "type": "object",
+                    "properties": {"x": {"type": "string", "default": "", "title": "X"}},
+                }
+            },
+        }
+        result = _make_strict_compatible(schema)
+        # Top-level
+        assert "title" not in result
+        assert "default" not in result
+        # Properties
+        assert "default" not in result["properties"]["name"]
+        assert "title" not in result["properties"]["name"]
+        # Nested object
+        assert "title" not in result["properties"]["nested"]
+        assert "default" not in result["properties"]["nested"]["properties"]["val"]
+        assert "title" not in result["properties"]["nested"]["properties"]["val"]
+        # $defs
+        inner = result["$defs"]["Inner"]
+        assert "title" not in inner
+        assert "default" not in inner["properties"]["x"]
+        assert "title" not in inner["properties"]["x"]
+
+    def test_real_schema_all_required(self):
+        """All agent schemas produce valid strict-mode output."""
+        from app.agents.schemas import AGENT_OUTPUT_SCHEMAS
+        from app.agents.tools.web_search import _build_text_format
+
+        for name, schema_cls in AGENT_OUTPUT_SCHEMAS.items():
+            fmt = _build_text_format(schema_cls)
+            schema = fmt["format"]["schema"]
+            # Check top-level
+            if "properties" in schema:
+                assert set(schema["required"]) == set(schema["properties"].keys()), (
+                    f"{name}: top-level required mismatch"
+                )
+            # Check $defs
+            for def_name, defn in schema.get("$defs", {}).items():
+                if defn.get("type") == "object" and "properties" in defn:
+                    assert set(defn["required"]) == set(defn["properties"].keys()), (
+                        f"{name}.{def_name}: required mismatch"
+                    )
+
+    def test_real_schema_no_unsupported_keys(self):
+        """No agent schema contains default/title after patching."""
+        from app.agents.schemas import AGENT_OUTPUT_SCHEMAS
+        from app.agents.tools.web_search import _build_text_format
+
+        def _check_schema_node(node, path=""):
+            """Check a single JSON-schema node for unsupported keys."""
+            if not isinstance(node, dict):
+                return
+            for bad_key in ("default", "title"):
+                assert bad_key not in node, f"{path}: found unsupported key '{bad_key}'"
+            # Recurse into properties *values* (each value is a schema node)
+            if "properties" in node:
+                for prop_name, prop_schema in node["properties"].items():
+                    _check_schema_node(prop_schema, f"{path}.properties.{prop_name}")
+            # Recurse into $defs values
+            for def_name, defn in node.get("$defs", {}).items():
+                _check_schema_node(defn, f"{path}.$defs.{def_name}")
+            # Recurse into anyOf/oneOf/allOf variants
+            for key in ("anyOf", "oneOf", "allOf"):
+                for i, variant in enumerate(node.get(key, [])):
+                    _check_schema_node(variant, f"{path}.{key}[{i}]")
+            # Recurse into array items
+            if "items" in node and isinstance(node["items"], dict):
+                _check_schema_node(node["items"], f"{path}.items")
+
+        for name, schema_cls in AGENT_OUTPUT_SCHEMAS.items():
+            fmt = _build_text_format(schema_cls)
+            schema = fmt["format"]["schema"]
+            _check_schema_node(schema, name)
 
 
 # ---------------------------------------------------------------------------
@@ -331,3 +473,228 @@ class TestWebSearchQuery:
 
         assert result["data"]["insights"] == "test"
         assert mock_client.responses.create.call_count == 2
+
+
+# ---------------------------------------------------------------------------
+# TestWebSearchQueryWithFunctionTools
+# ---------------------------------------------------------------------------
+
+
+class TestWebSearchQueryWithFunctionTools:
+    """Tests for function tool + structured output interaction."""
+
+    SAMPLE_FUNCTION_TOOLS = [
+        {
+            "type": "function",
+            "name": "get_local_data",
+            "description": "Get local data",
+            "parameters": {"type": "object", "properties": {"key": {"type": "string"}}},
+        }
+    ]
+
+    @staticmethod
+    def _make_function_call_response(call_id="call_1", name="get_local_data", arguments='{"key": "v"}', **usage_kw):
+        """Build a mock response containing a function_call output item."""
+        fc_item = MagicMock()
+        fc_item.type = "function_call"
+        fc_item.call_id = call_id
+        fc_item.name = name
+        fc_item.arguments = arguments
+
+        usage = MagicMock()
+        usage.input_tokens = usage_kw.get("input_tokens", 80)
+        usage.output_tokens = usage_kw.get("output_tokens", 30)
+
+        resp = MagicMock()
+        resp.output = [fc_item]
+        resp.usage = usage
+        resp.id = f"resp_{call_id}"
+        return resp
+
+    @staticmethod
+    def _make_message_response(text, annotations=None, input_tokens=60, output_tokens=40, resp_id="resp_msg"):
+        """Build a mock response containing a message output item."""
+        annotation_objs = []
+        for url in annotations or []:
+            ann = MagicMock()
+            ann.url = url
+            annotation_objs.append(ann)
+
+        content = MagicMock()
+        content.type = "output_text"
+        content.text = text
+        content.annotations = annotation_objs
+
+        message = MagicMock()
+        message.type = "message"
+        message.content = [content]
+
+        usage = MagicMock()
+        usage.input_tokens = input_tokens
+        usage.output_tokens = output_tokens
+
+        resp = MagicMock()
+        resp.output = [message]
+        resp.usage = usage
+        resp.id = resp_id
+        return resp
+
+    @pytest.mark.asyncio
+    @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
+    @patch("app.agents.tools.web_search.get_responses_client")
+    async def test_function_tools_skips_text_format_upfront(self, mock_get_client, mock_sem):
+        """Initial API call must NOT include 'text' key when function_tools are present."""
+        from app.agents.schemas import ProfileAgentOutput
+
+        client = AsyncMock()
+        mock_get_client.return_value = client
+
+        # Single message response (no function calls) so the loop exits immediately
+        msg_resp = self._make_message_response(text='{"insights": "test", "groupName": null}')
+        client.responses.create = AsyncMock(return_value=msg_resp)
+
+        await web_search_query(
+            system_prompt="test",
+            user_query="query",
+            agent_name="team",
+            function_tools=self.SAMPLE_FUNCTION_TOOLS,
+            function_handler=lambda args: '{"result": "ok"}',
+            output_schema=ProfileAgentOutput,
+        )
+
+        first_call_kwargs = client.responses.create.call_args_list[0][1]
+        assert "text" not in first_call_kwargs, "First call should NOT include text format with function tools"
+
+    @pytest.mark.asyncio
+    @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
+    @patch("app.agents.tools.web_search.get_responses_client")
+    async def test_reformatting_pass_called_after_tool_loop(self, mock_get_client, mock_sem):
+        """After function tool loop, a reformatting call enforces structured output."""
+        from app.agents.schemas import ProfileAgentOutput
+
+        client = AsyncMock()
+        mock_get_client.return_value = client
+
+        # Call 1: initial → returns function call
+        fc_resp = self._make_function_call_response()
+        # Call 2: function output → returns message (no more function calls)
+        msg_resp = self._make_message_response(text="Some prose about the company")
+        # Call 3: reformatting pass → returns structured JSON
+        reformat_resp = self._make_message_response(
+            text='{"insights": "structured", "groupName": null}',
+            resp_id="resp_reformat",
+        )
+
+        client.responses.create = AsyncMock(side_effect=[fc_resp, msg_resp, reformat_resp])
+
+        result = await web_search_query(
+            system_prompt="test",
+            user_query="query",
+            agent_name="team",
+            function_tools=self.SAMPLE_FUNCTION_TOOLS,
+            function_handler=lambda args: '{"result": "ok"}',
+            output_schema=ProfileAgentOutput,
+        )
+
+        assert client.responses.create.call_count == 3
+
+        # Reformatting call (3rd) should have text format but NO tools
+        reformat_kwargs = client.responses.create.call_args_list[2][1]
+        assert "text" in reformat_kwargs, "Reformatting call must include text format"
+        assert "tools" not in reformat_kwargs, "Reformatting call must NOT include tools"
+
+        assert result["data"]["insights"] == "structured"
+
+    @pytest.mark.asyncio
+    @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
+    @patch("app.agents.tools.web_search.get_responses_client")
+    async def test_reformatting_pass_token_accumulation(self, mock_get_client, mock_sem):
+        """Tokens from the reformatting pass are accumulated in totals."""
+        from app.agents.schemas import ProfileAgentOutput
+
+        client = AsyncMock()
+        mock_get_client.return_value = client
+
+        # Initial: 100 in, 50 out
+        fc_resp = self._make_function_call_response(input_tokens=100, output_tokens=50)
+        # Tool loop response: 80 in, 30 out
+        msg_resp = self._make_message_response(text="prose", input_tokens=80, output_tokens=30)
+        # Reformatting: 60 in, 40 out
+        reformat_resp = self._make_message_response(
+            text='{"insights": "ok", "groupName": null}', input_tokens=60, output_tokens=40
+        )
+
+        client.responses.create = AsyncMock(side_effect=[fc_resp, msg_resp, reformat_resp])
+
+        result = await web_search_query(
+            system_prompt="test",
+            user_query="query",
+            agent_name="team",
+            function_tools=self.SAMPLE_FUNCTION_TOOLS,
+            function_handler=lambda args: '{"result": "ok"}',
+            output_schema=ProfileAgentOutput,
+        )
+
+        assert result["input_tokens"] == 100 + 80 + 60
+        assert result["output_tokens"] == 50 + 30 + 40
+
+    @pytest.mark.asyncio
+    @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
+    @patch("app.agents.tools.web_search.get_responses_client")
+    async def test_no_reformatting_without_output_schema(self, mock_get_client, mock_sem):
+        """No reformatting pass when output_schema is None."""
+        client = AsyncMock()
+        mock_get_client.return_value = client
+
+        fc_resp = self._make_function_call_response()
+        msg_resp = self._make_message_response(text='{"key": "value"}')
+
+        client.responses.create = AsyncMock(side_effect=[fc_resp, msg_resp])
+
+        await web_search_query(
+            system_prompt="test",
+            user_query="query",
+            agent_name="team",
+            function_tools=self.SAMPLE_FUNCTION_TOOLS,
+            function_handler=lambda args: '{"result": "ok"}',
+            output_schema=None,
+        )
+
+        # Only 2 calls: initial + tool loop response, no reformatting
+        assert client.responses.create.call_count == 2
+
+    @pytest.mark.asyncio
+    @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
+    @patch("app.agents.tools.web_search.get_responses_client")
+    async def test_sources_accumulated_from_intermediate_responses(self, mock_get_client, mock_sem):
+        """URLs from tool-loop intermediate responses are preserved in final sources."""
+        from app.agents.schemas import ProfileAgentOutput
+
+        client = AsyncMock()
+        mock_get_client.return_value = client
+
+        fc_resp = self._make_function_call_response()
+        # Intermediate response has annotation URLs
+        msg_resp = self._make_message_response(
+            text="Company info from web",
+            annotations=["https://intermediate-source.com/page"],
+        )
+        # Reformatting response has its own annotation
+        reformat_resp = self._make_message_response(
+            text='{"insights": "ok", "groupName": null}',
+            annotations=["https://reformat-source.com/data"],
+        )
+
+        client.responses.create = AsyncMock(side_effect=[fc_resp, msg_resp, reformat_resp])
+
+        result = await web_search_query(
+            system_prompt="test",
+            user_query="query",
+            agent_name="team",
+            function_tools=self.SAMPLE_FUNCTION_TOOLS,
+            function_handler=lambda args: '{"result": "ok"}',
+            output_schema=ProfileAgentOutput,
+        )
+
+        assert "https://intermediate-source.com/page" in result["sources"]
+        assert "https://reformat-source.com/data" in result["sources"]
