@@ -4,10 +4,10 @@
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-3xl font-bold">
-          {{ $t('admin.organizations.title', 'Organization Management') }}
+          {{ $t('admin.organizations.title') }}
         </h1>
         <p class="text-secondary mt-2">
-          {{ $t('admin.organizations.description', 'Manage all organizations in Keycloak') }}
+          {{ $t('admin.organizations.description') }}
         </p>
       </div>
     </div>
@@ -17,7 +17,7 @@
       <Searchbar
         id="search-organizations"
         v-model="searchQuery"
-        :placeholder="$t('admin.organizations.search', 'Search organizations...')"
+        :placeholder="$t('admin.organizations.search')"
         class="max-w-md"
       />
     </div>
@@ -31,7 +31,7 @@
     <Alert
       v-else-if="error"
       variant="danger"
-      :title="$t('admin.organizations.error.title', 'Error Loading Organizations')"
+      :title="$t('admin.organizations.error.title')"
       :description="errorMessage"
     />
 
@@ -51,7 +51,7 @@
             <div>
               <h3 class="text-lg font-semibold">{{ org.name }}</h3>
               <p class="text-secondary text-sm">
-                {{ org.description || $t('admin.organization.noDescription', 'No description') }}
+                {{ org.description || $t('admin.organization.noDescription') }}
               </p>
               <p class="text-secondary mt-1 text-xs">ID: {{ org.id }}</p>
             </div>
@@ -59,7 +59,7 @@
           <div class="flex items-center gap-3">
             <Tag
               variant="slate"
-              :label="`${org.member_count} ${$t('admin.organizations.members', 'Members')}`"
+              :label="`${org.member_count} ${$t('admin.organizations.members')}`"
               size="sm"
             />
             <i class="fa fa-chevron-right text-secondary"></i>
@@ -71,7 +71,7 @@
     <!-- Empty State -->
     <div v-else class="py-12 text-center">
       <i class="fa fa-building text-secondary mb-4 text-4xl"></i>
-      <p class="text-secondary">{{ $t('admin.organizations.empty', 'No organizations found') }}</p>
+      <p class="text-secondary">{{ $t('admin.organizations.empty') }}</p>
     </div>
 
     <!-- Pagination -->

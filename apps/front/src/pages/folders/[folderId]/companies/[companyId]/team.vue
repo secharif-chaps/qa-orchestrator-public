@@ -27,7 +27,7 @@
       <div class="bg-base-100 rounded-lg p-6">
         <h3 class="text-secondary mb-4 flex items-center gap-2 text-lg font-semibold">
           <i class="fa fa-address-card"></i>
-          <span>{{ $t('screen.team.members.title', 'Team Members') }}</span>
+          <span>{{ $t('screen.team.members.title') }}</span>
         </h3>
         <TeamMembersList
           :team="company?.team ?? []"
@@ -40,7 +40,7 @@
         <div class="mb-4 flex items-center justify-between">
           <h3 class="text-secondary flex items-center gap-2 text-lg font-semibold">
             <i class="fa fa-sitemap"></i>
-            <span>{{ $t('screen.team.hierarchy.title', 'Organization Chart') }}</span>
+            <span>{{ $t('screen.team.hierarchy.title') }}</span>
           </h3>
           <div class="flex items-center gap-2">
             <Tag
@@ -53,7 +53,7 @@
               @click="doScreenshot"
               variant="tertiary"
               icon="fa fa-camera"
-              :title="$t('screen.team.hierarchy.screenshot', 'Take Screenshot')"
+              :title="$t('screen.team.hierarchy.screenshot')"
               icon-only
               size="sm"
             />

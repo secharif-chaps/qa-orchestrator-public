@@ -3,7 +3,7 @@
     <Button
       variant="tertiary"
       icon="fa fa-download"
-      :label="$t('screen.company.export.button', 'Export')"
+      :label="$t('screen.company.export.button')"
       @click="showModal = true"
     />
 

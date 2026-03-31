@@ -33,7 +33,7 @@
           :variant="getRoleVariant(item.permission_tier)"
           size="sm"
         />
-        <Tag v-else :label="$t('admin.users.roles.custom', 'Custom')" variant="slate" size="sm" />
+        <Tag v-else :label="$t('admin.users.roles.custom')" variant="slate" size="sm" />
       </td>
     </template>
 
@@ -52,16 +52,11 @@
       <td class="px-4 py-3">
         <Tag
           v-if="item.status === 'active'"
-          :label="$t('admin.users.status.active', 'Active')"
+          :label="$t('admin.users.status.active')"
           variant="success"
           size="sm"
         />
-        <Tag
-          v-else
-          :label="$t('admin.users.status.revoked', 'Revoked')"
-          variant="error"
-          size="sm"
-        />
+        <Tag v-else :label="$t('admin.users.status.revoked')" variant="error" size="sm" />
       </td>
     </template>
 
@@ -84,23 +79,19 @@
       <div class="p-12 text-center">
         <i class="fa fa-users text-secondary/50 mb-4 text-4xl"></i>
         <h3 class="mb-2 text-base text-lg font-medium">
-          {{
-            hasFilters
-              ? $t('admin.users.empty.filtered', 'No users found')
-              : $t('admin.users.empty.title', 'No users found')
-          }}
+          {{ hasFilters ? $t('admin.users.empty.filtered') : $t('admin.users.empty.title') }}
         </h3>
         <p class="text-secondary mb-6">
           {{
             hasFilters
-              ? $t('admin.users.empty.filteredDescription', 'Try a different search or filter')
-              : $t('admin.users.empty.description', 'No users in the system')
+              ? $t('admin.users.empty.filteredDescription')
+              : $t('admin.users.empty.description')
           }}
         </p>
         <Button
           v-if="hasFilters"
           variant="secondary"
-          :label="$t('admin.users.clearFilters', 'Clear Filters')"
+          :label="$t('admin.users.clearFilters')"
           @click="emit('clear-filters')"
         />
       </div>
@@ -141,22 +132,22 @@ const emit = defineEmits<Emits>()
 const { t } = useI18n()
 
 const fields = computed(() => [
-  { key: 'username', label: t('admin.users.table.username', 'Username') },
-  { key: 'email', label: t('admin.users.table.email', 'Email') },
-  { key: 'name', label: t('admin.users.table.name', 'Name') },
-  { key: 'permission_tier', label: t('admin.users.table.role', 'Role') },
-  { key: 'organization', label: t('admin.users.table.organization', 'Organization') },
-  { key: 'status', label: t('admin.users.table.status', 'Status') },
-  { key: 'actions', label: t('admin.users.table.actions', 'Actions'), class: 'text-right' },
+  { key: 'username', label: t('admin.users.table.username') },
+  { key: 'email', label: t('admin.users.table.email') },
+  { key: 'name', label: t('admin.users.table.name') },
+  { key: 'permission_tier', label: t('admin.users.table.role') },
+  { key: 'organization', label: t('admin.users.table.organization') },
+  { key: 'status', label: t('admin.users.table.status') },
+  { key: 'actions', label: t('admin.users.table.actions'), class: 'text-right' },
 ])
 
 // Helper to get localized permission tier label
 const getPermissionTierLabel = (tier: string): string => {
   const tierLabels: Record<string, string> = {
-    reader: t('admin.users.roles.reader', 'Reader'),
-    writer: t('admin.users.roles.writer', 'Writer'),
-    manager: t('admin.users.roles.manager', 'Manager'),
-    admin: t('admin.users.roles.admin', 'Admin'),
+    reader: t('admin.users.roles.reader'),
+    writer: t('admin.users.roles.writer'),
+    manager: t('admin.users.roles.manager'),
+    admin: t('admin.users.roles.admin'),
   }
   return tierLabels[tier] || tier
 }

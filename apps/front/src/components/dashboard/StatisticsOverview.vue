@@ -1,7 +1,7 @@
 <template>
   <div v-if="stats" class="grid grid-cols-1 gap-6 md:grid-cols-3">
     <StatCard
-      :title="$t('dashboard.stats.totalCompanies', 'Total Companies')"
+      :title="$t('dashboard.stats.totalCompanies')"
       :value="stats.total ? stats.total : 0"
       icon="building"
       color="indigo"
@@ -9,7 +9,7 @@
     />
 
     <StatCard
-      :title="$t('dashboard.stats.activeTasks', 'Active Tasks')"
+      :title="$t('dashboard.stats.activeTasks')"
       :value="stats.activeTasks ? stats.activeTasks : 0"
       icon="tasks"
       color="yellow"
@@ -17,9 +17,9 @@
     />
 
     <StatCard
-      :title="$t('dashboard.stats.recentUpdates', 'Recent Updates')"
+      :title="$t('dashboard.stats.recentUpdates')"
       :value="stats.recentUpdates ? stats.recentUpdates : 0"
-      :subtitle="$t('dashboard.stats.last24Hours', 'Last 24 hours')"
+      :subtitle="$t('dashboard.stats.last24Hours')"
       icon="clock"
       color="green"
       :loading="loading"

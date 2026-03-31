@@ -13,7 +13,7 @@
         <!-- Loading state -->
         <span v-if="isLoadingPermissions" class="text-secondary flex items-center gap-2">
           <Icon icon="fa-spinner" class="fa-spin text-sm" />
-          {{ $t('settings.team.loadingPermissions', 'Loading...') }}
+          {{ $t('settings.team.loadingPermissions') }}
         </span>
         <!-- Permission loaded -->
         <span v-else-if="selectedTier" class="flex items-center gap-2">
@@ -22,7 +22,7 @@
         </span>
         <!-- Not loaded yet -->
         <span v-else class="text-secondary">
-          {{ $t('settings.team.selectPermission', 'Select permission...') }}
+          {{ $t('settings.team.selectPermission') }}
         </span>
         <Icon
           icon="fa-chevron-down"
@@ -135,23 +135,23 @@ const permissionOptions: ComputedRef<
 > = computed(() => [
   {
     value: 'reader',
-    label: t('settings.team.permissions.reader', 'Reader'),
-    description: t('settings.team.permissions.readerDesc', 'View only'),
+    label: t('settings.team.permissions.reader'),
+    description: t('settings.team.permissions.readerDesc'),
   },
   {
     value: 'writer',
-    label: t('settings.team.permissions.writer', 'Writer'),
-    description: t('settings.team.permissions.writerDesc', 'Create and manage content'),
+    label: t('settings.team.permissions.writer'),
+    description: t('settings.team.permissions.writerDesc'),
   },
   {
     value: 'manager',
-    label: t('settings.team.permissions.manager', 'Manager'),
-    description: t('settings.team.permissions.managerDesc', 'Full team management'),
+    label: t('settings.team.permissions.manager'),
+    description: t('settings.team.permissions.managerDesc'),
   },
   {
     value: 'admin',
-    label: t('settings.team.permissions.admin', 'Admin'),
-    description: t('settings.team.permissions.adminDesc', 'Full admin access'),
+    label: t('settings.team.permissions.admin'),
+    description: t('settings.team.permissions.adminDesc'),
   },
 ])
 </script>

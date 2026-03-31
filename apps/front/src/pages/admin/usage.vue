@@ -3,11 +3,9 @@
     <!-- Header Section -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-3xl font-bold">{{ $t('admin.usage.title', 'Usage Dashboard') }}</h1>
+        <h1 class="text-3xl font-bold">{{ $t('admin.usage.title') }}</h1>
         <p class="text-secondary mt-1">
-          {{
-            $t('admin.usage.description', 'View application usage metrics across all organizations')
-          }}
+          {{ $t('admin.usage.description') }}
         </p>
       </div>
       <UsageTimeRangeToggle v-model="selectedRange" @update:dates="handleDatesUpdate" />
@@ -17,10 +15,10 @@
     <Alert
       v-if="error"
       variant="danger"
-      :title="$t('admin.usage.error.title', 'Error Loading Data')"
+      :title="$t('admin.usage.error.title')"
       :description="errorMessage"
       icon="fa-exclamation-triangle"
-      :action="$t('admin.usage.error.retry', 'Retry')"
+      :action="$t('admin.usage.error.retry')"
       @click="refetch"
     />
 
@@ -161,7 +159,7 @@ const { data, isLoading, error, refetch } = useQuery(() =>
  * Handles various error types safely.
  */
 const errorMessage = computed((): string => {
-  const defaultMessage = t('admin.usage.error.message', 'Failed to load usage statistics')
+  const defaultMessage = t('admin.usage.error.message')
   if (!error.value) return defaultMessage
   if (error.value instanceof Error) return error.value.message
   if (typeof error.value === 'object' && 'message' in error.value) {

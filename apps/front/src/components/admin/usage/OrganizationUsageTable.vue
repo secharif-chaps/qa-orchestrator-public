@@ -25,7 +25,7 @@
       <div class="text-center">
         <i class="fa fa-database text-secondary mb-2 text-2xl"></i>
         <p class="text-secondary text-sm">
-          {{ t('admin.usage.table.noData', 'No organization data for selected period') }}
+          {{ t('admin.usage.table.noData') }}
         </p>
       </div>
     </div>

@@ -48,7 +48,7 @@
           variant="tertiary"
           icon="fa fa-eye"
           icon-only
-          :title="$t('common.folder.item.actions.view', 'View Item')"
+          :title="$t('common.folder.item.actions.view')"
           @click.stop="handleClick"
         />
         <Button
@@ -56,7 +56,7 @@
           variant="tertiary"
           icon="fa fa-exchange-alt"
           icon-only
-          :title="$t('common.folder.moveCompany.button', 'Move to Folder')"
+          :title="$t('common.folder.moveCompany.button')"
           @click.stop="$emit('moveCompany', item)"
         />
         <Button
@@ -65,9 +65,7 @@
           :icon="isArchived ? 'fa fa-undo' : 'fa fa-trash'"
           icon-only
           :title="
-            isArchived
-              ? $t('screen.company.restore.title', 'Restore Company')
-              : $t('screen.company.delete.title', 'Delete Company')
+            isArchived ? $t('screen.company.restore.title') : $t('screen.company.delete.title')
           "
           @click.stop="$emit('deleteCompany', item)"
         />
@@ -75,9 +73,7 @@
     </div>
 
     <div class="text-secondary flex items-center justify-between text-sm">
-      <span
-        >{{ $t('common.folder.item.created', 'Created') }} {{ formatDate(item.created_at) }}</span
-      >
+      <span>{{ $t('common.folder.item.created') }} {{ formatDate(item.created_at) }}</span>
       <span v-if="item.owner">{{ $t('common.folder.grid.by') }} @{{ item.owner }}</span>
     </div>
   </Card>

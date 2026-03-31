@@ -7,8 +7,8 @@
       :title="
         $t(
           isArchived
-            ? 'watch_files.actions.restore_watch_file'
-            : 'watch_files.actions.archive_watch_file',
+            ? 'target.watchFiles.actions.restore_watch_file'
+            : 'target.watchFiles.actions.archive_watch_file',
         )
       "
       @click.stop="onButtonClick()"

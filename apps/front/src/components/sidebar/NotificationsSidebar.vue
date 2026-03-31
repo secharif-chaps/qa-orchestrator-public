@@ -6,7 +6,7 @@
         v-if="unreadCount"
         variant="tertiary"
         size="sm"
-        :label="$t('common.sidebar.notifications.markAllRead', 'Mark all as read')"
+        :label="$t('common.sidebar.notifications.markAllRead')"
         @click="markAllAsRead"
       />
     </SidebarHeader>
@@ -22,7 +22,7 @@
       <div v-else-if="error" class="flex flex-col items-center justify-center gap-3 px-4 py-8">
         <Badge variant="secondary" icon="fa fa-exclamation-triangle" size="lg" />
         <p class="text-sage-800 dark:text-sage-400 text-center text-sm">
-          {{ $t('common.sidebar.notifications.errorLoading', 'Unable to load notifications') }}
+          {{ $t('common.sidebar.notifications.errorLoading') }}
         </p>
       </div>
 
@@ -50,7 +50,7 @@
         <Badge variant="secondary" icon="fa fa-bell" size="lg" />
         <div class="text-center">
           <h3 class="text-sage-900 mb-2 text-sm font-medium">
-            {{ $t('common.sidebar.notifications.noNotifications', 'No notifications') }}
+            {{ $t('common.sidebar.notifications.noNotifications') }}
           </h3>
           <p class="text-sage-800 dark:text-sage-400 text-xs">
             {{
@@ -73,7 +73,7 @@
       <Button
         variant="tertiary"
         size="sm"
-        :label="$t('common.sidebar.notifications.viewAll', 'View all notifications')"
+        :label="$t('common.sidebar.notifications.viewAll')"
         icon-right="fa fa-arrow-right"
         @click="$router.push('/notifications')"
       />
@@ -129,13 +129,13 @@ const notifications = computed<Notification[]>(() => {
     return {
       id: notificationId,
       title: isCompany
-        ? t('common.sidebar.notifications.companyCreated', 'New company added')
-        : t('common.sidebar.notifications.folderCreated', 'New folder created'),
-      message: `${activity.owner} ${t('common.sidebar.notifications.activityMessage', 'created')} ${activity.name}`,
+        ? t('common.sidebar.notifications.companyCreated')
+        : t('common.sidebar.notifications.folderCreated'),
+      message: `${activity.owner} ${t('common.sidebar.notifications.activityMessage')} ${activity.name}`,
       time: formatRelativeTime(activity.created_at),
       category: isCompany
-        ? t('common.sidebar.notifications.categoryCompany', 'Company')
-        : t('common.sidebar.notifications.categoryFolder', 'Folder'),
+        ? t('common.sidebar.notifications.categoryCompany')
+        : t('common.sidebar.notifications.categoryFolder'),
       read: readNotifications.value.has(notificationId),
       icon: {
         icon: isCompany ? 'fa fa-building' : 'fa fa-folder',

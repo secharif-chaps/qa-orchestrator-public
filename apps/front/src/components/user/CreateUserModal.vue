@@ -5,7 +5,7 @@
       <div class="border-primary-stroke border-b px-6 py-4">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold">
-            {{ $t('settings.user.create.title', 'Create New User') }}
+            {{ $t('settings.user.create.title') }}
           </h2>
           <button
             @click="$emit('cancel')"
@@ -29,7 +29,7 @@
         <!-- Username -->
         <div>
           <label class="text-secondary mb-1 block text-sm font-medium">
-            {{ $t('settings.user.username', 'Username') }} *
+            {{ $t('settings.user.username') }} *
           </label>
           <input
             v-model="form.username"
@@ -42,7 +42,7 @@
                 ? 'border-error-stroke focus:ring-error'
                 : 'border-primary-stroke focus:ring-primary'
             "
-            :placeholder="$t('settings.user.usernamePlaceholder', 'Enter username')"
+            :placeholder="$t('settings.user.usernamePlaceholder')"
             @blur="touchField('username')"
             @input="validateForm()"
           />
@@ -54,7 +54,7 @@
         <!-- Email -->
         <div>
           <label class="text-secondary mb-1 block text-sm font-medium">
-            {{ $t('settings.user.email', 'Email') }} *
+            {{ $t('settings.user.email') }} *
           </label>
           <input
             v-model="form.email"
@@ -67,7 +67,7 @@
                 ? 'border-error-stroke focus:ring-error'
                 : 'border-primary-stroke focus:ring-primary'
             "
-            :placeholder="$t('settings.user.emailPlaceholder', 'Enter email address')"
+            :placeholder="$t('settings.user.emailPlaceholder')"
             @blur="touchField('email')"
             @input="validateForm()"
           />
@@ -79,7 +79,7 @@
         <!-- Temporary Password -->
         <div>
           <label class="text-secondary mb-1 block text-sm font-medium">
-            {{ $t('settings.user.temporaryPassword', 'Temporary Password') }} *
+            {{ $t('settings.user.temporaryPassword') }} *
           </label>
           <div class="relative">
             <input
@@ -93,7 +93,7 @@
                   ? 'border-error-stroke focus:ring-error'
                   : 'border-primary-stroke focus:ring-primary'
               "
-              :placeholder="$t('settings.user.passwordPlaceholder', 'Enter temporary password')"
+              :placeholder="$t('settings.user.passwordPlaceholder')"
               @blur="touchField('temporaryPassword')"
               @input="validateForm()"
             />
@@ -131,14 +131,14 @@
             class="text-secondary hover:text-sage-content/80 text-sm font-medium disabled:opacity-50"
           >
             <i class="fa fa-refresh mr-1"></i>
-            {{ $t('settings.user.generatePassword', 'Generate Random Password') }}
+            {{ $t('settings.user.generatePassword') }}
           </button>
         </div>
 
         <!-- Initial Role Selection -->
         <div class="border-primary-stroke border-t pt-4">
           <label class="text-secondary mb-2 block text-sm font-medium">
-            {{ $t('settings.user.initialRole', 'Initial Role') }}
+            {{ $t('settings.user.initialRole') }}
           </label>
           <p class="text-secondary mb-3 text-xs">
             {{
@@ -188,7 +188,7 @@
           :disabled="isLoading"
           class="text-secondary px-4 py-2 transition-colors hover:text-base disabled:opacity-50"
         >
-          {{ $t('common.cancel', 'Cancel') }}
+          {{ $t('common.cancel') }}
         </button>
         <button
           @click="handleSubmit"
@@ -205,7 +205,7 @@
             class="h-4 w-4 animate-spin rounded-full border-b-2 border-white"
           ></div>
           <i v-else class="fa fa-user-plus"></i>
-          {{ $t('settings.user.create.button', 'Add User') }}
+          {{ $t('settings.user.create.button') }}
         </button>
       </div>
     </div>
@@ -310,7 +310,7 @@ function validateForm() {
   errors.temporaryPassword = ''
 
   if (!form.username.trim()) {
-    errors.username = t('settings.user.validation.username.required', 'Username is required')
+    errors.username = t('settings.user.validation.username.required')
   } else if (form.username.length < 3) {
     errors.username = t(
       'settings.user.validation.username.minLength',
@@ -319,9 +319,9 @@ function validateForm() {
   }
 
   if (!form.email.trim()) {
-    errors.email = t('settings.user.validation.email.required', 'Email is required')
+    errors.email = t('settings.user.validation.email.required')
   } else if (!isValidEmail(form.email)) {
-    errors.email = t('settings.user.validation.email.invalid', 'Please enter a valid email address')
+    errors.email = t('settings.user.validation.email.invalid')
   }
 
   if (!form.temporaryPassword.trim()) {

@@ -2,7 +2,7 @@
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
     <!-- Companies Created KPI -->
     <StatCard
-      :title="t('admin.usage.kpi.companiesCreated', 'Companies Created')"
+      :title="t('admin.usage.kpi.companiesCreated')"
       :value="formattedCompaniesCount"
       icon="building"
       color="indigo"
@@ -11,7 +11,7 @@
 
     <!-- Task Success Rate KPI -->
     <StatCard
-      :title="t('admin.usage.kpi.taskSuccessRate', 'Task Success Rate')"
+      :title="t('admin.usage.kpi.taskSuccessRate')"
       :value="formattedSuccessRate"
       icon="check-circle"
       color="green"
@@ -20,7 +20,7 @@
 
     <!-- Active Users KPI -->
     <StatCard
-      :title="t('admin.usage.kpi.activeUsers', 'Active Users')"
+      :title="t('admin.usage.kpi.activeUsers')"
       :value="formattedActiveUsers"
       icon="users"
       color="purple"
@@ -30,9 +30,9 @@
     <!-- Azure Cost placeholder KPI -->
     <div class="opacity-50">
       <StatCard
-        :title="t('admin.usage.kpi.azureCost', 'Azure Cost')"
-        :value="t('common.comingSoon', 'Coming soon')"
-        :subtitle="t('admin.usage.kpi.phase2Feature', 'Phase 2 feature')"
+        :title="t('admin.usage.kpi.azureCost')"
+        :value="t('common.comingSoon')"
+        :subtitle="t('admin.usage.kpi.phase2Feature')"
         icon="dollar-sign"
         color="orange"
         :loading="loading"

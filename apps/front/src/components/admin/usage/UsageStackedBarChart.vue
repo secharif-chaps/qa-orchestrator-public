@@ -7,7 +7,7 @@
       <div class="text-center">
         <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
         <p class="text-secondary text-sm">
-          {{ t('admin.usage.stackedChart.loading', 'Loading chart data...') }}
+          {{ t('admin.usage.stackedChart.loading') }}
         </p>
       </div>
     </div>
@@ -21,7 +21,7 @@
       <div class="text-center">
         <i class="fa fa-chart-bar text-secondary mb-2 text-2xl"></i>
         <p class="text-secondary text-sm">
-          {{ t('admin.usage.stackedChart.noData', 'No organization data for selected period') }}
+          {{ t('admin.usage.stackedChart.noData') }}
         </p>
       </div>
     </div>

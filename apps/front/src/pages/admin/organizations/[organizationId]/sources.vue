@@ -4,7 +4,7 @@
       <div class="mb-6 flex items-center justify-between">
         <div>
           <h2 class="text-xl font-semibold">
-            {{ $t('screen.dataSources.title', 'Data Sources') }}
+            {{ $t('screen.dataSources.title') }}
           </h2>
           <p class="text-secondary mt-1">
             {{
@@ -45,7 +45,7 @@ const organizationIdValue = computed(() => organizationId?.value || '')
 const availableSources = computed<DataSourceInfo[]>(() => [
   {
     source: 'pappers',
-    name: t('screen.dataSources.pappers.name', 'Pappers'),
+    name: t('screen.dataSources.pappers.name'),
     description: t(
       'screen.dataSources.pappers.description',
       'French company data provider (legal info, financials, officers)',
@@ -54,7 +54,7 @@ const availableSources = computed<DataSourceInfo[]>(() => [
   },
   {
     source: 'worldcheck',
-    name: t('screen.dataSources.worldcheck.name', 'WorldCheck'),
+    name: t('screen.dataSources.worldcheck.name'),
     description: t(
       'screen.dataSources.worldcheck.description',
       'LSEG WorldCheck screening for sanctions, PEP, and adverse media',

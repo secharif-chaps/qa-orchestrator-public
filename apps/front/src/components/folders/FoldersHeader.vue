@@ -13,12 +13,12 @@
           <div>
             <div class="flex items-center gap-2">
               <h1 class="text-3xl font-bold">
-                {{ folder?.name || $t('common.folder.loading', 'Loading folder...') }}
+                {{ folder?.name || $t('common.folder.loading') }}
               </h1>
               <!-- Shared badge if not owner -->
               <Tag
                 v-if="isSharedWithMe"
-                :label="$t('common.folder.shared.badge', 'Shared')"
+                :label="$t('common.folder.shared.badge')"
                 intent="info"
                 size="sm"
               />
@@ -35,7 +35,7 @@
               {{ $t('common.folder.header.createdOn', { date: formatDate(folder.created_at) }) }}
               <!-- Show owner info differently for shared vs owned folders -->
               <template v-if="isSharedWithMe">
-                | {{ $t('common.folder.grid.owner', 'Owner:') }} @{{ folder.owner }}
+                | {{ $t('common.folder.grid.owner') }} @{{ folder.owner }}
               </template>
               <template v-else> {{ $t('common.folder.header.by') }} @{{ folder.owner }} </template>
             </p>
@@ -50,8 +50,8 @@
             :class="folder?.is_favorite ? 'text-amber-600' : ''"
             :label="
               folder?.is_favorite
-                ? $t('common.folder.actions.unfavorite', 'Unfavorite')
-                : $t('common.folder.actions.favorite', 'Favorite')
+                ? $t('common.folder.actions.unfavorite')
+                : $t('common.folder.actions.favorite')
             "
             :loading="isTogglingFavorite"
             @click="toggleFavorite"
@@ -65,7 +65,7 @@
             v-if="canEditFolder"
             variant="tertiary"
             icon="fa fa-edit"
-            :label="$t('common.folder.actions.edit', 'Edit')"
+            :label="$t('common.folder.actions.edit')"
             @click="handleEditFolder"
           />
 
@@ -75,7 +75,7 @@
             variant="tertiary"
             color="danger"
             icon="fa fa-trash"
-            :label="$t('common.folder.actions.delete', 'Delete')"
+            :label="$t('common.folder.actions.delete')"
             @click="handleDeleteFolder"
           />
         </div>
@@ -88,7 +88,7 @@
           <Searchbar
             id="folder-search-input"
             v-model="searchTerm"
-            :placeholder="$t('common.folder.search.placeholder', 'Search items...')"
+            :placeholder="$t('common.folder.search.placeholder')"
           />
         </div>
 
@@ -99,7 +99,7 @@
               <Button
                 variant="secondary"
                 icon="fa fa-plus"
-                :label="$t('common.folder.items.add', 'Add Items')"
+                :label="$t('common.folder.items.add')"
               />
             </template>
 
@@ -109,10 +109,8 @@
                 v-if="isScreenEnabled"
                 icon="fas fa-building"
                 color="blue"
-                :label="$t('common.folder.addItems.companyScreen', 'Company Screen')"
-                :description="
-                  $t('common.folder.addItems.companyDescription', 'Add company profiles')
-                "
+                :label="$t('common.folder.addItems.companyScreen')"
+                :description="$t('common.folder.addItems.companyDescription')"
                 @click="
                   $router.push(
                     `/folders/${($route.params as Record<string, string>).folderId}/create/company`,
@@ -125,10 +123,8 @@
                 disabled
                 icon="fas fa-eye"
                 color="green"
-                :label="$t('common.folder.addItems.watchfile', 'Watchfile')"
-                :description="
-                  $t('common.folder.addItems.watchfileDescription', 'Monitor company changes')
-                "
+                :label="$t('common.folder.addItems.watchfile')"
+                :description="$t('common.folder.addItems.watchfileDescription')"
               >
                 <template #suffix>
                   <Tag variant="secondary" size="xs" :label="$t('common.soon')" />
@@ -140,7 +136,7 @@
                 disabled
                 icon="fas fa-project-diagram"
                 color="purple"
-                :label="$t('common.folder.addItems.graphrag', 'Knowledge graph')"
+                :label="$t('common.folder.addItems.graphrag')"
                 :description="
                   $t(
                     'common.folder.addItems.graphragDescription',
@@ -229,8 +225,8 @@ function handleDeleteFolder() {
 const shareRoleLabel = computed(() => {
   if (!props.folder?.share_role) return ''
   return props.folder.share_role === 'writer'
-    ? t('common.folder.share.writer', 'Writer')
-    : t('common.folder.share.reader', 'Reader')
+    ? t('common.folder.share.writer')
+    : t('common.folder.share.reader')
 })
 
 // v-model for search term

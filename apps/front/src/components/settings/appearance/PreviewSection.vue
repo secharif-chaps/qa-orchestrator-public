@@ -29,7 +29,7 @@
           <div class="mb-4 flex items-start justify-between">
             <div>
               <h4 class="font-medium">
-                {{ $t('settings.appearance.preview.card.title', 'Sample Card Title') }}
+                {{ $t('settings.appearance.preview.card.title') }}
               </h4>
               <p class="text-secondary mt-1 text-sm">
                 {{
@@ -51,14 +51,12 @@
             <!-- Input Field -->
             <div>
               <label class="mb-2 block text-sm font-medium">{{
-                $t('settings.appearance.preview.input.label', 'Sample Input Field')
+                $t('settings.appearance.preview.input.label')
               }}</label>
               <input
                 v-model="previewInputValue"
                 type="text"
-                :placeholder="
-                  $t('settings.appearance.preview.input.placeholder', 'Type something here...')
-                "
+                :placeholder="$t('settings.appearance.preview.input.placeholder')"
                 class="bg-base-100 text-secondary focus:ring-primary w-full rounded-md border border-slate-300 px-3 py-2 placeholder-slate-400 focus:border-transparent focus:ring-2 focus:outline-none dark:border-slate-600 dark:placeholder-slate-500"
               />
             </div>
@@ -67,7 +65,7 @@
             <div class="flex items-center justify-between">
               <div>
                 <label class="text-sm font-medium">{{
-                  $t('settings.appearance.preview.toggle.label', 'Sample Toggle')
+                  $t('settings.appearance.preview.toggle.label')
                 }}</label>
                 <p class="text-secondary text-sm">
                   {{
@@ -93,15 +91,15 @@
             <!-- Buttons -->
             <div class="flex flex-wrap gap-3">
               <Button
-                :label="$t('settings.appearance.preview.buttons.primary', 'Primary Button')"
+                :label="$t('settings.appearance.preview.buttons.primary')"
                 variant="primary"
               />
               <Button
-                :label="$t('settings.appearance.preview.buttons.secondary', 'Secondary Button')"
+                :label="$t('settings.appearance.preview.buttons.secondary')"
                 variant="secondary"
               />
               <Button
-                :label="$t('settings.appearance.preview.buttons.danger', 'Danger Button')"
+                :label="$t('settings.appearance.preview.buttons.danger')"
                 variant="tertiary"
               />
             </div>
@@ -111,19 +109,19 @@
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 rounded-full bg-green-500"></div>
                 <span class="text-secondary text-sm">{{
-                  $t('settings.appearance.preview.status.active', 'Active')
+                  $t('settings.appearance.preview.status.active')
                 }}</span>
               </div>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 rounded-full bg-yellow-500"></div>
                 <span class="text-secondary text-sm">{{
-                  $t('settings.appearance.preview.status.pending', 'Pending')
+                  $t('settings.appearance.preview.status.pending')
                 }}</span>
               </div>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 rounded-full bg-red-500"></div>
                 <span class="text-secondary text-sm">{{
-                  $t('settings.appearance.preview.status.error', 'Error')
+                  $t('settings.appearance.preview.status.error')
                 }}</span>
               </div>
             </div>
@@ -134,7 +132,7 @@
         <div class="bg-base-100 border-primary-stroke overflow-hidden rounded-lg border">
           <div class="border-primary-stroke border-b px-4 py-3">
             <h4 class="text-sm font-medium">
-              {{ $t('settings.appearance.preview.list.title', 'Sample List Items') }}
+              {{ $t('settings.appearance.preview.list.title') }}
             </h4>
           </div>
           <div class="divide-y divide-slate-200 dark:divide-slate-700">

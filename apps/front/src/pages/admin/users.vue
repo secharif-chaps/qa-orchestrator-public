@@ -5,10 +5,10 @@
     <div class="flex items-end justify-between">
       <div class="flex-1">
         <h1 class="mb-2 text-2xl font-bold">
-          {{ $t('admin.users.title', 'User Management') }}
+          {{ $t('admin.users.title') }}
         </h1>
         <p class="text-secondary">
-          {{ $t('admin.users.description', 'Manage all users across organizations') }}
+          {{ $t('admin.users.description') }}
         </p>
       </div>
       <div class="flex gap-2">
@@ -23,7 +23,7 @@
         <Button
           variant="secondary"
           icon="fa fa-file-import"
-          :label="$t('admin.import.title', 'Import Users')"
+          :label="$t('admin.import.title')"
           @click="router.push('/admin/users/import')"
         />
       </div>
@@ -45,7 +45,7 @@
     >
       <div class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
       <p class="text-secondary">
-        {{ $t('admin.users.loading', 'Loading users...') }}
+        {{ $t('admin.users.loading') }}
       </p>
     </div>
 

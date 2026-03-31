@@ -13,7 +13,7 @@
           <div class="text-right">
             <TokenCounter
               :token-count="tokenBalance"
-              :label="$t('settings.tokens.balance', 'Token Balance')"
+              :label="$t('settings.tokens.balance')"
               :is-loading="tokenDataLoading || !currentOrganization?.id"
               :is-refreshing="isRefreshingTokens"
               show-label
@@ -26,7 +26,7 @@
 
       <!-- Folder context description (when folder ID in route) -->
       <p v-if="routeFolderId && folderData" class="text-sm text-gray-600 dark:text-gray-400">
-        {{ $t('screen.company.create.inFolder', 'Create a new company screen in folder') }}
+        {{ $t('screen.company.create.inFolder') }}
         <strong>{{ folderData.name }}</strong>
       </p>
     </div>
@@ -49,7 +49,7 @@
     >
       <div class="flex items-center justify-center py-8">
         <div class="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
-        <p class="text-secondary ml-4">{{ $t('common.folder.loading', 'Loading folders...') }}</p>
+        <p class="text-secondary ml-4">{{ $t('common.folder.loading') }}</p>
       </div>
     </div>
 
@@ -62,7 +62,7 @@
     >
       <Alert
         variant="info"
-        :title="$t('screen.company.create.noFolders.title', 'No folders available')"
+        :title="$t('screen.company.create.noFolders.title')"
         :description="
           $t(
             'screen.company.create.noFolders.message',
@@ -70,7 +70,7 @@
           )
         "
         icon="fa-folder-plus"
-        :action="$t('screen.company.create.noFolders.action', 'Create Folder')"
+        :action="$t('screen.company.create.noFolders.action')"
         @click="navigateToFolderCreate"
       />
     </div>
@@ -85,13 +85,13 @@
         <!-- Folder Selection (when no folder ID in route) -->
         <div v-if="needsFolderSelection" class="flex flex-col gap-2">
           <label for="folder-select" class="text-sm font-medium">
-            {{ $t('screen.company.create.selectFolder', 'Select Folder') }}
+            {{ $t('screen.company.create.selectFolder') }}
             <span class="text-error">*</span>
           </label>
           <Select
             v-model="selectedFolderOption"
             :options="folderSelectOptions"
-            :placeholder="$t('screen.company.create.chooseFolderPlaceholder', 'Choose a folder...')"
+            :placeholder="$t('screen.company.create.chooseFolderPlaceholder')"
             :icon="selectedFolderOption?.icon || 'fa fa-folder'"
           >
             <template #items>
@@ -148,7 +148,7 @@
           <Button
             variant="tertiary"
             icon="fa fa-upload"
-            :label="$t('screen.csv.upload.button', 'Upload CSV')"
+            :label="$t('screen.csv.upload.button')"
             @click="goToCSVUpload"
             :disabled="!targetFolderId"
           />
@@ -334,14 +334,14 @@ const folderGroups = computed<FolderGroup[]>(() => {
 
   if (myFolders.length > 0) {
     groups.push({
-      label: t('common.folder.groups.mine', 'My Folders'),
+      label: t('common.folder.groups.mine'),
       options: myFolders,
     })
   }
 
   if (sharedFolders.length > 0) {
     groups.push({
-      label: t('common.folder.groups.shared', 'Shared with me'),
+      label: t('common.folder.groups.shared'),
       options: sharedFolders,
     })
   }
@@ -597,7 +597,7 @@ const submit = async () => {
 
   // Check token data
   if (tokenDataLoading.value) {
-    companyError.value = t('screen.company.validation.loadingTokens', 'Loading tokens...')
+    companyError.value = t('screen.company.validation.loadingTokens')
     return
   }
 
@@ -630,7 +630,7 @@ const submit = async () => {
 
   // Check target folder
   if (!targetFolderId.value) {
-    companyError.value = t('screen.company.validation.folderRequired', 'Please select a folder')
+    companyError.value = t('screen.company.validation.folderRequired')
     return
   }
 
@@ -682,7 +682,7 @@ const submit = async () => {
           'Please enter a valid website URL',
         )
       } else if (message.includes('Invalid input')) {
-        companyError.value = t('screen.company.validation.nameRequired', 'Company name is required')
+        companyError.value = t('screen.company.validation.nameRequired')
         websiteError.value = t(
           'screen.company.validation.websiteRequired',
           'Website URL is required',

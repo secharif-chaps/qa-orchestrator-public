@@ -17,7 +17,7 @@
       <div v-if="type === 'loading'" class="flex justify-center">
         <div class="text-secondary flex items-center gap-3">
           <i class="fa fa-spinner animate-spin"></i>
-          <span>{{ $t('screen.jobs.loading', 'Analyzing job market and opportunities...') }}</span>
+          <span>{{ $t('screen.jobs.loading') }}</span>
         </div>
       </div>
 

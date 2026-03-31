@@ -60,7 +60,7 @@
           <!-- Loading State -->
           <div v-if="isLoading" class="text-secondary mt-2 flex items-center gap-2 text-xs">
             <div class="bg-primary/60 h-2 w-2 animate-pulse rounded-full"></div>
-            {{ $t('settings.tokens.loading', 'Loading token data...') }}
+            {{ $t('settings.tokens.loading') }}
           </div>
         </div>
       </div>
@@ -118,11 +118,11 @@ const companyEquivalenceText = computed(() => {
   const companiesCount = Math.floor(props.tokenCount / TOKENS_PER_COMPANY)
 
   if (companiesCount === 0) {
-    return t('settings.tokens.companyEquivalence.none', 'Not enough for company creation')
+    return t('settings.tokens.companyEquivalence.none')
   }
 
   if (companiesCount === 1) {
-    return t('settings.tokens.companyEquivalence.singular', 'Enough for 1 company')
+    return t('settings.tokens.companyEquivalence.singular')
   }
 
   return t('settings.tokens.companyEquivalence.plural', { count: companiesCount })

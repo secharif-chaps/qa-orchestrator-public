@@ -83,14 +83,10 @@ interface Props {
 const props = defineProps<Props>()
 
 // Computed props with translations as defaults
-const title = computed(
-  () => props.title ?? t('screen.chapseAssist.alert.title', 'Get Personalized AI Recommendations'),
-)
-const actionLabel = computed(
-  () => props.actionLabel ?? t('screen.chapseAssist.alert.actionLabel', 'Set Up Now'),
-)
+const title = computed(() => props.title ?? t('screen.chapseAssist.alert.title'))
+const actionLabel = computed(() => props.actionLabel ?? t('screen.chapseAssist.alert.actionLabel'))
 const dismissLabel = computed(
-  () => props.dismissLabel ?? t('screen.chapseAssist.alert.dismissLabel', 'Maybe Later'),
+  () => props.dismissLabel ?? t('screen.chapseAssist.alert.dismissLabel'),
 )
 const showDismiss = computed(() => props.showDismiss ?? true)
 const dismissKey = computed(() => props.dismissKey ?? 'chapse_assist_alert_dismissed')

@@ -11,12 +11,10 @@
           </div>
           <div>
             <h1 class="text-2xl font-bold">
-              {{ $t('common.folder.create.title', 'Create New Folder') }}
+              {{ $t('common.folder.create.title') }}
             </h1>
             <p class="text-secondary">
-              {{
-                $t('common.folder.create.subtitle', 'Organize your companies with a custom folder')
-              }}
+              {{ $t('common.folder.create.subtitle') }}
             </p>
           </div>
         </div>
@@ -28,13 +26,13 @@
           <!-- Folder Name -->
           <div>
             <label class="mb-2 block text-sm font-medium">
-              {{ $t('common.folder.form.name', 'Folder Name') }}
+              {{ $t('common.folder.form.name') }}
               <span class="text-red-500">*</span>
             </label>
             <Input
               id="folder-name"
               v-model="form.name"
-              :placeholder="$t('common.folder.form.namePlaceholder', 'Enter folder name...')"
+              :placeholder="$t('common.folder.form.namePlaceholder')"
               :error="errors.name"
               required
             />
@@ -49,17 +47,15 @@
           <!-- Tags -->
           <div>
             <label class="mb-2 block text-sm font-medium">
-              {{ $t('common.folder.form.tags', 'Tags') }}
+              {{ $t('common.folder.form.tags') }}
               <span class="text-secondary ml-1 text-xs"
-                >({{ $t('common.folder.form.tagsOptional', 'optional') }})</span
+                >({{ $t('common.folder.form.tagsOptional') }})</span
               >
             </label>
             <Input
               id="folder-tags"
               v-model="tagsInput"
-              :placeholder="
-                $t('common.folder.form.tagsPlaceholder', 'Enter tags separated by commas...')
-              "
+              :placeholder="$t('common.folder.form.tagsPlaceholder')"
             />
             <div v-if="form.tags && form.tags.length > 0" class="mt-2 flex flex-wrap gap-2">
               <Tag
@@ -83,7 +79,7 @@
               class="border-primary-stroke text-secondary focus:ring-primary/20 h-5 w-5 rounded"
             />
             <label for="is_favorite" class="cursor-pointer text-sm font-medium">
-              {{ $t('common.folder.form.favorite', 'Mark as favorite') }}
+              {{ $t('common.folder.form.favorite') }}
             </label>
           </div>
 
@@ -92,14 +88,14 @@
             <Button
               type="button"
               variant="secondary"
-              :label="$t('common.folder.form.cancel', 'Cancel')"
+              :label="$t('common.folder.form.cancel')"
               @click="$router.back()"
               :disabled="isSubmitting"
             />
             <Button
               type="submit"
               variant="primary"
-              :label="$t('common.folder.form.create', 'Create Folder')"
+              :label="$t('common.folder.form.create')"
               :loading="isSubmitting"
             />
           </div>
@@ -169,7 +165,7 @@ const validateForm = () => {
   errors.value = {}
 
   if (!form.value.name?.trim()) {
-    errors.value.name = $t('common.folder.validation.nameRequired', 'Folder name is required')
+    errors.value.name = $t('common.folder.validation.nameRequired')
     return false
   }
 

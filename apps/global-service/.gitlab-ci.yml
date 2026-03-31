@@ -37,8 +37,9 @@ global-service:mypy:
   needs: []
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   script:
-    - cd apps/global-service && poetry config virtualenvs.create false && poetry install --no-interaction
-    - cd apps/global-service && mypy app/ --ignore-missing-imports --exclude "app/grpc_generated/*"
+    - cd apps/global-service
+    - poetry config virtualenvs.create false && poetry install --no-interaction
+    - mypy app/ --ignore-missing-imports --exclude "app/grpc_generated/*"
   allow_failure: true
   <<: *gs-changes
 

@@ -6,7 +6,7 @@
         <div class="mb-6 flex items-center justify-between">
           <div>
             <h1 class="text-3xl font-bold">
-              {{ $t('admin.workflows.title', 'Workflow Management') }}
+              {{ $t('admin.workflows.title') }}
             </h1>
             <p class="text-secondary mt-2">
               {{
@@ -22,7 +22,7 @@
           <Button
             variant="tertiary"
             icon="fa fa-arrow-left"
-            :label="$t('admin.dashboard.back', 'Back to Admin')"
+            :label="$t('admin.dashboard.back')"
             @click="$router.push('/admin')"
           />
         </div>
@@ -33,7 +33,7 @@
             <div class="flex items-center">
               <Tag variant="success" icon="fa fa-check" size="sm" />
               <span class="ml-3 text-sm font-medium"
-                >{{ activeCount }} {{ $t('admin.workflows.status.active', 'Active') }}</span
+                >{{ activeCount }} {{ $t('admin.workflows.status.active') }}</span
               >
             </div>
           </div>
@@ -41,8 +41,7 @@
             <div class="flex items-center">
               <Tag variant="slate" icon="fa fa-times" size="sm" />
               <span class="ml-3 text-sm font-medium"
-                >{{ inactiveCount }}
-                {{ $t('admin.workflows.status.notConfigured', 'Not Configured') }}</span
+                >{{ inactiveCount }} {{ $t('admin.workflows.status.notConfigured') }}</span
               >
             </div>
           </div>
@@ -54,7 +53,7 @@
         <div class="text-center">
           <i class="fa fa-spinner text-secondary mb-4 animate-spin text-4xl"></i>
           <p class="text-secondary">
-            {{ $t('admin.workflows.loading', 'Loading workflows...') }}
+            {{ $t('admin.workflows.loading') }}
           </p>
         </div>
       </div>
@@ -63,7 +62,7 @@
       <Alert
         v-else-if="error"
         variant="danger"
-        :title="$t('admin.workflows.error.title', 'Failed to Load Workflows')"
+        :title="$t('admin.workflows.error.title')"
         :description="error"
         icon="fa-exclamation-triangle"
         class="mb-6"
@@ -87,7 +86,7 @@
       >
         <div class="flex items-center">
           <i class="fa fa-check-circle mr-2"></i>
-          {{ $t('admin.workflows.updateSuccess', 'Workflow updated successfully!') }}
+          {{ $t('admin.workflows.updateSuccess') }}
         </div>
       </div>
     </div>

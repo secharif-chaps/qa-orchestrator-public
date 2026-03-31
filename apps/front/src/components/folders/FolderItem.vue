@@ -26,7 +26,7 @@
               <!-- Shared with me badge -->
               <Tag
                 v-if="isSharedWithMe"
-                :label="$t('common.folder.shared.badge', 'Shared')"
+                :label="$t('common.folder.shared.badge')"
                 intent="info"
                 class="mr-0 ml-auto"
                 size="xs"
@@ -130,7 +130,7 @@
                   <i class="fas fa-plus text-secondary text-sm"></i>
                 </span>
                 <span class="text-secondary text-sm">{{
-                  $t('common.folder.addItems.company', 'Add Company')
+                  $t('common.folder.addItems.company')
                 }}</span>
               </div>
             </div>
@@ -141,9 +141,7 @@
             class="border-primary-stroke bg-base-200 dark:bg-base-100 h-16 rounded-md border-2 border-dashed"
           >
             <div class="flex h-full items-center justify-center">
-              <span class="text-secondary text-sm">{{
-                $t('common.folder.empty.readOnly', 'No items in this folder')
-              }}</span>
+              <span class="text-secondary text-sm">{{ $t('common.folder.empty.readOnly') }}</span>
             </div>
           </div>
         </div>
@@ -157,7 +155,7 @@
         <span>
           <!-- Show "by @owner" for shared folders, or just owner for owned folders -->
           <template v-if="isSharedWithMe">
-            {{ $t('common.folder.grid.owner', 'Owner:') }} @{{ folder.owner }}
+            {{ $t('common.folder.grid.owner') }} @{{ folder.owner }}
           </template>
           <template v-else> {{ $t('common.folder.grid.by') }} @{{ folder.owner }} </template>
         </span>
@@ -208,8 +206,8 @@ const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } 
 const shareRoleLabel = computed(() => {
   if (!props.folder.share_role) return ''
   return props.folder.share_role === 'writer'
-    ? t('common.folder.share.writer', 'Writer')
-    : t('common.folder.share.reader', 'Reader')
+    ? t('common.folder.share.writer')
+    : t('common.folder.share.reader')
 })
 
 // Compute folder color classes based on the color prop

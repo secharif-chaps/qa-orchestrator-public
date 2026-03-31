@@ -27,22 +27,22 @@ const keypath = computed(() => {
 
   switch (actionType) {
     case SourceActionType.SOURCE_CONNECTED:
-      return 'watch_files.activity.sources.history.source_connected'
+      return 'target.watchFiles.activity.sources.history.source_connected'
     case SourceActionType.SOURCE_ERROR:
-      return 'watch_files.activity.sources.history.source_error'
+      return 'target.watchFiles.activity.sources.history.source_error'
     case SourceActionType.SOURCE_RECOVERED:
-      return 'watch_files.activity.sources.history.source_recovered'
+      return 'target.watchFiles.activity.sources.history.source_recovered'
     case SourceActionType.SOURCE_CONFIG_UPDATED:
-      return 'watch_files.activity.sources.history.source_config_updated'
+      return 'target.watchFiles.activity.sources.history.source_config_updated'
     case SourceActionType.SOURCE_ADDED_TO_WATCHFILE:
-      return 'watch_files.activity.sources.history.source_added_to_watchfile'
+      return 'target.watchFiles.activity.sources.history.source_added_to_watchfile'
     case SourceActionType.SOURCE_COLLECT_STATUS_CHANGED:
-      return 'watch_files.activity.sources.history.source_collect_status_changed'
+      return 'target.watchFiles.activity.sources.history.source_collect_status_changed'
     case SourceActionType.SOURCE_STATUS_CHANGED:
       if (actionData.new_status === SourceStatus.ACTIVE) {
-        return 'watch_files.activity.sources.history.source_status_changed_active'
+        return 'target.watchFiles.activity.sources.history.source_status_changed_active'
       } else {
-        return 'watch_files.activity.sources.history.source_status_changed_inactive'
+        return 'target.watchFiles.activity.sources.history.source_status_changed_inactive'
       }
     default:
       return ''

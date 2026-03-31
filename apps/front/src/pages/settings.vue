@@ -48,7 +48,7 @@
         <div
           class="text-secondary group-hover:text-primary border-primary-stroke/50 mt-4 flex items-center border-t pt-4 transition-colors"
         >
-          <span class="text-sm font-medium">{{ $t('settings.viewSection', 'Configure') }}</span>
+          <span class="text-sm font-medium">{{ $t('settings.viewSection') }}</span>
           <i
             class="fas fa-arrow-right ml-2 transform text-xs transition-transform group-hover:translate-x-1"
           ></i>
@@ -102,8 +102,8 @@ const sections = computed(() => {
     },
     {
       id: 'team-management',
-      title: t('settings.tabs.team', 'Team Management'),
-      description: t('settings.team.cardDescription', 'Manage team members and permissions'),
+      title: t('settings.tabs.team'),
+      description: t('settings.team.cardDescription'),
       icon: 'fas fa-users',
       bgColor: 'bg-warning-light',
       iconColor: 'text-warning-light-content',
@@ -114,8 +114,8 @@ const sections = computed(() => {
   if (canManageOrganization.value) {
     baseSections.push({
       id: 'credits',
-      title: t('settings.tabs.credits', 'Crédits'),
-      description: t('settings.credits.cardDescription', 'View credit usage and statistics'),
+      title: t('settings.tabs.credits'),
+      description: t('settings.credits.cardDescription'),
       icon: 'fas fa-coins',
       bgColor: 'bg-info-light',
       iconColor: 'text-info-light-content',
@@ -155,7 +155,7 @@ const tabOptions = computed(() => {
     {
       id: 'team-management',
       icon: 'fas fa-users',
-      title: t('settings.tabs.team', 'Team Management'),
+      title: t('settings.tabs.team'),
       isActive: currentPath.includes('/team-management'),
       click: () => navigateTo('team-management'),
     },
@@ -166,7 +166,7 @@ const tabOptions = computed(() => {
     baseOptions.push({
       id: 'credits',
       icon: 'fas fa-coins',
-      title: t('settings.tabs.credits', 'Crédits'),
+      title: t('settings.tabs.credits'),
       isActive: currentPath.includes('/credits'),
       click: () => navigateTo('credits'),
     })

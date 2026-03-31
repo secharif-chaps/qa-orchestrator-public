@@ -62,7 +62,7 @@
               <div class="h-8 w-8 rounded-full shadow-md" :class="getCurrentAccentBgClass()"></div>
               <div>
                 <h4 class="text-sm font-medium">
-                  {{ $t('settings.appearance.accent.currentColor', 'Current Accent Color') }}
+                  {{ $t('settings.appearance.accent.currentColor') }}
                 </h4>
                 <p class="text-secondary text-xs">
                   {{ getCurrentAccentLabel() }}
@@ -71,7 +71,7 @@
             </div>
             <div class="flex items-center gap-2">
               <Tag
-                :label="$t('settings.appearance.accent.active', 'Active')"
+                :label="$t('settings.appearance.accent.active')"
                 variant="primary"
                 class="animate-pulse"
               />
@@ -87,9 +87,7 @@
             </div>
             <div>
               <h4 class="text-secondary text-sm font-medium">
-                {{
-                  $t('settings.appearance.accent.personalizeTitle', 'Personalize Your Experience')
-                }}
+                {{ $t('settings.appearance.accent.personalizeTitle') }}
               </h4>
               <p class="text-secondary mt-1 text-xs">
                 {{

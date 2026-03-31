@@ -10,7 +10,7 @@
       <div class="text-gray-500 dark:text-gray-400">
         <div class="mb-4 text-6xl">📚</div>
         <h3 class="mb-2 text-xl font-medium">
-          {{ $t('settings.help.noContent.title', 'No Help Content Available') }}
+          {{ $t('settings.help.noContent.title') }}
         </h3>
         <p>
           {{
@@ -58,7 +58,7 @@
           class="border-primary-stroke bg-base-100 text-secondary focus:ring-primary w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
         >
           <option value="">
-            {{ $t('settings.help.selectTopic.placeholder', 'Select a help topic') }}
+            {{ $t('settings.help.selectTopic.placeholder') }}
           </option>
           <optgroup
             v-for="category in helpCategories"
@@ -82,7 +82,7 @@
           <div class="text-gray-500 dark:text-gray-400">
             <div class="mb-4 text-4xl">👈</div>
             <h3 class="mb-2 text-lg font-medium">
-              {{ $t('settings.help.selectTopic.title', 'Select a Help Topic') }}
+              {{ $t('settings.help.selectTopic.title') }}
             </h3>
             <p>
               {{
@@ -115,7 +115,7 @@
                   class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
                 ></div>
                 <p class="text-secondary">
-                  {{ $t('settings.help.loading.content', 'Loading help content...') }}
+                  {{ $t('settings.help.loading.content') }}
                 </p>
               </div>
             </div>
@@ -149,9 +149,9 @@ const selectedSectionPermission = ref<string>('')
 // Category titles mapping
 const getCategoryTitle = (category: string) => {
   const titles: Record<string, string> = {
-    admin: t('settings.help.categories.admin', 'Administration'),
-    company: t('settings.help.categories.company', 'Company Screening'),
-    organization: t('settings.help.categories.organization', 'organization Management'),
+    admin: t('settings.help.categories.admin'),
+    company: t('settings.help.categories.company'),
+    organization: t('settings.help.categories.organization'),
   }
   return titles[category] || category
 }
@@ -178,7 +178,7 @@ watch(selectedSection, async (newSection) => {
       selectedSectionContent.value = await marked(content)
     } catch (error) {
       console.error('Error loading help content:', error)
-      selectedSectionContent.value = `<p>${t('settings.help.error.loadingContent', 'Error loading help content.')}</p>`
+      selectedSectionContent.value = `<p>${t('settings.help.error.loadingContent')}</p>`
     }
   } else {
     selectedSectionContent.value = ''

@@ -3,7 +3,7 @@
     <!-- Customer Type -->
     <div v-if="getSourcedValue(company?.products?.customerType)">
       <h4 class="text-secondary mb-2 flex items-center gap-2 font-medium">
-        {{ $t('screen.profile.sections.products.customerType', 'Customer Type') }}
+        {{ $t('screen.profile.sections.products.customerType') }}
       </h4>
       <p class="text-secondary text-sm">
         {{ getSourcedValue(company?.products?.customerType) }}
@@ -14,7 +14,7 @@
     <!-- Marketing Positioning -->
     <div v-if="getSourcedValue(company?.products?.marketingPositioning)">
       <h4 class="text-secondary mb-2 flex items-center gap-2 font-medium">
-        {{ $t('screen.profile.sections.products.marketingPositioning', 'Marketing Positioning') }}
+        {{ $t('screen.profile.sections.products.marketingPositioning') }}
       </h4>
       <p class="text-secondary text-sm">
         {{ getSourcedValue(company?.products?.marketingPositioning) }}
@@ -31,7 +31,7 @@
     <div v-if="hasAnyProductData" class="flex justify-end">
       <Button
         variant="secondary"
-        :label="$t('screen.profile.sections.products.viewProducts', 'View Products')"
+        :label="$t('screen.profile.sections.products.viewProducts')"
         icon="fa fa-arrow-right"
         icon-position="right"
         @click="viewProducts"

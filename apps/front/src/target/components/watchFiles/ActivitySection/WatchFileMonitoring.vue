@@ -131,20 +131,20 @@ const getActivityDescription = (activity: WatchFileActivity): WatchFileActivityD
     case 'monitoring_type_detected':
     case 'reference_subject_updated':
       return createWatchFileActivityDescription(
-        `watch_files.activity.history.${actionType}`,
+        `target.watchFiles.activity.history.${actionType}`,
         activity,
       )
 
     case 'status_changed':
       return createWatchFileActivityDescription(
-        'watch_files.activity.history.status_changed',
+        'target.watchFiles.activity.history.status_changed',
         activity,
         'TimelineItemWatchFileDescriptionStatusChanged',
       )
 
     default:
       return createWatchFileActivityDescription(
-        'watch_files.activity.history.unknown_action',
+        'target.watchFiles.activity.history.unknown_action',
         activity,
       )
   }

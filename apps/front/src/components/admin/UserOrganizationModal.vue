@@ -11,8 +11,8 @@
         <h3 class="text-base text-lg font-semibold">
           {{
             currentOrganization
-              ? $t('admin.users.modal.changeOrganization', 'Change User Organization')
-              : $t('admin.users.modal.assignOrganization', 'Assign User to Organization')
+              ? $t('admin.users.modal.changeOrganization')
+              : $t('admin.users.modal.assignOrganization')
           }}
         </h3>
         <Button variant="tertiary" icon="fa fa-times" @click="$emit('cancel')" />
@@ -22,7 +22,7 @@
       <div v-if="isLoadingOrg" class="py-12 text-center">
         <div class="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
         <p class="text-secondary text-sm">
-          {{ $t('admin.users.modal.loading', 'Loading organization...') }}
+          {{ $t('admin.users.modal.loading') }}
         </p>
       </div>
 
@@ -32,7 +32,7 @@
         variant="danger"
         class="mb-6"
         icon="fa-exclamation-circle"
-        :title="$t('admin.users.modal.error.title', 'Error loading organization')"
+        :title="$t('admin.users.modal.error.title')"
         :description="String(orgError)"
       />
 
@@ -52,7 +52,7 @@
           <!-- Current Organization -->
           <div v-if="currentOrganization" class="border-primary-stroke mt-3 border-t pt-3">
             <div class="text-secondary mb-1 text-xs">
-              {{ $t('admin.userOrganization.currentOrganization', 'Current organization:') }}
+              {{ $t('admin.userOrganization.currentOrganization') }}
             </div>
             <div class="flex items-center gap-2">
               <span
@@ -64,7 +64,7 @@
           </div>
           <div v-else class="border-primary-stroke mt-3 border-t pt-3">
             <div class="text-secondary text-xs italic">
-              {{ $t('admin.userOrganization.noOrganization', 'No organization assigned') }}
+              {{ $t('admin.userOrganization.noOrganization') }}
             </div>
           </div>
         </div>
@@ -72,7 +72,7 @@
         <!-- Organization Selection -->
         <div class="mb-6">
           <h4 class="text-secondary mb-3 text-sm font-medium">
-            {{ $t('admin.users.modal.selectOrganization', 'Select organization:') }}
+            {{ $t('admin.users.modal.selectOrganization') }}
           </h4>
 
           <div class="max-h-96 space-y-2 overflow-y-auto">
@@ -104,7 +104,7 @@
                       v-if="organization.id === currentOrganization?.id"
                       class="text-secondary text-xs"
                     >
-                      {{ $t('admin.userOrganization.current', '(current)') }}
+                      {{ $t('admin.userOrganization.current') }}
                     </span>
                   </div>
                   <div v-if="organization.description" class="text-secondary mt-1 text-sm">
@@ -136,7 +136,7 @@
         <Alert
           v-if="currentOrganization && selectedOrganizationId !== currentOrganization.id"
           variant="warning"
-          :title="$t('admin.users.modal.warning.title', 'Organization Change')"
+          :title="$t('admin.users.modal.warning.title')"
           :description="
             $t(
               'admin.users.modal.warning.message',
@@ -151,7 +151,7 @@
         <div class="flex items-center justify-end gap-3">
           <Button
             variant="tertiary"
-            :label="$t('common.cancel', 'Cancel')"
+            :label="$t('common.cancel')"
             @click="$emit('cancel')"
             :disabled="isAssigning"
           />
@@ -161,10 +161,10 @@
             icon="fa fa-check"
             :label="
               isAssigning
-                ? $t('admin.users.modal.assigning', 'Assigning...')
+                ? $t('admin.users.modal.assigning')
                 : currentOrganization
-                  ? $t('admin.users.modal.changeOrganization', 'Change User Organization')
-                  : $t('admin.users.modal.assignOrganization', 'Assign User to Organization')
+                  ? $t('admin.users.modal.changeOrganization')
+                  : $t('admin.users.modal.assignOrganization')
             "
             :loading="isAssigning"
             :disabled="

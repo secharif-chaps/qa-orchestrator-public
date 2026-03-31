@@ -5,7 +5,7 @@
       <Button
         variant="tertiary"
         size="sm"
-        :label="$t('common.sidebar.foldersSidebar.viewAll', 'View all folders')"
+        :label="$t('common.sidebar.foldersSidebar.viewAll')"
         @click="$router.push('/folders')"
       />
     </SidebarHeader>
@@ -15,7 +15,7 @@
       <Searchbar
         id="folders-sidebar-search"
         v-model="searchTerm"
-        :placeholder="$t('common.sidebar.foldersSidebar.search', 'Search a folder...')"
+        :placeholder="$t('common.sidebar.foldersSidebar.search')"
         size="sm"
       />
     </div>
@@ -32,8 +32,8 @@
       >
         {{
           searchTerm
-            ? $t('common.sidebar.foldersSidebar.noFoldersFound', 'No folders found')
-            : $t('common.sidebar.foldersSidebar.noFolders', 'No folders')
+            ? $t('common.sidebar.foldersSidebar.noFoldersFound')
+            : $t('common.sidebar.foldersSidebar.noFolders')
         }}
       </div>
 
@@ -46,7 +46,7 @@
           >
             <i class="fa fa-heart text-sm"></i>
             <span class="flex-1 text-sm font-medium">{{
-              $t('common.sidebar.foldersSidebar.favorites', 'Favorites')
+              $t('common.sidebar.foldersSidebar.favorites')
             }}</span>
           </div>
 
@@ -74,7 +74,7 @@
           >
             <i class="fa fa-folders text-sm"></i>
             <span class="flex-1 text-sm font-medium">{{
-              $t('common.sidebar.foldersSidebar.allFolders', 'Folders')
+              $t('common.sidebar.foldersSidebar.allFolders')
             }}</span>
           </div>
           <FolderRow

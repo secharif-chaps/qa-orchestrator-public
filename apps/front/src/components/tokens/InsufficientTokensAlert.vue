@@ -2,7 +2,7 @@
   <div v-if="show" class="flex flex-col gap-4">
     <Alert
       variant="warning"
-      :title="$t('settings.tokens.insufficientTitle', 'Out of Search Tokens')"
+      :title="$t('settings.tokens.insufficientTitle')"
       :description="
         $t(
           'settings.tokens.insufficientMessage',
@@ -29,7 +29,7 @@
           v-if="showContactAdmin"
           variant="primary"
           icon="fa-user-tie"
-          :label="$t('settings.tokens.contactAdmin', 'Contact Admin')"
+          :label="$t('settings.tokens.contactAdmin')"
           size="sm"
           @click="$emit('contact-admin')"
         />
@@ -38,7 +38,7 @@
           v-if="showRefresh"
           variant="secondary"
           icon="fa-refresh"
-          :label="$t('settings.tokens.refresh', 'Refresh')"
+          :label="$t('settings.tokens.refresh')"
           size="sm"
           :loading="isRefreshing"
           :disabled="isRefreshing"

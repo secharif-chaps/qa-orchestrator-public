@@ -19,7 +19,14 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "i18n:check": "node scripts/i18n/check.mjs",
+    "i18n:orphans": "node scripts/i18n/orphans.mjs",
+    "i18n:duplicates": "node scripts/i18n/duplicates.mjs",
+    "i18n:format": "node scripts/i18n/format.mjs",
+    "i18n:coverage": "node scripts/i18n/coverage.mjs",
+    "i18n:find": "node scripts/i18n/find.mjs",
+    "i18n:search": "node scripts/i18n/search.mjs"
   },
   "dependencies": {
     "@internationalized/date": "^3.11.0",

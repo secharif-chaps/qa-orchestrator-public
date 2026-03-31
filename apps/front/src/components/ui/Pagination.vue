@@ -82,7 +82,7 @@
     <!-- Right: Direct page input -->
     <div class="flex items-center justify-end gap-2">
       <label class="text-secondary text-sm whitespace-nowrap">{{
-        $t('common.pagination.page', 'Page:')
+        $t('common.pagination.page')
       }}</label>
       <input
         v-model.number="pageInput"
@@ -95,7 +95,7 @@
         :placeholder="String(meta.current_page)"
       />
       <span class="text-secondary text-sm whitespace-nowrap"
-        >{{ $t('common.pagination.of', 'of') }} {{ meta.last_page }}</span
+        >{{ $t('common.pagination.of') }} {{ meta.last_page }}</span
       >
     </div>
   </div>

@@ -10,7 +10,7 @@
       <div class="mb-6 flex items-center justify-between">
         <div>
           <h3 class="text-lg font-semibold">
-            {{ $t('admin.permissions.title', 'Manage Permissions') }}
+            {{ $t('admin.permissions.title') }}
           </h3>
           <p class="text-secondary mt-1 text-sm">
             {{
@@ -29,7 +29,7 @@
       <div v-if="isLoading" class="py-12 text-center">
         <div class="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
         <p class="text-secondary text-sm">
-          {{ $t('admin.permissions.loading', 'Loading permissions...') }}
+          {{ $t('admin.permissions.loading') }}
         </p>
       </div>
 
@@ -39,7 +39,7 @@
         variant="danger"
         class="mb-6"
         icon="fa-exclamation-circle"
-        :title="$t('admin.permissions.error.title', 'Error loading permissions')"
+        :title="$t('admin.permissions.error.title')"
         :description="String(error)"
       />
 
@@ -51,7 +51,7 @@
           variant="warning"
           class="mb-6"
           icon="fa-exclamation-triangle"
-          :title="$t('admin.permissions.legacyWarning.title', 'Legacy Permissions Detected')"
+          :title="$t('admin.permissions.legacyWarning.title')"
           :description="
             $t(
               'admin.permissions.legacyWarning.description',
@@ -66,7 +66,7 @@
           variant="warning"
           class="mb-6"
           icon="fa-exclamation-triangle"
-          :title="$t('admin.permissions.customWarning.title', 'Custom Permissions Detected')"
+          :title="$t('admin.permissions.customWarning.title')"
           :description="
             $t(
               'admin.permissions.customWarning.description',
@@ -86,7 +86,7 @@
             "
             @click="mode = 'roles'"
           >
-            {{ $t('admin.permissions.tabs.roles', 'Quick Roles') }}
+            {{ $t('admin.permissions.tabs.roles') }}
           </button>
           <button
             class="px-4 py-2 text-sm font-medium transition-colors"
@@ -97,7 +97,7 @@
             "
             @click="mode = 'custom'"
           >
-            {{ $t('admin.permissions.tabs.custom', 'Custom Permissions') }}
+            {{ $t('admin.permissions.tabs.custom') }}
           </button>
         </div>
 
@@ -127,7 +127,7 @@
           <div class="border-primary-stroke rounded-lg border p-4">
             <h4 class="mb-3 flex items-center gap-2 text-sm font-semibold">
               <i class="fa fa-shield text-sage-700"></i>
-              {{ $t('admin.permissions.sections.base', 'Base Access') }}
+              {{ $t('admin.permissions.sections.base') }}
             </h4>
             <div class="flex flex-col gap-3">
               <!-- organization.read (always on) -->
@@ -140,7 +140,7 @@
                   </div>
                   <div>
                     <p class="text-sm font-medium">
-                      {{ $t('admin.permissions.organizationRead.label', 'Read Access') }}
+                      {{ $t('admin.permissions.organizationRead.label') }}
                     </p>
                     <p class="text-secondary text-xs">
                       {{
@@ -152,18 +152,14 @@
                     </p>
                   </div>
                 </div>
-                <Tag
-                  :label="$t('admin.permissions.alwaysOn', 'Always On')"
-                  variant="sage"
-                  size="sm"
-                />
+                <Tag :label="$t('admin.permissions.alwaysOn')" variant="sage" size="sm" />
               </div>
 
               <!-- organization.write (toggle) -->
               <PermissionCheckbox
                 v-model="selectedPermissions"
                 permission="organization.write"
-                :label="$t('admin.permissions.organizationWrite.label', 'Write Access')"
+                :label="$t('admin.permissions.organizationWrite.label')"
                 :description="
                   $t(
                     'admin.permissions.organizationWrite.description',
@@ -177,7 +173,7 @@
               <PermissionCheckbox
                 v-model="selectedPermissions"
                 permission="organization.manage"
-                :label="$t('admin.permissions.organizationManage.label', 'Team Management')"
+                :label="$t('admin.permissions.organizationManage.label')"
                 :description="
                   $t(
                     'admin.permissions.organizationManage.description',
@@ -193,7 +189,7 @@
           <div class="border-primary-stroke rounded-lg border p-4">
             <h4 class="mb-3 flex items-center gap-2 text-sm font-semibold">
               <i class="fa fa-puzzle-piece text-sage-700"></i>
-              {{ $t('admin.permissions.sections.modules', 'Module Permissions') }}
+              {{ $t('admin.permissions.sections.modules') }}
             </h4>
             <p class="text-secondary mb-3 text-xs">
               {{
@@ -208,7 +204,7 @@
               <PermissionCheckbox
                 v-model="selectedPermissions"
                 permission="company.create"
-                :label="$t('admin.permissions.companyCreate.label', 'Add Items')"
+                :label="$t('admin.permissions.companyCreate.label')"
                 :description="
                   $t(
                     'admin.permissions.companyCreate.description',
@@ -217,16 +213,14 @@
                 "
                 icon="fa-plus-circle"
                 :disabled="!hasWriteAccess"
-                :disabled-reason="
-                  $t('admin.permissions.requiresWriteAccess', 'Requires Write Access to be enabled')
-                "
+                :disabled-reason="$t('admin.permissions.requiresWriteAccess')"
               />
 
               <!-- target.create -->
               <PermissionCheckbox
                 v-model="selectedPermissions"
                 permission="target.create"
-                :label="$t('admin.permissions.targetCreate.label', 'Create Targets')"
+                :label="$t('admin.permissions.targetCreate.label')"
                 :description="
                   $t(
                     'admin.permissions.targetCreate.description',
@@ -235,9 +229,7 @@
                 "
                 icon="fa-bullseye"
                 :disabled="!hasWriteAccess"
-                :disabled-reason="
-                  $t('admin.permissions.requiresWriteAccess', 'Requires Write Access to be enabled')
-                "
+                :disabled-reason="$t('admin.permissions.requiresWriteAccess')"
               />
             </div>
           </div>
@@ -246,7 +238,7 @@
           <div class="border-error-stroke rounded-lg border p-4">
             <h4 class="text-error-light-content mb-3 flex items-center gap-2 text-sm font-semibold">
               <i class="fa fa-shield-check"></i>
-              {{ $t('admin.permissions.sections.admin', 'Admin Permissions') }}
+              {{ $t('admin.permissions.sections.admin') }}
             </h4>
             <p class="text-secondary mb-3 text-xs">
               {{
@@ -261,7 +253,7 @@
               <PermissionCheckbox
                 v-model="selectedPermissions"
                 permission="admin.organizations"
-                :label="$t('admin.permissions.adminOrganizations.label', 'Organization Admin')"
+                :label="$t('admin.permissions.adminOrganizations.label')"
                 :description="
                   $t(
                     'admin.permissions.adminOrganizations.description',
@@ -287,7 +279,7 @@
           <!-- Current Permissions Summary -->
           <div class="bg-base-200 rounded-lg p-4">
             <h4 class="mb-2 text-sm font-semibold">
-              {{ $t('admin.permissions.summary.title', 'Permissions Summary') }}
+              {{ $t('admin.permissions.summary.title') }}
             </h4>
             <div class="flex flex-wrap gap-2">
               <Tag
@@ -298,7 +290,7 @@
                 variant="slate"
               />
               <span v-if="effectivePermissions.length === 0" class="text-secondary text-sm">
-                {{ $t('admin.permissions.summary.noPermissions', 'No permissions selected') }}
+                {{ $t('admin.permissions.summary.noPermissions') }}
               </span>
             </div>
           </div>
@@ -306,14 +298,10 @@
 
         <!-- Actions -->
         <div class="flex justify-end gap-3">
-          <Button
-            variant="secondary"
-            :label="$t('common.cancel', 'Cancel')"
-            @click="$emit('close')"
-          />
+          <Button variant="secondary" :label="$t('common.cancel')" @click="$emit('close')" />
           <Button
             variant="primary"
-            :label="$t('admin.permissions.save', 'Save Permissions')"
+            :label="$t('admin.permissions.save')"
             :disabled="!canSave"
             @click="handleSave"
           />

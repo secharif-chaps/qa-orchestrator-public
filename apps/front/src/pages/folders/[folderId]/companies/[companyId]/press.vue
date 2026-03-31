@@ -31,7 +31,7 @@
           <div v-if="company?.press?.financial_news?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-chart-line"></i>
-              {{ $t('screen.profile.sections.press.categories.financialNews', 'Financial News') }}
+              {{ $t('screen.profile.sections.press.categories.financialNews') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -49,9 +49,7 @@
           <div v-if="company?.press?.product_launches?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-rocket"></i>
-              {{
-                $t('screen.profile.sections.press.categories.productLaunches', 'Product Launches')
-              }}
+              {{ $t('screen.profile.sections.press.categories.productLaunches') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -95,7 +93,7 @@
           <div v-if="company?.press?.media_mentions?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-newspaper"></i>
-              {{ $t('screen.profile.sections.press.categories.mediaMentions', 'Media Mentions') }}
+              {{ $t('screen.profile.sections.press.categories.mediaMentions') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -113,7 +111,7 @@
           <div v-if="company?.press?.press_releases?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-file-alt"></i>
-              {{ $t('screen.profile.sections.press.categories.pressReleases', 'Press Releases') }}
+              {{ $t('screen.profile.sections.press.categories.pressReleases') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -131,7 +129,7 @@
           <div v-if="company?.press?.articles?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-newspaper"></i>
-              {{ $t('screen.profile.sections.press.categories.articles', 'Articles') }}
+              {{ $t('screen.profile.sections.press.categories.articles') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -200,12 +198,12 @@
           <!-- Quick Stats -->
           <div class="bg-base-100 rounded-lg p-6">
             <h3 class="text-secondary mb-4 text-lg font-semibold">
-              {{ $t('screen.profile.sections.press.stats.title', 'Press Coverage Stats') }}
+              {{ $t('screen.profile.sections.press.stats.title') }}
             </h3>
             <div class="space-y-3">
               <div class="flex items-center justify-between">
                 <span class="text-secondary text-sm">{{
-                  $t('screen.profile.sections.press.categories.financialNews', 'Financial News')
+                  $t('screen.profile.sections.press.categories.financialNews')
                 }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.financial_news?.length || 0
@@ -213,7 +211,7 @@
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-secondary text-sm">{{
-                  $t('screen.profile.sections.press.categories.productLaunches', 'Product Launches')
+                  $t('screen.profile.sections.press.categories.productLaunches')
                 }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.product_launches?.length || 0
@@ -221,7 +219,7 @@
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-secondary text-sm">{{
-                  $t('screen.profile.sections.press.categories.mediaMentions', 'Media Mentions')
+                  $t('screen.profile.sections.press.categories.mediaMentions')
                 }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.media_mentions?.length || 0
@@ -229,7 +227,7 @@
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-secondary text-sm">{{
-                  $t('screen.profile.sections.press.categories.pressReleases', 'Press Releases')
+                  $t('screen.profile.sections.press.categories.pressReleases')
                 }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.press_releases?.length || 0

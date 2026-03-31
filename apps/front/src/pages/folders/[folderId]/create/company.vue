@@ -13,7 +13,7 @@
           <div class="text-right">
             <TokenCounter
               :token-count="tokenBalance"
-              :label="$t('settings.tokens.balance', 'Token Balance')"
+              :label="$t('settings.tokens.balance')"
               :is-loading="tokenDataLoading || !currentOrganization?.id"
               :is-refreshing="isRefreshingTokens"
               show-label
@@ -72,7 +72,7 @@
           <Button
             variant="tertiary"
             icon="fa fa-upload"
-            :label="$t('screen.csv.upload.button', 'Upload CSV')"
+            :label="$t('screen.csv.upload.button')"
             @click="goToCSVUpload"
           />
 
@@ -281,7 +281,7 @@ const submit = async () => {
 
   // Check if token data is still loading
   if (tokenDataLoading.value) {
-    companyError.value = t('screen.company.validation.loadingTokens', 'Loading tokens...')
+    companyError.value = t('screen.company.validation.loadingTokens')
     return
   }
 
@@ -364,7 +364,7 @@ const submit = async () => {
           'Please enter a valid website URL',
         )
       } else if (message.includes('Invalid input')) {
-        companyError.value = t('screen.company.validation.nameRequired', 'Company name is required')
+        companyError.value = t('screen.company.validation.nameRequired')
         websiteError.value = t(
           'screen.company.validation.websiteRequired',
           'Website URL is required',

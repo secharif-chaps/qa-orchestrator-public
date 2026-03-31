@@ -74,7 +74,7 @@ const {
   addButtonText = 'common.action.add',
   addIcon = 'fa-plus',
   subTitle = '',
-  refreshButtonTitle = 'watch_files.aria_label_refresh_button',
+  refreshButtonTitle = 'target.watchFiles.aria_label_refresh_button',
   readonly = false,
   lastUpdate = '',
   loading = false,

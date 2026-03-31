@@ -10,9 +10,7 @@
         @click="handleChangeOrganization(close)"
       >
         <Icon icon="fa-building" class="text-secondary" />
-        <span class="flex-1 text-left">{{
-          t('admin.userActions.changeOrganization', 'Change Organization')
-        }}</span>
+        <span class="flex-1 text-left">{{ t('admin.userActions.changeOrganization') }}</span>
       </button>
 
       <button
@@ -20,9 +18,7 @@
         @click="handleManagePermissions(close)"
       >
         <Icon icon="fa-shield" class="text-secondary" />
-        <span class="flex-1 text-left">{{
-          t('admin.userActions.managePermissions', 'Manage Permissions')
-        }}</span>
+        <span class="flex-1 text-left">{{ t('admin.userActions.managePermissions') }}</span>
       </button>
 
       <div class="border-primary-stroke my-1 border-t"></div>
@@ -34,7 +30,7 @@
         @click="handleEnableUser(close)"
       >
         <Icon icon="fa-user-check" class="text-success" />
-        <span class="flex-1 text-left">{{ t('admin.userActions.enableUser', 'Enable User') }}</span>
+        <span class="flex-1 text-left">{{ t('admin.userActions.enableUser') }}</span>
       </button>
 
       <button
@@ -43,9 +39,7 @@
         @click="handleDisableUser(close)"
       >
         <Icon icon="fa-user-slash" class="text-warning" />
-        <span class="flex-1 text-left">{{
-          t('admin.userActions.disableUser', 'Disable User')
-        }}</span>
+        <span class="flex-1 text-left">{{ t('admin.userActions.disableUser') }}</span>
       </button>
 
       <button
@@ -53,9 +47,7 @@
         @click="handleResetPassword(close)"
       >
         <Icon icon="fa-key" class="text-info" />
-        <span class="flex-1 text-left">{{
-          t('admin.userActions.resetPassword', 'Reset Password')
-        }}</span>
+        <span class="flex-1 text-left">{{ t('admin.userActions.resetPassword') }}</span>
       </button>
     </template>
   </Dropdown>

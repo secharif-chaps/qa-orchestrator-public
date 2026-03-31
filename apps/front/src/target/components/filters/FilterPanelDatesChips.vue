@@ -91,8 +91,8 @@ const datesFilterLabel = computed(() => {
   // Use different translation keys based on whether we have date type or not
   // For analysis (no date type), use "collected" keys as analysis is about collected documents
   const translationKey = showDateType
-    ? `watch_files.filters.type.dates.${filterTypeKey}.${datePattern}`
-    : `watch_files.filters.type.dates.collected.${datePattern}`
+    ? `target.watchFiles.filters.type.dates.${filterTypeKey}.${datePattern}`
+    : `target.watchFiles.filters.type.dates.collected.${datePattern}`
 
   const translationParams: Record<string, string> = {}
 

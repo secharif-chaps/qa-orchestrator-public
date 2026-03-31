@@ -4,12 +4,10 @@
     <div class="mb-6 flex items-center justify-between">
       <div>
         <h2 class="text-xl font-semibold">
-          {{ $t('settings.tokens.management', 'Token Management') }}
+          {{ $t('settings.tokens.management') }}
         </h2>
         <p class="text-secondary mt-1">
-          {{
-            $t('settings.tokens.managementDescription', 'Manage your organization token balance')
-          }}
+          {{ $t('settings.tokens.managementDescription') }}
         </p>
       </div>
 
@@ -19,7 +17,7 @@
           icon="fa fa-refresh"
           :loading="isRefreshing"
           :disabled="isRefreshing"
-          :title="$t('settings.tokens.refresh', 'Refresh token balance')"
+          :title="$t('settings.tokens.refresh')"
           icon-only
           @click="handleRefresh"
         />
@@ -27,7 +25,7 @@
         <Button
           variant="secondary"
           icon="fa fa-history"
-          :label="$t('settings.tokens.viewHistory', 'View History')"
+          :label="$t('settings.tokens.viewHistory')"
           @click="$router.push('/tokens/history')"
         />
       </div>
@@ -37,7 +35,7 @@
     <div v-if="isLoading" class="p-8 text-center">
       <div class="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
       <p class="text-secondary">
-        {{ $t('settings.tokens.loading', 'Loading token balance...') }}
+        {{ $t('settings.tokens.loading') }}
       </p>
     </div>
 
@@ -63,14 +61,14 @@
             </div>
             <div>
               <p class="text-secondary mb-1 text-sm">
-                {{ $t('settings.tokens.globalBalance', 'Organization Token Balance') }}
+                {{ $t('settings.tokens.globalBalance') }}
               </p>
               <div class="flex items-baseline gap-2">
                 <span class="text-primary text-4xl font-bold">
                   {{ balance.toLocaleString() }}
                 </span>
                 <span class="text-secondary">
-                  {{ $t('settings.tokens.credits', 'credits') }}
+                  {{ $t('settings.tokens.credits') }}
                 </span>
               </div>
             </div>
@@ -78,7 +76,7 @@
 
           <div class="text-right">
             <p class="text-secondary mb-1 text-sm">
-              {{ $t('settings.tokens.companyEquivalent', 'Company Equivalent') }}
+              {{ $t('settings.tokens.companyEquivalent') }}
             </p>
             <div class="flex items-baseline justify-end gap-1">
               <span class="text-2xl font-semibold" :class="companyEquivalentColor">
@@ -87,8 +85,8 @@
               <span class="text-secondary">
                 {{
                   companyEquivalent === 1
-                    ? $t('settings.tokens.company', 'company')
-                    : $t('settings.tokens.companies', 'companies')
+                    ? $t('settings.tokens.company')
+                    : $t('settings.tokens.companies')
                 }}
               </span>
             </div>
@@ -99,13 +97,13 @@
       <!-- Add Tokens Section -->
       <div class="flex flex-col gap-4" data-testid="quick-add-section">
         <h3 class="text-lg font-medium">
-          {{ $t('settings.tokens.addTokens', 'Add Tokens') }}
+          {{ $t('settings.tokens.addTokens') }}
         </h3>
 
         <!-- Quick Add Buttons -->
         <div class="flex flex-col gap-3">
           <label class="text-secondary text-sm font-medium">
-            {{ $t('settings.tokens.quickAdd', 'Quick Add (by company count)') }}
+            {{ $t('settings.tokens.quickAdd') }}
           </label>
           <div class="flex flex-wrap items-center gap-2">
             <Button
@@ -124,14 +122,14 @@
         <!-- Custom Amount Input -->
         <div class="flex flex-col gap-2">
           <label class="text-secondary text-sm font-medium">
-            {{ $t('settings.tokens.customAmount', 'Custom Amount') }}
+            {{ $t('settings.tokens.customAmount') }}
           </label>
           <div class="flex items-center gap-3">
             <Input
               id="custom-token-amount"
               v-model="customAmount"
               type="number"
-              :placeholder="$t('settings.tokens.enterAmount', 'Enter token amount...')"
+              :placeholder="$t('settings.tokens.enterAmount')"
               :min="1"
               :max="100000"
               :disabled="addTokensMutation.isLoading.value"
@@ -140,7 +138,7 @@
             <Button
               variant="primary"
               icon="fa fa-plus"
-              :label="$t('settings.tokens.add', 'Add')"
+              :label="$t('settings.tokens.add')"
               :loading="addTokensMutation.isLoading.value && pendingAmount === Number(customAmount)"
               :disabled="!canAddCustomAmount"
               @click="handleCustomAdd"
@@ -160,7 +158,7 @@
       <!-- Module Status Section -->
       <div class="border-primary-stroke flex flex-col gap-4 border-t pt-4">
         <h3 class="text-lg font-medium">
-          {{ $t('settings.tokens.moduleStatus', 'Module Status') }}
+          {{ $t('settings.tokens.moduleStatus') }}
         </h3>
 
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">

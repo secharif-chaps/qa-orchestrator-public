@@ -13,7 +13,7 @@
           </div>
           <div>
             <h3 class="text-base text-lg font-semibold">
-              {{ $t('screen.company.restore.title', 'Restore Company') }}
+              {{ $t('screen.company.restore.title') }}
             </h3>
             <p class="text-secondary text-sm">
               {{
@@ -41,15 +41,15 @@
         <!-- Company Details -->
         <div class="bg-base-200 mb-6 rounded-lg p-4">
           <h4 class="mb-3 text-base font-medium">
-            {{ $t('screen.company.restore.details', 'Company Details') }}
+            {{ $t('screen.company.restore.details') }}
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('screen.company.name', 'Name') }}:</span>
+              <span class="text-secondary">{{ $t('screen.company.name') }}:</span>
               <span class="font-medium">{{ companyToRestore.name }}</span>
             </div>
             <div v-if="companyToRestore.website" class="flex justify-between">
-              <span class="text-secondary">{{ $t('screen.company.website', 'Website') }}:</span>
+              <span class="text-secondary">{{ $t('screen.company.website') }}:</span>
               <span class="text-xs">{{ companyToRestore.website }}</span>
             </div>
           </div>
@@ -60,13 +60,13 @@
       <div class="border-primary-stroke flex items-center justify-end gap-3 border-t p-6">
         <Button
           variant="secondary"
-          :label="$t('common.cancel', 'Cancel')"
+          :label="$t('common.cancel')"
           @click="showRestoreModal = false"
         />
         <Button
           variant="primary"
           icon="fa fa-undo"
-          :label="$t('screen.company.restore.confirm.button', 'Restore Company')"
+          :label="$t('screen.company.restore.confirm.button')"
           :loading="isLoading"
           :disabled="isLoading"
           @click="handleRestore"

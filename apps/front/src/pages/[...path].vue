@@ -4,7 +4,7 @@
       <div class="mb-8">
         <h1 class="text-secondary text-6xl font-bold">404</h1>
         <h2 class="mt-4 text-2xl font-semibold">
-          {{ $t('common.errors.notFound.title', 'Page Not Found') }}
+          {{ $t('common.errors.notFound.title') }}
         </h2>
         <p class="text-secondary mt-2">
           {{
@@ -18,12 +18,12 @@
 
       <div class="flex space-x-4">
         <Button
-          :label="$t('common.errors.notFound.goHome', 'Go to Home')"
+          :label="$t('common.errors.notFound.goHome')"
           variant="primary"
           @click="$router.push('/')"
         />
         <Button
-          :label="$t('common.errors.notFound.goBack', 'Go Back')"
+          :label="$t('common.errors.notFound.goBack')"
           variant="secondary"
           @click="$router.back()"
         />

@@ -7,7 +7,7 @@
           class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
         ></div>
         <p class="text-secondary">
-          {{ $t('common.folder.loading', 'Loading folder...') }}
+          {{ $t('common.folder.loading') }}
         </p>
       </div>
 
@@ -15,8 +15,8 @@
       <Alert
         v-else-if="status === 'error'"
         variant="danger"
-        :title="$t('common.folder.detail.error.title', 'Error')"
-        :description="$t('common.folder.detail.error.description', 'Failed to load folder')"
+        :title="$t('common.folder.detail.error.title')"
+        :description="$t('common.folder.detail.error.description')"
         icon="fa fa-exclamation-triangle"
       />
 
@@ -62,12 +62,12 @@
             <!-- Table Header -->
             <div class="border-primary-stroke bg-base-200 border-b px-6 py-4">
               <div class="text-secondary grid grid-cols-12 gap-4 text-sm font-medium">
-                <div class="col-span-4">{{ $t('common.folder.item.name', 'Name') }}</div>
-                <div class="col-span-2">{{ $t('common.folder.item.type', 'Type') }}</div>
-                <div class="col-span-2">{{ $t('common.folder.item.created', 'Created') }}</div>
-                <div class="col-span-2">{{ $t('common.folder.item.owner', 'Owner') }}</div>
+                <div class="col-span-4">{{ $t('common.folder.item.name') }}</div>
+                <div class="col-span-2">{{ $t('common.folder.item.type') }}</div>
+                <div class="col-span-2">{{ $t('common.folder.item.created') }}</div>
+                <div class="col-span-2">{{ $t('common.folder.item.owner') }}</div>
                 <div class="col-span-2 text-right">
-                  {{ $t('common.folder.item.actions', 'Actions') }}
+                  {{ $t('common.folder.item.actions') }}
                 </div>
               </div>
             </div>
@@ -122,9 +122,7 @@
                     <span class="text-secondary text-sm">{{ formatDate(item.created_at) }}</span>
                   </div>
                   <div class="col-span-2">
-                    <span class="text-secondary text-sm">{{
-                      item.owner || $t('common.na', 'N/A')
-                    }}</span>
+                    <span class="text-secondary text-sm">{{ item.owner || $t('common.na') }}</span>
                   </div>
                   <div class="col-span-2 text-right">
                     <div class="flex items-center justify-end gap-2">
@@ -132,7 +130,7 @@
                         variant="tertiary"
                         size="sm"
                         icon="fa fa-external-link-alt"
-                        :label="$t('common.folder.item.view', 'View')"
+                        :label="$t('common.folder.item.view')"
                         @click.stop="navigateToItem(item)"
                         :hidden="companyFilter === 'archived'"
                       />
@@ -144,7 +142,7 @@
                         size="sm"
                         icon="fa fa-exchange-alt"
                         icon-only
-                        :title="$t('common.folder.moveCompany.button', 'Move Company')"
+                        :title="$t('common.folder.moveCompany.button')"
                         @click.stop="confirmMoveCompany(item)"
                       />
                       <Button
@@ -156,8 +154,8 @@
                         icon-only
                         :title="
                           companyFilter === 'archived'
-                            ? $t('screen.company.restore.title', 'Restore Company')
-                            : $t('screen.company.delete.title', 'Archive Company')
+                            ? $t('screen.company.restore.title')
+                            : $t('screen.company.delete.title')
                         "
                         @click.stop="confirmArchiveCompany(item)"
                       />
@@ -166,7 +164,7 @@
                         v-if="companyFilter === 'archived'"
                         class="ml-2 inline-block rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-600"
                       >
-                        {{ $t('common.folder.item.deleted', 'Deleted') }}
+                        {{ $t('common.folder.item.deleted') }}
                       </span>
                     </div>
                   </div>
@@ -182,8 +180,8 @@
           variant="info"
           icon="fa fa-folder-open"
           class="py-6"
-          :title="$t('common.folder.empty.title', 'No companies found')"
-          :description="$t('common.folder.empty.description', 'Add companies to this folder')"
+          :title="$t('common.folder.empty.title')"
+          :description="$t('common.folder.empty.description')"
         >
         </Alert>
 
@@ -192,13 +190,13 @@
           variant="info"
           icon="fa fa-folder-open"
           class="py-6"
-          :title="$t('common.folder.empty.noResults', 'No results found')"
-          :description="$t('common.folder.empty.tryDifferentSearch', 'Try a different search term')"
+          :title="$t('common.folder.empty.noResults')"
+          :description="$t('common.folder.empty.tryDifferentSearch')"
         >
           <template #actions>
             <Button
               variant="secondary"
-              :label="$t('common.folder.clearSearch', 'Clear Search')"
+              :label="$t('common.folder.clearSearch')"
               @click="searchTerm = ''"
             />
           </template>
@@ -336,7 +334,7 @@ const getLogoUrl = (website?: string) => {
 
 // Methods
 const formatDate = (dateString: string) => {
-  if (!dateString) return t('common.na', 'N/A')
+  if (!dateString) return t('common.na')
   const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
   return new Date(dateString).toLocaleDateString(localeCode)
 }
@@ -344,7 +342,7 @@ const formatDate = (dateString: string) => {
 // Helper to format item type
 const formatItemType = (type: string): string => {
   if (type === 'company') {
-    return t('common.folder.itemTypes.company', 'Company')
+    return t('common.folder.itemTypes.company')
   }
   return type.charAt(0).toUpperCase() + type.slice(1)
 }

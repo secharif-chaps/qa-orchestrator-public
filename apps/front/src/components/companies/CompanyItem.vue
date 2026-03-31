@@ -223,16 +223,16 @@ const formatWebsiteDisplay = (website: string) => {
 }
 
 const getTaskStatusText = (tasks: Array<{ status: string }>) => {
-  if (!tasks || tasks.length === 0) return t('screen.company.item.tasks.status.new', 'New')
+  if (!tasks || tasks.length === 0) return t('screen.company.item.tasks.status.new')
 
   const running = tasks.filter((t) => t.status === 'running' || t.status === 'pending').length
   const failed = tasks.filter((t) => t.status === 'error' || t.status === 'failed').length
   const succeeded = tasks.filter((t) => t.status === 'succeeded').length
 
-  if (running > 0) return t('screen.company.item.tasks.status.processing', 'Processing')
-  if (failed > 0) return t('screen.company.item.tasks.status.issues', 'Issues')
-  if (succeeded === tasks.length) return t('screen.company.item.tasks.status.complete', 'Complete')
-  return t('screen.company.item.tasks.status.partial', 'Partial')
+  if (running > 0) return t('screen.company.item.tasks.status.processing')
+  if (failed > 0) return t('screen.company.item.tasks.status.issues')
+  if (succeeded === tasks.length) return t('screen.company.item.tasks.status.complete')
+  return t('screen.company.item.tasks.status.partial')
 }
 
 const getTaskStatusVariant = (tasks: Array<{ status: string }>): BadgeVariant => {

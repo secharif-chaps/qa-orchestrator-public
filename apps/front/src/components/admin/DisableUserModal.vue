@@ -9,7 +9,7 @@
       <!-- Header -->
       <div class="mb-6 flex items-center justify-between">
         <h3 class="text-base text-lg font-semibold">
-          {{ t('admin.disableUser.title', 'Disable User') }}
+          {{ t('admin.disableUser.title') }}
         </h3>
         <Button variant="tertiary" icon="fa fa-times" @click="$emit('close')" />
       </div>
@@ -17,7 +17,7 @@
       <!-- User Info -->
       <div class="mb-6">
         <p class="text-secondary text-sm">
-          {{ t('admin.disableUser.confirmText', 'Are you sure you want to disable') }}
+          {{ t('admin.disableUser.confirmText') }}
           <span class="font-semibold">{{ username }}</span
           >?
         </p>
@@ -28,7 +28,7 @@
         variant="warning"
         class="mb-6"
         icon="fa-exclamation-triangle"
-        :title="t('admin.disableUser.actionTitle', 'This action will:')"
+        :title="t('admin.disableUser.actionTitle')"
         :description="
           t(
             'admin.disableUser.actionDescription',
@@ -41,12 +41,12 @@
       <div class="flex justify-end gap-3">
         <Button
           variant="secondary"
-          :label="t('admin.disableUser.cancel', 'Cancel')"
+          :label="t('admin.disableUser.cancel')"
           @click="$emit('close')"
         />
         <Button
           variant="accent"
-          :label="t('admin.disableUser.confirm', 'Disable User')"
+          :label="t('admin.disableUser.confirm')"
           :loading="isLoading"
           @click="$emit('confirm')"
         />

@@ -9,7 +9,7 @@
       <!-- Header -->
       <div class="mb-6 flex items-center justify-between">
         <h3 class="text-base text-lg font-semibold">
-          {{ $t('settings.user.resetPassword.title', 'Reset Password') }}
+          {{ $t('settings.user.resetPassword.title') }}
         </h3>
         <Button variant="tertiary" icon="fa fa-times" @click="handleClose" />
       </div>
@@ -20,7 +20,7 @@
           variant="success"
           class="mb-6"
           icon="fa-check-circle"
-          :title="$t('settings.user.resetPassword.success', 'Password reset successfully!')"
+          :title="$t('settings.user.resetPassword.success')"
           :description="
             $t(
               'settings.user.resetPassword.successDescription',
@@ -32,7 +32,7 @@
         <!-- New Password Display -->
         <div class="mb-6">
           <label class="text-secondary mb-2 block text-sm font-medium">
-            {{ $t('settings.user.resetPassword.newPassword', 'New Temporary Password') }}
+            {{ $t('settings.user.resetPassword.newPassword') }}
           </label>
           <div class="flex gap-2">
             <div class="relative flex-1">
@@ -54,13 +54,13 @@
           </div>
           <p v-if="copied" class="text-success mt-1 text-xs">
             <i class="fa fa-check mr-1"></i>
-            {{ $t('common.copied', 'Copied to clipboard!') }}
+            {{ $t('common.copied') }}
           </p>
         </div>
 
         <!-- Close Button -->
         <div class="flex justify-end">
-          <Button variant="primary" :label="$t('common.close', 'Close')" @click="handleClose" />
+          <Button variant="primary" :label="$t('common.close')" @click="handleClose" />
         </div>
       </template>
 
@@ -69,7 +69,7 @@
         <!-- User Info -->
         <div class="mb-6">
           <p class="text-secondary text-sm">
-            {{ $t('settings.user.resetPassword.description', 'Reset password for') }}
+            {{ $t('settings.user.resetPassword.description') }}
             <span class="font-semibold">{{ username }}</span>
           </p>
         </div>
@@ -77,7 +77,7 @@
         <!-- Password Input -->
         <div class="mb-4">
           <label class="text-secondary mb-2 block text-sm font-medium">
-            {{ $t('settings.user.resetPassword.temporaryPassword', 'Temporary Password') }} *
+            {{ $t('settings.user.resetPassword.temporaryPassword') }} *
           </label>
           <div class="relative">
             <input
@@ -85,9 +85,7 @@
               :type="showPassword ? 'text' : 'password'"
               :disabled="isLoading"
               class="border-primary-stroke focus:ring-primary w-full rounded-lg border px-3 py-2 pr-10 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-              :placeholder="
-                $t('settings.user.resetPassword.placeholder', 'Enter temporary password')
-              "
+              :placeholder="$t('settings.user.resetPassword.placeholder')"
             />
             <button
               type="button"
@@ -110,7 +108,7 @@
             @click="generatePassword"
           >
             <i class="fa fa-refresh mr-1"></i>
-            {{ $t('settings.user.generatePassword', 'Generate Random Password') }}
+            {{ $t('settings.user.generatePassword') }}
           </button>
         </div>
 
@@ -119,7 +117,7 @@
           variant="info"
           class="mb-6"
           icon="fa-info-circle"
-          :title="$t('settings.user.resetPassword.infoTitle', 'Password will be temporary')"
+          :title="$t('settings.user.resetPassword.infoTitle')"
           :description="
             $t(
               'settings.user.resetPassword.infoDescription',
@@ -132,13 +130,13 @@
         <div class="flex justify-end gap-3">
           <Button
             variant="secondary"
-            :label="$t('common.cancel', 'Cancel')"
+            :label="$t('common.cancel')"
             :disabled="isLoading"
             @click="handleClose"
           />
           <Button
             variant="primary"
-            :label="$t('settings.user.resetPassword.button', 'Reset Password')"
+            :label="$t('settings.user.resetPassword.button')"
             :loading="isLoading"
             :disabled="!password || isLoading"
             @click="handleResetPassword"

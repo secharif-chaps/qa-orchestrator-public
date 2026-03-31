@@ -8,9 +8,7 @@
       }"
     >
       <div class="flex items-center gap-3">
-        <span class="font-medium">{{
-          t('screen.company.debug.workflowTitle', 'Search Workflow')
-        }}</span>
+        <span class="font-medium">{{ t('screen.company.debug.workflowTitle') }}</span>
         <div class="flex items-center">
           <span class="text-secondary text-xs font-medium"
             >{{ completedCount }}/{{ totalTasks }}</span
@@ -193,7 +191,7 @@
             @click="startAllPendingTasks"
             :loading="isStartingAll"
           >
-            {{ t('screen.company.tasks.startAll', 'Start all tasks') }}
+            {{ t('screen.company.tasks.startAll') }}
           </Button>
         </div>
       </div>
@@ -274,7 +272,7 @@ const getTokenInfo = (taskType: TaskType) => {
 const taskConfigs: TaskConfig[] = [
   {
     type: 'profile',
-    name: t('screen.company.analysisCards.profile.title', 'Company Profile'),
+    name: t('screen.company.analysisCards.profile.title'),
     description: t(
       'screen.company.analysisCards.profile.description',
       'View detailed company information, business lines, and key metrics',
@@ -282,12 +280,12 @@ const taskConfigs: TaskConfig[] = [
   },
   {
     type: 'digital',
-    name: t('screen.company.onlinePresence.title', 'Online Presence'),
-    description: t('screen.company.onlinePresence.socialMedia', 'Social Media Presence'),
+    name: t('screen.company.onlinePresence.title'),
+    description: t('screen.company.onlinePresence.socialMedia'),
   },
   {
     type: 'csr',
-    name: t('screen.company.analysisCards.csr.title', 'Corporate Social Responsibility'),
+    name: t('screen.company.analysisCards.csr.title'),
     description: t(
       'screen.company.analysisCards.csr.description',
       'CSR initiatives, sustainability programs, and social impact',
@@ -295,7 +293,7 @@ const taskConfigs: TaskConfig[] = [
   },
   {
     type: 'press',
-    name: t('screen.company.analysisCards.press.title', 'Press & Media'),
+    name: t('screen.company.analysisCards.press.title'),
     description: t(
       'screen.company.analysisCards.press.description',
       'Press releases, news articles, and media coverage',
@@ -303,7 +301,7 @@ const taskConfigs: TaskConfig[] = [
   },
   {
     type: 'timeline',
-    name: t('screen.company.analysisCards.timeline.title', 'Timeline & History'),
+    name: t('screen.company.analysisCards.timeline.title'),
     description: t(
       'screen.company.analysisCards.timeline.description',
       'Company history, milestones, and key events over time',
@@ -311,7 +309,7 @@ const taskConfigs: TaskConfig[] = [
   },
   {
     type: 'products',
-    name: t('screen.company.analysisCards.products.title', 'Products & Services'),
+    name: t('screen.company.analysisCards.products.title'),
     description: t(
       'screen.company.analysisCards.products.description',
       'Browse products, services, and offerings',
@@ -319,7 +317,7 @@ const taskConfigs: TaskConfig[] = [
   },
   {
     type: 'team',
-    name: t('screen.company.analysisCards.team.title', 'Team & Management'),
+    name: t('screen.company.analysisCards.team.title'),
     description: t(
       'screen.company.analysisCards.team.description',
       'Leadership team, organizational structure, and key personnel',
@@ -327,7 +325,7 @@ const taskConfigs: TaskConfig[] = [
   },
   {
     type: 'jobs',
-    name: t('screen.company.analysisCards.jobs.title', 'Job Offers'),
+    name: t('screen.company.analysisCards.jobs.title'),
     description: t(
       'screen.company.analysisCards.jobs.description',
       'Current job openings and career opportunities',
@@ -430,15 +428,15 @@ const getStatusVariant = (status: TaskStatus | null) => {
 const getStatusLabel = (status: TaskStatus | null): string => {
   switch (status) {
     case 'succeeded':
-      return t('screen.company.analysisCard.status.succeeded', 'Completed')
+      return t('screen.company.analysisCard.status.succeeded')
     case 'error':
-      return t('screen.company.analysisCard.status.error', 'Error')
+      return t('screen.company.analysisCard.status.error')
     case 'running':
-      return t('screen.company.analysisCard.status.running', 'In progress')
+      return t('screen.company.analysisCard.status.running')
     case 'pending':
-      return t('screen.company.analysisCard.status.pending', 'Pending')
+      return t('screen.company.analysisCard.status.pending')
     default:
-      return t('screen.company.analysisCard.status.notStarted', 'Not started')
+      return t('screen.company.analysisCard.status.notStarted')
   }
 }
 

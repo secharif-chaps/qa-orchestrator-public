@@ -13,7 +13,7 @@
 
       <div v-if="digitalStrategy?.overallStrategy" class="text-sm">
         <h5 class="text-secondary mb-1 font-medium">
-          {{ $t('screen.profile.sections.digital.overallStrategy', 'Overall Strategy') }}
+          {{ $t('screen.profile.sections.digital.overallStrategy') }}
         </h5>
         <p class="text-secondary">
           {{ getSourcedValue(digitalStrategy.overallStrategy) }}
@@ -23,9 +23,7 @@
 
       <div v-if="digitalStrategy?.digitalTransformation" class="text-sm">
         <h5 class="text-secondary mb-1 font-medium">
-          {{
-            $t('screen.profile.sections.digital.digitalTransformation', 'Digital Transformation')
-          }}
+          {{ $t('screen.profile.sections.digital.digitalTransformation') }}
         </h5>
         <p class="text-secondary">
           {{ getSourcedValue(digitalStrategy.digitalTransformation) }}
@@ -35,9 +33,7 @@
 
       <div v-if="digitalStrategy?.eCommerceCapabilities" class="text-sm">
         <h5 class="text-secondary mb-1 font-medium">
-          {{
-            $t('screen.profile.sections.digital.eCommerceCapabilities', 'E-Commerce Capabilities')
-          }}
+          {{ $t('screen.profile.sections.digital.eCommerceCapabilities') }}
         </h5>
         <p class="text-secondary">
           {{ getSourcedValue(digitalStrategy.eCommerceCapabilities) }}
@@ -47,7 +43,7 @@
 
       <div v-if="digitalStrategy?.mobileStrategy" class="text-sm">
         <h5 class="text-secondary mb-1 font-medium">
-          {{ $t('screen.profile.sections.digital.mobileStrategy', 'Mobile Strategy') }}
+          {{ $t('screen.profile.sections.digital.mobileStrategy') }}
         </h5>
         <p class="text-secondary">
           {{ getSourcedValue(digitalStrategy.mobileStrategy) }}

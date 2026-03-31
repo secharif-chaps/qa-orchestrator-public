@@ -54,7 +54,7 @@
             <!-- Shared badge (non-global view) -->
             <UiTag
               v-else-if="isSharedWithMe"
-              :label="$t('common.folder.shared.badge', 'Shared')"
+              :label="$t('common.folder.shared.badge')"
               variant="info"
               size="xs"
             />
@@ -102,7 +102,7 @@
               variant="tertiary"
               size="sm"
               icon="fa fa-external-link-alt"
-              :label="$t('common.folder.actions.view', 'View')"
+              :label="$t('common.folder.actions.view')"
               @click.stop="$emit('view-folder', folder.id)"
             />
             <!-- Delete button only for owners -->
@@ -194,7 +194,7 @@
     >
       <i class="fas fa-folder-open text-secondary/50 mb-2 text-2xl"></i>
       <p class="text-secondary text-sm">
-        {{ $t('common.folder.items.empty', 'No items in this folder') }}
+        {{ $t('common.folder.items.empty') }}
       </p>
     </div>
   </div>
@@ -234,8 +234,8 @@ const { canDeleteFolder, isSharedWithMe } = useFolderPermissions(folderRef)
 const shareRoleLabel = computed(() => {
   if (!props.folder.share_role) return ''
   return props.folder.share_role === 'writer'
-    ? t('common.folder.share.writer', 'Writer')
-    : t('common.folder.share.reader', 'Reader')
+    ? t('common.folder.share.writer')
+    : t('common.folder.share.reader')
 })
 
 const isExpanded = ref(false)

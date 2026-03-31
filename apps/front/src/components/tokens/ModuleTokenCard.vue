@@ -22,11 +22,7 @@
       <div class="flex items-center gap-3">
         <Tag
           :variant="isEnabled ? 'success' : 'slate'"
-          :label="
-            isEnabled
-              ? $t('settings.tokens.enabled', 'Enabled')
-              : $t('settings.tokens.disabled', 'Disabled')
-          "
+          :label="isEnabled ? $t('settings.tokens.enabled') : $t('settings.tokens.disabled')"
           size="sm"
           :dot="true"
         />

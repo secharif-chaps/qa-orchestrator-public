@@ -36,8 +36,8 @@
             >
               {{
                 sortAscending
-                  ? $t('screen.timeline.sort.oldestFirst', 'Oldest first')
-                  : $t('screen.timeline.sort.newestFirst', 'Newest first')
+                  ? $t('screen.timeline.sort.oldestFirst')
+                  : $t('screen.timeline.sort.newestFirst')
               }}
             </Button>
             <div class="w-64">
