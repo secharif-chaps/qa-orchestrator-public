@@ -679,3 +679,8 @@
     animation: float 3s ease-in-out infinite;
   }
 }
+
+/* Temporary fix: Reka UI popper z-index too low — waiting for Vuellar fix */
+div[data-reka-popper-content-wrapper] {
+  z-index: 20 !important;
+}

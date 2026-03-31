@@ -90,34 +90,25 @@
           </label>
           <Select
             v-model="selectedFolderOption"
-            :groups="folderGroups"
+            :options="folderSelectOptions"
             :placeholder="$t('screen.company.create.chooseFolderPlaceholder', 'Choose a folder...')"
             :icon="selectedFolderOption?.icon || 'fa fa-folder'"
           >
-            <template #groups="{ groups }">
-              <template v-for="group in groups" :key="group.label">
+            <template #items>
+              <template v-for="group in folderGroups" :key="group.label">
                 <SelectGroup>
                   <SelectLabel>{{ group.label }}</SelectLabel>
                   <SelectItem v-for="option in group.options" :key="option.value" :option="option">
                     <template #icon>
-                      <Radio
-                        v-model="selectedFolderOption"
-                        :value="option"
-                        name="folder-select"
-                        :id="option.value"
-                      />
-                      <Icon :icon="option.icon" :style="{ color: option.color }" />
-                      <span>{{ option.label }}</span>
-                      <span
-                        v-if="option.createdAt && option.ownerUsername"
-                        class="text-xs text-gray-600 dark:text-gray-100"
-                      >
-                        — {{ formatFolderCreationInfo(option) }}
-                      </span>
+                      <Icon :icon="option.icon ?? 'fa-folder'" :style="{ color: option.color }" />
                     </template>
-                    <template #default>
-                      <span class="sr-only">{{ option.label }}</span>
-                    </template>
+                    {{ option.label }}
+                    <span
+                      v-if="option.createdAt && option.ownerUsername"
+                      class="text-xs text-gray-600 dark:text-gray-100"
+                    >
+                      — {{ formatFolderCreationInfo(option) }}
+                    </span>
                   </SelectItem>
                 </SelectGroup>
               </template>
@@ -191,7 +182,6 @@ import {
   SelectItem,
   SelectLabel,
   Icon,
-  Radio,
 } from '@owlint/feathers-vue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -309,6 +299,9 @@ const folderOptions = computed(() => {
       ownerUsername: folder.owner_username,
     }))
 })
+
+// Flat options list for the Select :options prop (required for value tracking)
+const folderSelectOptions = computed(() => folderOptions.value)
 
 // Format folder creation info (shown in dropdown options only)
 const formatFolderCreationInfo = (option: FolderOption) => {
