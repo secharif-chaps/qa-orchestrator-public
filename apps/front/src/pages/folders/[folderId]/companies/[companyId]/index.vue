@@ -289,6 +289,16 @@ const companyInfoItems = computed(() => [
   },
 ])
 
+const jobsInsights = computed(() => {
+  const hiringFocus = company.value?.jobs?.insights?.hiring_focus?.value
+  if (hiringFocus) return hiringFocus
+
+  const hasOffers = company.value?.jobs?.offers?.length
+  if (hasOffers) return t('screen.company.analysisCards.jobs.insights')
+
+  return undefined
+})
+
 // Analysis cards configuration
 const analysisCards = computed(() => {
   return [
@@ -371,7 +381,7 @@ const analysisCards = computed(() => {
         'Current job openings and career opportunities',
       ),
       icon: 'fas fa-briefcase',
-      insights: company.value?.jobs?.insights?.hiring_focus?.value,
+      insights: jobsInsights.value,
       taskStatus: getTaskStatus('jobs'),
       errorDetails: getTaskErrorDetails('jobs'),
       taskId: getTaskId('jobs'),
