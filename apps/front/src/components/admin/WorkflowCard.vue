@@ -58,20 +58,18 @@
           <!-- API Key -->
           <div>
             <label class="mb-2 block text-base text-sm font-medium">
-              {{ $t('admin.workflows.apiKey', 'API Key') }}
+              {{ $t('admin.workflows.apiKey') }}
             </label>
             <Input
               v-if="isEditing"
               id="workflow-api-key"
               v-model="editData.api_key"
               type="password"
-              :placeholder="$t('admin.workflows.apiKeyPlaceholder', 'Enter Dify API key')"
+              :placeholder="$t('admin.workflows.apiKeyPlaceholder')"
               icon="fa-key"
             />
             <div v-else class="text-secondary bg-base-200 rounded-md px-3 py-2 font-mono text-sm">
-              {{
-                workflow.api_key_obfuscated || $t('admin.workflows.notConfigured', 'Not configured')
-              }}
+              {{ workflow.api_key_obfuscated || $t('admin.workflows.notConfigured') }}
             </div>
           </div>
 
@@ -80,7 +78,7 @@
             <Button
               variant="primary"
               icon="fa fa-save"
-              :label="t('admin.workflowCard.save', 'Save')"
+              :label="t('admin.workflowCard.save')"
               size="sm"
               :loading="loading"
               :disabled="!hasChanges"
@@ -89,7 +87,7 @@
             <Button
               variant="secondary"
               icon="fa fa-times"
-              :label="t('admin.workflowCard.cancel', 'Cancel')"
+              :label="t('admin.workflowCard.cancel')"
               size="sm"
               :disabled="loading"
               @click="cancelEdit"
@@ -155,12 +153,10 @@
         <!-- API Key -->
         <div>
           <label class="mb-2 block text-base text-sm font-medium">
-            {{ $t('admin.workflows.apiKey', 'API Key') }}
+            {{ $t('admin.workflows.apiKey') }}
           </label>
           <div class="text-secondary bg-base-200 rounded-md px-3 py-2 font-mono text-sm">
-            {{
-              workflow.api_key_obfuscated || $t('admin.workflows.notConfigured', 'Not configured')
-            }}
+            {{ workflow.api_key_obfuscated || $t('admin.workflows.notConfigured') }}
           </div>
         </div>
       </div>
@@ -238,7 +234,7 @@ const statusConfig = computed(() => {
   if (hasApiKey) {
     return {
       variant: 'success' as const,
-      label: t('admin.workflows.status.active', 'Active'),
+      label: t('admin.workflows.status.active'),
       badgeIcon: 'fa fa-check',
       iconBg: 'bg-success/10 group-hover:bg-success/20',
       iconColor: 'text-success',
@@ -247,7 +243,7 @@ const statusConfig = computed(() => {
 
   return {
     variant: 'slate' as const,
-    label: t('admin.workflows.status.notConfigured', 'Not Configured'),
+    label: t('admin.workflows.status.notConfigured'),
     badgeIcon: 'fa fa-times',
     iconBg: 'bg-slate/10 group-hover:bg-slate/20',
     iconColor: 'text-secondary',

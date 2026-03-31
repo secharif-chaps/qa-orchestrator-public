@@ -8,10 +8,30 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import type { FeatureFlagConfig } from '@/types/feature-flags'
 
-// Mock vue-i18n
+// Mock vue-i18n with meaningful translations for test assertions
+const translations: Record<string, string> = {
+  'dashboard.home.modules.screen.name': 'Screen',
+  'dashboard.home.modules.screen.description': 'Automated company cards',
+  'dashboard.home.modules.screen.category': 'Intelligence',
+  'dashboard.home.modules.target.name': 'Target',
+  'dashboard.home.modules.target.description': 'Strategic monitoring',
+  'dashboard.home.modules.target.category': 'Monitoring',
+  'dashboard.home.modules.explore.name': 'Explore',
+  'dashboard.home.modules.explore.description': 'Knowledge graph',
+  'dashboard.home.modules.explore.category': 'Data',
+  'dashboard.home.modules.discover.name': 'Discover',
+  'dashboard.home.modules.discover.description': 'Data exploration',
+  'dashboard.home.modules.discover.category': 'Exploration',
+  'dashboard.home.modules.actions.companyScreen': 'Screen',
+  'dashboard.home.modules.actions.contactSales': 'Contact Sales',
+  'dashboard.home.modules.actions.open': 'Open',
+  'dashboard.home.modules.status.active': 'Active',
+  'dashboard.home.modules.status.proFeature': 'Pro Feature',
+  'dashboard.home.modules.status.comingSoon': 'Coming Soon',
+}
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
+    t: (key: string) => translations[key] || key,
   }),
 }))
 
@@ -56,6 +76,14 @@ vi.mock('../ui/Card.vue', () => ({
 const mockWindowOpen = vi.fn()
 Object.defineProperty(window, 'open', { value: mockWindowOpen, writable: true })
 
+const globalMocks = {
+  global: {
+    mocks: {
+      $t: (key: string) => translations[key] || key,
+    },
+  },
+}
+
 describe('ModulesShowcase', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -78,6 +106,7 @@ describe('ModulesShowcase', () => {
 
     const wrapper = mount(ModulesShowcase, {
       props: { featureFlags },
+      ...globalMocks,
     })
 
     await flushPromises()
@@ -99,6 +128,7 @@ describe('ModulesShowcase', () => {
 
     const wrapper = mount(ModulesShowcase, {
       props: { featureFlags: [] },
+      ...globalMocks,
     })
 
     await flushPromises()
@@ -129,6 +159,7 @@ describe('ModulesShowcase', () => {
 
     const wrapper = mount(ModulesShowcase, {
       props: { featureFlags },
+      ...globalMocks,
     })
 
     await flushPromises()
@@ -163,6 +194,7 @@ describe('ModulesShowcase', () => {
 
     const wrapper = mount(ModulesShowcase, {
       props: { featureFlags },
+      ...globalMocks,
     })
 
     await flushPromises()
@@ -198,6 +230,7 @@ describe('ModulesShowcase', () => {
 
     const wrapper = mount(ModulesShowcase, {
       props: { featureFlags },
+      ...globalMocks,
     })
 
     await flushPromises()
@@ -231,6 +264,7 @@ describe('ModulesShowcase', () => {
 
     const wrapper = mount(ModulesShowcase, {
       props: { featureFlags },
+      ...globalMocks,
     })
 
     await flushPromises()
@@ -254,6 +288,7 @@ describe('ModulesShowcase', () => {
 
     // First render with Discover disabled
     const wrapper = mount(ModulesShowcase, {
+      ...globalMocks,
       props: {
         featureFlags: [
           {

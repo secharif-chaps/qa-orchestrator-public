@@ -2,13 +2,13 @@
   <div class="flex flex-col gap-4">
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-xl font-semibold">{{ t('settings.team.title', 'Your members') }}</h2>
+        <h2 class="text-xl font-semibold">{{ t('settings.team.title') }}</h2>
       </div>
 
       <Searchbar
         id="team-search"
         :model-value="searchQuery"
-        :placeholder="t('settings.team.searchPlaceholder', 'Search by name, email, or username')"
+        :placeholder="t('settings.team.searchPlaceholder')"
         class="w-96"
         @update:model-value="handleSearchInput"
       />
@@ -20,7 +20,7 @@
         <div class="text-center">
           <i class="fa fa-spinner fa-spin text-primary mb-3 text-3xl"></i>
           <p class="text-secondary">
-            {{ t('settings.team.loading', 'Loading team members...') }}
+            {{ t('settings.team.loading') }}
           </p>
         </div>
       </div>
@@ -30,8 +30,8 @@
         <Alert
           variant="danger"
           icon="fa-exclamation-circle"
-          :title="t('settings.team.error.title', 'Error')"
-          :description="t('settings.team.error.description', 'Failed to load team members')"
+          :title="t('settings.team.error.title')"
+          :description="t('settings.team.error.description')"
         />
       </div>
 
@@ -41,13 +41,13 @@
         <div v-if="teamMembers.length === 0" class="p-12 text-center">
           <i class="fa fa-users text-secondary/30 mb-4 text-5xl"></i>
           <h3 class="mb-2 text-lg font-semibold">
-            {{ t('settings.team.empty.title', 'No team members found') }}
+            {{ t('settings.team.empty.title') }}
           </h3>
           <p class="text-secondary">
             {{
               searchQuery
-                ? t('settings.team.empty.searchDescription', 'Try a different search term')
-                : t('settings.team.empty.description', 'No team members in your organization')
+                ? t('settings.team.empty.searchDescription')
+                : t('settings.team.empty.description')
             }}
           </p>
         </div>

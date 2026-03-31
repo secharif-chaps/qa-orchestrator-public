@@ -3,7 +3,7 @@
     <Button
       variant="tertiary"
       icon="fa fa-share-alt"
-      :label="$t('common.folder.actions.share', 'Share')"
+      :label="$t('common.folder.actions.share')"
       @click="showModal = true"
     />
 

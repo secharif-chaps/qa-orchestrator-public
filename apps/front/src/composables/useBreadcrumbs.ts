@@ -68,7 +68,7 @@ export function useBreadcrumbs() {
           // Only add 'Companies' breadcrumb if it's not under folders
           if (!pathSegments.includes('folders')) {
             items.push({
-              name: t('common.breadcrumb.companies', 'Companies'),
+              name: t('common.breadcrumb.companies'),
               to: isLast ? undefined : '/companies',
               current: isLast,
             })
@@ -80,7 +80,7 @@ export function useBreadcrumbs() {
 
         case 'folders':
           items.push({
-            name: t('common.breadcrumb.folders', 'Folders'),
+            name: t('common.breadcrumb.folders'),
             to: '/folders',
             current: isLast,
           })
@@ -88,7 +88,7 @@ export function useBreadcrumbs() {
 
         case 'team':
           items.push({
-            name: t('common.breadcrumb.team', 'Team'),
+            name: t('common.breadcrumb.team'),
             to: undefined,
             current: isLast,
           })
@@ -96,7 +96,7 @@ export function useBreadcrumbs() {
 
         case 'admin':
           items.push({
-            name: t('common.breadcrumb.admin', 'Admin'),
+            name: t('common.breadcrumb.admin'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -104,7 +104,7 @@ export function useBreadcrumbs() {
 
         case 'settings':
           items.push({
-            name: t('common.breadcrumb.settings', 'Settings'),
+            name: t('common.breadcrumb.settings'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -112,7 +112,7 @@ export function useBreadcrumbs() {
 
         case 'search':
           items.push({
-            name: t('common.breadcrumb.search', 'Search'),
+            name: t('common.breadcrumb.search'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -125,7 +125,7 @@ export function useBreadcrumbs() {
 
         case 'profile':
           items.push({
-            name: t('common.breadcrumb.profile', 'Profile'),
+            name: t('common.breadcrumb.profile'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -133,7 +133,7 @@ export function useBreadcrumbs() {
 
         case 'jobs':
           items.push({
-            name: t('common.breadcrumb.jobs', 'Jobs'),
+            name: t('common.breadcrumb.jobs'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -141,7 +141,7 @@ export function useBreadcrumbs() {
 
         case 'timeline':
           items.push({
-            name: t('common.breadcrumb.timeline', 'Timeline'),
+            name: t('common.breadcrumb.timeline'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -149,7 +149,7 @@ export function useBreadcrumbs() {
 
         case 'products':
           items.push({
-            name: t('common.breadcrumb.products', 'Products'),
+            name: t('common.breadcrumb.products'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -157,7 +157,7 @@ export function useBreadcrumbs() {
 
         case 'press':
           items.push({
-            name: t('common.breadcrumb.press', 'Press'),
+            name: t('common.breadcrumb.press'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -167,7 +167,7 @@ export function useBreadcrumbs() {
           // For folder edit pages
           if (pathSegments.includes('folders')) {
             items.push({
-              name: t('common.breadcrumb.edit', 'Edit'),
+              name: t('common.breadcrumb.edit'),
               to: isLast ? undefined : currentPath,
               current: isLast,
             })
@@ -178,7 +178,7 @@ export function useBreadcrumbs() {
           // For folder create pages - not clickable as there's no /create route
           if (pathSegments.includes('folders')) {
             items.push({
-              name: t('common.breadcrumb.create', 'Create'),
+              name: t('common.breadcrumb.create'),
               to: undefined, // Always undefined - no standalone /create page exists
               current: isLast,
             })
@@ -189,7 +189,7 @@ export function useBreadcrumbs() {
           // For specific create pages like /folders/[id]/create/company
           if (pathSegments.includes('folders') && pathSegments.includes('create')) {
             items.push({
-              name: t('common.breadcrumb.company', 'Company'),
+              name: t('common.breadcrumb.company'),
               to: isLast ? undefined : currentPath,
               current: isLast,
             })
@@ -199,7 +199,7 @@ export function useBreadcrumbs() {
         // Admin pages
         case 'users':
           items.push({
-            name: t('common.breadcrumb.users', 'Users'),
+            name: t('common.breadcrumb.users'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -207,7 +207,7 @@ export function useBreadcrumbs() {
 
         case 'organizations':
           items.push({
-            name: t('common.breadcrumb.organizations', 'Organizations'),
+            name: t('common.breadcrumb.organizations'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -215,7 +215,7 @@ export function useBreadcrumbs() {
 
         case 'tokens':
           items.push({
-            name: t('common.breadcrumb.tokens', 'Tokens'),
+            name: t('common.breadcrumb.tokens'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -223,7 +223,7 @@ export function useBreadcrumbs() {
 
         case 'members':
           items.push({
-            name: t('common.breadcrumb.members', 'Members'),
+            name: t('common.breadcrumb.members'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -231,7 +231,7 @@ export function useBreadcrumbs() {
 
         case 'sources':
           items.push({
-            name: t('common.breadcrumb.sources', 'Sources'),
+            name: t('common.breadcrumb.sources'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -239,7 +239,7 @@ export function useBreadcrumbs() {
 
         case 'tasks':
           items.push({
-            name: t('common.breadcrumb.tasks', 'Tasks'),
+            name: t('common.breadcrumb.tasks'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -247,7 +247,7 @@ export function useBreadcrumbs() {
 
         case 'usage':
           items.push({
-            name: t('common.breadcrumb.usage', 'Usage'),
+            name: t('common.breadcrumb.usage'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -255,7 +255,7 @@ export function useBreadcrumbs() {
 
         case 'workflows':
           items.push({
-            name: t('common.breadcrumb.workflows', 'Workflows'),
+            name: t('common.breadcrumb.workflows'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -263,7 +263,7 @@ export function useBreadcrumbs() {
 
         case 'history':
           items.push({
-            name: t('common.breadcrumb.history', 'History'),
+            name: t('common.breadcrumb.history'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -271,7 +271,7 @@ export function useBreadcrumbs() {
 
         case 'costs':
           items.push({
-            name: t('common.breadcrumb.costs', 'Costs'),
+            name: t('common.breadcrumb.costs'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -279,7 +279,7 @@ export function useBreadcrumbs() {
 
         case 'csr':
           items.push({
-            name: t('common.breadcrumb.csr', 'CSR'),
+            name: t('common.breadcrumb.csr'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -287,7 +287,7 @@ export function useBreadcrumbs() {
 
         case 'company-csv':
           items.push({
-            name: t('common.breadcrumb.companyCsv', 'CSV Import'),
+            name: t('common.breadcrumb.companyCsv'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -295,7 +295,7 @@ export function useBreadcrumbs() {
 
         case 'help':
           items.push({
-            name: t('common.breadcrumb.help', 'Help'),
+            name: t('common.breadcrumb.help'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -304,7 +304,7 @@ export function useBreadcrumbs() {
         // Settings pages
         case 'credits':
           items.push({
-            name: t('common.breadcrumb.credits', 'Credits'),
+            name: t('common.breadcrumb.credits'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -312,7 +312,7 @@ export function useBreadcrumbs() {
 
         case 'ai-preferences':
           items.push({
-            name: t('common.breadcrumb.aiPreferences', 'AI Preferences'),
+            name: t('common.breadcrumb.aiPreferences'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -320,7 +320,7 @@ export function useBreadcrumbs() {
 
         case 'ai-preferences-setup':
           items.push({
-            name: t('common.breadcrumb.aiPreferencesSetup', 'AI Preferences Setup'),
+            name: t('common.breadcrumb.aiPreferencesSetup'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -328,7 +328,7 @@ export function useBreadcrumbs() {
 
         case 'appearance':
           items.push({
-            name: t('common.breadcrumb.appearance', 'Appearance'),
+            name: t('common.breadcrumb.appearance'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -336,7 +336,7 @@ export function useBreadcrumbs() {
 
         case 'security':
           items.push({
-            name: t('common.breadcrumb.security', 'Security'),
+            name: t('common.breadcrumb.security'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })

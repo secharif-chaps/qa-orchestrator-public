@@ -4,10 +4,10 @@
       <div>
         <h2 class="text-secondary flex items-center gap-3 text-2xl font-bold">
           <i class="fa fa-users"></i>
-          <span>{{ $t('screen.team.title', 'Team & Organization') }}</span>
+          <span>{{ $t('screen.team.title') }}</span>
         </h2>
         <p class="text-secondary mt-1">
-          {{ $t('screen.team.subtitle', 'Explore the organizational structure and team members') }}
+          {{ $t('screen.team.subtitle') }}
         </p>
       </div>
 
@@ -16,7 +16,7 @@
         @click="$emit('export')"
         variant="secondary"
         icon="fa fa-download"
-        :label="$t('screen.team.export', 'Export')"
+        :label="$t('screen.team.export')"
       />
     </div>
 
@@ -27,7 +27,7 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-secondary text-sm">
-              {{ $t('screen.team.totalMembers', 'Total Members') }}
+              {{ $t('screen.team.totalMembers') }}
             </p>
             <p class="text-secondary mt-1 text-2xl font-bold">{{ totalMembers }}</p>
           </div>
@@ -42,7 +42,7 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-secondary text-sm">
-              {{ $t('screen.team.executives', 'Executives') }}
+              {{ $t('screen.team.executives') }}
             </p>
             <p class="mt-1 text-2xl font-bold text-purple-600 dark:text-purple-400">
               {{ executivesCount }}
@@ -61,7 +61,7 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-secondary text-sm">
-              {{ $t('screen.team.managers', 'Managers') }}
+              {{ $t('screen.team.managers') }}
             </p>
             <p class="mt-1 text-2xl font-bold text-orange-600 dark:text-orange-400">
               {{ managersCount }}
@@ -80,7 +80,7 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-secondary text-sm">
-              {{ $t('screen.team.departments', 'Departments') }}
+              {{ $t('screen.team.departments') }}
             </p>
             <p class="text-secondary mt-1 text-2xl font-bold">{{ departmentsCount }}</p>
           </div>
@@ -97,7 +97,7 @@
     <Alert
       v-if="hasInsights"
       variant="info"
-      :title="$t('screen.team.insights.title', 'Team Insights')"
+      :title="$t('screen.team.insights.title')"
       :description="teamInsights"
       icon="fa-lightbulb"
       class="mt-6"

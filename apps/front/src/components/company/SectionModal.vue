@@ -32,7 +32,7 @@
             <component :is="sectionComponent" v-if="sectionComponent" />
             <div v-else class="text-secondary py-12 text-center">
               <i class="fas fa-exclamation-triangle mb-4 text-4xl"></i>
-              <p>{{ t('screen.company.sections.notAvailable', 'Section not available') }}</p>
+              <p>{{ t('screen.company.sections.notAvailable') }}</p>
             </div>
           </div>
         </div>
@@ -98,7 +98,7 @@ const route = useRoute()
 // Section configurations
 const sections: Record<TaskType, SectionConfig> = {
   profile: {
-    name: t('screen.company.analysisCards.profile.title', 'Company Profile'),
+    name: t('screen.company.analysisCards.profile.title'),
     description: t(
       'screen.company.analysisCards.profile.description',
       'View detailed company information, business lines, and key metrics',
@@ -107,7 +107,7 @@ const sections: Record<TaskType, SectionConfig> = {
     component: ProfilePage,
   },
   timeline: {
-    name: t('screen.company.analysisCards.timeline.title', 'Timeline & History'),
+    name: t('screen.company.analysisCards.timeline.title'),
     description: t(
       'screen.company.analysisCards.timeline.description',
       'Company history, milestones, and key events over time',
@@ -116,7 +116,7 @@ const sections: Record<TaskType, SectionConfig> = {
     component: TimelinePage,
   },
   products: {
-    name: t('screen.company.analysisCards.products.title', 'Products & Services'),
+    name: t('screen.company.analysisCards.products.title'),
     description: t(
       'screen.company.analysisCards.products.description',
       'Browse products, services, and offerings',
@@ -125,7 +125,7 @@ const sections: Record<TaskType, SectionConfig> = {
     component: ProductsPage,
   },
   team: {
-    name: t('screen.company.analysisCards.team.title', 'Team & Management'),
+    name: t('screen.company.analysisCards.team.title'),
     description: t(
       'screen.company.analysisCards.team.description',
       'Leadership team, organizational structure, and key personnel',
@@ -134,7 +134,7 @@ const sections: Record<TaskType, SectionConfig> = {
     component: TeamPage,
   },
   jobs: {
-    name: t('screen.company.analysisCards.jobs.title', 'Job Offers'),
+    name: t('screen.company.analysisCards.jobs.title'),
     description: t(
       'screen.company.analysisCards.jobs.description',
       'Current job openings and career opportunities',
@@ -143,7 +143,7 @@ const sections: Record<TaskType, SectionConfig> = {
     component: JobsPage,
   },
   press: {
-    name: t('screen.company.analysisCards.press.title', 'Press & Media'),
+    name: t('screen.company.analysisCards.press.title'),
     description: t(
       'screen.company.analysisCards.press.description',
       'Press releases, news articles, and media coverage',
@@ -152,13 +152,13 @@ const sections: Record<TaskType, SectionConfig> = {
     component: PressPage,
   },
   digital: {
-    name: t('screen.company.onlinePresence.title', 'Online Presence'),
-    description: t('screen.company.onlinePresence.socialMedia', 'Social Media Presence'),
+    name: t('screen.company.onlinePresence.title'),
+    description: t('screen.company.onlinePresence.socialMedia'),
     icon: 'fas fa-globe',
     component: ProfilePage, // Included in profile
   },
   csr: {
-    name: t('screen.company.analysisCards.csr.title', 'Corporate Social Responsibility'),
+    name: t('screen.company.analysisCards.csr.title'),
     description: t(
       'screen.company.analysisCards.csr.description',
       'CSR initiatives, sustainability programs, and social impact',

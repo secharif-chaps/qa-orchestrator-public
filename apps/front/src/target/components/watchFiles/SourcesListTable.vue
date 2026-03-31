@@ -446,7 +446,7 @@ const typeLabel = (type: string) => {
     return t('target.sourceTypes.social_media')
   }
 
-  const translationKey = `source_types.${type}`
+  const translationKey = `target.sourceTypes.${type}`
   const translation = t(translationKey)
 
   return translation !== translationKey ? translation : type

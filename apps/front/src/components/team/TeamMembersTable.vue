@@ -18,7 +18,7 @@
               <Tag
                 v-if="item.is_current_user"
                 variant="primary"
-                :label="$t('settings.team.you', 'You')"
+                :label="$t('settings.team.you')"
                 size="xs"
                 rounded
               />
@@ -55,7 +55,7 @@
             v-if="canManageTeam && !item.is_current_user"
             variant="tertiary"
             icon="fa fa-key"
-            :title="$t('settings.team.resetPassword', 'Reset Password')"
+            :title="$t('settings.team.resetPassword')"
             @click="$emit('reset-password', item)"
           />
         </div>
@@ -91,10 +91,10 @@ defineEmits<{
 const { t } = useI18n()
 
 const fields = computed(() => [
-  { key: 'member', label: t('settings.team.table.member', 'Member') },
-  { key: 'email', label: t('settings.team.table.email', 'Email') },
-  { key: 'permissions', label: t('settings.team.table.permissions', 'Permissions') },
-  { key: 'actions', label: t('settings.team.table.actions', 'Actions'), class: 'text-right' },
+  { key: 'member', label: t('settings.team.table.member') },
+  { key: 'email', label: t('settings.team.table.email') },
+  { key: 'permissions', label: t('settings.team.table.permissions') },
+  { key: 'actions', label: t('settings.team.table.actions'), class: 'text-right' },
 ])
 
 // Helper to get row key for table

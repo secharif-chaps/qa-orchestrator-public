@@ -13,7 +13,7 @@
           </div>
           <div>
             <h3 class="text-base text-lg font-semibold">
-              {{ $t('common.folder.restore.title', 'Restore Folder') }}
+              {{ $t('common.folder.restore.title') }}
             </h3>
             <p class="text-secondary text-sm">
               {{
@@ -41,11 +41,11 @@
         <!-- Folder Details -->
         <div class="bg-base-200 mb-6 rounded-lg p-4">
           <h4 class="mb-3 text-base font-medium">
-            {{ $t('common.folder.restore.details', 'Folder Details') }}
+            {{ $t('common.folder.restore.details') }}
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('common.folder.name', 'Name') }}:</span>
+              <span class="text-secondary">{{ $t('common.folder.name') }}:</span>
               <span class="font-medium">{{ folderToRestore.name }}</span>
             </div>
           </div>
@@ -56,13 +56,13 @@
       <div class="border-primary-stroke flex items-center justify-end gap-3 border-t p-6">
         <Button
           variant="secondary"
-          :label="$t('common.cancel', 'Cancel')"
+          :label="$t('common.cancel')"
           @click="showRestoreModal = false"
         />
         <Button
           variant="primary"
           icon="fa fa-undo"
-          :label="$t('common.folder.restore.confirm.button', 'Restore Folder')"
+          :label="$t('common.folder.restore.confirm.button')"
           :loading="isLoading"
           :disabled="isLoading"
           @click="handleRestore"

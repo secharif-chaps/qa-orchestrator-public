@@ -1,14 +1,14 @@
 <template>
   <Modal
     v-model:display-modal="showModal"
-    :title="$t('admin.organization.admin.confirmAdminRole.title', 'Assign Admin Role?')"
+    :title="$t('admin.organization.admin.confirmAdminRole.title')"
     icon="fa fa-exclamation-triangle"
     size="md"
     color=""
     @close="showModal = false"
   >
     <template #description>
-      {{ $t('admin.organization.admin.confirmAdminRole.warningTitle', 'High privilege role') }}
+      {{ $t('admin.organization.admin.confirmAdminRole.warningTitle') }}
     </template>
 
     <div class="flex flex-col gap-4">
@@ -16,7 +16,7 @@
       <Alert
         variant="warning"
         icon="fa-shield"
-        :title="$t('admin.organization.admin.confirmAdminRole.warningTitle', 'High privilege role')"
+        :title="$t('admin.organization.admin.confirmAdminRole.warningTitle')"
         :description="
           $t(
             'admin.organization.admin.confirmAdminRole.warningDescription',
@@ -28,9 +28,7 @@
       <!-- Description -->
       <div class="text-secondary flex flex-col gap-3 text-sm">
         <p>
-          {{
-            $t('admin.organization.admin.confirmAdminRole.description', 'The Admin role includes:')
-          }}
+          {{ $t('admin.organization.admin.confirmAdminRole.description') }}
         </p>
         <ul class="ml-5 list-disc space-y-1">
           <li>
@@ -46,12 +44,8 @@
     </div>
 
     <template #footer>
-      <Button variant="primary" :label="$t('common.confirm', 'Confirm')" @click="handleConfirm" />
-      <Button
-        variant="tertiary"
-        :label="$t('common.cancel', 'Cancel')"
-        @click="showModal = false"
-      />
+      <Button variant="primary" :label="$t('common.confirm')" @click="handleConfirm" />
+      <Button variant="tertiary" :label="$t('common.cancel')" @click="showModal = false" />
     </template>
   </Modal>
 </template>

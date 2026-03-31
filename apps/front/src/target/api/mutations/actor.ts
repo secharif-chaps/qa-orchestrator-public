@@ -43,8 +43,8 @@ export const useChangeActorStatus = (options?: CallbackMutations<unknown>) => {
       const sourceCount = sourceIds?.length || 0
       const messageKey =
         status === ActorStatus.ACTIVE
-          ? 'watch_files.actors.deactivation_modal.success.activated'
-          : 'watch_files.actors.deactivation_modal.success.deactivated'
+          ? 'target.watchFiles.actors.deactivation_modal.success.activated'
+          : 'target.watchFiles.actors.deactivation_modal.success.deactivated'
 
       toast.success(t(messageKey, sourceCount))
 

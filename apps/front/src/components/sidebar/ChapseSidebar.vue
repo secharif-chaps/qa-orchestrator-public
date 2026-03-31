@@ -34,8 +34,8 @@
             size="sm"
             :title="
               sidebarStore.isFullscreen
-                ? $t('common.sidebar.chapse.exitFullscreen', 'Exit fullscreen')
-                : $t('common.sidebar.chapse.enterFullscreen', 'Enter fullscreen')
+                ? $t('common.sidebar.chapse.exitFullscreen')
+                : $t('common.sidebar.chapse.enterFullscreen')
             "
             @click="toggleFullscreen"
           />
@@ -43,14 +43,14 @@
             variant="tertiary"
             icon="fa-solid fa-plus"
             size="sm"
-            :title="$t('common.sidebar.chapse.newConversation', 'New conversation')"
+            :title="$t('common.sidebar.chapse.newConversation')"
             @click="handleNewConversation"
           />
           <Button
             variant="tertiary"
             icon="fa-solid fa-trash"
             size="sm"
-            :title="$t('common.sidebar.chapse.clearHistory', 'Clear history')"
+            :title="$t('common.sidebar.chapse.clearHistory')"
             @click="handleClearHistory"
           />
         </div>
@@ -67,9 +67,9 @@
         >
           <i class="fa fa-building text-sage-400 text-sm"></i>
           <span class="text-sage-200 text-sm">
-            {{ $t('common.sidebar.chapse.addThisCompany', 'Add') }}
+            {{ $t('common.sidebar.chapse.addThisCompany') }}
             <strong>{{ availablePageContext.name }}</strong>
-            {{ $t('common.sidebar.chapse.toContext', 'to context') }}
+            {{ $t('common.sidebar.chapse.toContext') }}
           </span>
           <i class="fa fa-plus text-sage-400 ml-auto text-xs"></i>
         </button>
@@ -116,7 +116,7 @@
             </div>
             <div class="bg-sage-800 text-sage-200 text-sm rounded-xl px-4 py-3">
               <i class="fa fa-circle fa-beat text-primary text-xs mr-2"></i>
-              {{ $t('common.sidebar.chapse.thinking', 'Thinking...') }}
+              {{ $t('common.sidebar.chapse.thinking') }}
             </div>
           </div> -->
         </template>
@@ -125,7 +125,7 @@
       <!-- Chat Input -->
       <ChatInput
         v-model="userMessage"
-        :placeholder="$t('common.sidebar.chapse.placeholder', 'Write a message...')"
+        :placeholder="$t('common.sidebar.chapse.placeholder')"
         :loading="isLoading"
         :disabled="isStreaming"
         :company-context="companyContext"

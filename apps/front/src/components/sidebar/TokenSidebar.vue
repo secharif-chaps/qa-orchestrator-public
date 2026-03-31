@@ -4,7 +4,7 @@
     <SidebarHeader :title="$t('common.sidebar.tokens.title')">
       <Tag
         color="almond"
-        :label="`${totalTokens} ${$t('common.sidebar.tokens.credits', 'credits')}`"
+        :label="`${totalTokens} ${$t('common.sidebar.tokens.credits')}`"
         icon="fa-coins"
         size="md"
       />
@@ -24,7 +24,7 @@
           <Tag color="sage" icon="fa-coins" />
           <div class="text-center">
             <h3 class="text-sage-900 mb-1 text-sm font-semibold dark:text-white">
-              {{ $t('common.sidebar.tokens.noHistory', 'No usage history') }}
+              {{ $t('common.sidebar.tokens.noHistory') }}
             </h3>
             <p class="text-sage-700 dark:text-sage-300 px-4 text-xs">
               {{
@@ -59,7 +59,7 @@
           <h3
             class="text-sage-900 dark:text-sage-400 text-xs font-semibold tracking-wider uppercase"
           >
-            {{ $t('common.sidebar.tokens.yesterday', 'Hier') }}
+            {{ $t('common.sidebar.tokens.yesterday') }}
           </h3>
           <div class="flex flex-col gap-2">
             <TokenHistoryItem
@@ -97,7 +97,7 @@
           <Button
             variant="tertiary"
             size="sm"
-            :label="$t('common.sidebar.tokens.viewHistory', 'View all history')"
+            :label="$t('common.sidebar.tokens.viewHistory')"
             icon-right="fa fa-arrow-right"
             @click="$router.push('/tokens/history')"
           />

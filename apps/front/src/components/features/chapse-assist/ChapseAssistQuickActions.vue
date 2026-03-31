@@ -15,9 +15,7 @@
     >
       <div class="border-primary h-10 w-10 animate-spin rounded-full border-b-2"></div>
       <p class="text-secondary text-sm">
-        {{
-          $t('screen.chapseAssist.quickActions.checkingPreferences', 'Checking AI preferences...')
-        }}
+        {{ $t('screen.chapseAssist.quickActions.checkingPreferences') }}
       </p>
     </div>
   </div>
@@ -50,7 +48,7 @@
           variant="secondary"
           size="sm"
           icon="fa fa-refresh"
-          :label="$t('screen.chapseAssist.quickActions.tryAgain', 'Try Again')"
+          :label="$t('screen.chapseAssist.quickActions.tryAgain')"
           @click="retryPreferencesCheck"
         />
       </div>
@@ -75,7 +73,7 @@
         variant="tertiary"
         size="sm"
         icon="fa fa-refresh"
-        :label="$t('screen.chapseAssist.quickActions.refresh', 'Refresh')"
+        :label="$t('screen.chapseAssist.quickActions.refresh')"
         @click="handleRefresh"
         :disabled="isLoadingActions"
       />
@@ -88,7 +86,7 @@
     >
       <div class="border-primary h-10 w-10 animate-spin rounded-full border-b-2"></div>
       <p class="text-secondary text-sm">
-        {{ $t('screen.chapseAssist.quickActions.loading', 'Generating personalized actions...') }}
+        {{ $t('screen.chapseAssist.quickActions.loading') }}
       </p>
     </div>
 
@@ -96,7 +94,7 @@
     <div v-else-if="hasError" class="flex flex-col gap-3">
       <Alert
         variant="danger"
-        :title="$t('screen.chapseAssist.quickActions.error.title', 'Failed to Load Quick Actions')"
+        :title="$t('screen.chapseAssist.quickActions.error.title')"
         :description="
           actionsError ||
           $t(
@@ -111,7 +109,7 @@
           variant="secondary"
           size="sm"
           icon="fa fa-refresh"
-          :label="$t('screen.chapseAssist.quickActions.tryAgain', 'Try Again')"
+          :label="$t('screen.chapseAssist.quickActions.tryAgain')"
           @click="handleRetry"
         />
         <Button
@@ -119,7 +117,7 @@
           variant="primary"
           size="sm"
           icon="fa fa-cog"
-          :label="$t('screen.chapseAssist.quickActions.configure', 'Configure AI Preferences')"
+          :label="$t('screen.chapseAssist.quickActions.configure')"
           @click="goToSetup"
         />
       </div>
@@ -190,7 +188,7 @@
     >
       <i class="fa fa-magic text-secondary mb-3 text-3xl"></i>
       <h4 class="mb-2 font-semibold">
-        {{ $t('screen.chapseAssist.quickActions.empty.title', 'No Quick Actions Available') }}
+        {{ $t('screen.chapseAssist.quickActions.empty.title') }}
       </h4>
       <p class="text-secondary text-sm">
         {{
@@ -205,7 +203,7 @@
         size="sm"
         icon="fa fa-refresh"
         class="mt-4"
-        :label="$t('screen.chapseAssist.quickActions.tryAgain', 'Try Again')"
+        :label="$t('screen.chapseAssist.quickActions.tryAgain')"
         @click="handleRetry"
       />
     </div>
@@ -258,9 +256,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // Computed props with translations as defaults
-const title = computed(
-  () => props.title ?? t('screen.chapseAssist.quickActions.title', 'Chaps-e Smart Assist'),
-)
+const title = computed(() => props.title ?? t('screen.chapseAssist.quickActions.title'))
 
 const emit = defineEmits<{
   actionClick: [action: QuickAction]

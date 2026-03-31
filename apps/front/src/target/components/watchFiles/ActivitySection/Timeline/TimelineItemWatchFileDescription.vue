@@ -113,35 +113,35 @@ const keypath = computed(() => {
 
   switch (actionType) {
     case 'created':
-      return 'watch_files.activity.history.watch_file_created'
+      return 'target.watchFiles.activity.history.watch_file_created'
     case 'updated':
-      return 'watch_files.activity.history.watch_file_updated'
+      return 'target.watchFiles.activity.history.watch_file_updated'
     case 'source_status_changed': {
       const sourceData = props.activity.actionData as SourceStatusChangedActionData
-      return 'watch_files.activity.history.source_status_changed_' + sourceData.status
+      return 'target.watchFiles.activity.history.source_status_changed_' + sourceData.status
     }
     case 'actor_status_changed': {
       const actorData = props.activity.actionData as ActorStatusChangedActionData
-      return 'watch_files.activity.history.actor_status_changed_' + actorData.status
+      return 'target.watchFiles.activity.history.actor_status_changed_' + actorData.status
     }
     case 'shared_mode_changed': {
       const sharedData = props.activity.actionData as SharedModeChangedActionData
       if (sharedData.new_value === WatchFileUserAccessState.NO_ACCESS) {
-        return 'watch_files.activity.history.shared_mode_removed'
+        return 'target.watchFiles.activity.history.shared_mode_removed'
       }
       if (sharedData.new_value === WatchFileUserAccessState.OWNER) {
-        return 'watch_files.activity.history.shared_mode_owner'
+        return 'target.watchFiles.activity.history.shared_mode_owner'
       }
-      return 'watch_files.activity.history.shared_mode_changed'
+      return 'target.watchFiles.activity.history.shared_mode_changed'
     }
     case 'actor_added':
-      return 'watch_files.activity.history.actor_added'
+      return 'target.watchFiles.activity.history.actor_added'
     case 'source_added':
-      return 'watch_files.activity.history.source_added'
+      return 'target.watchFiles.activity.history.source_added'
     case 'monitoring_type_detected':
-      return 'watch_files.activity.history.monitoring_type_detected'
+      return 'target.watchFiles.activity.history.monitoring_type_detected'
     case 'reference_subject_detected':
-      return 'watch_files.activity.history.reference_subject_detected'
+      return 'target.watchFiles.activity.history.reference_subject_detected'
     default:
       return ''
   }

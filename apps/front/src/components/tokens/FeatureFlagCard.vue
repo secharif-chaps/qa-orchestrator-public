@@ -8,9 +8,7 @@
           <Badge
             :intent="isEnabled ? 'success' : 'danger'"
             :label="
-              isEnabled
-                ? $t('settings.featureFlags.enabled', 'Enabled')
-                : $t('settings.featureFlags.disabled', 'Disabled')
+              isEnabled ? $t('settings.featureFlags.enabled') : $t('settings.featureFlags.disabled')
             "
             :icon="flagIcon"
             variant="secondary"
@@ -43,10 +41,8 @@
           id="discover-url-input"
           v-model="urlInput"
           type="url"
-          :label="$t('settings.featureFlags.discover.urlLabel', 'External URL')"
-          :placeholder="
-            $t('settings.featureFlags.discover.urlPlaceholder', 'https://discover.example.com')
-          "
+          :label="$t('settings.featureFlags.discover.urlLabel')"
+          :placeholder="$t('settings.featureFlags.discover.urlPlaceholder')"
           :error="urlError"
           :disabled="isSavingUrl"
           icon="fa fa-external-link"
@@ -156,7 +152,7 @@ const handleUrlBlur = async () => {
 
   // Validate URL format
   if (trimmedUrl && !validateHttpsUrl(trimmedUrl)) {
-    urlError.value = t('settings.featureFlags.discover.urlError', 'Please enter a valid HTTPS URL')
+    urlError.value = t('settings.featureFlags.discover.urlError')
     return
   }
 
@@ -181,7 +177,7 @@ const handleUrlBlur = async () => {
     emit('refresh')
   } catch (error) {
     console.error('Failed to save URL config:', error)
-    urlError.value = t('settings.featureFlags.discover.saveError', 'Failed to save URL')
+    urlError.value = t('settings.featureFlags.discover.saveError')
   } finally {
     isSavingUrl.value = false
   }

@@ -5,7 +5,7 @@
       <div class="mb-6 flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-bold">
-            {{ $t('screen.company.management.title', 'Company Management') }}
+            {{ $t('screen.company.management.title') }}
           </h1>
           <p class="text-secondary mt-2">
             {{
@@ -20,7 +20,7 @@
         <Button
           variant="tertiary"
           icon="fa fa-plus"
-          :label="$t('screen.company.create.button', 'New search')"
+          :label="$t('screen.company.create.button')"
           @click="$router.push('/search')"
         />
       </div>
@@ -36,7 +36,7 @@
             <input
               v-model="companiesStore.filterName"
               type="text"
-              :placeholder="$t('screen.company.search.placeholder', 'Search companies...')"
+              :placeholder="$t('screen.company.search.placeholder')"
               class="border-primary-stroke focus:ring-primary/20 focus:border-primary bg-base-100 w-full rounded-lg border py-2 pr-4 pl-10 focus:ring-2"
             />
           </div>
@@ -68,13 +68,13 @@ const viewModeOptions = computed(() => [
     value: 'table',
     label: 'Table',
     icon: 'fa fa-list',
-    title: t('screen.company.view.table', 'Table View'),
+    title: t('screen.company.view.table'),
   },
   {
     value: 'grid',
     label: 'Grid',
     icon: 'fa fa-th-large',
-    title: t('screen.company.view.grid', 'Grid View'),
+    title: t('screen.company.view.grid'),
   },
 ])
 </script>

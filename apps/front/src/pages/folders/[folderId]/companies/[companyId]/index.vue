@@ -9,7 +9,7 @@
         >
           <div class="text-secondary flex items-center gap-3 text-base">
             <i class="fas fa-spinner fa-spin text-xl"></i>
-            <span>{{ t('screen.company.analysis.loading', 'Loading analysis...') }}</span>
+            <span>{{ t('screen.company.analysis.loading') }}</span>
           </div>
         </div>
         <div class="flex items-start gap-6">
@@ -20,7 +20,7 @@
                 {{ getSourcedValue(company.profile.businessLine) }}
               </h3>
               <h3 class="font-bold" v-else>
-                {{ t('screen.company.fields.notSpecified', 'Not specified') }}
+                {{ t('screen.company.fields.notSpecified') }}
               </h3>
             </div>
             <div v-else>
@@ -40,7 +40,7 @@
                 :label="item.label"
                 :value="item.value"
                 :loading="isTaskRunning('profile')"
-                :placeholder="t('screen.company.fields.notSpecified', 'Not specified')"
+                :placeholder="t('screen.company.fields.notSpecified')"
               />
             </div>
 
@@ -56,10 +56,10 @@
         >
           <div class="text-secondary flex items-center gap-3 text-base">
             <i class="fas fa-spinner fa-spin text-xl"></i>
-            <span>{{ t('screen.company.analysis.loading', 'Loading analysis...') }}</span>
+            <span>{{ t('screen.company.analysis.loading') }}</span>
           </div>
         </div>
-        <p>{{ t('screen.company.onlinePresence.title', 'Online Presence') }}</p>
+        <p>{{ t('screen.company.onlinePresence.title') }}</p>
         <a
           v-if="company?.website"
           :href="formatWebsiteUrl(company.website)"
@@ -70,7 +70,7 @@
           <i class="fa-solid fa-link fa-fw text-secondary"></i>
           <div class="flex w-44 flex-col gap-1">
             <span class="truncate text-sm">
-              {{ t('screen.company.onlinePresence.website', 'Website') }}
+              {{ t('screen.company.onlinePresence.website') }}
             </span>
             <span class="text-secondary truncate text-xs underline">
               {{ company.website }}
@@ -82,14 +82,14 @@
           <i class="fa-solid fa-link fa-fw text-secondary"></i>
           <div class="flex w-44 flex-col gap-1">
             <span class="truncate text-sm">
-              {{ t('screen.company.onlinePresence.website', 'Website') }}
+              {{ t('screen.company.onlinePresence.website') }}
             </span>
             <span class="text-secondary truncate text-xs">
-              {{ t('screen.company.fields.notSpecified', 'Not specified') }}
+              {{ t('screen.company.fields.notSpecified') }}
             </span>
           </div>
         </div>
-        <p>{{ t('screen.company.onlinePresence.socialMedia', 'Social Media Presence') }}</p>
+        <p>{{ t('screen.company.onlinePresence.socialMedia') }}</p>
         <div>
           <!-- Loading state -->
           <div v-if="isTaskRunning('digital')" class="flex flex-wrap gap-2">
@@ -115,7 +115,7 @@
           </div>
           <!-- No data -->
           <span v-else class="text-secondary text-xs">
-            {{ t('screen.company.fields.notSpecified', 'Not specified') }}
+            {{ t('screen.company.fields.notSpecified') }}
           </span>
         </div>
       </Card>
@@ -136,7 +136,7 @@
     />
 
     <div>
-      <h4 class="font-semibold">{{ t('screen.company.sections.analyses', 'Analyses') }}</h4>
+      <h4 class="font-semibold">{{ t('screen.company.sections.analyses') }}</h4>
     </div>
 
     <!-- Analysis Cards Grid -->
@@ -269,22 +269,22 @@ const getTaskId = (taskType: TaskType): number | null => {
 const companyInfoItems = computed(() => [
   {
     icon: 'fa fa-users',
-    label: t('screen.company.fields.employeeCount', 'Employee Count'),
+    label: t('screen.company.fields.employeeCount'),
     value: company.value?.profile?.employeeCount?.value,
   },
   {
     icon: 'fa fa-map-marker',
-    label: t('screen.company.fields.headquarters', 'Headquarters'),
+    label: t('screen.company.fields.headquarters'),
     value: company.value?.profile?.hq?.value,
   },
   {
     icon: 'fa fa-user-tie',
-    label: t('screen.company.fields.ceo', 'CEO'),
+    label: t('screen.company.fields.ceo'),
     value: company.value?.profile?.ceo?.value,
   },
   {
     icon: 'fa fa-money-bill',
-    label: t('screen.company.fields.revenue', 'Revenue'),
+    label: t('screen.company.fields.revenue'),
     value: company.value?.profile?.revenue?.value,
   },
 ])
@@ -304,7 +304,7 @@ const analysisCards = computed(() => {
   return [
     {
       section: 'profile' as TaskType,
-      title: t('screen.company.analysisCards.profile.title', 'Company Profile'),
+      title: t('screen.company.analysisCards.profile.title'),
       description: t(
         'screen.company.analysisCards.profile.description',
         'View detailed company information, business lines, and key metrics',
@@ -319,7 +319,7 @@ const analysisCards = computed(() => {
     },
     {
       section: 'timeline' as TaskType,
-      title: t('screen.company.analysisCards.timeline.title', 'Timeline & History'),
+      title: t('screen.company.analysisCards.timeline.title'),
       description: t(
         'screen.company.analysisCards.timeline.description',
         'Company history, milestones, and key events over time',
@@ -337,7 +337,7 @@ const analysisCards = computed(() => {
     },
     {
       section: 'products' as TaskType,
-      title: t('screen.company.analysisCards.products.title', 'Products & Services'),
+      title: t('screen.company.analysisCards.products.title'),
       description: t(
         'screen.company.analysisCards.products.description',
         'Browse products, services, and offerings',
@@ -357,7 +357,7 @@ const analysisCards = computed(() => {
     },
     {
       section: 'team' as TaskType,
-      title: t('screen.company.analysisCards.team.title', 'Team & Management'),
+      title: t('screen.company.analysisCards.team.title'),
       description: t(
         'screen.company.analysisCards.team.description',
         'Leadership team, organizational structure, and key personnel',
@@ -375,7 +375,7 @@ const analysisCards = computed(() => {
     },
     {
       section: 'jobs' as TaskType,
-      title: t('screen.company.analysisCards.jobs.title', 'Job Offers'),
+      title: t('screen.company.analysisCards.jobs.title'),
       description: t(
         'screen.company.analysisCards.jobs.description',
         'Current job openings and career opportunities',
@@ -390,7 +390,7 @@ const analysisCards = computed(() => {
     },
     {
       section: 'press' as TaskType,
-      title: t('screen.company.analysisCards.press.title', 'Press & Media'),
+      title: t('screen.company.analysisCards.press.title'),
       description: t(
         'screen.company.analysisCards.press.description',
         'Press releases, news articles, and media coverage',
@@ -405,7 +405,7 @@ const analysisCards = computed(() => {
     },
     {
       section: 'csr' as TaskType,
-      title: t('screen.company.analysisCards.csr.title', 'Corporate Social Responsibility'),
+      title: t('screen.company.analysisCards.csr.title'),
       description: t(
         'screen.company.analysisCards.csr.description',
         'CSR initiatives, sustainability programs, and social impact',
@@ -420,7 +420,7 @@ const analysisCards = computed(() => {
     },
     {
       section: 'digital' as TaskType,
-      title: t('screen.company.analysisCards.communications.title', 'Corporate Communications'),
+      title: t('screen.company.analysisCards.communications.title'),
       description: t(
         'screen.company.analysisCards.communications.description',
         'Press releases, public statements, and official communications',

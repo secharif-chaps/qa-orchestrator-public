@@ -5,13 +5,13 @@
       class="border-sage-300 dark:border-sage-700 flex items-center justify-between border-b px-4 py-3.5"
     >
       <h3 class="dark:text-sage-100 text-sm font-semibold text-black">
-        {{ $t('screen.chapse.conversations', 'Conversations') }}
+        {{ $t('screen.chapse.conversations') }}
       </h3>
       <Button
         variant="tertiary"
         icon="fa fa-plus"
         size="sm"
-        :title="$t('screen.chapse.newConversation', 'New conversation')"
+        :title="$t('screen.chapse.newConversation')"
         @click="$emit('new-conversation')"
       />
     </div>
@@ -37,10 +37,10 @@
           <Icon icon="fa-comments" class="text-sage-900 dark:text-sage-300" />
         </div>
         <p class="text-sage-900 dark:text-sage-300 text-sm">
-          {{ $t('screen.chapse.noConversations', 'No conversations yet') }}
+          {{ $t('screen.chapse.noConversations') }}
         </p>
         <p class="text-sage-700 dark:text-sage-200 mt-1 text-xs">
-          {{ $t('screen.chapse.startConversation', 'Start a new conversation to begin') }}
+          {{ $t('screen.chapse.startConversation') }}
         </p>
       </div>
 

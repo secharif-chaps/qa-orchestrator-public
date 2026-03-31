@@ -4,10 +4,10 @@
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-bold">
-          {{ $t('admin.tasks.title', 'Task Monitoring') }}
+          {{ $t('admin.tasks.title') }}
         </h1>
         <p class="text-secondary mt-1">
-          {{ $t('admin.tasks.description', 'Monitor and manage tasks across all organizations') }}
+          {{ $t('admin.tasks.description') }}
         </p>
       </div>
 

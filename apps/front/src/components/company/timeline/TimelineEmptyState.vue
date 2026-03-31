@@ -17,7 +17,7 @@
       <div v-if="type === 'loading'" class="flex justify-center">
         <div class="text-secondary flex items-center gap-3">
           <i class="fa fa-spinner animate-spin"></i>
-          <span>{{ $t('screen.timeline.loading', 'Analyzing company timeline...') }}</span>
+          <span>{{ $t('screen.timeline.loading') }}</span>
         </div>
       </div>
 
@@ -26,9 +26,7 @@
         <slot name="actions">
           <!-- Default action could be to suggest running timeline analysis -->
           <div v-if="type === 'no-data'" class="text-secondary text-sm">
-            {{
-              $t('screen.timeline.emptyState.hint', 'Timeline data will appear here once available')
-            }}
+            {{ $t('screen.timeline.emptyState.hint') }}
           </div>
         </slot>
       </div>

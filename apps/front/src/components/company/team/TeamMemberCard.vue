@@ -34,7 +34,7 @@
           @click="openLinkedIn"
           variant="tertiary"
           icon="fab fa-linkedin"
-          :title="$t('screen.team.viewLinkedIn', 'View LinkedIn Profile')"
+          :title="$t('screen.team.viewLinkedIn')"
           icon-only
           size="sm"
           class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
@@ -45,7 +45,7 @@
           @click="$emit('viewInHierarchy', member)"
           variant="tertiary"
           icon="fa fa-sitemap"
-          :title="$t('screen.team.viewInHierarchy', 'View in Hierarchy')"
+          :title="$t('screen.team.viewInHierarchy')"
           icon-only
           size="sm"
         />

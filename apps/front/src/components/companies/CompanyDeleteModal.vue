@@ -13,10 +13,10 @@
           </div>
           <div>
             <h3 class="text-base text-lg font-semibold">
-              {{ $t('screen.company.delete.title', 'Delete Company') }}
+              {{ $t('screen.company.delete.title') }}
             </h3>
             <p class="text-secondary text-sm">
-              {{ $t('screen.company.delete.subtitle', 'This action cannot be undone') }}
+              {{ $t('screen.company.delete.subtitle') }}
             </p>
           </div>
         </div>
@@ -52,29 +52,29 @@
         <!-- Company Details -->
         <div class="bg-base-200 mb-6 rounded-lg p-4">
           <h4 class="mb-3 text-base font-medium">
-            {{ $t('screen.company.delete.details', 'Company Details') }}
+            {{ $t('screen.company.delete.details') }}
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('screen.company.name', 'Name') }}:</span>
+              <span class="text-secondary">{{ $t('screen.company.name') }}:</span>
               <span class="font-medium">{{ companyToDelete.name }}</span>
             </div>
             <div v-if="companyToDelete.website" class="flex justify-between">
-              <span class="text-secondary">{{ $t('screen.company.website', 'Website') }}:</span>
+              <span class="text-secondary">{{ $t('screen.company.website') }}:</span>
               <span class="text-xs">{{ companyToDelete.website }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('screen.company.created', 'Created') }}:</span>
+              <span class="text-secondary">{{ $t('screen.company.created') }}:</span>
               <span>{{ formatDate(companyToDelete.created_at) }}</span>
             </div>
             <div
               v-if="companyToDelete.tasks && companyToDelete.tasks.length > 0"
               class="flex justify-between"
             >
-              <span class="text-secondary">{{ $t('screen.company.tasks', 'Tasks') }}:</span>
+              <span class="text-secondary">{{ $t('screen.company.tasks') }}:</span>
               <span class="inline-flex items-center gap-1">
                 <i class="fa fa-tasks text-secondary text-xs"></i>
-                {{ companyToDelete.tasks.length }} {{ $t('screen.company.tasks.count', 'tasks') }}
+                {{ companyToDelete.tasks.length }} {{ $t('screen.company.tasks.count') }}
               </span>
             </div>
           </div>
@@ -97,9 +97,7 @@
             <Input
               id="delete-confirmation"
               v-model="confirmationText"
-              :placeholder="
-                $t('screen.company.delete.confirm.placeholder', 'Enter company name...')
-              "
+              :placeholder="$t('screen.company.delete.confirm.placeholder')"
               class="bg-base-300"
             />
           </div>
@@ -108,11 +106,11 @@
 
       <!-- Footer -->
       <div class="border-primary-stroke flex items-center justify-end gap-3 border-t p-6">
-        <Button variant="tertiary" :label="$t('common.cancel', 'Cancel')" @click="handleClose" />
+        <Button variant="tertiary" :label="$t('common.cancel')" @click="handleClose" />
         <Button
           variant="accent"
           icon="fa fa-trash"
-          :label="$t('screen.company.delete.confirm.button', 'Delete Company')"
+          :label="$t('screen.company.delete.confirm.button')"
           :loading="isLoading"
           :disabled="!isConfirmed || isLoading"
           @click="handleDelete"

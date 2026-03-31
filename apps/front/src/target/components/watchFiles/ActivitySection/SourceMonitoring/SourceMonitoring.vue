@@ -95,13 +95,13 @@ const getActivityDescription = (activity: SourceActivity): SourceActivityDescrip
     case SourceActionType.SOURCE_ADDED_TO_WATCHFILE:
     case SourceActionType.SOURCE_STATUS_CHANGED:
       return createSourceActivityDescription(
-        `watch_files.activity.sources.history.${actionType}`,
+        `target.watchFiles.activity.sources.history.${actionType}`,
         activity,
       )
 
     default:
       return createSourceActivityDescription(
-        'watch_files.activity.sources.history.unknown_action',
+        'target.watchFiles.activity.sources.history.unknown_action',
         activity,
       )
   }

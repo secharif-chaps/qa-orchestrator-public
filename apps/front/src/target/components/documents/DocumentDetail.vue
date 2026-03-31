@@ -35,8 +35,8 @@
       :title="t('target.documents.detail.summary.title')"
       :content="summaryText"
       :status="document.summaryStatus"
-      pending-title="watch_files.documents.summary.pending"
-      error-title="watch_files.documents.summary.error"
+      pending-title="target.watchFiles.documents.summary.pending"
+      error-title="target.watchFiles.documents.summary.error"
     >
       <template #subtitle>
         <Tag v-if="document.summaryGeneratedAt" size="sm" icon="fa-clock" variant="secondary">
@@ -50,8 +50,8 @@
       :title="validationTitle"
       :content="validationReasonText"
       :status="document.aiValidation.status"
-      pending-title="watch_files.documents.validation.pending"
-      error-title="watch_files.documents.validation.error"
+      pending-title="target.watchFiles.documents.validation.pending"
+      error-title="target.watchFiles.documents.validation.error"
     >
       <template #subtitle>
         <Tag v-if="document.aiValidation.processedAt" size="sm" icon="fa-clock" variant="secondary">

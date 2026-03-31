@@ -4,7 +4,7 @@
     <div class="mx-auto mb-6 max-w-5xl">
       <div class="mb-2 flex items-center gap-4">
         <h1 class="text-headline-3xl font-bold">
-          {{ $t('settings.tokens.history.title', 'Token History') }}
+          {{ $t('settings.tokens.history.title') }}
         </h1>
       </div>
       <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -25,7 +25,7 @@
         <div class="flex items-center justify-between">
           <div>
             <h2 class="mb-1 text-sm font-semibold text-gray-600 uppercase dark:text-gray-400">
-              {{ $t('settings.tokens.history.totalCredits', 'Total Available Credits') }}
+              {{ $t('settings.tokens.history.totalCredits') }}
             </h2>
             <p class="text-sage-600 dark:text-sage-400 text-3xl font-bold">
               {{ totalTokens.toLocaleString() }}
@@ -35,8 +35,8 @@
             :variant="totalTokens > 0 ? 'success' : 'warning'"
             :label="
               totalTokens > 0
-                ? $t('settings.tokens.history.active', 'Active')
-                : $t('settings.tokens.history.empty', 'Empty')
+                ? $t('settings.tokens.history.active')
+                : $t('settings.tokens.history.empty')
             "
             size="lg"
             rounded
@@ -55,19 +55,19 @@
           <!-- Transaction Type Filter -->
           <div class="flex flex-col gap-2">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('settings.tokens.history.transactionType', 'Transaction Type') }}
+              {{ $t('settings.tokens.history.transactionType') }}
             </label>
             <select
               v-model="filters.transaction_type"
               class="bg-base-200 border-primary-stroke focus:ring-primary/20 focus:border-primary min-w-40 rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             >
-              <option value="">{{ $t('settings.tokens.history.allTypes', 'All Types') }}</option>
-              <option value="add">{{ $t('settings.tokens.history.type.add', 'Add') }}</option>
+              <option value="">{{ $t('settings.tokens.history.allTypes') }}</option>
+              <option value="add">{{ $t('settings.tokens.history.type.add') }}</option>
               <option value="consume">
-                {{ $t('settings.tokens.history.type.consume', 'Consume') }}
+                {{ $t('settings.tokens.history.type.consume') }}
               </option>
               <option value="adjustment">
-                {{ $t('settings.tokens.history.type.adjustment', 'Adjustment') }}
+                {{ $t('settings.tokens.history.type.adjustment') }}
               </option>
             </select>
           </div>
@@ -75,26 +75,26 @@
           <!-- Reference Type Filter -->
           <div class="flex flex-col gap-2">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('settings.tokens.history.referenceType', 'Reference Type') }}
+              {{ $t('settings.tokens.history.referenceType') }}
             </label>
             <select
               v-model="filters.reference_type"
               class="bg-base-200 border-primary-stroke focus:ring-primary/20 focus:border-primary min-w-40 rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             >
               <option value="">
-                {{ $t('settings.tokens.history.allReferences', 'All References') }}
+                {{ $t('settings.tokens.history.allReferences') }}
               </option>
               <option value="company">
-                {{ $t('settings.tokens.history.ref.company', 'Company') }}
+                {{ $t('settings.tokens.history.ref.company') }}
               </option>
               <option value="manual">
-                {{ $t('settings.tokens.history.ref.manual', 'Manual') }}
+                {{ $t('settings.tokens.history.ref.manual') }}
               </option>
               <option value="csv_import">
-                {{ $t('settings.tokens.history.ref.csv_import', 'CSV Import') }}
+                {{ $t('settings.tokens.history.ref.csv_import') }}
               </option>
               <option value="system">
-                {{ $t('settings.tokens.history.ref.system', 'System') }}
+                {{ $t('settings.tokens.history.ref.system') }}
               </option>
             </select>
           </div>
@@ -102,7 +102,7 @@
           <!-- Date Range (simplified) -->
           <div class="flex flex-col gap-2">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('settings.tokens.history.dateFrom', 'Date From') }}
+              {{ $t('settings.tokens.history.dateFrom') }}
             </label>
             <input
               v-model="filters.date_from"
@@ -113,7 +113,7 @@
 
           <div class="flex flex-col gap-2">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('settings.tokens.history.dateTo', 'Date To') }}
+              {{ $t('settings.tokens.history.dateTo') }}
             </label>
             <input
               v-model="filters.date_to"
@@ -127,7 +127,7 @@
             variant="tertiary"
             size="sm"
             icon="fa fa-times"
-            :label="$t('settings.tokens.history.clearFilters', 'Clear Filters')"
+            :label="$t('settings.tokens.history.clearFilters')"
             @click="clearFilters"
           />
         </div>
@@ -162,7 +162,7 @@
           <i class="fa fa-coins text-4xl text-gray-400 dark:text-gray-500"></i>
         </div>
         <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-          {{ $t('settings.tokens.history.noHistory', 'No token history yet') }}
+          {{ $t('settings.tokens.history.noHistory') }}
         </h3>
         <p class="mx-auto max-w-md text-sm text-gray-600 dark:text-gray-400">
           {{
@@ -183,22 +183,22 @@
             <thead class="bg-base-200">
               <tr>
                 <th class="text-secondary px-4 py-3 text-left text-sm font-semibold">
-                  {{ $t('settings.tokens.history.table.date', 'Date') }}
+                  {{ $t('settings.tokens.history.table.date') }}
                 </th>
                 <th class="text-secondary px-4 py-3 text-left text-sm font-semibold">
-                  {{ $t('settings.tokens.history.table.type', 'Type') }}
+                  {{ $t('settings.tokens.history.table.type') }}
                 </th>
                 <th class="text-secondary px-4 py-3 text-right text-sm font-semibold">
-                  {{ $t('settings.tokens.history.table.amount', 'Amount') }}
+                  {{ $t('settings.tokens.history.table.amount') }}
                 </th>
                 <th class="text-secondary px-4 py-3 text-right text-sm font-semibold">
-                  {{ $t('settings.tokens.history.table.balanceAfter', 'Balance After') }}
+                  {{ $t('settings.tokens.history.table.balanceAfter') }}
                 </th>
                 <th class="text-secondary px-4 py-3 text-left text-sm font-semibold">
-                  {{ $t('settings.tokens.history.table.reference', 'Reference') }}
+                  {{ $t('settings.tokens.history.table.reference') }}
                 </th>
                 <th class="text-secondary px-4 py-3 text-left text-sm font-semibold">
-                  {{ $t('settings.tokens.history.table.user', 'User') }}
+                  {{ $t('settings.tokens.history.table.user') }}
                 </th>
               </tr>
             </thead>
@@ -361,9 +361,9 @@ function getTransactionTypeVariant(type: TransactionType): BadgeVariant {
 
 function getTransactionTypeLabel(type: TransactionType): string {
   const labels: Record<TransactionType, string> = {
-    add: t('settings.tokens.history.type.add', 'Add'),
-    consume: t('settings.tokens.history.type.consume', 'Consume'),
-    adjustment: t('settings.tokens.history.type.adjustment', 'Adjustment'),
+    add: t('settings.tokens.history.type.add'),
+    consume: t('settings.tokens.history.type.consume'),
+    adjustment: t('settings.tokens.history.type.adjustment'),
   }
   return labels[type] || type
 }

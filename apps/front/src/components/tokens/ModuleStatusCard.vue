@@ -5,11 +5,7 @@
         <!-- Module Icon -->
         <Badge
           :intent="isEnabled ? 'success' : 'danger'"
-          :label="
-            isEnabled
-              ? $t('settings.tokens.enabled', 'Enabled')
-              : $t('settings.tokens.disabled', 'Disabled')
-          "
+          :label="isEnabled ? $t('settings.tokens.enabled') : $t('settings.tokens.disabled')"
           :icon="moduleIcon"
           variant="secondary"
         >

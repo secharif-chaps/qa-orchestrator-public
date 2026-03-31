@@ -29,16 +29,14 @@
           @click="$router.push('/settings')"
         >
           <Icon icon="fa-cog" class="text-lg" />
-          <span class="text-xs">{{ $t('common.sidebar.footer.settings', 'Settings') }}</span>
+          <span class="text-xs">{{ $t('common.sidebar.footer.settings') }}</span>
         </button>
         <button
           class="text-sage-700 dark:text-sage-300 hover:text-sage-950 flex flex-col items-center gap-1 transition-colors dark:hover:text-white"
           @click="toggleAccessibilityMode()"
         >
           <Icon icon="fa-universal-access" class="text-lg" />
-          <span class="text-xs">{{
-            $t('common.sidebar.footer.accessibility', 'Accessibility')
-          }}</span>
+          <span class="text-xs">{{ $t('common.sidebar.footer.accessibility') }}</span>
         </button>
       </div>
     </div>
@@ -210,7 +208,7 @@ const transitionClasses = computed(() => {
 })
 
 const toggleAccessibilityMode = () => {
-  toast.info(t('common.comingSoon', 'This feature is coming soon!'), {
+  toast.info(t('common.comingSoon'), {
     duration: 3000,
   })
 }

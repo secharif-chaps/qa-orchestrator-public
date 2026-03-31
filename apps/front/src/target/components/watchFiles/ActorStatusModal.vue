@@ -362,8 +362,8 @@ const confirmButtonLabel = computed(() => {
   ).length
 
   const translationKey = isActivating
-    ? 'watch_files.actors.deactivation_modal.activation_modal.confirm'
-    : 'watch_files.actors.deactivation_modal.confirm'
+    ? 'target.watchFiles.actors.deactivation_modal.activation_modal.confirm'
+    : 'target.watchFiles.actors.deactivation_modal.confirm'
 
   return t(translationKey, { count: selectedCount })
 })
@@ -432,7 +432,7 @@ const getSourceTypeLabel = (type: string | undefined): string => {
   }
 
   const translation = t(`target.sourceTypes.${type}`)
-  if (translation !== `source_types.${type}`) {
+  if (translation !== `target.sourceTypes.${type}`) {
     return translation
   }
   return type

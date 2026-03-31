@@ -14,10 +14,10 @@
         </div>
         <div>
           <h3 class="text-lg font-semibold">
-            {{ $t('common.folder.delete.title', 'Delete Folder') }}
+            {{ $t('common.folder.delete.title') }}
           </h3>
           <p class="text-secondary text-sm">
-            {{ $t('common.folder.delete.subtitle', 'This action cannot be undone') }}
+            {{ $t('common.folder.delete.subtitle') }}
           </p>
         </div>
       </div>
@@ -25,7 +25,7 @@
       <!-- Warning Message -->
       <div class="mb-6">
         <p class="text-secondary mb-3">
-          {{ $t('common.folder.delete.message', 'Are you sure you want to delete this folder?') }}
+          {{ $t('common.folder.delete.message') }}
         </p>
 
         <div class="bg-base-200 border-primary-stroke rounded-lg border p-4">
@@ -52,7 +52,7 @@
         <Alert
           v-if="folderToDelete?.items && folderToDelete.items.length > 0"
           variant="warning"
-          :title="$t('common.folder.delete.warning.title', 'Items will not be deleted')"
+          :title="$t('common.folder.delete.warning.title')"
           :description="
             $t(
               'common.folder.delete.warning.message',
@@ -67,14 +67,14 @@
       <div class="flex justify-end gap-3">
         <Button
           variant="secondary"
-          :label="$t('common.folder.delete.cancel', 'Cancel')"
+          :label="$t('common.folder.delete.cancel')"
           @click="$emit('update:modelValue', false)"
           :disabled="isDeleting"
         />
         <Button
           variant="primary"
           color="danger"
-          :label="$t('common.folder.delete.confirm', 'Delete Folder')"
+          :label="$t('common.folder.delete.confirm')"
           :loading="isDeleting"
           @click="handleDelete"
         />

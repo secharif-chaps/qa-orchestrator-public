@@ -21,7 +21,7 @@
       <ChapseAlert
         v-if="productsInsights"
         variant="mage"
-        :title="$t('screen.products.insights.title', 'Product Insights')"
+        :title="$t('screen.products.insights.title')"
       >
         {{ productsInsights }}
       </ChapseAlert>
@@ -65,7 +65,7 @@
       <!-- No Results State -->
       <NoData v-if="Object.keys(filteredProducts).length === 0 && searchQuery">
         <p class="text-secondary text-lg font-medium">
-          {{ $t('screen.products.noResults', 'No products found matching your search') }}
+          {{ $t('screen.products.noResults') }}
         </p>
       </NoData>
     </div>

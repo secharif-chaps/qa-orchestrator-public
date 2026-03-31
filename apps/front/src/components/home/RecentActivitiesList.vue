@@ -1,7 +1,7 @@
 <template>
   <Card>
     <h3 class="mb-4 font-semibold text-gray-900 dark:text-white">
-      {{ $t('dashboard.home.recentActivities.title', 'Recent Activities') }}
+      {{ $t('dashboard.home.recentActivities.title') }}
     </h3>
 
     <!-- Loading State -->
@@ -13,10 +13,8 @@
     <div v-else-if="error" class="py-6">
       <Alert
         variant="danger"
-        :title="$t('dashboard.home.recentActivities.error.title', 'Error')"
-        :description="
-          $t('dashboard.home.recentActivities.error.description', 'Failed to load activities')
-        "
+        :title="$t('dashboard.home.recentActivities.error.title')"
+        :description="$t('dashboard.home.recentActivities.error.description')"
         icon="fa-exclamation-triangle"
       />
     </div>

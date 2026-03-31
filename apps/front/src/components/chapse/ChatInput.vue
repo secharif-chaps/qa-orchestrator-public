@@ -3,7 +3,7 @@
     <!-- Context Badges Row (always visible to allow adding companies) -->
     <div class="border-sage-300 dark:border-sage-700 flex flex-wrap items-center gap-2 px-4 py-2">
       <span class="text-sage-900 dark:text-sage-300 text-xs">
-        {{ $t('common.sidebar.chapse.context', 'Context:') }}
+        {{ $t('common.sidebar.chapse.context') }}
       </span>
       <ContextBadge
         v-for="company in companyContext"
@@ -22,7 +22,7 @@
         @select="$emit('add-context', $event)"
       />
       <span v-else class="text-sage-500 text-xs">
-        {{ $t('screen.chapse.maxCompanies', '(max 3)') }}
+        {{ $t('screen.chapse.maxCompanies') }}
       </span>
     </div>
 

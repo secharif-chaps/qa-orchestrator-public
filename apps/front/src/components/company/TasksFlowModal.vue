@@ -17,7 +17,7 @@
               </div>
               <div>
                 <h2 class="text-lg font-semibold">
-                  {{ t('screen.company.debug.workflowTitle', 'Search Workflow') }}
+                  {{ t('screen.company.debug.workflowTitle') }}
                 </h2>
                 <p class="text-secondary text-sm">
                   {{
@@ -207,7 +207,7 @@
                   variant="secondary"
                   size="sm"
                   icon="fa fa-play"
-                  :label="t('screen.company.tasks.startAll', 'Start all tasks')"
+                  :label="t('screen.company.tasks.startAll')"
                   @click="startAllPendingTasks"
                   :loading="isStartingAll"
                 />
@@ -433,15 +433,15 @@ const getStatusIntent = (status: TaskStatus | null) => {
 const getStatusLabel = (status: TaskStatus | null): string => {
   switch (status) {
     case 'succeeded':
-      return t('screen.company.analysisCard.status.succeeded', 'Completed')
+      return t('screen.company.analysisCard.status.succeeded')
     case 'error':
-      return t('screen.company.analysisCard.status.error', 'Error')
+      return t('screen.company.analysisCard.status.error')
     case 'running':
-      return t('screen.company.analysisCard.status.running', 'In progress')
+      return t('screen.company.analysisCard.status.running')
     case 'pending':
-      return t('screen.company.analysisCard.status.pending', 'Pending')
+      return t('screen.company.analysisCard.status.pending')
     default:
-      return t('screen.company.analysisCard.status.notStarted', 'Not started')
+      return t('screen.company.analysisCard.status.notStarted')
   }
 }
 

@@ -194,7 +194,7 @@ watch(currentPage, () => {
 })
 
 const search = () => {
-  emit('screen.search')
+  emit('search')
   currentPage.value = 1
 }
 

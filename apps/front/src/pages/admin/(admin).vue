@@ -4,10 +4,10 @@
       <!-- Header -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold">
-          {{ $t('admin.dashboard.title', 'Admin Dashboard') }}
+          {{ $t('admin.dashboard.title') }}
         </h1>
         <p class="text-secondary mt-2">
-          {{ $t('admin.dashboard.description', 'Manage system features and settings') }}
+          {{ $t('admin.dashboard.description') }}
         </p>
       </div>
 
@@ -60,7 +60,7 @@
       <div v-if="!hasAnyAdminAccess" class="mt-8">
         <Alert
           variant="warning"
-          :title="$t('admin.dashboard.limitedAccess.title', 'Limited Access')"
+          :title="$t('admin.dashboard.limitedAccess.title')"
           :description="
             $t(
               'admin.dashboard.limitedAccess.message',

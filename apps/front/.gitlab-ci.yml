@@ -96,6 +96,15 @@ front:yarn-audit:
     - <<: *cache-node-modules
   <<: *front-changes
 
+front:i18n:
+  <<: *default-lint-job
+  stage: lint
+  needs: [front:install]
+  script:
+    - cd apps/front
+    - node scripts/i18n/check.mjs
+    - node scripts/i18n/orphans.mjs
+
 # ─── Test Stage ────────────────────────────────────────
 front:test:
   <<: *default-lint-job
@@ -130,7 +139,15 @@ front:docker-build:
   stage: build
   extends: .front-docker-build
   needs:
-    [front:eslint, front:prettier, front:stylelint, front:typecheck, front:yarn-audit, front:test]
+    [
+      front:eslint,
+      front:prettier,
+      front:stylelint,
+      front:typecheck,
+      front:yarn-audit,
+      front:test,
+      front:i18n,
+    ]
   variables:
     IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   rules:

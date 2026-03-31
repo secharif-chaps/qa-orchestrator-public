@@ -6,9 +6,7 @@
         ref="searchbar"
         id="user-search"
         :model-value="search"
-        :placeholder="
-          $t('admin.users.search.placeholder', 'Search by username, name, email or organization...')
-        "
+        :placeholder="$t('admin.users.search.placeholder')"
         @update:model-value="handleSearchInput"
         class="w-[28rem]"
       >
@@ -17,7 +15,7 @@
           icon="fa-close"
           kind="gray"
           size="sm"
-          :aria-label="$t('admin.users.search.clear', 'Clear search')"
+          :aria-label="$t('admin.users.search.clear')"
           @click="handleClearSearch"
         />
       </Searchbar>
@@ -31,34 +29,34 @@
         <template #content="{ close }">
           <!-- Sort by Username -->
           <div class="text-secondary px-4 py-2 text-xs font-semibold uppercase">
-            {{ $t('admin.users.sort.sortBy', 'Sort by') }}
+            {{ $t('admin.users.sort.sortBy') }}
           </div>
 
           <DropdownItem @click="selectSort('username', close)">
             <i class="fa fa-user"></i>
-            {{ $t('admin.users.sort.username', 'Username') }}
+            {{ $t('admin.users.sort.username') }}
           </DropdownItem>
 
           <DropdownItem @click="selectSort('created_at', close)">
             <i class="fa fa-calendar"></i>
-            {{ $t('admin.users.sort.createdDate', 'Created Date') }}
+            {{ $t('admin.users.sort.createdDate') }}
           </DropdownItem>
 
           <DropdownDivider />
 
           <!-- Sort order -->
           <div class="text-secondary px-4 py-2 text-xs font-semibold uppercase">
-            {{ $t('admin.users.sort.order', 'Order') }}
+            {{ $t('admin.users.sort.order') }}
           </div>
 
           <DropdownItem @click="selectOrder('asc', close)">
             <i class="fa fa-sort-amount-up"></i>
-            {{ $t('admin.users.sort.ascending', 'Ascending (A-Z)') }}
+            {{ $t('admin.users.sort.ascending') }}
           </DropdownItem>
 
           <DropdownItem @click="selectOrder('desc', close)">
             <i class="fa fa-sort-amount-down"></i>
-            {{ $t('admin.users.sort.descending', 'Descending (Z-A)') }}
+            {{ $t('admin.users.sort.descending') }}
           </DropdownItem>
         </template>
       </Dropdown>

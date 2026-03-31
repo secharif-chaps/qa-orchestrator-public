@@ -51,3 +51,15 @@ tasks:
   test:ui:
     desc: Run frontend tests with Vitest UI (interactive browser)
     cmd: npx vitest --ui
+
+  i18n:
+    desc: Run i18n quality checks (consistency, orphans, duplicates)
+    cmds:
+      - node scripts/i18n/check.mjs
+      - node scripts/i18n/orphans.mjs
+      - node scripts/i18n/duplicates.mjs
+
+  i18n:fix:
+    desc: Sort and format i18n locale files
+    cmds:
+      - node scripts/i18n/format.mjs
