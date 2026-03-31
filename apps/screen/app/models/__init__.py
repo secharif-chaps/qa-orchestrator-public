@@ -15,6 +15,7 @@ from .company_children import (
     ProductItemType,
 )
 from .company_enrichment import CompanyEnrichment
+from .company_financial import CompanyFinancial, CompanyFinancialMetric, CompanyFundingRound
 from .company_sections import (
     CompanyCsr,
     CompanyDigital,
@@ -48,6 +49,7 @@ __all__ = [
     "CompanyJobs",
     "CompanyCsr",
     "CompanyPress",
+    "CompanyFinancial",
     # 1:N Child models
     "ProductItemType",
     "CsrInitiativeType",
@@ -61,6 +63,8 @@ __all__ = [
     "CompanyCsrInitiative",
     "CompanyPressItem",
     "CompanyTeamMember",
+    "CompanyFinancialMetric",
+    "CompanyFundingRound",
     # Organization models
     "Organization",
     "OrganizationModule",

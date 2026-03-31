@@ -24,6 +24,7 @@ class TaskType(StrEnum):
     csr = "csr"
     press = "press"
     team = "team"
+    financial = "financial"
 
 
 class Task(Base):
