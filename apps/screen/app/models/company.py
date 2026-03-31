@@ -45,6 +45,7 @@ class Company(Base):
         jobs_data: Relationship to CompanyJobs (1:1)
         csr_data: Relationship to CompanyCsr (1:1)
         press_data: Relationship to CompanyPress (1:1)
+        financial_data: Relationship to CompanyFinancial (1:1)
         online_services: Relationship to CompanyOnlineService (1:N)
         social_media_accounts: Relationship to CompanySocialMediaAccount (1:N)
         timeline_events: Relationship to CompanyTimelineEvent (1:N)
@@ -54,6 +55,8 @@ class Company(Base):
         csr_initiatives: Relationship to CompanyCsrInitiative (1:N)
         press_items: Relationship to CompanyPressItem (1:N)
         team_members: Relationship to CompanyTeamMember (1:N)
+        financial_metrics: Relationship to CompanyFinancialMetric (1:N)
+        funding_rounds: Relationship to CompanyFundingRound (1:N)
     """
 
     __tablename__ = "companies"
@@ -98,6 +101,11 @@ class Company(Base):
     csr_data = relationship("CompanyCsr", back_populates="company", uselist=False, cascade="all, delete-orphan")
     press_data = relationship("CompanyPress", back_populates="company", uselist=False, cascade="all, delete-orphan")
 
+    # 1:1 Relationship to financial section
+    financial_data = relationship(
+        "CompanyFinancial", back_populates="company", uselist=False, cascade="all, delete-orphan"
+    )
+
     # 1:N Relationships to child tables
     # cascade="all, delete-orphan" ensures child records are deleted with company
     online_services = relationship("CompanyOnlineService", back_populates="company", cascade="all, delete-orphan")
@@ -114,6 +122,10 @@ class Company(Base):
 
     # Enrichment data from external APIs (1:N)
     enrichments = relationship("CompanyEnrichment", back_populates="company", cascade="all, delete-orphan")
+
+    # 1:N Relationships to financial child tables
+    financial_metrics = relationship("CompanyFinancialMetric", back_populates="company", cascade="all, delete-orphan")
+    funding_rounds = relationship("CompanyFundingRound", back_populates="company", cascade="all, delete-orphan")
 
     # Translations relationship (1:N)
     translations = relationship("Translation", back_populates="company", cascade="all, delete-orphan")
