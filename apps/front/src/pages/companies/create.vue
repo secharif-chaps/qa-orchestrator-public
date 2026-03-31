@@ -146,6 +146,7 @@
         <!-- Action Buttons -->
         <div class="flex items-center justify-between pt-4">
           <Button
+            type="button"
             variant="tertiary"
             icon="fa fa-upload"
             :label="$t('screen.csv.upload.button')"
@@ -154,6 +155,7 @@
           />
 
           <Button
+            type="submit"
             variant="primary"
             icon="fa fa-search"
             :label="$t('screen.search.actions.launchSearch')"
