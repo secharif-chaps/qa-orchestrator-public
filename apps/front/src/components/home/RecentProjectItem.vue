@@ -34,7 +34,6 @@ const props = defineProps<Props>()
 
 const router = useRouter()
 function handleClick() {
-  console.log(props.folderId)
   if (props.folderId) {
     router.push(`/folders/${props.folderId}/companies/${props.id}`)
   }
