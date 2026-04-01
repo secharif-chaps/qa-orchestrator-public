@@ -64,7 +64,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods including PATCH
     allow_headers=["*"],  # Allow all headers
-    expose_headers=["Content-Type", "Authorization"],
+    expose_headers=["Content-Type", "Authorization", "Retry-After"],
 )
 
 # Add security middleware AFTER CORS (so CORS headers are set before security checks)
