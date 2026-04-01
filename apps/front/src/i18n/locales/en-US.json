@@ -296,15 +296,15 @@
         },
         "buttons": {
           "cancel": "Cancel",
-          "restart": "Restart {count} Task | Restart {count} Tasks",
+          "restart": "{count, plural, one {Restart # Task} other {Restart # Tasks}}",
           "restarting": "Restarting..."
         },
-        "description": "You are about to restart {count} task. This action will: | You are about to restart {count} tasks. This action will:",
+        "description": "{count, plural, one {You are about to restart # task. This action will:} other {You are about to restart # tasks. This action will:}}",
         "result": {
           "initiated": "Restart Initiated",
           "noTasks": "No Tasks Restarted",
-          "restarted": "{count} task restarted successfully | {count} tasks restarted successfully",
-          "skipped": "{count} task skipped | {count} tasks skipped",
+          "restarted": "{count, plural, one {# task restarted successfully} other {# tasks restarted successfully}}",
+          "skipped": "{count, plural, one {# task skipped} other {# tasks skipped}}",
           "skippedReasons": "Skipped reasons:",
           "taskReason": "Task #{id}: {reason}"
         },
@@ -319,7 +319,7 @@
       "refresh": "Refresh",
       "selection": {
         "clearSelection": "Clear Selection",
-        "restart": "Restart {count} Task | Restart {count} Tasks",
+        "restart": "{count, plural, one {Restart # Task} other {Restart # Tasks}}",
         "selected": "{count} selected"
       },
       "stats": {
@@ -338,7 +338,7 @@
       "stuckAlert": {
         "description": "Tasks running longer than expected may need attention. Review and restart if necessary.",
         "selectAll": "Select All Stuck",
-        "title": "{count} Stuck Task Detected | {count} Stuck Tasks Detected"
+        "title": "{count, plural, one {# Stuck Task Detected} other {# Stuck Tasks Detected}}"
       },
       "table": {
         "actions": "Actions",
@@ -409,7 +409,7 @@
         "loading": "Loading chart data...",
         "noData": "No company data for selected period",
         "title": "Companies Over Time",
-        "tooltip": "{count} company created | {count} companies created"
+        "tooltip": "{count, plural, one {# company created} other {# companies created}}"
       },
       "stackedChart": {
         "companies": "companies",
@@ -569,7 +569,7 @@
       "back": "Back",
       "loading": "Loading...",
       "selectAll": "Select All",
-      "selectedCount": "({count} document) | ({count} documents)"
+      "selectedCount": "{count, plural, one {(# document)} other {(# documents)}}"
     },
     "auth": {
       "callback": {
@@ -630,10 +630,10 @@
     "comingSoon": "Coming soon",
     "composables": {
       "useTimeDisplay": {
-        "hoursAgo": "{count} hour ago | {count} hours ago",
+        "hoursAgo": "{count, plural, one {# hour ago} other {# hours ago}}",
         "invalidDate": "Invalid date",
         "justNow": "just now",
-        "minutesAgo": "{count} minute ago | {count} minutes ago"
+        "minutesAgo": "{count, plural, one {# minute ago} other {# minutes ago}}"
       }
     },
     "confirm": "Confirm",
@@ -824,7 +824,7 @@
       "header": {
         "by": "by",
         "createdOn": "created on {date}",
-        "itemsCount": "{count} item | {count} items"
+        "itemsCount": "{count, plural, one {# item} other {# items}}"
       },
       "item": {
         "actions": {
@@ -837,13 +837,13 @@
         "type": "Type",
         "view": "View"
       },
-      "itemCount": "{count} item | {count} items",
+      "itemCount": "{count, plural, one {# item} other {# items}}",
       "itemName": "folders",
       "items": {
         "add": "Add Items",
         "empty": "No items in this folder"
       },
-      "itemsChip": "{count} item | {count} items",
+      "itemsChip": "{count, plural, one {# item} other {# items}}",
       "itemTypes": {
         "company": "Company Card"
       },
@@ -2549,10 +2549,10 @@
               "actors": "Oops, actors cannot be displayed",
               "sources": "Oops, sources cannot be displayed"
             },
-            "WATCHFILE_ACTOR_ADDED": "Actor added | Actors added",
-            "WATCHFILE_ACTOR_STATUS_CHANGED": "Actor status changed | Actor status changes",
-            "WATCHFILE_SOURCE_ADDED": "Source added | Sources added",
-            "WATCHFILE_SOURCE_STATUS_CHANGED": "Source status changed | Source status changes"
+            "WATCHFILE_ACTOR_ADDED": "{count, plural, one {Actor added} other {Actors added}}",
+            "WATCHFILE_ACTOR_STATUS_CHANGED": "{count, plural, one {Actor status changed} other {Actor status changes}}",
+            "WATCHFILE_SOURCE_ADDED": "{count, plural, one {Source added} other {Sources added}}",
+            "WATCHFILE_SOURCE_STATUS_CHANGED": "{count, plural, one {Source status changed} other {Source status changes}}"
           },
           "monitoring_type_detected": "The monitoring type has been updated.",
           "reference_subject_detected": "The reference subject has been updated.",
@@ -2603,7 +2603,7 @@
           },
           "search": {
             "clear": "Clear search",
-            "results": "Results: {count} sources | Results: {count} source | Results: {count} sources"
+            "results": "{count, plural, =0 {Results: # sources} one {Results: # source} other {Results: # sources}}"
           },
           "search_placeholder": "Search a source",
           "status": {
@@ -2617,8 +2617,8 @@
       "actors": {
         "batch_change": {
           "error": "Failed to activate actors",
-          "partial_error": "{count} actor failed to activate | {count} actors failed to activate",
-          "success": "Successfully activated {count} actor | Successfully activated {count} actors"
+          "partial_error": "{count, plural, one {# actor failed to activate} other {# actors failed to activate}}",
+          "success": "{count, plural, one {Successfully activated # actor} other {Successfully activated # actors}}"
         },
         "deactivation_modal": {
           "activation_modal": {
@@ -2632,8 +2632,8 @@
           "source_already_inactive": "This source is already inactive",
           "source_name": "Source name",
           "success": {
-            "activated": "Actor activated successfully | Actor and 1 source activated successfully | Actor and {count} sources activated successfully",
-            "deactivated": "Actor deactivated successfully | Actor and 1 source deactivated successfully | Actor and {count} sources deactivated successfully"
+            "activated": "{count, plural, =0 {Actor activated successfully} one {Actor and 1 source activated successfully} other {Actor and # sources activated successfully}}",
+            "deactivated": "{count, plural, =0 {Actor deactivated successfully} one {Actor and 1 source deactivated successfully} other {Actor and # sources deactivated successfully}}"
           },
           "title": "Deactivation of actor '{actor}'",
           "type": "Type"
@@ -2667,14 +2667,14 @@
         "see_more": "View details",
         "select_actor": "Choose actors",
         "selection_modal": {
-          "add_actors": "Add {count} actor and {sources} sources | Add {count} actors and {sources} sources",
-          "add_actors_no_sources": "Add {count} actor | Add {count} actors",
+          "add_actors": "{count, plural, one {Add # actor and {sources} sources} other {Add # actors and {sources} sources}}",
+          "add_actors_no_sources": "{count, plural, one {Add # actor} other {Add # actors}}",
           "no_actors": "No actors available",
-          "select_actor": "Select actor | Select actor and {count} source | Select actor and {count} sources",
+          "select_actor": "{count, plural, =0 {Select actor} one {Select actor and # source} other {Select actor and # sources}}",
           "title": "Choose actors"
         },
-        "sources_count": "{count} sources | {count} source | {count} sources",
-        "sub_title": "No actors displayed | 1 actor displayed out of {total} | {count} actors displayed out of {total}",
+        "sources_count": "{count, plural, =0 {# sources} one {# source} other {# sources}}",
+        "sub_title": "{count, plural, =0 {No actors displayed} one {1 actor displayed out of {total}} other {# actors displayed out of {total}}}",
         "title": "Identified actors",
         "type": {
           "competitor": "Competitor",
@@ -2706,11 +2706,11 @@
         "graph": {
           "legend": {
             "axis": {
-              "y": "{nb} documents | {nb} document | {nb} documents"
+              "y": "{nb, plural, =0 {# documents} one {# document} other {# documents}}"
             },
             "event": {
               "basic": "Standard Daily Indicator",
-              "count": "{nb} event | {nb} events",
+              "count": "{nb, plural, one {# event} other {# events}}",
               "starred": "Daily indicator with at least one milestone event"
             }
           }
@@ -2802,7 +2802,7 @@
         },
         "system_messages": {
           "hide_older": "Hide older actions",
-          "view_older": "View {count} older action {time} | View {count} older actions {time}"
+          "view_older": "{count, plural, one {View # older action {time}} other {View # older actions {time}}}"
         },
         "typing_indicator": {
           "0": "Chaps-e is analyzing your request...",
@@ -2837,21 +2837,21 @@
         },
         "batch_reject": {
           "modal": {
-            "message": "You are going to reject {count} document. Do you want to continue? | You are going to reject {count} documents. Do you want to continue?",
+            "message": "{count, plural, one {You are going to reject # document. Do you want to continue?} other {You are going to reject # documents. Do you want to continue?}}",
             "title": "Reject documents"
           }
         },
         "batch_status_change": {
           "error_accept": "Error during batch validation",
           "error_refuse": "Error during batch rejection",
-          "partial_success_accept": "No documents validated | 1 document validated, {failed} failed | {success} documents validated, {failed} failed",
-          "partial_success_refuse": "No documents rejected | 1 document rejected, {failed} failed | {success} documents rejected, {failed} failed",
-          "success_accept": "No documents validated | 1 document successfully validated | {count} documents successfully validated",
-          "success_refuse": "No documents rejected | 1 document successfully rejected | {count} documents successfully rejected"
+          "partial_success_accept": "{count, plural, =0 {No documents validated} one {1 document validated, {failed} failed} other {{success} documents validated, {failed} failed}}",
+          "partial_success_refuse": "{count, plural, =0 {No documents rejected} one {1 document rejected, {failed} failed} other {{success} documents rejected, {failed} failed}}",
+          "success_accept": "{count, plural, =0 {No documents validated} one {1 document successfully validated} other {# documents successfully validated}}",
+          "success_refuse": "{count, plural, =0 {No documents rejected} one {1 document successfully rejected} other {# documents successfully rejected}}"
         },
         "batch_validate": {
           "modal": {
-            "message": "You are going to validate {count} document. Do you want to continue? | You are going to validate {count} documents. Do you want to continue?",
+            "message": "{count, plural, one {You are going to validate # document. Do you want to continue?} other {You are going to validate # documents. Do you want to continue?}}",
             "title": "Validate documents"
           }
         },
@@ -2862,7 +2862,7 @@
         "search": {
           "delete": "Clear Search",
           "matching": "Result \"{search}\" in the document",
-          "nb_results": "Results : {nb} documents | Results : {nb} document | Results : {nb} documents",
+          "nb_results": "{nb, plural, =0 {Results : # documents} one {Results : # document} other {Results : # documents}}",
           "placeholder": "Search documents"
         },
         "status": {
@@ -3004,7 +3004,7 @@
       "pagination": {
         "items_per_page": "Watch files per page"
       },
-      "persons": "{count} person | {count} persons",
+      "persons": "{count, plural, one {# person} other {# persons}}",
       "prefix": {
         "createdAt": "Created: ",
         "updatedAt": "Last modified: "
@@ -3045,8 +3045,8 @@
         "actor": "Actor: {label}",
         "batch_change": {
           "error": "Failed to activate sources",
-          "partial_error": "{count} source failed to activate | {count} sources failed to activate",
-          "success": "Successfully activated {count} source | Successfully activated {count} sources"
+          "partial_error": "{count, plural, one {# source failed to activate} other {# sources failed to activate}}",
+          "success": "{count, plural, one {Successfully activated # source} other {Successfully activated # sources}}"
         },
         "justification": "Justification",
         "link_label": "Source link",
@@ -3056,7 +3056,7 @@
         },
         "select_source": "Choose a source",
         "selection_modal": {
-          "add_sources": "Add {count} source | Add {count} sources",
+          "add_sources": "{count, plural, one {Add # source} other {Add # sources}}",
           "title": "Choose sources"
         },
         "status_change": {
@@ -3064,7 +3064,7 @@
           "error": "An error occurred while changing the status of the source",
           "inactive": "Source successfully deactivated"
         },
-        "sub_title": "1 source displayed out of {total} | {count} sources displayed out of {total}",
+        "sub_title": "{count, plural, one {1 source displayed out of {total}} other {# sources displayed out of {total}}}",
         "title": "Sources",
         "type": {
           "media": "Media",
@@ -3127,7 +3127,7 @@
           "removeUser": "Error removing user from the watch file"
         },
         "success": {
-          "addUsers": "{count} user successfully added to the watch file | {count} users successfully added to the watch file",
+          "addUsers": "{count, plural, one {# user successfully added to the watch file} other {# users successfully added to the watch file}}",
           "changeRole": "Role changed for {user}",
           "removeUser": "User {user} removed from the watch file"
         }

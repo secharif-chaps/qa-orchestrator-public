@@ -49,7 +49,7 @@
     <template v-else>
       <div v-if="!isLoading && searchQuery" class="flex items-center gap-4">
         <p class="text-sm font-bold">
-          {{ t('target.watchFiles.documents.search.nb_results', { nb: totalItems }, totalItems) }}
+          {{ t('target.watchFiles.documents.search.nb_results', { nb: totalItems }) }}
         </p>
         <Button variant="secondary" size="sm" icon="fa-xmark" @click="searchQuery = ''">
           {{ $t('target.watchFiles.documents.search.delete') }}
@@ -221,7 +221,7 @@ const validateSelectedDocuments = () => {
 
   showConfirmModal({
     title: t('target.watchFiles.documents.batch_validate.modal.title'),
-    message: t('target.watchFiles.documents.batch_validate.modal.message', { count }, count),
+    message: t('target.watchFiles.documents.batch_validate.modal.message', { count }),
     confirmLabel: t('common.button.confirm'),
     cancelLabel: t('common.button.cancel'),
     onConfirm: () => {
@@ -242,7 +242,7 @@ const rejectSelectedDocuments = () => {
 
   showConfirmModal({
     title: t('target.watchFiles.documents.batch_reject.modal.title'),
-    message: t('target.watchFiles.documents.batch_reject.modal.message', { count }, count),
+    message: t('target.watchFiles.documents.batch_reject.modal.message', { count }),
     confirmLabel: t('common.button.confirm'),
     cancelLabel: t('common.button.cancel'),
     onConfirm: () => {

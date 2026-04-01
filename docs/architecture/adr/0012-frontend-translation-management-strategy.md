@@ -2,7 +2,7 @@
 
 ## Status
 
-**Status:** Proposed
+**Status:** Accepted
 
 **Date:** 2026-03-04
 
@@ -390,17 +390,21 @@ yarn add @messageformat/core
 // src/i18n/index.ts
 import MessageFormat from '@messageformat/core'
 import { createI18n } from 'vue-i18n'
+import type { MessageCompiler, MessageCompilerContext, MessageContext } from 'vue-i18n'
 
-const messageCompiler = (message: string, { locale }: { locale: string }) => {
-  const mf = new MessageFormat(locale)
-  const compiled = mf.compile(message)
-  return (ctx: Record<string, unknown>) => compiled(ctx)
+const messageCompiler: MessageCompiler = (message, { locale }: MessageCompilerContext) => {
+  if (typeof message === 'string') {
+    const mf = new MessageFormat(locale)
+    const compiled = mf.compile(message)
+    return (ctx: MessageContext) => compiled(ctx.values ?? {})
+  }
+  return () => String(message)
 }
 
 const i18n = createI18n({
   legacy: false,
   globalInjection: true,
-  locale: 'fr-FR',
+  locale: 'en-US',
   messageCompiler, // replaces default compiler with ICU MessageFormat
   messages: { ... },
 })
