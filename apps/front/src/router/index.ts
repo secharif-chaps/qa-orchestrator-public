@@ -23,7 +23,7 @@ const is404Route = (routeName: string | null | undefined): boolean => {
 }
 
 // Global navigation guard
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore()
 
   // Wait for auth initialization if not done yet
@@ -43,9 +43,9 @@ router.beforeEach(async (to, from, next) => {
   if (isPublic || is404) {
     // Redirect authenticated users away from login page
     if (to.path === '/login' && isAuthenticated) {
-      return next('/')
+      return '/'
     }
-    return next()
+    return true
   }
 
   // For protected routes, check authentication
@@ -54,10 +54,10 @@ router.beforeEach(async (to, from, next) => {
     const redirectTo = to.fullPath !== '/' ? to.fullPath : undefined
     const loginQuery = redirectTo ? { redirect: redirectTo } : {}
 
-    return next({
+    return {
       path: '/login',
       query: loginQuery,
-    })
+    }
   }
 
   // Check for required permissions if specified in route meta
@@ -74,10 +74,10 @@ router.beforeEach(async (to, from, next) => {
       })
 
       // Redirect to 403 forbidden page
-      return next({
+      return {
         path: '/403',
         replace: true,
-      })
+      }
     }
   }
 
@@ -85,15 +85,15 @@ router.beforeEach(async (to, from, next) => {
   if (to.name === '/target/(watch_files)/[id]/radar') {
     const { useWatchFileAnalysisStore } = await import('@target/stores/watchFileAnalysis')
     const store = useWatchFileAnalysisStore()
-    return next({
+    return {
       name: store.selectedView,
       params: to.params,
       query: to.query,
-    })
+    }
   }
 
   // User is authenticated and has required permissions, allow access
-  next()
+  return true
 })
 
 export default router
