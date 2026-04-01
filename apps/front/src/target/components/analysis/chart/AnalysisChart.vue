@@ -289,7 +289,7 @@ const drawChart = (canvas: HTMLCanvasElement) => {
           textStrokeColor: '#000000',
           backdropColor: '#000000',
           callback: function (value: string | number) {
-            return t('target.watchFiles.analysis.graph.legend.axis.y', { nb: value }, Number(value))
+            return t('target.watchFiles.analysis.graph.legend.axis.y', { nb: value })
           },
           precision: 0,
         },

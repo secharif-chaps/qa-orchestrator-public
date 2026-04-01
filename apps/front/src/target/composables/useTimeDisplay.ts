@@ -60,13 +60,9 @@ export function useTimeDisplay(options: TimeDisplayOptions = {}) {
       if (diffMinutes < 1) {
         return t('common.composables.useTimeDisplay.justNow')
       } else if (diffMinutes < 60) {
-        return t(
-          'common.composables.useTimeDisplay.minutesAgo',
-          { count: diffMinutes },
-          diffMinutes,
-        )
+        return t('common.composables.useTimeDisplay.minutesAgo', { count: diffMinutes })
       } else if (isSameDay) {
-        return t('common.composables.useTimeDisplay.hoursAgo', { count: diffHours }, diffHours)
+        return t('common.composables.useTimeDisplay.hoursAgo', { count: diffHours })
       } else {
         // For dates yesterday or day before but within threshold
         return d(targetDate, format)

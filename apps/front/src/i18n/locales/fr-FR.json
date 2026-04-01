@@ -296,15 +296,15 @@
         },
         "buttons": {
           "cancel": "Annuler",
-          "restart": "Redémarrer {count} Tâche | Redémarrer {count} Tâches",
+          "restart": "{count, plural, one {Redémarrer # Tâche} other {Redémarrer # Tâches}}",
           "restarting": "Redémarrage..."
         },
-        "description": "Vous êtes sur le point de redémarrer {count} tâche. Cette action va : | Vous êtes sur le point de redémarrer {count} tâches. Cette action va :",
+        "description": "{count, plural, one {Vous êtes sur le point de redémarrer # tâche. Cette action va :} other {Vous êtes sur le point de redémarrer # tâches. Cette action va :}}",
         "result": {
           "initiated": "Redémarrage Initié",
           "noTasks": "Aucune Tâche Redémarrée",
-          "restarted": "{count} tâche redémarrée avec succès | {count} tâches redémarrées avec succès",
-          "skipped": "{count} tâche ignorée | {count} tâches ignorées",
+          "restarted": "{count, plural, one {# tâche redémarrée avec succès} other {# tâches redémarrées avec succès}}",
+          "skipped": "{count, plural, one {# tâche ignorée} other {# tâches ignorées}}",
           "skippedReasons": "Raisons des exclusions :",
           "taskReason": "Tâche #{id} : {reason}"
         },
@@ -319,8 +319,8 @@
       "refresh": "Actualiser",
       "selection": {
         "clearSelection": "Effacer la Sélection",
-        "restart": "Redémarrer {count} Tâche | Redémarrer {count} Tâches",
-        "selected": "{count} sélectionnée | {count} sélectionnées"
+        "restart": "{count, plural, one {Redémarrer # Tâche} other {Redémarrer # Tâches}}",
+        "selected": "{count, plural, one {# sélectionnée} other {# sélectionnées}}"
       },
       "stats": {
         "failed": "Échouées",
@@ -338,7 +338,7 @@
       "stuckAlert": {
         "description": "Des tâches en cours depuis trop longtemps nécessitent votre attention. Vérifiez et redémarrez si nécessaire.",
         "selectAll": "Sélectionner Toutes les Bloquées",
-        "title": "{count} Tâche Bloquée Détectée | {count} Tâches Bloquées Détectées"
+        "title": "{count, plural, one {# Tâche Bloquée Détectée} other {# Tâches Bloquées Détectées}}"
       },
       "table": {
         "actions": "Actions",
@@ -409,7 +409,7 @@
         "loading": "Chargement des données du graphique...",
         "noData": "Aucune donnée d'entreprise pour la période sélectionnée",
         "title": "Entreprises au Fil du Temps",
-        "tooltip": "{count} entreprise créée | {count} entreprises créées"
+        "tooltip": "{count, plural, one {# entreprise créée} other {# entreprises créées}}"
       },
       "stackedChart": {
         "companies": "entreprises",
@@ -569,7 +569,7 @@
       "back": "Retour",
       "loading": "Chargement en cours...",
       "selectAll": "Tout sélectionner",
-      "selectedCount": "({count} document) | ({count} documents)"
+      "selectedCount": "{count, plural, one {(# document)} other {(# documents)}}"
     },
     "auth": {
       "callback": {
@@ -630,10 +630,10 @@
     "comingSoon": "Bientôt disponible",
     "composables": {
       "useTimeDisplay": {
-        "hoursAgo": "il y a {count} heure | il y a {count} heures",
+        "hoursAgo": "{count, plural, one {il y a # heure} other {il y a # heures}}",
         "invalidDate": "Date invalide",
         "justNow": "à l'instant",
-        "minutesAgo": "il y a {count} minute | il y a {count} minutes"
+        "minutesAgo": "{count, plural, one {il y a # minute} other {il y a # minutes}}"
       }
     },
     "confirm": "Confirmer",
@@ -824,7 +824,7 @@
       "header": {
         "by": "par",
         "createdOn": "créé le {date}",
-        "itemsCount": "{count} élément | {count} éléments"
+        "itemsCount": "{count, plural, one {# élément} other {# éléments}}"
       },
       "item": {
         "actions": {
@@ -837,13 +837,13 @@
         "type": "Type",
         "view": "Voir"
       },
-      "itemCount": "{count} élément | {count} éléments",
+      "itemCount": "{count, plural, one {# élément} other {# éléments}}",
       "itemName": "dossiers",
       "items": {
         "add": "Ajouter des éléments",
         "empty": "Aucun élément dans ce dossier"
       },
-      "itemsChip": "{count} élément | {count} éléments",
+      "itemsChip": "{count, plural, one {# élément} other {# éléments}}",
       "itemTypes": {
         "company": "Fiche entreprise"
       },
@@ -2549,10 +2549,10 @@
               "actors": "Oups, impossible d'afficher les acteurs",
               "sources": "Oups, impossible d'afficher les sources"
             },
-            "WATCHFILE_ACTOR_ADDED": "Acteur ajouté | Acteurs ajoutés",
-            "WATCHFILE_ACTOR_STATUS_CHANGED": "Changement de statut de l'acteur | Changement de statut des acteurs",
-            "WATCHFILE_SOURCE_ADDED": "Source ajoutée | Sources ajoutées",
-            "WATCHFILE_SOURCE_STATUS_CHANGED": "Changement de statut de la source | Changement de statut des sources"
+            "WATCHFILE_ACTOR_ADDED": "{count, plural, one {Acteur ajouté} other {Acteurs ajoutés}}",
+            "WATCHFILE_ACTOR_STATUS_CHANGED": "{count, plural, one {Changement de statut de l'acteur} other {Changement de statut des acteurs}}",
+            "WATCHFILE_SOURCE_ADDED": "{count, plural, one {Source ajoutée} other {Sources ajoutées}}",
+            "WATCHFILE_SOURCE_STATUS_CHANGED": "{count, plural, one {Changement de statut de la source} other {Changement de statut des sources}}"
           },
           "monitoring_type_detected": "Le type de veille a été mis à jour.",
           "reference_subject_detected": "Le sujet de référence a été mis à jour.",
@@ -2603,7 +2603,7 @@
           },
           "search": {
             "clear": "Effacer la recherche",
-            "results": "Résultats : {count} source | Résultats : {count} source | Résultats : {count} sources"
+            "results": "{count, plural, =0 {Résultats : # source} one {Résultats : # source} other {Résultats : # sources}}"
           },
           "search_placeholder": "Rechercher une source",
           "status": {
@@ -2617,8 +2617,8 @@
       "actors": {
         "batch_change": {
           "error": "Échec de l'activation des acteurs",
-          "partial_error": "{count} acteur n'a pas pu être activé | {count} acteurs n'ont pas pu être activés",
-          "success": "{count} acteur activé avec succès | {count} acteurs activés avec succès"
+          "partial_error": "{count, plural, one {# acteur n'a pas pu être activé} other {# acteurs n'ont pas pu être activés}}",
+          "success": "{count, plural, one {# acteur activé avec succès} other {# acteurs activés avec succès}}"
         },
         "deactivation_modal": {
           "activation_modal": {
@@ -2632,8 +2632,8 @@
           "source_already_inactive": "Cette source est déjà désactivée",
           "source_name": "Nom de la source",
           "success": {
-            "activated": "Acteur activé avec succès | Acteur et 1 source activés avec succès | Acteur et {count} sources activés avec succès",
-            "deactivated": "Acteur désactivé avec succès | Acteur et 1 source désactivés avec succès | Acteur et {count} sources désactivés avec succès"
+            "activated": "{count, plural, =0 {Acteur activé avec succès} one {Acteur et 1 source activés avec succès} other {Acteur et # sources activés avec succès}}",
+            "deactivated": "{count, plural, =0 {Acteur désactivé avec succès} one {Acteur et 1 source désactivés avec succès} other {Acteur et # sources désactivés avec succès}}"
           },
           "title": "Désactivation de l'acteur '{actor}'",
           "type": "Type"
@@ -2667,14 +2667,14 @@
         "see_more": "Consulter la fiche",
         "select_actor": "Choisir les acteurs",
         "selection_modal": {
-          "add_actors": "Ajouter {count} acteur et {sources} sources | Ajouter {count} acteurs et {sources} sources",
-          "add_actors_no_sources": "Ajouter {count} acteur | Ajouter {count} acteurs",
+          "add_actors": "{count, plural, one {Ajouter # acteur et {sources} sources} other {Ajouter # acteurs et {sources} sources}}",
+          "add_actors_no_sources": "{count, plural, one {Ajouter # acteur} other {Ajouter # acteurs}}",
           "no_actors": "Aucun acteur disponible",
-          "select_actor": "Sélectionner l'acteur | Sélectionner l'acteur et {count} source | Sélectionner l'acteur et {count} sources",
+          "select_actor": "{count, plural, =0 {Sélectionner l'acteur} one {Sélectionner l'acteur et # source} other {Sélectionner l'acteur et # sources}}",
           "title": "Choisir des acteurs"
         },
-        "sources_count": "{count} source | {count} source | {count} sources",
-        "sub_title": "Aucun acteur affiché | 1 acteur affiché sur {total} | {count} acteurs affichés sur {total}",
+        "sources_count": "{count, plural, =0 {# source} one {# source} other {# sources}}",
+        "sub_title": "{count, plural, =0 {Aucun acteur affiché} one {1 acteur affiché sur {total}} other {# acteurs affichés sur {total}}}",
         "title": "Acteurs identifiés",
         "type": {
           "competitor": "Concurrent",
@@ -2706,11 +2706,11 @@
         "graph": {
           "legend": {
             "axis": {
-              "y": "{nb} document | {nb} document | {nb} documents"
+              "y": "{nb, plural, =0 {# document} one {# document} other {# documents}}"
             },
             "event": {
               "basic": "Indicateur quotidien standard",
-              "count": "{nb} évènement | {nb} évènements",
+              "count": "{nb, plural, one {# évènement} other {# évènements}}",
               "starred": "Indicateur quotidien avec au moins un évènement marquant"
             }
           }
@@ -2802,7 +2802,7 @@
         },
         "system_messages": {
           "hide_older": "Masquer les actions précédentes",
-          "view_older": "Voir {count} action précédente {time} | Voir {count} actions précédentes {time}"
+          "view_older": "{count, plural, one {Voir # action précédente {time}} other {Voir # actions précédentes {time}}}"
         },
         "typing_indicator": {
           "0": "Chaps-e analyse votre demande...",
@@ -2837,21 +2837,21 @@
         },
         "batch_reject": {
           "modal": {
-            "message": "Vous allez refuser {count} document. Souhaitez-vous continuer ? | Vous allez refuser {count} documents. Souhaitez-vous continuer ?",
+            "message": "{count, plural, one {Vous allez refuser # document. Souhaitez-vous continuer ?} other {Vous allez refuser # documents. Souhaitez-vous continuer ?}}",
             "title": "Refuser des documents"
           }
         },
         "batch_status_change": {
           "error_accept": "Erreur lors de la validation groupée",
           "error_refuse": "Erreur lors du rejet groupé",
-          "partial_success_accept": "Aucun document validé | 1 document validé, {failed} en échec | {success} documents validés, {failed} en échec",
-          "partial_success_refuse": "Aucun document refusé | 1 document refusé, {failed} en échec | {success} documents refusés, {failed} en échec",
-          "success_accept": "Aucun document validé | 1 document validé avec succès | {count} documents validés avec succès",
-          "success_refuse": "Aucun document refusé | 1 document refusé avec succès | {count} documents refusés avec succès"
+          "partial_success_accept": "{count, plural, =0 {Aucun document validé} one {1 document validé, {failed} en échec} other {{success} documents validés, {failed} en échec}}",
+          "partial_success_refuse": "{count, plural, =0 {Aucun document refusé} one {1 document refusé, {failed} en échec} other {{success} documents refusés, {failed} en échec}}",
+          "success_accept": "{count, plural, =0 {Aucun document validé} one {1 document validé avec succès} other {# documents validés avec succès}}",
+          "success_refuse": "{count, plural, =0 {Aucun document refusé} one {1 document refusé avec succès} other {# documents refusés avec succès}}"
         },
         "batch_validate": {
           "modal": {
-            "message": "Vous allez valider {count} document. Souhaitez-vous continuer ? | Vous allez valider {count} documents. Souhaitez-vous continuer ?",
+            "message": "{count, plural, one {Vous allez valider # document. Souhaitez-vous continuer ?} other {Vous allez valider # documents. Souhaitez-vous continuer ?}}",
             "title": "Valider des documents"
           }
         },
@@ -2862,7 +2862,7 @@
         "search": {
           "delete": "Effacer la recherche",
           "matching": "Résultat \"{search}\" dans le document",
-          "nb_results": "Résultats : {nb} document| Résultats : {nb} document |Résultats : {nb} documents",
+          "nb_results": "{nb, plural, =0 {Résultats : # documents} one {Résultats : # document} other {Résultats : # documents}}",
           "placeholder": "Rechercher dans les documents"
         },
         "status": {
@@ -3004,7 +3004,7 @@
       "pagination": {
         "items_per_page": "Dossiers de veille par page"
       },
-      "persons": "{count} personne | {count} personnes",
+      "persons": "{count, plural, one {# personne} other {# personnes}}",
       "prefix": {
         "createdAt": "Création : ",
         "updatedAt": "Dernière modification : "
@@ -3045,8 +3045,8 @@
         "actor": "Acteur: {label}",
         "batch_change": {
           "error": "Échec de l'activation des sources",
-          "partial_error": "{count} source n'a pas pu être activée | {count} sources n'ont pas pu être activées",
-          "success": "{count} source activée avec succès | {count} sources activées avec succès"
+          "partial_error": "{count, plural, one {# source n'a pas pu être activée} other {# sources n'ont pas pu être activées}}",
+          "success": "{count, plural, one {# source activée avec succès} other {# sources activées avec succès}}"
         },
         "justification": "Justification",
         "link_label": "Lien de la source",
@@ -3056,7 +3056,7 @@
         },
         "select_source": "Choisir une source",
         "selection_modal": {
-          "add_sources": "Ajouter {count} source | Ajouter {count} sources",
+          "add_sources": "{count, plural, one {Ajouter # source} other {Ajouter # sources}}",
           "title": "Choisir des sources"
         },
         "status_change": {
@@ -3064,7 +3064,7 @@
           "error": "Une erreur est survenue lors du changement de statut de la source",
           "inactive": "Source désactivée avec succès"
         },
-        "sub_title": "1 source affichée sur {total} | {count} sources affichées sur {total}",
+        "sub_title": "{count, plural, one {1 source affichée sur {total}} other {# sources affichées sur {total}}}",
         "title": "Sources",
         "type": {
           "media": "Médias",
@@ -3127,7 +3127,7 @@
           "removeUser": "Erreur lors du retrait de l'utilisateur du dossier"
         },
         "success": {
-          "addUsers": "{count} utilisateur ajouté au dossier de veille | {count} utilisateurs ajoutés au dossier",
+          "addUsers": "{count, plural, one {# utilisateur ajouté au dossier de veille} other {# utilisateurs ajoutés au dossier}}",
           "changeRole": "Rôle modifié pour {user}",
           "removeUser": "Utilisateur {user} retiré du dossier"
         }

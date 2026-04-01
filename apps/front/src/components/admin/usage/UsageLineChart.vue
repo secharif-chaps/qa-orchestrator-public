@@ -203,7 +203,7 @@ const chartOptions = computed(() => ({
         },
         label: (context: { parsed: { y: number | null } }) => {
           const count = context.parsed.y ?? 0
-          return t('admin.usage.lineChart.tooltip', { count }, count)
+          return t('admin.usage.lineChart.tooltip', { count })
         },
       },
     },

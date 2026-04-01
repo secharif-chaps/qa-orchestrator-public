@@ -1160,9 +1160,17 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - Never create foreign keys to users or organizations
 - Always use VARCHAR/String/UUID fields for user and organization references
 - User and organization data comes from Keycloak, not database
-- for i18n When using vue-i18n with legacy: false (Composition API mode):
-  - Always use: t(translationKey, { param: value })
-  - Never use: t(translationKey, 'fallback', { param: value })
+- **i18n** uses ICU MessageFormat via `@messageformat/core` as custom `messageCompiler` (ADR-0012 section 4):
+  - Always use: `t(translationKey, { param: value })`
+  - Never use: `t(translationKey, 'fallback', { param: value })` (no fallback as 2nd arg)
+  - Never use positional plural: `t(key, { count }, count)` → `t(key, { count })`
+  - **Pipe syntax is disabled** (`zero | one | many` does NOT work)
+  - Plurals: `"{count, plural, =0 {No items} one {# item} other {# items}}"`
+  - Select (gender/type/status): `"{gender, select, male {assigné à} female {assignée à} other {assigné(e) à}} {name}"`
+  - Nested select+plural: `"{type, select, company {{count, plural, one {# entreprise} other {# entreprises}}} other {{count, plural, one {# élément} other {# éléments}}}}"`
+  - `#` is shorthand for the selector variable value; other variables (`{total}`, `{name}`) stay as-is
+  - `other` branch is mandatory in both `plural` and `select`
+  - French CLDR: 0 falls under `one`; use `=0` for distinct zero messages ("Aucun...")
 - vuellar is our own private component lib dont make research on it you wont find anything
 
 ---
