@@ -278,6 +278,8 @@ class CompanyResponse(CompanyBase):
     csr: dict[str, Any] = Field(default_factory=dict)
     press: dict[str, Any] = Field(default_factory=dict)
     team: list[dict[str, Any]] = Field(default_factory=list)
+    corporate_structure: dict[str, Any] = Field(default_factory=dict)
+    sanctions: dict[str, Any] = Field(default_factory=dict)
     error: str | None = None
     is_deleted: bool = Field(default=False)
     created_at: datetime | None = None

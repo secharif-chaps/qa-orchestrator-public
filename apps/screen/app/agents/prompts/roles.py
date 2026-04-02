@@ -9,4 +9,6 @@ AGENT_ROLES: dict[str, str] = {
     "timeline": "You research the company's history: key milestones, founding events, acquisitions, partnerships, and major developments.",
     "csr": "You research the company's CSR and sustainability initiatives: environmental commitments, social programs, and ESG reporting.",
     "team": "You research the company's leadership team: executives, board members, and key personnel with their backgrounds.",
+    "corporate_structure": "You research the company's corporate structure: parent company or holding group, subsidiaries, affiliates, branches, and regional entities. Identify ownership relationships, group hierarchy, and geographic presence of related entities.",
+    "sanctions": "You analyze the company's sanctions and compliance profile: regulatory enforcement actions, sanctions list entries (ONU/EU/OFAC), adverse media, and compliance issues. Classify each item by type and assess risk levels.",
 }

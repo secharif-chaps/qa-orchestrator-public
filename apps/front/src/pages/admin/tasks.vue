@@ -808,6 +808,8 @@ const taskTypeKeys: Record<TaskType, string> = {
   csr: 'admin.tasks.taskTypes.csr',
   press: 'admin.tasks.taskTypes.press',
   team: 'admin.tasks.taskTypes.team',
+  corporate_structure: 'admin.tasks.taskTypes.corporateStructure',
+  sanctions: 'admin.tasks.taskTypes.sanctions',
 }
 
 function formatTaskType(type: TaskType): string {

@@ -30,6 +30,7 @@ from .exceptions import (
 from .schemas import (
     CaseResult,
     EntityType,
+    ReferenceProfile,
     ScreeningRequest,
     ScreeningResponse,
     ScreeningResult,
@@ -282,12 +283,15 @@ class WorldCheckClient:
                 )
             )
 
+        # Enrich EXACT/STRONG matches with full profile data
+        enriched_results = await self._enrich_results(results)
+
         screening_response = ScreeningResponse(
             caseSystemId=data.get("caseSystemId", ""),
             caseId=data.get("caseId"),
             name=data.get("name"),
-            results=results,
-            resultCount=len(results),
+            results=enriched_results,
+            resultCount=len(enriched_results),
         )
 
         logger.info(
@@ -295,10 +299,59 @@ class WorldCheckClient:
             extra={
                 "case_system_id": screening_response.caseSystemId,
                 "result_count": screening_response.resultCount,
+                "enriched_count": sum(1 for r in enriched_results if r.profile is not None),
             },
         )
 
         return screening_response
+
+    async def _enrich_results(self, results: list[ScreeningResult]) -> list[ScreeningResult]:
+        """Fetch detailed profiles for EXACT and STRONG matches concurrently.
+
+        Uses asyncio.gather with a semaphore to limit concurrency and avoid
+        overwhelming the WorldCheck API.
+
+        Args:
+            results: Screening results from the initial screening call
+
+        Returns:
+            Same results list with profile field populated for EXACT/STRONG matches
+        """
+        enrichable = [r for r in results if r.matchStrength in ("EXACT", "STRONG")]
+
+        if not enrichable:
+            return results
+
+        logger.info(
+            f"Enriching {len(enrichable)} EXACT/STRONG matches with profile data",
+        )
+
+        semaphore = asyncio.Semaphore(5)
+
+        async def _enrich_one(result: ScreeningResult) -> None:
+            async with semaphore:
+                try:
+                    profile_data = await self.get_reference_profile(result.referenceId)
+                    result.profile = ReferenceProfile(
+                        referenceId=result.referenceId,
+                        name=profile_data.get("name"),
+                        entityType=profile_data.get("entityType"),
+                        categories=profile_data.get("categories", []),
+                        sources=profile_data.get("sources", []),
+                        countryLinks=profile_data.get("countryLinks", []),
+                        aliases=profile_data.get("aliases", []),
+                        events=profile_data.get("events", []),
+                        weblinks=profile_data.get("weblinks", []),
+                    )
+                except Exception:
+                    logger.warning(
+                        f"Failed to enrich profile for referenceId={result.referenceId}",
+                        exc_info=True,
+                    )
+
+        await asyncio.gather(*[_enrich_one(r) for r in enrichable])
+
+        return results
 
     @staticmethod
     def _validate_path_param(value: str, name: str) -> None:
@@ -379,7 +432,7 @@ class WorldCheckClient:
             ValueError: If reference_id contains invalid characters
         """
         self._validate_path_param(reference_id, "reference_id")
-        path = f"{API_BASE_PATH}/cases/references/{reference_id}"
+        path = f"{API_BASE_PATH}/reference/profile/{reference_id}"
 
         logger.info(
             "Fetching WorldCheck reference profile",

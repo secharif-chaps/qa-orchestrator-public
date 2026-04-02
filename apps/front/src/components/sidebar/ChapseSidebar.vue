@@ -399,14 +399,7 @@ async function handleSelectConversation(conversationId: string) {
 }
 
 const handleDeleteConversation = async (conversationId: string) => {
-  if (
-    confirm(
-      t(
-        'common.sidebar.chapse.confirmDeleteConversation',
-        'Are you sure you want to delete this conversation?',
-      ),
-    )
-  ) {
+  if (confirm(t('common.sidebar.chapse.confirmDeleteConversation'))) {
     await deleteConversation(conversationId)
   }
 }
@@ -420,14 +413,7 @@ async function handleLoadMoreConversations() {
 }
 
 const handleClearHistory = () => {
-  if (
-    confirm(
-      t(
-        'common.sidebar.chapse.confirmClearMessages',
-        'Are you sure you want to clear all messages?',
-      ),
-    )
-  ) {
+  if (confirm(t('common.sidebar.chapse.confirmClearMessages'))) {
     clearHistory()
   }
 }

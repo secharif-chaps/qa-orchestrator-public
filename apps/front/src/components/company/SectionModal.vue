@@ -72,6 +72,12 @@ const PressPage = defineAsyncComponent(
 const CsrPage = defineAsyncComponent(
   () => import('@/pages/folders/[folderId]/companies/[companyId]/csr.vue'),
 )
+const CorporateStructurePage = defineAsyncComponent(
+  () => import('@/pages/folders/[folderId]/companies/[companyId]/corporate-structure.vue'),
+)
+const SanctionsPage = defineAsyncComponent(
+  () => import('@/pages/folders/[folderId]/companies/[companyId]/sanctions.vue'),
+)
 
 interface SectionConfig {
   name: string
@@ -99,55 +105,37 @@ const route = useRoute()
 const sections: Record<TaskType, SectionConfig> = {
   profile: {
     name: t('screen.company.analysisCards.profile.title'),
-    description: t(
-      'screen.company.analysisCards.profile.description',
-      'View detailed company information, business lines, and key metrics',
-    ),
+    description: t('screen.company.analysisCards.profile.description'),
     icon: 'fas fa-building',
     component: ProfilePage,
   },
   timeline: {
     name: t('screen.company.analysisCards.timeline.title'),
-    description: t(
-      'screen.company.analysisCards.timeline.description',
-      'Company history, milestones, and key events over time',
-    ),
+    description: t('screen.company.analysisCards.timeline.description'),
     icon: 'fas fa-calendar-days',
     component: TimelinePage,
   },
   products: {
     name: t('screen.company.analysisCards.products.title'),
-    description: t(
-      'screen.company.analysisCards.products.description',
-      'Browse products, services, and offerings',
-    ),
+    description: t('screen.company.analysisCards.products.description'),
     icon: 'fas fa-box',
     component: ProductsPage,
   },
   team: {
     name: t('screen.company.analysisCards.team.title'),
-    description: t(
-      'screen.company.analysisCards.team.description',
-      'Leadership team, organizational structure, and key personnel',
-    ),
+    description: t('screen.company.analysisCards.team.description'),
     icon: 'fas fa-users',
     component: TeamPage,
   },
   jobs: {
     name: t('screen.company.analysisCards.jobs.title'),
-    description: t(
-      'screen.company.analysisCards.jobs.description',
-      'Current job openings and career opportunities',
-    ),
+    description: t('screen.company.analysisCards.jobs.description'),
     icon: 'fas fa-briefcase',
     component: JobsPage,
   },
   press: {
     name: t('screen.company.analysisCards.press.title'),
-    description: t(
-      'screen.company.analysisCards.press.description',
-      'Press releases, news articles, and media coverage',
-    ),
+    description: t('screen.company.analysisCards.press.description'),
     icon: 'fas fa-newspaper',
     component: PressPage,
   },
@@ -159,12 +147,21 @@ const sections: Record<TaskType, SectionConfig> = {
   },
   csr: {
     name: t('screen.company.analysisCards.csr.title'),
-    description: t(
-      'screen.company.analysisCards.csr.description',
-      'CSR initiatives, sustainability programs, and social impact',
-    ),
+    description: t('screen.company.analysisCards.csr.description'),
     icon: 'fas fa-leaf',
     component: CsrPage,
+  },
+  corporate_structure: {
+    name: t('screen.company.analysisCards.corporateStructure.title'),
+    description: t('screen.company.analysisCards.corporateStructure.description'),
+    icon: 'fas fa-sitemap',
+    component: CorporateStructurePage,
+  },
+  sanctions: {
+    name: t('screen.company.analysisCards.sanctions.title'),
+    description: t('screen.company.analysisCards.sanctions.description'),
+    icon: 'fas fa-shield-halved',
+    component: SanctionsPage,
   },
 }
 

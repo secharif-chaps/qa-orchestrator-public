@@ -63,12 +63,7 @@
       <Alert
         variant="info"
         :title="$t('screen.company.create.noFolders.title')"
-        :description="
-          $t(
-            'screen.company.create.noFolders.message',
-            'You need to create a folder before creating a company screen',
-          )
-        "
+        :description="$t('screen.company.create.noFolders.message')"
         icon="fa-folder-plus"
         :action="$t('screen.company.create.noFolders.action')"
         @click="navigateToFolderCreate"
@@ -590,10 +585,7 @@ const dismissTokenAlert = () => {
 const submit = async () => {
   // Check organization data
   if (!currentOrganization.value?.id) {
-    companyError.value = t(
-      'screen.company.validation.loadingorganization',
-      'Loading organization...',
-    )
+    companyError.value = t('screen.company.validation.loadingorganization')
     return
   }
 
@@ -606,15 +598,9 @@ const submit = async () => {
   // Check token availability
   if (!canPerformSearch.value) {
     if (!screenModuleEnabled.value) {
-      companyError.value = t(
-        'screen.company.validation.moduleDisabled',
-        'The Screen module is disabled',
-      )
+      companyError.value = t('screen.company.validation.moduleDisabled')
     } else {
-      companyError.value = t(
-        'screen.company.validation.insufficientTokens',
-        'Insufficient tokens. You need at least 35 tokens to create a company.',
-      )
+      companyError.value = t('screen.company.validation.insufficientTokens')
     }
     return
   }
@@ -664,10 +650,7 @@ const submit = async () => {
     console.error('Error during company creation:', error)
 
     if (error instanceof InsufficientTokensError) {
-      companyError.value = t(
-        'screen.company.validation.insufficientTokens',
-        'Insufficient tokens. You need at least 35 tokens to create a company.',
-      )
+      companyError.value = t('screen.company.validation.insufficientTokens')
       await refreshTokenData()
       return
     }
@@ -675,31 +658,16 @@ const submit = async () => {
     const message = error instanceof Error ? error.message : undefined
     if (message) {
       if (message.includes('Validation error')) {
-        companyError.value = t(
-          'screen.company.validation.invalidNameFormat',
-          'Company name must contain at least 2 alphabetic characters',
-        )
-        websiteError.value = t(
-          'screen.company.validation.invalidWebsiteFormat',
-          'Please enter a valid website URL',
-        )
+        companyError.value = t('screen.company.validation.invalidNameFormat')
+        websiteError.value = t('screen.company.validation.invalidWebsiteFormat')
       } else if (message.includes('Invalid input')) {
         companyError.value = t('screen.company.validation.nameRequired')
-        websiteError.value = t(
-          'screen.company.validation.websiteRequired',
-          'Website URL is required',
-        )
+        websiteError.value = t('screen.company.validation.websiteRequired')
       } else {
-        companyError.value = t(
-          'screen.company.validation.createError',
-          'An error occurred while creating the company',
-        )
+        companyError.value = t('screen.company.validation.createError')
       }
     } else {
-      companyError.value = t(
-        'screen.company.validation.networkError',
-        'Network error - please try again',
-      )
+      companyError.value = t('screen.company.validation.networkError')
     }
   }
 }

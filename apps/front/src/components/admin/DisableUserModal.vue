@@ -29,12 +29,7 @@
         class="mb-6"
         icon="fa-exclamation-triangle"
         :title="t('admin.disableUser.actionTitle')"
-        :description="
-          t(
-            'admin.disableUser.actionDescription',
-            '• Prevent the user from logging in • Revoke all active sessions • Preserve all user data. You can re-enable the user later if needed.',
-          )
-        "
+        :description="t('admin.disableUser.actionDescription')"
       />
 
       <!-- Actions -->

@@ -8,12 +8,7 @@
             {{ $t('screen.csv.upload.title') }}
           </h1>
           <p class="text-secondary">
-            {{
-              $t(
-                'screen.csv.upload.description',
-                'Upload a CSV file to create multiple companies at once',
-              )
-            }}
+            {{ $t('screen.csv.upload.description') }}
           </p>
         </div>
 
@@ -105,20 +100,10 @@
                 {{ $t('screen.csv.upload.format1') }}
               </li>
               <li>
-                {{
-                  $t(
-                    'screen.csv.upload.format2',
-                    'Company name column: Name, Company, Nom, Entreprise, etc.',
-                  )
-                }}
+                {{ $t('screen.csv.upload.format2') }}
               </li>
               <li>
-                {{
-                  $t(
-                    'screen.csv.upload.format3',
-                    'Website column: Website, URL, Site, Domain, etc.',
-                  )
-                }}
+                {{ $t('screen.csv.upload.format3') }}
               </li>
               <li>{{ $t('screen.csv.upload.format4') }}</li>
             </ul>
@@ -270,12 +255,7 @@
           <Alert
             variant="warning"
             :title="$t('screen.csv.upload.validation.errorsFound')"
-            :message="
-              $t(
-                'screen.csv.upload.validation.errorsFoundMessage',
-                'You can either fix the errors in your CSV file and re-upload, or proceed with import which will skip invalid rows.',
-              )
-            "
+            :message="$t('screen.csv.upload.validation.errorsFoundMessage')"
           />
         </div>
 
@@ -519,10 +499,7 @@ const validateCompanies = async () => {
     })
   } catch (error: unknown) {
     console.error('Validation error:', error)
-    validationError.value = t(
-      'screen.csv.upload.validationFailed',
-      'Validation failed. Please try again.',
-    )
+    validationError.value = t('screen.csv.upload.validationFailed')
   } finally {
     isValidating.value = false
   }

@@ -61,12 +61,7 @@
         <Alert
           variant="warning"
           :title="$t('admin.dashboard.limitedAccess.title')"
-          :description="
-            $t(
-              'admin.dashboard.limitedAccess.message',
-              'You have access to basic admin features. Contact your administrator for additional permissions.',
-            )
-          "
+          :description="$t('admin.dashboard.limitedAccess.message')"
           icon="fa-lock"
         />
       </div>

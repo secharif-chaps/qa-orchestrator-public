@@ -69,12 +69,7 @@
         {{ $t('settings.featureFlags.globalFeatures') }}
       </h2>
       <p class="text-secondary mb-4 text-sm">
-        {{
-          $t(
-            'settings.featureFlags.description',
-            'Add-on capabilities that enhance core modules. These features are disabled by default.',
-          )
-        }}
+        {{ $t('settings.featureFlags.description') }}
       </p>
 
       <!-- Loading State -->

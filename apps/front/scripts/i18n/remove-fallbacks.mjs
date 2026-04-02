@@ -20,7 +20,11 @@ const dryRun = process.argv.includes('--dry-run')
 // Group 4: quote char for fallback
 // Group 5: fallback text
 // Does NOT match when second arg starts with { (object/interpolation)
+// Single-line pattern
 const fallbackPattern = /(?<!\w)(\$?)t\(\s*(['"])([^'"]+)\2\s*,\s*(['"])([^'"]*)\4\s*\)/g
+// Multi-line pattern: handles t(\n  'key',\n  'fallback',?\n)
+const fallbackPatternMultiline =
+  /(?<!\w)(\$?)t\(\s*\n\s*(['"])([^'"]+)\2\s*,\s*\n\s*(['"])([^'"]*)\4\s*,?\s*\n\s*\)/g
 
 const sourceFiles = scanSourceFiles(SOURCE_DIR, ['.vue', '.ts'])
 
@@ -33,6 +37,11 @@ for (const file of sourceFiles) {
   let fileReplacements = 0
 
   modified = modified.replace(fallbackPattern, (_match, prefix, q1, key) => {
+    fileReplacements++
+    return `${prefix}t(${q1}${key}${q1})`
+  })
+
+  modified = modified.replace(fallbackPatternMultiline, (_match, prefix, q1, key) => {
     fileReplacements++
     return `${prefix}t(${q1}${key}${q1})`
   })

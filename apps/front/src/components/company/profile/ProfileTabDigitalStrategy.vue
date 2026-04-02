@@ -53,12 +53,7 @@
 
       <div v-if="digitalStrategy?.digitalMarketingApproach" class="text-sm">
         <h5 class="text-secondary mb-1 font-medium">
-          {{
-            $t(
-              'screen.profile.sections.digital.digitalMarketingApproach',
-              'Digital Marketing Approach',
-            )
-          }}
+          {{ $t('screen.profile.sections.digital.digitalMarketingApproach') }}
         </h5>
         <p class="text-secondary">
           {{ getSourcedValue(digitalStrategy.digitalMarketingApproach) }}

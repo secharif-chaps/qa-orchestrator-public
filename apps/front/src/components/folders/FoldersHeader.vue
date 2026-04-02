@@ -137,12 +137,7 @@
                 icon="fas fa-project-diagram"
                 color="purple"
                 :label="$t('common.folder.addItems.graphrag')"
-                :description="
-                  $t(
-                    'common.folder.addItems.graphragDescription',
-                    'explore ecosystem with GraphRAG',
-                  )
-                "
+                :description="$t('common.folder.addItems.graphragDescription')"
               >
                 <template #suffix>
                   <Tag variant="secondary" size="xs" :label="$t('common.soon')" />

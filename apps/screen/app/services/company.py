@@ -86,6 +86,8 @@ def _build_company_response(
         csr=section_data.get("csr", {}),
         press=section_data.get("press", {}),
         team=section_data.get("team", []),
+        corporate_structure=section_data.get("corporate_structure", {}),
+        sanctions=section_data.get("sanctions", {}),
         error=company.error,
         is_deleted=company.is_deleted,
         created_at=company.created_at,
@@ -213,14 +215,33 @@ class CompanyService:
         return company
 
     def _launch_analysis(self, company: Company, owner_id: str) -> None:
-        """Launch LangGraph analysis as a background task."""
+        """Launch WorldCheck screening first, then LangGraph analysis.
+
+        WorldCheck runs first so that raw_worldcheck_knowledge is available
+        when the corporate_structure agent executes inside the LangGraph graph.
+        """
         from app.agents.runner import CompanyAnalysisRunner
 
         runner = CompanyAnalysisRunner()
 
-        async def _run() -> None:
+        async def _run_pipeline() -> None:
             from app.database import SessionLocal
 
+            # Step 1: WorldCheck screening (non-blocking if disabled/failing)
+            db = SessionLocal()
+            try:
+                await self._run_worldcheck_screening(
+                    db=db,
+                    company_id=company.id,
+                    company_name=company.name,
+                    organization_id=company.organization_id,
+                )
+            except Exception as e:
+                logger.warning(f"WorldCheck screening failed for company {company.id}: {e}", exc_info=True)
+            finally:
+                db.close()
+
+            # Step 2: LangGraph analysis (all agents including corporate_structure)
             db = SessionLocal()
             try:
                 await runner.run(
@@ -238,10 +259,68 @@ class CompanyService:
 
         try:
             loop = asyncio.get_running_loop()
-            loop.create_task(_run())
+            loop.create_task(_run_pipeline())
         except RuntimeError:
-            # No running loop — should not happen in FastAPI but handle gracefully
             logger.error("No running event loop for analysis launch")
+
+    @staticmethod
+    async def _run_worldcheck_screening(
+        db: Session,
+        company_id: int,
+        company_name: str,
+        organization_id: str,
+    ) -> None:
+        """Run WorldCheck screening if the feature flag is enabled.
+
+        Screens the company name against WorldCheck One databases and stores
+        the enriched results (sanctions, PEP, adverse media) in raw_worldcheck_knowledge.
+        """
+        from app.models.organization import FeatureFlag
+        from app.services.feature_flags import has_feature
+        from app.services.worldcheck import (
+            WorldCheckCredentialsMissingError,
+            WorldCheckFeatureNotEnabledError,
+            WorldCheckService,
+        )
+
+        if not has_feature(db, organization_id, FeatureFlag.WORLDCHECK):
+            logger.debug(f"WorldCheck not enabled for organization {organization_id}, skipping")
+            return
+
+        logger.info(
+            "Starting WorldCheck screening",
+            extra={"company_id": company_id, "organization_id": organization_id},
+        )
+
+        try:
+            response = await WorldCheckService.screen_company(
+                db=db,
+                organization_id=organization_id,
+                company_name=company_name,
+            )
+
+            # Store serialized screening response in raw_worldcheck_knowledge
+            company = db.query(Company).filter(Company.id == company_id).first()
+            if company:
+                company.raw_worldcheck_knowledge = response.model_dump_json()
+                db.commit()
+
+                logger.info(
+                    "WorldCheck screening stored",
+                    extra={
+                        "company_id": company_id,
+                        "result_count": response.resultCount,
+                        "enriched_count": sum(1 for r in response.results if r.profile is not None),
+                    },
+                )
+
+        except (WorldCheckFeatureNotEnabledError, WorldCheckCredentialsMissingError) as e:
+            logger.warning(f"WorldCheck skipped for company {company_id}: {e}")
+        except Exception:
+            logger.error(
+                f"WorldCheck screening error for company {company_id}",
+                exc_info=True,
+            )
 
     def restart_task(self, task_id: int) -> Task | None:
         """Restart a task by running the corresponding agent.
@@ -615,11 +694,23 @@ class CompanyService:
         if not company:
             raise ResourceNotFoundError("Company not found", details={"company_id": company_id})
 
-        # Reset all tasks to PENDING
+        # Reset existing tasks to PENDING
+        existing_types = {task.type for task in company.tasks}
         for task in company.tasks:
             task.status = TaskStatus.PENDING
             task.error = None
             task.error_details = None
+
+        # Create missing tasks (e.g. new task types added after company creation)
+        for task_type in TaskType:
+            if task_type not in existing_types:
+                new_task = Task(
+                    company_id=company.id,
+                    organization_id=company.organization_id,
+                    type=task_type,
+                    status=TaskStatus.PENDING,
+                )
+                company.tasks.append(new_task)
 
         self.db.commit()
 

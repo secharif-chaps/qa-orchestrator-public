@@ -15,12 +15,7 @@
             {{ $t('settings.appearance.preview.sample') }}
           </h3>
           <p class="text-secondary text-sm">
-            {{
-              $t(
-                'settings.appearance.preview.interfaceDescription',
-                'Experience how your interface looks with the current theme settings.',
-              )
-            }}
+            {{ $t('settings.appearance.preview.interfaceDescription') }}
           </p>
         </div>
 
@@ -32,12 +27,7 @@
                 {{ $t('settings.appearance.preview.card.title') }}
               </h4>
               <p class="text-secondary mt-1 text-sm">
-                {{
-                  $t(
-                    'settings.appearance.preview.card.description',
-                    'This card demonstrates the current theme styling',
-                  )
-                }}
+                {{ $t('settings.appearance.preview.card.description') }}
               </p>
             </div>
             <div class="flex gap-2">
@@ -68,12 +58,7 @@
                   $t('settings.appearance.preview.toggle.label')
                 }}</label>
                 <p class="text-secondary text-sm">
-                  {{
-                    $t(
-                      'settings.appearance.preview.toggle.description',
-                      'This toggle demonstrates switch styling',
-                    )
-                  }}
+                  {{ $t('settings.appearance.preview.toggle.description') }}
                 </p>
               </div>
               <Switch.Root

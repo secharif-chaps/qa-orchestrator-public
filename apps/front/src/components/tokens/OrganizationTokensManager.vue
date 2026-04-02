@@ -145,12 +145,7 @@
             />
           </div>
           <p class="text-secondary text-xs">
-            {{
-              $t(
-                'settings.tokens.addHelper',
-                'Enter the number of tokens to add, or use quick-add buttons above.',
-              )
-            }}
+            {{ $t('settings.tokens.addHelper') }}
           </p>
         </div>
       </div>

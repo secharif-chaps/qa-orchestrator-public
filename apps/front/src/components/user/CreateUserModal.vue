@@ -15,12 +15,7 @@
           </button>
         </div>
         <p class="text-secondary mt-1 text-sm">
-          {{
-            $t(
-              'settings.user.create.description',
-              'User will be prompted to reset password on first login',
-            )
-          }}
+          {{ $t('settings.user.create.description') }}
         </p>
       </div>
 
@@ -113,12 +108,7 @@
             {{ errors.temporaryPassword }}
           </p>
           <p v-else class="text-secondary mt-1 text-xs">
-            {{
-              $t(
-                'settings.user.passwordHelp',
-                'User will be required to change this password on first login',
-              )
-            }}
+            {{ $t('settings.user.passwordHelp') }}
           </p>
         </div>
 
@@ -141,12 +131,7 @@
             {{ $t('settings.user.initialRole') }}
           </label>
           <p class="text-secondary mb-3 text-xs">
-            {{
-              $t(
-                'settings.user.initialRoleDescription',
-                'Select the initial permissions for this user. Can be changed later.',
-              )
-            }}
+            {{ $t('settings.user.initialRoleDescription') }}
           </p>
           <div class="flex flex-col gap-2">
             <label
@@ -312,10 +297,7 @@ function validateForm() {
   if (!form.username.trim()) {
     errors.username = t('settings.user.validation.username.required')
   } else if (form.username.length < 3) {
-    errors.username = t(
-      'settings.user.validation.username.minLength',
-      'Username must be at least 3 characters',
-    )
+    errors.username = t('settings.user.validation.username.minLength')
   }
 
   if (!form.email.trim()) {
@@ -325,15 +307,9 @@ function validateForm() {
   }
 
   if (!form.temporaryPassword.trim()) {
-    errors.temporaryPassword = t(
-      'settings.user.validation.temporaryPassword.required',
-      'Temporary password is required',
-    )
+    errors.temporaryPassword = t('settings.user.validation.temporaryPassword.required')
   } else if (form.temporaryPassword.length < 8) {
-    errors.temporaryPassword = t(
-      'settings.user.validation.temporaryPassword.minLength',
-      'Password must be at least 8 characters',
-    )
+    errors.temporaryPassword = t('settings.user.validation.temporaryPassword.minLength')
   }
 
   return !errors.username && !errors.email && !errors.temporaryPassword

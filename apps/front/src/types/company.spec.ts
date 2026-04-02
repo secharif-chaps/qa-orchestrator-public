@@ -200,6 +200,13 @@ describe('Company types', () => {
           ],
         },
       ],
+      corporate_structure: {
+        parents: [],
+        subsidiaries: [],
+        affiliates: [],
+        branches: [],
+        regional_entities: [],
+      },
     }
 
     // =============================================================================

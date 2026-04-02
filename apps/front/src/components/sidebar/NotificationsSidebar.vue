@@ -53,12 +53,7 @@
             {{ $t('common.sidebar.notifications.noNotifications') }}
           </h3>
           <p class="text-sage-800 dark:text-sage-400 text-xs">
-            {{
-              $t(
-                'common.sidebar.notifications.upToDate',
-                'You are up to date! All notifications will appear here.',
-              )
-            }}
+            {{ $t('common.sidebar.notifications.upToDate') }}
           </p>
         </div>
       </div>

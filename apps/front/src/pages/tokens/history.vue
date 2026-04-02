@@ -8,12 +8,7 @@
         </h1>
       </div>
       <p class="text-sm text-gray-600 dark:text-gray-400">
-        {{
-          $t(
-            'settings.tokens.history.subtitle',
-            'View all token transactions for your organization',
-          )
-        }}
+        {{ $t('settings.tokens.history.subtitle') }}
       </p>
     </div>
 
@@ -165,12 +160,7 @@
           {{ $t('settings.tokens.history.noHistory') }}
         </h3>
         <p class="mx-auto max-w-md text-sm text-gray-600 dark:text-gray-400">
-          {{
-            $t(
-              'settings.tokens.history.noHistoryDesc',
-              'Token transactions will appear here when tokens are added or consumed.',
-            )
-          }}
+          {{ $t('settings.tokens.history.noHistoryDesc') }}
         </p>
       </div>
 

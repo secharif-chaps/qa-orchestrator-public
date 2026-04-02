@@ -133,8 +133,8 @@
                     class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full"
                     :class="getIconContainerClass(task.status)"
                   >
-                    <i v-if="task.status === 'running'" class="fas fa-spinner-third fa-spin"></i>
-                    <i v-else :class="getTaskIcon(task.type)"></i>
+                    <Icon v-if="task.status === 'running'" icon="fa-spinner-third fa-spin" />
+                    <Icon v-else :icon="getTaskIcon(task.type)" />
                   </div>
 
                   <div class="min-w-0 flex-1">
@@ -196,12 +196,7 @@
             <div v-if="hasErrorsOrPending" class="border-primary-stroke mt-6 pt-6">
               <div class="flex items-center justify-between">
                 <div class="text-secondary text-sm">
-                  {{
-                    t(
-                      'screen.company.tasks.canBeRestarted',
-                      'Tasks can be restarted or have not been started yet',
-                    )
-                  }}
+                  {{ t('screen.company.tasks.canBeRestarted') }}
                 </div>
                 <Button
                   variant="secondary"
@@ -221,7 +216,7 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Tag } from '@owlint/feathers-vue'
+import { Button, Tag, Icon } from '@owlint/feathers-vue'
 import type { TaskType, TaskStatus, TaskResponse } from '@/types/task'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -300,50 +295,25 @@ const getTokenInfo = (taskType: TaskType) => {
   }
 }
 
-// Task configuration - all 9 tasks that can run in parallel
-// Using internal/dev names for easier debugging
-const taskConfigs: TaskConfig[] = [
-  {
-    type: 'profile',
-    name: 'profile',
-    description: 'Company profile, business lines, key metrics',
-  },
-  {
-    type: 'digital',
-    name: 'digital',
-    description: 'Online presence, social media, digital strategy',
-  },
-  {
-    type: 'csr',
-    name: 'csr',
-    description: 'CSR initiatives, sustainability, social impact',
-  },
-  {
-    type: 'press',
-    name: 'press',
-    description: 'Press releases, news, media coverage',
-  },
-  {
-    type: 'timeline',
-    name: 'timeline',
-    description: 'Company history, milestones, key events',
-  },
-  {
-    type: 'products',
-    name: 'products',
-    description: 'Products, services, offerings',
-  },
-  {
-    type: 'team',
-    name: 'team',
-    description: 'Leadership team, org structure, key personnel',
-  },
-  {
-    type: 'jobs',
-    name: 'jobs',
-    description: 'Job openings, career opportunities',
-  },
+// Task types list
+const taskTypes: TaskType[] = [
+  'profile',
+  'digital',
+  'csr',
+  'press',
+  'timeline',
+  'products',
+  'team',
+  'jobs',
+  'corporate_structure',
+  'sanctions',
 ]
+
+const taskConfigs: TaskConfig[] = taskTypes.map((type) => ({
+  type,
+  name: t(`screen.company.tasks.types.${type}.name`),
+  description: t(`screen.company.tasks.types.${type}.description`),
+}))
 
 const { mutate: restart } = useRestartTask()
 
@@ -379,6 +349,8 @@ const getTaskIcon = (taskType: TaskType): string => {
     csr: 'fas fa-leaf',
     press: 'fas fa-newspaper',
     team: 'fas fa-users',
+    corporate_structure: 'fas fa-sitemap',
+    sanctions: 'fas fa-shield-halved',
   }
   return iconMap[taskType] || 'fas fa-question'
 }

@@ -7,6 +7,8 @@ export type TaskType =
   | 'csr'
   | 'press'
   | 'team'
+  | 'corporate_structure'
+  | 'sanctions'
 export type TaskStatus = 'pending' | 'running' | 'succeeded' | 'error'
 
 export interface AgentErrorDetails {

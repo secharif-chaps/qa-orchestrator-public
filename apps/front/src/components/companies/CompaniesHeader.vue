@@ -8,12 +8,7 @@
             {{ $t('screen.company.management.title') }}
           </h1>
           <p class="text-secondary mt-2">
-            {{
-              $t(
-                'screen.company.management.description',
-                'View and manage all companies in your organization',
-              )
-            }}
+            {{ $t('screen.company.management.description') }}
           </p>
         </div>
 

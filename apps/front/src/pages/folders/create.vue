@@ -170,18 +170,12 @@ const validateForm = () => {
   }
 
   if (form.value.name.trim().length < 3) {
-    errors.value.name = $t(
-      'common.folder.validation.nameMinLength',
-      'Folder name must be at least 3 characters',
-    )
+    errors.value.name = $t('common.folder.validation.nameMinLength')
     return false
   }
 
   if (form.value.name.trim().length > 50) {
-    errors.value.name = $t(
-      'common.folder.validation.nameMaxLength',
-      'Folder name must be less than 50 characters',
-    )
+    errors.value.name = $t('common.folder.validation.nameMaxLength')
     return false
   }
 

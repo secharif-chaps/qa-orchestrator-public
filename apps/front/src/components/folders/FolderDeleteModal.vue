@@ -53,12 +53,7 @@
           v-if="folderToDelete?.items && folderToDelete.items.length > 0"
           variant="warning"
           :title="$t('common.folder.delete.warning.title')"
-          :description="
-            $t(
-              'common.folder.delete.warning.message',
-              'Companies in this folder will remain accessible but will no longer be organized in this folder.',
-            )
-          "
+          :description="$t('common.folder.delete.warning.message')"
           class="mt-4"
         />
       </div>

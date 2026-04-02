@@ -1,6 +1,7 @@
 """Pydantic schemas for WorldCheck One API requests and responses."""
 
 from enum import StrEnum
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -54,6 +55,26 @@ class ScreeningResultSource(BaseModel):
     type: str | None = Field(None, description="Source type")
 
 
+class ReferenceProfile(BaseModel):
+    """Detailed profile data from WorldCheck get_reference_profile endpoint.
+
+    Contains the full compliance data: sanctions lists, PEP status,
+    adverse media, country risks, aliases, etc.
+    """
+
+    referenceId: str = Field(..., description="Reference profile ID")
+    name: str | None = Field(None, description="Primary name")
+    entityType: str | None = Field(None, description="INDIVIDUAL or ORGANISATION")
+    categories: list[dict[str, Any]] = Field(default_factory=list, description="Categories (Sanctions, PEP, etc.)")
+    sources: list[dict[str, Any]] = Field(default_factory=list, description="Data sources with details")
+    countryLinks: list[dict[str, Any]] = Field(default_factory=list, description="Country associations and roles")
+    aliases: list[dict[str, Any]] = Field(default_factory=list, description="Known aliases / AKA names")
+    events: list[dict[str, Any]] = Field(default_factory=list, description="Associated events (sanctions dates, etc.)")
+    weblinks: list[dict[str, Any]] = Field(default_factory=list, description="Related web links / articles")
+
+    model_config = {"extra": "allow"}
+
+
 class ScreeningResult(BaseModel):
     """A single match result from a screening response."""
 
@@ -67,6 +88,9 @@ class ScreeningResult(BaseModel):
     primaryName: str | None = Field(None, description="Primary name of the matched entity")
     gender: str | None = Field(None, description="Gender (for individuals)")
     events: list[dict] | None = Field(None, description="Associated events")
+    profile: ReferenceProfile | None = Field(
+        None, description="Enriched profile data (fetched for EXACT/STRONG matches)"
+    )
 
 
 class ScreeningResponse(BaseModel):

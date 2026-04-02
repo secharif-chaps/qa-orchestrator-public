@@ -177,12 +177,7 @@
       <div v-if="hasErrorsOrPending" class="border-primary-stroke mt-6 border-t pt-6">
         <div class="flex items-center justify-between">
           <div class="text-secondary text-sm">
-            {{
-              t(
-                'screen.company.tasks.canBeRestarted',
-                'Tasks can be restarted or have not been started yet',
-              )
-            }}
+            {{ t('screen.company.tasks.canBeRestarted') }}
           </div>
           <Button
             variant="secondary"
@@ -268,15 +263,12 @@ const getTokenInfo = (taskType: TaskType) => {
   }
 }
 
-// Task configuration - all 8 tasks that can run in parallel
+// Task configuration - all 9 tasks that can run in parallel
 const taskConfigs: TaskConfig[] = [
   {
     type: 'profile',
     name: t('screen.company.analysisCards.profile.title'),
-    description: t(
-      'screen.company.analysisCards.profile.description',
-      'View detailed company information, business lines, and key metrics',
-    ),
+    description: t('screen.company.analysisCards.profile.description'),
   },
   {
     type: 'digital',
@@ -286,50 +278,42 @@ const taskConfigs: TaskConfig[] = [
   {
     type: 'csr',
     name: t('screen.company.analysisCards.csr.title'),
-    description: t(
-      'screen.company.analysisCards.csr.description',
-      'CSR initiatives, sustainability programs, and social impact',
-    ),
+    description: t('screen.company.analysisCards.csr.description'),
   },
   {
     type: 'press',
     name: t('screen.company.analysisCards.press.title'),
-    description: t(
-      'screen.company.analysisCards.press.description',
-      'Press releases, news articles, and media coverage',
-    ),
+    description: t('screen.company.analysisCards.press.description'),
   },
   {
     type: 'timeline',
     name: t('screen.company.analysisCards.timeline.title'),
-    description: t(
-      'screen.company.analysisCards.timeline.description',
-      'Company history, milestones, and key events over time',
-    ),
+    description: t('screen.company.analysisCards.timeline.description'),
   },
   {
     type: 'products',
     name: t('screen.company.analysisCards.products.title'),
-    description: t(
-      'screen.company.analysisCards.products.description',
-      'Browse products, services, and offerings',
-    ),
+    description: t('screen.company.analysisCards.products.description'),
   },
   {
     type: 'team',
     name: t('screen.company.analysisCards.team.title'),
-    description: t(
-      'screen.company.analysisCards.team.description',
-      'Leadership team, organizational structure, and key personnel',
-    ),
+    description: t('screen.company.analysisCards.team.description'),
   },
   {
     type: 'jobs',
     name: t('screen.company.analysisCards.jobs.title'),
-    description: t(
-      'screen.company.analysisCards.jobs.description',
-      'Current job openings and career opportunities',
-    ),
+    description: t('screen.company.analysisCards.jobs.description'),
+  },
+  {
+    type: 'corporate_structure',
+    name: t('screen.company.analysisCards.corporateStructure.title'),
+    description: t('screen.company.analysisCards.corporateStructure.description'),
+  },
+  {
+    type: 'sanctions',
+    name: t('screen.company.analysisCards.sanctions.title'),
+    description: t('screen.company.analysisCards.sanctions.description'),
   },
 ]
 
@@ -374,6 +358,8 @@ const getTaskIcon = (taskType: TaskType): string => {
     csr: 'fas fa-leaf',
     press: 'fas fa-newspaper',
     team: 'fas fa-users',
+    corporate_structure: 'fas fa-sitemap',
+    sanctions: 'fas fa-shield-halved',
   }
   return iconMap[taskType] || 'fas fa-question'
 }

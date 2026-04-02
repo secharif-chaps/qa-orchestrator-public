@@ -17,12 +17,7 @@
         variant="warning"
         icon="fa-shield"
         :title="$t('admin.organization.admin.confirmAdminRole.warningTitle')"
-        :description="
-          $t(
-            'admin.organization.admin.confirmAdminRole.warningDescription',
-            'This role grants full administrative access to the organization.',
-          )
-        "
+        :description="$t('admin.organization.admin.confirmAdminRole.warningDescription')"
       />
 
       <!-- Description -->
@@ -32,12 +27,7 @@
         </p>
         <ul class="ml-5 list-disc space-y-1">
           <li>
-            {{
-              $t(
-                'admin.organization.admin.confirmAdminRole.permissions.adminOrganizations',
-                'Admin access to organization management',
-              )
-            }}
+            {{ $t('admin.organization.admin.confirmAdminRole.permissions.adminOrganizations') }}
           </li>
         </ul>
       </div>

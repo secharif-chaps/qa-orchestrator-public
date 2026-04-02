@@ -49,12 +49,7 @@
           @blur="handleUrlBlur"
         />
         <p class="text-secondary text-xs">
-          {{
-            $t(
-              'settings.featureFlags.discover.urlHint',
-              'Enter the HTTPS URL for the Discover dashboard.',
-            )
-          }}
+          {{ $t('settings.featureFlags.discover.urlHint') }}
         </p>
       </div>
     </div>

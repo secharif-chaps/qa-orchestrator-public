@@ -353,6 +353,7 @@
         "viewError": "Voir l'erreur"
       },
       "taskTypes": {
+        "corporate_structure": "Structure Corporate",
         "csr": "RSE",
         "digital": "Digital",
         "jobs": "Emplois",
@@ -1283,6 +1284,11 @@
           "description": "Communiqués de presse, déclarations publiques et communications officielles",
           "title": "Communications d'Entreprise"
         },
+        "corporateStructure": {
+          "description": "Sociétés mères, filiales, affiliées et hiérarchie du groupe",
+          "insights": "Découvrez la structure du groupe",
+          "title": "Structure Corporate"
+        },
         "csr": {
           "description": "Initiatives RSE, programmes de durabilité et impact social",
           "title": "Responsabilité Sociale d'Entreprise"
@@ -1304,6 +1310,11 @@
         "profile": {
           "description": "Consultez les informations détaillées, les activités et les indicateurs clés",
           "title": "Profil de l'Entreprise"
+        },
+        "sanctions": {
+          "description": "Sanctions, actions reglementaires et problemes de conformite issus de WorldCheck",
+          "insights": "Decouvrez les informations sur les sanctions et la conformite",
+          "title": "Sanctions & Conformite"
         },
         "team": {
           "description": "Équipe dirigeante, structure organizationnelle et personnel clé",
@@ -1394,6 +1405,10 @@
           "deselectAll": "Tout désélectionner",
           "export": "Exporter",
           "options": {
+            "corporateStructure": {
+              "description": "Sociétés mères, filiales et affiliées",
+              "label": "Structure Corporate"
+            },
             "csr": {
               "description": "Initiatives de responsabilité et actions caritatives",
               "label": "Responsabilité sociale des entreprises"
@@ -1545,7 +1560,49 @@
         "pendingShort": "{count} en attente",
         "running": "{count} en cours ({percentage}%)",
         "runningShort": "{count} en cours",
-        "startAll": "Démarrer toutes les tâches"
+        "startAll": "Démarrer toutes les tâches",
+        "types": {
+          "corporate_structure": {
+            "description": "Maison mère, filiales, affiliés, branches",
+            "name": "Structure Corporate"
+          },
+          "csr": {
+            "description": "Initiatives RSE, développement durable, impact social",
+            "name": "RSE"
+          },
+          "digital": {
+            "description": "Présence en ligne, réseaux sociaux, stratégie digitale",
+            "name": "Digital"
+          },
+          "jobs": {
+            "description": "Offres d'emploi, opportunités de carrière",
+            "name": "Emplois"
+          },
+          "press": {
+            "description": "Communiqués de presse, actualités, couverture médiatique",
+            "name": "Presse"
+          },
+          "products": {
+            "description": "Produits, services, offres",
+            "name": "Produits"
+          },
+          "profile": {
+            "description": "Profil de l'entreprise, activités, indicateurs clés",
+            "name": "Profil"
+          },
+          "sanctions": {
+            "description": "Sanctions, actions réglementaires, conformité",
+            "name": "Sanctions"
+          },
+          "team": {
+            "description": "Équipe dirigeante, organigramme, personnes clés",
+            "name": "Équipe"
+          },
+          "timeline": {
+            "description": "Historique de l'entreprise, jalons, événements clés",
+            "name": "Chronologie"
+          }
+        }
       },
       "translation": {
         "alreadyInProgress": "Traduction déjà en cours",
@@ -1718,6 +1775,15 @@
           "notFound": "Non trouvé",
           "title": "Secteur d'activité"
         },
+        "corporateStructure": {
+          "affiliates": "Affiliées",
+          "branches": "Succursales",
+          "noData": "Aucune donnée de structure corporate disponible",
+          "parents": "Sociétés Mères",
+          "regionalEntities": "Entités Régionales",
+          "subsidiaries": "Filiales",
+          "title": "Structure Corporate"
+        },
         "csr": {
           "awards": "Prix et certifications",
           "charity": "Actions caritatives",
@@ -1802,6 +1868,23 @@
         },
         "profile": {
           "noData": "Aucune donnée de profil disponible pour cette entreprise"
+        },
+        "sanctions": {
+          "clean": "Conforme",
+          "itemsCount": "{count} element(s) trouve(s)",
+          "nature": "Nature",
+          "noData": "Aucune sanction ou probleme de conformite trouve dans le screening WorldCheck",
+          "riskAssessment": "Evaluation du risque",
+          "riskJustification": "Justification du risque",
+          "riskLevels": {
+            "critical": "Risque critique",
+            "high": "Risque eleve",
+            "low": "Risque faible",
+            "medium": "Risque moyen"
+          },
+          "sourceCode": "Code source",
+          "sources": "Sources",
+          "title": "Sanctions & Conformite"
         },
         "team": {
           "noData": "Aucune donnée d'équipe disponible"

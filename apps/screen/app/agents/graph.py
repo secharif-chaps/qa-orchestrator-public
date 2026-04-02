@@ -5,6 +5,7 @@ from collections.abc import Callable
 from langgraph.constants import END, Send
 from langgraph.graph import StateGraph
 
+from app.agents.nodes.corporate_structure import run_corporate_structure_agent
 from app.agents.nodes.csr import run_csr_agent
 from app.agents.nodes.data_collector import data_collector_node
 from app.agents.nodes.digital import run_digital_agent
@@ -13,6 +14,7 @@ from app.agents.nodes.planner import planner_node
 from app.agents.nodes.press import run_press_agent
 from app.agents.nodes.products import run_products_agent
 from app.agents.nodes.profile import run_profile_agent
+from app.agents.nodes.sanctions import run_sanctions_agent
 from app.agents.nodes.synthesizer import synthesizer_node
 from app.agents.nodes.team import run_team_agent
 from app.agents.nodes.timeline import run_timeline_agent
@@ -28,6 +30,8 @@ AGENT_NODE_MAP: dict[str, Callable] = {
     "timeline": run_timeline_agent,
     "csr": run_csr_agent,
     "team": run_team_agent,
+    "corporate_structure": run_corporate_structure_agent,
+    "sanctions": run_sanctions_agent,
 }
 
 

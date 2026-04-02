@@ -27,12 +27,7 @@
               {{ $t('common.sidebar.tokens.noHistory') }}
             </h3>
             <p class="text-sage-700 dark:text-sage-300 px-4 text-xs">
-              {{
-                $t(
-                  'common.sidebar.tokens.noHistoryDesc',
-                  'Token usage will appear here when you create company cards.',
-                )
-              }}
+              {{ $t('common.sidebar.tokens.noHistoryDesc') }}
             </p>
           </div>
         </div>

@@ -70,12 +70,7 @@
           >
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-microphone"></i>
-              {{
-                $t(
-                  'screen.profile.sections.press.categories.executiveInterviews',
-                  'Executive Interviews',
-                )
-              }}
+              {{ $t('screen.profile.sections.press.categories.executiveInterviews') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -153,12 +148,7 @@
           >
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-lg font-semibold">
               <i class="fa fa-handshake"></i>
-              {{
-                $t(
-                  'screen.profile.sections.press.categories.partnershipAnnouncements',
-                  'Partnership Announcements',
-                )
-              }}
+              {{ $t('screen.profile.sections.press.categories.partnershipAnnouncements') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -176,12 +166,7 @@
           <div v-if="company?.press?.awards_recognition?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-secondary mb-4 flex items-center gap-2 text-lg font-semibold">
               <i class="fa fa-trophy"></i>
-              {{
-                $t(
-                  'screen.profile.sections.press.categories.awardsRecognition',
-                  'Awards & Recognition',
-                )
-              }}
+              {{ $t('screen.profile.sections.press.categories.awardsRecognition') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -235,10 +220,7 @@
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-secondary text-sm">{{
-                  $t(
-                    'screen.profile.sections.press.categories.executiveInterviews',
-                    'Executive Interviews',
-                  )
+                  $t('screen.profile.sections.press.categories.executiveInterviews')
                 }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.executive_interviews?.length || 0

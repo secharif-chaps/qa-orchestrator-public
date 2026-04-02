@@ -203,31 +203,38 @@ class CompanyAnalysisRunner:
         )
 
         try:
-            # Load enrichment sources from DB for agents that support them
-            enrichment_sources = None
-            company_id_for_tool = None
-            if agent_name in ("profile", "team"):
-                from app.models.company_enrichment import CompanyEnrichment
+            # corporate_structure and sanctions use WorldCheck data, not web search
+            if agent_name in ("corporate_structure", "sanctions"):
+                node_fn = self._get_worldcheck_agent(agent_name)
+                state = self._build_agent_state(company, agent_name)
+                state_result = await node_fn(state)
+                result = state_result["agent_results"][0]
+            else:
+                # Load enrichment sources from DB for agents that support them
+                enrichment_sources = None
+                company_id_for_tool = None
+                if agent_name in ("profile", "team"):
+                    from app.models.company_enrichment import CompanyEnrichment
 
-                enrichments = (
-                    db.query(CompanyEnrichment)
-                    .filter(
-                        CompanyEnrichment.company_id == company.id,
-                        CompanyEnrichment.status == "success",
+                    enrichments = (
+                        db.query(CompanyEnrichment)
+                        .filter(
+                            CompanyEnrichment.company_id == company.id,
+                            CompanyEnrichment.status == "success",
+                        )
+                        .all()
                     )
-                    .all()
-                )
-                if enrichments:
-                    enrichment_sources = [e.source for e in enrichments]
-                    company_id_for_tool = company.id
+                    if enrichments:
+                        enrichment_sources = [e.source for e in enrichments]
+                        company_id_for_tool = company.id
 
-            result = await run_agent(
-                agent_name=agent_name,
-                company_name=company.name,
-                website=company.website,
-                enrichment_sources=enrichment_sources,
-                company_id=company_id_for_tool,
-            )
+                result = await run_agent(
+                    agent_name=agent_name,
+                    company_name=company.name,
+                    website=company.website,
+                    enrichment_sources=enrichment_sources,
+                    company_id=company_id_for_tool,
+                )
 
             await self._persist_agent_result(db, company.id, agent_name, result)
             await self._update_task_status(db, task, result)
@@ -258,6 +265,39 @@ class CompanyAnalysisRunner:
                 task_type=agent_name,
                 error=str(e),
             )
+
+    @staticmethod
+    def _build_agent_state(company: Company, agent_name: str) -> CompanyAnalysisState:
+        """Build a minimal CompanyAnalysisState for running a single WorldCheck-based agent."""
+        return {
+            "company_id": company.id,
+            "company_name": company.name,
+            "website": company.website,
+            "organization_id": company.organization_id or "",
+            "owner_id": company.owner_id or "",
+            "country_code": None,
+            "company_brief": None,
+            "agents_to_run": [agent_name],
+            "agent_results": [],
+            "quality_issues": [],
+            "agents_to_retry": [],
+            "retry_counts": {},
+            "total_tokens": 0,
+            "total_cost": 0.0,
+        }
+
+    @staticmethod
+    def _get_worldcheck_agent(agent_name: str):
+        """Return the node function for a WorldCheck-based agent."""
+        if agent_name == "corporate_structure":
+            from app.agents.nodes.corporate_structure import run_corporate_structure_agent
+
+            return run_corporate_structure_agent
+        elif agent_name == "sanctions":
+            from app.agents.nodes.sanctions import run_sanctions_agent
+
+            return run_sanctions_agent
+        raise ValueError(f"Unknown WorldCheck agent: {agent_name}")
 
     def _extract_result(self, event: dict, agent_name: str) -> AgentResult | None:
         """Extract AgentResult from a stream event."""
