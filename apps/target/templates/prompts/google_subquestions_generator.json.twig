@@ -1,0 +1,25 @@
+{
+    "type": "ARRAY",
+    "items": {
+        "type": "OBJECT",
+        "properties": {
+            "country": {
+                "type": "STRING",
+                "description": "Two-letter country code (US, FR, DE, etc.)"
+            },
+            "language": {
+                "type": "STRING",
+                "description": "Two-letter language code (en, fr, de, etc.)"
+            },
+            "query": {
+                "type": "STRING",
+                "description": "Complete search query including operators"
+            }
+        },
+        "required": [
+            "country",
+            "language",
+            "query"
+        ]
+    }
+}

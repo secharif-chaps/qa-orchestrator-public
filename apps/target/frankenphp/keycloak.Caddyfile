@@ -1,0 +1,18 @@
+{$KEYCLOAK_SERVER_NAME:auth.localhost} {
+	log {
+		# Redact the authorization query parameter that can be set by Mercure
+		format filter {
+			request>uri query {
+				replace authorization REDACTED
+			}
+		}
+	}
+
+	reverse_proxy {
+		to http://{$OIDC_UPSTREAM}
+		header_up Host {http.request.host}
+		header_up X-Forwarded-Port {http.request.port}
+	}
+
+	{$CADDY_SERVER_TLS_DIRECTIVES}
+}

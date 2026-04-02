@@ -1,0 +1,33 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  # Individual language detectors (tagged with priority for chain ordering)
+  App\Infrastructure\Language\PatrickschurLanguageDetector:
+    tags:
+      - { name: 'language.detector', priority: 300 }
+
+  App\Infrastructure\Language\WikimediaTextCatLanguageDetector:
+    tags:
+      - { name: 'language.detector', priority: 200 }
+
+  # LiteLLM Client with environment variable binding
+  App\Infrastructure\AI\LiteLLM\LiteLLMClient:
+    arguments:
+      $baseUrl: '%env(LITE_LLM_BASE_URL)%'
+      $apiKey: '%env(LITE_LLM_API_KEY)%'
+      $model: '%env(LITE_LLM_MODEL)%'
+
+  App\Infrastructure\Language\LiteLLMLanguageDetector:
+    tags:
+      - { name: 'language.detector', priority: 100 }
+
+  # Chain of Responsibility coordinator
+  App\Infrastructure\Language\ChainOfResponsibilityLanguageDetector:
+    arguments:
+      $languageDetectors: !tagged_iterator language.detector
+
+  # Alias the interface to use the chain coordinator
+  App\Domain\Language\LanguageDetectorInterface:
+    alias: App\Infrastructure\Language\ChainOfResponsibilityLanguageDetector

@@ -1,0 +1,46 @@
+{
+    "type": "array",
+    "items": {
+        "type": "object",
+        "required": [
+            "question",
+            "context"
+        ],
+        "properties": {
+            "question": {
+                "type": "object",
+                "required": [
+                    "fr",
+                    "en"
+                ],
+                "properties": {
+                    "fr": {
+                        "type": "string",
+                        "maxLength": 2500
+                    },
+                    "en": {
+                        "type": "string",
+                        "maxLength": 2500
+                    }
+                }
+            },
+            "context": {
+                "type": "object",
+                "required": [
+                    "fr",
+                    "en"
+                ],
+                "properties": {
+                    "fr": {
+                        "type": "string",
+                        "maxLength": 2500
+                    },
+                    "en": {
+                        "type": "string",
+                        "maxLength": 2500
+                    }
+                }
+            }
+        }
+    }
+}

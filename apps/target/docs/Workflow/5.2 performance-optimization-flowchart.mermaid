@@ -1,0 +1,80 @@
+flowchart TD
+    subgraph Mesure["Mesure de Performance et Optimisation (Phase 5.2)"]
+        START([Système intégré de la phase 5.1]) --> INPUT[/Système en exploitation/]
+        
+        subgraph MesureFonda["Intelligence de Mesure Fondamentale"]
+            INPUT --> A1[Agent IA de KPIs Système]
+            A1 --> A2[Agent IA d'Analyse de Pertinence]
+            A2 --> A3[Agent IA d'Évaluation Coût-Bénéfice]
+            A3 --> BRANCH{Spécialisation\npar type\nde veille}
+        end
+        
+        BRANCH -->|Veille Concurrentielle| B1
+        BRANCH -->|Veille Stratégique| C1
+        BRANCH -->|Veille Commerciale| D1
+        BRANCH -->|Veille Technologique| E1
+        BRANCH -->|Veille Juridique| F1
+        
+        subgraph MesureConc["Intelligence de Mesure Concurrentielle"]
+            B1[Agent IA de Mesure d'Anticipation Concurrentielle]
+            B1 --> B2[Agent IA d'Évaluation d'Impact Décisionnel]
+            B2 --> B3[Agent IA d'Analyse Time-to-Market]
+            B3 --> MERGE
+        end
+        
+        subgraph MesureStrat["Intelligence de Mesure Stratégique"]
+            C1[Agent IA de Mesure d'Anticipation des Ruptures]
+            C1 --> C2[Agent IA d'Évaluation d'Impact Investissement]
+            C2 --> C3[Agent IA d'Analyse de Résilience]
+            C3 --> MERGE
+        end
+        
+        subgraph MesureCom["Intelligence de Mesure Commerciale"]
+            D1[Agent IA de Mesure de Conversion Opportunités]
+            D1 --> D2[Agent IA d'Évaluation d'Impact sur Cycle de Vente]
+            D2 --> D3[Agent IA d'Analyse de Taux de Gain]
+            D3 --> MERGE
+        end
+        
+        subgraph MesureTech["Intelligence de Mesure Technologique"]
+            E1[Agent IA de Mesure d'Avance Technique]
+            E1 --> E2[Agent IA d'Évaluation d'Impact R&D]
+            E2 --> E3[Agent IA d'Analyse d'Obsolescence Évitée]
+            E3 --> MERGE
+        end
+        
+        subgraph MesureJur["Intelligence de Mesure Juridique"]
+            F1[Agent IA de Mesure de Conformité]
+            F1 --> F2[Agent IA d'Évaluation de Réduction des Risques]
+            F2 --> F3[Agent IA d'Analyse de Coûts Évités]
+            F3 --> MERGE
+        end
+        
+        MERGE{Intégration\ndes métriques\nspécifiques}
+        
+        MERGE --> G1
+        
+        subgraph OptimSys["Intelligence d'Optimisation Système"]
+            G1[Agent IA d'Optimisation des Sources]
+            G1 --> G2[Agent IA d'Amélioration des Algorithmes]
+            G2 --> G3[Agent IA de Raffinement des Modèles]
+            G3 --> G4[Agent IA d'Efficience Ressources]
+        end
+        
+        G4 --> OUTPUT[/Système optimisé avec métriques de performance/]
+        OUTPUT --> END([Passage à la phase 5.3])
+    end
+    
+    %% Styles améliorés avec meilleur contraste
+    classDef intelligence fill:#8a2be2,stroke:#000,stroke-width:2px,color:#fff
+    classDef process fill:#4682b4,stroke:#000,stroke-width:1px,color:#fff
+    classDef document fill:#f5a742,stroke:#000,stroke-width:1px,color:#000
+    classDef decision fill:#d81b60,stroke:#000,stroke-width:1px,color:#fff
+    classDef subgraphStyle fill:#f5f5f5,stroke:#333,stroke-width:1px
+    
+    %% Application des styles
+    class A1,A2,A3,B1,B2,B3,C1,C2,C3,D1,D2,D3,E1,E2,E3,F1,F2,F3,G1,G2,G3,G4 intelligence
+    class START,END process
+    class INPUT,OUTPUT document
+    class BRANCH,MERGE decision
+    class MesureFonda,MesureConc,MesureStrat,MesureCom,MesureTech,MesureJur,OptimSys subgraphStyle

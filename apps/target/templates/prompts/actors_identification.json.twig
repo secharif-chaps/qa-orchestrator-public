@@ -1,0 +1,202 @@
+{
+    "type": "OBJECT",
+    "properties": {
+        "actors": {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "name": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "fr": {
+                                "type": "STRING",
+                                "description": "Actor name in French"
+                            },
+                            "en": {
+                                "type": "STRING",
+                                "description": "Actor name in English"
+                            }
+                        }
+                    },
+                    "type": {
+                        "type": "STRING",
+                        "enum": ["competitor", "partner", "supplier", "customer", "regulator", "influencer", "other"]
+                    },
+                    "primaryDomain": {
+                        "type": "STRING",
+                        "description": "Primary website domain of the actor"
+                    },
+                    "relevanceScore": {
+                        "type": "NUMBER",
+                        "minimum": 0,
+                        "maximum": 100
+                    },
+                    "relevance": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "fr": {
+                                "type": "STRING",
+                                "maxLength": 500,
+                                "description": "Explanation of relevance in French"
+                            },
+                            "en": {
+                                "type": "STRING",
+                                "maxLength": 500,
+                                "description": "Explanation of relevance in English"
+                            }
+                        }
+                    },
+                    "significantEvents": {
+                        "type": "ARRAY",
+                        "items": {
+                            "type": "OBJECT",
+                            "properties": {
+                                "date": {
+                                    "type": "STRING",
+                                    "format": "date"
+                                },
+                                "title": {
+                                    "type": "STRING"
+                                },
+                                "description": {
+                                    "type": "OBJECT",
+                                    "properties": {
+                                        "fr": {
+                                            "type": "STRING",
+                                            "maxLength": 300
+                                        },
+                                        "en": {
+                                            "type": "STRING",
+                                            "maxLength": 300
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "relationships": {
+                        "type": "ARRAY",
+                        "items": {
+                            "type": "OBJECT",
+                            "properties": {
+                                "relatedActorName": {
+                                    "type": "STRING"
+                                },
+                                "relationshipType": {
+                                    "type": "STRING",
+                                    "enum": ["competitor", "partner", "supplier", "customer", "regulator", "subsidiary", "parent", "other"]
+                                },
+                                "description": {
+                                    "type": "OBJECT",
+                                    "properties": {
+                                        "fr": {
+                                            "type": "STRING",
+                                            "maxLength": 300
+                                        },
+                                        "en": {
+                                            "type": "STRING",
+                                            "maxLength": 300
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "required": ["name", "type", "primaryDomain", "relevanceScore", "relevance"]
+            }
+        },
+        "actorGroups": {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "groupName": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "fr": {
+                                "type": "STRING"
+                            },
+                            "en": {
+                                "type": "STRING"
+                            }
+                        }
+                    },
+                    "actorNames": {
+                        "type": "ARRAY",
+                        "items": {
+                            "type": "STRING"
+                        }
+                    },
+                    "groupType": {
+                        "type": "STRING",
+                        "enum": ["market_segment", "geographic_cluster", "value_chain", "technology_adopters", "industry_association", "other"]
+                    },
+                    "description": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "fr": {
+                                "type": "STRING",
+                                "maxLength": 500
+                            },
+                            "en": {
+                                "type": "STRING",
+                                "maxLength": 500
+                            }
+                        }
+                    }
+                },
+                "required": ["groupName", "actorNames", "groupType"]
+            }
+        },
+        "keyCoverage": {
+            "type": "OBJECT",
+            "properties": {
+                "primaryCompetitors": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                },
+                "emergingThreats": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                },
+                "keyPartners": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                },
+                "regulatoryBodies": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                }
+            }
+        },
+        "actorAnalysisSummary": {
+            "type": "OBJECT",
+            "properties": {
+                "fr": {
+                    "type": "STRING",
+                    "maxLength": 1000
+                },
+                "en": {
+                    "type": "STRING",
+                    "maxLength": 1000
+                }
+            }
+        },
+        "confidence": {
+            "type": "NUMBER",
+            "minimum": 0,
+            "maximum": 100
+        }
+    },
+    "required": ["actors", "keyCoverage", "confidence"]
+}

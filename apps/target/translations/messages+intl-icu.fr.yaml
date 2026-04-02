@@ -1,0 +1,93 @@
+actor.unknown: 'Acteur inconnu'
+
+watch_file.untitled: 'Dossier de veille sans titre'
+
+timeline.event_default: 'Événement timeline'
+timeline.actor_added: "Ajout de l'acteur {actorName}"
+timeline.actor_type_suffix: '(type: {type})'
+timeline.actor_domain_suffix: '- domaine principal: {domain}'
+timeline.actor_status_changed: "Changement de statut de l'acteur {actorName} : {oldStatus} → {newStatus}"
+
+model.error_message: 'Nous sommes désolés, mais nous ne pouvons pas traiter votre demande pour le moment. Veuillez réessayer plus tard.'
+
+conversation.cancelled: "L'opération a été annulée."
+conversation.timed_out: "L'opération a expiré. Veuillez réessayer."
+
+quota.watchfile_max_owned_non_archived: 'Vous ne pouvez pas posséder plus de {limit, plural, one {# dossier de veille non archivé} other {# dossiers de veille non archivés}}. Nombre actuel : {current, plural, one {# dossier non archivé} other {# dossiers non archivés}}.'
+quota.watchfile_max_active_per_user: 'Vous ne pouvez pas avoir plus de {limit, plural, one {# dossier de veille actif} other {# dossiers de veille actifs}} en même temps. Nombre actuel : {current, plural, one {# dossier actif} other {# dossiers actifs}}.'
+quota.source_max_active_per_watchfile: 'Un dossier de veille ne peut pas avoir plus de {limit, plural, one {# source active} other {# sources actives}}. Nombre actuel : {current, plural, one {# source active} other {# sources actives}}.'
+quota.source_max_per_watchfile: 'Un dossier de veille ne peut pas contenir plus de {limit, plural, one {# source} other {# sources}}. Nombre actuel : {current, plural, one {# source} other {# sources}}.'
+quota.actor_max_per_watchfile: 'Un dossier de veille ne peut pas contenir plus de {limit, plural, one {# acteur} other {# acteurs}}. Nombre actuel : {current, plural, one {# acteur} other {# acteurs}}.'
+quota.document_max_per_watchfile: 'Un dossier de veille ne peut pas contenir plus de {limit, plural, one {# document} other {# documents}}.'
+
+rate_limit.exceeded: 'Limite de requêtes dépassée. Veuillez réessayer dans {retryAfter, plural, one {# seconde} other {# secondes}}.'
+
+watchfile.activation.missing_active_source: "Impossible d'activer le dossier de veille : au moins une source active est requise."
+watchfile.activation.missing_reference_subject: "Impossible d'activer le dossier de veille : un sujet de référence est requis."
+
+source_type.rss_feed: 'Flux RSS'
+source_type.blog: 'Blogs'
+source_type.website: 'Sites Web'
+source_type.newsletter: 'Newsletters'
+source_type.social_media_x_search: 'Recherche X (Twitter)'
+source_type.social_media_x_hashtag: 'Hashtags X (Twitter)'
+source_type.social_media_x_user: 'Utilisateurs X (Twitter)'
+source_type.social_media_facebook_page: 'Pages Facebook'
+source_type.social_media_facebook_group: 'Groupes Facebook'
+source_type.social_media_facebook_user: 'Utilisateurs Facebook'
+source_type.social_media_facebook_search: 'Recherche Facebook'
+source_type.social_media_linkedin_company: 'Entreprises LinkedIn'
+source_type.social_media_linkedin_user: 'Utilisateurs LinkedIn'
+source_type.social_media_linkedin_group: 'Groupes LinkedIn'
+source_type.social_media_linkedin_search: 'Recherche LinkedIn'
+source_type.social_media_instagram_user: 'Utilisateurs Instagram'
+source_type.social_media_instagram_hashtag: 'Hashtags Instagram'
+source_type.social_media_instagram_search: 'Recherche Instagram'
+source_type.document_questel_search: 'Recherche de Documents Questel'
+source_type.event_geoconfirmed_events: 'Événements GeoConfirmed'
+source_type.video_youtube_comments: 'Commentaires YouTube'
+source_type.video_youtube_channel: 'Chaînes YouTube'
+source_type.video_youtube_playlist: 'Playlists YouTube'
+source_type.video_youtube_search: 'Recherche YouTube'
+source_type.video_odysee: 'Vidéos Odysee'
+source_type.social_media_reddit_subreddit: 'Subreddits Reddit'
+source_type.social_media_reddit_user: 'Utilisateurs Reddit'
+source_type.domain_company_name: "Nom de domaine par nom d'entreprise"
+source_type.domain_search: 'Recherche de nom de domaine'
+# Source type labels description
+source_type.rss_feed.description: 'Flux RSS'
+source_type.blog.description: 'Blogs'
+source_type.website.description: 'Sites Web'
+source_type.newsletter.description: 'Newsletters'
+source_type.social_media_x_search.description: 'Recherche X (Twitter)'
+source_type.social_media_x_hashtag.description: 'Hashtags X (Twitter)'
+source_type.social_media_x_user.description: 'Utilisateurs X (Twitter)'
+source_type.social_media_facebook_page.description: 'Pages Facebook'
+source_type.social_media_facebook_group.description: 'Groupes Facebook'
+source_type.social_media_facebook_user.description: 'Utilisateurs Facebook'
+source_type.social_media_facebook_search.description: 'Recherche Facebook'
+source_type.social_media_linkedin_company.description: 'Entreprises LinkedIn'
+source_type.social_media_linkedin_user.description: 'Utilisateurs LinkedIn'
+source_type.social_media_linkedin_group.description: 'Groupes LinkedIn'
+source_type.social_media_linkedin_search.description: 'Recherche LinkedIn'
+source_type.social_media_instagram_user.description: 'Utilisateurs Instagram'
+source_type.social_media_instagram_hashtag.description: 'Hashtags Instagram'
+source_type.social_media_instagram_search.description: 'Recherche Instagram'
+source_type.document_questel_search.description: 'Recherche de Documents Questel'
+source_type.event_geoconfirmed_events.description: 'Événements GeoConfirmed'
+source_type.video_youtube_comments.description: 'Commentaires YouTube'
+source_type.video_youtube_channel.description: 'Chaînes YouTube'
+source_type.video_youtube_playlist.description: 'Playlists YouTube'
+source_type.video_youtube_search.description: 'Recherche YouTube'
+source_type.video_odysee.description: 'Vidéos Odysee'
+source_type.social_media_reddit_subreddit.description: 'Subreddits Reddit'
+source_type.social_media_reddit_user.description: 'Utilisateurs Reddit'
+source_type.domain_company_name.description: "Nom de domaine par nom d'entreprise"
+source_type.domain_search.description: 'Recherche de nom de domaine'
+
+document.event_type.acquisition: 'Acquisition'
+document.event_type.partnership: 'Partenariat'
+document.event_type.product_launch: 'Lancement produit'
+document.event_type.restructuring: 'Restructuration'
+document.event_type.funding: 'Levée de fonds'
+document.event_type.regulatory: 'Réglementation'

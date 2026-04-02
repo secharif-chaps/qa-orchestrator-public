@@ -1,0 +1,13 @@
+when@dev:
+  web_profiler:
+    toolbar: true
+
+  framework:
+    profiler:
+      collect_serializer_data: true
+
+when@test: &test
+  framework:
+    profiler: { collect: false }
+
+when@staging: *test

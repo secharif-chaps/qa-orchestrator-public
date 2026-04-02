@@ -1,0 +1,172 @@
+{
+    "type": "OBJECT",
+    "properties": {
+        "content": {
+            "type": "STRING",
+            "description": "The concise analysis (max 5 sentences)"
+        },
+        "identifiedNeeds": {
+            "type": "OBJECT",
+            "properties": {
+                "primaryNeed": {
+                    "type": "STRING",
+                    "description": "Main need identified"
+                },
+                "secondaryNeeds": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                },
+                "implicitNeeds": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                }
+            },
+            "required": [
+                "primaryNeed",
+                "secondaryNeeds",
+                "implicitNeeds"
+            ]
+        },
+        "entities": {
+            "type": "OBJECT",
+            "properties": {
+                "organizations": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                },
+                "products": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                },
+                "markets": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                },
+                "technologies": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                },
+                "regulations": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                }
+            }
+        },
+        "temporalScope": {
+            "type": "OBJECT",
+            "properties": {
+                "urgency": {
+                    "type": "STRING"
+                },
+                "shortTerm": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                },
+                "mediumTerm": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                },
+                "longTerm": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    }
+                }
+            },
+            "required": [
+                "urgency"
+            ]
+        },
+        "monitoringTypes": {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "type": {
+                        "type": "STRING"
+                    },
+                    "relevance": {
+                        "type": "INTEGER"
+                    },
+                    "justification": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "fr": {
+                                "type": "STRING"
+                            },
+                            "en": {
+                                "type": "STRING"
+                            }
+                        }
+                    }
+                },
+                "required": [
+                    "type",
+                    "relevance"
+                ]
+            }
+        },
+        "strategicQuestions": {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "fr": {
+                        "type": "STRING"
+                    },
+                    "en": {
+                        "type": "STRING"
+                    }
+                }
+            }
+        },
+        "suggestedApproach": {
+            "type": "OBJECT",
+            "properties": {
+                "fr": {
+                    "type": "STRING"
+                },
+                "en": {
+                    "type": "STRING"
+                }
+            }
+        },
+        "confidenceScore": {
+            "type": "INTEGER"
+        }
+    },
+    "required": [
+        "content",
+        "identifiedNeeds",
+        "monitoringTypes",
+        "strategicQuestions"
+    ],
+    "propertyOrdering": [
+        "content",
+        "identifiedNeeds",
+        "entities",
+        "temporalScope",
+        "monitoringTypes",
+        "strategicQuestions",
+        "suggestedApproach",
+        "confidenceScore"
+    ]
+}

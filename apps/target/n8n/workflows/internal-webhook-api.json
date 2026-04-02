@@ -1,0 +1,172 @@
+{
+  "updatedAt": "2025-12-02T10:13:35.658Z",
+  "createdAt": "2025-11-27T10:06:10.425Z",
+  "id": "SJQNxSShprfYQzrv",
+  "name": "Internal - Webhook API",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://{{ $env.N8N_WEBHOOK_HOSTNAME || 'basil.local' }}/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Signature",
+              "value": "={{ $json.signature }}"
+            },
+            {
+              "name": "X-Message-Type",
+              "value": "={{ $json.messageType }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Serialization-Groups",
+              "value": "={{ $json.serializationGroups }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.data || 'null' }}",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        576,
+        -80
+      ],
+      "id": "1e4df102-88d5-4244-8c6d-b9da93cf31bb",
+      "name": "Webhook_HTTP_Request",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "fMVIOHmTlKpe0VZO",
+          "name": "Webhook Api Token Header - Development"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "action": "hmac",
+        "type": "SHA256",
+        "value": "={{ $json.data }}",
+        "dataPropertyName": "signature",
+        "secret": "={{ $env.N8N_WEBHOOK_HMAC_KEY }}"
+      },
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        288,
+        48
+      ],
+      "id": "694d2ff3-0984-4ca2-ace7-08372ca0b57f",
+      "name": "Webhook_Crypto_Signature",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "data",
+              "type": "any"
+            },
+            {
+              "name": "language"
+            },
+            {
+              "name": "messageType"
+            },
+            {
+              "name": "serializationGroups"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        64,
+        48
+      ],
+      "id": "042be8d7-6aea-4aa1-b7a5-4cc2bcd4d6ea",
+      "name": "Workflow_Trigger_Webhook"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Workflow_Trigger_Webhook').item.json.language === 'en' ? `An error occurred while creating the signature for your data.` : `Une erreur est survenue lors de la création de la signature de vos données.`).toJsonString() }},\n  \"context\": {\n    \"error\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        144
+      ],
+      "id": "15965513-28cf-4a45-9f51-bb86077ed425",
+      "name": "Feedback_CryptoError"
+    }
+  ],
+  "connections": {
+    "Webhook_HTTP_Request": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Webhook_Crypto_Signature": {
+      "main": [
+        [
+          {
+            "node": "Webhook_HTTP_Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Feedback_CryptoError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Trigger_Webhook": {
+      "main": [
+        [
+          {
+            "node": "Webhook_Crypto_Signature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "versionId": "8828e07a-2b76-4973-af6a-76f010d41455",
+  "versionCounter": 14,
+  "triggerCount": 0,
+  "tags": []
+}

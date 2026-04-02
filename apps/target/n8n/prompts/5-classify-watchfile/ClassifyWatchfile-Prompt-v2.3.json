@@ -1,0 +1,214 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WatchFileClassificationOutput",
+  "type": "object",
+  "required": [
+    "primaryType",
+    "primarySubtype",
+    "confidenceScore",
+    "justification",
+    "secondaryTypes",
+    "topics",
+    "analysis",
+    "suggestions",
+    "deepSearchReadiness"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "primaryType": {
+      "type": "string",
+      "enum": [
+        "competitive",
+        "regulatory",
+        "technological",
+        "commercial",
+        "strategic",
+        "reputational"
+      ]
+    },
+    "primarySubtype": {
+      "type": ["string", "null"],
+      "enum": ["positive", "negative", "global", null]
+    },
+    "confidenceScore": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "justification": {
+      "type": "object",
+      "required": ["en", "fr"],
+      "additionalProperties": false,
+      "properties": {
+        "en": { "type": "string" },
+        "fr": { "type": "string" }
+      }
+    },
+    "secondaryTypes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "subtype", "score", "justification"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "competitive",
+              "regulatory",
+              "technological",
+              "commercial",
+              "strategic",
+              "reputational"
+            ]
+          },
+          "subtype": {
+            "type": ["string", "null"],
+            "enum": ["positive", "negative", "global", null]
+          },
+          "score": { "type": "integer" },
+          "justification": {
+            "type": "object",
+            "required": ["en", "fr"],
+            "additionalProperties": false,
+            "properties": {
+              "en": { "type": "string" },
+              "fr": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "topics": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["label", "keywords", "relevanceScore", "searchQueryTemplate", "tier"],
+        "additionalProperties": false,
+        "properties": {
+          "label": { "type": "string" },
+          "keywords": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 2
+          },
+          "relevanceScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "searchQueryTemplate": { "type": "string" },
+          "tier": {
+            "type": "integer",
+            "enum": [1, 2, 3]
+          }
+        }
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "required": ["detectedKeywords", "detectedEntities", "userObjective", "geographicScope"],
+      "additionalProperties": false,
+      "properties": {
+        "detectedKeywords": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "detectedEntities": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "userObjective": { "type": "string" },
+        "geographicScope": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "suggestions": {
+      "type": "object",
+      "required": ["actors", "sources", "searchQueries"],
+      "additionalProperties": false,
+      "properties": {
+        "actors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "relevance", "score"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "organization",
+                  "person",
+                  "regulator",
+                  "competitor",
+                  "ngo",
+                  "media",
+                  "other"
+                ]
+              },
+              "relevance": { "type": "string" },
+              "score": { "type": "integer" }
+            }
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "url", "type", "relevance", "score"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "url": { "type": "string" },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "website",
+                  "linkedin",
+                  "twitter",
+                  "rss",
+                  "newsletter",
+                  "database",
+                  "regulatory",
+                  "other"
+                ]
+              },
+              "relevance": { "type": "string" },
+              "score": { "type": "integer" }
+            }
+          }
+        },
+        "searchQueries": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "deepSearchReadiness": {
+      "type": "object",
+      "required": ["ready", "reason", "suggestedSearchQueries"],
+      "additionalProperties": false,
+      "properties": {
+        "ready": { "type": "boolean" },
+        "reason": {
+          "type": "object",
+          "required": ["en", "fr"],
+          "additionalProperties": false,
+          "properties": {
+            "en": { "type": "string" },
+            "fr": { "type": "string" }
+          }
+        },
+        "suggestedSearchQueries": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

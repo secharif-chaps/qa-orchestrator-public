@@ -1,0 +1,122 @@
+# Vuellar
+
+> Vuellar is Chapsvision's Vue 3 component library built with TypeScript, Tailwind CSS, and Reka UI. It provides a comprehensive set of accessible, dark-mode-ready UI components following atomic design principles.
+
+## Installation
+
+```bash
+npm install @owlint/feathers-vue
+```
+
+## Quick Start
+
+```vue
+<script setup>
+import { Button, Input, Select } from '@owlint/feathers-vue'
+</script>
+
+<template>
+  <Button label="Click me" variant="primary" />
+</template>
+```
+
+## Documentation
+
+- [Full Documentation](llms-full.txt): Complete component reference with props, slots, events, and examples
+
+## Available Components
+
+All components are exported from `@owlint/feathers-vue`:
+
+```vue
+import {
+  // Electrons (Core Primitives)
+  Avatar, Badge, Bullet, Button, Checkbox, Input, Label,
+  Link, Radio, Select, Switch, Tab, Tag, Textarea, Toggle,
+
+  // Atoms (Building Blocks)
+  Breadcrumb, Chips, DateRangePicker, Pagination, Searchbar, Table,
+
+  // Molecules (Functional Composites)
+  Alert, Menu,
+
+  // Organisms (Complex Composites)
+  Modal
+} from '@owlint/feathers-vue'
+```
+
+## Component Overview
+
+### Electrons (Core Primitives)
+- [Avatar](llms-full.txt#avatar): Displays a visual representation of a user, profile, or entity
+- [Badge](llms-full.txt#badge): Small visual indicator for counts, status, or highlights
+- [Bullet](llms-full.txt#bullet): Colored dot indicator for status visualization
+- [Button](llms-full.txt#button): Triggers immediate user actions
+- [Checkbox](llms-full.txt#checkbox): Multi-selection from a list of options
+- [Input](llms-full.txt#input): Single-line text field for data entry
+- [Label](llms-full.txt#label): Text label for form fields and controls
+- [Link](llms-full.txt#link): Navigation to pages, sections, or resources
+- [Radio](llms-full.txt#radio): Single selection from mutually exclusive options
+- [Select](llms-full.txt#select): Dropdown for choosing from predefined options
+- [Switch](llms-full.txt#switch): Binary toggle for immediate on/off state
+- [Tab](llms-full.txt#tab): Organizes content into switchable panels
+- [Tag](llms-full.txt#tag): Static label for categorizing content
+- [Textarea](llms-full.txt#textarea): Multi-line text field for longer content
+- [Toggle](llms-full.txt#toggle): Segmented control for switching views or modes
+
+### Atoms (Building Blocks)
+- [Breadcrumb](llms-full.txt#breadcrumb): Navigation hierarchy display
+- [Chips](llms-full.txt#chips): Interactive removable tag element
+- [DateRangePicker](llms-full.txt#daterangepicker): Calendar input for date range selection
+- [Pagination](llms-full.txt#pagination): Page navigation control
+- [Searchbar](llms-full.txt#searchbar): Search input with icon and loading state
+- [Table](llms-full.txt#table): Structured data display in rows and columns
+
+### Molecules (Functional Composites)
+- [Alert](llms-full.txt#alert): Contextual feedback messages
+- [Menu](llms-full.txt#menu): Dropdown menu for actions or navigation
+
+### Organisms (Complex Composites)
+- [Modal](llms-full.txt#modal): Overlay dialog for focused tasks
+
+## Standardized Props Pattern
+
+Most components follow a standardized props pattern:
+
+### variant
+Controls the visual style:
+- `primary`: Filled/solid style (default)
+- `secondary`: Lighter/outlined style
+- `tertiary`: Minimal/text-only style (Button only)
+
+### intent
+Semantic colors for meaningful feedback:
+- `neutral`: Gray - default, neutral state
+- `accent`: Pink - branded, highlighted
+- `success`: Green - positive, confirmed
+- `warning`: Orange - caution, attention
+- `danger`: Red - error, destructive
+- `info`: Blue - informational
+
+### color
+Decorative colors for visual variety:
+- `sage`, `almond`, `pink`, `indigo`, `yellow`, `cherry`, `cyan`
+
+### size
+Component dimensions:
+- `xs`, `sm`, `md`, `lg` (availability varies by component)
+
+## Dark Mode
+
+All components support dark mode. Dark mode is activated by adding the `dark` class to a parent element:
+
+```vue
+<div class="dark">
+  <!-- All Vuellar components inside will use dark mode -->
+  <Button label="Dark mode button" />
+</div>
+```
+
+## Optional
+
+- [Deprecated Components](llms-full.txt#deprecated): Indicator (use Bullet), ToggleGroup (use Toggle)

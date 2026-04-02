@@ -1,0 +1,229 @@
+flowchart TD
+    %% PHASE 1.1 - Analyse des Objectifs
+    subgraph Phase1_1["Phase 1.1 - Analyse des Objectifs"]
+        START1_1([Démarrage du processus]) --> INPUT1_1[/Saisie des besoins initiaux par l'utilisateur/]
+        
+        subgraph Identification["Intelligence d'Identification et Cadrage"]
+            INPUT1_1 --> A1_1[Agent IA d'Analyse des Besoins]
+            A1_1 --> A2_1[Agent IA de Formalisation des Questions Stratégiques]
+            A2_1 --> A3_1[Agent IA de Cadrage Temporel]
+            A3_1 --> DETECT1_1{Détection\ndu type de\nveille principal}
+        end
+        
+        DETECT1_1 -->|Veille Concurrentielle| B1_1
+        DETECT1_1 -->|Veille Stratégique| C1_1
+        DETECT1_1 -->|Veille Commerciale| D1_1
+        DETECT1_1 -->|Veille Technologique| E1_1
+        DETECT1_1 -->|Veille Juridique| F1_1
+        
+        subgraph Concurrentielle["Intelligence Concurrentielle"]
+            B1_1[Agent IA de Cartographie Concurrentielle]
+            B1_1 --> B2_1[Agent IA d'Analyse Différentielle]
+            B2_1 --> B3_1[Agent IA de Positionnement Concurrentiel]
+            B3_1 --> MERGE1_1
+        end
+        
+        subgraph Strategique["Intelligence Stratégique"]
+            C1_1[Agent IA d'Analyse PESTEL]
+            C1_1 --> C2_1[Agent IA de Prospective]
+            C2_1 --> C3_1[Agent IA de Modélisation de Ruptures]
+            C3_1 --> MERGE1_1
+        end
+        
+        subgraph Commerciale["Intelligence Commerciale"]
+            D1_1[Agent IA de Segmentation Client]
+            D1_1 --> D2_1[Agent IA de Qualification d'Opportunités]
+            D2_1 --> D3_1[Agent IA de Détection de Signaux d'Achat]
+            D3_1 --> MERGE1_1
+        end
+        
+        subgraph Technologique["Intelligence Technologique"]
+            E1_1[Agent IA de Cartographie Technologique]
+            E1_1 --> E2_1[Agent IA d'Évaluation de Maturité]
+            E2_1 --> E3_1[Agent IA d'Analyse de Ruptures Techniques]
+            E3_1 --> MERGE1_1
+        end
+        
+        subgraph Juridique["Intelligence Juridique"]
+            F1_1[Agent IA de Cartographie Réglementaire]
+            F1_1 --> F2_1[Agent IA d'Analyse d'Impact Compliance]
+            F2_1 --> F3_1[Agent IA de Priorisation des Risques]
+            F3_1 --> MERGE1_1
+        end
+        
+        MERGE1_1{Fusion et\nintégration des\nanalyses spécifiques}
+        
+        MERGE1_1 --> G1_1
+        
+        subgraph Synthese["Intelligence de Synthèse et Configuration"]
+            G1_1[Agent IA de Définition des KPIs]
+            G1_1 --> G2_1[Agent IA de Configuration des Seuils d'Alerte]
+            G2_1 --> G3_1[Agent IA de Modélisation des Impacts]
+            G3_1 --> G4_1[Agent IA de Génération de Plan d'Action]
+        end
+        
+        G4_1 --> OUTPUT1_1[/Document de cadrage finalisé/]
+    end
+    
+    %% PHASE 1.2 - Cartographie des Éléments à Surveiller
+    OUTPUT1_1 --> START1_2
+    
+    subgraph Phase1_2["Phase 1.2 - Cartographie des Éléments à Surveiller"]
+        START1_2([Document de cadrage de la phase 1.1]) --> INPUT1_2[/Paramètres du type de veille sélectionné/]
+        
+        subgraph Structuration["Intelligence de Structuration"]
+            INPUT1_2 --> A1_2[Agent IA de Taxonomie Adaptative]
+            A1_2 --> A2_2[Agent IA de Hiérarchisation Multi-critères]
+            A2_2 --> A3_2[Agent IA de Modélisation Relationnelle]
+            A3_2 --> BRANCH1_2{Spécialisation\npar type\nde veille}
+        end
+        
+        BRANCH1_2 -->|Veille Concurrentielle| B1_2
+        BRANCH1_2 -->|Veille Stratégique| C1_2
+        BRANCH1_2 -->|Veille Commerciale| D1_2
+        BRANCH1_2 -->|Veille Technologique| E1_2
+        BRANCH1_2 -->|Veille Juridique| F1_2
+        
+        subgraph CartoConcurrentielle["Intelligence de Cartographie Concurrentielle"]
+            B1_2[Agent IA de Profiling Concurrentiel]
+            B1_2 --> B2_2[Agent IA de Mapping d'Écosystème]
+            B2_2 --> B3_2[Agent IA d'Analyse de Différenciation]
+            B3_2 --> MERGE1_2
+        end
+        
+        subgraph CartoStrategique["Intelligence de Cartographie Stratégique"]
+            C1_2[Agent IA de Détection de Macro-Tendances]
+            C1_2 --> C2_2[Agent IA de Modélisation d'Influence]
+            C2_2 --> C3_2[Agent IA d'Identification de Facteurs Disruptifs]
+            C3_2 --> MERGE1_2
+        end
+        
+        subgraph CartoCommerciale["Intelligence de Cartographie Commerciale"]
+            D1_2[Agent IA de Segmentation Avancée]
+            D1_2 --> D2_2[Agent IA de Mapping Décisionnel Client]
+            D2_2 --> D3_2[Agent IA de Détection d'Opportunités]
+            D3_2 --> MERGE1_2
+        end
+        
+        subgraph CartoTechnologique["Intelligence de Cartographie Technologique"]
+            E1_2[Agent IA d'Inventaire Technologique]
+            E1_2 --> E2_2[Agent IA de Mapping d'Innovation]
+            E2_2 --> E3_2[Agent IA d'Analyse d'Interdépendance Technique]
+            E3_2 --> MERGE1_2
+        end
+        
+        subgraph CartoJuridique["Intelligence de Cartographie Juridique"]
+            F1_2[Agent IA de Corpus Normatif]
+            F1_2 --> F2_2[Agent IA de Jurisprudence Sectorielle]
+            F2_2 --> F3_2[Agent IA de Compliance Anticipative]
+            F3_2 --> MERGE1_2
+        end
+        
+        MERGE1_2{Intégration\ndes éléments\nà surveiller}
+        
+        MERGE1_2 --> G1_2
+        
+        subgraph Orchestration["Intelligence d'Orchestration"]
+            G1_2[Agent IA de Consolidation Cartographique]
+            G1_2 --> G2_2[Agent IA de Détection des Angles Morts]
+            G2_2 --> G3_2[Agent IA d'Optimisation de Couverture]
+            G3_2 --> G4_2[Agent IA de Visualisation Adaptative]
+        end
+        
+        G4_2 --> OUTPUT1_2[/Cartographie structurée des éléments à surveiller/]
+    end
+    
+    %% PHASE 1.3 - Configuration des Critères et Alertes
+    OUTPUT1_2 --> START1_3
+    
+    subgraph Phase1_3["Phase 1.3 - Configuration des Critères et Alertes"]
+        START1_3([Cartographie structurée de la phase 1.2]) --> INPUT1_3[/Éléments à surveiller et paramètres/]
+        
+        subgraph Parametrage["Intelligence de Paramétrage Commun"]
+            INPUT1_3 --> A1_3[Agent IA de Définition des KPIs]
+            A1_3 --> A2_3[Agent IA de Traduction Langage Naturel]
+            A2_3 --> A3_3[Agent IA de Scoring Multi-dimensionnel]
+            A3_3 --> BRANCH1_3{Personnalisation\npar type\nde veille}
+        end
+        
+        BRANCH1_3 -->|Veille Concurrentielle| B1_3
+        BRANCH1_3 -->|Veille Stratégique| C1_3
+        BRANCH1_3 -->|Veille Commerciale| D1_3
+        BRANCH1_3 -->|Veille Technologique| E1_3
+        BRANCH1_3 -->|Veille Juridique| F1_3
+        
+        subgraph CriteresConc["Intelligence de Critères Concurrentiels"]
+            B1_3[Agent IA de Monitoring Produit/Service]
+            B1_3 --> B2_3[Agent IA de Surveillance Tarifaire]
+            B2_3 --> B3_3[Agent IA de Détection Marketing]
+            B3_3 --> MERGE1_3
+        end
+        
+        subgraph CriteresStrat["Intelligence de Critères Stratégiques"]
+            C1_3[Agent IA de Détection de Ruptures]
+            C1_3 --> C2_3[Agent IA de Surveillance Macro-environnementale]
+            C2_3 --> C3_3[Agent IA d'Analyse de Points d'Inflexion]
+            C3_3 --> MERGE1_3
+        end
+        
+        subgraph CriteresCom["Intelligence de Critères Commerciaux"]
+            D1_3[Agent IA de Détection de Triggers d'Achat]
+            D1_3 --> D2_3[Agent IA de Qualification d'Appels d'Offres]
+            D2_3 --> D3_3[Agent IA de Monitoring Comportemental]
+            D3_3 --> MERGE1_3
+        end
+        
+        subgraph CriteresTech["Intelligence de Critères Technologiques"]
+            E1_3[Agent IA de Surveillance d'Avancées Techniques]
+            E1_3 --> E2_3[Agent IA de Détection de Brevets Stratégiques]
+            E2_3 --> E3_3[Agent IA de Monitoring d'Adoption]
+            E3_3 --> MERGE1_3
+        end
+        
+        subgraph CriteresJur["Intelligence de Critères Juridiques"]
+            F1_3[Agent IA de Veille Normative]
+            F1_3 --> F2_3[Agent IA de Détection Jurisprudentielle]
+            F2_3 --> F3_3[Agent IA de Calendrier Réglementaire]
+            F3_3 --> MERGE1_3
+        end
+        
+        MERGE1_3{Intégration\ndes critères\nspécifiques}
+        
+        MERGE1_3 --> G1_3
+        
+        subgraph Alertes["Intelligence d'Alertes et Notifications"]
+            G1_3[Agent IA de Configuration des Seuils]
+            G1_3 --> G2_3[Agent IA de Personnalisation par Utilisateur]
+            G2_3 --> G3_3[Agent IA de Priorisation Contextuelle]
+            G3_3 --> G4_3[Agent IA de Tests et Simulation]
+        end
+        
+        G4_3 --> OUTPUT1_3[/Configuration complète des critères et alertes/]
+    end
+    
+    %% Liaison vers la partie 2
+    OUTPUT1_3 -.->|Suite dans Partie 2| Part2
+
+    %% Styles améliorés avec meilleur contraste
+    classDef phaseTitle fill:#2c3e50,stroke:#000,stroke-width:2px,color:#fff,font-weight:bold
+    classDef intelligence fill:#8a2be2,stroke:#000,stroke-width:2px,color:#fff
+    classDef process fill:#4682b4,stroke:#000,stroke-width:1px,color:#fff
+    classDef document fill:#f5a742,stroke:#000,stroke-width:1px,color:#000
+    classDef decision fill:#d81b60,stroke:#000,stroke-width:1px,color:#fff
+    classDef subgraphStyle fill:#f5f5f5,stroke:#333,stroke-width:1px
+    
+    %% Application des styles aux phases
+    class Phase1_1,Phase1_2,Phase1_3 phaseTitle
+    
+    %% Application des styles aux éléments
+    class A1_1,A2_1,A3_1,B1_1,B2_1,B3_1,C1_1,C2_1,C3_1,D1_1,D2_1,D3_1,E1_1,E2_1,E3_1,F1_1,F2_1,F3_1,G1_1,G2_1,G3_1,G4_1 intelligence
+    class A1_2,A2_2,A3_2,B1_2,B2_2,B3_2,C1_2,C2_2,C3_2,D1_2,D2_2,D3_2,E1_2,E2_2,E3_2,F1_2,F2_2,F3_2,G1_2,G2_2,G3_2,G4_2 intelligence
+    class A1_3,A2_3,A3_3,B1_3,B2_3,B3_3,C1_3,C2_3,C3_3,D1_3,D2_3,D3_3,E1_3,E2_3,E3_3,F1_3,F2_3,F3_3,G1_3,G2_3,G3_3,G4_3 intelligence
+    
+    class START1_1,START1_2,START1_3 process
+    class INPUT1_1,INPUT1_2,INPUT1_3,OUTPUT1_1,OUTPUT1_2,OUTPUT1_3 document
+    class DETECT1_1,MERGE1_1,BRANCH1_2,MERGE1_2,BRANCH1_3,MERGE1_3 decision
+    
+    class Identification,Concurrentielle,Strategique,Commerciale,Technologique,Juridique,Synthese subgraphStyle
+    class Structuration,CartoConcurrentielle,CartoStrategique,CartoCommerciale,CartoTechnologique,CartoJuridique,Orchestration subgraphStyle
+    class Parametrage,CriteresConc,CriteresStrat,CriteresCom,CriteresTech,CriteresJur,Alertes subgraphStyle

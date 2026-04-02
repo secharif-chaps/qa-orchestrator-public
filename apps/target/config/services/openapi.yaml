@@ -1,0 +1,25 @@
+services:
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  App\Infrastructure\OpenApi\RateLimitOpenApiFactory:
+    decorates: 'api_platform.openapi.factory'
+    decoration_priority: 15
+    arguments:
+      $decorated: '@.inner'
+
+  App\Infrastructure\OpenApi\InternationalizationOpenApiFactory:
+    decorates: 'api_platform.openapi.factory'
+    decoration_priority: 10
+    arguments:
+      $decorated: '@.inner'
+      $enabledLocales: '%kernel.enabled_locales%'
+      $defaultLocale: '%kernel.default_locale%'
+
+  App\Infrastructure\OpenApi\MercureOpenApiFactory:
+    decorates: 'api_platform.openapi.factory'
+    decoration_priority: 5
+    arguments:
+      $decorated: '@.inner'

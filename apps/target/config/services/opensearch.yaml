@@ -1,0 +1,12 @@
+services:
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  # Use client autoconfigured by API Platform
+  OpenSearch\Client: '@api_platform.elasticsearch.client'
+
+  App\Infrastructure\OpenSearch\State\CollectionProviderWithAggregations:
+    arguments:
+      $collectionExtensions: !tagged_iterator api_platform.elasticsearch.request_body_search_extension.collection

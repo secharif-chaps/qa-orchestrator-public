@@ -1,0 +1,80 @@
+flowchart TD
+    subgraph Alertes["Système d'Alertes Intelligentes (Phase 4.2)"]
+        START([Contenu de la phase 4.1]) --> INPUT[/Contenu à forte valeur ajoutée/]
+        
+        subgraph Notification["Intelligence de Notification Fondamentale"]
+            INPUT --> A1[Agent IA de Priorisation des Informations]
+            A1 --> A2[Agent IA de Contextualisation d'Alerte]
+            A2 --> A3[Agent IA de Timing Optimal]
+            A3 --> BRANCH{Spécialisation\npar type\nde veille}
+        end
+        
+        BRANCH -->|Veille Concurrentielle| B1
+        BRANCH -->|Veille Stratégique| C1
+        BRANCH -->|Veille Commerciale| D1
+        BRANCH -->|Veille Technologique| E1
+        BRANCH -->|Veille Juridique| F1
+        
+        subgraph AlertesConc["Intelligence d'Alertes Concurrentielles"]
+            B1[Agent IA d'Alertes Mouvements Stratégiques]
+            B1 --> B2[Agent IA de Notifications Prix et Produits]
+            B2 --> B3[Agent IA d'Alertes Communications]
+            B3 --> MERGE
+        end
+        
+        subgraph AlertesStrat["Intelligence d'Alertes Stratégiques"]
+            C1[Agent IA d'Alertes Ruptures Tendancielles]
+            C1 --> C2[Agent IA de Notifications Géopolitiques]
+            C2 --> C3[Agent IA d'Alertes Transformations Structurelles]
+            C3 --> MERGE
+        end
+        
+        subgraph AlertesCom["Intelligence d'Alertes Commerciales"]
+            D1[Agent IA d'Alertes Opportunités Business]
+            D1 --> D2[Agent IA de Notifications Appels d'Offres]
+            D2 --> D3[Agent IA d'Alertes Déclencheurs d'Achat]
+            D3 --> MERGE
+        end
+        
+        subgraph AlertesTech["Intelligence d'Alertes Technologiques"]
+            E1[Agent IA d'Alertes Innovations Critiques]
+            E1 --> E2[Agent IA de Notifications Standards]
+            E2 --> E3[Agent IA d'Alertes Obsolescence]
+            E3 --> MERGE
+        end
+        
+        subgraph AlertesJur["Intelligence d'Alertes Juridiques"]
+            F1[Agent IA d'Alertes Réglementaires]
+            F1 --> F2[Agent IA de Notifications Jurisprudentielles]
+            F2 --> F3[Agent IA d'Alertes Échéances Conformité]
+            F3 --> MERGE
+        end
+        
+        MERGE{Intégration\ndes alertes\nspécialisées}
+        
+        MERGE --> G1
+        
+        subgraph Diffusion["Intelligence de Diffusion Personnalisée"]
+            G1[Agent IA de Personnalisation Utilisateur]
+            G1 --> G2[Agent IA de Multicanal Adaptatif]
+            G2 --> G3[Agent IA de Feedback Instantané]
+            G3 --> G4[Agent IA d'Apprentissage de Préférences]
+        end
+        
+        G4 --> OUTPUT[/Alertes personnalisées et contextualisées/]
+        OUTPUT --> END([Passage à la phase 4.3])
+    end
+    
+    %% Styles améliorés avec meilleur contraste
+    classDef intelligence fill:#8a2be2,stroke:#000,stroke-width:2px,color:#fff
+    classDef process fill:#4682b4,stroke:#000,stroke-width:1px,color:#fff
+    classDef document fill:#f5a742,stroke:#000,stroke-width:1px,color:#000
+    classDef decision fill:#d81b60,stroke:#000,stroke-width:1px,color:#fff
+    classDef subgraphStyle fill:#f5f5f5,stroke:#333,stroke-width:1px
+    
+    %% Application des styles
+    class A1,A2,A3,B1,B2,B3,C1,C2,C3,D1,D2,D3,E1,E2,E3,F1,F2,F3,G1,G2,G3,G4 intelligence
+    class START,END process
+    class INPUT,OUTPUT document
+    class BRANCH,MERGE decision
+    class Notification,AlertesConc,AlertesStrat,AlertesCom,AlertesTech,AlertesJur,Diffusion subgraphStyle

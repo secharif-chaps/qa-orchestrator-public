@@ -1,0 +1,620 @@
+{
+  "updatedAt": "2026-01-05T15:57:01.469Z",
+  "createdAt": "2025-11-27T16:15:13.957Z",
+  "id": "6RCLmgTzQlBkCBXm",
+  "name": "6.a DeepSearch - Generate Strategic Question",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "runId",
+              "value": "={{ $json._testMetadata.runId }}"
+            },
+            {
+              "key": "testCaseId",
+              "value": "={{ $json._testMetadata.testCaseId }}"
+            },
+            {
+              "key": "testCaseName",
+              "value": "={{ $json._testMetadata.testCaseName }}"
+            },
+            {
+              "key": "datasetFile",
+              "value": "={{ $json._testMetadata.datasetFile }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -2576,
+        -416
+      ],
+      "id": "476f054f-0486-47b2-b35a-a1fa7155856a",
+      "name": "ExecutionData_Store_TestMetadata"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "= {{ $json.body.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2800,
+        -416
+      ],
+      "id": "22c5c9c3-c10f-47c3-84ce-f5853775a7cb",
+      "name": "Set_Format_TestInput"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  // Helper: parse JSON string safely\n  const safeJsonParse = (value) => {\n    if (typeof value === 'string') {\n      try {\n        return JSON.parse(value);\n      } catch (e) {\n        return value; // Not valid JSON, keep original\n      }\n    }\n    return value; // Already parsed or not a string\n  };\n\n  // Parse watchFile\n  if (item.json?.watchFile) {\n    item.json.watchFile = safeJsonParse(item.json.watchFile);\n  }\n\n  // Parse conversation\n  if (item.json?.conversation) {\n    item.json.conversation = safeJsonParse(item.json.conversation);\n  }\n\n  // Parse context\n  if (item.json?.context) {\n    item.json.context = safeJsonParse(item.json.context);\n\n    if (typeof item.json.context.BusNameStamp !== 'string') {\n      item.json.context.BusNameStamp = JSON.stringify(item.json.context.BusNameStamp);\n    }\n\n    if (typeof item.json.context.RouterContextStamp !== 'string') {\n      item.json.context.RouterContextStamp = JSON.stringify(item.json.context.RouterContextStamp);\n    }\n  }\n\n  // Default language\n  item.json.language = item.json?.language || 'en';\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2352,
+        -320
+      ],
+      "id": "cb516324-c7a1-402b-9aa7-a786725a696b",
+      "name": "Code_Initialize_WatchFileData"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "f48c19fb-78d5-422e-9a73-d7ee5dc0e7fc",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -3024,
+        -416
+      ],
+      "id": "41c5942d-f5b6-4cc7-95c0-93385bd331a8",
+      "name": "Webhook_Trigger_TestInput",
+      "webhookId": "f48c19fb-78d5-422e-9a73-d7ee5dc0e7fc"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "watchFile",
+              "type": "any"
+            },
+            {
+              "name": "conversation",
+              "type": "any"
+            },
+            {
+              "name": "language"
+            },
+            {
+              "name": "context"
+            },
+            {
+              "name": "messageContentId",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2576,
+        -224
+      ],
+      "id": "c72114fe-e36f-42f1-bc4f-1f048d6e64ba",
+      "name": "Workflow_Trigger_DeepSearch"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": true,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').item.json.language === 'en' ? `The strategic question \"${$json.response.question.en}\" is added to the watchfile.` : `La question stratégique \"${$json.response.question.fr}\" est ajouté au dossier de veille.`).toJsonString() }},\n  \"context\": {\n    \"strategicQuestion\": {{ $json.response.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Code_Initialize_WatchFileData').item.json?.messageContentId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Initialize_WatchFileData').item.json?.conversation.id?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -832,
+        -512
+      ],
+      "id": "b921d87a-6b6b-4387-862d-0a23572a8c1c",
+      "name": "Feedback_AgentSuccess",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# 🎯 Strategic Sub-Questions Decomposition Agent - Basil DeepSearch\n\nYou are the **Strategic Sub-Questions Decomposition AI Agent** of the Basil DeepSearch system. Your mission is to transform a complex monitoring need into 3-5 precise, actionable, and MECE (Mutually Exclusive, Collectively Exhaustive) strategic sub-questions that will guide the web search process.\n\n## 🌐 CONTEXT OF THE BASIL DEEPSEARCH SYSTEM\n\nThe Basil DeepSearch system helps organizations structure their strategic monitoring across 5 main intelligence dimensions:\n- **Competitive Intelligence** (actors, products, positioning, market share)\n- **Strategic Intelligence** (macro trends, disruptions, sectoral transformations)\n- **Commercial Intelligence** (business opportunities, purchasing triggers, tenders)\n- **Technological Intelligence** (innovations, patents, standards, R&D)\n- **Regulatory Intelligence** (regulations, standards, compliance, law changes)\n\n## 📋 YOUR MISSION\n\nTransform the user's monitoring need into **3-5 strategic sub-questions** that will serve as the foundation for subsequent Google search optimization.\n\n## ✅ CRITICAL INSTRUCTIONS\n\n### 1. ANALYZE THE PROVIDED CONTEXT\nCarefully examine:\n- **Original monitoring need** (user's raw input)\n- **Classified monitoring type** (one of the 5 dimensions above)\n- **Preliminary analysis** (if available from previous agents)\n- **Entities mentioned** (companies, technologies, markets, regulations)\n- **Time horizon** (short/medium/long term monitoring)\n- **Geographic scope** (local, regional, global)\n\n### 2. GENERATE 3-5 MECE SUB-QUESTIONS\n\nEach sub-question must respect these principles:\n\n#### MECE Framework\n- **Mutually Exclusive**: No overlap between sub-questions\n- **Collectively Exhaustive**: All critical aspects of the need are covered\n- **Strategic Focus**: Each question targets a specific investigation axis\n- **Actionable**: Questions enable concrete information gathering\n\n#### Quality Criteria\n✅ **Clear & Precise**: No ambiguous formulation  \n✅ **Specific**: Includes relevant entities, sectors, or technologies  \n✅ **Contextual**: Aligned with the monitoring type  \n✅ **Measurable**: Allows for factual answers  \n✅ **Time-bound**: Considers the relevant time horizon  \n✅ **Searchable**: Can be converted into effective Google queries  \n\n### 3. STRUCTURE YOUR OUTPUT\n\nFor each sub-question, provide:\n\n```json\n{\n  \"subQuestions\": [\n    {\n      \"questionFR\": \"[Question in French]\",\n      \"questionEN\": \"[Question in English]\",\n      \"contextFR\": \"[Relevance explanation in French - 1-2 sentences]\",\n      \"contextEN\": \"[Relevance explanation in English - 1-2 sentences]\",\n      \"monitoringDimension\": \"[Primary dimension: competitive|strategic|commercial|technological|regulatory]\",\n      \"priority\": \"[integer between 0 and 100]\",\n      \"expectedOutputType\": \"[Actors list|Trends analysis|Regulatory changes|Innovation radar|etc.]\"\n    }\n  ],\n  \"decompositionRationale\": {\n    \"approachFR\": \"[Explain your decomposition strategy in French]\",\n    \"approachEN\": \"[Explain your decomposition strategy in English]\"\n  }\n}\n```\n\n## 📊 DECOMPOSITION EXAMPLES\n\n### Example 1: Competitive Intelligence\n**Input Need**: \"Monitor Tesla and electric vehicle competitors\"  \n**Monitoring Type**: Competitive Intelligence\n\n**Generated Sub-Questions**:\n1. **Who are the top 5 direct competitors of Tesla in the global EV market?**\n- *Context*: Identifies key competitive landscape actors for comparative analysis\n- *Dimension*: Competitive Intelligence\n- *Priority*: 90\n\n2. **What are the recent technological innovations in battery technology and autonomous driving by Tesla's competitors?**\n- *Context*: Tracks technological differentiation factors and innovation race\n- *Dimension*: Technological Intelligence\n- *Priority*: 90\n\n3. **What are the pricing strategies and market positioning of main EV manufacturers in 2024-2025?**\n- *Context*: Analyzes competitive positioning and commercial strategies\n- *Dimension*: Commercial Intelligence\n- *Priority*: 50\n\n4. **What strategic partnerships and alliances have been formed in the EV ecosystem recently?**\n- *Context*: Reveals collaboration strategies and value chain reconfigurations\n- *Dimension*: Strategic Intelligence\n- *Priority*: 50\n\n### Example 2: Regulatory Intelligence\n**Input Need**: \"Track EU AI regulations impacting chatbot development\"  \n**Monitoring Type**: Regulatory Intelligence\n\n**Generated Sub-Questions**:\n1. **What are the key provisions of the EU AI Act affecting conversational AI systems?**\n- *Context*: Identifies specific legal requirements for chatbot compliance\n- *Priority*: 90\n\n2. **What are the timelines and implementation phases for EU AI regulations?**\n- *Context*: Establishes critical compliance deadlines\n- *Priority*: 90\n\n3. **Which compliance frameworks and standards are emerging for AI chatbots in Europe?**\n- *Context*: Maps industry best practices and certification requirements\n- *Priority*: 50\n\n## 🎓 BEST PRACTICES\n\n### DO ✅\n- **Start broad, then narrow**: Cover the full scope before diving into specifics\n- **Mix dimensions**: Complex needs often require multiple intelligence types\n- **Consider stakeholders**: Who, What, When, Where, Why, How\n- **Think actionable**: Each question should lead to concrete insights\n- **Balance quantity**: 3 questions minimum for depth, 5 maximum to avoid fragmentation\n\n### DON'T ❌\n- **Avoid redundancy**: No questions asking essentially the same thing\n- **No vague formulations**: \"What's happening with X?\" is too broad\n- **Don't ignore the user's implicit needs**: Read between the lines\n- **Don't generate more than 5 questions**: Focus over exhaustiveness\n- **Avoid yes/no questions**: Prefer open-ended investigative questions\n\n## 🔄 ADAPTIVE DECOMPOSITION PATTERNS\n\n### Pattern A: Actor-Centric (Competitive)\n1. Who are the key actors?\n2. What are their strategies/products?\n3. What are their competitive advantages?\n4. What are the market dynamics?\n\n### Pattern B: Trend-Centric (Strategic)\n1. What are the emerging trends?\n2. What are the disruption drivers?\n3. What are the future scenarios?\n4. What are the implications for the sector?\n\n### Pattern C: Opportunity-Centric (Commercial)\n1. What are the market opportunities?\n2. Who are the potential clients/partners?\n3. What are the purchasing triggers?\n4. What are the competitive differentiators?\n\n### Pattern D: Innovation-Centric (Technological)\n1. What are the recent innovations?\n2. What are the technology maturity levels?\n3. What are the R&D investments?\n4. What are the adoption barriers?\n\n### Pattern E: Compliance-Centric (Regulatory)\n1. What are the applicable regulations?\n2. What are the compliance deadlines?\n3. What are the penalties for non-compliance?\n4. What are the industry best practices?\n\n## 📥 INPUT DATA TO ANALYZE\n\n- Watchfile: {{ $('Code_Initialize_WatchFileData').item.json.watchFile.toJsonString() }}\n\n**Expected Variables**:\n- `watchfile.referenceSubject`: User's raw monitoring need\n- `watchfile.monitoringType`: Classified intelligence dimension\n- `watchfile.watchFileActors`: Identified actors, companies...\n- `watchfile.sources`: Identified sources\n- `watchfile.strategicQuestions`: strategics questions already generated\n- `watchfile.analysisResults`: Initial analysis of user expression needs\n\n## 🔍 SELF-VALIDATION CHECKLIST\n\nBefore finalizing your output, verify:\n- [ ] 3-5 sub-questions generated (not more, not less)\n- [ ] MECE principle respected (no overlap, full coverage)\n- [ ] Each question is bilingual (FR + EN)\n- [ ] Context explanation provided for each question\n- [ ] Monitoring dimension assigned to each question\n- [ ] Priority level defined (integer between 0 and 100)\n- [ ] Decomposition rationale explained\n- [ ] Questions are specific and actionable\n- [ ] No yes/no questions, only investigative ones\n- [ ] Output formatted as valid JSON\n\n---\n\n**🚀 NOW: Analyze the provided watchfile data and generate your strategic sub-questions decomposition.**",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "options": {
+          "maxIterations": 10,
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -2096,
+        -320
+      ],
+      "id": "cef4329a-5fd8-4691-967c-bb483e6a6d86",
+      "name": "LLM_StrategicQuestions_GeneratorAgent",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"type\": \"object\",\n  \"required\": [\"subQuestions\", \"decompositionRationale\"],\n  \"properties\": {\n    \"subQuestions\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"required\": [\"questionFR\", \"questionEN\", \"contextFR\", \"contextEN\", \"monitoringDimension\", \"priority\", \"expectedOutputType\"],\n        \"properties\": {\n          \"questionFR\": {\n            \"type\": \"string\",\n            \"minLength\": 1\n          },\n          \"questionEN\": {\n            \"type\": \"string\",\n            \"minLength\": 1\n          },\n          \"contextFR\": {\n            \"type\": \"string\"\n          },\n          \"contextEN\": {\n            \"type\": \"string\"\n          },\n          \"monitoringDimension\": {\n            \"type\": \"string\",\n            \"enum\": [\"competitive\", \"strategic\", \"commercial\", \"technological\", \"regulatory\"]\n          },\n          \"priority\": {\n            \"type\": \"integer\",\n            \"minimum\": 0,\n            \"maximum\": 100\n          },\n          \"expectedOutputType\": {\n            \"type\": \"string\"\n          }\n        },\n        \"additionalProperties\": false\n      },\n      \"minItems\": 1\n    },\n    \"decompositionRationale\": {\n      \"type\": \"object\",\n      \"required\": [\"approachFR\", \"approachEN\"],\n      \"properties\": {\n        \"approachFR\": {\n          \"type\": \"string\"\n        },\n        \"approachEN\": {\n          \"type\": \"string\"\n        }\n      },\n      \"additionalProperties\": false\n    }\n  },\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1872,
+        -80
+      ],
+      "id": "a3d8c6ef-9597-4d1b-af60-725ca4d395ed",
+      "name": "LLM_Parser_StrategicQuestionGenerator"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').item.json.userLanguage === 'en' ? `The AI agent is experiencing a problem. Please try again later.` : `L'agent AI rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }},\n  \"context\": {\n    \"data\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Code_Initialize_WatchFileData').item.json?.messageContentId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Initialize_WatchFileData').item.json?.conversation.id?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1504,
+        -224
+      ],
+      "id": "b5f641d8-70de-454f-9398-3b1ba812637b",
+      "name": "Feedback_AgentAIError"
+    },
+    {
+      "parameters": {
+        "jsCode": "const strategicQuestions = $input.first().json.output?.subQuestions || [];\n\nreturn strategicQuestions.map((item) => ({\n    json: {\n      ...item,\n      watchFileId: $('Code_Initialize_WatchFileData').first().json.watchFile.id,\n      messageContentId: $('Code_Initialize_WatchFileData').first().json?.messageContentId || null\n  }\n}));\n "
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1504,
+        -416
+      ],
+      "id": "c46a9aeb-166d-48b6-84e4-eaafc87d9a36",
+      "name": "Split_Item_StrategicQuestion"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "SJQNxSShprfYQzrv",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/SJQNxSShprfYQzrv",
+          "cachedResultName": "Internal - Webhook API"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "language": "={{ $('Code_Initialize_WatchFileData').item.json.language }}",
+            "data": "={{ $json.toJsonString() }}",
+            "messageType": "App\\Application\\WatchFile\\StrategicQuestion\\AddStrategicQuestionAction",
+            "serializationGroups": "watch_file:llm"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "messageType",
+              "displayName": "messageType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "serializationGroups",
+              "displayName": "serializationGroups",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -1280,
+        -416
+      ],
+      "id": "86586ff5-4cf9-4126-b716-76804b02f9e8",
+      "name": "Workflow_Execute_InternalWebhook",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f32516b6-2b44-4aa0-982f-92c58b63505f",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c6ef137c-101a-46aa-94de-4b42c71f41bd",
+              "leftValue": "={{ $json?.response?.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1056,
+        -416
+      ],
+      "id": "e5fea335-8b2f-417f-8640-2999ed7e6b94",
+      "name": "Condition_Check_IsSuccess"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').item.json.language === 'en' ? `An error occurred while saving a strategic question.` : `Une erreur est survenue lors de l'enregistrement d'une question stratégique.`).toJsonString() }},\n  \"context\": {\n    \"error\": {{ $json.toJsonString() }},\n    \"strategicQuestion\": {{ $('Split_Item_StrategicQuestion').item.json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Code_Initialize_WatchFileData').item.json?.messageContentId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Initialize_WatchFileData').item.json?.conversation.id?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -832,
+        -320
+      ],
+      "id": "38bc4572-18ff-4b6a-8362-d82a4da566fe",
+      "name": "Feedback_StrategicQuestionSaveError",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.1-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5.1-sweden"
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "schema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"required\": [\"subQuestions\", \"decompositionRationale\"],\n  \"properties\": {\n    \"subQuestions\": {\n      \"type\": \"array\",\n      \"description\": \"List of sub-questions (minimum 1 required)\",\n      \"items\": {\n        \"type\": \"object\",\n        \"required\": [\"questionFR\", \"questionEN\", \"contextFR\", \"contextEN\", \"monitoringDimension\", \"priority\", \"expectedOutputType\"],\n        \"properties\": {\n          \"questionFR\": {\n            \"type\": \"string\",\n            \"description\": \"Question in French (non-empty)\"\n          },\n          \"questionEN\": {\n            \"type\": \"string\",\n            \"description\": \"Question in English (non-empty)\"\n          },\n          \"contextFR\": {\n            \"type\": \"string\"\n          },\n          \"contextEN\": {\n            \"type\": \"string\"\n          },\n          \"monitoringDimension\": {\n            \"type\": \"string\",\n            \"enum\": [\"competitive\", \"strategic\", \"commercial\", \"technological\", \"regulatory\"]\n          },\n          \"priority\": {\n            \"type\": \"integer\",\n            \"description\": \"Priority level (0-100)\"\n          },\n          \"expectedOutputType\": {\n            \"type\": \"string\"\n          }\n        },\n        \"additionalProperties\": false\n      }\n    },\n    \"decompositionRationale\": {\n      \"type\": \"object\",\n      \"required\": [\"approachFR\", \"approachEN\"],\n      \"properties\": {\n        \"approachFR\": {\n          \"type\": \"string\"\n        },\n        \"approachEN\": {\n          \"type\": \"string\"\n        }\n      },\n      \"additionalProperties\": false\n    }\n  },\n  \"additionalProperties\": false\n}"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2128,
+        -80
+      ],
+      "id": "e1da0a82-1773-402f-b431-5bd3887314eb",
+      "name": "LLM_Model_Primary",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5-sweden"
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "schema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"required\": [\"subQuestions\", \"decompositionRationale\"],\n  \"properties\": {\n    \"subQuestions\": {\n      \"type\": \"array\",\n      \"description\": \"List of sub-questions (minimum 1 required)\",\n      \"items\": {\n        \"type\": \"object\",\n        \"required\": [\"questionFR\", \"questionEN\", \"contextFR\", \"contextEN\", \"monitoringDimension\", \"priority\", \"expectedOutputType\"],\n        \"properties\": {\n          \"questionFR\": {\n            \"type\": \"string\",\n            \"description\": \"Question in French (non-empty)\"\n          },\n          \"questionEN\": {\n            \"type\": \"string\",\n            \"description\": \"Question in English (non-empty)\"\n          },\n          \"contextFR\": {\n            \"type\": \"string\"\n          },\n          \"contextEN\": {\n            \"type\": \"string\"\n          },\n          \"monitoringDimension\": {\n            \"type\": \"string\",\n            \"enum\": [\"competitive\", \"strategic\", \"commercial\", \"technological\", \"regulatory\"]\n          },\n          \"priority\": {\n            \"type\": \"integer\",\n            \"description\": \"Priority level (0-100)\"\n          },\n          \"expectedOutputType\": {\n            \"type\": \"string\"\n          }\n        },\n        \"additionalProperties\": false\n      }\n    },\n    \"decompositionRationale\": {\n      \"type\": \"object\",\n      \"required\": [\"approachFR\", \"approachEN\"],\n      \"properties\": {\n        \"approachFR\": {\n          \"type\": \"string\"\n        },\n        \"approachEN\": {\n          \"type\": \"string\"\n        }\n      },\n      \"additionalProperties\": false\n    }\n  },\n  \"additionalProperties\": false\n}"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2000,
+        -80
+      ],
+      "id": "ec81c23f-37b7-43ae-b859-9f448b666351",
+      "name": "LLM_Model_Fallback",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-nano-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5-nano-sweden"
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1840,
+        128
+      ],
+      "id": "75d33dc4-65e4-4531-9d2f-7f41c4bb8642",
+      "name": "LLM_Model_ValidationParser",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "ExecutionData_Store_TestMetadata": {
+      "main": [
+        [
+          {
+            "node": "Code_Initialize_WatchFileData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set_Format_TestInput": {
+      "main": [
+        [
+          {
+            "node": "ExecutionData_Store_TestMetadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook_Trigger_TestInput": {
+      "main": [
+        [
+          {
+            "node": "Set_Format_TestInput",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Trigger_DeepSearch": {
+      "main": [
+        [
+          {
+            "node": "Code_Initialize_WatchFileData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Initialize_WatchFileData": {
+      "main": [
+        [
+          {
+            "node": "LLM_StrategicQuestions_GeneratorAgent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_StrategicQuestions_GeneratorAgent": {
+      "main": [
+        [
+          {
+            "node": "Split_Item_StrategicQuestion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Feedback_AgentAIError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Parser_StrategicQuestionGenerator": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "LLM_StrategicQuestions_GeneratorAgent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split_Item_StrategicQuestion": {
+      "main": [
+        [
+          {
+            "node": "Workflow_Execute_InternalWebhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Execute_InternalWebhook": {
+      "main": [
+        [
+          {
+            "node": "Condition_Check_IsSuccess",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Condition_Check_IsSuccess": {
+      "main": [
+        [
+          {
+            "node": "Feedback_AgentSuccess",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Feedback_StrategicQuestionSaveError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Model_Primary": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM_StrategicQuestions_GeneratorAgent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Model_Fallback": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM_StrategicQuestions_GeneratorAgent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "LLM_Model_ValidationParser": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM_Parser_StrategicQuestionGenerator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "versionId": "cab607bc-8c66-4b06-91d3-00032ccab4bc",
+  "versionCounter": 58,
+  "triggerCount": 1,
+  "tags": []
+}

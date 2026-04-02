@@ -1,0 +1,783 @@
+parameters:
+	ignoreErrors:
+		-
+			rawMessage: 'Parameter #1 $func of method Doctrine\Common\Collections\Collection<(int|string),mixed>::map() expects Closure(mixed): string, Closure(App\Domain\WatchFile\SearchQuery): string given.'
+			identifier: argument.type
+			count: 1
+			path: src/Application/WatchFile/Workflow/SearchQuery/RunSearchQueryHandler.php
+
+		-
+			rawMessage: @@readonly property App\DataFixtures\Factory\WatchFile\WatchFileFactory::$owner is assigned outside of the constructor.
+			identifier: property.readOnlyByPhpDocAssignNotInConstructor
+			count: 1
+			path: src/DataFixtures/Factory/WatchFile/WatchFileFactory.php
+
+		-
+			rawMessage: @@readonly property App\DataFixtures\Factory\WatchFile\WatchFileFactory::$userFavorites is assigned outside of the constructor.
+			identifier: property.readOnlyByPhpDocAssignNotInConstructor
+			count: 1
+			path: src/DataFixtures/Factory/WatchFile/WatchFileFactory.php
+
+		-
+			rawMessage: @@readonly property App\DataFixtures\Factory\WatchFile\WatchFileFactory::$watchFileUsers is assigned outside of the constructor.
+			identifier: property.readOnlyByPhpDocAssignNotInConstructor
+			count: 1
+			path: src/DataFixtures/Factory/WatchFile/WatchFileFactory.php
+
+		-
+			rawMessage: @@readonly property cannot have a default value.
+			identifier: property.readOnlyByPhpDocDefaultValue
+			count: 3
+			path: src/DataFixtures/Factory/WatchFile/WatchFileFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\AnalyzeUserNeedsPromptFactory::getContent() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/AnalyzeUserNeedsPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\AnalyzeUserNeedsPromptFactory::getExpectedResponseFormat() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/AnalyzeUserNeedsPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\AnalyzeUserNeedsPromptFactory::getExpectedResponseFormat() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/AnalyzeUserNeedsPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\AnalyzeUserNeedsPromptFactory::makePrompt() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/AnalyzeUserNeedsPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\DetectLanguagePrompt::getContent() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/DetectLanguagePrompt.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\DetectLanguagePrompt::getExpectedResponseFormat() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/DetectLanguagePrompt.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\DetectLanguagePrompt::getExpectedResponseFormat() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/DetectLanguagePrompt.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\DetectLanguagePrompt::makePrompt() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/DetectLanguagePrompt.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\DetectMonitoringTypePromptFactory::getContent() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/DetectMonitoringTypePromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\DetectMonitoringTypePromptFactory::getExpectedResponseFormat() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/DetectMonitoringTypePromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\DetectMonitoringTypePromptFactory::getExpectedResponseFormat() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/DetectMonitoringTypePromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\DetectMonitoringTypePromptFactory::makePrompt() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/DetectMonitoringTypePromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\ExtractActorsPromptFactory::getContent() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/ExtractActorsPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\ExtractActorsPromptFactory::getExpectedResponseFormat() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/ExtractActorsPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\ExtractActorsPromptFactory::getExpectedResponseFormat() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/ExtractActorsPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\ExtractActorsPromptFactory::makePrompt() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/ExtractActorsPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\ExtractSourcesPromptFactory::getContent() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/ExtractSourcesPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\ExtractSourcesPromptFactory::getExpectedResponseFormat() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/ExtractSourcesPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\ExtractSourcesPromptFactory::getExpectedResponseFormat() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/ExtractSourcesPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\ExtractSourcesPromptFactory::makePrompt() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/ExtractSourcesPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\GenerateWatchFileQueryPromptFactory::getContent() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/GenerateWatchFileQueryPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\GenerateWatchFileQueryPromptFactory::getExpectedResponseFormat() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/GenerateWatchFileQueryPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\GenerateWatchFileQueryPromptFactory::getExpectedResponseFormat() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/GenerateWatchFileQueryPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\GenerateWatchFileQueryPromptFactory::makePrompt() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/GenerateWatchFileQueryPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\GoogleSubquestionsGeneratorPromptFactory::getContent() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/GoogleSubquestionsGeneratorPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\GoogleSubquestionsGeneratorPromptFactory::getExpectedResponseFormat() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/GoogleSubquestionsGeneratorPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\GoogleSubquestionsGeneratorPromptFactory::getExpectedResponseFormat() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/GoogleSubquestionsGeneratorPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\GoogleSubquestionsGeneratorPromptFactory::makePrompt() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/GoogleSubquestionsGeneratorPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\Prompt::__construct() has parameter $expectedResponseFormat with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/Prompt.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\PromptTemplateEngineInterface::getExpectedResponseSchema() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/PromptTemplateEngineInterface.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\StrategicQuestionFormalizationPromptFactory::getContent() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/StrategicQuestionFormalizationPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\StrategicQuestionFormalizationPromptFactory::getExpectedResponseFormat() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/StrategicQuestionFormalizationPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\StrategicQuestionFormalizationPromptFactory::getExpectedResponseFormat() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/StrategicQuestionFormalizationPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\StrategicQuestionFormalizationPromptFactory::makePrompt() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/StrategicQuestionFormalizationPromptFactory.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\WatchFileChatSystemInstructionPrompt::getContent() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/WatchFileChatSystemInstructionPrompt.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\WatchFileChatSystemInstructionPrompt::getExpectedResponseFormat() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/WatchFileChatSystemInstructionPrompt.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\WatchFileChatSystemInstructionPrompt::getExpectedResponseFormat() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/WatchFileChatSystemInstructionPrompt.php
+
+		-
+			rawMessage: 'Method App\Domain\AI\Prompt\WatchFileChatSystemInstructionPrompt::makePrompt() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/AI/Prompt/WatchFileChatSystemInstructionPrompt.php
+
+		-
+			rawMessage: 'Property App\Domain\Actor\Actor::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/Actor/Actor.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Content\FunctionCallContent::__construct() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Content/FunctionCallContent.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Content\FunctionCallContent::getParameters() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Content/FunctionCallContent.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Content\FunctionCallContent::setParameters() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Content/FunctionCallContent.php
+
+		-
+			rawMessage: Property App\Domain\Chat\Content\FunctionCallContent::$parameters type has no value type specified in iterable type array.
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Content/FunctionCallContent.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Content\FunctionResponseContent::__construct() has parameter $metadata with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Content/FunctionResponseContent.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Content\FunctionResponseContent::__construct() has parameter $result with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Content/FunctionResponseContent.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Content\FunctionResponseContent::getMetadata() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Content/FunctionResponseContent.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Content\FunctionResponseContent::getResult() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Content/FunctionResponseContent.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Content\FunctionResponseContent::setMetadata() has parameter $metadata with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Content/FunctionResponseContent.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Content\FunctionResponseContent::setResult() has parameter $result with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Content/FunctionResponseContent.php
+
+		-
+			rawMessage: Property App\Domain\Chat\Content\FunctionResponseContent::$metadata type has no value type specified in iterable type array.
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Content/FunctionResponseContent.php
+
+		-
+			rawMessage: Property App\Domain\Chat\Content\FunctionResponseContent::$result type has no value type specified in iterable type array.
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Content/FunctionResponseContent.php
+
+		-
+			rawMessage: 'Property App\Domain\Chat\Content\MessageContent::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/Chat/Content/MessageContent.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Conversation::getMetadata() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Conversation.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Conversation::setMetadata() has parameter $metadata with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Conversation.php
+
+		-
+			rawMessage: 'Property App\Domain\Chat\Conversation::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/Chat/Conversation.php
+
+		-
+			rawMessage: Property App\Domain\Chat\Conversation::$metadata type has no value type specified in iterable type array.
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Conversation.php
+
+		-
+			rawMessage: 'Property App\Domain\Chat\Conversation::$title type mapping mismatch: database can contain string|null but property expects string.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/Chat/Conversation.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Message::getMetadata() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Message.php
+
+		-
+			rawMessage: 'Method App\Domain\Chat\Message::setMetadata() has parameter $metadata with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Message.php
+
+		-
+			rawMessage: 'Property App\Domain\Chat\Message::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/Chat/Message.php
+
+		-
+			rawMessage: Property App\Domain\Chat\Message::$metadata type has no value type specified in iterable type array.
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Chat/Message.php
+
+		-
+			rawMessage: 'Property App\Domain\Organisation\Organisation::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/Organisation/Organisation.php
+
+		-
+			rawMessage: 'Property App\Domain\Organisation\OrganisationUser::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/Organisation/OrganisationUser.php
+
+		-
+			rawMessage: 'Property App\Domain\Collect\CollectTask::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/Collect/CollectTask.php
+
+		-
+			rawMessage: 'Method App\Domain\Source\Source::getWatchFile() should return App\Domain\WatchFile\WatchFile but returns App\Domain\WatchFile\WatchFile|null.'
+			identifier: return.type
+			count: 1
+			path: src/Domain/Source/Source.php
+
+		-
+			rawMessage: 'Method App\Domain\Source\Source::updateParameters() has parameter $parameters with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Source/Source.php
+
+		-
+			rawMessage: 'Property App\Domain\Source\Source::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/Source/Source.php
+
+		-
+			rawMessage: Property App\Domain\Source\Source::$parameters type has no value type specified in iterable type array.
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Domain/Source/Source.php
+
+		-
+			rawMessage: 'Property App\Domain\SourceActivity\SourceActivity::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/SourceActivity/SourceActivity.php
+
+		-
+			rawMessage: 'Property App\Domain\User\User::$email type mapping mismatch: database can contain string|null but property expects non-empty-string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/User/User.php
+
+		-
+			rawMessage: 'Property App\Domain\User\User::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/User/User.php
+
+		-
+			rawMessage: 'Strict comparison using === between '''' and non-empty-string will always evaluate to false.'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: src/Domain/User/User.php
+
+		-
+			rawMessage: 'Property App\Domain\User\UserFavoriteWatchFile::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/User/UserFavoriteWatchFile.php
+
+		-
+			rawMessage: 'Method App\Domain\WatchFile\SearchQuery::getSearchResults() return type with generic interface Doctrine\Common\Collections\Collection does not specify its types: TKey, T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Domain/WatchFile/SearchQuery.php
+
+		-
+			rawMessage: 'Parameter #1 $searchQuery of method App\Domain\WatchFile\SearchResult::setSearchQuery() expects App\Domain\WatchFile\SearchQuery, null given.'
+			identifier: argument.type
+			count: 1
+			path: src/Domain/WatchFile/SearchQuery.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\SearchQuery::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/WatchFile/SearchQuery.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\SearchQuery::$searchResults type mapping mismatch: property can contain Doctrine\Common\Collections\Collection but database expects Doctrine\Common\Collections\Collection&iterable<App\Domain\WatchFile\SearchResult>.'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Domain/WatchFile/SearchQuery.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\SearchQuery::$searchResults with generic interface Doctrine\Common\Collections\Collection does not specify its types: TKey, T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Domain/WatchFile/SearchQuery.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\SearchResult::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/WatchFile/SearchResult.php
+
+		-
+			rawMessage: 'Method App\Domain\WatchFile\StrategicQuestion::getSearchQueries() return type with generic interface Doctrine\Common\Collections\Collection does not specify its types: TKey, T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Domain/WatchFile/StrategicQuestion.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\StrategicQuestion::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/WatchFile/StrategicQuestion.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\StrategicQuestion::$searchQueries type mapping mismatch: property can contain Doctrine\Common\Collections\Collection but database expects Doctrine\Common\Collections\Collection&iterable<App\Domain\WatchFile\SearchQuery>.'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Domain/WatchFile/StrategicQuestion.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\StrategicQuestion::$searchQueries with generic interface Doctrine\Common\Collections\Collection does not specify its types: TKey, T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Domain/WatchFile/StrategicQuestion.php
+
+		-
+			rawMessage: 'Method App\Domain\WatchFile\WatchFile::getAnalysisResults() return type with generic interface Doctrine\Common\Collections\Collection does not specify its types: TKey, T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Method App\Domain\WatchFile\WatchFile::getId() should return string but returns string|null.'
+			identifier: return.type
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Method App\Domain\WatchFile\WatchFile::getStrategicQuestions() return type with generic interface Doctrine\Common\Collections\Collection does not specify its types: TKey, T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Method App\Domain\WatchFile\WatchFile::getUpdatedAt() should return DateTimeImmutable but returns DateTimeImmutable|null.'
+			identifier: return.type
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Parameter #1 $p of method Doctrine\Common\Collections\Collection<(int|string),mixed>::filter() expects Closure(mixed, int|string): bool, Closure(App\Domain\WatchFile\StrategicQuestion): bool given.'
+			identifier: argument.type
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Parameter #1 $p of method Doctrine\Common\Collections\Collection<(int|string),mixed>::filter() expects Closure(mixed, int|string): bool, Closure(App\Domain\WatchFile\WatchFileActor): bool given.'
+			identifier: argument.type
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Parameter #1 $watchFileActor of method App\Domain\WatchFile\WatchFile::removeWatchFileActor() expects App\Domain\WatchFile\WatchFileActor, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\WatchFile::$analysisResults type mapping mismatch: property can contain Doctrine\Common\Collections\Collection but database expects Doctrine\Common\Collections\Collection&iterable<App\Domain\WatchFile\AnalysisResult>.'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\WatchFile::$analysisResults with generic interface Doctrine\Common\Collections\Collection does not specify its types: TKey, T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\WatchFile::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\WatchFile::$strategicQuestions type mapping mismatch: property can contain Doctrine\Common\Collections\Collection but database expects Doctrine\Common\Collections\Collection&iterable<App\Domain\WatchFile\StrategicQuestion>.'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\WatchFile::$strategicQuestions with generic interface Doctrine\Common\Collections\Collection does not specify its types: TKey, T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\WatchFile::$watchFileActors type mapping mismatch: property can contain Doctrine\Common\Collections\Collection but database expects Doctrine\Common\Collections\Collection&iterable<App\Domain\WatchFile\WatchFileActor>.'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\WatchFile::$watchFileActors with generic interface Doctrine\Common\Collections\Collection does not specify its types: TKey, T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\WatchFile::$watchFileUsers type mapping mismatch: property can contain Doctrine\Common\Collections\Collection but database expects Doctrine\Common\Collections\Collection&iterable<App\Domain\WatchFile\WatchFileUser>.'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\WatchFile::$watchFileUsers with generic interface Doctrine\Common\Collections\Collection does not specify its types: TKey, T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Domain/WatchFile/WatchFile.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\WatchFileActor::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/WatchFile/WatchFileActor.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFile\WatchFileUser::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/WatchFile/WatchFileUser.php
+
+		-
+			rawMessage: 'Property App\Domain\WatchFileActivity\WatchFileActivity::$id type mapping mismatch: database can contain Symfony\Component\Uid\Uuid but property expects string|null.'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Domain/WatchFileActivity/WatchFileActivity.php
+
+		-
+			rawMessage: 'Method App\Infrastructure\AI\Prompt\PromptTwigTemplateEngine::getExpectedResponseSchema() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Infrastructure/AI/Prompt/PromptTwigTemplateEngine.php
+
+		-
+			rawMessage: 'Method App\Infrastructure\AI\Prompt\PromptTwigTemplateEngine::getExpectedResponseSchema() should return array|null but returns mixed.'
+			identifier: return.type
+			count: 1
+			path: src/Infrastructure/AI/Prompt/PromptTwigTemplateEngine.php
+
+		-
+			rawMessage: 'Method App\Infrastructure\Chat\ConversationDoctrineGateway::getLastConversationByWatchFileId() should return App\Domain\Chat\Conversation but returns mixed.'
+			identifier: return.type
+			count: 1
+			path: src/Infrastructure/Chat/ConversationDoctrineGateway.php
+
+		-
+			rawMessage: Type App\Domain\Shared\CreatedByInterface in generic type Doctrine\Persistence\Event\LifecycleEventArgs<App\Domain\Shared\CreatedByInterface> in PHPDoc tag @param for parameter $args is not subtype of template type TObjectManager of Doctrine\Persistence\ObjectManager of class Doctrine\Persistence\Event\LifecycleEventArgs.
+			identifier: generics.notSubtype
+			count: 1
+			path: src/Infrastructure/Shared/CreatedByDoctrineListener.php
+
+		-
+			rawMessage: 'Method App\Infrastructure\WatchFile\ConversationMessageProcessor::__construct() has parameter $persistProcessor with generic interface ApiPlatform\State\ProcessorInterface but does not specify its types: T1, T2'
+			identifier: missingType.generics
+			count: 1
+			path: src/Infrastructure/WatchFile/ConversationMessageProcessor.php
+
+		-
+			rawMessage: 'Method App\Infrastructure\WatchFile\ConversationMessageProcessor::process() should return App\Domain\Chat\Conversation but returns mixed.'
+			identifier: return.type
+			count: 1
+			path: src/Infrastructure/WatchFile/ConversationMessageProcessor.php
+
+		-
+			rawMessage: 'Property App\Infrastructure\WatchFile\ConversationMessageProcessor::$persistProcessor is never read, only written.'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Infrastructure/WatchFile/ConversationMessageProcessor.php
+
+		-
+			rawMessage: 'Method App\Infrastructure\WatchFile\LastWatchFileConversationProvider::provide() never returns iterable<App\Domain\Chat\Conversation> so it can be removed from the return type.'
+			identifier: return.unusedType
+			count: 1
+			path: src/Infrastructure/WatchFile/LastWatchFileConversationProvider.php
+
+		-
+			rawMessage: 'Parameter #1 $watchFileId of method App\Domain\Chat\ConversationGatewayInterface::getLastConversationByWatchFileId() expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/Infrastructure/WatchFile/LastWatchFileConversationProvider.php
+
+		-
+			rawMessage: 'Method App\Infrastructure\WatchFile\WatchFileConversationProcessor::process() should return App\Domain\Chat\Conversation but returns mixed.'
+			identifier: return.type
+			count: 1
+			path: src/Infrastructure/WatchFile/WatchFileConversationProcessor.php
+
+		-
+			rawMessage: 'Parameter $watchFileId of class App\Application\WatchFile\Chat\CreateConversationAction constructor expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/Infrastructure/WatchFile/WatchFileConversationProcessor.php
+
+		-
+			rawMessage: 'PHPDoc tag @var for variable $parts contains generic interface Doctrine\Common\Collections\Collection but does not specify its types: TKey, T'
+			identifier: missingType.generics
+			count: 1
+			path: src/Infrastructure/WatchFile/WatchFileFunctionCallEventListener.php
+
+		-
+			rawMessage: 'Strict comparison using === between null and App\Domain\WatchFile\WatchFile will always evaluate to false.'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: src/Infrastructure/WatchFile/WatchFileFunctionCallEventListener.php
+
+		-
+			rawMessage: 'Method App\Infrastructure\WatchFileActivity\WatchFileActivityDoctrineGateway::getByUserPaginated() should return ApiPlatform\State\Pagination\PaginatorInterface<App\Domain\WatchFileActivity\WatchFileActivity> but returns ApiPlatform\Doctrine\Orm\Paginator.'
+			identifier: return.type
+			count: 1
+			path: src/Infrastructure/WatchFileActivity/WatchFileActivityDoctrineGateway.php
+
+		-
+			rawMessage: 'Method App\Infrastructure\WatchFileActivity\WatchFileActivityDoctrineGateway::getByWatchFilePaginated() should return ApiPlatform\State\Pagination\PaginatorInterface<App\Domain\WatchFileActivity\WatchFileActivity> but returns ApiPlatform\Doctrine\Orm\Paginator.'
+			identifier: return.type
+			count: 1
+			path: src/Infrastructure/WatchFileActivity/WatchFileActivityDoctrineGateway.php
+
+		-
+			rawMessage: 'Parameter #1 $id of method App\Domain\WatchFile\WatchFileGatewayInterface::get() expects string, string|null given.'
+			identifier: argument.type
+			count: 1
+			path: src/UserInterface/Http/Dev/PromptController.php
+
+		-
+			rawMessage: 'Cannot call method getActor() on App\Domain\WatchFile\WatchFileActor|false.'
+			identifier: method.nonObject
+			count: 4
+			path: tests/Units/Application/WatchFile/Actor/AddActorHandlerTest.php
+
+		-
+			rawMessage: 'Cannot call method getAddedByMessage() on App\Domain\WatchFile\WatchFileActor|false.'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Units/Application/WatchFile/Actor/AddActorHandlerTest.php
+
+		-
+			rawMessage: 'Cannot call method getExplanations() on App\Domain\WatchFile\WatchFileActor|false.'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Units/Application/WatchFile/Actor/AddActorHandlerTest.php
+
+		-
+			rawMessage: 'Cannot call method getScore() on App\Domain\WatchFile\WatchFileActor|false.'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Units/Application/WatchFile/Actor/AddActorHandlerTest.php
+
+		-
+			rawMessage: 'Cannot call method getType() on App\Domain\WatchFile\WatchFileActor|false.'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Units/Application/WatchFile/Actor/AddActorHandlerTest.php
+
+		-
+			rawMessage: 'Method App\Tests\Units\Infrastructure\AI\Prompt\NullPromptTemplateEngine::getExpectedResponseSchema() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Units/Infrastructure/AI/Prompt/NullPromptTemplateEngine.php
+
+
+		-
+			rawMessage: 'Call to function method_exists() with ''Symfony\\Component\\Dotenv\\Dotenv'' and ''bootEnv'' will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/bootstrap.php
+

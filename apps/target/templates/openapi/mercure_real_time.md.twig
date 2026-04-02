@@ -1,0 +1,84 @@
+## Real-Time Updates (Mercure)
+
+This API supports real-time updates using [Mercure](https://mercure.rocks/), a protocol built on top of Server-Sent
+Events (SSE).
+
+### Mercure Hub Discovery
+
+The Mercure hub URL and topic are automatically discovered via `Link` headers on supported GET endpoints.
+Two headers are returned following [RFC 8288](https://tools.ietf.org/html/rfc8288):
+
+```http
+Link: <https://basil.local/.well-known/mercure>; rel="mercure"
+Link: </users/{userId}/watch-files/{watchFileId}>; rel="topic"
+```
+
+**Supported endpoints for auto-discovery:**
+
+| Endpoint                               | Topic                                                     |
+|----------------------------------------|-----------------------------------------------------------|
+| `GET /api/watch_files/{id}`            | `/users/{userId}/watch-files/{watchFileId}`               |
+| `GET /api/conversations/{id}`          | `/users/{userId}/conversations/{conversationId}`          |
+| `GET /api/conversations/{id}/messages` | `/users/{userId}/conversations/{conversationId}/messages` |
+
+### Authentication
+
+To subscribe to real-time updates, you need a JWT token obtained from `/api/security/real-time/token`. This token grants
+read-only access to resources you are authorized to view.
+
+### Topic Structure
+
+Topics follow a user-scoped pattern for security:
+
+| Resource | Topic Pattern |
+|----------|---------------|
+| WatchFile | `/users/{userId}/watch-files/{watchFileId}` |
+| Conversation | `/users/{userId}/conversations/{conversationId}` |
+| Conversation Messages | `/users/{userId}/conversations/{conversationId}/messages` |
+
+### Subscribing to Updates
+
+1. Obtain a Mercure token: `GET /api/security/real-time/token`
+2. Fetch a resource to discover the hub URL and topic from `Link` headers
+3. Connect to the Mercure hub with the token
+4. Subscribe to topics using the EventSource API
+
+**Example (JavaScript):**
+```javascript
+// 1. Get Mercure token
+const token = await fetch('/api/security/real-time/token')
+  .then(r => r.json())
+  .then(d => d.token);
+
+// 2. Fetch resource to discover topic from Link header
+const response = await fetch(`/api/watch_files/${watchFileId}`);
+const linkHeader = response.headers.get('Link');
+const mercureMatch = linkHeader.match(/<([^>]+)>;\s*rel="mercure"/);
+const mercure = mercureMatch ? mercureMatch[1] : null;
+const topicMatch = linkHeader.match(/<([^>]+)>;\s*rel="topic"/);
+const topic = topicMatch ? topicMatch[1] : null;
+
+// 3. Subscribe to real-time updates
+const url = new URL(mercure);
+url.searchParams.append('topic', topic);
+
+const eventSource = new EventSource(url, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+eventSource.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  console.log('Update received:', data);
+};
+```
+
+### Update Events
+
+Updates are published when resources change:
+- **WatchFile**: Actors added, sources added, status changes
+- **Conversation**: Metadata updates
+- **Conversation Messages**: New messages, typing indicators
+
+### Token Expiration
+
+Tokens expire after {{ token_expiration_hours }} hour(s). Reconnect with a fresh token before expiration.

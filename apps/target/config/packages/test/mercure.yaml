@@ -1,0 +1,10 @@
+# Override mercure configuration for test environment
+# Using dummy values since NullHub is used instead of real Mercure
+mercure:
+  hubs:
+    default:
+      url: 'http://localhost/.well-known/mercure'
+      public_url: 'http://localhost/.well-known/mercure'
+      jwt:
+        secret: 'test-secret-key'
+        publish: '*'

@@ -1,0 +1,25 @@
+framework:
+  rate_limiter:
+    # For healthcheck endpoint (stricter to prevent abuse)
+    healthcheck_api:
+      policy: 'sliding_window'
+      limit: 30
+      interval: '1 minute'
+
+    # For logo endpoint
+    logo_api:
+      policy: 'sliding_window'
+      limit: 100
+      interval: '1 hour'
+
+    # Global rate limit by IP (for anonymous requests)
+    api_anonymous:
+      policy: 'sliding_window'
+      limit: 500
+      interval: '1 hour'
+
+    # Rate limit by authenticated user (more generous)
+    api_authenticated:
+      policy: 'sliding_window'
+      limit: 2000
+      interval: '1 hour'

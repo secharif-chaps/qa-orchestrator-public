@@ -1,0 +1,3 @@
+watchfile.share_notification.added_subject: 'Nouveau dossier de veille partagé avec vous'
+watchfile.share_notification.updated_subject: 'Permissions du dossier de veille mises à jour'
+watchfile.share_notification.removed_subject: 'Dossier de veille partagé retiré'

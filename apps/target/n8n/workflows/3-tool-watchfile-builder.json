@@ -1,0 +1,1048 @@
+{
+  "updatedAt": "2026-01-06T10:39:07.510Z",
+  "createdAt": "2025-11-13T22:15:08.003Z",
+  "id": "N87xE62THnkDjs2x",
+  "name": "3. Tool - WatchFile Builder",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "watchFile",
+              "type": "any"
+            },
+            {
+              "name": "userMessageId"
+            },
+            {
+              "name": "conversationId"
+            },
+            {
+              "name": "actor",
+              "type": "any"
+            },
+            {
+              "name": "source",
+              "type": "any"
+            },
+            {
+              "name": "referenceSubject"
+            },
+            {
+              "name": "context",
+              "type": "any"
+            },
+            {
+              "name": "language"
+            },
+            {
+              "name": "sourceTypes",
+              "type": "any"
+            },
+            {
+              "name": "collectors",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -5008,
+        -2144
+      ],
+      "id": "82454620-4795-4c38-b522-a843f4c6e084",
+      "name": "Workflow_Trigger_BuildWatchFile",
+      "alwaysOutputData": true,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * Calculate Levenshtein distance between two strings\n * @param {string} str1 - First string\n * @param {string} str2 - Second string\n * @returns {number} - Levenshtein distance\n */\nfunction levenshteinDistance(str1, str2) {\n  const len1 = str1.length;\n  const len2 = str2.length;\n  \n  // Create matrix\n  const matrix = Array(len1 + 1).fill(null).map(() => Array(len2 + 1).fill(0));\n  \n  // Initialize first column and row\n  for (let i = 0; i <= len1; i++) matrix[i][0] = i;\n  for (let j = 0; j <= len2; j++) matrix[0][j] = j;\n  \n  // Fill matrix\n  for (let i = 1; i <= len1; i++) {\n    for (let j = 1; j <= len2; j++) {\n      const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;\n      matrix[i][j] = Math.min(\n        matrix[i - 1][j] + 1,      // deletion\n        matrix[i][j - 1] + 1,      // insertion\n        matrix[i - 1][j - 1] + cost // substitution\n      );\n    }\n  }\n  \n  return matrix[len1][len2];\n}\n\n/**\n * Calculate similarity percentage between two strings\n * @param {string} str1 - First string\n * @param {string} str2 - Second string\n * @returns {number} - Similarity percentage (0-100)\n */\nfunction similarity(str1, str2) {\n  const distance = levenshteinDistance(str1.toLowerCase(), str2.toLowerCase());\n  const maxLength = Math.max(str1.length, str2.length);\n  return ((maxLength - distance) / maxLength) * 100;\n}\n\n/**\n * Check if two strings are duplicates\n * @param {string} str1 - First string\n * @param {string} str2 - Second string\n * @param {number} distanceThreshold - Max Levenshtein distance (default: 3)\n * @param {number} similarityThreshold - Min similarity percentage (default: 85)\n * @returns {boolean} - True if duplicate detected\n */\nfunction isDuplicate(str1, str2, distanceThreshold = 3, similarityThreshold = 85) {\n  // Add null/undefined checks\n  if (!str1 || !str2) return false;\n  \n  const distance = levenshteinDistance(str1.toLowerCase(), str2.toLowerCase());\n  const sim = similarity(str1, str2);\n  \n  return distance < distanceThreshold || sim > similarityThreshold;\n}\n\nconst items = $input.all();\n\nitems.forEach(item => {\n  const data = item.json;\n  \n  // Check actor duplicates\n  if (data.actor && data.watchFile?.watchFileActors) {\n    const newLabel = data.actor.label;\n    const existingActors = data.watchFile.watchFileActors;\n    \n    // Add safety check for label existence\n    const duplicateFound = existingActors.filter(existing => {\n      if (!existing?.actor?.label || !newLabel) return false;\n      return isDuplicate(newLabel, existing.actor.label);\n    });\n\n    item.json.actor.duplicates = duplicateFound;\n    item.json.actor.isDuplicated = duplicateFound.length > 0;\n  }\n  \n  // Check source duplicates\n  if (data.source && data.watchFile?.sources) {\n    const newUrl = data.source.url;\n    const newDomain = data.source.primaryDomain;\n    const newQuery = data.source.query;\n    \n    const duplicateFound = data.watchFile.sources.filter(existing => {\n      // Add null checks for all comparisons\n      if (!existing) return false;\n      \n      // Exact URL match\n      if (newUrl && existing.url && existing.url === newUrl) return true;\n      \n      // Same domain + same query\n      if (newDomain && newQuery && \n          existing.primaryDomain === newDomain && \n          existing.query === newQuery) return true;\n      \n      return false;\n    });\n    \n    item.json.source.duplicates = duplicateFound;\n    item.json.source.isDuplicated = duplicateFound.length > 0;\n  }\n});\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4336,
+        -2240
+      ],
+      "id": "f8622ff0-28a1-4da0-89c5-051ef8a84fab",
+      "name": "Code_Check_DuplicateWatchFile"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').item.json.language === 'en' ? 'Invalid input: you must specify at least an actor, a source, or a reference subject (all three cannot be null simultaneously).' : 'Entrée non valide : vous devez spécifier au moins un acteur, une source ou un sujet de référence (les trois ne peuvent pas être nuls simultanément).').toJsonString() }},\n  \"messageId\": {{ $json.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $json.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $json.watchFile?.id?.toJsonString() || 'null' }},\n  \"context\": {\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4336,
+        -2432
+      ],
+      "id": "e7838548-124d-4fe1-9cfc-29b9fa0b1e77",
+      "name": "Feedback_InvalidInput"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "numberInputs": 3,
+        "output": "empty"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -3440,
+        -2080
+      ],
+      "id": "389cd656-8765-4a44-ba34-46af743f0e83",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": true,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').item.json.language === 'en' ? `The execution was completed successfully. See the \"actor\", \"source\" and \"referenceSubject\" values for more details.` : `L'exécution s'est terminé avec succès, consulté les valeurs \"acteur\", \"source\" et \"referenceSubject\" pour plus de détails.`).toJsonString() }},\n  \"messageId\": {{ $('Code_Check_DuplicateWatchFile').item.json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Check_DuplicateWatchFile').item.json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Check_DuplicateWatchFile').item.json?.watchFile.id?.toJsonString() || 'null' }},\n  \"context\": {\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  }\n}",
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2992,
+        -2064
+      ],
+      "id": "a05523c4-18ac-42cb-aed1-4da0021a33e6",
+      "name": "Feedback_Final"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  // Helper: parse JSON string safely\n  const safeJsonParse = (value) => {\n    if (typeof value === 'string') {\n      try {\n        return JSON.parse(value);\n      } catch (e) {\n        return value; // Not valid JSON, keep original\n      }\n    }\n    return value; // Already parsed or not a string\n  };\n\n  // Parse watchFile\n  if (item.json?.watchFile) {\n    item.json.watchFile = safeJsonParse(item.json.watchFile);\n  }\n\n  // Parse actor\n  if (item.json?.actor) {\n    item.json.actor = safeJsonParse(item.json.actor);\n  } else if (item.json?.actor === '') {\n    item.json.actor = null;\n  }\n\n  // Parse source\n  if (item.json?.source) {\n    item.json.source = safeJsonParse(item.json.source);\n  } else if (item.json?.source === '') {\n    item.json.source = null;\n  }\n\n  // Parse referenceSubject\n  if (item.json?.referenceSubject === '') {\n    item.json.referenceSubject = null;\n  }\n\n  // Parse context\n  if (item.json?.context) {\n    item.json.context = safeJsonParse(item.json.context);\n\n    if (typeof item.json.context.BusNameStamp !== 'string') {\n      item.json.context.BusNameStamp = JSON.stringify(item.json.context.BusNameStamp);\n    }\n\n    if (typeof item.json.context.RouterContextStamp !== 'string') {\n      item.json.context.RouterContextStamp = JSON.stringify(item.json.context.RouterContextStamp);\n    }\n  }\n\n  // Parse sourceTypes\n  if (item.json?.sourceTypes) {\n    item.json.sourceTypes = safeJsonParse(item.json.sourceTypes);\n  }\n\n  // Parse collectors\n  if (item.json?.collectors) {\n    item.json.collectors = safeJsonParse(item.json.collectors);\n  }\n\n  // Default language\n  item.json.language = item.json?.language || 'en';\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4784,
+        -2240
+      ],
+      "id": "59e3ab86-3f54-40f0-8df5-995ac5e4001e",
+      "name": "Code_Initialize_WatchFileData"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "7uS3PqE9HezIqOd1",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/7uS3PqE9HezIqOd1",
+          "cachedResultName": "3.c WatchFile Builder - Update reference subject"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "watchFile": "={{ $json.watchFile }}",
+            "conversationId": "={{ $json.conversationId }}",
+            "BusNameStamp": "={{ $json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $json.context.RouterContextStamp }}",
+            "language": "={{ $json.language }}",
+            "referenceSubject": "={{ $json.referenceSubject }}",
+            "messageId": "={{ $json.userMessageId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "watchFile",
+              "displayName": "watchFile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "referenceSubject",
+              "displayName": "referenceSubject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -3888,
+        -1584
+      ],
+      "id": "2f66ebb6-79ff-4dbf-91b1-f7cf324fc7b5",
+      "name": "Workflow_Call_UpdateReferenceSubject",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "HLe3ZYDy6oiBINzb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/HLe3ZYDy6oiBINzb",
+          "cachedResultName": "3.a WatchFile Builder - Add Actor"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "watchFile": "={{ $json.watchFile }}",
+            "conversationId": "={{ $json.conversationId }}",
+            "messageId": "={{ $json.userMessageId }}",
+            "language": "={{ $json.language }}",
+            "actor": "={{ $json.actor }}",
+            "BusNameStamp": "={{ $json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $json.context.RouterContextStamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "watchFile",
+              "displayName": "watchFile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "actor",
+              "displayName": "actor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -3888,
+        -2480
+      ],
+      "id": "15bcb8f2-7a82-4665-a3f0-218e454ceabd",
+      "name": "Workflow_Call_AddActor",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "U5xXoj93ilunzZGz",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/U5xXoj93ilunzZGz",
+          "cachedResultName": "3.b WatchFile Builder - Add Source"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "watchFile": "={{ $json.watchFile }}",
+            "conversationId": "={{ $json.conversationId }}",
+            "BusNameStamp": "={{ $json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $json.context.RouterContextStamp }}",
+            "language": "={{ $json.language }}",
+            "messageId": "={{ $json.userMessageId }}",
+            "source": "={{ $json.source }}",
+            "sourceTypes": "={{ $json.sourceTypes }}",
+            "collectors": "={{ $json.collectors }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "watchFile",
+              "displayName": "watchFile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "collectors",
+              "displayName": "collectors",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            },
+            {
+              "id": "sourceTypes",
+              "displayName": "sourceTypes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -3888,
+        -2000
+      ],
+      "id": "a1c774f3-6a8f-4e30-afd7-bd694be4ee29",
+      "name": "Workflow_Call_AddSource",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').item.json.language === 'en' ? `The AI agent is experiencing a problem. Please try again later.` : `L'agent AI rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }},\n  \"context\": {\n    \"error\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Code_Initialize_WatchFileData').item.json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Initialize_WatchFileData').item.json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3664,
+        -2544
+      ],
+      "id": "81df9803-a2e8-40b3-94c2-bfdba173787d",
+      "name": "Feedback_ActorWorkflowError"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').item.json.language === 'en' ? `The AI agent is experiencing a problem. Please try again later.` : `L'agent AI rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }},\n  \"context\": {\n    \"error\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Code_Initialize_WatchFileData').item.json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Initialize_WatchFileData').item.json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3664,
+        -1920
+      ],
+      "id": "5c6e63c5-a4d3-4394-8be7-a49715aeea37",
+      "name": "Feedback_SourceWorkflowError"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').item.json.language === 'en' ? `The AI agent is experiencing a problem. Please try again later.` : `L'agent AI rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }},\n  \"context\": {\n    \"error\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Code_Initialize_WatchFileData').item.json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Initialize_WatchFileData').item.json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3664,
+        -1520
+      ],
+      "id": "c907dffb-190b-4345-9a66-a2378d3e2c72",
+      "name": "Feedback_UpdateReferenceSubjectWorkflowError"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "deff2809-99e4-4163-b643-262168df15d8",
+              "leftValue": "={{ $json.actor }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "91506324-06f0-4403-b849-7ec3807bea48",
+              "leftValue": "={{ $json.source }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c6e401e9-b051-4c30-ad42-e9ae67bcdaef",
+              "leftValue": "={{ $json.referenceSubject }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4560,
+        -2240
+      ],
+      "id": "75a4a78f-f3b9-407c-8fed-12aa2e4f26b8",
+      "name": "Condition_Check_Input"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "10db59d7-1286-4c88-aed3-bc4f32d3772f",
+              "leftValue": "={{ $json.actor }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4112,
+        -2400
+      ],
+      "id": "df5818e8-26c0-41e9-826f-73f42c395e57",
+      "name": "Condition_Check_HasActor"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "10db59d7-1286-4c88-aed3-bc4f32d3772f",
+              "leftValue": "={{ $json.source }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4112,
+        -2064
+      ],
+      "id": "1334d65c-24b0-454f-a0e4-5a7c2dded1a6",
+      "name": "Condition_Check_HasSource"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "10db59d7-1286-4c88-aed3-bc4f32d3772f",
+              "leftValue": "={{ $json.referenceSubject }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4112,
+        -1664
+      ],
+      "id": "2555fd75-823f-45eb-a488-f4490a48b374",
+      "name": "Condition_Check_UpdateReferenceSubjectNeeded"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "runId",
+              "value": "={{ $json._testMetadata.runId }}"
+            },
+            {
+              "key": "testCaseId",
+              "value": "={{ $json._testMetadata.testCaseId }}"
+            },
+            {
+              "key": "testCaseName",
+              "value": "={{ $json._testMetadata.testCaseName }}"
+            },
+            {
+              "key": "datasetFile",
+              "value": "={{ $json._testMetadata.datasetFile }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -5008,
+        -2336
+      ],
+      "id": "e82585a0-367e-49a4-ae80-8afccbc5e55f",
+      "name": "ExecutionData_Store_TestMetadata"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "434e990f-4a3c-4e79-b497-cf902856d736",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -5456,
+        -2336
+      ],
+      "id": "1e696024-0944-41d7-b29c-f3fbad9adc6f",
+      "name": "Webhook_Trigger_TestInput",
+      "webhookId": "434e990f-4a3c-4e79-b497-cf902856d736"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "= {{ $json.body.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5232,
+        -2336
+      ],
+      "id": "e186f52f-c78b-4af9-a5d6-f6949ae12e8c",
+      "name": "Set_Format_TestInput"
+    },
+    {
+      "parameters": {
+        "jsCode": "function getNodeData(nodeName) {\n  try {\n    const items = $(nodeName).all();\n    return items.length > 0 ? $(nodeName).last().json : null;\n  } catch (error) {\n    return null;\n  }\n}\n\nfunction flattenObject(key, data) {\n  if (data && data.hasOwnProperty(key)) {\n    return data[key];\n  }\n  return data;\n}\n\nfunction getNodeValue(key, errorNodeName, successNodeName) {\n  const error = getNodeData(errorNodeName);\n  if (error !== null) {\n    const result = {[key]: flattenObject(key, error)};\n    return result;\n  }\n  \n  const feedback = getNodeData(successNodeName);\n  if (feedback !== null) {\n    const result = {[key]: flattenObject(key, feedback)};\n    return result;\n  }\n  return null;\n}\n\nconst result = {\n  actor: null,\n  source: null,\n  referenceSubject: null,\n  ...getNodeValue('actor', 'Feedback_ActorWorkflowError', 'Workflow_Call_AddActor'),\n  ...getNodeValue('source', 'Feedback_SourceWorkflowError', 'Workflow_Call_AddSource'),\n  ...getNodeValue('referenceSubject', 'Feedback_UpdateReferenceSubjectWorkflowError', 'Workflow_Call_UpdateReferenceSubject')\n};\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3216,
+        -2064
+      ],
+      "id": "911aa0a1-5584-46cf-9e08-3c1a69c51d36",
+      "name": "Code_Merge_SubWorkflowData"
+    }
+  ],
+  "connections": {
+    "Workflow_Trigger_BuildWatchFile": {
+      "main": [
+        [
+          {
+            "node": "Code_Initialize_WatchFileData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Check_DuplicateWatchFile": {
+      "main": [
+        [
+          {
+            "node": "Condition_Check_HasActor",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Condition_Check_HasSource",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code_Merge_SubWorkflowData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Initialize_WatchFileData": {
+      "main": [
+        [
+          {
+            "node": "Condition_Check_Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Call_UpdateReferenceSubject": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ],
+        [
+          {
+            "node": "Feedback_UpdateReferenceSubjectWorkflowError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Call_AddActor": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Feedback_ActorWorkflowError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Call_AddSource": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Feedback_SourceWorkflowError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback_Final": {
+      "main": [
+        []
+      ]
+    },
+    "Feedback_ActorWorkflowError": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback_SourceWorkflowError": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Feedback_UpdateReferenceSubjectWorkflowError": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Condition_Check_Input": {
+      "main": [
+        [
+          {
+            "node": "Feedback_InvalidInput",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code_Check_DuplicateWatchFile",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Condition_Check_UpdateReferenceSubjectNeeded",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Condition_Check_HasActor": {
+      "main": [
+        [
+          {
+            "node": "Workflow_Call_AddActor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Condition_Check_HasSource": {
+      "main": [
+        [
+          {
+            "node": "Workflow_Call_AddSource",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Condition_Check_UpdateReferenceSubjectNeeded": {
+      "main": [
+        [
+          {
+            "node": "Workflow_Call_UpdateReferenceSubject",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "ExecutionData_Store_TestMetadata": {
+      "main": [
+        [
+          {
+            "node": "Code_Initialize_WatchFileData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook_Trigger_TestInput": {
+      "main": [
+        [
+          {
+            "node": "Set_Format_TestInput",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set_Format_TestInput": {
+      "main": [
+        [
+          {
+            "node": "ExecutionData_Store_TestMetadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Merge_SubWorkflowData": {
+      "main": [
+        [
+          {
+            "node": "Feedback_Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 540,
+    "availableInMCP": false,
+    "timeSavedPerExecution": 60
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "05e22d27620d1717ac398bbf3f2dbdaa9098598488c5baaa743d646b60379aaf"
+  },
+  "versionId": "fd6a1f25-d9d6-4dff-a4a4-a0322ceae592",
+  "versionCounter": 61,
+  "triggerCount": 1,
+  "tags": []
+}

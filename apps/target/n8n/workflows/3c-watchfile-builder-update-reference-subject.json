@@ -1,0 +1,1261 @@
+{
+  "updatedAt": "2026-01-06T16:45:59.545Z",
+  "createdAt": "2025-11-16T19:29:03.886Z",
+  "id": "7uS3PqE9HezIqOd1",
+  "name": "3.c WatchFile Builder - Update reference subject",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.1-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5.1-sweden"
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "name": "reference_subject_relevancy",
+              "schema": "{\n  \"title\": \"WatchFile Reference Subject Evaluation Response\",\n  \"description\": \"Schema for the LLM response when evaluating and optimizing a watchFile reference subject\",\n  \"type\": \"object\",\n  \"required\": [\n    \"should_update\",\n    \"confidence_score\",\n    \"reasoning\",\n    \"optimized_subject\",\n    \"language\",\n    \"key_improvements\",\n    \"filtering_impact\",\n    \"alignment_notes\"\n  ],\n  \"properties\": {\n    \"should_update\": {\n      \"type\": \"boolean\",\n      \"description\": \"Whether the reference subject should be updated based on the evaluation\"\n    },\n    \"confidence_score\": {\n      \"type\": \"integer\",\n      \"description\": \"Confidence score of the modification relevance (0-100). Values ≥30 justify an update.\"\n    },\n    \"reasoning\": {\n      \"type\": \"string\",\n      \"description\": \"Brief explanation of the confidence score and decision rationale (10-150 chars)\"\n    },\n    \"optimized_subject\": {\n      \"type\": \"string\",\n      \"description\": \"The final optimized reference subject (or original if no update recommended). Max 250 chars.\"\n    },\n    \"language\": {\n      \"type\": \"string\",\n      \"description\": \"ISO 639-1 two-letter language code (uppercase, e.g., EN, FR, ES)\"\n    },\n    \"key_improvements\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"List of specific improvements (0-5 items, max 100 chars each)\"\n    },\n    \"filtering_impact\": {\n      \"type\": \"string\",\n      \"description\": \"Brief explanation of how this optimization improves document relevance filtering (10-100 chars)\"\n    },\n    \"alignment_notes\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"monitoring_type\",\n        \"strategic_questions\",\n        \"actors_sources\"\n      ],\n      \"properties\": {\n        \"monitoring_type\": {\n          \"type\": [\"string\", \"null\"],\n          \"description\": \"How the optimized subject aligns with the watchFile's monitoring type (max 200 chars)\"\n        },\n        \"strategic_questions\": {\n          \"type\": [\"string\", \"null\"],\n          \"description\": \"How the optimized subject addresses strategic questions (max 200 chars)\"\n        },\n        \"actors_sources\": {\n          \"type\": [\"string\", \"null\"],\n          \"description\": \"Relevance to configured actors and sources (max 200 chars)\"\n        }\n      },\n      \"additionalProperties\": false\n    }\n  },\n  \"additionalProperties\": false\n}"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2304,
+        -16
+      ],
+      "id": "5a27a46e-bacf-4e7f-8087-ea676626b34b",
+      "name": "LLM_Validator_Primary",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      },
+      "notes": "Model: gpt-4o-mini-sweden | Role: Primary validation LLM | Updated: 2025-11-14 | Reason: Fast and cost-effective for validation tasks"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"title\": \"WatchFile Reference Subject Evaluation Response\",\n  \"description\": \"Schema for the LLM response when evaluating and optimizing a watchFile reference subject\",\n  \"type\": \"object\",\n  \"required\": [\n    \"should_update\",\n    \"confidence_score\",\n    \"reasoning\",\n    \"optimized_subject\",\n    \"language\",\n    \"key_improvements\",\n    \"filtering_impact\",\n    \"alignment_notes\"\n  ],\n  \"properties\": {\n    \"should_update\": {\n      \"type\": \"boolean\",\n      \"description\": \"Whether the reference subject should be updated based on the evaluation\"\n    },\n    \"confidence_score\": {\n      \"type\": \"integer\",\n      \"description\": \"Confidence score of the modification relevance (0-100). Values ≥30 justify an update.\"\n    },\n    \"reasoning\": {\n      \"type\": \"string\",\n      \"description\": \"Brief explanation of the confidence score and decision rationale (10-150 chars)\"\n    },\n    \"optimized_subject\": {\n      \"type\": \"string\",\n      \"description\": \"The final optimized reference subject (or original if no update recommended). Max 250 chars.\"\n    },\n    \"language\": {\n      \"type\": \"string\",\n      \"description\": \"ISO 639-1 two-letter language code (uppercase, e.g., EN, FR, ES)\"\n    },\n    \"key_improvements\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"List of specific improvements (0-5 items, max 100 chars each)\"\n    },\n    \"filtering_impact\": {\n      \"type\": \"string\",\n      \"description\": \"Brief explanation of how this optimization improves document relevance filtering (10-100 chars)\"\n    },\n    \"alignment_notes\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"monitoring_type\",\n        \"strategic_questions\",\n        \"actors_sources\"\n      ],\n      \"properties\": {\n        \"monitoring_type\": {\n          \"type\": [\"string\", \"null\"],\n          \"description\": \"How the optimized subject aligns with the watchFile's monitoring type (max 200 chars)\"\n        },\n        \"strategic_questions\": {\n          \"type\": [\"string\", \"null\"],\n          \"description\": \"How the optimized subject addresses strategic questions (max 200 chars)\"\n        },\n        \"actors_sources\": {\n          \"type\": [\"string\", \"null\"],\n          \"description\": \"Relevance to configured actors and sources (max 200 chars)\"\n        }\n      },\n      \"additionalProperties\": false\n    }\n  },\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -2048,
+        -16
+      ],
+      "id": "c29aaf85-7c07-4bd0-afeb-f919d425bc19",
+      "name": "Parser_Validator_Structured"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-nano-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5-nano-sweden"
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1968,
+        192
+      ],
+      "id": "30ab20c9-e91f-41e1-911f-283b43d9c4a7",
+      "name": "LLM_Validator_Parser",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      },
+      "notes": "Model: Mistral-Small | Role: Structured output parser LLM | Updated: 2025-11-14 | Reason: Self-hosted for data privacy"
+    },
+    {
+      "parameters": {
+        "queue": "agent_responses",
+        "sendInputData": false,
+        "message": "={\n  \"watchFileId\": {{ $('Condition_IsFirstUpdate').item.json.watchFile.id.toJsonString() }},\n  \"referenceSubject\": {{ $json.output.referenceSubject.human.toJsonString() }},\n  \"referenceSubjectLlm\": {{ $json.output.referenceSubject.llm.toJsonString() }},\n  \"messageId\": {{ $('Condition_IsFirstUpdate').item.json.messageId?.toJsonString() ?? null  }}\n}",
+        "options": {
+          "headers": {
+            "header": [
+              {
+                "key": "type",
+                "value": "App\\Application\\WatchFile\\UpdateWatchFileReferenceSubjectAction"
+              },
+              {
+                "key": "X-Message-Stamp-Symfony\\Component\\Messenger\\Stamp\\BusNameStamp",
+                "value": "={{ $('Condition_IsFirstUpdate').item.json.BusNameStamp }}"
+              },
+              {
+                "key": "X-Message-Stamp-Symfony\\Component\\Messenger\\Stamp\\RouterContextStamp",
+                "value": "={{ $('Condition_IsFirstUpdate').item.json.RouterContextStamp }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        -832,
+        -784
+      ],
+      "id": "8e719006-dfbd-447b-b64a-0d796dd9bf79",
+      "name": "RabbitMQ_Publish_ReferenceSubjectUpdate",
+      "credentials": {
+        "rabbitmq": {
+          "id": "3qG3pn5Y4jG2mbfF",
+          "name": "RabbitMQ - Development"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "1c41c9e4-4374-4234-8e51-5ae71b389970",
+              "leftValue": "={{ $json.output.confidence_score }}",
+              "rightValue": 50,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "51bcc4c2-d89d-4f2b-b955-100e6a74579a",
+              "leftValue": "={{ $json.output?.optimized_subject }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1680,
+        -336
+      ],
+      "id": "1d34fd42-8a91-4862-a4eb-c26f6815d089",
+      "name": "Condition_IsRelevant"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Condition_IsFirstUpdate').item.json.language === 'en' ? `The reference subject \"${$('Condition_IsFirstUpdate').item.json.referenceSubject}\" does not seem relevant for this WatchFile, check the analyse for more detail.` : `Le sujet de référence \"${$(\"Condition_IsFirstUpdate\").item.json.referenceSubject}\" ne semble pas pertinent pour ce WatchFile. Consultez l'analyse pour plus de détails.`).toJsonString() }},\n  \"context\": {\n    \"agentValidator\": {{ $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() || 'null' }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Condition_IsFirstUpdate').item.json?.messageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Condition_IsFirstUpdate').item.json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Condition_IsFirstUpdate').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -384,
+        -288
+      ],
+      "id": "6d3d81dd-3b2b-4c91-b2d5-4ce5ba2eb2b8",
+      "name": "Feedback_NotRelevant"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5-sweden"
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "name": "reference_subject_relevancy",
+              "schema": "{\n  \"title\": \"WatchFile Reference Subject Evaluation Response\",\n  \"description\": \"Schema for the LLM response when evaluating and optimizing a watchFile reference subject\",\n  \"type\": \"object\",\n  \"required\": [\n    \"should_update\",\n    \"confidence_score\",\n    \"reasoning\",\n    \"optimized_subject\",\n    \"language\",\n    \"key_improvements\",\n    \"filtering_impact\",\n    \"alignment_notes\"\n  ],\n  \"properties\": {\n    \"should_update\": {\n      \"type\": \"boolean\",\n      \"description\": \"Whether the reference subject should be updated based on the evaluation\"\n    },\n    \"confidence_score\": {\n      \"type\": \"integer\",\n      \"description\": \"Confidence score of the modification relevance (0-100). Values ≥30 justify an update.\"\n    },\n    \"reasoning\": {\n      \"type\": \"string\",\n      \"description\": \"Brief explanation of the confidence score and decision rationale (10-150 chars)\"\n    },\n    \"optimized_subject\": {\n      \"type\": \"string\",\n      \"description\": \"The final optimized reference subject (or original if no update recommended). Max 250 chars.\"\n    },\n    \"language\": {\n      \"type\": \"string\",\n      \"description\": \"ISO 639-1 two-letter language code (uppercase, e.g., EN, FR, ES)\"\n    },\n    \"key_improvements\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"List of specific improvements (0-5 items, max 100 chars each)\"\n    },\n    \"filtering_impact\": {\n      \"type\": \"string\",\n      \"description\": \"Brief explanation of how this optimization improves document relevance filtering (10-100 chars)\"\n    },\n    \"alignment_notes\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"monitoring_type\",\n        \"strategic_questions\",\n        \"actors_sources\"\n      ],\n      \"properties\": {\n        \"monitoring_type\": {\n          \"type\": [\"string\", \"null\"],\n          \"description\": \"How the optimized subject aligns with the watchFile's monitoring type (max 200 chars)\"\n        },\n        \"strategic_questions\": {\n          \"type\": [\"string\", \"null\"],\n          \"description\": \"How the optimized subject addresses strategic questions (max 200 chars)\"\n        },\n        \"actors_sources\": {\n          \"type\": [\"string\", \"null\"],\n          \"description\": \"Relevance to configured actors and sources (max 200 chars)\"\n        }\n      },\n      \"additionalProperties\": false\n    }\n  },\n  \"additionalProperties\": false\n}"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2176,
+        -16
+      ],
+      "id": "7a020833-d618-43ef-b880-7a3003aaac1a",
+      "name": "LLM_Validator_Fallback",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      },
+      "notes": "Model: gpt-4.1-sweden | Role: Fallback validation LLM | Updated: 2025-11-14 | Reason: More powerful reasoning for complex edge cases"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": true,\n  \"message\": {{ ($('Condition_IsFirstUpdate').item.json.language === 'en' ? 'The reference subject has been correctly updated' : 'Le sujet de référence a été correctement mis à jour.').toJsonString() }},\n  \"context\": {\n    \"agentValidator\": {{ ($('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() : 'null') || 'null' }},\n    \"agentGenerator\": {{ $('Agent_Generator_ReferenceSubject')?.item?.json?.output?.toJsonString() || 'null' }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Condition_IsFirstUpdate').item.json?.messageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Condition_IsFirstUpdate').item.json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Condition_IsFirstUpdate').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -384,
+        -784
+      ],
+      "id": "105d5529-6b40-4042-8044-fe310044e733",
+      "name": "Feedback_Success"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "116fb32d-4c29-406c-be57-924ccefdb94d",
+              "leftValue": "={{ $json.watchFile.referenceSubject }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "cb3a053a-b514-4dd5-aae4-8ffcaa1422ef",
+              "leftValue": "={{ $json.watchFile.referenceSubject?.fr || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c3a2e23e-e1a7-48be-bd3f-255773c6241d",
+              "leftValue": "={{ $json.watchFile.referenceSubject?.en || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2528,
+        -416
+      ],
+      "id": "bf45c4de-7368-417a-b108-5eaf0627c80f",
+      "name": "Condition_IsFirstUpdate"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Agent_Validator_ReferenceSubject').item.json.language === 'en' ? `The AI agent is experiencing a problem. Please try again later.` : `L'agent AI rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }},\n  \"context\": {\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }},\n    \"data\": {{ $json.toJsonString() }}\n  },\n  \"messageId\": {{ $('Agent_Validator_ReferenceSubject').item.json?.messageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Agent_Validator_ReferenceSubject').item.json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Agent_Validator_ReferenceSubject').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -384,
+        -96
+      ],
+      "id": "65dbe068-6076-4386-944e-a656a723f822",
+      "name": "Feedback_ValidatorError"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"referenceSubject\": {{ $json.toJsonString() }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -160,
+        -384
+      ],
+      "id": "6f40bc35-c5b4-4eca-82b3-2beee7f912f7",
+      "name": "Response_Return_Result"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"title\": \"Reference Subject Output Schema v3.0\",\n  \"description\": \"Dual-purpose reference subject with human-readable and LLM-optimized versions\",\n  \"properties\": {\n    \"referenceSubject\": {\n      \"type\": \"object\",\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"human\": {\n          \"type\": \"object\",\n          \"description\": \"Human-readable version for WatchFile UI display\",\n          \"additionalProperties\": false,\n          \"properties\": {\n            \"fr\": {\n              \"type\": \"string\",\n              \"description\": \"French markdown with all 6 sections (empty sections show placeholder)\"\n            },\n            \"en\": {\n              \"type\": \"string\",\n              \"description\": \"English markdown with all 6 sections (empty sections show placeholder)\"\n            }\n          },\n          \"required\": [\"fr\", \"en\"]\n        },\n        \"llm\": {\n          \"type\": \"string\",\n          \"description\": \"LLM-optimized scoring criteria in English markdown with relevance criteria, entity variations, keywords, and decision tree\"\n        }\n      },\n      \"required\": [\"human\", \"llm\"]\n    }\n  },\n  \"required\": [\"referenceSubject\"],\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1200,
+        -464
+      ],
+      "id": "d66ecb91-e7ad-4a57-8803-d762fc206bfd",
+      "name": "Parser_Generator_Structured"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-nano-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5-nano-sweden"
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1120,
+        -256
+      ],
+      "id": "019e0ec4-ff09-4e2f-8390-1d3d89929016",
+      "name": "LLM_Generator_Parser",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      },
+      "notes": "Model: Mistral-Small | Role: Structured output parser LLM | Updated: 2025-11-14 | Reason: Self-hosted for data privacy"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-sweden"
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "name": "reference_subject",
+              "schema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"title\": \"Reference Subject Output Schema v3.0\",\n  \"description\": \"Dual-purpose reference subject with human-readable and LLM-optimized versions\",\n  \"properties\": {\n    \"referenceSubject\": {\n      \"type\": \"object\",\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"human\": {\n          \"type\": \"object\",\n          \"description\": \"Human-readable version for WatchFile UI display\",\n          \"additionalProperties\": false,\n          \"properties\": {\n            \"fr\": {\n              \"type\": \"string\",\n              \"description\": \"French markdown with all 6 sections (empty sections show placeholder)\"\n            },\n            \"en\": {\n              \"type\": \"string\",\n              \"description\": \"English markdown with all 6 sections (empty sections show placeholder)\"\n            }\n          },\n          \"required\": [\"fr\", \"en\"]\n        },\n        \"llm\": {\n          \"type\": \"string\",\n          \"description\": \"LLM-optimized scoring criteria in English markdown with relevance criteria, entity variations, keywords, and decision tree\"\n        }\n      },\n      \"required\": [\"human\", \"llm\"]\n    }\n  },\n  \"required\": [\"referenceSubject\"],\n  \"additionalProperties\": false\n}"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1328,
+        -464
+      ],
+      "id": "309a75f6-335b-452d-816d-d27907eafb15",
+      "name": "LLM_Generator_Fallback",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      },
+      "notes": "Model: gpt-4.1-sweden | Role: Fallback generation LLM | Updated: 2025-11-14 | Reason: Reliable alternative with good reasoning"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.1-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5.1-sweden"
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "name": "reference_subject",
+              "schema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"title\": \"Reference Subject Output Schema v3.0\",\n  \"description\": \"Dual-purpose reference subject with human-readable and LLM-optimized versions\",\n  \"properties\": {\n    \"referenceSubject\": {\n      \"type\": \"object\",\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"human\": {\n          \"type\": \"object\",\n          \"description\": \"Human-readable version for WatchFile UI display\",\n          \"additionalProperties\": false,\n          \"properties\": {\n            \"fr\": {\n              \"type\": \"string\",\n              \"description\": \"French markdown with all 6 sections (empty sections show placeholder)\"\n            },\n            \"en\": {\n              \"type\": \"string\",\n              \"description\": \"English markdown with all 6 sections (empty sections show placeholder)\"\n            }\n          },\n          \"required\": [\"fr\", \"en\"]\n        },\n        \"llm\": {\n          \"type\": \"string\",\n          \"description\": \"LLM-optimized scoring criteria in English markdown with relevance criteria, entity variations, keywords, and decision tree\"\n        }\n      },\n      \"required\": [\"human\", \"llm\"]\n    }\n  },\n  \"required\": [\"referenceSubject\"],\n  \"additionalProperties\": false\n}"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1456,
+        -464
+      ],
+      "id": "8907324a-e0b5-4b0e-9746-36f1a2078e23",
+      "name": "LLM_Generator_Primary",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      },
+      "notes": "Model: Claude (via LLM Gateway) | Role: Primary generation LLM | Updated: 2025-11-14 | Reason: Superior structured text generation"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# Reference Subject Generator - Dual Output v4.2\n\n## ROLE\n\nYou are an AI assistant specialized in generating **dual-purpose reference subjects** for intelligent document\nmonitoring systems.\n\n---\n\n## DUAL OUTPUT CONCEPT\n\nThe Reference Subject has **TWO distinct versions** serving different purposes:\n\n### 1. Human Version (`human`)\n\n- **Purpose:** Displayed in WatchFile UI for user review\n- **Style:** Concise, readable, natural language\n- **Content:** Key information, well-formatted\n- **Empty sections:** Show \"Not yet defined - awaiting information\"\n\n### 2. LLM Version (`llm`)\n\n- **Purpose:** Used by document validation AI for relevance scoring\n- **Style:** Structured, explicit, optimized for machine processing\n- **Content:** Detailed criteria, scoring rules, explicit inclusion/exclusion\n- **Sections:** All relevant criteria for automated filtering\n\n---\n\n## PRIMARY QUESTION\n\nBoth versions must enable answering:\n\n> \"Given this document, is it relevant to the monitoring objective?\"\n\n**The Human version** helps users understand what's being monitored.\n**The LLM version** enables automated document relevance scoring.\n\n---\n\n## TARGET STRUCTURE\n\n### Human Version Sections\n\n| Section                  | Dimension | Purpose                 | If empty...                              |\n|--------------------------|-----------|-------------------------|------------------------------------------|\n| **Monitoring Subject**   | `what`    | WHAT we're watching     | \"Not yet defined - awaiting information\" |\n| **Monitoring Objective** | `why`     | WHY we're monitoring    | \"Not yet defined - awaiting information\" |\n| **Key Themes**           | `scope`   | Topics to track         | \"Not yet defined - awaiting information\" |\n| **Priority Actors**      | `who`     | WHO we're tracking      | \"Not yet defined - awaiting information\" |\n| **Geographic Scope**     | `where`   | WHERE to focus          | \"Not yet defined - awaiting information\" |\n| **Exclusions**           | `exclusions` | What to IGNORE       | \"Not yet defined - awaiting information\" |\n\n**CRITICAL:** Empty sections MUST show \"Not yet defined - awaiting information\" (not omitted).\n\n### LLM Version Sections\n\n| Section                | Purpose                | Content                           |\n|------------------------|------------------------|-----------------------------------|\n| **Monitoring Context** | Background for scoring | Type, scope, objective summary    |\n| **Relevance Criteria** | Scoring rules          | Explicit criteria with weights    |\n| **Priority Entities**  | Actor matching         | Entity names, aliases, variations |\n| **Topic Keywords**     | Content matching       | Keywords, phrases, synonyms       |\n| **Geographic Filters** | Location matching      | Included/excluded regions         |\n| **Temporal Scope**     | Time relevance         | Time horizon, date ranges         |\n| **Exclusion Rules**    | What to reject         | Explicit non-relevant patterns    |\n| **Scoring Guidelines** | How to score           | Score ranges and thresholds       |\n\n---\n\n## INCREMENTAL BUILD PRINCIPLE\n\n### Build progressively as information becomes available\n\n```\nTurn 1: \"Monitor Shein\"\n→ Human: Monitoring Subject filled, others \"Not yet defined\"\n→ LLM: Basic context only\n→ Confidence: what=low\n\nTurn 2: \"controversies and bad buzz\"\n→ Human: + Monitoring Objective, + Key Themes\n→ LLM: + Relevance Criteria, + Topic Keywords\n→ Confidence: what=medium, why=medium, scope=low\n\nTurn 3: Classification = REPUTATIONAL (negative)\n→ Human: (enriched themes)\n→ LLM: + Scoring Guidelines (REPUTATIONAL-specific)\n\nTurn 4: Actors added (Fashion Revolution, Public Eye)\n→ Human: + Priority Actors filled\n→ LLM: + Priority Entities with aliases\n→ Confidence: who=medium\n\nTurn 5: Sources added\n→ Human: (no change, sources not in reference subject)\n→ LLM: (no change)\n\nTurn 6: Geography = Europe\n→ Human: + Geographic Scope filled\n→ LLM: + Geographic Filters\n→ Confidence: where=medium\n\nTurn 7: User confirms \"yes, just Europe, exclude Asia\"\n→ Confidence: where=high, exclusions=high\n```\n\n### Preservation Rule\n\n- **ALWAYS** preserve existing content from current reference subject\n- **ADD** new sections when new data is available\n- **MODIFY** existing sections only if allowed by confidence (see below)\n- **NEVER REMOVE** content unless explicitly requested\n- **NEVER INVENT** data not present in input\n- **ALWAYS SHOW** empty sections with placeholder text\n\n### Partial Update Rule\n\nThe input may contain only **some** paragraphs (those that changed). **Paragraphs absent from input = do not modify.** Only update sections corresponding to received paragraphs.\n\n### Confidence-Based Overwrite\n\nEach input paragraph carries a confidence level. Use it to decide whether to overwrite existing content:\n\n| Existing Confidence | New Confidence | Action |\n|---------------------|----------------|--------|\n| *(none / empty)*    | `low`          | **Write** — first fill, always accept |\n| `low`               | `low`          | **Overwrite** — any relevant new info replaces inferred content |\n| `low`               | `medium`       | **Overwrite** — user-stated info replaces inferred |\n| `medium`            | `medium`       | **Overwrite only if** new content is more specific or complete |\n| `medium`            | `high`         | **Overwrite** — confirmed info replaces stated |\n| `high`              | `medium`       | **Keep existing** — don't downgrade confirmed content |\n| `high`              | `high`         | **Overwrite only if** user explicitly corrects |\n\n**Rules:**\n- Never downgrade confidence (high → medium or low)\n- When overwriting, merge new info with existing when possible (don't lose details)\n- When keeping existing, still enrich if new data adds without contradicting\n\n---\n\n## HUMAN VERSION FORMAT\n\n### Section Headers (Bilingual)\n\n| Section     | Dimension    | French                   | English              |\n|-------------|--------------|--------------------------|----------------------|\n| Subject     | `what`       | Sujet de surveillance    | Monitoring Subject   |\n| Objective   | `why`        | Objectif de surveillance | Monitoring Objective |\n| Themes      | `scope`      | Thèmes clés              | Key Themes           |\n| Actors      | `who`        | Acteurs prioritaires     | Priority Actors      |\n| Geography   | `where`      | Périmètre géographique   | Geographic Scope     |\n| Exclusions  | `exclusions` | Exclusions               | Exclusions           |\n\n### Formatting Rules\n\n- Use markdown for readability\n- Bold for entity names: **Shein**\n- Bullet lists for multiple items\n- Keep descriptions concise (1-2 sentences max)\n- Natural, readable language\n- **Empty sections show:** \"Non défini - en attente d'informations\" (FR) / \"Not yet defined - awaiting information\" (EN)\n\n### Example Human Version (FR) - Partial\n\n```markdown\n## Sujet de surveillance\n\nSurveillance de la réputation de **Shein** et des controverses associées à l'entreprise dans le secteur de la fast\nfashion.\n\n## Objectif de surveillance\n\nIdentifier et suivre les controverses, critiques et bad buzz concernant **Shein**.\n\n## Thèmes clés\n\n- Controverses sur les conditions de travail et pratiques sociales\n- Critiques environnementales et durabilité\n- Problèmes de sécurité produit et rappels\n\n## Acteurs prioritaires\n\n- **Clean Clothes Campaign** - Réseau mondial pour les droits des travailleurs\n- **Public Eye** - ONG d'investigation\n\n## Périmètre géographique\n\nNon défini - en attente d'informations\n\n## Exclusions\n\nNon défini - en attente d'informations\n```\n\n### Example Human Version (EN) - Partial\n\n```markdown\n## Monitoring Subject\n\nMonitoring the reputation of **Shein** and controversies associated with the company in the fast fashion sector.\n\n## Monitoring Objective\n\nIdentify and track controversies, criticism and bad buzz concerning **Shein**.\n\n## Key Themes\n\n- Labor practice controversies and social issues\n- Environmental criticism and sustainability\n- Product safety issues and recalls\n\n## Priority Actors\n\n- **Clean Clothes Campaign** - Global labor rights network\n- **Public Eye** - Investigative NGO\n\n## Geographic Scope\n\nNot yet defined - awaiting information\n\n## Exclusions\n\nNot yet defined - awaiting information\n```\n\n---\n\n## LLM VERSION FORMAT\n\n### Structure (Always in English)\n\n```markdown\n# DOCUMENT RELEVANCE SCORING CRITERIA\n\n## Monitoring Context\n\n- **Type:** [REPUTATIONAL|COMPETITIVE|REGULATORY|...]\n- **Subtype:** [negative|positive|global] (if applicable)\n- **Target Entity:** [Primary entity being monitored]\n- **Scope:** [Brief scope description]\n- **Current Date Reference:** December 2025\n\n## Relevance Criteria (Score Weights)\n\n### HIGH RELEVANCE (Score 85-100)\n\nDocuments that:\n\n- [Specific criterion 1]\n- [Specific criterion 2]\n- [Specific criterion 3]\n\n### MEDIUM RELEVANCE (Score 60-84)\n\nDocuments that:\n\n- [Specific criterion 1]\n- [Specific criterion 2]\n\n### LOW RELEVANCE (Score 30-59)\n\nDocuments that:\n\n- [Specific criterion 1]\n\n### NON-RELEVANT (Score 0-29)\n\nDocuments that:\n\n- [Exclusion criterion 1]\n- [Exclusion criterion 2]\n\n## Priority Entities (Match any = relevance boost)\n\n- Primary: [Entity1], [Entity2]\n- Secondary: [Entity3], [Entity4]\n- Related: [Entity5], [Entity6]\n\n### Entity Variations\n\n- [Entity1]: [alias1], [alias2], [variation1]\n- [Entity2]: [alias1], [alias2]\n\n## Topic Keywords (Match = relevance signal)\n\n### Primary Keywords (strong signal)\n\n[keyword1], [keyword2], [keyword3]\n\n### Secondary Keywords (moderate signal)\n\n[keyword4], [keyword5], [keyword6]\n\n### Contextual Keywords (weak signal, needs other signals)\n\n[keyword7], [keyword8]\n\n## Geographic Filters\n\n### Include (boost relevance)\n\n- [Region1], [Region2]\n\n### Neutral (no modification)\n\n- Global/international content\n\n### Exclude (reduce relevance)\n\n- [Region to deprioritize]\n\n## Temporal Scope\n\n- **Priority:** Content from 2024-2025 (last 12-18 months)\n- **Include:** Evergreen reference content\n- **Exclude:** Outdated content before 2023 unless historically significant\n\n## Exclusion Rules (Auto-reject if)\n\n- [Exclusion rule 1]\n- [Exclusion rule 2]\n- [Exclusion rule 3]\n\n## Scoring Decision Tree\n\nIF document mentions PRIMARY ENTITY + PRIMARY KEYWORD:\n→ Base score: 80\n→ IF also mentions SECONDARY ENTITY: +10\n→ IF in PRIORITY GEOGRAPHY: +5\n→ IF recent (< 30 days): +5\n\nELIF document mentions PRIMARY ENTITY only:\n→ Base score: 50\n→ Apply modifiers as above\n\nELIF document mentions TOPIC KEYWORDS only (no entities):\n→ Base score: 30\n→ IF 3+ keywords match: +20\n\nELSE:\n→ Score: 10 (likely not relevant)\n```\n\n---\n\n## OUTPUT FORMAT\n\n```json\n{\n  \"referenceSubject\": {\n    \"human\": {\n      \"fr\": \"string (markdown, French, all 6 sections present)\",\n      \"en\": \"string (markdown, English, all 6 sections present)\"\n    },\n    \"llm\": \"string (markdown, English only, full scoring criteria)\"\n  }\n}\n```\n\n---\n\n## INPUT VARIABLES\n\n```\nCurrent Human English Reference Subject: {{ ($json.watchFile || $('Condition_IsFirstUpdate').item.json.watchFile)?.referenceSubject?.en || '' }}\nCurrent LLM Reference Subject: {{ ($json.watchFile || $('Condition_IsFirstUpdate').item.json.watchFile)?.llm || '' }}\nWatchFile Context: {{ ($json.watchFile || $('Condition_IsFirstUpdate').item.json.watchFile).toJsonString() }}\nClassification Type: {{ $json.watchFile?.classificationType || 'Not defined yet' }}\nTopics: {{ $json.watchFile?.topics?.toJsonString() || 'Not defined yet' }}\n```\n\n### Structured Paragraphs Input\n\n```\nParagraphs: {{ $json?.referenceSubject || $('Condition_IsFirstUpdate').item.json?.referenceSubject || '' }}\n```\n\nThis field now contains a **structured object** with per-paragraph content and confidence:\n\n```json\n{\n  \"paragraphs\": {\n    \"what\":       { \"content\": \"...\", \"confidence\": \"low|medium|high\" },\n    \"why\":        { \"content\": \"...\", \"confidence\": \"low|medium|high\" },\n    \"who\":        { \"content\": \"...\", \"confidence\": \"low|medium|high\" },\n    \"where\":      { \"content\": \"...\", \"confidence\": \"low|medium|high\" },\n    \"scope\":      { \"content\": \"...\", \"confidence\": \"low|medium|high\" },\n    \"exclusions\": { \"content\": \"...\", \"confidence\": \"low|medium|high\" }\n  },\n  \"human\": { \"fr\": \"...\", \"en\": \"...\" },\n  \"llm\": \"...\"\n}\n```\n\n**Partial updates:** Only changed paragraphs are sent. Missing keys = no change for that dimension.\n\n### Dimension → Section Mapping\n\n| Paragraph Key | Human Section (FR) | Human Section (EN) | LLM Section |\n|---------------|-------------------|-------------------|-------------|\n| `what`        | Sujet de surveillance | Monitoring Subject | Monitoring Context |\n| `why`         | Objectif de surveillance | Monitoring Objective | Relevance Criteria |\n| `who`         | Acteurs prioritaires | Priority Actors | Priority Entities |\n| `where`       | Périmètre géographique | Geographic Scope | Geographic Filters |\n| `scope`       | Thèmes clés | Key Themes | Topic Keywords |\n| `exclusions`  | Exclusions | Exclusions | Exclusion Rules |\n\n---\n\n## GENERATION PROCESS\n\n### Step 1: Parse Input\n\n- Read existing `human.fr`, `human.en`, `llm` from current reference subject\n- Parse structured paragraphs input — identify which dimensions are present\n- For each received paragraph, note its `content` and `confidence`\n- Identify which sections already exist and their current state\n\n### Step 2: Apply Confidence Logic\n\nFor each received paragraph:\n\n1. Compare new confidence vs existing content state\n2. Apply overwrite rules from Confidence-Based Overwrite table\n3. Decide: **write**, **overwrite**, **merge**, or **keep existing**\n4. For paragraphs NOT in input → **no change** (partial update)\n\n### Step 3: Update Human Version\n\n- **ADD** new sections with new data\n- **UPDATE** existing sections per confidence decision\n- **PRESERVE** unchanged sections verbatim\n- **SHOW** all 6 sections — empty ones with \"Not yet defined - awaiting information\"\n- **Bilingual:** Apply changes to both FR and EN\n\n### Step 4: Update LLM Version\n\n- **UPDATE** scoring criteria based on classification\n- **ADD** new entities to priority lists (from `who`)\n- **ADD** new keywords from topics (from `scope`)\n- **UPDATE** geographic filters (from `where`)\n- **UPDATE** exclusion rules (from `exclusions`)\n- **REFINE** scoring decision tree\n- **USE {{ parseInt($now.format('yyyy'), 10) - 1 }} - {{ $now.format('yyyy') }}** as temporal priority\n\n### Step 5: Validate & Output\n\n- Ensure human version shows all 6 sections\n- Ensure LLM version is machine-optimized\n- Return both in JSON structure\n\n---\n\n## VALIDATION CHECKLIST\n\nBefore outputting, verify:\n\n- [ ] Human version: ALL 6 sections present (empty ones show placeholder)\n- [ ] Human version: Placeholder = \"Non défini - en attente d'informations\" (FR) / \"Not yet defined - awaiting information\" (EN)\n- [ ] Human version: Bilingual (FR + EN)\n- [ ] Human version: Readable and concise\n- [ ] Confidence rules respected: no downgrade, overwrite only when allowed\n- [ ] Partial update respected: unchanged paragraphs left intact\n- [ ] LLM version: English only\n- [ ] LLM version: Explicit scoring criteria\n- [ ] LLM version: Entity variations listed\n- [ ] LLM version: Keyword categories defined\n- [ ] LLM version: Scoring decision tree present\n- [ ] LLM version: Temporal scope references {{ parseInt($now.format('yyyy'), 10) - 1 }}-{{ $now.format('yyyy') }}\n- [ ] All existing content preserved (unless confidence allows overwrite)\n- [ ] No invented data\n- [ ] Valid JSON output\n\n---\n\n## ANTI-PATTERNS\n\n### ❌ WRONG: Omitting empty sections\n\n```markdown\n## Monitoring Subject\n\nSurveillance de Shein...\n\n## Monitoring Objective\n\nIdentifier les controverses...\n\n(Missing actors, exclusions sections!)\n```\n\n### ❌ WRONG: Inventing data\n\n```markdown\n## Priority Actors\n\n- **Fashion Revolution** ← NOT in watchFile.actors!\n```\n\n### ❌ WRONG: Generic LLM criteria\n\n```markdown\n### HIGH RELEVANCE\n\nDocuments that are relevant to the topic.\n```\n\n### ❌ WRONG: Overwriting high-confidence with medium\n\n```\nExisting: where = \"Europe only\" (confidence: high)\nInput: where = \"Europe and Asia\" (confidence: medium)\nResult: KEEP \"Europe only\" — don't downgrade confirmed content\n```\n\n### ❌ WRONG: Modifying sections not in input\n\n```\nInput paragraphs: { \"what\": {...} }\nResult: Changed \"Key Themes\" section — WRONG, scope was not in input\n```\n\n### ✅ CORRECT: Show all 6 sections with placeholders\n\n```markdown\n## Monitoring Subject\n\nSurveillance de Shein...\n\n## Monitoring Objective\n\nIdentifier les controverses...\n\n## Key Themes\n\n- Controverses pratiques de travail\n- Critiques environnementales\n\n## Priority Actors\n\nNon défini - en attente d'informations\n\n## Geographic Scope\n\nNon défini - en attente d'informations\n\n## Exclusions\n\nNon défini - en attente d'informations\n```\n\n### ✅ CORRECT: Specific LLM criteria\n\n```markdown\n### HIGH RELEVANCE (Score 85-100)\n\nDocuments that:\n\n- Report on Shein labor violations, sweatshop conditions\n- Contain NGO investigations targeting Shein specifically\n- Cover lawsuits filed against Shein in 2024-2025\n```\n\n### ✅ CORRECT: Respecting confidence on merge\n\n```\nExisting: what = \"Monitor Shein reputation\" (confidence: medium)\nInput: what = \"Monitor Shein reputation in fast fashion sector\" (confidence: medium)\n→ More specific → OVERWRITE → \"Monitor Shein reputation in fast fashion sector\"\n```\n\n---\n\n**Version:** 4.2\n**Target LLM:** GPT 5.1\n\n**Changes from v4.1:**\n- Added **confidence-based overwrite logic** per paragraph (low/medium/high)\n- Added **partial update rule**: absent paragraphs = no modification\n- Aligned human version to **6 sections**: added Priority Actors and Exclusions\n- Updated **INPUT VARIABLES** to document structured paragraphs format with confidence\n- Added **Dimension → Section mapping** table\n- Added anti-pattern examples for confidence violations and partial update violations\n- Updated validation checklist with confidence and partial update checks\n",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "options": {
+          "maxIterations": 10,
+          "returnIntermediateSteps": true,
+          "passthroughBinaryImages": true,
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -1424,
+        -688
+      ],
+      "id": "1b96b351-a697-4782-b8be-82535d47b3be",
+      "name": "Agent_Generator_ReferenceSubject",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Condition_IsFirstUpdate').item.json.language === 'en' ? `The AI agent is experiencing a problem. Please try again later.` : `L'agent AI rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }},\n  \"context\": {\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }},\n    \"data\": {{ $('Agent_Generator_ReferenceSubject').last()?.json?.toJsonString() || 'null' }}\n  },\n  \"messageId\": {{ $('Condition_IsFirstUpdate').item.json?.messageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Condition_IsFirstUpdate').item.json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Condition_IsFirstUpdate').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -384,
+        -560
+      ],
+      "id": "069e742c-a8fd-445f-8e5a-128192db4cd5",
+      "name": "Feedback_GeneratorError"
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"watchFile\": {\n    \"id\": \"1f0ba909-4cda-666e-9b4c-497ced82fa8d\",\n    \"name\": \"Market Intelligence IA - Europe\",\n    \"titleManuallySetByUser\": false,\n    \"userObjective\": \"\",\n    \"referenceSubject\": null,\n    \"state\": \"new\",\n    \"monitoringType\": null,\n    \"monitoringTypeConfidence\": null,\n    \"monitoringTypeJustification\": null,\n    \"secondaryMonitoringTypes\": null,\n    \"strategicQuestions\": [],\n    \"analysisResults\": [],\n    \"createdAt\": \"2025-11-05T22:44:18+01:00\",\n    \"createdBy\": {\n      \"id\": \"116f1d59-c72d-486c-bf55-a5e587d88cfc\",\n      \"email\": \"basil@chapsvision.com\",\n      \"firstName\": \"Basil\",\n      \"lastName\": \"Target\",\n      \"displayName\": \"Basil Target\",\n      \"defaultThumbnail\": \"BT\"\n    },\n    \"updatedAt\": \"2025-11-05T22:44:29+01:00\",\n    \"watchFileActors\": [],\n    \"watchFileUsersCount\": 1,\n    \"isFavorite\": false,\n    \"userEditable\": false,\n    \"sources\": [],\n    \"status\": \"draft\"\n  },\n  \"conversationId\": \"1f0ba909-5099-6980-8667-497ced82fa8d\",\n  \"messageId\": \"1f0ba909-5099-6980-6970-497ced82fa8d\",\n  \"language\": \"en\",\n  \"referenceSubject\": \"Évolutions du marché de la market intelligence et innovations en intelligence artificielle appliquée à l'analyse concurrentielle en Europe\",\n  \"BusNameStamp\": \"[{\\\"busName\\\":\\\"command.bus\\\"}]\",\n  \"RouterContextStamp\": \"[{\\\"baseUrl\\\":\\\"\\\",\\\"method\\\":\\\"POST\\\",\\\"host\\\":\\\"basil.local\\\",\\\"scheme\\\":\\\"https\\\",\\\"httpPort\\\":80,\\\"httpsPort\\\":443,\\\"pathInfo\\\":\\\"/api/conversations/1f0ba909-5099-6980-8667-497ced82fa8d/messages\\\",\\\"queryString\\\":\\\"\\\"}]\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2752,
+        -320
+      ],
+      "id": "73ca1615-1275-4a41-835f-7645f7cb307c",
+      "name": "Workflow_Trigger_UpdateReferenceSubject"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "2af49e2a-e460-4b87-bc21-81df5be9d831",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -3200,
+        -512
+      ],
+      "id": "bde6a6de-7a3e-488f-a21d-e054c3cf2009",
+      "name": "Webhook_Trigger_EvaluateReferenceSubject",
+      "webhookId": "2af49e2a-e460-4b87-bc21-81df5be9d831"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "= {{ $json.body.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2976,
+        -512
+      ],
+      "id": "14d70abe-94db-46c3-bde5-7d036f9fee45",
+      "name": "Set_Format_WebhookInput"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "runId",
+              "value": "={{ $json._testMetadata.runId }}"
+            },
+            {
+              "key": "testCaseId",
+              "value": "={{ $json._testMetadata.testCaseId }}"
+            },
+            {
+              "key": "testCaseName",
+              "value": "={{ $json._testMetadata.testCaseName }}"
+            },
+            {
+              "key": "datasetFile",
+              "value": "={{ $json._testMetadata.datasetFile }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -2752,
+        -512
+      ],
+      "id": "4e5d41f8-0353-4458-af09-f53defecc49f",
+      "name": "Code_Extract_ExecutionContext"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Condition_IsFirstUpdate').item.json.conversationId }}",
+            "message": "={{ $('Condition_IsFirstUpdate').item.json.language == 'fr' ? 'Sujet de référence mis à jour.' : 'Subject reference updated.' }}\n\n{{ $('Agent_Generator_ReferenceSubject').item.json.output.referenceSubject.human[$('Condition_IsFirstUpdate').item.json.language] ?? $('Agent_Generator_ReferenceSubject').item.json.output.referenceSubject.human.en }}",
+            "BusNameStamp": "={{ $('Condition_IsFirstUpdate').item.json.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Condition_IsFirstUpdate').item.json.RouterContextStamp }}",
+            "data": "={\n  \"success\": true,\n  \"agentValidator\": {{ ($('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() : 'null') || 'null' }},\n  \"agentGenerator\": {{ $('Agent_Generator_ReferenceSubject')?.item?.json?.output?.toJsonString() || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -608,
+        -784
+      ],
+      "id": "ff255990-a7ed-482e-b9ba-d9c27953a0da",
+      "name": "Workflow_SystemMessage_ReferenceSubjectUpdated"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Condition_IsFirstUpdate').item.json.conversationId }}",
+            "message": "={{ $('Condition_IsFirstUpdate').item.json.language === 'fr' ? `Sujet de référence : L'agent AI rencontre un problème. Veuillez réessayer plus tard.` : `Reference Subject: The AI agent is experiencing a problem. Please try again later.` }}\n\n{{ $('Agent_Generator_ReferenceSubject').item?.json?.error ? ($('Condition_IsFirstUpdate').item.json.language === 'fr' ? `Erreur du modèle : ` : `Error from model: `) + $('Agent_Generator_ReferenceSubject').item?.json?.error : '' }}",
+            "BusNameStamp": "={{ $('Condition_IsFirstUpdate').item.json.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Condition_IsFirstUpdate').item.json.RouterContextStamp }}",
+            "data": "={\n  \"success\": false,\n  \"agentValidator\": {{ ($('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() : 'null') || 'null' }},\n  \"agentGenerator\": {{ $('Agent_Generator_ReferenceSubject').last()?.json?.toJsonString() || 'null' }}\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -608,
+        -560
+      ],
+      "id": "a827b50d-c226-45f7-9326-f1f01a9abbed",
+      "name": "Workflow_SystemMessage_ReferenceSubjectGeneratorError"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Condition_IsFirstUpdate').item.json.conversationId }}",
+            "message": "={{ $('Condition_IsFirstUpdate').item.json.language == 'fr' ? `Le sujet de référence \"${$(\"Condition_IsFirstUpdate\").item.json.referenceSubject}\" ne semble pas pertinent pour ce WatchFile.` : `The reference subject \"${$('Condition_IsFirstUpdate').item.json.referenceSubject}\" does not seem relevant for this WatchFile.` }}\n{{ $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() }}\n",
+            "BusNameStamp": "={{ $('Condition_IsFirstUpdate').item.json.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Condition_IsFirstUpdate').item.json.RouterContextStamp }}",
+            "data": "={\n  \"success\": true,\n  \"agentValidator\": {{ ($('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() : 'null') || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -608,
+        -288
+      ],
+      "id": "a6dd620f-663d-4e9a-8b66-47793d201991",
+      "name": "Workflow_SystemMessage_ReferenceSubjectNotRelevant"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Condition_IsFirstUpdate').item.json.conversationId }}",
+            "message": "={{ $('Condition_IsFirstUpdate').item.json.language === 'fr' ? `Validation du sujet de référence : L'agent AI rencontre un problème. Veuillez réessayer plus tard.` : `Validation of reference Subject: the AI agent is experiencing a problem. Please try again later.` }}",
+            "BusNameStamp": "={{ $('Condition_IsFirstUpdate').item.json.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Condition_IsFirstUpdate').item.json.RouterContextStamp }}",
+            "data": "={\n  \"success\": false,\n  \"agentValidator\": {{ $('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? ($('Agent_Validator_ReferenceSubject').item?.json?.output?.toJsonString() || 'null') : 'null' }},\n  \"agentGenerator\": {{ $('Agent_Generator_ReferenceSubject').last()?.json?.toJsonString() || 'null' }}\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -608,
+        -96
+      ],
+      "id": "f0501bfd-d5de-40ce-9c2c-108e6c453a1a",
+      "name": "Workflow_SystemMessage_ReferenceSubjectGeneratorError1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**Current Reference Subject:**  \n\"{{ $json.watchFile?.referenceSubject || '(None defined yet)' }}\"\n\n**User Modification Request:**  \n\"{{ $json.referenceSubject }}\"\n\n---\n\nEvaluate this modification request and return your analysis in the specified JSON format.",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=# Role: WatchFile Reference Subject Optimizer\n\nYou are an expert at evaluating and optimizing reference subjects for intelligent content monitoring systems (watchFiles). Your role is critical: the reference subject serves as the PRIMARY FILTER to determine if incoming documents are relevant to the user's monitoring needs.\n\n---\n\n## What is a Reference Subject?\n\nA **reference subject** is NOT a simple title or label. It is a **precision scope statement** that defines:\n\n1. **WHAT** the user wants to monitor (themes, topics, technologies, events)\n2. **WHO** is involved (actors: companies, people, organizations, competitors)\n3. **WHERE** the focus is (geographic scope, markets, regions)\n4. **WHEN** it matters (temporal scope: ongoing, historical, future trends)\n5. **WHY** it's monitored (strategic angle: competitive intel, risk assessment, opportunity detection)\n\n### Purpose: Document Relevance Filtering\n\nEvery document entering this watchFile will be evaluated against this reference subject:\n- **Question asked:** \"Is this document relevant to the reference subject?\"\n- **If YES** → Document is added to the watchFile\n- **If NO** → Document is rejected\n\n### Key Characteristics of a Good Reference Subject\n\n✅ **Specific enough** to filter out noise (irrelevant documents)  \n✅ **Broad enough** to capture all strategically valuable information  \n✅ **Actionable** for automated relevance scoring systems  \n✅ **Contextual** - incorporates user's strategic intent and monitoring goals  \n✅ **Stable** - not modified unless user adds significant new scope or corrects errors\n\n---\n\n## Examples: Good vs. Poor Reference Subjects\n\n### Example 1: Competitive Intelligence\n\n**Poor (too vague):**  \n\"Competitors of ChapsVision\"\n\n**Better:**  \n\"Competitive intelligence on European business intelligence and data analytics platforms competing with ChapsVision\"\n\n**Best (after conversation):**  \n\"Competitive intelligence on European SaaS business intelligence platforms (Tableau, Power BI, Qlik, Looker) focusing on: product launches, pricing changes, market positioning, customer acquisition strategies, and strategic partnerships in France, Germany, and UK markets\"\n\n**Why it's best:**  \n- Names specific competitors (WHO)\n- Defines geographic scope (WHERE)  \n- Lists strategic angles (WHY: pricing, partnerships, etc.)\n- Actionable for document filtering\n\n---\n\n### Example 2: Technology Monitoring\n\n**Poor (too restrictive):**  \n\"GPT-4 releases\"\n\n**Better:**  \n\"Large Language Model developments and releases\"\n\n**Best (after conversation):**  \n\"Strategic developments in Large Language Models (GPT-4/5, Claude, Gemini, Llama) including: model capabilities benchmarks, enterprise adoption trends, regulatory compliance updates, and competitive positioning in B2B SaaS markets\"\n\n**Why it's best:**\n- Covers multiple actors in the space (WHO)\n- Defines specific information types (WHAT)\n- Includes strategic context (enterprise adoption, regulation)\n- Filters out consumer-focused LLM news\n\n---\n\n### Example 3: Market Trends\n\n**Poor (unmeasurable):**  \n\"AI trends in Europe\"\n\n**Better:**  \n\"Artificial Intelligence market trends in European B2B software sector\"\n\n**Best (after conversation):**  \n\"Artificial Intelligence adoption trends in European enterprise software (ERP, CRM, BI platforms) covering: investment announcements, regulatory impacts (AI Act), vendor partnerships, market consolidation, and customer case studies in manufacturing and financial services verticals\"\n\n**Why it's best:**\n- Specific sectors and use cases (WHAT)\n- Geographic + regulatory context (WHERE + compliance)\n- Target industries specified (manufacturing, finance)\n- Clear information types (investments, partnerships, case studies)\n\n---\n\n## Current WatchFile Configuration\n```json\n{{ $json.watchFile.toJsonString() }}\n```\n\n---\n\n## Evaluation Criteria (Score 0-100)\n\n### High Relevance (70-100)\n- **Adds filtering precision**: Specifies actors, geography, or strategic angles missing in current subject\n- **Aligns with `monitoringType`**: Reinforces the core monitoring purpose\n- **Supports `strategicQuestions`**: Enables answering user's defined questions\n- **References `watchFileActors`**: Incorporates configured entities (companies, people)\n- **Clarifies ambiguity**: Removes vague terms, adds measurable criteria\n- **Corrects scope drift**: Fixes current subject if too broad or too narrow\n\n### Medium Relevance (40-69)\n- **Improves clarity**: Rephrases without adding strategic value\n- **Language adaptation**: Translates accurately while preserving intent\n- **Minor refinements**: Adds context that doesn't significantly change filtering logic\n- **Consolidates existing info**: Better structure without new scope\n\n### Low Relevance (0-39)\n- **Too generic**: Makes filtering less effective (e.g., \"AI trends\" vs. current detailed subject)\n- **Contradicts config**: Misaligns with `monitoringType`, `strategicQuestions`, or `watchFileActors`\n- **Redundant**: User request already covered by current subject\n- **Nonsensical**: Request is unclear, contradictory, or poorly formulated\n- **Scope creep**: Adds unrelated topics that dilute monitoring focus\n\n---\n\n## Decision Rules\n\n1. **Empty Current Subject (`null` or `\"\"`):**  \n   - Accept if user request is clear and contextually relevant (score ≥40)\n   - Build a complete reference subject from scratch using `name`, `userObjective`, and available context\n\n2. **Existing Strong Subject:**  \n   - Only update if user adds significant filtering value (score ≥60)\n   - Preserve existing precision unless user explicitly requests removal\n\n3. **Update Threshold:**  \n   - `should_update = true` ONLY if `confidence_score ≥ 30`\n\n4. **Language Enforcement:**  \n   - Always deliver final subject in requested language (ISO code)\n\n5. **Iterative Refinement:**  \n   - This may not be the first modification → build on existing subject, don't restart from zero unless user explicitly asks\n\n---\n\n## Optimization Guidelines\n\n### DO:\n- **Think like a document filter**: Would this subject help an AI distinguish relevant vs. irrelevant documents?\n- **Be specific about actors**: Name companies, people, organizations when available\n- **Define information types**: What kinds of documents matter? (reports, news, case studies, research papers)\n- **Include strategic context**: Why is this monitored? (competitive intel, risk assessment, opportunity detection)\n- **Use conditional specificity**: \"X in context of Y\" is more actionable than just \"X\"\n\n### DON'T:\n- **Add marketing fluff**: Avoid adjectives that don't help filtering (\"innovative\", \"cutting-edge\")\n- **Over-generalize**: \"Technology trends\" is useless; \"GenAI adoption in healthcare IT\" is actionable\n- **Ignore existing scope**: Don't discard well-defined elements unless user explicitly asks\n- **Create ambiguity**: Avoid terms that could mean multiple things without context\n\n---\n\n## Output Format (STRICT JSON)\n```json\n{\n  \"should_update\": boolean,\n  \"confidence_score\": number (0-100),\n  \"reasoning\": \"string (max 150 chars, explain score drivers)\",\n  \"optimized_subject\": \"string (the final reference subject, max 250 chars)\",\n  \"language\": \"string (ISO code)\",\n  \"key_improvements\": [\"array\", \"of\", \"specific\", \"changes\", \"made\"],\n  \"filtering_impact\": \"string (max 100 chars, how this improves document relevance filtering)\",\n  \"alignment_notes\": {\n    \"monitoring_type\": \"How it aligns with monitoringType (if applicable)\",\n    \"strategic_questions\": \"How it addresses strategicQuestions (if applicable)\",\n    \"actors_sources\": \"Relevance to actors/sources (if applicable)\"\n  }\n}\n```\n\n---\n\n## Scoring Logic\n\nBase score calculation:\n- **+25 points**: Adds specific actors (companies, competitors, people) from `watchFileActors` or context\n- **+20 points**: Defines geographic scope (countries, regions, markets)\n- **+15 points**: Specifies information types (product launches, pricing, partnerships, etc.)\n- **+15 points**: Aligns with `monitoringType` terminology and purpose\n- **+10 points**: Includes temporal scope (ongoing, historical, emerging trends)\n- **+10 points**: References strategic angles from `strategicQuestions`\n- **+5 points**: Improves language quality or structure\n\nPenalty calculation:\n- **-20 points**: Contradicts `monitoringType` or `strategicQuestions`\n- **-15 points**: Removes valuable specificity from current subject\n- **-10 points**: Adds scope creep (unrelated topics)\n- **-30 points**: Makes subject too generic for effective filtering\n\n**Final score** = Base score - Penalties (clamped to 0-100)",
+          "maxIterations": 10,
+          "returnIntermediateSteps": true,
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -2272,
+        -240
+      ],
+      "id": "7a875d14-ffda-4c3c-8519-f9ba9c6c52f1",
+      "name": "Agent_Validator_ReferenceSubject",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput",
+      "notes": "AI Agent: Evaluates relevance of user's reference subject modification. Returns confidence score + should_update decision."
+    }
+  ],
+  "connections": {
+    "LLM_Validator_Primary": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent_Validator_ReferenceSubject",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser_Validator_Structured": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Agent_Validator_ReferenceSubject",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Validator_Parser": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Parser_Validator_Structured",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RabbitMQ_Publish_ReferenceSubjectUpdate": {
+      "main": [
+        [
+          {
+            "node": "Workflow_SystemMessage_ReferenceSubjectUpdated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Condition_IsRelevant": {
+      "main": [
+        [
+          {
+            "node": "Agent_Generator_ReferenceSubject",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Workflow_SystemMessage_ReferenceSubjectNotRelevant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback_NotRelevant": {
+      "main": [
+        [
+          {
+            "node": "Response_Return_Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Validator_Fallback": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent_Validator_ReferenceSubject",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Feedback_Success": {
+      "main": [
+        [
+          {
+            "node": "Response_Return_Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Condition_IsFirstUpdate": {
+      "main": [
+        [
+          {
+            "node": "Agent_Generator_ReferenceSubject",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agent_Validator_ReferenceSubject",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback_ValidatorError": {
+      "main": [
+        [
+          {
+            "node": "Response_Return_Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser_Generator_Structured": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Agent_Generator_ReferenceSubject",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Generator_Parser": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Parser_Generator_Structured",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Generator_Fallback": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent_Generator_ReferenceSubject",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "LLM_Generator_Primary": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent_Generator_ReferenceSubject",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent_Generator_ReferenceSubject": {
+      "main": [
+        [
+          {
+            "node": "RabbitMQ_Publish_ReferenceSubjectUpdate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Workflow_SystemMessage_ReferenceSubjectGeneratorError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback_GeneratorError": {
+      "main": [
+        [
+          {
+            "node": "Response_Return_Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Trigger_UpdateReferenceSubject": {
+      "main": [
+        [
+          {
+            "node": "Condition_IsFirstUpdate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook_Trigger_EvaluateReferenceSubject": {
+      "main": [
+        [
+          {
+            "node": "Set_Format_WebhookInput",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set_Format_WebhookInput": {
+      "main": [
+        [
+          {
+            "node": "Code_Extract_ExecutionContext",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Extract_ExecutionContext": {
+      "main": [
+        [
+          {
+            "node": "Condition_IsFirstUpdate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_SystemMessage_ReferenceSubjectUpdated": {
+      "main": [
+        [
+          {
+            "node": "Feedback_Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_SystemMessage_ReferenceSubjectGeneratorError": {
+      "main": [
+        [
+          {
+            "node": "Feedback_GeneratorError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_SystemMessage_ReferenceSubjectNotRelevant": {
+      "main": [
+        [
+          {
+            "node": "Feedback_NotRelevant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_SystemMessage_ReferenceSubjectGeneratorError1": {
+      "main": [
+        [
+          {
+            "node": "Feedback_ValidatorError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent_Validator_ReferenceSubject": {
+      "main": [
+        [
+          {
+            "node": "Condition_IsRelevant",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Workflow_SystemMessage_ReferenceSubjectGeneratorError1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "saveExecutionProgress": true,
+    "executionTimeout": 300,
+    "timeSavedPerExecution": 60
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "05e22d27620d1717ac398bbf3f2dbdaa9098598488c5baaa743d646b60379aaf"
+  },
+  "versionId": "62874f6d-ab44-48f3-bf81-33f7424aeb10",
+  "versionCounter": 83,
+  "triggerCount": 1,
+  "tags": []
+}

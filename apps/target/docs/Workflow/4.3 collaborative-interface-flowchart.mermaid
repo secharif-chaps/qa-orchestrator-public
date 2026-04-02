@@ -1,0 +1,80 @@
+flowchart TD
+    subgraph Interface["Interface Collaborative (Phase 4.3)"]
+        START([Alertes de la phase 4.2]) --> INPUT[/Alertes personnalisées et contenus/]
+        
+        subgraph CollabFonda["Intelligence de Collaboration Fondamentale"]
+            INPUT --> A1[Agent IA d'Accès Unifié]
+            A1 --> A2[Agent IA de Recherche Sémantique]
+            A2 --> A3[Agent IA d'Interface Conversationnelle]
+            A3 --> BRANCH{Spécialisation\npar type\nde veille}
+        end
+        
+        BRANCH -->|Veille Concurrentielle| B1
+        BRANCH -->|Veille Stratégique| C1
+        BRANCH -->|Veille Commerciale| D1
+        BRANCH -->|Veille Technologique| E1
+        BRANCH -->|Veille Juridique| F1
+        
+        subgraph CollabConc["Intelligence de Collaboration Concurrentielle"]
+            B1[Agent IA d'Espaces Produit/Marketing]
+            B1 --> B2[Agent IA de Comparaison Interactive]
+            B2 --> B3[Agent IA d'Annotation Stratégique]
+            B3 --> MERGE
+        end
+        
+        subgraph CollabStrat["Intelligence de Collaboration Stratégique"]
+            C1[Agent IA d'Espaces Scénarios Collaboratifs]
+            C1 --> C2[Agent IA de Modélisation d'Impact]
+            C2 --> C3[Agent IA de Forums Prospectifs]
+            C3 --> MERGE
+        end
+        
+        subgraph CollabCom["Intelligence de Collaboration Commerciale"]
+            D1[Agent IA d'Intégration CRM]
+            D1 --> D2[Agent IA de Qualification Collaborative]
+            D2 --> D3[Agent IA de Partage d'Insights Client]
+            D3 --> MERGE
+        end
+        
+        subgraph CollabTech["Intelligence de Collaboration Technologique"]
+            E1[Agent IA d'Espaces R&D Collaboratifs]
+            E1 --> E2[Agent IA d'Évaluation Comparative]
+            E2 --> E3[Agent IA d'Annotation Technique]
+            E3 --> MERGE
+        end
+        
+        subgraph CollabJur["Intelligence de Collaboration Juridique"]
+            F1[Agent IA d'Intégration Compliance]
+            F1 --> F2[Agent IA d'Évaluation Risques Collaborative]
+            F2 --> F3[Agent IA de Suivi d'Actions]
+            F3 --> MERGE
+        end
+        
+        MERGE{Intégration\ndes modules\ncollaboratifs}
+        
+        MERGE --> G1
+        
+        subgraph Visualisation["Intelligence de Visualisation Interactive"]
+            G1[Agent IA de Tableaux de Bord Dynamiques]
+            G1 --> G2[Agent IA de Représentation Graphique]
+            G2 --> G3[Agent IA d'Adaptation de Vue]
+            G3 --> G4[Agent IA d'Intelligence Collective]
+        end
+        
+        G4 --> OUTPUT[/Plateforme collaborative interactive/]
+        OUTPUT --> END([Intégration complète phase 4])
+    end
+    
+    %% Styles améliorés avec meilleur contraste
+    classDef intelligence fill:#8a2be2,stroke:#000,stroke-width:2px,color:#fff
+    classDef process fill:#4682b4,stroke:#000,stroke-width:1px,color:#fff
+    classDef document fill:#f5a742,stroke:#000,stroke-width:1px,color:#000
+    classDef decision fill:#d81b60,stroke:#000,stroke-width:1px,color:#fff
+    classDef subgraphStyle fill:#f5f5f5,stroke:#333,stroke-width:1px
+    
+    %% Application des styles
+    class A1,A2,A3,B1,B2,B3,C1,C2,C3,D1,D2,D3,E1,E2,E3,F1,F2,F3,G1,G2,G3,G4 intelligence
+    class START,END process
+    class INPUT,OUTPUT document
+    class BRANCH,MERGE decision
+    class CollabFonda,CollabConc,CollabStrat,CollabCom,CollabTech,CollabJur,Visualisation subgraphStyle

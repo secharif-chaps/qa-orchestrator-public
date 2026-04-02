@@ -1,0 +1,246 @@
+parameters:
+  env(BAKUS_CLIENT_ID): ''
+  env(BAKUS_CLIENT_SECRET): ''
+  env(BAKUS_USERNAME): ''
+  env(BAKUS_PASSWORD): ''
+  env(BAKUS_AUTH_URL): ''
+  env(BAKUS_API_URL): ''
+  env(BAKUS_WEBSOCKET_URL): ''
+  env(BAKUS_CALLBACK_TYPE): 'websocket_pull'
+  env(BAKUS_CALLBACK_VERIFY_SSL): 'true'
+  env(BAKUS_CALLBACK_URL): ''
+  env(BAKUS_CALLBACK_PROXY_TAGS): 'target-ws'
+  env(BAKUS_WEBSOCKET_SERVER_PORT): '5000'
+  env(BAKUS_WEBSOCKET_SERVER_SSL_ENABLED): 'true'
+  env(BAKUS_WEBSOCKET_SERVER_SSL_CERT): '/certs/basil.local-cert.pem'
+  env(BAKUS_WEBSOCKET_SERVER_SSL_KEY): '/certs/basil.local-key.pem'
+  env(BAKUS_WEBSOCKET_SERVER_SSL_ALLOW_SELF_SIGNED): 'true'
+  env(BAKUS_WEBSOCKET_SERVER_SSL_VERIFY_PEER): 'false'
+  env(BAKUS_WEBSOCKET_SERVER_SSL_VERIFY_PEER_NAME): 'false'
+  env(BAKUS_WEBSOCKET_SERVER_SSL_CA_CERT): ''
+  env(BAKUS_WEBSOCKET_MAX_CONNECTIONS): '100'
+  env(BAKUS_WEBSOCKET_TIMEOUT): '25'
+  env(COLLECT_TASK_JWT_SECRET): ''
+  env(COLLECT_DEFAULT_PROVIDER): 'bakus'
+
+  app.collect_task.jwt_secret: '%env(string:COLLECT_TASK_JWT_SECRET)%'
+
+  app.collect.provider_routing.default: '%env(string:COLLECT_DEFAULT_PROVIDER)%'
+  # To route a specific SourceType to a different provider, add overrides here:
+  # app.collect.provider_routing.source_types:
+  #   rss_feed: 'apify'
+  #   blog: 'apify'
+  app.collect.provider_routing.source_types: {}
+
+  app.bakus.callback_type: '%env(string:BAKUS_CALLBACK_TYPE)%'
+  app.bakus.callback_url: '%env(string:BAKUS_CALLBACK_URL)%'
+  app.bakus.callback_verify_ssl: '%env(bool:BAKUS_CALLBACK_VERIFY_SSL)%'
+  app.bakus.callback_proxy_tags: '%env(csv:BAKUS_CALLBACK_PROXY_TAGS)%'
+
+  app.bakus.collector_mapping:
+    # Dailymotion
+    get_user_videos.dailymotion.sbx: ['video:dailymotion:user']
+    get_video.dailymotion.sbx: ['video:dailymotion:video']
+    search_channels.dailymotion.sbx: ['video:dailymotion:channel:search']
+    search_videos.dailymotion.sbx: ['video:dailymotion:search']
+
+    # Domains
+    company_name.nrd_search.psql.blackmorf: ['domain:company_name']
+    content_str.domain_name_details.psql.blackmorf: ['domain:search']
+    content_str.new_domain_names_nrd.psql.blackmorf: ['domain:search']
+    content_str.certstream_fqdns_and_domains_recent.psql.blackmorf: ['domain:search']
+
+    # Espacenet
+    get_patents_advanced_search.espacenet.sbx: ['document:espacenet:advanced_search']
+    get_patents_smart_search.espacenet.sbx: ['document:espacenet:smart_search']
+
+    # Facebook
+    get_posts_from_page.facebook.sbx: ['social_media:facebook:page']
+    search_pages.facebook.sbx: ['social_media:facebook:search']
+
+    # FTP
+    get_files.ftp.sbx: ['file:ftp']
+
+    # Gab
+    get_group_posts.gab.sbx: ['social_media:gab:group']
+    get_user_posts.gab.sbx: ['social_media:gab:user']
+    search_posts.gab.sbx: ['social_media:gab:search']
+    search_users.gab.sbx: ['social_media:gab:user:search']
+
+    # IEEE Xplore
+    get_publications.ieeexplore.sbx: ['document:ieeexplore:publications']
+
+    # Mastodon
+    get_user_posts.mastodon.sbx: ['social_media:mastodon:user']
+    search_users.mastodon.sbx: ['social_media:mastodon:search']
+
+    # NewsAPI
+    get_news.newsapi.sbx: ['news:newsapi']
+    get_headlines.newsapi.sbx: ['news:newsapi:headlines']
+
+    # Odysee
+    get_videos.odysee.sbx: ['video:odysee']
+    search_channels.odysee.sbx: ['video:odysee:channel:search']
+
+    # Pages
+    get_pages.site.sbx: ['rss_feed', 'website', 'blog']
+
+    # Questel
+    search_documents.questel.sbx: ['document:questel:search']
+
+    # Reddit
+    get_posts_from_sr.reddit.sbx: ['social_media:reddit:subreddit']
+    get_posts_from_user.reddit.sbx: ['social_media:reddit:user']
+    get_profile_info_sr.reddit.sbx: ['social_media:reddit:subreddit']
+    get_profile_info_user.reddit.sbx: ['social_media:reddit:user']
+
+    # SerpAPI
+    baidu.serpapi.blackmorf: ['search:baidu']
+    bing.serpapi.blackmorf: ['search:bing']
+    google.serpapi.blackmorf: ['search:google']
+    google_images.serpapi.blackmorf: ['image:google:images']
+    yahoo.serpapi.blackmorf: ['search:yahoo']
+    yandex.serpapi.blackmorf: ['search:yandex']
+
+    # Telegram
+    get_channel_infos.telegram.sbx: ['social_media:telegram:channel']
+    get_channel_posts.telegram.sbx: ['social_media:telegram:channel']
+
+    # Twitter/X (Nitter)
+    get_tweets.twitter.sbx: ['social_media:x:user']
+    search_users.twitter.sbx: ['social_media:x:search']
+
+    # Zone Events
+    get_zone_events.geoconfirmed.sbx: ['event:geoconfirmed:zone']
+
+  app.bakus.collector_default_parameters:
+    rss.bakus:
+      recursive_request_content: true
+    get_pages.site.sbx:
+      depth: 1
+      attachments: separated
+      return_query_logs: true
+
+services:
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  app.collect_provider.bakus_credentials:
+    class: App\Domain\Collect\Auth\AuthenticationCredentials
+    arguments:
+      $clientId: '%env(string:BAKUS_CLIENT_ID)%'
+      $clientSecret: '%env(string:BAKUS_CLIENT_SECRET)%'
+      $username: '%env(string:BAKUS_USERNAME)%'
+      $password: '%env(string:BAKUS_PASSWORD)%'
+      $authUrl: '%env(string:BAKUS_AUTH_URL)%'
+
+  App\Domain\Collect\Auth\AuthenticationClientInterface:
+    alias: App\Infrastructure\Collect\Bakus\Auth\BakusAuthenticationClient
+
+  App\Infrastructure\Collect\Bakus\Auth\BakusAuthenticationClient:
+    arguments:
+      $credentials: '@app.collect_provider.bakus_credentials'
+
+  app.collect_provider.bakus_websocket_client.middleware.close_handler:
+    class: WebSocket\Middleware\CloseHandler
+    tags: ['app.collect_provider.bakus_websocket_client.middleware']
+    calls:
+      - ['setLogger', ['@logger']]
+
+  app.collect_provider.bakus_websocket_client.middleware.ping_responder:
+    class: WebSocket\Middleware\PingResponder
+    tags: ['app.collect_provider.bakus_websocket_client.middleware']
+    calls:
+      - ['setLogger', ['@logger']]
+
+  app.collect_provider.bakus_websocket_client.middleware.ping_interval:
+    class: WebSocket\Middleware\PingInterval
+    tags: ['app.collect_provider.bakus_websocket_client.middleware']
+    calls:
+      - ['setLogger', ['@logger']]
+    arguments:
+      - 20
+
+  app.collect_provider.bakus_websocket_client_factory:
+    class: App\Infrastructure\Collect\Bakus\Stream\WebSocketClientFactory
+    arguments:
+      - '%env(string:BAKUS_WEBSOCKET_URL)%'
+    calls:
+      - ['setTimeout', ['%env(int:BAKUS_WEBSOCKET_TIMEOUT)%']]
+      - ['setLogger', ['@logger']]
+      - [
+          'addHeader',
+          [
+            'User-Agent',
+            '%env(default:default_app_name:string:APP_NAME)%/%env(default:default_app_version:string:APP_VERSION)%',
+          ],
+        ]
+      - [
+          'addMiddlewares',
+          [!tagged_iterator { tag: 'app.collect_provider.bakus_websocket_client.middleware' }],
+        ]
+
+  App\Infrastructure\Collect\Bakus\Client\BakusHttpClient:
+    arguments:
+      $apiUrl: '%env(string:BAKUS_API_URL)%'
+
+  App\Infrastructure\Collect\Bakus\Stream\BakusWebSocketClient:
+    arguments:
+      $websocketUrl: '%env(string:BAKUS_WEBSOCKET_URL)%'
+      $clientFactory: '@app.collect_provider.bakus_websocket_client_factory'
+
+  App\Infrastructure\Collect\Bakus\Stream\Middleware\CollectTaskAuthorizationMiddleware:
+
+  App\Infrastructure\Collect\Bakus\BakusProviderGateway:
+    tags:
+      - { name: 'app.collect.provider', key: 'bakus' }
+
+  App\Infrastructure\Collect\ProviderGatewayLocator:
+    arguments:
+      - !tagged_locator { tag: 'app.collect.provider', index_by: 'key' }
+
+  App\Domain\Collect\ProviderResolverInterface:
+    class: App\Infrastructure\Collect\SourceTypeProviderResolver
+
+  app.collect_provider.websocket_server_ssl_context:
+    class: Phrity\Net\Context
+    calls:
+      - [
+          'setOptions',
+          [
+            {
+              ssl:
+                {
+                  local_cert: '%env(string:BAKUS_WEBSOCKET_SERVER_SSL_CERT)%',
+                  local_pk: '%env(string:BAKUS_WEBSOCKET_SERVER_SSL_KEY)%',
+                  cafile: '%env(string:BAKUS_WEBSOCKET_SERVER_SSL_CA_CERT)%',
+                  allow_self_signed: '%env(bool:BAKUS_WEBSOCKET_SERVER_SSL_ALLOW_SELF_SIGNED)%',
+                  verify_peer: '%env(bool:BAKUS_WEBSOCKET_SERVER_SSL_VERIFY_PEER)%',
+                  verify_peer_name: '%env(bool:BAKUS_WEBSOCKET_SERVER_SSL_VERIFY_PEER_NAME)%',
+                },
+            },
+          ],
+        ]
+
+  WebSocket\Server:
+    arguments:
+      $port: '%env(int:BAKUS_WEBSOCKET_SERVER_PORT)%'
+      $ssl: '%env(bool:BAKUS_WEBSOCKET_SERVER_SSL_ENABLED)%'
+    calls:
+      - ['setTimeout', ['%env(int:BAKUS_WEBSOCKET_TIMEOUT)%']]
+      - ['setMaxConnections', ['%env(int:BAKUS_WEBSOCKET_MAX_CONNECTIONS)%']]
+      - ['setContext', ['@app.collect_provider.websocket_server_ssl_context']]
+      - ['addMiddleware', ['@app.collect_provider.bakus_websocket_client.middleware.close_handler']]
+      - [
+          'addMiddleware',
+          ['@app.collect_provider.bakus_websocket_client.middleware.ping_responder'],
+        ]
+      - ['addMiddleware', ['@app.collect_provider.bakus_websocket_client.middleware.ping_interval']]
+      - [
+          'addMiddleware',
+          [
+            '@App\Infrastructure\Collect\Bakus\Stream\Middleware\CollectTaskAuthorizationMiddleware',
+          ],
+        ]

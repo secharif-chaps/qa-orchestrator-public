@@ -1,0 +1,103 @@
+version: '3'
+
+tasks:
+  export-workflows:
+    desc: 'Export n8n workflows from n8n instance to workflows directory with kebab-case naming'
+    dir: '../../'
+    cmds:
+      - python3 scripts/export-n8n-workflows.py
+    summary: |
+      Usage:
+        task n8n:export-workflows              # Perform actual export
+        task n8n:export-workflows -- --dry-run # Preview export operations
+
+      Note: Requires n8n service to be running (docker compose up n8n)
+
+  export-credentials:
+    desc: 'Export n8n credentials from n8n instance to credentials directory with kebab-case naming'
+    dir: '../../'
+    cmds:
+      - python3 scripts/export-n8n-credentials.py
+    summary: |
+      Usage:
+        task n8n:export-credentials              # Perform actual export
+        task n8n:export-credentials -- --dry-run # Preview export operations
+
+      Note: Requires n8n service to be running (docker compose up n8n)
+
+  reset:
+    desc: 'Reset n8n instance (data and database)'
+    summary: |
+      Note: This will delete all n8n data and database, use with caution!
+    dir: '../../'
+    vars:
+      VOL_FORMAT:
+        sh: |
+          echo -n '{' && echo -n '{.Name}}'
+    cmds:
+      - docker compose down n8n n8n-import
+      - docker volume rm --force "$(docker compose volumes --format \'{{.VOL_FORMAT}}\' | grep n8n_data)"
+      - docker compose exec database psql -U app -d n8n_db -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO n8n_user;" > /dev/null
+      - docker compose up -d --wait n8n
+      - docker compose logs -n 45 n8n-import n8n
+
+  test:setup:
+    desc: 'Setup N8N test environment (install dependencies)'
+    dir: '../../'
+    cmds:
+      - docker compose exec n8n npm --prefix /tests install
+
+  test:
+    desc: 'Run N8N workflow tests with dataset, usage: task n8n:test -- <dataset-filename> [options]'
+    dir: '../../'
+    cmds:
+      - docker compose exec --workdir /tests n8n node /tests/test-workflow.js {{.CLI_ARGS}}
+    summary: |
+      Usage:
+        task n8n:test -- my-dataset.json           # Auto-detect workflow ID from dataset
+        task n8n:test -- my-dataset.json --verbose # Verbose output
+        task n8n:test -- my-dataset.json --parallel # Run tests in parallel
+
+      Note: Dataset file can be just the filename (looks in /tests/datasets/) or full path
+
+  validate:
+    desc: 'Validate N8N workflows (naming convention, agent config, feedback nodes)'
+    dir: '../../'
+    cmds:
+      - docker compose run --rm devtools php api/tests/N8N/validate-n8n-workflows.php --workflows-dir=/app/docker/n8n/workflows {{.CLI_ARGS}}
+    summary: |
+      Validates all N8N workflows against best practices:
+        1. Naming Convention: Domain_Role_Action format (e.g., Folder_Agent_UpdateReferenceSubject)
+        2. Agent Configuration: fallback model, retry, maxIterations < 30, error output connected
+        3. Feedback Nodes: JSON with success, message (translated), context.execution.id
+
+      Usage:
+        task n8n:validate                                           # Console output only
+        task n8n:validate -- --workflows-dir=custom/path            # Custom workflows directory
+
+      Exit codes:
+        0 - All validations passed
+        1 - Validation errors found
+        2 - Script error
+
+  validate:datasets:
+    desc: 'Validate test datasets against JSON Schema'
+    dir: '../../'
+    cmds:
+      - docker compose exec --workdir /tests n8n node /tests/validate-datasets.js {{.CLI_ARGS}}
+    summary: |
+      Validates test dataset files against the dataset-schema.json schema.
+      Checks for:
+        - Required fields (version, metadata, testCases)
+        - Valid testCaseId format (TC-XXX)
+        - Snapshot normalization config
+        - Success check configuration
+        - Input/output structure
+
+      Usage:
+        task n8n:validate:datasets                     # Validate all datasets
+        task n8n:validate:datasets -- datasets/my-test.json # Validate specific file
+
+      Exit codes:
+        0 - All datasets valid
+        1 - Validation errors found

@@ -1,0 +1,11 @@
+services:
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  # Use NullHub in test environment to avoid network calls to Mercure
+  mercure.hub.default:
+    class: App\Infrastructure\Mercure\Test\NullHub
+
+  Symfony\Component\Mercure\HubInterface: '@mercure.hub.default'

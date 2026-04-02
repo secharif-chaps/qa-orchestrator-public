@@ -1,0 +1,56 @@
+/* Custom styles for TARGET logo */
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+    height: 2rem;
+    width: auto;
+    max-width: 8rem;
+}
+
+.md-nav__title .md-logo img,
+.md-nav__title .md-logo svg {
+    height: 1.6rem;
+    width: auto;
+    max-width: 6rem;
+}
+
+/* Ensure SVG styles work properly */
+.md-logo svg .cls-2 {
+    fill: currentColor;
+}
+
+.md-logo svg .cls-3 {
+    fill: currentColor;
+    opacity: 0.8;
+}
+
+/* Dark mode compatibility */
+[data-md-color-scheme='slate'] .md-logo svg .cls-2,
+[data-md-color-scheme='slate'] .md-logo svg .cls-3 {
+    fill: var(--md-primary-bg-color);
+}
+
+/* Custom colors for the logo icon */
+.md-logo svg path[style*='#39939e'] {
+    fill: #39939e !important;
+}
+
+/* Responsive logo sizing */
+@media screen and (max-width: 76.1875em) {
+    .md-nav__title .md-logo img,
+    .md-nav__title .md-logo svg {
+        height: 1.4rem;
+        max-width: 5rem;
+    }
+}
+
+@media screen and (max-width: 44.9375em) {
+    .md-header__button.md-logo img,
+    .md-header__button.md-logo svg {
+        height: 1.8rem;
+        max-width: 7rem;
+    }
+}
+
+.md-grid {
+    max-width: 100% !important;
+}

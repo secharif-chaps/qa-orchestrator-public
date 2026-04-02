@@ -1,0 +1,262 @@
+{
+    "type": "OBJECT",
+    "properties": {
+        "recommendedSources": {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "name": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "fr": {
+                                "type": "STRING",
+                                "description": "Source name in French"
+                            },
+                            "en": {
+                                "type": "STRING",
+                                "description": "Source name in English"
+                            }
+                        }
+                    },
+                    "url": {
+                        "type": "STRING",
+                        "format": "uri",
+                        "description": "Main URL of the source"
+                    },
+                    "sourceType": {
+                        "type": "STRING",
+                        "enum": ["corporate", "news", "social", "regulatory", "research", "data", "blog", "forum", "other"]
+                    },
+                    "primaryDomain": {
+                        "type": "STRING",
+                        "description": "Primary domain name for displaying logo"
+                    },
+                    "relevanceScore": {
+                        "type": "NUMBER",
+                        "minimum": 0,
+                        "maximum": 100
+                    },
+                    "relevance": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "fr": {
+                                "type": "STRING",
+                                "maxLength": 500,
+                                "description": "Explanation of relevance in French"
+                            },
+                            "en": {
+                                "type": "STRING",
+                                "maxLength": 500,
+                                "description": "Explanation of relevance in English"
+                            }
+                        }
+                    },
+                    "monitoringMethod": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "type": {
+                                "type": "STRING",
+                                "enum": ["rss", "api", "web_scraping", "email_alert", "manual_check", "social_media_api", "other"]
+                            },
+                            "updateFrequency": {
+                                "type": "STRING",
+                                "enum": ["realtime", "daily", "weekly", "monthly", "quarterly", "event_based"]
+                            },
+                            "technicalDetails": {
+                                "type": "OBJECT",
+                                "properties": {
+                                    "endpoint": {
+                                        "type": "STRING",
+                                        "description": "RSS feed URL, API endpoint, or specific web page to monitor"
+                                    },
+                                    "parameters": {
+                                        "type": "OBJECT",
+                                        "additionalProperties": true,
+                                        "description": "Required parameters for API calls or monitoring configuration"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "contentFocus": {
+                        "type": "ARRAY",
+                        "items": {
+                            "type": "STRING",
+                            "description": "Specific content areas this source covers well"
+                        }
+                    },
+                    "relatedActors": {
+                        "type": "ARRAY",
+                        "items": {
+                            "type": "STRING",
+                            "description": "Names of actors this source provides information about"
+                        }
+                    },
+                    "qualityAssessment": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "authority": {
+                                "type": "NUMBER",
+                                "minimum": 0,
+                                "maximum": 10
+                            },
+                            "depth": {
+                                "type": "NUMBER",
+                                "minimum": 0,
+                                "maximum": 10
+                            },
+                            "timeliness": {
+                                "type": "NUMBER",
+                                "minimum": 0,
+                                "maximum": 10
+                            },
+                            "uniqueness": {
+                                "type": "NUMBER",
+                                "minimum": 0,
+                                "maximum": 10
+                            }
+                        }
+                    }
+                },
+                "required": ["name", "url", "sourceType", "primaryDomain", "relevanceScore", "relevance", "monitoringMethod"]
+            }
+        },
+        "sourceCategories": {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "categoryName": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "fr": {
+                                "type": "STRING"
+                            },
+                            "en": {
+                                "type": "STRING"
+                            }
+                        }
+                    },
+                    "sources": {
+                        "type": "ARRAY",
+                        "items": {
+                            "type": "STRING",
+                            "description": "Names of sources in this category"
+                        }
+                    },
+                    "monitoringPriority": {
+                        "type": "NUMBER",
+                        "minimum": 1,
+                        "maximum": 10
+                    },
+                    "description": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "fr": {
+                                "type": "STRING",
+                                "maxLength": 500
+                            },
+                            "en": {
+                                "type": "STRING",
+                                "maxLength": 500
+                            }
+                        }
+                    }
+                },
+                "required": ["categoryName", "sources", "monitoringPriority"]
+            }
+        },
+        "coverageAnalysis": {
+            "type": "OBJECT",
+            "properties": {
+                "strategicQuestionsCoverage": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "questionId": {
+                                "type": "STRING"
+                            },
+                            "coverageScore": {
+                                "type": "NUMBER",
+                                "minimum": 0,
+                                "maximum": 100
+                            },
+                            "bestSources": {
+                                "type": "ARRAY",
+                                "items": {
+                                    "type": "STRING"
+                                },
+                                "maxItems": 3
+                            }
+                        }
+                    }
+                },
+                "actorsCoverage": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "actorName": {
+                                "type": "STRING"
+                            },
+                            "coverageScore": {
+                                "type": "NUMBER",
+                                "minimum": 0,
+                                "maximum": 100
+                            },
+                            "bestSources": {
+                                "type": "ARRAY",
+                                "items": {
+                                    "type": "STRING"
+                                },
+                                "maxItems": 3
+                            }
+                        }
+                    }
+                },
+                "temporalCoverage": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "realtimeSources": {
+                            "type": "NUMBER"
+                        },
+                        "dailySources": {
+                            "type": "NUMBER"
+                        },
+                        "weeklySources": {
+                            "type": "NUMBER"
+                        },
+                        "monthlySources": {
+                            "type": "NUMBER"
+                        },
+                        "coverageAssessment": {
+                            "type": "STRING",
+                            "maxLength": 300
+                        }
+                    }
+                }
+            }
+        },
+        "sourcingStrategySummary": {
+            "type": "OBJECT",
+            "properties": {
+                "fr": {
+                    "type": "STRING",
+                    "maxLength": 1000
+                },
+                "en": {
+                    "type": "STRING",
+                    "maxLength": 1000
+                }
+            }
+        },
+        "confidence": {
+            "type": "NUMBER",
+            "minimum": 0,
+            "maximum": 100
+        }
+    },
+    "required": ["recommendedSources", "sourceCategories", "confidence"]
+}
