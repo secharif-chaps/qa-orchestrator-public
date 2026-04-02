@@ -52,12 +52,7 @@
           class="mb-6"
           icon="fa-exclamation-triangle"
           :title="$t('admin.permissions.legacyWarning.title')"
-          :description="
-            $t(
-              'admin.permissions.legacyWarning.description',
-              'This user has old-style permissions. They will be automatically converted to the new permission model when you save.',
-            )
-          "
+          :description="$t('admin.permissions.legacyWarning.description')"
         />
 
         <!-- Warning for custom permissions -->
@@ -111,10 +106,7 @@
             :disabled="role.id === 'admin' && !isChapsVisionUser"
             :disabled-reason="
               role.id === 'admin' && !isChapsVisionUser
-                ? $t(
-                    'admin.permissions.adminChapsVisionOnly',
-                    'Admin role is reserved for ChapsVision employees',
-                  )
+                ? $t('admin.permissions.adminChapsVisionOnly')
                 : undefined
             "
             @select="handleRoleSelect"
@@ -143,12 +135,7 @@
                       {{ $t('admin.permissions.organizationRead.label') }}
                     </p>
                     <p class="text-secondary text-xs">
-                      {{
-                        $t(
-                          'admin.permissions.organizationRead.description',
-                          'View folders and companies in the organization',
-                        )
-                      }}
+                      {{ $t('admin.permissions.organizationRead.description') }}
                     </p>
                   </div>
                 </div>
@@ -160,12 +147,7 @@
                 v-model="selectedPermissions"
                 permission="organization.write"
                 :label="$t('admin.permissions.organizationWrite.label')"
-                :description="
-                  $t(
-                    'admin.permissions.organizationWrite.description',
-                    'Create and manage folders, manage owned content',
-                  )
-                "
+                :description="$t('admin.permissions.organizationWrite.description')"
                 icon="fa-pencil"
               />
 
@@ -174,12 +156,7 @@
                 v-model="selectedPermissions"
                 permission="organization.manage"
                 :label="$t('admin.permissions.organizationManage.label')"
-                :description="
-                  $t(
-                    'admin.permissions.organizationManage.description',
-                    'Manage team members and their permissions',
-                  )
-                "
+                :description="$t('admin.permissions.organizationManage.description')"
                 icon="fa-users-cog"
               />
             </div>
@@ -192,12 +169,7 @@
               {{ $t('admin.permissions.sections.modules') }}
             </h4>
             <p class="text-secondary mb-3 text-xs">
-              {{
-                $t(
-                  'admin.permissions.sections.modulesDescription',
-                  'These permissions allow creating specific types of content. Requires Write Access.',
-                )
-              }}
+              {{ $t('admin.permissions.sections.modulesDescription') }}
             </p>
             <div class="flex flex-col gap-3">
               <!-- company.create -->
@@ -205,12 +177,7 @@
                 v-model="selectedPermissions"
                 permission="company.create"
                 :label="$t('admin.permissions.companyCreate.label')"
-                :description="
-                  $t(
-                    'admin.permissions.companyCreate.description',
-                    'Add company screens and other items to folders',
-                  )
-                "
+                :description="$t('admin.permissions.companyCreate.description')"
                 icon="fa-plus-circle"
                 :disabled="!hasWriteAccess"
                 :disabled-reason="$t('admin.permissions.requiresWriteAccess')"
@@ -221,12 +188,7 @@
                 v-model="selectedPermissions"
                 permission="target.create"
                 :label="$t('admin.permissions.targetCreate.label')"
-                :description="
-                  $t(
-                    'admin.permissions.targetCreate.description',
-                    'Create new watchfiles (Target module)',
-                  )
-                "
+                :description="$t('admin.permissions.targetCreate.description')"
                 icon="fa-bullseye"
                 :disabled="!hasWriteAccess"
                 :disabled-reason="$t('admin.permissions.requiresWriteAccess')"
@@ -241,12 +203,7 @@
               {{ $t('admin.permissions.sections.admin') }}
             </h4>
             <p class="text-secondary mb-3 text-xs">
-              {{
-                $t(
-                  'admin.permissions.sections.adminDescription',
-                  'Administrative access grants full control. Use with caution.',
-                )
-              }}
+              {{ $t('admin.permissions.sections.adminDescription') }}
             </p>
             <div class="flex flex-col gap-3">
               <!-- admin.organizations (with confirmation and ChapsVision restriction) -->
@@ -254,22 +211,12 @@
                 v-model="selectedPermissions"
                 permission="admin.organizations"
                 :label="$t('admin.permissions.adminOrganizations.label')"
-                :description="
-                  $t(
-                    'admin.permissions.adminOrganizations.description',
-                    'Full administrative access to all organizations',
-                  )
-                "
+                :description="$t('admin.permissions.adminOrganizations.description')"
                 icon="fa-shield-check"
                 variant="danger"
                 :disabled="!isChapsVisionUser"
                 :disabled-reason="
-                  !isChapsVisionUser
-                    ? $t(
-                        'admin.permissions.adminChapsVisionOnly',
-                        'Admin role is reserved for ChapsVision employees',
-                      )
-                    : undefined
+                  !isChapsVisionUser ? $t('admin.permissions.adminChapsVisionOnly') : undefined
                 "
                 @change="handleAdminPermissionChange"
               />

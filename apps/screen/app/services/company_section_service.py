@@ -15,24 +15,30 @@ All functions handle the transformation between agent JSON output
 and normalized database tables with SourcedValue pattern.
 """
 
+import json
 import logging
 from typing import Any
 
 from sqlalchemy.orm import Session
 
 from app.models.company_children import (
+    CompanyCorporateEntity,
     CompanyCsrInitiative,
     CompanyJobOffer,
     CompanyOnlineService,
     CompanyPressItem,
     CompanyProductCategory,
     CompanyProductItem,
+    CompanySanctionItem,
     CompanySocialMediaAccount,
     CompanyTeamMember,
     CompanyTimelineEvent,
+    CorporateRelationshipType,
     CsrInitiativeType,
     PressItemType,
     ProductItemType,
+    RiskLevel,
+    SanctionType,
 )
 from app.models.company_sections import (
     CompanyCsr,
@@ -41,6 +47,7 @@ from app.models.company_sections import (
     CompanyPress,
     CompanyProducts,
     CompanyProfile,
+    CompanySanctions,
     CompanyTimeline,
 )
 
@@ -1436,6 +1443,277 @@ def get_team_data(db: Session, company_id: int) -> list[dict[str, Any]]:
 
 
 # =============================================================================
+# CORPORATE STRUCTURE SECTION
+# =============================================================================
+
+# Valid relationship type strings for mapping
+_CORPORATE_TYPE_MAP: dict[str, CorporateRelationshipType] = {
+    "parent": CorporateRelationshipType.parent,
+    "subsidiary": CorporateRelationshipType.subsidiary,
+    "affiliate": CorporateRelationshipType.affiliate,
+    "branch": CorporateRelationshipType.branch,
+    "regional_entity": CorporateRelationshipType.regional_entity,
+}
+
+
+def save_corporate_structure_data(db: Session, company_id: int, data: dict) -> None:
+    """Save corporate structure entities from agent output.
+
+    Args:
+        db: Database session
+        company_id: Company ID to save data for
+        data: Agent output with 'entities' list
+    """
+    # Clear existing data
+    db.query(CompanyCorporateEntity).filter(CompanyCorporateEntity.company_id == company_id).delete()
+
+    entities = data.get("entities", [])
+    if not isinstance(entities, list):
+        entities = []
+
+    for entity_data in entities:
+        if not isinstance(entity_data, dict):
+            continue
+
+        # Extract name (required)
+        name, name_source = _get_sourced_value(entity_data, "name")
+        if not name:
+            continue
+
+        # Extract country (optional)
+        country, country_source = _get_sourced_value(entity_data, "country")
+
+        # Map relationship type
+        entity_type_str = entity_data.get("type", "")
+        entity_type = _CORPORATE_TYPE_MAP.get(entity_type_str)
+        if not entity_type:
+            continue
+
+        db.add(
+            CompanyCorporateEntity(
+                company_id=company_id,
+                type=entity_type,
+                name=name,
+                name_source=name_source,
+                country=country,
+                country_source=country_source,
+                source=entity_data.get("source", "worldcheck"),
+                wc_reference_id=entity_data.get("wc_reference_id"),
+                match_strength=entity_data.get("match_strength"),
+            )
+        )
+
+    db.flush()
+
+
+def get_corporate_structure_data(db: Session, company_id: int) -> dict[str, Any]:
+    """Read corporate structure entities grouped by relationship type.
+
+    Args:
+        db: Database session
+        company_id: Company ID to read data for
+
+    Returns:
+        Dictionary with keys: parents, subsidiaries, affiliates, branches, regional_entities
+    """
+    entities = db.query(CompanyCorporateEntity).filter(CompanyCorporateEntity.company_id == company_id).all()
+
+    result: dict[str, list[dict[str, Any]]] = {
+        "parents": [],
+        "subsidiaries": [],
+        "affiliates": [],
+        "branches": [],
+        "regional_entities": [],
+    }
+
+    # Map enum values to result keys
+    type_to_key = {
+        CorporateRelationshipType.parent: "parents",
+        CorporateRelationshipType.subsidiary: "subsidiaries",
+        CorporateRelationshipType.affiliate: "affiliates",
+        CorporateRelationshipType.branch: "branches",
+        CorporateRelationshipType.regional_entity: "regional_entities",
+    }
+
+    for entity in entities:
+        key = type_to_key.get(entity.type)
+        if not key:
+            continue
+
+        entity_dict: dict[str, Any] = {"name": entity.name}
+        if entity.country:
+            entity_dict["country"] = entity.country
+        if entity.name_source:
+            entity_dict["source"] = entity.name_source
+
+        result[key].append(entity_dict)
+
+    return result
+
+
+# =============================================================================
+# SANCTIONS DATA - WRITER AND READER
+# =============================================================================
+
+# Map string values to SanctionType enum
+_SANCTION_TYPE_MAP: dict[str, SanctionType] = {e.value: e for e in SanctionType}
+
+# Map string values to RiskLevel enum
+_RISK_LEVEL_MAP: dict[str, RiskLevel] = {e.value: e for e in RiskLevel}
+
+
+def save_sanctions_data(db: Session, company_id: int, data: dict) -> None:
+    """Save sanctions data from agent output to normalized tables.
+
+    Args:
+        db: Database session
+        company_id: Company ID to save data for
+        data: Agent output with overall risk, insights, and items list
+    """
+    # Clear existing sanctions data
+    db.query(CompanySanctionItem).filter(CompanySanctionItem.company_id == company_id).delete()
+    db.query(CompanySanctions).filter(CompanySanctions.company_id == company_id).delete()
+
+    # Save 1:1 sanctions summary
+    items = data.get("items", [])
+    if not isinstance(items, list):
+        items = []
+
+    sanctions = CompanySanctions(
+        company_id=company_id,
+        insights=_get_string_value(data, "insights"),
+        insights_source="worldcheck",
+        overall_risk_level=_get_string_value(data, "overall_risk_level"),
+        overall_risk_justification=_get_string_value(data, "overall_risk_justification"),
+        total_sanctions_count=len(items),
+    )
+    db.add(sanctions)
+
+    # Save 1:N sanction items
+    for item_data in items:
+        if not isinstance(item_data, dict):
+            continue
+
+        entity_name = item_data.get("entity_name")
+        if not entity_name:
+            continue
+
+        # Map sanction_type string to enum
+        sanction_type_str = item_data.get("sanction_type", "")
+        sanction_type = _SANCTION_TYPE_MAP.get(sanction_type_str)
+
+        # Map risk_level string to enum
+        risk_level_str = item_data.get("risk_level", "")
+        risk_level = _RISK_LEVEL_MAP.get(risk_level_str)
+
+        # Extract weblinks - preserve full objects as JSON strings in the TEXT[] array
+        raw_weblinks = item_data.get("weblinks")
+        weblinks = None
+        if isinstance(raw_weblinks, list):
+            extracted = []
+            for w in raw_weblinks:
+                if isinstance(w, str):
+                    extracted.append(w)
+                elif isinstance(w, dict) and w.get("uri"):
+                    extracted.append(json.dumps(w))
+            weblinks = extracted if extracted else None
+
+        db.add(
+            CompanySanctionItem(
+                company_id=company_id,
+                entity_name=entity_name,
+                country=item_data.get("country"),
+                sanction_nature=item_data.get("sanction_nature"),
+                description=item_data.get("description"),
+                source_code=item_data.get("source_code"),
+                sanction_type=sanction_type,
+                date=item_data.get("date"),
+                weblinks=weblinks,
+                is_onu_eu_ofac=bool(item_data.get("is_onu_eu_ofac", False)),
+                risk_level=risk_level,
+                risk_justification=item_data.get("risk_justification"),
+            )
+        )
+
+    db.flush()
+    logger.info(f"Saved sanctions data for company {company_id} ({len(items)} items)")
+
+
+def get_sanctions_data(db: Session, company_id: int) -> dict[str, Any]:
+    """Read sanctions data from normalized tables.
+
+    Args:
+        db: Database session
+        company_id: Company ID to read data for
+
+    Returns:
+        Dictionary with sanctions summary and items list
+    """
+    sanctions = db.query(CompanySanctions).filter(CompanySanctions.company_id == company_id).first()
+
+    items = db.query(CompanySanctionItem).filter(CompanySanctionItem.company_id == company_id).all()
+
+    if not sanctions and not items:
+        return {}
+
+    result: dict[str, Any] = {}
+
+    if sanctions:
+        if sanctions.insights:
+            result["insights"] = sanctions.insights
+        if sanctions.overall_risk_level:
+            result["overall_risk_level"] = sanctions.overall_risk_level
+        if sanctions.overall_risk_justification:
+            result["overall_risk_justification"] = sanctions.overall_risk_justification
+        result["total_sanctions_count"] = sanctions.total_sanctions_count or 0
+
+    if items:
+        items_list = []
+        for item in items:
+            item_dict: dict[str, Any] = {
+                "entity_name": item.entity_name,
+            }
+            if item.country:
+                item_dict["country"] = item.country
+            if item.sanction_nature:
+                item_dict["sanction_nature"] = item.sanction_nature
+            if item.description:
+                item_dict["description"] = item.description
+            if item.source_code:
+                item_dict["source_code"] = item.source_code
+            if item.sanction_type:
+                item_dict["sanction_type"] = item.sanction_type.value
+            if item.date:
+                item_dict["date"] = item.date
+            if item.weblinks:
+                # Parse JSON strings back to objects, keep plain URIs as-is
+                parsed_weblinks = []
+                for w in item.weblinks:
+                    try:
+                        parsed = json.loads(w)
+                        if isinstance(parsed, dict):
+                            # Only include non-null fields
+                            cleaned = {k: v for k, v in parsed.items() if v is not None}
+                            parsed_weblinks.append(cleaned)
+                        else:
+                            parsed_weblinks.append({"uri": w})
+                    except (json.JSONDecodeError, TypeError):
+                        parsed_weblinks.append({"uri": w})
+                item_dict["weblinks"] = parsed_weblinks
+            item_dict["is_onu_eu_ofac"] = item.is_onu_eu_ofac
+            if item.risk_level:
+                item_dict["risk_level"] = item.risk_level.value
+            if item.risk_justification:
+                item_dict["risk_justification"] = item.risk_justification
+            items_list.append(item_dict)
+        result["items"] = items_list
+    else:
+        result["items"] = []
+
+    return result
+
+
+# =============================================================================
 # MAIN DISPATCHER FUNCTION
 # =============================================================================
 
@@ -1467,6 +1745,8 @@ def write_section_data(
         "csr": save_csr_data,
         "press": save_press_data,
         "team": save_team_data,
+        "corporate_structure": save_corporate_structure_data,
+        "sanctions": save_sanctions_data,
     }
 
     writer = writers.get(query_type)
@@ -1497,6 +1777,8 @@ def read_all_section_data(db: Session, company_id: int) -> dict[str, Any]:
         "csr": get_csr_data(db, company_id),
         "press": get_press_data(db, company_id),
         "team": get_team_data(db, company_id),
+        "corporate_structure": get_corporate_structure_data(db, company_id),
+        "sanctions": get_sanctions_data(db, company_id),
     }
 
 

@@ -14,6 +14,8 @@ Models:
 - CompanyCsrInitiative: CSR initiatives by type
 - CompanyPressItem: Press coverage items by type
 - CompanyTeamMember: Team hierarchy with self-referential parent_id
+- CompanyCorporateEntity: Corporate structure entities (parents, subsidiaries, affiliates)
+- CompanySanctionItem: Sanctions and compliance records from WorldCheck
 
 All models have 1:N relationship with Company via company_id foreign key.
 """
@@ -21,6 +23,7 @@ All models have 1:N relationship with Company via company_id foreign key.
 import enum
 
 from sqlalchemy import (
+    Boolean,
     Column,
     DateTime,
     Enum,
@@ -95,6 +98,51 @@ class PressItemType(enum.Enum):
     interview = "interview"
     financial = "financial"
     partnership = "partnership"
+
+
+class CorporateRelationshipType(enum.Enum):
+    """Corporate entity relationship type enum.
+
+    Values:
+        parent: Parent company or holding group
+        subsidiary: Subsidiary company
+        affiliate: Affiliated company
+        branch: Local branch or office
+        regional_entity: Regional entity or division
+    """
+
+    parent = "parent"
+    subsidiary = "subsidiary"
+    affiliate = "affiliate"
+    branch = "branch"
+    regional_entity = "regional_entity"
+
+
+class SanctionType(enum.StrEnum):
+    """Types of sanctions/enforcement actions."""
+
+    unfair_competition = "unfair_competition"
+    data_protection = "data_protection"
+    consumer_protection = "consumer_protection"
+    ip_rights_infringement = "ip_rights_infringement"
+    regulatory_enforcement = "regulatory_enforcement"
+    financial_crime = "financial_crime"
+    corruption = "corruption"
+    money_laundering = "money_laundering"
+    terrorism_financing = "terrorism_financing"
+    tax_evasion = "tax_evasion"
+    sanctions_violation = "sanctions_violation"
+    environmental = "environmental"
+    other = "other"
+
+
+class RiskLevel(enum.StrEnum):
+    """Risk level classification."""
+
+    low = "low"
+    medium = "medium"
+    high = "high"
+    critical = "critical"
 
 
 # Child model definitions
@@ -552,3 +600,140 @@ class CompanyTeamMember(Base):
 
     # Subordinates relationship (direct reports)
     subordinates = relationship("CompanyTeamMember", back_populates="parent", foreign_keys=[parent_id])
+
+
+class CompanyCorporateEntity(Base):
+    """Corporate structure entity linked to a company (parent, subsidiary, affiliate, etc.).
+
+    Stores entities extracted from WorldCheck, Pappers, or web search that form
+    the corporate group structure of a company.
+
+    Attributes:
+        id: Primary key
+        company_id: Foreign key to parent company
+        type: Relationship type (parent, subsidiary, affiliate, branch, regional_entity)
+        name: Entity name
+        name_source: Source URL for the entity name
+        country: Country where the entity is located
+        country_source: Source URL for the country information
+        source: Data provenance system ("worldcheck", "pappers", or "web")
+        wc_reference_id: WorldCheck reference ID (for future TAR-1419 integration)
+        match_strength: Match confidence from enrichment data (for future TAR-1419 integration)
+        created_at: Record creation timestamp
+    """
+
+    __tablename__ = "company_corporate_entities"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    company_id = Column(
+        Integer,
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+
+    # Relationship type
+    type = Column(
+        Enum(
+            CorporateRelationshipType,
+            values_callable=lambda obj: [e.value for e in obj],
+            name="corporate_relationship_type_enum",
+            schema=SCREEN_SCHEMA,
+        ),
+        nullable=False,
+    )
+
+    # Entity name with source
+    name = Column(Text, nullable=False)
+    name_source = Column(Text, nullable=True)
+
+    # Country with source
+    country = Column(Text, nullable=True)
+    country_source = Column(Text, nullable=True)
+
+    # Data provenance: "worldcheck", "pappers", or "web"
+    source = Column(Text, nullable=True)
+
+    # WorldCheck fields (reserved for TAR-1419 integration)
+    wc_reference_id = Column(Text, nullable=True)
+    match_strength = Column(Text, nullable=True)
+
+    # Timestamp
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    # Relationship to Company
+    company = relationship("Company", back_populates="corporate_entities")
+
+
+class CompanySanctionItem(Base):
+    """Individual sanction/enforcement record for a company.
+
+    Stores sanctions, regulatory enforcement actions, and compliance issues
+    extracted from WorldCheck screening data.
+
+    Attributes:
+        id: Primary key
+        company_id: Foreign key to companies table
+        entity_name: Name of the sanctioned/enforcement entity
+        country: Country of the enforcement action
+        sanction_nature: Nature of the sanction (e.g. "Regulatory Enforcement")
+        description: Detailed description of the sanction
+        source_code: WorldCheck source code (e.g. "FRAC")
+        sanction_type: Categorized type of sanction
+        date: Date of the sanction or enforcement action
+        weblinks: Array of reference URLs
+        is_onu_eu_ofac: Whether this is an ONU/EU/OFAC sanction list entry
+        risk_level: Assessed risk level for this item
+        risk_justification: Explanation of the risk assessment
+        created_at: Record creation timestamp
+    """
+
+    __tablename__ = "company_sanction_items"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    company_id = Column(
+        Integer,
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+
+    entity_name = Column(Text, nullable=False)
+    country = Column(Text, nullable=True)
+    sanction_nature = Column(Text, nullable=True)
+    description = Column(Text, nullable=True)
+    source_code = Column(Text, nullable=True)
+
+    sanction_type = Column(
+        Enum(
+            SanctionType,
+            values_callable=lambda obj: [e.value for e in obj],
+            name="sanction_type_enum",
+            schema=SCREEN_SCHEMA,
+        ),
+        nullable=True,
+    )
+
+    date = Column(Text, nullable=True)
+    weblinks = Column(ARRAY(Text), nullable=True)
+    is_onu_eu_ofac = Column(Boolean, default=False, nullable=False)
+
+    risk_level = Column(
+        Enum(
+            RiskLevel,
+            values_callable=lambda obj: [e.value for e in obj],
+            name="risk_level_enum",
+            schema=SCREEN_SCHEMA,
+        ),
+        nullable=True,
+    )
+
+    risk_justification = Column(Text, nullable=True)
+
+    # Timestamp
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    # Relationship to Company
+    company = relationship("Company", back_populates="sanction_items")

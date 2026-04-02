@@ -46,6 +46,7 @@ class Company(Base):
         csr_data: Relationship to CompanyCsr (1:1)
         press_data: Relationship to CompanyPress (1:1)
         financial_data: Relationship to CompanyFinancial (1:1)
+        sanctions_data: Relationship to CompanySanctions (1:1)
         online_services: Relationship to CompanyOnlineService (1:N)
         social_media_accounts: Relationship to CompanySocialMediaAccount (1:N)
         timeline_events: Relationship to CompanyTimelineEvent (1:N)
@@ -57,6 +58,7 @@ class Company(Base):
         team_members: Relationship to CompanyTeamMember (1:N)
         financial_metrics: Relationship to CompanyFinancialMetric (1:N)
         funding_rounds: Relationship to CompanyFundingRound (1:N)
+        sanction_items: Relationship to CompanySanctionItem (1:N)
     """
 
     __tablename__ = "companies"
@@ -100,6 +102,9 @@ class Company(Base):
     jobs_data = relationship("CompanyJobs", back_populates="company", uselist=False, cascade="all, delete-orphan")
     csr_data = relationship("CompanyCsr", back_populates="company", uselist=False, cascade="all, delete-orphan")
     press_data = relationship("CompanyPress", back_populates="company", uselist=False, cascade="all, delete-orphan")
+    sanctions_data = relationship(
+        "CompanySanctions", back_populates="company", uselist=False, cascade="all, delete-orphan"
+    )
 
     # 1:1 Relationship to financial section
     financial_data = relationship(
@@ -119,6 +124,10 @@ class Company(Base):
     csr_initiatives = relationship("CompanyCsrInitiative", back_populates="company", cascade="all, delete-orphan")
     press_items = relationship("CompanyPressItem", back_populates="company", cascade="all, delete-orphan")
     team_members = relationship("CompanyTeamMember", back_populates="company", cascade="all, delete-orphan")
+    corporate_entities = relationship(
+        "CompanyCorporateEntity", back_populates="company", cascade="all, delete-orphan"
+    )
+    sanction_items = relationship("CompanySanctionItem", back_populates="company", cascade="all, delete-orphan")
 
     # Enrichment data from external APIs (1:N)
     enrichments = relationship("CompanyEnrichment", back_populates="company", cascade="all, delete-orphan")

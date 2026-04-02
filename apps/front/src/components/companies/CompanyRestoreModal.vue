@@ -16,12 +16,7 @@
               {{ $t('screen.company.restore.title') }}
             </h3>
             <p class="text-secondary text-sm">
-              {{
-                $t(
-                  'screen.company.restore.subtitle',
-                  'This will move the company back to the active list.',
-                )
-              }}
+              {{ $t('screen.company.restore.subtitle') }}
             </p>
           </div>
         </div>
@@ -30,12 +25,7 @@
       <!-- Content -->
       <div class="p-6">
         <p class="text-secondary mb-4 text-sm">
-          {{
-            $t(
-              'screen.company.restore.warning.message',
-              'Restoring a company will make it visible again in the main list.',
-            )
-          }}
+          {{ $t('screen.company.restore.warning.message') }}
         </p>
 
         <!-- Company Details -->

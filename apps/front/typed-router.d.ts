@@ -179,11 +179,13 @@ declare module 'vue-router/auto-routes' {
       | '/folders/[folderId]/(folderId)'
       | '/folders/[folderId]/companies/[companyId]'
       | '/folders/[folderId]/companies/[companyId]/'
+      | '/folders/[folderId]/companies/[companyId]/corporate-structure'
       | '/folders/[folderId]/companies/[companyId]/csr'
       | '/folders/[folderId]/companies/[companyId]/jobs'
       | '/folders/[folderId]/companies/[companyId]/press'
       | '/folders/[folderId]/companies/[companyId]/products'
       | '/folders/[folderId]/companies/[companyId]/profile'
+      | '/folders/[folderId]/companies/[companyId]/sanctions'
       | '/folders/[folderId]/companies/[companyId]/team'
       | '/folders/[folderId]/companies/[companyId]/timeline'
       | '/folders/[folderId]/create/company'
@@ -203,17 +205,26 @@ declare module 'vue-router/auto-routes' {
       { folderId: ParamValue<true>, companyId: ParamValue<true> },
       { folderId: ParamValue<false>, companyId: ParamValue<false> },
       | '/folders/[folderId]/companies/[companyId]/'
+      | '/folders/[folderId]/companies/[companyId]/corporate-structure'
       | '/folders/[folderId]/companies/[companyId]/csr'
       | '/folders/[folderId]/companies/[companyId]/jobs'
       | '/folders/[folderId]/companies/[companyId]/press'
       | '/folders/[folderId]/companies/[companyId]/products'
       | '/folders/[folderId]/companies/[companyId]/profile'
+      | '/folders/[folderId]/companies/[companyId]/sanctions'
       | '/folders/[folderId]/companies/[companyId]/team'
       | '/folders/[folderId]/companies/[companyId]/timeline'
     >,
     '/folders/[folderId]/companies/[companyId]/': RouteRecordInfo<
       '/folders/[folderId]/companies/[companyId]/',
       '/folders/:folderId/companies/:companyId',
+      { folderId: ParamValue<true>, companyId: ParamValue<true> },
+      { folderId: ParamValue<false>, companyId: ParamValue<false> },
+      | never
+    >,
+    '/folders/[folderId]/companies/[companyId]/corporate-structure': RouteRecordInfo<
+      '/folders/[folderId]/companies/[companyId]/corporate-structure',
+      '/folders/:folderId/companies/:companyId/corporate-structure',
       { folderId: ParamValue<true>, companyId: ParamValue<true> },
       { folderId: ParamValue<false>, companyId: ParamValue<false> },
       | never
@@ -249,6 +260,13 @@ declare module 'vue-router/auto-routes' {
     '/folders/[folderId]/companies/[companyId]/profile': RouteRecordInfo<
       '/folders/[folderId]/companies/[companyId]/profile',
       '/folders/:folderId/companies/:companyId/profile',
+      { folderId: ParamValue<true>, companyId: ParamValue<true> },
+      { folderId: ParamValue<false>, companyId: ParamValue<false> },
+      | never
+    >,
+    '/folders/[folderId]/companies/[companyId]/sanctions': RouteRecordInfo<
+      '/folders/[folderId]/companies/[companyId]/sanctions',
+      '/folders/:folderId/companies/:companyId/sanctions',
       { folderId: ParamValue<true>, companyId: ParamValue<true> },
       { folderId: ParamValue<false>, companyId: ParamValue<false> },
       | never
@@ -591,11 +609,13 @@ declare module 'vue-router/auto-routes' {
         | '/folders/[folderId]/(folderId)'
         | '/folders/[folderId]/companies/[companyId]'
         | '/folders/[folderId]/companies/[companyId]/'
+        | '/folders/[folderId]/companies/[companyId]/corporate-structure'
         | '/folders/[folderId]/companies/[companyId]/csr'
         | '/folders/[folderId]/companies/[companyId]/jobs'
         | '/folders/[folderId]/companies/[companyId]/press'
         | '/folders/[folderId]/companies/[companyId]/products'
         | '/folders/[folderId]/companies/[companyId]/profile'
+        | '/folders/[folderId]/companies/[companyId]/sanctions'
         | '/folders/[folderId]/companies/[companyId]/team'
         | '/folders/[folderId]/companies/[companyId]/timeline'
         | '/folders/[folderId]/create/company'
@@ -614,11 +634,13 @@ declare module 'vue-router/auto-routes' {
       routes:
         | '/folders/[folderId]/companies/[companyId]'
         | '/folders/[folderId]/companies/[companyId]/'
+        | '/folders/[folderId]/companies/[companyId]/corporate-structure'
         | '/folders/[folderId]/companies/[companyId]/csr'
         | '/folders/[folderId]/companies/[companyId]/jobs'
         | '/folders/[folderId]/companies/[companyId]/press'
         | '/folders/[folderId]/companies/[companyId]/products'
         | '/folders/[folderId]/companies/[companyId]/profile'
+        | '/folders/[folderId]/companies/[companyId]/sanctions'
         | '/folders/[folderId]/companies/[companyId]/team'
         | '/folders/[folderId]/companies/[companyId]/timeline'
       views:
@@ -627,6 +649,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/folders/[folderId]/companies/[companyId]/index.vue': {
       routes:
         | '/folders/[folderId]/companies/[companyId]/'
+      views:
+        | never
+    }
+    'src/pages/folders/[folderId]/companies/[companyId]/corporate-structure.vue': {
+      routes:
+        | '/folders/[folderId]/companies/[companyId]/corporate-structure'
       views:
         | never
     }
@@ -657,6 +685,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/folders/[folderId]/companies/[companyId]/profile.vue': {
       routes:
         | '/folders/[folderId]/companies/[companyId]/profile'
+      views:
+        | never
+    }
+    'src/pages/folders/[folderId]/companies/[companyId]/sanctions.vue': {
+      routes:
+        | '/folders/[folderId]/companies/[companyId]/sanctions'
       views:
         | never
     }

@@ -353,6 +353,7 @@
         "viewError": "View error"
       },
       "taskTypes": {
+        "corporate_structure": "Corporate Structure",
         "csr": "CSR",
         "digital": "Digital",
         "jobs": "Jobs",
@@ -1283,6 +1284,11 @@
           "description": "Press releases, public statements, and official communications",
           "title": "Corporate Communications"
         },
+        "corporateStructure": {
+          "description": "Parent companies, subsidiaries, affiliates, and group hierarchy",
+          "insights": "Discover the corporate group structure",
+          "title": "Corporate Structure"
+        },
         "csr": {
           "description": "CSR initiatives, sustainability programs, and social impact",
           "title": "Corporate Social Responsibility"
@@ -1304,6 +1310,11 @@
         "profile": {
           "description": "View detailed company information, business lines, and key metrics",
           "title": "Company Profile"
+        },
+        "sanctions": {
+          "description": "Sanctions, regulatory enforcement actions, and compliance issues from WorldCheck",
+          "insights": "Discover sanctions and compliance information",
+          "title": "Sanctions & Compliance"
         },
         "team": {
           "description": "Leadership team, organizational structure, and key personnel",
@@ -1394,6 +1405,10 @@
           "deselectAll": "Deselect All",
           "export": "Export",
           "options": {
+            "corporateStructure": {
+              "description": "Parent companies, subsidiaries, and affiliates",
+              "label": "Corporate Structure"
+            },
             "csr": {
               "description": "Responsibility initiatives and charity actions",
               "label": "Corporate Social Responsibility"
@@ -1545,7 +1560,49 @@
         "pendingShort": "{count} pending",
         "running": "{count} running ({percentage}%)",
         "runningShort": "{count} running",
-        "startAll": "Start all tasks"
+        "startAll": "Start all tasks",
+        "types": {
+          "corporate_structure": {
+            "description": "Parent company, subsidiaries, affiliates, branches",
+            "name": "Corporate Structure"
+          },
+          "csr": {
+            "description": "CSR initiatives, sustainability, social impact",
+            "name": "CSR"
+          },
+          "digital": {
+            "description": "Online presence, social media, digital strategy",
+            "name": "Digital"
+          },
+          "jobs": {
+            "description": "Job openings, career opportunities",
+            "name": "Jobs"
+          },
+          "press": {
+            "description": "Press releases, news, media coverage",
+            "name": "Press"
+          },
+          "products": {
+            "description": "Products, services, offerings",
+            "name": "Products"
+          },
+          "profile": {
+            "description": "Company profile, business lines, key metrics",
+            "name": "Profile"
+          },
+          "sanctions": {
+            "description": "Sanctions, regulatory enforcement, compliance issues",
+            "name": "Sanctions"
+          },
+          "team": {
+            "description": "Leadership team, org structure, key personnel",
+            "name": "Team"
+          },
+          "timeline": {
+            "description": "Company history, milestones, key events",
+            "name": "Timeline"
+          }
+        }
       },
       "translation": {
         "alreadyInProgress": "Translation already in progress",
@@ -1718,6 +1775,15 @@
           "notFound": "Not found",
           "title": "Line of business"
         },
+        "corporateStructure": {
+          "affiliates": "Affiliates",
+          "branches": "Branches",
+          "noData": "No corporate structure data available",
+          "parents": "Parent Companies",
+          "regionalEntities": "Regional Entities",
+          "subsidiaries": "Subsidiaries",
+          "title": "Corporate Structure"
+        },
         "csr": {
           "awards": "Awards & Certifications",
           "charity": "Charity Actions",
@@ -1802,6 +1868,23 @@
         },
         "profile": {
           "noData": "No profile data available for this company"
+        },
+        "sanctions": {
+          "clean": "Clean",
+          "itemsCount": "{count} item(s) found",
+          "nature": "Nature",
+          "noData": "No sanctions or compliance issues found in WorldCheck screening",
+          "riskAssessment": "Risk Assessment",
+          "riskJustification": "Risk Justification",
+          "riskLevels": {
+            "critical": "Critical Risk",
+            "high": "High Risk",
+            "low": "Low Risk",
+            "medium": "Medium Risk"
+          },
+          "sourceCode": "Source Code",
+          "sources": "Sources",
+          "title": "Sanctions & Compliance"
         },
         "team": {
           "noData": "No team data available"

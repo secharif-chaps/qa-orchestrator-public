@@ -85,12 +85,7 @@
               {{ $t('settings.help.selectTopic.title') }}
             </h3>
             <p>
-              {{
-                $t(
-                  'settings.help.selectTopic.message',
-                  'Choose a topic from the sidebar to view detailed documentation.',
-                )
-              }}
+              {{ $t('settings.help.selectTopic.message') }}
             </p>
           </div>
         </div>

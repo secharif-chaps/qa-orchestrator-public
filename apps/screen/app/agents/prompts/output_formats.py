@@ -30,13 +30,10 @@ def _clean_schema_for_prompt(schema: dict[str, Any]) -> dict[str, Any]:
 
 
 def _generate_output_format(agent_name: str) -> str:
-    """Generate a human-readable JSON schema description for an agent's prompt."""
-    schema_class = AGENT_OUTPUT_SCHEMAS.get(agent_name)
-    if schema_class is None:
-        return "{}"
-
-    json_schema = schema_class.model_json_schema()
-    cleaned = _clean_schema_for_prompt(json_schema)
+    """Generate a clean JSON schema string for use in agent prompts."""
+    schema_cls = AGENT_OUTPUT_SCHEMAS[agent_name]
+    raw_schema = schema_cls.model_json_schema()
+    cleaned = _clean_schema_for_prompt(raw_schema)
     return json.dumps(cleaned, indent=2)
 
 

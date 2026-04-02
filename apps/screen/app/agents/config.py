@@ -30,6 +30,8 @@ ALL_AGENT_TYPES = [
     "timeline",
     "csr",
     "team",
+    "corporate_structure",
+    "sanctions",
 ]
 
 

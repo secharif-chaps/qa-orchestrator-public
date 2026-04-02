@@ -16,12 +16,7 @@
               {{ $t('common.folder.restore.title') }}
             </h3>
             <p class="text-secondary text-sm">
-              {{
-                $t(
-                  'common.folder.restore.subtitle',
-                  'This will move the folder back to the active list.',
-                )
-              }}
+              {{ $t('common.folder.restore.subtitle') }}
             </p>
           </div>
         </div>
@@ -30,12 +25,7 @@
       <!-- Content -->
       <div class="p-6">
         <p class="text-secondary mb-4 text-sm">
-          {{
-            $t(
-              'common.folder.restore.warning.message',
-              'Restoring a folder will make it visible again in the main list.',
-            )
-          }}
+          {{ $t('common.folder.restore.warning.message') }}
         </p>
 
         <!-- Folder Details -->

@@ -12,6 +12,7 @@ Models:
 - CompanyJobs: Job market insights
 - CompanyCsr: Corporate social responsibility
 - CompanyPress: Press coverage insights
+- CompanySanctions: Sanctions and compliance summary from WorldCheck
 
 All models have 1:1 relationship with Company using company_id as PK and FK.
 """
@@ -370,3 +371,43 @@ class CompanyPress(Base):
 
     # Relationship to Company
     company = relationship("Company", back_populates="press_data")
+
+
+class CompanySanctions(Base):
+    """1:1 sanctions and compliance summary for a company.
+
+    Contains overall risk assessment and insights from WorldCheck screening.
+    Individual sanction items are in 1:N table (CompanySanctionItem).
+
+    Attributes:
+        company_id: Primary key and foreign key to companies table
+        insights: AI-generated sanctions summary
+        insights_source: Source of insights
+        overall_risk_level: Aggregated risk level (low/medium/high/critical)
+        overall_risk_justification: Explanation of overall risk assessment
+        total_sanctions_count: Total number of sanction items found
+        created_at: Record creation timestamp
+        updated_at: Record last update timestamp
+        company: Relationship to parent Company model
+    """
+
+    __tablename__ = "company_sanctions"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
+
+    company_id = Column(Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), primary_key=True)
+
+    # Insights (translatable)
+    insights = Column(Text, nullable=True)
+    insights_source = Column(Text, nullable=True)
+
+    # Overall risk assessment
+    overall_risk_level = Column(Text, nullable=True)
+    overall_risk_justification = Column(Text, nullable=True)
+    total_sanctions_count = Column(Integer, default=0)
+
+    # Timestamps
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
+
+    # Relationship to Company
+    company = relationship("Company", back_populates="sanctions_data", uselist=False)

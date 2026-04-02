@@ -21,12 +21,7 @@
           class="mb-6"
           icon="fa-check-circle"
           :title="$t('settings.user.resetPassword.success')"
-          :description="
-            $t(
-              'settings.user.resetPassword.successDescription',
-              'Share the new password with the user. They will be required to change it on first login.',
-            )
-          "
+          :description="$t('settings.user.resetPassword.successDescription')"
         />
 
         <!-- New Password Display -->
@@ -118,12 +113,7 @@
           class="mb-6"
           icon="fa-info-circle"
           :title="$t('settings.user.resetPassword.infoTitle')"
-          :description="
-            $t(
-              'settings.user.resetPassword.infoDescription',
-              'The user will be required to change this password on their next login.',
-            )
-          "
+          :description="$t('settings.user.resetPassword.infoDescription')"
         />
 
         <!-- Actions -->

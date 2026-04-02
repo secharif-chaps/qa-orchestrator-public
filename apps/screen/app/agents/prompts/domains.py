@@ -56,4 +56,17 @@ AGENT_ALLOWED_DOMAINS: dict[str, list[str]] = {
         "crunchbase.com",
         "bloomberg.com",
     ],
+    "corporate_structure": [
+        "{company_domain}",
+        "wikipedia.org",
+        "linkedin.com",
+        "crunchbase.com",
+        "pappers.fr",
+        "societe.com",
+        "infogreffe.fr",
+        "companieshouse.gov.uk",
+        "sec.gov",
+        "opencorporates.com",
+        "bloomberg.com",
+    ],
 }

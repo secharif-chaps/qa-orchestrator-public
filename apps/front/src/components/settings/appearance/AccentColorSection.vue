@@ -90,12 +90,7 @@
                 {{ $t('settings.appearance.accent.personalizeTitle') }}
               </h4>
               <p class="text-secondary mt-1 text-xs">
-                {{
-                  $t(
-                    'settings.appearance.accent.personalizeDescription',
-                    'Your accent color affects buttons, links, highlights, and interactive elements throughout the application.',
-                  )
-                }}
+                {{ $t('settings.appearance.accent.personalizeDescription') }}
               </p>
             </div>
           </div>

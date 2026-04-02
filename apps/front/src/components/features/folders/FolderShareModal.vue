@@ -7,12 +7,7 @@
     @close="handleClose"
   >
     <template #description>
-      {{
-        $t(
-          'common.folder.share.description',
-          'Share this folder with other users in your organization',
-        )
-      }}
+      {{ $t('common.folder.share.description') }}
 
       <div class="mt-4 flex flex-col gap-6">
         <!-- User Search Section -->
@@ -94,12 +89,7 @@
             class="bg-error-light text-error-light-content border-error-stroke rounded-lg border p-3 text-sm"
           >
             <i class="fa fa-exclamation-triangle mr-2"></i>
-            {{
-              $t(
-                'common.folder.share.searchError',
-                'Failed to search users. You may not have permission to share folders.',
-              )
-            }}
+            {{ $t('common.folder.share.searchError') }}
           </div>
 
           <!-- Selected User (pending add) -->
@@ -149,12 +139,7 @@
               class="text-secondary mt-2 flex items-center gap-1 text-xs"
             >
               <i class="fa fa-info-circle"></i>
-              {{
-                $t(
-                  'common.folder.share.writerDisabledNote',
-                  'Writer role is disabled because this user only has read permissions in the organization.',
-                )
-              }}
+              {{ $t('common.folder.share.writerDisabledNote') }}
             </div>
           </div>
         </div>

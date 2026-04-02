@@ -9,12 +9,7 @@
               {{ $t('admin.workflows.title') }}
             </h1>
             <p class="text-secondary mt-2">
-              {{
-                $t(
-                  'admin.workflows.description',
-                  'Configure Dify workflow integrations for automated analysis tasks',
-                )
-              }}
+              {{ $t('admin.workflows.description') }}
             </p>
           </div>
 

@@ -7,12 +7,7 @@
             {{ $t('screen.dataSources.title') }}
           </h2>
           <p class="text-secondary mt-1">
-            {{
-              $t(
-                'screen.dataSources.description',
-                'Configure external data providers for company screening',
-              )
-            }}
+            {{ $t('screen.dataSources.description') }}
           </p>
         </div>
       </div>
@@ -46,19 +41,13 @@ const availableSources = computed<DataSourceInfo[]>(() => [
   {
     source: 'pappers',
     name: t('screen.dataSources.pappers.name'),
-    description: t(
-      'screen.dataSources.pappers.description',
-      'French company data provider (legal info, financials, officers)',
-    ),
+    description: t('screen.dataSources.pappers.description'),
     logo: '/src/assets/logos/pappers.svg',
   },
   {
     source: 'worldcheck',
     name: t('screen.dataSources.worldcheck.name'),
-    description: t(
-      'screen.dataSources.worldcheck.description',
-      'LSEG WorldCheck screening for sanctions, PEP, and adverse media',
-    ),
+    description: t('screen.dataSources.worldcheck.description'),
     logo: '/src/assets/logos/worldcheck.svg',
     isDualCredential: true,
   },

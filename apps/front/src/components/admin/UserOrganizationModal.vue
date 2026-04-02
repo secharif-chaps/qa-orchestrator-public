@@ -121,12 +121,7 @@
             <div v-if="organizations.length === 0" class="py-8 text-center">
               <i class="fa fa-building text-secondary/50 mb-2 text-4xl"></i>
               <p class="text-secondary text-sm">
-                {{
-                  $t(
-                    'admin.userOrganization.noOrganizationsAvailable',
-                    'No organizations available',
-                  )
-                }}
+                {{ $t('admin.userOrganization.noOrganizationsAvailable') }}
               </p>
             </div>
           </div>

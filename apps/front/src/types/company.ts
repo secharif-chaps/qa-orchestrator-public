@@ -50,6 +50,33 @@ export interface PressItem {
   value_fr?: string
 }
 
+export interface CorporateEntity {
+  name: string
+  country?: string
+  source?: string
+}
+
+export interface SanctionItem {
+  entity_name: string
+  country?: string
+  sanction_type?: string
+  date?: string
+  description?: string
+  sanction_nature?: string
+  source_code?: string
+  risk_level?: string
+  risk_justification?: string
+  is_onu_eu_ofac?: boolean
+  weblinks?: Array<{ uri: string; caption?: string | null; date?: string | null }>
+}
+
+export interface SanctionsData {
+  overall_risk_level?: string
+  overall_risk_justification?: string
+  insights?: string
+  items?: SanctionItem[]
+}
+
 export interface TeamMember {
   position: string
   firstName: string
@@ -190,6 +217,16 @@ export interface Company {
   }
 
   team?: TeamMember[]
+
+  corporate_structure: {
+    parents?: CorporateEntity[]
+    subsidiaries?: CorporateEntity[]
+    affiliates?: CorporateEntity[]
+    branches?: CorporateEntity[]
+    regional_entities?: CorporateEntity[]
+  }
+
+  sanctions?: SanctionsData
 
   // Raw knowledge fields (debug/admin only)
   raw_mistral_knowledge?: string | null

@@ -25,6 +25,8 @@ class TaskType(StrEnum):
     press = "press"
     team = "team"
     financial = "financial"
+    corporate_structure = "corporate_structure"
+    sanctions = "sanctions"
 
 
 class Task(Base):

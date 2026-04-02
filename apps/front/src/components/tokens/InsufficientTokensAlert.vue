@@ -3,12 +3,7 @@
     <Alert
       variant="warning"
       :title="$t('settings.tokens.insufficientTitle')"
-      :description="
-        $t(
-          'settings.tokens.insufficientMessage',
-          'You need tokens to search for companies. Contact your administrator to get more tokens and continue searching.',
-        )
-      "
+      :description="$t('settings.tokens.insufficientMessage')"
       icon="fa-exclamation-triangle"
     />
 

@@ -1,18 +1,23 @@
 from .chapse_conversation_context import ChapseConversationContext
 from .company import Company
 from .company_children import (
+    CompanyCorporateEntity,
     CompanyCsrInitiative,
     CompanyJobOffer,
     CompanyOnlineService,
     CompanyPressItem,
     CompanyProductCategory,
     CompanyProductItem,
+    CompanySanctionItem,
     CompanySocialMediaAccount,
     CompanyTeamMember,
     CompanyTimelineEvent,
+    CorporateRelationshipType,
     CsrInitiativeType,
     PressItemType,
     ProductItemType,
+    RiskLevel,
+    SanctionType,
 )
 from .company_enrichment import CompanyEnrichment
 from .company_financial import CompanyFinancial, CompanyFinancialMetric, CompanyFundingRound
@@ -23,6 +28,7 @@ from .company_sections import (
     CompanyPress,
     CompanyProducts,
     CompanyProfile,
+    CompanySanctions,
     CompanyTimeline,
 )
 from .organization import (
@@ -50,10 +56,14 @@ __all__ = [
     "CompanyCsr",
     "CompanyPress",
     "CompanyFinancial",
+    "CompanySanctions",
     # 1:N Child models
     "ProductItemType",
     "CsrInitiativeType",
     "PressItemType",
+    "CorporateRelationshipType",
+    "SanctionType",
+    "RiskLevel",
     "CompanyOnlineService",
     "CompanySocialMediaAccount",
     "CompanyTimelineEvent",
@@ -65,6 +75,8 @@ __all__ = [
     "CompanyTeamMember",
     "CompanyFinancialMetric",
     "CompanyFundingRound",
+    "CompanyCorporateEntity",
+    "CompanySanctionItem",
     # Organization models
     "Organization",
     "OrganizationModule",

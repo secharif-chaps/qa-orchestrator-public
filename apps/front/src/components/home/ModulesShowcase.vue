@@ -139,10 +139,7 @@ const discoverUrl = computed(() => (discoverFlag.value?.config?.url as string) |
 const staticModules = computed<Module[]>(() => [
   {
     name: t('dashboard.home.modules.screen.name'),
-    description: t(
-      'dashboard.home.modules.screen.description',
-      'Deep company intelligence and comprehensive business screening with advanced analytics',
-    ),
+    description: t('dashboard.home.modules.screen.description'),
     category: t('dashboard.home.modules.screen.category'),
     icon: 'fa-solid fa-magnifying-glass',
     unlocked: true,
@@ -153,10 +150,7 @@ const staticModules = computed<Module[]>(() => [
   },
   {
     name: t('dashboard.home.modules.target.name'),
-    description: t(
-      'dashboard.home.modules.target.description',
-      'AI-powered market watch with smart alerts and comprehensive monitoring tools',
-    ),
+    description: t('dashboard.home.modules.target.description'),
     category: t('dashboard.home.modules.target.category'),
     icon: 'fa-solid fa-bullseye',
     unlocked: false,
@@ -167,10 +161,7 @@ const staticModules = computed<Module[]>(() => [
   },
   {
     name: t('dashboard.home.modules.explore.name'),
-    description: t(
-      'dashboard.home.modules.explore.description',
-      'Interactive knowledge graph for advanced data visualization and discovery',
-    ),
+    description: t('dashboard.home.modules.explore.description'),
     category: t('dashboard.home.modules.explore.category'),
     icon: 'fa-solid fa-project-diagram',
     unlocked: false,

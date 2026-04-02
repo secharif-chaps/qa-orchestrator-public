@@ -9,4 +9,6 @@ AGENT_SEARCH_TARGETS: dict[str, str] = {
     "timeline": """Search Wikipedia, Crunchbase, the company's history/about page, press archives, and business databases for chronological milestones.""",
     "csr": """Search the company's CSR/sustainability page, ESG reports, sustainability databases (CDP, B Corp), press releases about environmental/social initiatives.""",
     "team": """Search the company's team/leadership page, LinkedIn profiles of executives, Crunchbase people profiles, press mentions of key personnel, and board of directors pages.""",
+    "corporate_structure": """Search the company's corporate website (About, Legal, Group pages), Wikipedia, business registries (Pappers for French companies, Companies House for UK, SEC EDGAR for US, OpenCorporates), Crunchbase, Bloomberg, and annual reports. Look for corporate group structure, subsidiary lists, parent company, and organizational charts.""",
+    "sanctions": """Search WorldCheck screening results for sanctions list entries (ONU, EU, OFAC, SDN), regulatory enforcement actions (competition authorities, data protection agencies), adverse media related to compliance issues, and PEP connections. Cross-reference with official sanctions databases and regulatory body publications.""",
 }

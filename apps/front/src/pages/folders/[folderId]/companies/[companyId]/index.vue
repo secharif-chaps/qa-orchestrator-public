@@ -305,10 +305,7 @@ const analysisCards = computed(() => {
     {
       section: 'profile' as TaskType,
       title: t('screen.company.analysisCards.profile.title'),
-      description: t(
-        'screen.company.analysisCards.profile.description',
-        'View detailed company information, business lines, and key metrics',
-      ),
+      description: t('screen.company.analysisCards.profile.description'),
       icon: 'fas fa-building',
       insights: company.value?.profile?.businessLine?.value || company.value?.digital?.insights,
       taskStatus: getTaskStatus('profile') || getTaskStatus('digital'),
@@ -320,15 +317,9 @@ const analysisCards = computed(() => {
     {
       section: 'timeline' as TaskType,
       title: t('screen.company.analysisCards.timeline.title'),
-      description: t(
-        'screen.company.analysisCards.timeline.description',
-        'Company history, milestones, and key events over time',
-      ),
+      description: t('screen.company.analysisCards.timeline.description'),
       icon: 'fas fa-calendar-days',
-      insights: t(
-        'screen.company.analysisCards.timeline.insights',
-        'Discover the company history and key events',
-      ),
+      insights: t('screen.company.analysisCards.timeline.insights'),
       taskStatus: getTaskStatus('timeline'),
       errorDetails: getTaskErrorDetails('timeline'),
       taskId: getTaskId('timeline'),
@@ -338,17 +329,10 @@ const analysisCards = computed(() => {
     {
       section: 'products' as TaskType,
       title: t('screen.company.analysisCards.products.title'),
-      description: t(
-        'screen.company.analysisCards.products.description',
-        'Browse products, services, and offerings',
-      ),
+      description: t('screen.company.analysisCards.products.description'),
       icon: 'fas fa-box',
       insights:
-        company.value?.products?.insights ||
-        t(
-          'screen.company.analysisCards.products.insights',
-          'Discover the company products and services',
-        ),
+        company.value?.products?.insights || t('screen.company.analysisCards.products.insights'),
       taskStatus: getTaskStatus('products'),
       errorDetails: getTaskErrorDetails('products'),
       taskId: getTaskId('products'),
@@ -358,15 +342,9 @@ const analysisCards = computed(() => {
     {
       section: 'team' as TaskType,
       title: t('screen.company.analysisCards.team.title'),
-      description: t(
-        'screen.company.analysisCards.team.description',
-        'Leadership team, organizational structure, and key personnel',
-      ),
+      description: t('screen.company.analysisCards.team.description'),
       icon: 'fas fa-users',
-      insights: t(
-        'screen.company.analysisCards.team.insights',
-        'Discover the organizational structure and key members',
-      ),
+      insights: t('screen.company.analysisCards.team.insights'),
       taskStatus: getTaskStatus('team'),
       errorDetails: getTaskErrorDetails('team'),
       taskId: getTaskId('team'),
@@ -374,12 +352,33 @@ const analysisCards = computed(() => {
       disabled: false,
     },
     {
+      section: 'corporate_structure' as TaskType,
+      title: t('screen.company.analysisCards.corporateStructure.title'),
+      description: t('screen.company.analysisCards.corporateStructure.description'),
+      icon: 'fas fa-sitemap',
+      insights: t('screen.company.analysisCards.corporateStructure.insights'),
+      taskStatus: getTaskStatus('corporate_structure'),
+      errorDetails: getTaskErrorDetails('corporate_structure'),
+      taskId: getTaskId('corporate_structure'),
+      taskUpdatedAt: getTaskUpdatedAt('corporate_structure'),
+      disabled: false,
+    },
+    {
+      section: 'sanctions' as TaskType,
+      title: t('screen.company.analysisCards.sanctions.title'),
+      description: t('screen.company.analysisCards.sanctions.description'),
+      icon: 'fas fa-shield-halved',
+      insights: t('screen.company.analysisCards.sanctions.insights'),
+      taskStatus: getTaskStatus('sanctions'),
+      errorDetails: getTaskErrorDetails('sanctions'),
+      taskId: getTaskId('sanctions'),
+      taskUpdatedAt: getTaskUpdatedAt('sanctions'),
+      disabled: false,
+    },
+    {
       section: 'jobs' as TaskType,
       title: t('screen.company.analysisCards.jobs.title'),
-      description: t(
-        'screen.company.analysisCards.jobs.description',
-        'Current job openings and career opportunities',
-      ),
+      description: t('screen.company.analysisCards.jobs.description'),
       icon: 'fas fa-briefcase',
       insights: jobsInsights.value,
       taskStatus: getTaskStatus('jobs'),
@@ -391,10 +390,7 @@ const analysisCards = computed(() => {
     {
       section: 'press' as TaskType,
       title: t('screen.company.analysisCards.press.title'),
-      description: t(
-        'screen.company.analysisCards.press.description',
-        'Press releases, news articles, and media coverage',
-      ),
+      description: t('screen.company.analysisCards.press.description'),
       icon: 'fas fa-newspaper',
       insights: company.value?.press?.insights,
       taskStatus: getTaskStatus('press'),
@@ -406,10 +402,7 @@ const analysisCards = computed(() => {
     {
       section: 'csr' as TaskType,
       title: t('screen.company.analysisCards.csr.title'),
-      description: t(
-        'screen.company.analysisCards.csr.description',
-        'CSR initiatives, sustainability programs, and social impact',
-      ),
+      description: t('screen.company.analysisCards.csr.description'),
       icon: 'fas fa-leaf',
       insights: company.value?.csr?.insights,
       taskStatus: getTaskStatus('csr'),
@@ -421,10 +414,7 @@ const analysisCards = computed(() => {
     {
       section: 'digital' as TaskType,
       title: t('screen.company.analysisCards.communications.title'),
-      description: t(
-        'screen.company.analysisCards.communications.description',
-        'Press releases, public statements, and official communications',
-      ),
+      description: t('screen.company.analysisCards.communications.description'),
       icon: 'fas fa-bullhorn',
       insights: null,
       taskStatus: null,

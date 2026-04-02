@@ -26,12 +26,7 @@
         <slot name="actions">
           <!-- Default action hint -->
           <div v-if="type === 'no-data'" class="text-secondary text-sm">
-            {{
-              $t(
-                'screen.jobs.emptyState.hint',
-                'Job listings and hiring insights will appear here once available',
-              )
-            }}
+            {{ $t('screen.jobs.emptyState.hint') }}
           </div>
         </slot>
       </div>

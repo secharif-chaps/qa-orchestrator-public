@@ -30,20 +30,10 @@
             <i class="fa fa-exclamation-triangle mt-0.5 text-red-500"></i>
             <div class="text-sm leading-relaxed text-red-700">
               <p class="mb-2 font-medium">
-                {{
-                  $t(
-                    'screen.company.delete.warning.title',
-                    'Warning: This will permanently delete the company',
-                  )
-                }}
+                {{ $t('screen.company.delete.warning.title') }}
               </p>
               <p>
-                {{
-                  $t(
-                    'screen.company.delete.warning.message',
-                    'All associated data including tasks, reports, and history will be permanently removed. This action cannot be undone.',
-                  )
-                }}
+                {{ $t('screen.company.delete.warning.message') }}
               </p>
             </div>
           </div>
@@ -83,12 +73,7 @@
         <!-- Confirmation Input -->
         <div class="mb-6">
           <p class="text-secondary mb-3 text-sm">
-            {{
-              $t(
-                'screen.company.delete.confirm.message',
-                'Type the company name to confirm deletion:',
-              )
-            }}
+            {{ $t('screen.company.delete.confirm.message') }}
           </p>
           <div class="space-y-2">
             <code class="bg-base-300 block rounded px-2 py-1 text-sm">{{

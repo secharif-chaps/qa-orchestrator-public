@@ -183,14 +183,8 @@
             foldersStore.filterName
               ? $t('common.folder.empty.tryDifferentSearch')
               : canCreateFolder
-                ? $t(
-                    'common.folder.emptyList.description',
-                    'Create your first folder to organize your companies',
-                  )
-                : $t(
-                    'common.folder.emptyList.descriptionReadOnly',
-                    'No folders have been shared with you yet',
-                  )
+                ? $t('common.folder.emptyList.description')
+                : $t('common.folder.emptyList.descriptionReadOnly')
           }}
         </p>
         <Button

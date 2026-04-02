@@ -52,15 +52,15 @@ class TestAgentNodeMap:
         for agent_type in ALL_AGENT_TYPES:
             assert agent_type in AGENT_NODE_MAP
 
-    def test_exactly_eight_entries(self):
-        assert len(AGENT_NODE_MAP) == 8
+    def test_entry_count_matches_config(self):
+        assert len(AGENT_NODE_MAP) == len(ALL_AGENT_TYPES)
 
     def test_values_are_callable(self):
         for name, fn in AGENT_NODE_MAP.items():
             assert callable(fn), f"{name} node function is not callable"
 
     def test_expected_agent_names(self):
-        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team"}
+        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team", "corporate_structure", "sanctions"}
         assert set(AGENT_NODE_MAP.keys()) == expected
 
 
@@ -98,11 +98,11 @@ class TestRouteToAgents:
 
         assert result == []
 
-    def test_all_eight_agents(self):
+    def test_all_agents(self):
         state = _make_state(agents_to_run=list(ALL_AGENT_TYPES))
         result = _route_to_agents(state)
 
-        assert len(result) == 8
+        assert len(result) == len(ALL_AGENT_TYPES)
         expected_nodes = [f"agent_{name}" for name in ALL_AGENT_TYPES]
         assert [s.node for s in result] == expected_nodes
 
@@ -161,7 +161,7 @@ class TestAnalysisGraph:
     def test_graph_has_expected_nodes(self):
         node_names = set(analysis_graph.nodes.keys())
 
-        # Should have planner, synthesizer, and all 8 agent nodes
+        # Should have planner, synthesizer, and all 9 agent nodes
         expected = {"planner", "synthesizer", "__start__"}
         expected |= {f"agent_{name}" for name in ALL_AGENT_TYPES}
 

@@ -34,12 +34,7 @@
     <div class="flex flex-col gap-3">
       <Alert
         variant="danger"
-        :title="
-          $t(
-            'screen.chapseAssist.quickActions.error.preferencesCheck',
-            'Failed to Check Preferences',
-          )
-        "
+        :title="$t('screen.chapseAssist.quickActions.error.preferencesCheck')"
         :description="preferencesCheckError ?? ''"
         icon="fa-exclamation-circle"
       />
@@ -95,13 +90,7 @@
       <Alert
         variant="danger"
         :title="$t('screen.chapseAssist.quickActions.error.title')"
-        :description="
-          actionsError ||
-          $t(
-            'screen.chapseAssist.quickActions.error.message',
-            'An error occurred while generating actions. Please try again.',
-          )
-        "
+        :description="actionsError || $t('screen.chapseAssist.quickActions.error.message')"
         icon="fa-exclamation-circle"
       />
       <div class="flex justify-end gap-3">
@@ -191,12 +180,7 @@
         {{ $t('screen.chapseAssist.quickActions.empty.title') }}
       </h4>
       <p class="text-secondary text-sm">
-        {{
-          $t(
-            'screen.chapseAssist.quickActions.empty.loadedMessage',
-            'Unable to generate quick actions for this company. Try refreshing or check back later.',
-          )
-        }}
+        {{ $t('screen.chapseAssist.quickActions.empty.loadedMessage') }}
       </p>
       <Button
         variant="secondary"

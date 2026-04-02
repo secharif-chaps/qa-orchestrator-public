@@ -31,12 +31,7 @@
 
       <div class="text-secondary mt-8 text-sm">
         <p>
-          {{
-            $t(
-              'common.errors.notFound.help',
-              'If you believe this page should exist, please contact support.',
-            )
-          }}
+          {{ $t('common.errors.notFound.help') }}
         </p>
       </div>
     </div>
