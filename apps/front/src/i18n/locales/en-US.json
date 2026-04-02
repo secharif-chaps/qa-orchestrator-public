@@ -1212,6 +1212,7 @@
         "loadConversationFailed": "Error loading conversation",
         "loadConversationsFailed": "Error loading conversations",
         "notAuthenticated": "Not authenticated",
+        "rateLimited": "Too many messages. Please wait {seconds} seconds before trying again.",
         "sendMessageFailed": "Sorry, an error occurred. Please try again."
       },
       "maxCompanies": "(max 3)",

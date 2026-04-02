@@ -1212,6 +1212,7 @@
         "loadConversationFailed": "Erreur lors du chargement de la conversation",
         "loadConversationsFailed": "Erreur lors du chargement des conversations",
         "notAuthenticated": "Non authentifié",
+        "rateLimited": "Trop de messages. Veuillez patienter {seconds} secondes avant de réessayer.",
         "sendMessageFailed": "Désolé, une erreur s'est produite. Veuillez réessayer."
       },
       "maxCompanies": "(max 3)",

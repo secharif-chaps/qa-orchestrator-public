@@ -14,6 +14,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useEndpointResolver } from '@/composables/useEndpointResolver'
 import {
   sendChatMessage,
+  ChatRateLimitError,
   getConversations,
   getConversation,
   deleteConversation as apiDeleteConversation,
@@ -164,7 +165,14 @@ export function useChapseChat() {
       }
     } catch (err: unknown) {
       console.error('Error sending message:', err)
-      const errorMessage = t('screen.chapse.errors.sendMessageFailed')
+
+      let errorMessage: string
+      if (err instanceof ChatRateLimitError) {
+        errorMessage = t('screen.chapse.errors.rateLimited', { seconds: err.retryAfter })
+      } else {
+        errorMessage = t('screen.chapse.errors.sendMessageFailed')
+      }
+
       store.setError(errorMessage)
 
       // Update the streaming message with error

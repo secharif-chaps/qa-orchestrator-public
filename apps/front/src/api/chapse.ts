@@ -7,6 +7,20 @@
 import { apiClient } from './client'
 
 // =============================================================================
+// Errors
+// =============================================================================
+
+export class ChatRateLimitError extends Error {
+  retryAfter: number
+
+  constructor(retryAfter: number) {
+    super('Rate limit exceeded')
+    this.name = 'ChatRateLimitError'
+    this.retryAfter = retryAfter
+  }
+}
+
+// =============================================================================
 // Types
 // =============================================================================
 
@@ -114,6 +128,11 @@ export async function sendChatMessage(
     },
     body: JSON.stringify(request),
   })
+
+  if (response.status === 429) {
+    const retryAfter = parseInt(response.headers.get('Retry-After') || '60', 10)
+    throw new ChatRateLimitError(retryAfter)
+  }
 
   if (!response.ok) {
     const errorText = await response.text()

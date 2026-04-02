@@ -68,6 +68,9 @@ class Settings(BaseSettings):
     SYSTRAN_API_KEY: str | None = None
     SYSTRAN_API_URL: str = "https://api-translate.systran.net"
 
+    # Rate limiting
+    CHAPSE_CHAT_RATE_LIMIT: int = 15  # Max requests per minute per user on /chapse/chat
+
     model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     # Encryption settings

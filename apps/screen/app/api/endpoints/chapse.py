@@ -16,6 +16,7 @@ from app.core.exceptions import AuthorizationError, ExternalServiceError, Resour
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.organization import OrganizationContext, get_user_organization
+from app.core.rate_limit import check_chapse_chat_rate_limit
 from app.schemas.chapse import (
     ChapseChatRequest,
     ContextResponse,
@@ -44,7 +45,7 @@ def get_chapse_service(db: Session = Depends(get_db)) -> ChatService:
 @router.post("/chat")
 async def chat(
     request: ChapseChatRequest,
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: OIDCUser = Depends(check_chapse_chat_rate_limit),
     org_context: OrganizationContext = Depends(get_user_organization),
     service: ChatService = Depends(get_chapse_service),
 ):
