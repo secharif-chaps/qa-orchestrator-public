@@ -85,7 +85,7 @@ main:update-codeowners:
   stage: maintenance
   needs: []
   rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $JOB_TYPE == "update-codeowners"
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   variables:
     GIT_DEPTH: 0
