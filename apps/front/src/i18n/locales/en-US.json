@@ -1546,6 +1546,53 @@
       },
       "sections": {
         "analyses": "Analysis",
+        "financial": {
+          "desc": "Revenue, profitability & funding",
+          "funding": {
+            "amount": "Amount",
+            "date": "Date",
+            "lastValuation": "Last Valuation",
+            "leadInvestor": "Lead Investor",
+            "noRounds": "No funding rounds found",
+            "round": "Round",
+            "title": "Funding History",
+            "totalFunding": "Total Funding"
+          },
+          "history": {
+            "noData": "No historical data available",
+            "period": "Period",
+            "title": "Historical Financials"
+          },
+          "identity": {
+            "currency": "Currency",
+            "exchange": "Exchange",
+            "fiscalYear": "Fiscal Year End",
+            "private": "Private Company",
+            "public": "Public Company",
+            "subsidiary": "Subsidiary",
+            "ticker": "Ticker"
+          },
+          "insights": "Financial Insights",
+          "metrics": {
+            "debtToEquity": "Debt / Equity",
+            "ebitdaMargin": "EBITDA Margin",
+            "freeCashFlow": "Free Cash Flow",
+            "grossMargin": "Gross Margin",
+            "netMargin": "Net Margin",
+            "revenue": "Revenue",
+            "revenueGrowth": "Revenue Growth"
+          },
+          "noData": "No financial data available for this company",
+          "title": "Financial",
+          "valuation": {
+            "enterpriseValue": "Enterprise Value",
+            "evEbitda": "EV / EBITDA",
+            "evRevenue": "EV / Revenue",
+            "marketCap": "Market Cap",
+            "peRatio": "P/E Ratio",
+            "title": "Valuation"
+          }
+        },
         "notAvailable": "Section not available"
       },
       "tasks": {
