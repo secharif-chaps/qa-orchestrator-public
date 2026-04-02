@@ -1,0 +1,374 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "workflowId": "HLe3ZYDy6oiBINzb",
+    "workflowName": "3.a WatchFile Builder - Add Actor",
+    "description": "Evaluation dataset for Add Actor workflow - validates actor relevance, duplication detection, and domain validation",
+    "snapshotNormalization": {
+      "removeFields": ["*.context"]
+    }
+  },
+  "testCases": [
+    {
+      "testCaseId": "TC-001",
+      "name": "Success - Relevant actor with valid domain (Nuclear monitoring)",
+      "description": "Adding a highly relevant actor (EDF) for nuclear policy monitoring with valid domain",
+      "expectedBehavior": "The workflow must validate domain, check relevance via LLM_Agent_ValidateActorRelevance (score ≥50), detect no duplicates, and publish to RabbitMQ",
+      "expectedOutput": "Success with actor added to watchFile and chat message published",
+      "successCheck": {
+        "enabled": true,
+        "expectedPathValue": [["actor.success", true]]
+      },
+      "input": {
+        "watchFile": {
+          "id": "1f0ba909-4cda-666e-9b4c-497ced82fa8d",
+          "name": "News gouvernementales - Nucléaire",
+          "titleManuallySetByUser": false,
+          "userObjective": "Comprendre et anticiper les évolutions gouvernementales et réglementaires mondiales relative à l'énergie nucléaire. Trouver des informations évoquant des changements, des évolutions, mais aussi des informations permettant d'anticiper des changements.",
+          "referenceSubject": {
+            "en": "# Nuclear Energy Policy Watch\n\n**Global Nuclear Energy Policy Monitoring**\n\n*Track government regulations, policy changes, and safety protocols across major nuclear energy markets. Focus on France's nuclear energy policy updates, Germany's phase-out decisions, and USA's nuclear regulatory changes. Monitor keywords: nuclear policy, government regulations, energy security.*",
+            "fr": "# Surveillance des Politiques Nucléaires\n\n**Surveillance Mondiale des Politiques Énergétiques Nucléaires**\n\n*Suivre les réglementations gouvernementales, les changements de politique et les protocoles de sécurité dans les principaux marchés de l'énergie nucléaire. Focus sur les mises à jour de la politique nucléaire française, les décisions d'abandon de l'Allemagne et les changements réglementaires nucléaires des États-Unis. Mots-clés : politique nucléaire, réglementations gouvernementales, sécurité énergétique.*"
+          },
+          "referenceSubjectLlm": "Monitor global nuclear energy policy developments. Focus on: government regulations, policy changes, safety protocols. Priority markets: France, Germany, USA. Track: legislative updates, regulatory announcements, safety protocol revisions. Include: official government statements, regulatory body publications. Exclude: general energy news without nuclear focus.",
+          "state": "new",
+          "monitoringType": "regulatory",
+          "monitoringTypeConfidence": 0.92,
+          "monitoringTypeJustification": "Clear regulatory focus on nuclear policy",
+          "secondaryMonitoringTypes": ["strategic"],
+          "strategicQuestions": [
+            "What are the latest nuclear regulatory changes in Europe?",
+            "Which countries are expanding nuclear energy?",
+            "What safety protocols are being updated?"
+          ],
+          "analysisResults": [],
+          "createdAt": "2025-11-05T22:44:18+01:00",
+          "createdBy": {
+            "id": "116f1d59-c72d-486c-bf55-a5e587d88cfc",
+            "email": "basil@chapsvision.com",
+            "firstName": "Basil",
+            "lastName": "Target",
+            "displayName": "Basil Target",
+            "defaultThumbnail": "BT"
+          },
+          "updatedAt": "2025-11-05T22:44:29+01:00",
+          "watchFileActors": [],
+          "watchFileUsersCount": 1,
+          "isFavorite": false,
+          "userEditable": false,
+          "sources": [],
+          "status": "draft"
+        },
+        "conversationId": "1f0ba909-5099-6980-8667-497ced82fa8d",
+        "messageContentId": "msg-tc001",
+        "language": "en",
+        "actor": {
+          "label": "EDF",
+          "primaryDomain": "edf.fr",
+          "score": 95,
+          "explanation_fr": "EDF est le principal opérateur nucléaire français et un acteur majeur de l'industrie nucléaire mondiale. Essentiel pour suivre les développements réglementaires et les politiques énergétiques.",
+          "explanation_en": "EDF is the main French nuclear operator and a major player in the global nuclear industry. Essential for tracking regulatory developments and energy policies.",
+          "duplicate": [],
+          "isDuplicated": false
+        },
+        "BusNameStamp": "[{\"busName\":\"command.bus\"}]",
+        "RouterContextStamp": "[{\"baseUrl\":\"\",\"method\":\"POST\",\"host\":\"basil.local\",\"scheme\":\"https\",\"httpPort\":80,\"httpsPort\":443,\"pathInfo\":\"/api/conversations/1f0ba909-5099-6980-8667-497ced82fa8d/messages\",\"queryString\":\"\"}]"
+      },
+      "snapshot": [
+        {
+          "actor": {
+            "success": true,
+            "message": "The actor \"EDF\" has been correctly added",
+            "messageId": "msg-tc001",
+            "conversationId": "1f0ba909-5099-6980-8667-497ced82fa8d",
+            "watchFileId": "1f0ba909-4cda-666e-9b4c-497ced82fa8d"
+          }
+        }
+      ]
+    },
+    {
+      "testCaseId": "TC-002",
+      "name": "Success - Relevant actor without domain (Market Intelligence)",
+      "description": "Adding a competitor actor (Crayon) for Market Intelligence monitoring without primaryDomain",
+      "expectedBehavior": "The workflow must accept null domain, validate relevance (score ≥50), and successfully add actor",
+      "expectedOutput": "Success with actor added and RabbitMQ message published",
+      "successCheck": {
+        "enabled": true,
+        "expectedPathValue": [["actor.success", true]]
+      },
+      "input": {
+        "watchFile": {
+          "id": "wf-market-intel-001",
+          "name": "Analyse des acteurs de la veille concurrentielle",
+          "titleManuallySetByUser": false,
+          "userObjective": "Je travaille pour Chapsvision, et je souhaite étudier les éditeurs de logiciels concurrents dans le secteur de la Market Intelligence",
+          "referenceSubject": {
+            "en": "# Competitive Intelligence Software Market\n\n**Market Intelligence Platform Analysis**\n\n*Analyze enterprise solutions like Crayon (AI-powered intelligence), Kompyte (competitive tracking), SEMrush (digital marketing), and SimilarWeb (web traffic). Monitor specialized tools including Brand24 (social media), Mention (brand monitoring), and Awario (social listening). Track key features: AI analysis, real-time data, custom reports, and API access.*",
+            "fr": "# Marché des Logiciels d'Intelligence Concurrentielle\n\n**Analyse des Plateformes de Market Intelligence**\n\n*Analyser les solutions d'entreprise comme Crayon (intelligence augmentée par IA), Kompyte (suivi concurrentiel), SEMrush (marketing digital) et SimilarWeb (trafic web). Surveiller les outils spécialisés incluant Brand24 (médias sociaux), Mention (surveillance de marque) et Awario (écoute sociale). Suivre les fonctionnalités clés : analyse IA, données en temps réel, rapports personnalisés et accès API.*"
+          },
+          "referenceSubjectLlm": "Analyze competitive intelligence software market. Priority competitors: Crayon, Kompyte, SEMrush, SimilarWeb, Brand24, Mention, Awario. Focus on: AI analysis capabilities, real-time data features, custom reporting, API access, pricing strategies. Include: product launches, feature updates, partnership announcements. Exclude: general marketing software without CI focus.",
+          "state": "active",
+          "monitoringType": "competitive",
+          "monitoringTypeConfidence": 0.95,
+          "strategicQuestions": [
+            "What features are our competitors launching?",
+            "What are their pricing strategies?",
+            "How are they positioning AI capabilities?"
+          ],
+          "createdAt": "2025-10-20T14:00:00+01:00",
+          "createdBy": {
+            "id": "116f1d59-c72d-486c-bf55-a5e587d88cfc",
+            "email": "basil@chapsvision.com",
+            "firstName": "Basil",
+            "lastName": "Target",
+            "displayName": "Basil Target",
+            "defaultThumbnail": "BT"
+          },
+          "watchFileActors": [],
+          "sources": [],
+          "status": "draft"
+        },
+        "conversationId": "conv-tc002",
+        "messageContentId": "msg-tc002",
+        "language": "en",
+        "actor": {
+          "label": "Crayon",
+          "primaryDomain": null,
+          "score": 95,
+          "explanation_fr": "Crayon est un concurrent direct majeur dans l'intelligence concurrentielle avec des capacités IA avancées. Essentiel pour ce monitoring compétitif.",
+          "explanation_en": "Crayon is a major direct competitor in competitive intelligence with advanced AI capabilities. Essential for this competitive monitoring.",
+          "duplicate": [],
+          "isDuplicated": false
+        },
+        "BusNameStamp": "[{\"busName\":\"command.bus\"}]",
+        "RouterContextStamp": "[{\"baseUrl\":\"\",\"method\":\"POST\",\"host\":\"basil.local\",\"scheme\":\"https\",\"httpPort\":80,\"httpsPort\":443,\"pathInfo\":\"/api/conversations/conv-tc002/messages\",\"queryString\":\"\"}]"
+      },
+      "snapshot": [
+        {
+          "actor": {
+            "success": false,
+            "message": "The actor \"Crayon\" does not seem relevant for this WatchFile, check the analyse for more detail.",
+            "messageId": "msg-tc002",
+            "conversationId": "conv-tc002",
+            "watchFileId": "wf-market-intel-001"
+          }
+        }
+      ]
+    },
+    {
+      "testCaseId": "TC-003",
+      "name": "Failure - Duplicate actor detection",
+      "description": "Attempting to add an actor (Oscorp Industries) that already exists in the watchFile",
+      "expectedBehavior": "The workflow must detect duplication via Condition_Check_ActorDuplicate and return Feedback_DuplicateActorError without publishing to RabbitMQ",
+      "expectedOutput": "Error with duplicate actor message",
+      "successCheck": {
+        "enabled": true,
+        "expectedPathValue": [["actor.success", true]]
+      },
+      "input": {
+        "watchFile": {
+          "id": "wf-nuclear-tech-001",
+          "name": "News gouvernementales - Nucléaire",
+          "titleManuallySetByUser": false,
+          "userObjective": "Comprendre et anticiper les évolutions gouvernementales et réglementaires mondiales relative à l'énergie nucléaire.",
+          "referenceSubject": {
+            "en": "# Nuclear Energy Policy Watch\n\n**Global Nuclear Energy Policy Monitoring**",
+            "fr": "# Surveillance des Politiques Nucléaires\n\n**Surveillance Mondiale des Politiques Énergétiques Nucléaires**"
+          },
+          "referenceSubjectLlm": "Monitor global nuclear energy policy developments. Track: government regulations, policy changes, safety protocols. Include: legislative updates, regulatory announcements. Exclude: general energy news without nuclear focus.",
+          "state": "active",
+          "monitoringType": "regulatory",
+          "createdAt": "2025-11-05T22:44:18+01:00",
+          "createdBy": {
+            "id": "116f1d59-c72d-486c-bf55-a5e587d88cfc",
+            "email": "basil@chapsvision.com",
+            "firstName": "Basil",
+            "lastName": "Target",
+            "displayName": "Basil Target",
+            "defaultThumbnail": "BT"
+          },
+          "watchFileActors": [
+            {
+              "id": "existing-actor-001",
+              "actor": {
+                "id": "actor-oscorp-001",
+                "label": "Oscorp Industries",
+                "primaryDomain": "oscorp.com"
+              },
+              "type": "company",
+              "score": 0.88,
+              "status": "active"
+            }
+          ],
+          "sources": [],
+          "status": "draft"
+        },
+        "conversationId": "conv-tc003",
+        "messageContentId": "msg-tc003",
+        "language": "en",
+        "actor": {
+          "label": "Oscorp Industries",
+          "primaryDomain": "oscorp.com",
+          "score": 85,
+          "explanation_fr": "Oscorp est un acteur dans le secteur énergétique.",
+          "explanation_en": "Oscorp is a player in the energy sector.",
+          "duplicate": [
+            {
+              "id": "actor-oscorp-001",
+              "label": "Oscorp Industries",
+              "primaryDomain": "oscorp.com"
+            }
+          ],
+          "isDuplicated": true
+        },
+        "BusNameStamp": "[{\"busName\":\"command.bus\"}]",
+        "RouterContextStamp": "[{\"baseUrl\":\"\",\"method\":\"POST\",\"host\":\"basil.local\",\"scheme\":\"https\",\"httpPort\":80,\"httpsPort\":443,\"pathInfo\":\"/api/conversations/conv-tc003/messages\",\"queryString\":\"\"}]"
+      },
+      "snapshot": [
+        {
+          "actor": {
+            "success": false,
+            "message": "The actor \"Oscorp Industries\" is already defined in the WatchFile.",
+            "messageId": "msg-tc003",
+            "conversationId": "conv-tc003",
+            "watchFileId": "wf-nuclear-tech-001"
+          }
+        }
+      ]
+    },
+    {
+      "testCaseId": "TC-004",
+      "name": "Failure - Irrelevant actor rejected (low relevance score)",
+      "description": "Attempting to add an irrelevant actor (Wonka Industries - candy manufacturer) to nuclear policy monitoring",
+      "expectedBehavior": "The workflow must validate via LLM_Agent_ValidateActorRelevance, get low score (<50), and return Feedback_SourceNotRelevant",
+      "expectedOutput": "Error with 'not relevant' message explaining the mismatch",
+      "successCheck": {
+        "enabled": true,
+        "expectedPathValue": [["actor.success", true]]
+      },
+      "input": {
+        "watchFile": {
+          "id": "wf-nuclear-policy-002",
+          "name": "News gouvernementales - Nucléaire",
+          "titleManuallySetByUser": false,
+          "userObjective": "Comprendre et anticiper les évolutions gouvernementales et réglementaires mondiales relative à l'énergie nucléaire.",
+          "referenceSubject": {
+            "en": "# Nuclear Energy Policy Watch\n\n**Global Nuclear Energy Policy Monitoring**\n\n*Track government regulations, policy changes, and safety protocols across major nuclear energy markets.*",
+            "fr": "# Surveillance des Politiques Nucléaires\n\n**Surveillance Mondiale des Politiques Énergétiques Nucléaires**\n\n*Suivre les réglementations gouvernementales, les changements de politique et les protocoles de sécurité dans les principaux marchés de l'énergie nucléaire.*"
+          },
+          "referenceSubjectLlm": "Monitor global nuclear energy policy developments and regulatory changes. Focus on: government nuclear regulations, reactor licensing decisions, safety protocol updates, nuclear waste management policies, international atomic energy agreements. Track: national energy ministries, nuclear regulatory authorities (NRC, ASN, IAEA), policy announcements, legislative changes. Geographic scope: major nuclear markets including USA, France, China, Japan, UK, South Korea. Include: regulatory approvals and denials, safety incident reports, decommissioning policies, new construction permits. Exclude: general energy news without nuclear focus, purely technical research without policy implications.",
+          "state": "active",
+          "monitoringType": "regulatory",
+          "strategicQuestions": [
+            "What are the latest nuclear regulatory changes?",
+            "Which countries are expanding nuclear programs?"
+          ],
+          "createdAt": "2025-11-05T22:44:18+01:00",
+          "createdBy": {
+            "id": "116f1d59-c72d-486c-bf55-a5e587d88cfc",
+            "email": "basil@chapsvision.com",
+            "firstName": "Basil",
+            "lastName": "Target",
+            "displayName": "Basil Target",
+            "defaultThumbnail": "BT"
+          },
+          "watchFileActors": [],
+          "sources": [],
+          "status": "draft"
+        },
+        "conversationId": "conv-tc004",
+        "messageContentId": "msg-tc004",
+        "language": "en",
+        "actor": {
+          "label": "Wonka Industries",
+          "primaryDomain": "wonka.com",
+          "score": 25,
+          "explanation_fr": "Wonka Industries est spécialisé dans la confiserie, pas dans l'énergie nucléaire.",
+          "explanation_en": "Wonka Industries specializes in candy manufacturing, not nuclear energy.",
+          "duplicate": [],
+          "isDuplicated": false
+        },
+        "BusNameStamp": "[{\"busName\":\"command.bus\"}]",
+        "RouterContextStamp": "[{\"baseUrl\":\"\",\"method\":\"POST\",\"host\":\"basil.local\",\"scheme\":\"https\",\"httpPort\":80,\"httpsPort\":443,\"pathInfo\":\"/api/conversations/conv-tc004/messages\",\"queryString\":\"\"}]"
+      },
+      "snapshot": [
+        {
+          "actor": {
+            "success": false,
+            "message": "The actor \"Wonka Industries\" does not seem relevant for this WatchFile, check the analyse for more detail.",
+            "messageId": "msg-tc004",
+            "conversationId": "conv-tc004",
+            "watchFileId": "wf-nuclear-policy-002"
+          }
+        }
+      ]
+    },
+    {
+      "testCaseId": "TC-005",
+      "name": "Success - French language context (Pharmacy sector)",
+      "description": "Adding a relevant actor (Sanofi) to pharmacy employer labels monitoring with French language",
+      "expectedBehavior": "The workflow must process in French language context, validate relevance, and return French success message",
+      "expectedOutput": "Success with French message 'Acteur ajouté : Sanofi'",
+      "successCheck": {
+        "enabled": true,
+        "expectedPathValue": [["actor.success", true]]
+      },
+      "input": {
+        "watchFile": {
+          "id": "wf-pharma-employer-001",
+          "name": "Employer Labels Monitoring in Pharmacy & Cosmetics",
+          "titleManuallySetByUser": false,
+          "userObjective": "identifier les labels les plus reconnus en 2024/2025 'Meilleurs employeurs'",
+          "referenceSubject": {
+            "en": "# Employer Labels Monitoring - Pharma & Cosmetics Sector\n\n**HR Certifications and Labels Monitoring**\n\n*Track Great Place to Work, Top Employer, Happy Trainees certifications in pharmaceutical and cosmetics sectors. Focus on Sanofi, L'Oréal, Servier, Ipsen.*",
+            "fr": "# Surveillance Labels Employeurs - Secteur Pharma & Cosmétiques\n\n**Monitoring des Certifications et Labels RH**\n\n*Suivre les certifications Great Place to Work, Top Employer, Happy Trainees dans le secteur pharmaceutique et cosmétique. Focus sur Sanofi, L'Oréal, Servier, Ipsen.*"
+          },
+          "referenceSubjectLlm": "Monitor employer branding certifications and HR labels in pharmaceutical and cosmetics industries. Focus on: Great Place to Work certifications, Top Employer Institute rankings, Happy Trainees labels, Best Workplaces awards, diversity and inclusion certifications. Track companies: Sanofi, L'Oréal, Servier, Ipsen, Pierre Fabre, Bioderma, Johnson & Johnson. Monitor: annual certification announcements, ranking publications, award ceremonies, employer reputation studies. Include: certification criteria, company rankings, employee satisfaction metrics, HR best practices. Exclude: general HR news without certification focus, unrelated industry sectors.",
+          "state": "active",
+          "monitoringType": "commercial",
+          "strategicQuestions": [
+            "Quels sont les labels les plus reconnus?",
+            "Quelles entreprises obtiennent ces certifications?",
+            "Quels critères sont valorisés?"
+          ],
+          "createdAt": "2025-10-01T10:00:00+01:00",
+          "createdBy": {
+            "id": "116f1d59-c72d-486c-bf55-a5e587d88cfc",
+            "email": "basil@chapsvision.com",
+            "firstName": "Basil",
+            "lastName": "Target",
+            "displayName": "Basil Target",
+            "defaultThumbnail": "BT"
+          },
+          "watchFileActors": [],
+          "sources": [],
+          "status": "draft"
+        },
+        "conversationId": "conv-tc005",
+        "messageContentId": "msg-tc005",
+        "language": "fr",
+        "actor": {
+          "label": "Sanofi",
+          "primaryDomain": "sanofi.com",
+          "score": 92,
+          "explanation_fr": "Sanofi est un leader pharmaceutique français majeur, régulièrement certifié pour ses pratiques RH. Essentiel pour ce monitoring des labels employeurs.",
+          "explanation_en": "Sanofi is a major French pharmaceutical leader, regularly certified for its HR practices. Essential for this employer labels monitoring.",
+          "duplicate": [],
+          "isDuplicated": false
+        },
+        "BusNameStamp": "[{\"busName\":\"command.bus\"}]",
+        "RouterContextStamp": "[{\"baseUrl\":\"\",\"method\":\"POST\",\"host\":\"basil.local\",\"scheme\":\"https\",\"httpPort\":80,\"httpsPort\":443,\"pathInfo\":\"/api/conversations/conv-tc005/messages\",\"queryString\":\"\"}]"
+      },
+      "snapshot": [
+        {
+          "actor": {
+            "success": true,
+            "message": "L'acteur \"Sanofi\" a été correctement ajouté.",
+            "messageId": "msg-tc005",
+            "conversationId": "conv-tc005",
+            "watchFileId": "wf-pharma-employer-001"
+          }
+        }
+      ]
+    }
+  ]
+}

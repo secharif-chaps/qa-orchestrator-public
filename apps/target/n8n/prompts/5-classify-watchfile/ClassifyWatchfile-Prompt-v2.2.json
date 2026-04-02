@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WatchFileClassificationOutput",
+  "description": "Schema for Chaps-e Classification Agent output - v2.2",
+  "type": "object",
+  "required": [
+    "primaryType",
+    "confidenceScore",
+    "justification",
+    "secondaryTypes",
+    "topics",
+    "analysis",
+    "suggestions",
+    "deepSearchReadiness"
+  ],
+  "properties": {
+    "primaryType": {
+      "type": "string",
+      "enum": [
+        "technological",
+        "competitive",
+        "regulatory",
+        "commercial",
+        "strategic",
+        "reputational"
+      ]
+    },
+    "primarySubtype": {
+      "type": ["string", "null"],
+      "enum": ["positive", "negative", "global", null],
+      "description": "Subtype for reputational intelligence, null for other types"
+    },
+    "confidenceScore": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "justification": {
+      "type": "object",
+      "required": ["en", "fr"],
+      "properties": {
+        "en": { "type": "string" },
+        "fr": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "secondaryTypes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "score", "justification"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "technological",
+              "competitive",
+              "regulatory",
+              "commercial",
+              "strategic",
+              "reputational"
+            ]
+          },
+          "subtype": {
+            "type": ["string", "null"],
+            "enum": ["positive", "negative", "global", null]
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 60,
+            "maximum": 100
+          },
+          "justification": {
+            "type": "object",
+            "required": ["en", "fr"],
+            "properties": {
+              "en": { "type": "string" },
+              "fr": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "topics": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "required": ["label", "keywords", "relevanceScore", "searchQueryTemplate"],
+        "properties": {
+          "label": { "type": "string" },
+          "keywords": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 6,
+            "items": { "type": "string" }
+          },
+          "relevanceScore": {
+            "type": "integer",
+            "minimum": 50,
+            "maximum": 100
+          },
+          "searchQueryTemplate": {
+            "type": "string",
+            "pattern": ".*2025.*"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "required": ["detectedKeywords", "detectedEntities", "userObjective"],
+      "properties": {
+        "detectedKeywords": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "detectedEntities": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "userObjective": { "type": "string" },
+        "geographicScope": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "suggestions": {
+      "type": "object",
+      "required": ["actors", "sources", "searchQueries"],
+      "properties": {
+        "actors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "relevance", "score"],
+            "properties": {
+              "name": { "type": "string" },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "organization",
+                  "person",
+                  "regulator",
+                  "competitor",
+                  "ngo",
+                  "media",
+                  "other"
+                ]
+              },
+              "relevance": { "type": "string" },
+              "score": { "type": "integer", "minimum": 0, "maximum": 100 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "relevance", "score"],
+            "properties": {
+              "name": { "type": "string" },
+              "url": { "type": "string", "format": "uri" },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "website",
+                  "linkedin",
+                  "twitter",
+                  "rss",
+                  "newsletter",
+                  "database",
+                  "regulatory",
+                  "other"
+                ]
+              },
+              "relevance": { "type": "string" },
+              "score": { "type": "integer", "minimum": 0, "maximum": 100 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "searchQueries": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "deepSearchReadiness": {
+      "type": "object",
+      "required": ["ready", "reason", "suggestedSearchQueries"],
+      "properties": {
+        "ready": { "type": "boolean" },
+        "reason": {
+          "type": "object",
+          "required": ["en", "fr"],
+          "properties": {
+            "en": { "type": "string" },
+            "fr": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "suggestedSearchQueries": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

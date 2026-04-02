@@ -1,0 +1,67 @@
+api_platform:
+  exception_to_status:
+    App\Domain\Shared\NotFoundException: 404
+    App\Domain\Shared\AccessDeniedException: 403
+    # Bad Request: invalid data provided by the client - Exception generally throw by Webmozart\Assert\Assert
+    \InvalidArgumentException: 400
+    Symfony\Component\Serializer\Exception\UnexpectedValueException: 422
+    App\Domain\UsageLimit\Exception\QuotaExceededException: 429
+  title: '%env(default:default_app_name:string:APP_NAME)%'
+  version: '%env(default:default_app_version:string:APP_VERSION)%'
+  use_symfony_listeners: true
+  mercure:
+    include_type: true
+  elasticsearch:
+    enabled: true
+    client: opensearch
+  show_webby: false
+  resource_class_directories:
+    - '%kernel.project_dir%/src/Domain'
+    - '%kernel.project_dir%/src/UserInterface/Http'
+    - '%kernel.project_dir%/src/UserInterface/Dto'
+  defaults:
+    stateless: true
+    pagination_client_items_per_page: true
+    cache_headers:
+      vary: ['Content-Type', 'Authorization', 'Origin']
+  oauth:
+    enabled: true
+    clientId: '%env(OIDC_SWAGGER_CLIENT_ID)%'
+    pkce: true
+    type: oauth2
+    flow: authorizationCode
+    tokenUrl: '%env(OIDC_SERVER_URL)%/protocol/openid-connect/token'
+    authorizationUrl: '%env(OIDC_SERVER_URL)%/protocol/openid-connect/auth'
+    scopes:
+      openid: (required) Indicates that the application intends to use OIDC to verify the user's identity
+      profile: 'profile'
+      email: 'email'
+      roles: 'roles'
+  openapi:
+    contact:
+      name: ChapsVision - Target Team
+      url: https://chapsvision.com
+      email: dev-target@chapsvision.com
+
+when@prod:
+  parameters:
+    app.opensearch.ssl_ca_bundle: '%env(string:OPENSEARCH_SSL_CA_PATH)%'
+
+  api_platform:
+    elasticsearch:
+      hosts:
+        [
+          '%env(string:OPENSEARCH_SCHEMA)%://%env(string:OPENSEARCH_USERNAME)%:%env(string:OPENSEARCH_PASSWORD)%@%env(string:OPENSEARCH_HOST)%:%env(string:OPENSEARCH_PORT)%',
+        ]
+
+when@dev: &api_platform_dev
+  parameters:
+    app.opensearch.ssl_ca_bundle: ~
+
+  api_platform:
+    elasticsearch:
+      hosts: ['%env(string:OPENSEARCH_URL)%']
+
+when@test: *api_platform_dev
+
+when@staging: *api_platform_dev

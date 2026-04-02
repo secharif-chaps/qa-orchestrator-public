@@ -1,0 +1,234 @@
+flowchart TD
+    %% Point de liaison depuis la partie 1
+    Part1[Partie 1] -.->|Suite de la partie 1| START2_1
+    
+    %% PHASE 2.1 - Configuration des Sources Spécialisées
+    subgraph Phase2_1["Phase 2.1 - Configuration des Sources Spécialisées"]
+        START2_1([Configuration des critères de la phase 1.3]) --> INPUT2_1[/Critères et paramètres de surveillance/]
+        
+        subgraph Selection["Intelligence de Sélection de Sources"]
+            INPUT2_1 --> A1_21[Agent IA de Cartographie des Sources]
+            A1_21 --> A2_21[Agent IA d'Évaluation de Fiabilité]
+            A2_21 --> A3_21[Agent IA d'Optimisation de Fréquence]
+            A3_21 --> BRANCH2_1{Spécialisation\npar type\nde veille}
+        end
+        
+        BRANCH2_1 -->|Veille Concurrentielle| B1_21
+        BRANCH2_1 -->|Veille Stratégique| C1_21
+        BRANCH2_1 -->|Veille Commerciale| D1_21
+        BRANCH2_1 -->|Veille Technologique| E1_21
+        BRANCH2_1 -->|Veille Juridique| F1_21
+        
+        subgraph SourcesConc["Intelligence de Sources Concurrentielles"]
+            B1_21[Agent IA de Configuration Corporate]
+            B1_21 --> B2_21[Agent IA d'Intégration Feedback Client]
+            B2_21 --> B3_21[Agent IA d'Accès Financier]
+            B3_21 --> MERGE2_1
+        end
+        
+        subgraph SourcesStrat["Intelligence de Sources Stratégiques"]
+            C1_21[Agent IA de Configuration Prospective]
+            C1_21 --> C2_21[Agent IA d'Intégration Macro-économique]
+            C2_21 --> C3_21[Agent IA d'Accès Experts]
+            C3_21 --> MERGE2_1
+        end
+        
+        subgraph SourcesCom["Intelligence de Sources Commerciales"]
+            D1_21[Agent IA de Configuration Appels d'Offres]
+            D1_21 --> D2_21[Agent IA d'Intégration Réseaux Professionnels]
+            D2_21 --> D3_21[Agent IA d'Accès Projets]
+            D3_21 --> MERGE2_1
+        end
+        
+        subgraph SourcesTech["Intelligence de Sources Technologiques"]
+            E1_21[Agent IA de Configuration Académique]
+            E1_21 --> E2_21[Agent IA d'Intégration Brevets]
+            E2_21 --> E3_21[Agent IA d'Accès Code Source]
+            E3_21 --> MERGE2_1
+        end
+        
+        subgraph SourcesJur["Intelligence de Sources Juridiques"]
+            F1_21[Agent IA de Configuration Officielle]
+            F1_21 --> F2_21[Agent IA d'Intégration Bases Juridiques]
+            F2_21 --> F3_21[Agent IA d'Accès Réglementaire]
+            F3_21 --> MERGE2_1
+        end
+        
+        MERGE2_1{Intégration\ndes sources\nspécifiques}
+        
+        MERGE2_1 --> G1_21
+        
+        subgraph Authentication["Intelligence d'Authentification et Accès"]
+            G1_21[Agent IA de Gestion d'Authentification]
+            G1_21 --> G2_21[Agent IA de Rotation d'Identité]
+            G2_21 --> G3_21[Agent IA de Respect des Limitations]
+            G3_21 --> G4_21[Agent IA de Test d'Accessibilité]
+        end
+        
+        G4_21 --> OUTPUT2_1[/Configuration complète des sources à surveiller/]
+    end
+    
+    %% PHASE 2.2 - Surveillance Automatisée et Optimisée
+    OUTPUT2_1 --> START2_2
+    
+    subgraph Phase2_2["Phase 2.2 - Surveillance Automatisée et Optimisée"]
+        START2_2([Configuration des sources de la phase 2.1]) --> INPUT2_2[/Sources et paramètres de collecte/]
+        
+        subgraph Crawling["Intelligence de Crawling Adaptatif"]
+            INPUT2_2 --> A1_22[Agent IA de Crawling Intelligent]
+            A1_22 --> A2_22[Agent IA Anti-Détection]
+            A2_22 --> A3_22[Agent IA de Profondeur Adaptative]
+            A3_22 --> BRANCH2_2{Spécialisation\npar type\nde veille}
+        end
+        
+        BRANCH2_2 -->|Veille Concurrentielle| B1_22
+        BRANCH2_2 -->|Veille Stratégique| C1_22
+        BRANCH2_2 -->|Veille Commerciale| D1_22
+        BRANCH2_2 -->|Veille Technologique| E1_22
+        BRANCH2_2 -->|Veille Juridique| F1_22
+        
+        subgraph SurvConc["Intelligence de Surveillance Concurrentielle"]
+            B1_22[Agent IA de Monitoring Prix et Produits]
+            B1_22 --> B2_22[Agent IA de Détection Marketing]
+            B2_22 --> B3_22[Agent IA d'Analyse de Positionnement]
+            B3_22 --> MERGE2_2
+        end
+        
+        subgraph SurvStrat["Intelligence de Surveillance Stratégique"]
+            C1_22[Agent IA de Monitoring Indicateurs Macro]
+            C1_22 --> C2_22[Agent IA de Détection de Tendances]
+            C2_22 --> C3_22[Agent IA d'Analyse Disruptive]
+            C3_22 --> MERGE2_2
+        end
+        
+        subgraph SurvCom["Intelligence de Surveillance Commerciale"]
+            D1_22[Agent IA de Monitoring Triggers d'Achat]
+            D1_22 --> D2_22[Agent IA de Détection d'Appels d'Offres]
+            D2_22 --> D3_22[Agent IA d'Analyse d'Intention d'Achat]
+            D3_22 --> MERGE2_2
+        end
+        
+        subgraph SurvTech["Intelligence de Surveillance Technologique"]
+            E1_22[Agent IA de Monitoring Code et Commits]
+            E1_22 --> E2_22[Agent IA de Détection de Publications]
+            E2_22 --> E3_22[Agent IA d'Analyse de Standards]
+            E3_22 --> MERGE2_2
+        end
+        
+        subgraph SurvJur["Intelligence de Surveillance Juridique"]
+            F1_22[Agent IA de Monitoring Publications Officielles]
+            F1_22 --> F2_22[Agent IA de Détection Jurisprudentielle]
+            F2_22 --> F3_22[Agent IA d'Analyse Consultative]
+            F3_22 --> MERGE2_2
+        end
+        
+        MERGE2_2{Intégration\ndes flux\nde données}
+        
+        MERGE2_2 --> G1_22
+        
+        subgraph Optimisation["Intelligence d'Optimisation Continue"]
+            G1_22[Agent IA de Déduplication]
+            G1_22 --> G2_22[Agent IA d'Archivage Intelligent]
+            G2_22 --> G3_22[Agent IA d'Apprentissage par Feedback]
+            G3_22 --> G4_22[Agent IA de Découverte de Sources]
+        end
+        
+        G4_22 --> OUTPUT2_2[/Données brutes collectées et structurées/]
+    end
+    
+    %% PHASE 3.1 - Analyse Contextuelle et Sémantique
+    OUTPUT2_2 --> START3_1
+    
+    subgraph Phase3_1["Phase 3.1 - Analyse Contextuelle et Sémantique"]
+        START3_1([Données brutes collectées de la phase 2.2]) --> INPUT3_1[/Données structurées et métadonnées/]
+        
+        subgraph AnalyseFonda["Intelligence d'Analyse Fondamentale"]
+            INPUT3_1 --> A1_31[Agent IA d'Extraction d'Entités Nommées]
+            A1_31 --> A2_31[Agent IA d'Analyse Sémantique Profonde]
+            A2_31 --> A3_31[Agent IA de Catégorisation Thématique]
+            A3_31 --> BRANCH3_1{Spécialisation\npar type\nde veille}
+        end
+        
+        BRANCH3_1 -->|Veille Concurrentielle| B1_31
+        BRANCH3_1 -->|Veille Stratégique| C1_31
+        BRANCH3_1 -->|Veille Commerciale| D1_31
+        BRANCH3_1 -->|Veille Technologique| E1_31
+        BRANCH3_1 -->|Veille Juridique| F1_31
+        
+        subgraph AnalyseConc["Intelligence d'Analyse Concurrentielle"]
+            B1_31[Agent IA d'Analyse de Positionnement]
+            B1_31 --> B2_31[Agent IA d'Extraction de Proposition de Valeur]
+            B2_31 --> B3_31[Agent IA de Détection d'Avantages Compétitifs]
+            B3_31 --> MERGE3_1
+        end
+        
+        subgraph AnalyseStrat["Intelligence d'Analyse Stratégique"]
+            C1_31[Agent IA d'Analyse de Tendances Corrélées]
+            C1_31 --> C2_31[Agent IA d'Extraction de Scénarios Prospectifs]
+            C2_31 --> C3_31[Agent IA de Détection de Ruptures Paradigmatiques]
+            C3_31 --> MERGE3_1
+        end
+        
+        subgraph AnalyseCom["Intelligence d'Analyse Commerciale"]
+            D1_31[Agent IA d'Analyse des Besoins Clients]
+            D1_31 --> D2_31[Agent IA d'Extraction de Points de Douleur]
+            D2_31 --> D3_31[Agent IA de Détection d'Intentions d'Achat]
+            D3_31 --> MERGE3_1
+        end
+        
+        subgraph AnalyseTech["Intelligence d'Analyse Technologique"]
+            E1_31[Agent IA d'Analyse Comparative Technique]
+            E1_31 --> E2_31[Agent IA d'Extraction de Paramètres Performantiels]
+            E2_31 --> E3_31[Agent IA de Détection d'Interdépendances]
+            E3_31 --> MERGE3_1
+        end
+        
+        subgraph AnalyseJur["Intelligence d'Analyse Juridique"]
+            F1_31[Agent IA d'Analyse d'Implications Réglementaires]
+            F1_31 --> F2_31[Agent IA d'Extraction d'Obligations Spécifiques]
+            F2_31 --> F3_31[Agent IA de Détection de Zones Grises]
+            F3_31 --> MERGE3_1
+        end
+        
+        MERGE3_1{Intégration\ndes analyses\nspécialisées}
+        
+        MERGE3_1 --> G1_31
+        
+        subgraph Context["Intelligence de Contextualisation"]
+            G1_31[Agent IA d'Enrichissement Contextuel]
+            G1_31 --> G2_31[Agent IA de Mise en Perspective Historique]
+            G2_31 --> G3_31[Agent IA d'Analyse Sentiment/Tonalité]
+            G3_31 --> G4_31[Agent IA de Liaison Interdomaines]
+        end
+        
+        G4_31 --> OUTPUT3_1[/Information contextualisée et enrichie/]
+    end
+
+    %% Liaison vers la partie 3
+    OUTPUT3_1 -.->|Suite dans Partie 3| Part3
+    
+    %% Styles améliorés avec meilleur contraste
+    classDef phaseTitle fill:#2c3e50,stroke:#000,stroke-width:2px,color:#fff,font-weight:bold
+    classDef intelligence fill:#8a2be2,stroke:#000,stroke-width:2px,color:#fff
+    classDef process fill:#4682b4,stroke:#000,stroke-width:1px,color:#fff
+    classDef document fill:#f5a742,stroke:#000,stroke-width:1px,color:#000
+    classDef decision fill:#d81b60,stroke:#000,stroke-width:1px,color:#fff
+    classDef subgraphStyle fill:#f5f5f5,stroke:#333,stroke-width:1px
+    classDef linkNode fill:#80bdab,stroke:#333,stroke-width:1px,color:#000
+    
+    %% Application des styles aux phases
+    class Phase2_1,Phase2_2,Phase3_1 phaseTitle
+    class Part1,Part3 linkNode
+    
+    %% Application des styles aux éléments
+    class A1_21,A2_21,A3_21,B1_21,B2_21,B3_21,C1_21,C2_21,C3_21,D1_21,D2_21,D3_21,E1_21,E2_21,E3_21,F1_21,F2_21,F3_21,G1_21,G2_21,G3_21,G4_21 intelligence
+    class A1_22,A2_22,A3_22,B1_22,B2_22,B3_22,C1_22,C2_22,C3_22,D1_22,D2_22,D3_22,E1_22,E2_22,E3_22,F1_22,F2_22,F3_22,G1_22,G2_22,G3_22,G4_22 intelligence
+    class A1_31,A2_31,A3_31,B1_31,B2_31,B3_31,C1_31,C2_31,C3_31,D1_31,D2_31,D3_31,E1_31,E2_31,E3_31,F1_31,F2_31,F3_31,G1_31,G2_31,G3_31,G4_31 intelligence
+    
+    class START2_1,START2_2,START3_1 process
+    class INPUT2_1,INPUT2_2,INPUT3_1,OUTPUT2_1,OUTPUT2_2,OUTPUT3_1 document
+    class BRANCH2_1,MERGE2_1,BRANCH2_2,MERGE2_2,BRANCH3_1,MERGE3_1 decision
+    
+    class Selection,SourcesConc,SourcesStrat,SourcesCom,SourcesTech,SourcesJur,Authentication subgraphStyle
+    class Crawling,SurvConc,SurvStrat,SurvCom,SurvTech,SurvJur,Optimisation subgraphStyle
+    class AnalyseFonda,AnalyseConc,AnalyseStrat,AnalyseCom,AnalyseTech,AnalyseJur,Context subgraphStyle

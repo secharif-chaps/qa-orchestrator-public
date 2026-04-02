@@ -1,0 +1,64 @@
+{
+	{$CADDY_GLOBAL_OPTIONS}
+
+	frankenphp {
+		{$FRANKENPHP_CONFIG}
+	}
+}
+
+{$CADDY_EXTRA_CONFIG}
+
+{$SERVER_NAME:localhost}{$CADDY_HTTP_PORT} {
+	log {
+		# Redact the authorization query parameter that can be set by Mercure
+		format filter {
+			request>uri query {
+				replace authorization REDACTED
+			}
+		}
+	}
+
+	root * /app/public
+	encode zstd br gzip
+
+	mercure {
+		# Transport to use (default to Bolt)
+		transport bolt {
+			path /data/mercure.db
+		}
+		# Publisher JWT key
+		publisher_jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
+		# Subscriber JWT key
+		subscriber_jwt {env.MERCURE_SUBSCRIBER_JWT_KEY} {env.MERCURE_SUBSCRIBER_JWT_ALG}
+		# Enable the subscription API (double-check that it's what you want)
+		subscriptions
+		# Extra directives
+		{$MERCURE_EXTRA_DIRECTIVES}
+	}
+
+	vulcain
+
+	# Add links to the API docs and to the Mercure Hub if not set explicitly (e.g. the PWA)
+	header ?Link `</docs.jsonld>; rel="http://www.w3.org/ns/hydra/core#apiDocumentation", </.well-known/mercure>; rel="mercure"`
+	# Disable Topics tracking if not enabled explicitly: https://github.com/jkarlin/topics
+	header ?Permissions-Policy "browsing-topics=()"
+
+	{$CADDY_SERVER_TLS_DIRECTIVES}
+
+	{$CADDY_SERVER_APP_EXTRA_DIRECTIVES}
+
+	# Restrict Mercure Subscription API to internal network only (ADR-2025-001)
+	# Prevents information disclosure about active subscribers
+	@subscription_api path /.well-known/mercure/subscriptions*
+	handle @subscription_api {
+		@internal remote_ip 172.16.0.0/12 192.168.0.0/16 10.0.0.0/8 127.0.0.1 ::1
+		handle @internal {
+			# Allow internal requests - passes through to Mercure
+		}
+		handle {
+			respond "Forbidden" 403
+		}
+	}
+
+	php_server
+}

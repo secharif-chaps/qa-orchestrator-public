@@ -1,0 +1,2500 @@
+{
+  "updatedAt": "2026-01-06T10:50:37.931Z",
+  "createdAt": "2025-12-01T09:37:38.050Z",
+  "id": "qDGDHlg1EIpwmm15",
+  "name": "6. Tool - DeepSearch Agent",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "runId",
+              "value": "={{ $json._testMetadata.runId }}"
+            },
+            {
+              "key": "testCaseId",
+              "value": "={{ $json._testMetadata.testCaseId }}"
+            },
+            {
+              "key": "testCaseName",
+              "value": "={{ $json._testMetadata.testCaseName }}"
+            },
+            {
+              "key": "datasetFile",
+              "value": "={{ $json._testMetadata.datasetFile }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -11152,
+        -112
+      ],
+      "id": "4f9f7341-d2f9-4b06-8043-26e2e484bdf1",
+      "name": "ExecutionData_Store_TestMetadata"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "= {{ $json.body.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -11376,
+        -112
+      ],
+      "id": "8093aacc-0f75-4409-98c4-e4c25c597b32",
+      "name": "Set_Format_TestInput"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  // Helper: parse JSON string safely\n  const safeJsonParse = (value) => {\n    if (typeof value === 'string') {\n      try {\n        return JSON.parse(value);\n      } catch (e) {\n        return value; // Not valid JSON, keep original\n      }\n    }\n    return value; // Already parsed or not a string\n  };\n\n  // Parse watchFile\n  if (item.json?.watchFile) {\n    item.json.watchFile = safeJsonParse(item.json.watchFile);\n  }\n\n  // Parse conversation\n  if (item.json?.conversation) {\n    item.json.conversation = safeJsonParse(item.json.conversation);\n  }\n\n  // Parse context\n  if (item.json?.context) {\n    item.json.context = safeJsonParse(item.json.context);\n\n    if (typeof item.json.context.BusNameStamp !== 'string') {\n      item.json.context.BusNameStamp = JSON.stringify(item.json.context.BusNameStamp);\n    }\n\n    if (typeof item.json.context.RouterContextStamp !== 'string') {\n      item.json.context.RouterContextStamp = JSON.stringify(item.json.context.RouterContextStamp);\n    }\n  }\n\n  // Default language\n  item.json.language = item.json?.language || 'en';\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -10928,
+        -16
+      ],
+      "id": "40e132ef-622b-4da0-96d8-8960207f525a",
+      "name": "Code_Initialize_WatchFileData"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "c5916e0a-b770-4bfb-9193-f0d07167422f",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -11600,
+        -112
+      ],
+      "id": "88d5e750-f4f9-477f-9701-d956f5477871",
+      "name": "Webhook_Trigger_TestInput",
+      "webhookId": "8d067253-7b62-4224-a148-02864821934a"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "watchFile",
+              "type": "any"
+            },
+            {
+              "name": "conversation",
+              "type": "any"
+            },
+            {
+              "name": "language"
+            },
+            {
+              "name": "context"
+            },
+            {
+              "name": "userMessageId"
+            },
+            {
+              "name": "collectors_list",
+              "type": "any"
+            },
+            {
+              "name": "source_types",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -11152,
+        80
+      ],
+      "id": "c36ba225-37e2-41e8-9e06-26d1bc7c44d9",
+      "name": "Workflow_Trigger_DeepSearch"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "6RCLmgTzQlBkCBXm",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/6RCLmgTzQlBkCBXm",
+          "cachedResultName": "6.a DeepSearch - Generate Strategic Question"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "watchFile": "={{ $('Code_Initialize_WatchFileData').item.json.watchFile }}",
+            "conversation": "={{ $('Code_Initialize_WatchFileData').item.json.conversation }}",
+            "language": "={{ $('Code_Initialize_WatchFileData').item.json.language }}",
+            "context": "={{ $('Code_Initialize_WatchFileData').item.json.context.toJsonString() }}",
+            "messageContentId": "={{ $('Code_Initialize_WatchFileData').item.json.userMessageId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "watchFile",
+              "displayName": "watchFile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "conversation",
+              "displayName": "conversation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "context",
+              "displayName": "context",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "messageContentId",
+              "displayName": "messageContentId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -10480,
+        -16
+      ],
+      "id": "279fdf95-1e4c-4e3a-bff5-5f848a3b290b",
+      "name": "Workflow_Execute_GenerateStrategicQuestion",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const count = $input.all().length;\n\nlet message = '🧠 Generating a line of investigation';\nif ($('Code_Initialize_WatchFileData').first().json.language === 'fr') {\n  message = (count > 1) ? `🧠 Génération de ${count} axes d'investigation...`: '🧠 Génération d\\'un axe d\\'investigation...';\n} else {\n  message = (count > 1) ? `🧠 Generating ${count} lines of investigation...`: '🧠 Generating of investigation...';\n}\n\nreturn {\n  json: {\n    message\n  }\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -10032,
+        -224
+      ],
+      "id": "7bf6dd5c-06a5-4433-99d6-159b7a018e0f",
+      "name": "Code_Build_MessageForFeedback"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').item.json.language === 'en' ? `The deep search agent is experiencing a problem. Please try again later.` : `L'agent de recherche approfondie rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }},\n  \"context\": {\n    \"data\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Code_Initialize_WatchFileData').item.json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Initialize_WatchFileData').item.json?.conversation.id?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -10032,
+        112
+      ],
+      "id": "0047d68a-70cd-4105-8050-6f024250bfcc",
+      "name": "Feedback_AgentAIError",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c2f2c69f-9844-4115-a57c-7f3f6e960eee",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "3033b666-0b97-4083-b506-433bbc712bbd",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -10256,
+        -112
+      ],
+      "id": "fe38f3c0-0b67-403d-93dd-daf298adcd1b",
+      "name": "Condition_Check_IsSuccess"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').item.json.language === 'en' ? `The agent is experiencing a problem. Please try again later.` : `L'agent rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }},\n  \"context\": {\n    \"data\": {{ $('Workflow_Execute_GenerateSearchQueries').item.json?.error?.toJsonString() || 'null' }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Code_Initialize_WatchFileData').item.json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Initialize_WatchFileData').item.json?.conversation.id?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -8912,
+        -64
+      ],
+      "id": "fbce069b-1993-498a-a4b4-88549134f04b",
+      "name": "Feedback_AgentAIError1",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "useDataOfInput": 2
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -9584,
+        -112
+      ],
+      "id": "9d447551-e8ad-4375-917a-7e2d0806d8a3",
+      "name": "Merge_Retrieve_StrategicQuestion"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "GPZb8QuJIlbF1muT",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/GPZb8QuJIlbF1muT",
+          "cachedResultName": "6.b DeepSearch - SearchQuery"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "watchFile": "={{ $('Code_Initialize_WatchFileData').item.json.watchFile }}",
+            "language": "={{ $('Code_Initialize_WatchFileData').item.json.language }}",
+            "context": "={{ $('Code_Initialize_WatchFileData').item.json.context.toJsonString() }}",
+            "conversation": "={{ $('Code_Initialize_WatchFileData').item.json.conversation }}",
+            "messageContentId": "={{ $('Code_Initialize_WatchFileData').item.json.userMessageId }}",
+            "strategicQuestion": "={{ $json.context.strategicQuestion.toJsonString() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "watchFile",
+              "displayName": "watchFile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "conversation",
+              "displayName": "conversation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "context",
+              "displayName": "context",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "messageContentId",
+              "displayName": "messageContentId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "strategicQuestion",
+              "displayName": "strategicQuestion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -9360,
+        -112
+      ],
+      "id": "e30f465d-d3fe-456f-82aa-d0773914d24b",
+      "name": "Workflow_Execute_GenerateSearchQueries",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c2f2c69f-9844-4115-a57c-7f3f6e960eee",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "3033b666-0b97-4083-b506-433bbc712bbd",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -9136,
+        -272
+      ],
+      "id": "ebd6e30a-63d1-449b-9f16-aa95a820627d",
+      "name": "Condition_Check_IsSuccess1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "0tnw5GMM7ql8HN2N",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/0tnw5GMM7ql8HN2N",
+          "cachedResultName": "6.c DeepSearch - SearchQueryExecute"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "watchFile": "={{ $('Code_Initialize_WatchFileData').first().json.watchFile }}",
+            "conversation": "={{ $('Code_Initialize_WatchFileData').first().json.conversation }}",
+            "language": "={{ $('Code_Initialize_WatchFileData').first().json.language }}",
+            "messageContentId": "={{ $('Code_Initialize_WatchFileData').first().json.userMessageId }}",
+            "strategicQuestion": "={{ $json.context.strategicQuestion.toJsonString() }}",
+            "searchQuery": "={{ $json.context.searchQuery.toJsonString() }}",
+            "context": "={{ $('Code_Initialize_WatchFileData').first().json.context.toJsonString() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "watchFile",
+              "displayName": "watchFile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "conversation",
+              "displayName": "conversation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "context",
+              "displayName": "context",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "messageContentId",
+              "displayName": "messageContentId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "strategicQuestion",
+              "displayName": "strategicQuestion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "searchQuery",
+              "displayName": "searchQuery",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -8240,
+        -272
+      ],
+      "id": "da8dba67-26ef-4efb-a117-76b6f17744ec",
+      "name": "Workflow_Execute_SearchQuery",
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst context = item.json?.context || {};\nconst searchResultSelected = context.searchResultSelected || [];\nconst selectedCount = Array.isArray(searchResultSelected) ? searchResultSelected.length : 0;\nconst language = $('Code_Initialize_WatchFileData').first().json.language || 'en';\n\nconst message = language === 'fr'\n  ? `✅ ${selectedCount} résultat${selectedCount > 1 ? 's' : ''} sélectionné${selectedCount > 1 ? 's' : ''} et classé${selectedCount > 1 ? 's' : ''} avec succès.`\n  : `✅ ${selectedCount} result${selectedCount !== 1 ? 's' : ''} selected and ranked successfully.`;\n\nreturn {\n  json: {\n    message\n  }\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -7792,
+        -464
+      ],
+      "id": "612c5a40-ec64-41f0-b308-baf61ed7c98f",
+      "name": "Code_Build_SearchResultsFeedbackMessage"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "useDataOfInput": 2
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -7344,
+        -400
+      ],
+      "id": "7da91f21-2a8e-49a1-a5ce-a06394045809",
+      "name": "Merge_Retrieve_SearchQueryResults"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c2f2c69f-9844-4115-a57c-7f3f6e960eee",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "3033b666-0b97-4083-b506-433bbc712bbd",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -8016,
+        -400
+      ],
+      "id": "6009f4b4-f0fe-4c1c-bc81-0ad700822816",
+      "name": "Condition_Check_SearchQueryExecuted"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.1-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5.1-sweden"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -6944,
+        -160
+      ],
+      "id": "71e19ad9-bccd-4408-aee2-6e7bf49970c6",
+      "name": "LLM_Model_Primary",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.1-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5.1-sweden"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -6768,
+        -160
+      ],
+      "id": "d6d70734-ce51-41bb-bd42-7c5be058f13d",
+      "name": "LLM_Model_Fallback",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-nano-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5-nano-sweden"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -6560,
+        32
+      ],
+      "id": "412753d2-64d5-423a-8ddf-6d2d057e2fb7",
+      "name": "LLM_Model_ValidationParser",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"title\": \"SearchResultEntityExtraction\",\n  \"description\": \"Output schema for the Entity Extraction agent\",\n  \"type\": \"object\",\n  \"required\": [\n    \"searchResultId\",\n    \"extractions\"\n  ],\n  \"properties\": {\n    \"searchResultId\": {\n      \"type\": \"string\",\n      \"description\": \"Identifier of the search result being analyzed\"\n    },\n    \"extractions\": {\n      \"type\": \"object\",\n      \"required\": [\"actors\", \"sources\", \"topics\"],\n      \"properties\": {\n        \"actors\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"object\",\n            \"required\": [\"label\", \"type\", \"score\", \"explanation_fr\", \"explanation_en\", \"confidence\"],\n            \"properties\": {\n              \"label\": {\n                \"type\": \"string\",\n                \"description\": \"Actor label (entity name)\"\n              },\n              \"type\": {\n                \"type\": \"string\",\n                \"enum\": [\"competitor\", \"partner\", \"supplier\", \"customer\", \"regulator\", \"subsidiary\", \"parent\", \"other\"],\n                \"description\": \"Actor type mapped to ActorType enum\"\n              },\n              \"primaryDomain\": {\n                \"type\": \"string\",\n                \"description\": \"Primary business domain/industry (optional)\"\n              },\n              \"score\": {\n                \"type\": \"number\",\n                \"minimum\": 0,\n                \"maximum\": 100,\n                \"description\": \"Relevance score for this actor (0-100)\"\n              },\n              \"explanation_fr\": {\n                \"type\": \"string\",\n                \"description\": \"French explanation: why this actor is relevant for this research topic\"\n              },\n              \"explanation_en\": {\n                \"type\": \"string\",\n                \"description\": \"English explanation: why this actor is relevant for this research topic\"\n              },\n              \"confidence\": {\n                \"type\": \"number\",\n                \"minimum\": 0.0,\n                \"maximum\": 1.0,\n                \"description\": \"Extraction confidence (0.0 to 1.0)\"\n              }\n            },\n            \"additionalProperties\": false\n          },\n          \"description\": \"List of extracted actors (business entities linked to the watchfile context)\"\n          },\n        \"sources\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"object\",\n            \"required\": [\n              \"name\",\n              \"description_fr\",\n              \"description_en\",\n              \"relevance_fr\",\n              \"relevance_en\",\n              \"primaryDomain\",\n              \"url\",\n              \"type\",\n              \"score\",\n              \"confidence\"\n            ],\n            \"properties\": {\n              \"name\": {\n                \"type\": \"string\",\n                \"description\": \"Source name\"\n              },\n              \"description_fr\": {\n                \"type\": \"string\",\n                \"description\": \"Description of the source in French\"\n              },\n              \"description_en\": {\n                \"type\": \"string\",\n                \"description\": \"Description of the source in English\"\n              },\n              \"relevance_fr\": {\n                \"type\": \"string\",\n                \"description\": \"French justification of why this source is relevant for this watchfile\"\n              },\n              \"relevance_en\": {\n                \"type\": \"string\",\n                \"description\": \"English justification of why this source is relevant for this watchfile\"\n              },\n              \"query\": {\n                \"type\": \"string\",\n                \"description\": \"Search filter query used for this source (optional)\"\n              },\n              \"primaryDomain\": {\n                \"type\": \"string\",\n                \"description\": \"Primary domain name of the source (without http/https/www, e.g. \\\"techcrunch.com\\\")\"\n              },\n              \"url\": {\n                \"type\": \"string\",\n                \"description\": \"URL of the source to follow\"\n              },\n              \"type\": {\n                \"type\": \"string\",\n                \"description\": \"Source type, must be one of the sourceTypes provided in input (e.g. rss_feed, blog, website, ...)\"\n              },\n              \"score\": {\n                \"type\": \"number\",\n                \"minimum\": 0,\n                \"maximum\": 100,\n                \"description\": \"Relevance score (0-100)\"\n              },\n              \"confidence\": {\n                \"type\": \"number\",\n                \"minimum\": 0.0,\n                \"maximum\": 1.0,\n                \"description\": \"Extraction confidence (0.0 to 1.0)\"\n              }\n            },\n            \"additionalProperties\": false\n          },\n          \"description\": \"List of extracted sources (publications, websites, reports) compatible with Builder Add_Source\"\n        },\n        \"topics\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"object\",\n            \"required\": [\"name\", \"explanation\", \"score\", \"confidence\"],\n            \"properties\": {\n              \"name\": {\n                \"type\": \"string\",\n                \"description\": \"Topic name as an English phrase\"\n              },\n              \"explanation\": {\n                \"type\": \"string\",\n                \"description\": \"Reason why this topic was chosen and why it is relevant for this research\"\n              },\n              \"score\": {\n                \"type\": \"number\",\n                \"minimum\": 0,\n                \"maximum\": 100,\n                \"description\": \"Relevance score (0-100)\"\n              },\n              \"confidence\": {\n                \"type\": \"number\",\n                \"minimum\": 0.0,\n                \"maximum\": 1.0,\n                \"description\": \"Extraction confidence (0.0 to 1.0)\"\n              }\n            },\n            \"additionalProperties\": false\n          },\n          \"description\": \"List of extracted topics (themes, concepts, subjects) with relevance explanation\"\n        }\n      },\n      \"additionalProperties\": false\n    }\n  },\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -6640,
+        -176
+      ],
+      "id": "13d4cf31-2f26-45ae-ab08-ee839153454d",
+      "name": "LLM_OutputParser_RelevanceScore"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# 🎯 Entity Extractor - Basil DeepSearch\n\nYou are the **Entity Extraction Agent** for Basil DeepSearch. Extract structured business entities from search results.\n\n## 📥 INPUT\n\n```json\n{\n  \"searchResult\": {{ $json.searchResult.toJsonString() }},\n  \"strategicQuestion\": {{ $json.strategicQuestion.toJsonString() }},\n  \"watchFile\": {{ $json.watchFile.toJsonString() }}\n}\n```\n\n**Source types available:**  {{ $('Code_Initialize_WatchFileData').first().json.source_types.toJsonString() }}\n\n\n---\n\n## 🎯 EXTRACTION TASK\n\nExtract **maximum 3 actors, 3 sources, 3 topics** per search result. Only extract entities with **confidence ≥ 0.6** that are **directly relevant** to the strategic question.\n\n### Priority Rules\n1. **Entities explicitly named** in searchResult content → HIGH priority\n2. **Entities aligned** with watchFile context → MEDIUM priority  \n3. **Entities inferred** from context → LOW priority (only if strong signal)\n\n---\n\n## 📋 ENTITY SCHEMAS\n\n### Actors (Companies, People, Organizations)\n\nActive participants in the business context. **Use `label`, not `name`.**\n\n| Field | Type | Required | Description |\n|-------|------|----------|-------------|\n| `label` | string | ✅ | Entity name |\n| `type` | enum | ✅ | `competitor`, `partner`, `supplier`, `customer`, `regulator`, `subsidiary`, `parent`, `other` |\n| `primaryDomain` | string | ✅ | Domain only (e.g., `techcrunch.com`) |\n| `score` | 0-100 | ✅ | Relevance to strategic question |\n| `explanation_fr` | string | ✅ | French: why relevant |\n| `explanation_en` | string | ✅ | English: why relevant |\n| `confidence` | 0.0-1.0 | ✅ | Extraction confidence |\n\n### Sources (Publications, Websites, Reports)\n\nInformation sources mentioned or referenced.\n\n| Field | Type | Required | Description |\n|-------|------|----------|-------------|\n| `name` | string | ✅ | Source name |\n| `description_fr` | string | ✅ | French description |\n| `description_en` | string | ✅ | English description |\n| `relevance_fr` | string | ✅ | French: why relevant for watchfile |\n| `relevance_en` | string | ✅ | English: why relevant for watchfile |\n| `primaryDomain` | string | ✅ | Domain only (e.g., `techcrunch.com`) |\n| `url` | string | ✅ | Full URL |\n| `type` | string | ✅ | Must match one of `source_types` above |\n| `query` | string | ❌ | Search filter query |\n| `score` | 0-100 | ✅ | Relevance score |\n| `confidence` | 0.0-1.0 | ✅ | Extraction confidence |\n\n### Topics (Themes, Concepts, Subjects)\n\nKey themes discussed. **Always in English.**\n\n| Field | Type | Required | Description |\n|-------|------|----------|-------------|\n| `name` | string | ✅ | Topic name (English phrase) |\n| `explanation` | string | ✅ | Why relevant for this research |\n| `score` | 0-100 | ✅ | Relevance score |\n| `confidence` | 0.0-1.0 | ✅ | Extraction confidence |\n\n---\n\n## 📊 SCORING GUIDE\n\n| Score | Criteria |\n|-------|----------|\n| **90-100** | Entity is **central** to searchResult AND directly answers strategic question |\n| **70-89** | Entity is **clearly mentioned** AND relevant to watchFile context |\n| **50-69** | Entity is **referenced** but tangential to main topic |\n| **<50** | Do not extract |\n\n---\n\n## ❌ DO NOT EXTRACT\n\n- Generic terms (`company`, `market`, `industry`)\n- Entities with confidence < 0.6\n- Duplicates (same label/name + type)\n- Entities not in searchResult content\n- Entities unrelated to strategic question\n\n---\n\n## 📤 OUTPUT FORMAT\n\n```json\n{\n  \"searchResultId\": \"{{ $json.searchResult.id }}\",\n  \"extractions\": {\n    \"actors\": [ /* max 3 */ ],\n    \"sources\": [ /* max 3 */ ],\n    \"topics\": [ /* max 3 */ ]\n  }\n}\n```\n\n---\n\n## 💡 QUICK EXAMPLE\n\n**Input context:**\n- Strategic Question: \"Who are Tesla's main competitors?\"\n- SearchResult about: \"BYD overtakes Tesla in Q3 2024 sales\"\n\n**Good extraction:**\n```json\n{\n  \"searchResultId\": \"abc-123\",\n  \"extractions\": {\n    \"actors\": [{\n      \"label\": \"BYD\",\n      \"type\": \"competitor\",\n      \"primaryDomain\": \"byd.com\",\n      \"score\": 95,\n      \"explanation_fr\": \"Constructeur chinois de VE qui a dépassé Tesla au Q3 2024\",\n      \"explanation_en\": \"Chinese EV manufacturer that overtook Tesla in Q3 2024\",\n      \"confidence\": 0.95\n    }],\n    \"sources\": [{\n      \"name\": \"TechCrunch\",\n      \"description_fr\": \"Publication tech sur l'innovation\",\n      \"description_en\": \"Tech publication on innovation\",\n      \"relevance_fr\": \"Source clé pour l'actualité VE\",\n      \"relevance_en\": \"Key source for EV news\",\n      \"primaryDomain\": \"techcrunch.com\",\n      \"url\": \"https://techcrunch.com/2024/tesla-competitors\",\n      \"type\": \"blog\",\n      \"score\": 85,\n      \"confidence\": 0.90\n    }],\n    \"topics\": [{\n      \"name\": \"EV Market Share Competition\",\n      \"explanation\": \"Directly addresses competitive dynamics in the EV market\",\n      \"score\": 90,\n      \"confidence\": 0.92\n    }]\n  }\n}\n```\n\n---\n\n## ✅ PRE-OUTPUT CHECK\n\nBefore responding, verify:\n- [ ] `searchResultId` matches input\n- [ ] Max 3 items per category\n- [ ] All confidence ≥ 0.6\n- [ ] No duplicates\n- [ ] Actors use `label` (not `name`)\n- [ ] `primaryDomain` without http/www\n- [ ] Topics are in English\n- [ ] All required fields present\n",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "options": {
+          "maxIterations": 10,
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -6864,
+        -400
+      ],
+      "id": "5c014e83-4c22-4c87-9089-7a4340ab5aff",
+      "name": "LLM_Agent_ExtractEntities",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code_Prepare_Top10_ForExtraction\n// Extrait searchResultSelected depuis le contexte et itère sur chaque résultat Top-10\n// Prépare les données pour l'analyse LLM\n\nconst inputItem = $input.first().json;\nconst searchResultSelected = inputItem.context?.searchResultSelected || [];\n\nif (!Array.isArray(searchResultSelected) || searchResultSelected.length === 0) {\n  return [];\n}\n\n// Récupérer les données du contexte (optimisé)\nconst strategicQuestion = $('Condition_Check_IsSuccess1').first().json.context?.strategicQuestion || null;\nconst initData = $('Code_Initialize_WatchFileData').first().json;\nconst watchFile = initData.watchFile || null;\nconst language = initData.language || 'en';\n\n// Préparer chaque résultat Top-10 pour l'analyse LLM\nreturn searchResultSelected\n  .filter(result => result.id) // Filtrer les résultats sans ID\n  .map(result => ({\n    json: {\n      searchResult: {\n        id: result.id,\n        title: result.title || '',\n        description: result.description || result.snippet || '',\n        url: result.url || '',\n        content: result.content || result.description || result.snippet || '',\n        domain: result.domain || null,\n        publishDate: result.publishDate || null,\n        googleRanking: result.googleRanking || null,\n        qualityScore: result.qualityScore || null,\n        selectionRank: result.selectionRank || null\n      },\n      strategicQuestion: strategicQuestion, // Envoyer tout l'objet strategicQuestion\n      watchFile: watchFile, // Envoyer tout l'objet watchFile\n      language: language\n    }\n  }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -7120,
+        -400
+      ],
+      "id": "a2f98812-f48b-4e5f-b1aa-fe0e09c0ec58",
+      "name": "Code_SearchResult_PrepareTop10ForExtraction"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').first().json.language === 'en' ? `The AI agent is experiencing a problem. Please try again later.` : `L'agent AI rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }},\n  \"context\": {\n    \"data\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Code_Initialize_WatchFileData').first().json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Initialize_WatchFileData').first().json?.conversation.id?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').first().json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -6048,
+        -208
+      ],
+      "id": "91d45949-753d-4aaf-90de-7d3f4c1b8025",
+      "name": "Feedback_AgentAIError2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputItems = $input.all().map(item => item.json);\n\nreturn inputItems.map(input => {\n  const output = input.output || input;\n  const searchResultId = output.searchResultId || \n    $('Code_SearchResult_PrepareTop10ForExtraction').first()?.json?.searchResult?.id;\n  \n  const formattedExtractions = [];\n  const { actors = [], sources = [], topics = [] } = output.extractions || {};\n  \n  // ✅ ACTORS - Conserver TOUTE la structure originale\n  actors.forEach(actor => {\n    if (actor.confidence >= 0.6) {\n      const actorData = {};\n      \n      // Copier TOUS les champs de l'actor original\n      if (actor.label !== undefined) actorData.label = actor.label;\n      if (actor.type !== undefined) actorData.type = actor.type;\n      if (actor.primaryDomain !== undefined) actorData.primaryDomain = actor.primaryDomain;\n      if (actor.score !== undefined) actorData.score = actor.score;\n      if (actor.explanation_fr !== undefined) actorData.explanation_fr = actor.explanation_fr;\n      if (actor.explanation_en !== undefined) actorData.explanation_en = actor.explanation_en;\n      if (actor.description !== undefined) actorData.description = actor.description;\n      \n      formattedExtractions.push({\n        type: 'actor',\n        data: actorData,\n        confidenceScore: actor.confidence || 0.0\n      });\n    }\n  });\n  \n  // ✅ SOURCES - Conserver TOUTE la structure originale\n  sources.forEach(source => {\n    if (source.confidence >= 0.6) {\n      const sourceData = {};\n      \n      // Copier TOUS les champs de la source originale\n      if (source.name !== undefined) sourceData.name = source.name;\n      if (source.url !== undefined) sourceData.url = source.url;\n      if (source.type !== undefined) sourceData.type = source.type;\n      if (source.primaryDomain !== undefined) sourceData.primaryDomain = source.primaryDomain;\n      if (source.description_fr !== undefined) sourceData.description_fr = source.description_fr;\n      if (source.description_en !== undefined) sourceData.description_en = source.description_en;\n      if (source.description !== undefined) sourceData.description = source.description;\n      if (source.relevance_fr !== undefined) sourceData.relevance_fr = source.relevance_fr;\n      if (source.relevance_en !== undefined) sourceData.relevance_en = source.relevance_en;\n      if (source.score !== undefined) sourceData.score = source.score;\n      if (source.query !== undefined) sourceData.query = source.query;\n      \n      formattedExtractions.push({\n        type: 'source',\n        data: sourceData,\n        confidenceScore: source.confidence || 0.0\n      });\n    }\n  });\n  \n  // ✅ TOPICS - Conserver TOUTE la structure originale\n  topics.forEach(topic => {\n    if (topic.confidence >= 0.6) {\n      const topicData = {};\n      \n      // Copier TOUS les champs du topic original\n      if (topic.name !== undefined) topicData.name = topic.name;\n      if (topic.type !== undefined) topicData.type = topic.type;\n      if (topic.primaryDomain !== undefined) topicData.primaryDomain = topic.primaryDomain;\n      if (topic.explanation !== undefined) topicData.explanation = topic.explanation;\n      if (topic.description !== undefined) topicData.description = topic.description;\n      if (topic.score !== undefined) topicData.score = topic.score;\n      \n      formattedExtractions.push({\n        type: 'topic',\n        data: topicData,\n        confidenceScore: topic.confidence || 0.0\n      });\n    }\n  });\n  \n  return {\n    json: {\n      searchResultId,\n      extractions: formattedExtractions\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6272,
+        -496
+      ],
+      "id": "5f7e6bd7-33dd-4f6a-9ca6-925e4144d734",
+      "name": "Code_Format_ExtractionData"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "SJQNxSShprfYQzrv",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/SJQNxSShprfYQzrv",
+          "cachedResultName": "Internal - Webhook API"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "language": "={{ $('Code_Initialize_WatchFileData').first().json.language }}",
+            "data": "={{\n  {\n    searchResultId: $json.searchResultId,\n    extractions: $json.extractions\n  }.toJsonString()\n}}",
+            "serializationGroups": "watch_file:llm",
+            "messageType": "App\\Application\\WatchFile\\SearchResult\\ExtractSearchResultEntitiesAction"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "messageType",
+              "displayName": "messageType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "serializationGroups",
+              "displayName": "serializationGroups",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -6048,
+        -400
+      ],
+      "id": "33af9195-4b4d-4f72-8dc1-ae88a5b9be9f",
+      "name": "Workflow_Execute_ExtractEntities",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').item.json.language === 'en' ? `The deep search agent is experiencing a problem. Please try again later.` : `L'agent de recherche approfondie rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }},\n  \"context\": {\n    \"data\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Code_Initialize_WatchFileData').item.json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Initialize_WatchFileData').item.json?.conversation.id?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -7792,
+        -160
+      ],
+      "id": "2d2076e2-9e94-4443-914a-68bf4320619f",
+      "name": "Feedback_AgentAIError3",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "N87xE62THnkDjs2x",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/N87xE62THnkDjs2x",
+          "cachedResultName": "3. Tool - WatchFile Builder"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "watchFile": "={{ $('Code_Initialize_WatchFileData').first().json.watchFile.toJsonString() }}",
+            "conversationId": "={{ $('Code_Initialize_WatchFileData').first().json.conversation.id }}",
+            "actor": "={{ $json?.actor?.toJsonString() || 'null' }}",
+            "source": "={{ $json?.source?.toJsonString() || 'null' }}",
+            "referenceSubject": "={{ $json?.topic?.toJsonString() || 'null' }}",
+            "context": "={{ $('Code_Initialize_WatchFileData').first().json.context.toJsonString() }}",
+            "language": "={{ $('Code_Initialize_WatchFileData').first().json.userLanguage }}",
+            "sourceTypes": "={{ $('Code_Initialize_WatchFileData').first().json.source_types.toJsonString() }}",
+            "collectors": "={{ $('Code_Initialize_WatchFileData').first().json.collectors_list.toJsonString() }}",
+            "userMessageId": "={{ $('Code_Initialize_WatchFileData').first().json.userMessageId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "watchFile",
+              "displayName": "watchFile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "userMessageId",
+              "displayName": "userMessageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "actor",
+              "displayName": "actor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "referenceSubject",
+              "displayName": "referenceSubject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "context",
+              "displayName": "context",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "sourceTypes",
+              "displayName": "sourceTypes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "collectors",
+              "displayName": "collectors",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -4944,
+        -416
+      ],
+      "id": "c1d21653-8648-4e9b-ac81-a8c71e6822d7",
+      "name": "Workflow_WatchFile_Builder"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputItems = $input.all();\nconst queryCount = inputItems.length;\nconst language = $('Code_Initialize_WatchFileData').first().json.language || 'en';\n\nconst message = language === 'fr'\n  ? `🌐 Recherche web en cours (${queryCount} requête${queryCount > 1 ? 's' : ''})...`\n  : `🌐 Web search in progress (${queryCount} quer${queryCount !== 1 ? 'ies' : 'y'})...`;\n\nreturn {\n  json: {\n    message\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8912,
+        -368
+      ],
+      "id": "a7058485-f773-4825-99d6-f8b0ef06ef77",
+      "name": "Code_Build_WebSearchProgressMessage"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "useDataOfInput": 2
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -8464,
+        -368
+      ],
+      "id": "45930946-3953-45f1-be44-9bf7db356cb7",
+      "name": "Merge_Retrieve_WebSearchQuery"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code_Build_EnrichmentProgressMessage\nconst language = $('Code_Initialize_WatchFileData').first().json.language || 'en';\n\nconst message = language === 'fr'\n  ? `✅ Enrichissement WatchFile en cours...`\n  : `✅ WatchFile enrichment in progress...`;\n\nreturn {\n  json: {\n    message\n  }\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5600,
+        -560
+      ],
+      "id": "e9af3919-1307-4f53-bc3c-b10a31b9aad9",
+      "name": "Code_Build_EnrichmentProgressMessage"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "useDataOfInput": 2
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -5152,
+        -560
+      ],
+      "id": "5de12288-08fb-475d-94bb-e993958ca5e2",
+      "name": "Merge_Retrieve_SearchQueryResults1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const initData = $('Code_Initialize_WatchFileData').first().json;\nconst language = initData.language || 'en';\nconst watchFileName = initData.watchFile?.name || 'WatchFile';\nconst builderResults = $input.all();\n\nlet actorsAdded = 0;\nlet sourcesAdded = 0;\nlet topicsIdentified = 0;\nlet duplicatesAvoided = 0;\n\nbuilderResults.forEach(item => {\n  const json = item.json || {};\n  \n  // Compter les acteurs\n  if (json.actor) {\n    if (json.actor.success === true) {\n      actorsAdded++;\n    } else if (json.actor.message && (\n      json.actor.message.toLowerCase().includes('duplicate') || \n      json.actor.message.toLowerCase().includes('déjà') ||\n      json.actor.message.toLowerCase().includes('already')\n    )) {\n      duplicatesAvoided++;\n    }\n  }\n  \n  // Compter les sources\n  if (json.source) {\n    if (json.source.success === true) {\n      sourcesAdded++;\n    } else if (json.source.message && (\n      json.source.message.toLowerCase().includes('duplicate') || \n      json.source.message.toLowerCase().includes('déjà') ||\n      json.source.message.toLowerCase().includes('already')\n    )) {\n      duplicatesAvoided++;\n    }\n  }\n  \n  // Compter les sujets\n  if (json.referenceSubject?.success === true) {\n    topicsIdentified++;\n  }\n});\n\nconst message = language === 'fr'\n  ? `✅ **Recherche approfondie terminée !**\\n\\nVotre dossier de veille **${watchFileName}** a été enrichi :\\n- **${actorsAdded} acteur${actorsAdded > 1 ? 's' : ''}** ajouté${actorsAdded > 1 ? 's' : ''}${duplicatesAvoided > 0 ? ` (${duplicatesAvoided} doublon${duplicatesAvoided > 1 ? 's' : ''} évité${duplicatesAvoided > 1 ? 's' : ''})` : ''}\\n- **${sourcesAdded} source${sourcesAdded > 1 ? 's' : ''}** configurée${sourcesAdded > 1 ? 's' : ''} automatiquement\\n- **${topicsIdentified} sujet${topicsIdentified > 1 ? 's' : ''}** identifié${topicsIdentified > 1 ? 's' : ''}, mise à jour du sujet de référence\\n\\n💬 Souhaitez-vous ajuster la configuration ou ajouter d'autres éléments ?`\n  : `✅ **Deep search completed!**\\n\\nYour watch file **${watchFileName}** has been enriched:\\n- **${actorsAdded} actor${actorsAdded !== 1 ? 's' : ''}** added${duplicatesAvoided > 0 ? ` (${duplicatesAvoided} duplicate${duplicatesAvoided !== 1 ? 's' : ''} avoided)` : ''}\\n- **${sourcesAdded} source${sourcesAdded !== 1 ? 's' : ''}** automatically configured\\n- **${topicsIdentified} topic${topicsIdentified !== 1 ? 's' : ''}** identified, reference subject updated\\n\\n💬 Would you like to adjust the configuration or add other elements?`;\n\nreturn {\n  json: {\n    message,\n    stats: {\n      actorsAdded,\n      sourcesAdded,\n      topicsIdentified,\n      duplicatesAvoided,\n      totalItems: builderResults.length\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5824,
+        -752
+      ],
+      "id": "2d30b6a3-6454-46d6-b86f-40e5c21aba8e",
+      "name": "Code_Build_FinalSummaryMessage"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ $('Code_Build_FinalSummaryMessage').item.json.message.toJsonString() }},\n  \"context\": {\n    \"data\": {{ $('Code_Build_FinalSummaryMessage').item.json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Code_Initialize_WatchFileData').first().json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Initialize_WatchFileData').first().json?.conversation.id?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').first().json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5376,
+        -752
+      ],
+      "id": "6cfe0d7e-9612-4a03-a371-1009757bbb4a",
+      "name": "Feedback_AgentAIError4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -6048,
+        -592
+      ],
+      "id": "1fb7b67c-0ebd-4205-a920-08457c6033d7",
+      "name": "Split_Loop_Extractions"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $json.extractions\n  .filter(item => (item.confidenceScore || 0) > 0.6)  .map(item => ({ [item.type]: item.data, searchResultId: $json.searchResultId }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5824,
+        -496
+      ],
+      "id": "9acaba9c-c66f-497f-8325-dab05cdcbb4c",
+      "name": "Code_Transform_Extraction"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Code_Initialize_WatchFileData').last().json.conversation.id.toJsonString() }}",
+            "message": "={{ ($('Code_Initialize_WatchFileData').last().json.userLanguage === 'en' ? `🔍 Launching deep search...` : `🔍 Lancement recherche approfondie...`).toJsonString() }}",
+            "data": "={{\n  {\n    modelError: $json.toJsonString(),\n    execution: $execution.toJsonString(),\n    prevNode: $prevNode.toJsonString()\n  }\n}}",
+            "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -10720,
+        -16
+      ],
+      "id": "b1b6387a-c450-44bd-aed2-7cc3a4d84986",
+      "name": "ExecuteWorkflow_IMS_StartDeepSearchFeedback",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Code_Initialize_WatchFileData').last().json.conversation.id.toJsonString() }}",
+            "message": "={{ $json.message.toJsonString() }}",
+            "data": "={{\n  {\n    strategicQuestions: $('Workflow_Execute_GenerateStrategicQuestion').all().toJsonString(),\n    execution: $execution.toJsonString(),\n    prevNode: $prevNode.toJsonString()\n  }\n}}",
+            "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -9792,
+        -224
+      ],
+      "id": "d31f7c3e-bb9c-4836-8ebb-6d7a0bff7862",
+      "name": "ExecuteWorkflow_IMS_StrategicQuestionGeneratedFeedback",
+      "executeOnce": false,
+      "onError": "continueRegularOutput",
+      "notes": "@n8n-validate-ignore RABBITMQ_CHAT_MESSAGE_NOT_TRANSLATED"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Code_Initialize_WatchFileData').last().json.conversation.id.toJsonString() }}",
+            "message": "={{ ($('Code_Initialize_WatchFileData').last().json.language === 'en' ? `The deep search agent is experiencing a problem. Please try again later.` : `L'agent de recherche approfondie rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }}",
+            "data": "={{ {\n    \"modelError\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  } }}",
+            "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -10240,
+        96
+      ],
+      "id": "18a7021b-0b73-4a3b-9986-f25473a2b888",
+      "name": "ExecuteWorkflow_IMS_ChatMessageFailed",
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Code_Initialize_WatchFileData').last().json.conversation.id.toJsonString() }}",
+            "message": "={{ ($('Code_Initialize_WatchFileData').last().json.language === 'en' ? `The agent is experiencing a problem. Please try again later.` : `L'agent rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }}",
+            "data": "={{ {\n    \"modelError\": $json.toJsonString(),\n    \"execution\": $execution.toJsonString(),\n    \"prevNode\": $prevNode.toJsonString()\n  } }}",
+            "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -9120,
+        -80
+      ],
+      "id": "6c8da390-ef6f-4672-9c21-7a9f8b2147d1",
+      "name": "ExecuteWorkflow_IMS_ChatMessageFailed1",
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Code_Initialize_WatchFileData').last().json.conversation.id.toJsonString() }}",
+            "message": "={{ $json.message.toJsonString() }}",
+            "data": "={{ {\n    \"execution\": $execution.toJsonString(),\n    \"prevNode\": $prevNode.toJsonString()\n  } }}",
+            "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -8672,
+        -368
+      ],
+      "id": "2f64e12f-b5c7-4dd4-8056-c361e23ec823",
+      "name": "ExecuteWorkflow_IMS_WebSearchProgressFeedback",
+      "executeOnce": false,
+      "onError": "continueRegularOutput",
+      "notes": "@n8n-validate-ignore RABBITMQ_CHAT_MESSAGE_NOT_TRANSLATED"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Code_Initialize_WatchFileData').last().json.conversation.id.toJsonString() }}",
+            "message": "={{ ($('Code_Initialize_WatchFileData').last().json.language === 'en' ? `The deep search agent is experiencing a problem. Please try again later.` : `L'agent de recherche approfondie rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }}",
+            "data": "={{ {\n    \"modelError\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  } }}",
+            "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -8016,
+        -192
+      ],
+      "id": "293e67b2-f13c-4ea1-a07b-434b82f7aba4",
+      "name": "ExecuteWorkflow_IMS_ChatMessageFailed2",
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Code_Initialize_WatchFileData').last().json.conversation.id.toJsonString() }}",
+            "message": "={{ $json.message.toJsonString() }}",
+            "data": "={{ {\n    \"execution\": $execution.toJsonString(),\n    \"prevNode\": $prevNode.toJsonString()\n  } }}",
+            "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -7568,
+        -464
+      ],
+      "id": "8f07b1e9-d5cd-4912-bed3-b812b711a9df",
+      "name": "ExecuteWorkflow_IMS_SearchResultsSelectedFeedback",
+      "executeOnce": false,
+      "onError": "continueRegularOutput",
+      "notes": "@n8n-validate-ignore RABBITMQ_CHAT_MESSAGE_NOT_TRANSLATED"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Code_Initialize_WatchFileData').last().json.conversation.id.toJsonString() }}",
+            "message": "={{ ($('Code_Initialize_WatchFileData').last().json.language === 'en' ? `The deep search agent is experiencing a problem. Please try again later.` : `L'agent de recherche approfondie rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }}",
+            "data": "={{ {\n    \"modelError\": $json.toJsonString(),\n    \"execution\": $execution.toJsonString(),\n    \"prevNode\": $prevNode.toJsonString()\n  } }}",
+            "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -6352,
+        -240
+      ],
+      "id": "81d06cf3-0579-4cc4-9547-17f1d6baafcd",
+      "name": "ExecuteWorkflow_IMS_ChatMessageFailed3",
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Code_Initialize_WatchFileData').last().json.conversation.id.toJsonString() }}",
+            "message": "={{ $json.message.toJsonString() }}",
+            "data": "={{ {\n    \"execution\": $execution.toJsonString(),\n    \"prevNode\": $prevNode.toJsonString()\n  } }}",
+            "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -5600,
+        -752
+      ],
+      "id": "c364b35f-b7de-444b-aeb1-3e2440d8ded2",
+      "name": "ExecuteWorkflow_IMS_SearchResultsSelectedFeedback2",
+      "executeOnce": false,
+      "onError": "continueRegularOutput",
+      "notes": "@n8n-validate-ignore RABBITMQ_CHAT_MESSAGE_NOT_TRANSLATED"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Code_Initialize_WatchFileData').last().json.conversation.id.toJsonString() }}",
+            "message": "={{ $json.message.toJsonString() }}",
+            "data": "={{ {\n    \"execution\": $execution.toJsonString(),\n    \"prevNode\": $prevNode.toJsonString()\n  } }}",
+            "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -5376,
+        -560
+      ],
+      "id": "46b4b178-8f63-40d1-a18e-d7d53b2af4ec",
+      "name": "ExecuteWorkflow_IMS_SearchResultsSelectedFeedback1",
+      "executeOnce": false,
+      "onError": "continueRegularOutput",
+      "notes": "@n8n-validate-ignore RABBITMQ_CHAT_MESSAGE_NOT_TRANSLATED"
+    }
+  ],
+  "connections": {
+    "ExecutionData_Store_TestMetadata": {
+      "main": [
+        [
+          {
+            "node": "Code_Initialize_WatchFileData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set_Format_TestInput": {
+      "main": [
+        [
+          {
+            "node": "ExecutionData_Store_TestMetadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Initialize_WatchFileData": {
+      "main": [
+        [
+          {
+            "node": "ExecuteWorkflow_IMS_StartDeepSearchFeedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook_Trigger_TestInput": {
+      "main": [
+        [
+          {
+            "node": "Set_Format_TestInput",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Trigger_DeepSearch": {
+      "main": [
+        [
+          {
+            "node": "Code_Initialize_WatchFileData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Execute_GenerateStrategicQuestion": {
+      "main": [
+        [
+          {
+            "node": "Condition_Check_IsSuccess",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ExecuteWorkflow_IMS_ChatMessageFailed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Build_MessageForFeedback": {
+      "main": [
+        [
+          {
+            "node": "ExecuteWorkflow_IMS_StrategicQuestionGeneratedFeedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Condition_Check_IsSuccess": {
+      "main": [
+        [
+          {
+            "node": "Code_Build_MessageForFeedback",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge_Retrieve_StrategicQuestion",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge_Retrieve_StrategicQuestion": {
+      "main": [
+        [
+          {
+            "node": "Workflow_Execute_GenerateSearchQueries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Execute_GenerateSearchQueries": {
+      "main": [
+        [
+          {
+            "node": "Condition_Check_IsSuccess1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ExecuteWorkflow_IMS_ChatMessageFailed1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Condition_Check_IsSuccess1": {
+      "main": [
+        [
+          {
+            "node": "Code_Build_WebSearchProgressMessage",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Workflow_Execute_SearchQuery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Execute_SearchQuery": {
+      "main": [
+        [
+          {
+            "node": "Condition_Check_SearchQueryExecuted",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ExecuteWorkflow_IMS_ChatMessageFailed2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Build_SearchResultsFeedbackMessage": {
+      "main": [
+        [
+          {
+            "node": "ExecuteWorkflow_IMS_SearchResultsSelectedFeedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge_Retrieve_SearchQueryResults": {
+      "main": [
+        [
+          {
+            "node": "Code_SearchResult_PrepareTop10ForExtraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Condition_Check_SearchQueryExecuted": {
+      "main": [
+        [
+          {
+            "node": "Code_Build_SearchResultsFeedbackMessage",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge_Retrieve_SearchQueryResults",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "LLM_Model_Primary": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM_Agent_ExtractEntities",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Model_Fallback": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM_Agent_ExtractEntities",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "LLM_Model_ValidationParser": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM_OutputParser_RelevanceScore",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_OutputParser_RelevanceScore": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "LLM_Agent_ExtractEntities",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Agent_ExtractEntities": {
+      "main": [
+        [
+          {
+            "node": "Code_Format_ExtractionData",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ExecuteWorkflow_IMS_ChatMessageFailed3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_SearchResult_PrepareTop10ForExtraction": {
+      "main": [
+        [
+          {
+            "node": "LLM_Agent_ExtractEntities",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Format_ExtractionData": {
+      "main": [
+        [
+          {
+            "node": "Workflow_Execute_ExtractEntities",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split_Loop_Extractions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_WatchFile_Builder": {
+      "main": [
+        [
+          {
+            "node": "Split_Loop_Extractions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Build_WebSearchProgressMessage": {
+      "main": [
+        [
+          {
+            "node": "ExecuteWorkflow_IMS_WebSearchProgressFeedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge_Retrieve_WebSearchQuery": {
+      "main": [
+        [
+          {
+            "node": "Workflow_Execute_SearchQuery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Build_EnrichmentProgressMessage": {
+      "main": [
+        [
+          {
+            "node": "ExecuteWorkflow_IMS_SearchResultsSelectedFeedback1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge_Retrieve_SearchQueryResults1": {
+      "main": [
+        [
+          {
+            "node": "Workflow_WatchFile_Builder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Build_FinalSummaryMessage": {
+      "main": [
+        [
+          {
+            "node": "ExecuteWorkflow_IMS_SearchResultsSelectedFeedback2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split_Loop_Extractions": {
+      "main": [
+        [
+          {
+            "node": "Code_Build_FinalSummaryMessage",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code_Transform_Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Transform_Extraction": {
+      "main": [
+        [
+          {
+            "node": "Code_Build_EnrichmentProgressMessage",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Workflow_WatchFile_Builder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteWorkflow_IMS_StartDeepSearchFeedback": {
+      "main": [
+        [
+          {
+            "node": "Workflow_Execute_GenerateStrategicQuestion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteWorkflow_IMS_StrategicQuestionGeneratedFeedback": {
+      "main": [
+        [
+          {
+            "node": "Merge_Retrieve_StrategicQuestion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteWorkflow_IMS_ChatMessageFailed": {
+      "main": [
+        [
+          {
+            "node": "Feedback_AgentAIError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteWorkflow_IMS_ChatMessageFailed1": {
+      "main": [
+        [
+          {
+            "node": "Feedback_AgentAIError1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteWorkflow_IMS_WebSearchProgressFeedback": {
+      "main": [
+        [
+          {
+            "node": "Merge_Retrieve_WebSearchQuery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteWorkflow_IMS_ChatMessageFailed2": {
+      "main": [
+        [
+          {
+            "node": "Feedback_AgentAIError3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteWorkflow_IMS_SearchResultsSelectedFeedback": {
+      "main": [
+        [
+          {
+            "node": "Merge_Retrieve_SearchQueryResults",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteWorkflow_IMS_ChatMessageFailed3": {
+      "main": [
+        [
+          {
+            "node": "Feedback_AgentAIError2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteWorkflow_IMS_SearchResultsSelectedFeedback2": {
+      "main": [
+        [
+          {
+            "node": "Feedback_AgentAIError4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecuteWorkflow_IMS_SearchResultsSelectedFeedback1": {
+      "main": [
+        [
+          {
+            "node": "Merge_Retrieve_SearchQueryResults1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": "05e22d27620d1717ac398bbf3f2dbdaa9098598488c5baaa743d646b60379aaf",
+    "templateCredsSetupCompleted": true
+  },
+  "versionId": "be8c3713-c224-4faa-86a3-21942c3eafbd",
+  "versionCounter": 16,
+  "triggerCount": 0,
+  "tags": []
+}

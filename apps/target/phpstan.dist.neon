@@ -1,0 +1,40 @@
+includes:
+	# https://phpstan.org/blog/what-is-bleeding-edge
+	- phar://phpstan.phar/conf/bleedingEdge.neon
+	# https://github.com/phpstan/phpstan-symfony
+	- vendor/phpstan/phpstan-symfony/extension.neon
+	- vendor/phpstan/phpstan-symfony/rules.neon
+	# https://github.com/phpstan/phpstan-doctrine
+	- vendor/phpstan/phpstan-doctrine/extension.neon
+	- vendor/phpstan/phpstan-doctrine/rules.neon
+	# https://phpstan.org/user-guide/baseline
+	- phpstan-baseline.neon
+
+parameters:
+	# See https://phpstan.org/user-guide/rule-levels
+	level: 9
+	paths:
+		- src
+		- tests
+	scanFiles:
+		- vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php
+	doctrine:
+		objectManagerLoader: tests/object-manager.php
+	symfony:
+		consoleApplicationLoader: tests/console-application.php
+		containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
+	ignoreErrors:
+		-
+			# for partial entity in domain
+			message: '#^Property .*::\$[a-zA-Z0-9_]+ type mapping mismatch: property can contain .*\|null but database expects .*\.$#'
+			path: src/Domain
+		-
+			# to remove error when using HandleTrait
+			message: '#^Property .*::\$messageBus is never read, only written\.$#'
+		-
+			# use trait in anonymous class, is not correctly discovered by phpstan
+			message: '#^Call to an undefined method object::getWatchFile\(\)#'
+			path: tests/Units/Application/WatchFile/GetWatchFileTraitTest.php
+		-
+			message: '#^Method App\\Kernel::configureContainer\(\) is unused\.#'
+			path: src/Kernel.php

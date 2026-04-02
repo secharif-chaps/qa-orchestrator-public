@@ -1,0 +1,4 @@
+# Disable email sending in test environment
+framework:
+  mailer:
+    dsn: 'null://null'

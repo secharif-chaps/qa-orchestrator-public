@@ -1,0 +1,64 @@
+doctrine:
+  dbal:
+    url: '%env(resolve:DATABASE_URL)%'
+
+    # IMPORTANT: You MUST configure your server version,
+    # either here or in the DATABASE_URL env var (see .env file)
+    #server_version: '16'
+
+    profiling_collect_backtrace: '%kernel.debug%'
+    # Ignore messenger_messages table (managed by Symfony Messenger, not Doctrine ORM)
+    schema_filter: ~^(?!messenger_messages)~
+    types:
+      translated_text: App\Infrastructure\Doctrine\Type\TranslatedTextType
+      signals: App\Infrastructure\Doctrine\Type\SignalsType
+  orm:
+    validate_xml_mapping: true
+    naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+    identity_generation_preferences:
+      Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
+    auto_mapping: true
+    mappings:
+      Domain:
+        type: attribute
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/Domain'
+        prefix: 'App\Domain'
+        alias: App
+    controller_resolver:
+      auto_mapping: false
+    filters:
+      tenant:
+        class: App\Infrastructure\Organisation\Doctrine\TenantFilter
+        enabled: false
+    dql:
+      string_functions:
+        UNACCENT: App\Infrastructure\Persistence\Doctrine\DQL\UnaccentFunction
+      datetime_functions:
+        DATE: App\Infrastructure\Persistence\Doctrine\DQL\DateFunction
+
+when@test:
+  doctrine:
+    dbal:
+      # "TEST_TOKEN" is typically set by ParaTest
+      dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+      # Ignore messenger_messages table (managed by Symfony Messenger, not Doctrine ORM)
+      schema_filter: ~^(?!messenger_messages)~
+
+when@prod:
+  doctrine:
+    orm:
+      query_cache_driver:
+        type: pool
+        pool: doctrine.system_cache_pool
+      result_cache_driver:
+        type: pool
+        pool: doctrine.result_cache_pool
+
+  framework:
+    cache:
+      pools:
+        doctrine.result_cache_pool:
+          adapter: cache.app
+        doctrine.system_cache_pool:
+          adapter: cache.system

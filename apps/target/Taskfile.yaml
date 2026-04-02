@@ -1,0 +1,99 @@
+version: 3
+tasks:
+  composer:install:
+    desc: 'Install PHP dependencies with Composer'
+    cmds:
+      - docker compose exec api composer install --no-interaction
+
+  cs:fix:
+    desc: 'Fix PHP code style with ECS, pass {filename} to fix specifics files or directories, usage task cs:fix -- {filename}'
+    cmds:
+      - docker compose exec api php vendor/bin/ecs check --config=ecs.php --fix {{.CLI_ARGS}}
+
+  cs:check:
+    desc: 'Check PHP code style with ECS'
+    cmds:
+      - docker compose exec api php vendor/bin/ecs check --config=ecs.php
+
+  phpstan:check:
+    desc: 'Analyse PHP code with PHPStan'
+    cmds:
+      - docker compose exec api php vendor/bin/phpstan --memory-limit=1G analyse {{.CLI_ARGS}}
+
+  phpstan:generate-baseline:
+    desc: 'Generate PHPStan baseline'
+    cmds:
+      - docker compose exec api php vendor/bin/phpstan --memory-limit=1G analyse --generate-baseline
+
+  phpstan:clear-result-cache:
+    desc: 'Deletes previously built cache'
+    cmds:
+      - docker compose exec api php vendor/bin/phpstan clear-result-cache
+
+  test:
+    desc: 'Run all PHPUnit tests'
+    cmds:
+      - docker compose exec api php vendor/bin/phpunit
+
+  test:unit:
+    desc: 'Run PHPUnit unit tests'
+    cmds:
+      - docker compose exec api php vendor/bin/phpunit --testsuite "Unit tests" {{.CLI_ARGS}}
+
+  test:unit:coverage:
+    desc: 'Run PHPUnit unit tests with code coverage'
+    cmds:
+      - docker compose exec -e XDEBUG_MODE=coverage api php vendor/bin/phpunit --testsuite "Unit tests" --coverage-html=var/build/unit-coverage --coverage-text {{.CLI_ARGS}}
+
+  test:unit:coverage:path:
+    desc: 'Run PHPUnit unit tests with path coverage'
+    cmds:
+      - docker compose exec -e XDEBUG_MODE=coverage api php vendor/bin/phpunit --testsuite "Unit tests" --path-coverage {{.CLI_ARGS}}
+
+  test:integration:
+    desc: 'Run PHPUnit integration tests'
+    cmds:
+      - docker compose exec api php vendor/bin/phpunit --testsuite "Integration tests" {{.CLI_ARGS}}
+
+  test:integration:setup:
+    desc: 'Setup integration tests environment'
+    cmds:
+      - docker compose --profile test up -d --wait database-test opensearch-test
+      - docker compose exec api php bin/console doctrine:database:create --if-not-exists --env=test
+      - |
+        if ! docker compose exec api php bin/console doctrine:schema:validate --quiet --env=test; then
+          docker compose exec api php bin/console doctrine:schema:update --force --no-interaction --env=test
+        fi
+      - docker compose exec api php bin/console doctrine:migrations:sync-metadata-storage --no-interaction --env=test
+      - docker compose exec api php bin/console doctrine:migrations:version --add --all --env=test --no-interaction -vvv
+      - docker compose exec api php bin/console cache:clear --quiet --env=test
+      - docker compose exec api php bin/console cache:warmup --quiet --env=test
+      - docker compose exec api php bin/console opensearch:index:reset --no-interaction --env=test
+      - docker compose exec api php bin/console opensearch:migrations:migrate --force --no-interaction --env=test
+
+  test:integration:reset:
+    desc: 'Reset integration tests environment'
+    cmds:
+      - docker compose --profile test down database-test opensearch-test
+      - task: test:integration:setup
+
+  test:integration:coverage:
+    desc: 'Run PHPUnit integration with code coverage'
+    cmds:
+      - docker compose exec -e XDEBUG_MODE=coverage api php vendor/bin/phpunit --testsuite "Integration tests" --coverage-html=var/build/integration-coverage --coverage-text {{.CLI_ARGS}}
+
+  rector:fix:
+    desc: 'Run Rector to apply automated refactoring rules'
+    cmds:
+      - docker compose exec api php vendor/bin/rector process {{.CLI_ARGS}}
+
+  rector:dry-run:
+    desc: 'Preview Rector changes without applying them'
+    cmds:
+      - docker compose exec api php vendor/bin/rector process --dry-run {{.CLI_ARGS}}
+
+  fixture:load:
+    desc: 'Load fixtures into the database'
+    cmds:
+      - docker compose exec api php bin/console opensearch:index:reset --no-interaction
+      - docker compose exec api php bin/console doctrine:fixtures:load --no-interaction

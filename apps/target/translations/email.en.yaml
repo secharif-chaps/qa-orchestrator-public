@@ -1,0 +1,3 @@
+watchfile.share_notification.added_subject: 'Watch file shared with you'
+watchfile.share_notification.updated_subject: 'Watch file permissions updated'
+watchfile.share_notification.removed_subject: 'Watch file shared removed'

@@ -1,0 +1,17 @@
+{
+    "type": "OBJECT",
+    "properties": {
+        "language": {
+            "type": "STRING",
+            "description": "ISO 639-1 language code (2 lowercase letters)",
+            "pattern": "^[a-z]{2}$"
+        },
+        "confidence": {
+            "type": "NUMBER",
+            "description": "Confidence score between 0.0 and 1.0",
+            "minimum": 0.0,
+            "maximum": 1.0
+        }
+    },
+    "required": ["language", "confidence"]
+}

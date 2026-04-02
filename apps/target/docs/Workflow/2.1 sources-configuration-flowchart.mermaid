@@ -1,0 +1,80 @@
+flowchart TD
+    subgraph ConfigSources["Configuration des Sources Spécialisées (Phase 2.1)"]
+        START([Configuration des critères de la phase 1.3]) --> INPUT[/Critères et paramètres de surveillance/]
+        
+        subgraph Selection["Intelligence de Sélection de Sources"]
+            INPUT --> A1[Agent IA de Cartographie des Sources]
+            A1 --> A2[Agent IA d'Évaluation de Fiabilité]
+            A2 --> A3[Agent IA d'Optimisation de Fréquence]
+            A3 --> BRANCH{Spécialisation\npar type\nde veille}
+        end
+        
+        BRANCH -->|Veille Concurrentielle| B1
+        BRANCH -->|Veille Stratégique| C1
+        BRANCH -->|Veille Commerciale| D1
+        BRANCH -->|Veille Technologique| E1
+        BRANCH -->|Veille Juridique| F1
+        
+        subgraph SourcesConc["Intelligence de Sources Concurrentielles"]
+            B1[Agent IA de Configuration Corporate]
+            B1 --> B2[Agent IA d'Intégration Feedback Client]
+            B2 --> B3[Agent IA d'Accès Financier]
+            B3 --> MERGE
+        end
+        
+        subgraph SourcesStrat["Intelligence de Sources Stratégiques"]
+            C1[Agent IA de Configuration Prospective]
+            C1 --> C2[Agent IA d'Intégration Macro-économique]
+            C2 --> C3[Agent IA d'Accès Experts]
+            C3 --> MERGE
+        end
+        
+        subgraph SourcesCom["Intelligence de Sources Commerciales"]
+            D1[Agent IA de Configuration Appels d'Offres]
+            D1 --> D2[Agent IA d'Intégration Réseaux Professionnels]
+            D2 --> D3[Agent IA d'Accès Projets]
+            D3 --> MERGE
+        end
+        
+        subgraph SourcesTech["Intelligence de Sources Technologiques"]
+            E1[Agent IA de Configuration Académique]
+            E1 --> E2[Agent IA d'Intégration Brevets]
+            E2 --> E3[Agent IA d'Accès Code Source]
+            E3 --> MERGE
+        end
+        
+        subgraph SourcesJur["Intelligence de Sources Juridiques"]
+            F1[Agent IA de Configuration Officielle]
+            F1 --> F2[Agent IA d'Intégration Bases Juridiques]
+            F2 --> F3[Agent IA d'Accès Réglementaire]
+            F3 --> MERGE
+        end
+        
+        MERGE{Intégration\ndes sources\nspécifiques}
+        
+        MERGE --> G1
+        
+        subgraph Authentication["Intelligence d'Authentification et Accès"]
+            G1[Agent IA de Gestion d'Authentification]
+            G1 --> G2[Agent IA de Rotation d'Identité]
+            G2 --> G3[Agent IA de Respect des Limitations]
+            G3 --> G4[Agent IA de Test d'Accessibilité]
+        end
+        
+        G4 --> OUTPUT[/Configuration complète des sources à surveiller/]
+        OUTPUT --> END([Passage à la phase 2.2])
+    end
+    
+    %% Styles améliorés avec meilleur contraste
+    classDef intelligence fill:#8a2be2,stroke:#000,stroke-width:2px,color:#fff
+    classDef process fill:#4682b4,stroke:#000,stroke-width:1px,color:#fff
+    classDef document fill:#f5a742,stroke:#000,stroke-width:1px,color:#000
+    classDef decision fill:#d81b60,stroke:#000,stroke-width:1px,color:#fff
+    classDef subgraphStyle fill:#f5f5f5,stroke:#333,stroke-width:1px
+    
+    %% Application des styles
+    class A1,A2,A3,B1,B2,B3,C1,C2,C3,D1,D2,D3,E1,E2,E3,F1,F2,F3,G1,G2,G3,G4 intelligence
+    class START,END process
+    class INPUT,OUTPUT document
+    class BRANCH,MERGE decision
+    class Selection,SourcesConc,SourcesStrat,SourcesCom,SourcesTech,SourcesJur,Authentication subgraphStyle

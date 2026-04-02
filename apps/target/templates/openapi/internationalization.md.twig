@@ -1,0 +1,21 @@
+
+## Internationalization
+
+The API supports content negotiation via the `Accept-Language` header. Error messages and translatable content will be returned in the requested language when available.
+
+### Supported Languages
+{% for lang in languages %}
+- `{{ lang.code }}` - {{ lang.name }}{% if lang.default %} (default){% endif %}
+
+{% endfor %}
+
+### Usage
+Include the `Accept-Language` header in your requests:
+```
+Accept-Language: fr
+```
+
+The API follows standard HTTP content negotiation, so you can also specify quality values:
+```
+Accept-Language: fr-FR, fr;q=0.9, en;q=0.8
+```

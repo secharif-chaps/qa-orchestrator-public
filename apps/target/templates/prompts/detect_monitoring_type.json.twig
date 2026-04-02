@@ -1,0 +1,25 @@
+{
+    "type": "OBJECT",
+    "properties": {
+        "classification": {
+            "type": "STRING",
+            "enum": [
+                "competitive",
+                "strategic",
+                "commercial",
+                "technological",
+                "regulatory",
+                "reputational"
+            ]
+        },
+        "confidence": {
+            "type": "NUMBER",
+            "minimum": 0,
+            "maximum": 100
+        },
+        "justification": {
+            "type": "STRING",
+            "maxLength": 500
+        }
+    }
+}

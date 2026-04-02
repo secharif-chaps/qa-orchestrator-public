@@ -1,0 +1,1217 @@
+{
+  "name": "3.a WatchFile Builder - Add Actor",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"watchFile\": {\n    \"id\": \"1f0ba909-4cda-666e-9b4c-497ced82fa8d\",\n    \"name\": \"Market Intelligence IA - Europe\",\n    \"titleManuallySetByUser\": false,\n    \"userObjective\": \"\",\n    \"referenceSubject\": null,\n    \"state\": \"new\",\n    \"monitoringType\": null,\n    \"monitoringTypeConfidence\": null,\n    \"monitoringTypeJustification\": null,\n    \"secondaryMonitoringTypes\": null,\n    \"strategicQuestions\": [],\n    \"analysisResults\": [],\n    \"createdAt\": \"2025-11-05T22:44:18+01:00\",\n    \"createdBy\": {\n      \"id\": \"116f1d59-c72d-486c-bf55-a5e587d88cfc\",\n      \"email\": \"basil@chapsvision.com\",\n      \"firstName\": \"Basil\",\n      \"lastName\": \"Target\",\n      \"displayName\": \"Basil Target\",\n      \"defaultThumbnail\": \"BT\"\n    },\n    \"updatedAt\": \"2025-11-05T22:44:29+01:00\",\n    \"watchFileActors\": [],\n    \"watchFileUsersCount\": 1,\n    \"isFavorite\": false,\n    \"userEditable\": false,\n    \"sources\": [],\n    \"status\": \"draft\"\n  },\n  \"conversationId\": \"1f0ba909-5099-6980-8667-497ced82fa8d\",\n  \"messageId\": \"1f0ba909-5099-6980-6970-497ced82fa8d\",\n  \"language\": \"en\",\n  \"actor\": {\n    \"label\": \"Actor name\",    \n    \"type\": \"competitor|partner|supplier|customer|regulator|subsidiary|parent|other\",\n    \"primaryDomain\": \"website.com or null\",\n    \"score\": \"0\",\n    \"explanation_fr\": \"French explanation\",\n    \"explanation_en\": \"English explanation\",\n    \"duplicate\": [],\n    \"isDuplicated\": false\n  },\n  \"BusNameStamp\": \"[{\\\"busName\\\":\\\"command.bus\\\"}]\",\n  \"RouterContextStamp\": \"[{\\\"baseUrl\\\":\\\"\\\",\\\"method\\\":\\\"POST\\\",\\\"host\\\":\\\"basil.local\\\",\\\"scheme\\\":\\\"https\\\",\\\"httpPort\\\":80,\\\"httpsPort\\\":443,\\\"pathInfo\\\":\\\"/api/conversations/1f0ba909-5099-6980-8667-497ced82fa8d/messages\\\",\\\"queryString\\\":\\\"\\\"}]\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2128,
+        -328
+      ],
+      "id": "d6e74df3-290c-4cdf-923f-78889b5d040e",
+      "name": "Workflow_Trigger_AddActor"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "74d14144-97b3-4cf0-908f-3957d9bd80fc",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2576,
+        -520
+      ],
+      "id": "2c60a07d-83be-4e6f-b7cc-256e800367d7",
+      "name": "Webhook_Trigger_TestInput",
+      "webhookId": "2af49e2a-e460-4b87-bc21-81df5be9d831"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "= {{ $json.body.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2352,
+        -520
+      ],
+      "id": "d41b1fc8-7b68-4a7e-ad24-913410c0ed12",
+      "name": "Set_Format_TestInput"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "runId",
+              "value": "={{ $json._testMetadata.runId }}"
+            },
+            {
+              "key": "testCaseId",
+              "value": "={{ $json._testMetadata.testCaseId }}"
+            },
+            {
+              "key": "testCaseName",
+              "value": "={{ $json._testMetadata.testCaseName }}"
+            },
+            {
+              "key": "datasetFile",
+              "value": "={{ $json._testMetadata.datasetFile }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -2128,
+        -520
+      ],
+      "id": "52b99456-5285-4b1c-aad5-62e14a397fdf",
+      "name": "ExecutionData_Store_TestMetadata"
+    },
+    {
+      "parameters": {
+        "queue": "agent_responses",
+        "sendInputData": false,
+        "message": "={\n  \"watchFileId\": {{ $('Condition_Check_ActorDuplicate').last().json.watchFile.id?.toJsonString() || 'null' }},\n  \"name\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.label?.toJsonString() || 'null' }},\n  \"type\": {{\n    $if(\n      $('LLM_Agent_ValidateActorType').isExecuted,\n      $('LLM_Agent_ValidateActorType').last().json.output.actor.type,\n      $('Condition_Check_ActorDuplicate').last().json.actor.type ?? null\n    ).toJsonString()\n  }},\n  \"explanation\": {\n    \"fr\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.explanation_fr?.toJsonString() || 'null' }},\n    \"en\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.explanation_en?.toJsonString() || 'null' }}\n  },\n  \"primaryDomain\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.primaryDomain?.toJsonString() || 'null' }},\n  \"score\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.score ? parseFloat($('Condition_Check_ActorDuplicate').last().json.actor.score) : 'null' }},\n  \"messageId\": {{ $('Condition_Check_ActorDuplicate').last().json.userMessageId?.toJsonString() || 'null' }}\n}",
+        "options": {
+          "headers": {
+            "header": [
+              {
+                "key": "type",
+                "value": "App\\Application\\WatchFile\\Actor\\AddActorAction"
+              },
+              {
+                "key": "X-Message-Stamp-Symfony\\Component\\Messenger\\Stamp\\BusNameStamp",
+                "value": "={{ $('Condition_Check_ActorDuplicate').item.json.BusNameStamp }}"
+              },
+              {
+                "key": "X-Message-Stamp-Symfony\\Component\\Messenger\\Stamp\\RouterContextStamp",
+                "value": "={{ $('Condition_Check_ActorDuplicate').item.json.RouterContextStamp }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        -112
+      ],
+      "id": "ac51a0ff-46e1-406f-a89b-8ff5682e57a3",
+      "name": "RabbitMQ_Publish_ActorCreation",
+      "credentials": {
+        "rabbitmq": {
+          "id": "3qG3pn5Y4jG2mbfF",
+          "name": "RabbitMQ - Development"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=My current WatchFile is : {{ $('Condition_Check_ActorDuplicate').item.json.watchFile.toJsonString() }}\n\nThe user would like to add : {{ $('Condition_Check_ActorDuplicate').item.json.actor.toJsonString() }}",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are a WatchFile Actor Validation Assistant. Your role is to evaluate user requests to add actors (companies, suppliers, customers) to a WatchFile monitoring configuration.\n\n## CRITICAL: Tool Usage Rules\n\nYou MUST call Tool_WebSearch_Grounding at least once to validate with up-to-date information (your training data may be outdated).\nYou may call it a MAXIMUM of 2 times total. After 2 calls, you MUST stop searching and produce your final JSON output immediately using the results you already have combined with your knowledge.\n\nRecommended first query: \"[Actor name] [sector from WatchFile] company official website [current year]\"\nOptional second query (only if first result was insufficient): \"[Actor name] news acquisitions [current year]\"\n\nDo NOT repeat similar queries or rephrase the same search. If results are limited, rely on your knowledge and flag lower confidence.\n\n## Your Tasks\n\n1. **Verify Actor Existence & Accuracy**\n   - Use your knowledge + the single web search result to confirm the actor exists and is active\n   - Check if the primaryDomain corresponds to the actor\n   - Verify the company is still active (not defunct, merged, or renamed)\n\n2. **Detect Duplicates**\n   - Compare against existing actors in watchFileActors (check label variations, primaryDomain, aliases)\n   - Check for alternative names, abbreviations, translations (Inc./Corp./Ltd./SA/SAS)\n   - Flag if the actor is already present under a different name\n\n3. **Assess Relevance**\n   - Evaluate alignment with the WatchFile's userObjective and referenceSubject\n   - Consider if the actor type (company/supplier/customer) makes sense\n   - Verify if the actor operates in the domains covered by the WatchFile\n\n4. **Provide a Relevance Score (1-100)**\n   - 90-100: Perfect fit, directly relevant, fills a gap\n   - 70-89: Good fit, relevant but some concerns\n   - 50-69: Moderate relevance, significant concerns\n   - 1-49: Poor fit, not recommended\n\n5. **Output Format**\nReturn a JSON object:\n{\n  \"isValid\": boolean,\n  \"relevanceScore\": number (1-100),\n  \"isDuplicate\": boolean,\n  \"duplicateOf\": string | null,\n  \"concerns\": string[],\n  \"recommendations\": string[],\n  \"domainValidation\": {\n    \"exists\": boolean,\n    \"matchesActor\": boolean\n  }\n}\n\n## Evaluation Criteria\n\n**CRITICAL CHECKS (must pass):**\n- Actor exists and is real\n- primaryDomain is valid and corresponds to the actor\n- Not a duplicate of existing actors\n- Actor name is correctly spelled\n\n**RELEVANCE FACTORS:**\n- Direct involvement in the WatchFile's focus area (+30 points)\n- Strategic importance in the sector (+20 points)\n- Geographic relevance to monitoring scope (+15 points)\n- Active in policy/regulatory influence (+20 points)\n- Fills a gap in current actor coverage (+15 points)\n\n**PENALTY FACTORS:**\n- Tangential relevance only (-20 points)\n- Duplicate or near-duplicate (-50 points)\n- Unclear connection to objective (-30 points)\n- Inactive or defunct company (-40 points)\n\n## Important Notes\n\n- Be strict on duplicates: check label variations (abbreviations, Inc./Corp./Ltd., translations)\n- If the web search returns limited results, rely on your knowledge but flag lower confidence\n- For borderline cases (score 60-75), provide clear recommendations\n- Always explain your reasoning for the score\n- REMINDER: Maximum 2 Tool_WebSearch_Grounding calls. After that, produce your JSON output with the information you have.",
+          "maxIterations": 3,
+          "returnIntermediateSteps": true,
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -736,
+        -304
+      ],
+      "id": "d2471c6c-358c-4c57-bd40-58566122dc5d",
+      "name": "LLM_Agent_ValidateActorRelevance",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "72de992b-0e16-48fe-9367-ea0d724601f9",
+              "leftValue": "={{ $json.output.isDuplicate }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "68edc873-f144-43ec-aff0-2553d273b8a4",
+              "leftValue": "={{ $json.output.relevanceScore }}",
+              "rightValue": 60,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "c0e33476-8510-419b-b517-47590ac22066",
+              "leftValue": "={{ $json.output.isValid || $json.output.relevanceScore > 85 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        -112
+      ],
+      "id": "00f7a846-b4bc-4478-b623-a282ccbfa3a1",
+      "name": "Condition_Validate_ActorRelevance"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "480e463b-202c-480b-9fde-44a58bb1bb6d",
+              "leftValue": "={{ $json.actor?.isDuplicated || false }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists"
+              }
+            },
+            {
+              "id": "d828affc-c061-4ea5-a526-16b63edef961",
+              "leftValue": "={{ $json.actor?.isDuplicated || false }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1904,
+        -424
+      ],
+      "id": "7c579c4f-b6ca-49d0-9c73-549b0e3b35f1",
+      "name": "Condition_Check_ActorDuplicate"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"actor\": {{ $json?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        816,
+        -352
+      ],
+      "id": "141242f2-f946-45af-bc2f-40a0874228dd",
+      "name": "Response_Return_Final"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\n    \"isValid\",\n    \"relevanceScore\",\n    \"isDuplicate\",\n    \"duplicateOf\",\n    \"concerns\",\n    \"recommendations\",\n    \"wikipediaValidation\",\n    \"webSearchValidation\",\n    \"domainValidation\"\n  ],\n  \"properties\": {\n    \"isValid\": {\n      \"type\": \"boolean\",\n      \"description\": \"Whether the actor passes all critical validation checks\"\n    },\n    \"relevanceScore\": {\n      \"type\": \"integer\",\n      \"minimum\": 1,\n      \"maximum\": 100,\n      \"description\": \"Overall relevance score for adding this actor to the WatchFile\"\n    },\n    \"isDuplicate\": {\n      \"type\": \"boolean\",\n      \"description\": \"Whether this actor duplicates an existing one\"\n    },\n    \"duplicateOf\": {\n      \"type\": [\"string\", \"null\"],\n      \"description\": \"Name of the existing actor this duplicates, if any\"\n    },\n    \"concerns\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"List of concerns or issues identified during validation\"\n    },\n    \"recommendations\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"Actionable recommendations for the user\"\n    },\n    \"wikipediaValidation\": {\n      \"type\": \"object\",\n      \"required\": [\"found\", \"summary\", \"alternativeNames\"],\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"found\": {\n          \"type\": \"boolean\",\n          \"description\": \"Whether the actor was found on Wikipedia\"\n        },\n        \"summary\": {\n          \"type\": \"string\",\n          \"description\": \"Brief summary of what was found about the actor\"\n        },\n        \"alternativeNames\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          },\n          \"description\": \"Alternative names, acronyms, or former names found\"\n        }\n      }\n    },\n    \"webSearchValidation\": {\n      \"type\": \"object\",\n      \"required\": [\"performed\", \"sourcesFound\", \"confirmsExistence\", \"confirmsActivity\", \"relevantFindings\"],\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"performed\": {\n          \"type\": \"boolean\",\n          \"description\": \"Whether web search was performed for this actor\"\n        },\n        \"sourcesFound\": {\n          \"type\": \"integer\",\n          \"minimum\": 0,\n          \"description\": \"Number of relevant sources found via web search\"\n        },\n        \"confirmsExistence\": {\n          \"type\": \"boolean\",\n          \"description\": \"Whether web search confirms the actor exists\"\n        },\n        \"confirmsActivity\": {\n          \"type\": \"boolean\",\n          \"description\": \"Whether web search confirms the actor is still active (not defunct/merged)\"\n        },\n        \"relevantFindings\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          },\n          \"description\": \"Key findings from web search relevant to the WatchFile focus\"\n        }\n      }\n    },\n    \"domainValidation\": {\n      \"type\": \"object\",\n      \"required\": [\"exists\", \"matchesActor\", \"verificationMethod\"],\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"exists\": {\n          \"type\": \"boolean\",\n          \"description\": \"Whether the primaryDomain exists and is reachable\"\n        },\n        \"matchesActor\": {\n          \"type\": \"boolean\",\n          \"description\": \"Whether the domain content matches the actor identity\"\n        },\n        \"verificationMethod\": {\n          \"type\": \"string\",\n          \"enum\": [\"whois\", \"web_search\", \"direct\", \"none\"],\n          \"description\": \"Method used to verify domain ownership\"\n        }\n      }\n    }\n  },\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -448,
+        -80
+      ],
+      "id": "ef18b73e-4238-4351-b3d5-4d07b40dc65b",
+      "name": "LLM_Parser_StructuredOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-nano-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5-nano-sweden"
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -368,
+        128
+      ],
+      "id": "4c291ab6-4e76-46d5-a35f-735cf0c5a3c0",
+      "name": "LLM_Model_Parser",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Condition_Check_ActorDuplicate').item.json.language === 'fr' ? `L'acteur \"${$('Condition_Check_ActorDuplicate').item.json.actor.label}\" est déjà défini dans WatchFile.` : `The actor \"${$('Condition_Check_ActorDuplicate').item.json.actor.label}\" is already defined in the WatchFile.`).toJsonString() }},\n  \"messageId\": {{ $('Condition_Check_ActorDuplicate').item.json.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Condition_Check_ActorDuplicate').item.json.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Condition_Check_ActorDuplicate').item.json.watchFile?.id?.toJsonString() || 'null' }},\n  \"context\": {\n    \"checkActorDuplicate\": {\n      \"duplicate\": {{ $('Condition_Check_ActorDuplicate').item.json.actor.duplicate.toJsonString() }},\n      \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').item.json.actor.isDuplicated }}\n    },\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        -672
+      ],
+      "id": "bea6d333-61b9-4272-aeec-05cfdc74e414",
+      "name": "Feedback_DuplicateActorError"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Condition_Check_ActorDuplicate').item.json.language === 'en' ? `The AI agent is experiencing a problem. Please try again later.` : `L'agent AI rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }},\n  \"context\": {\n    \"modelError\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Condition_Check_ActorDuplicate').item.json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Condition_Check_ActorDuplicate').item.json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Condition_Check_ActorDuplicate').item.json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        -304
+      ],
+      "id": "2bd1c2e2-6828-4de6-b7b3-b0178fdfe814",
+      "name": "Feedback_AIAgentError"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Condition_Check_ActorDuplicate').last().json.language === 'en' ? `The actor \"${$('Condition_Check_ActorDuplicate').last().json.actor.label}\" does not seem relevant for this WatchFile, check the analyse for more detail.` : `L'acteur \"${$(\"Condition_Check_ActorDuplicate\").last().json.actor.label}\" » ne semble pas pertinent pour ce WatchFile, consultez l'analyse pour plus de détails.`).toJsonString() }},\n  \"context\": {\n    \"analyze\": {{ $json.toJsonString() }},\n    \"duplicate\": {\n      \"duplicates\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.duplicates?.toJsonString() || '[]' }},\n      \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').last().json.actor?.isDuplicated || 'false' }}\n    },\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Condition_Check_ActorDuplicate').last().json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Condition_Check_ActorDuplicate').last().json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Condition_Check_ActorDuplicate').last().json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        80
+      ],
+      "id": "304adfc2-1406-4633-a48b-fd8d031e8f4b",
+      "name": "Feedback_IrrelevantActorError"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": true,\n  \"message\": {{ ($('Condition_Check_ActorDuplicate').last().json.language === 'en' ? `The actor \"${$('Condition_Check_ActorDuplicate').last().json.actor.label}\" has been correctly added` : `L'acteur \"${$('Condition_Check_ActorDuplicate').last().json.actor.label}\" a été correctement ajouté.`).toJsonString() }},\n  \"context\": {\n    \"analyse\": {{ $('LLM_Agent_ValidateActorRelevance').item.json?.toJsonString() }},\n    \"checkType\": {{ $('LLM_Agent_ValidateActorType')?.isExecuted ? $('LLM_Agent_ValidateActorType').item.json?.toJsonString() : null }},    \"duplicate\": {\n      \"duplicates\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.duplicates?.toJsonString() || '[]' }},\n      \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').last().json.actor?.isDuplicated || 'false' }}\n    },\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Condition_Check_ActorDuplicate').last().json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Condition_Check_ActorDuplicate').last().json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Condition_Check_ActorDuplicate').last().json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        -112
+      ],
+      "id": "e74df88f-7208-4539-a137-e5262a9d9878",
+      "name": "Feedback_SuccessResponse"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6ca09344-3e28-4cb6-bce3-48dd025f0725",
+              "leftValue": "={{ $json.actor?.type || '' }}",
+              "rightValue": "competitor|partner|supplier|customer|regulator|subsidiary|parent|other",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1680,
+        -248
+      ],
+      "id": "1e311f72-6f3d-432b-9866-dd8c70701cdd",
+      "name": "Check_ActorType_IsValid"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a data validation assistant. Your task is to fix an invalid actor type.\n\n## Input Actor\n{{ $json.actor.toJsonString() }}\n\n## Error\n{{ $json.actor?.type ? `The type \"${$json.actor.type}\" is not valid.` : 'The type is null or empty.' }}\n\n## Valid Types\n\"competitor\", \"partner\", \"supplier\", \"customer\", \"regulator\", \"subsidiary\", \"parent\", \"other\"\n\n## Instructions\n1. Analyze the actor data (name, description, context) to determine the most appropriate type\n2. If uncertain, use \"other\"\n3. Return the complete actor object with the corrected type\n\n## Output Format\nReturn ONLY valid JSON:\n```json\n{\n  \"actor\": { ...original fields, \"type\": \"corrected_value\" }\n}\n```",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "options": {
+          "maxIterations": 10,
+          "returnIntermediateSteps": true,
+          "passthroughBinaryImages": true,
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -1424,
+        48
+      ],
+      "id": "9b01b83c-0aae-4fd6-b80e-dc7eefa09800",
+      "name": "LLM_Agent_ValidateActorType",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano-sweden"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1456,
+        272
+      ],
+      "id": "55f08956-e23d-412f-9f92-68ea01e8833f",
+      "name": "LLM_Model_ActorTypePrimary",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano-sweden"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1328,
+        272
+      ],
+      "id": "afa8111b-5454-45c8-963f-ef92efadc0ad",
+      "name": "LLM_Model_ActorTypeSecondary",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"required\": [\"actor\"],\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"actor\": {\n      \"type\": \"object\",\n      \"required\": [\"type\"],\n      \"properties\": {\n        \"id\": {\n          \"type\": [\"string\", \"integer\", \"null\"]\n        },\n        \"name\": {\n          \"type\": \"string\"\n        },\n        \"description\": {\n          \"type\": [\"string\", \"null\"]\n        },\n        \"type\": {\n          \"type\": \"string\",\n          \"enum\": [\"competitor\", \"partner\", \"supplier\", \"customer\", \"regulator\", \"subsidiary\", \"parent\", \"other\"]\n        }\n      },\n      \"additionalProperties\": true\n    }\n  }\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1200,
+        272
+      ],
+      "id": "dd634fd2-0013-45f5-8319-f3b2d6ae9ddf",
+      "name": "LLM_Parser_ActorTypeStructuredOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-nano-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5-nano-sweden"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1120,
+        480
+      ],
+      "id": "b712b0b2-6cfd-4ee9-901b-bc0dfa7247af",
+      "name": "LLM_Model_ActorTypeParser",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Condition_Check_ActorDuplicate').last().json.conversationId }}",
+            "message": "={{ $('Condition_Check_ActorDuplicate').last().json.language === 'fr' ? `L'acteur \"${$(\"Condition_Check_ActorDuplicate\").last().json.actor.label}\" ne semble pas pertinent pour ce dossier de veille.` : `The actor \"${$('Condition_Check_ActorDuplicate').last().json.actor.label}\" does not seem relevant for this WatchFile.` }}\n{{ $('LLM_Agent_ValidateActorRelevance').item.json?.output?.wikipediaValidation?.summary || '' }}\n{{ $('LLM_Agent_ValidateActorRelevance').item.json?.output?.recommendations?.join(\"\\n\") || '' }}",
+            "BusNameStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.RouterContextStamp }}",
+            "data": "={\n  \"analyze\": {{ $('LLM_Agent_ValidateActorRelevance').last().json.toJsonString() }},\n  \"duplicate\": {\n    \"duplicates\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.duplicates?.toJsonString() || '[]' }},\n    \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').last().json.actor?.isDuplicated || 'false' }}\n  },\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        368,
+        80
+      ],
+      "id": "5f18e436-d768-4481-978a-7489f7280160",
+      "name": "Workflow_SystemMessage_ActorNotRelevant"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Condition_Check_ActorDuplicate').last().json.conversationId }}",
+            "message": "={{ $('Condition_Check_ActorDuplicate').last().json.language === 'fr' ?  `Acteur ajouté : ${$('Condition_Check_ActorDuplicate').last().json.actor.label}` : `Actor added: ${$('Condition_Check_ActorDuplicate').last().json.actor.label}` }}\n{{ $('LLM_Agent_ValidateActorRelevance').item.json?.output?.wikipediaValidation?.summary || '' }}\n{{ $('LLM_Agent_ValidateActorRelevance').item.json?.output?.recommendations?.join(\"\\n\") || '' }}",
+            "BusNameStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.RouterContextStamp }}",
+            "data": "={\n  \"analyze\": {{ $('LLM_Agent_ValidateActorRelevance').last().json.toJsonString() }},\n  \"duplicate\": {\n    \"duplicates\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.duplicates?.toJsonString() || '[]' }},\n    \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').last().json.actor?.isDuplicated || 'false' }}\n  },\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        368,
+        -112
+      ],
+      "id": "70259962-63e3-4b66-9d9d-a8e3d2c8e651",
+      "name": "Workflow_SystemMessage_ActorAdded"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Condition_Check_ActorDuplicate').last().json.conversationId }}",
+            "message": "={{ ($('Condition_Check_ActorDuplicate').item.json.language === 'en' ? `The actor \"${$json.actor.label}\" is already defined in the WatchFile.` : `L'acteur \"${$json.actor.label}\" est déjà défini dans le dossier de veille.`).toJsonString() }}",
+            "BusNameStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.RouterContextStamp }}",
+            "data": "={\n  \"checkActorDuplicate\": {\n    \"duplicate\": {{ $('Condition_Check_ActorDuplicate').item.json.actor.duplicate.toJsonString() }},\n    \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').item.json.actor.isDuplicated }}\n  },\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        368,
+        -672
+      ],
+      "id": "90b9544c-04b9-461e-9a22-00209a174d79",
+      "name": "Workflow_SystemMessage_ActorDuplicated"
+    },
+    {
+      "parameters": {
+        "description": "Search the web to validate actor existence, verify company information, check domain ownership, and gather recent news or regulatory involvement. Use this tool when Wikipedia is insufficient, when you need to verify current company status (active/defunct), or to find recent news about the actor's involvement in the WatchFile's focus area.",
+        "workflowId": {
+          "__rl": true,
+          "value": "WSlQWUjqiGWIDbXz",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/WSlQWUjqiGWIDbXz",
+          "cachedResultName": "Internal - Web Search Grounding"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', `Search query to find information about the actor. Be specific: include company name, sector, and relevant keywords (e.g., 'EDF nuclear energy France policy' or 'Siemens Energy nuclear projects'). For domain validation, search '[company name] official website'.`, 'string') }}",
+            "language": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('language', `Language for search results. Use 'fr' for French companies or EU policy, 'en' for international companies or global context. Match the actor's primary market.`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -576,
+        -80
+      ],
+      "id": "cfd9cbd9-d30e-441b-9fbf-e2aff3767e2d",
+      "name": "Tool_WebSearch_Grounding"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-sweden"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -832,
+        -80
+      ],
+      "id": "897e82fb-1dd1-4bb1-ac77-1a08c68511a4",
+      "name": "LLM_Model_ActorTypePrimary1",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-nano-sweden",
+          "mode": "list",
+          "cachedResultName": "gpt-5-nano-sweden"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -704,
+        -80
+      ],
+      "id": "be71bc66-20dc-4c07-834b-7d0df4befb16",
+      "name": "LLM_Model_ActorTypeSecondary1",
+      "credentials": {
+        "openAiApi": {
+          "id": "opXO2Ykv65TKscag",
+          "name": "LLM Gateway - chapsmind-target-env-dev"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Workflow_Trigger_AddActor": {
+      "main": [
+        [
+          {
+            "node": "Condition_Check_ActorDuplicate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook_Trigger_TestInput": {
+      "main": [
+        [
+          {
+            "node": "Set_Format_TestInput",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set_Format_TestInput": {
+      "main": [
+        [
+          {
+            "node": "ExecutionData_Store_TestMetadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecutionData_Store_TestMetadata": {
+      "main": [
+        [
+          {
+            "node": "Condition_Check_ActorDuplicate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RabbitMQ_Publish_ActorCreation": {
+      "main": [
+        [
+          {
+            "node": "Workflow_SystemMessage_ActorAdded",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Agent_ValidateActorRelevance": {
+      "main": [
+        [
+          {
+            "node": "Condition_Validate_ActorRelevance",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Feedback_AIAgentError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Condition_Validate_ActorRelevance": {
+      "main": [
+        [
+          {
+            "node": "RabbitMQ_Publish_ActorCreation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Workflow_SystemMessage_ActorNotRelevant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Condition_Check_ActorDuplicate": {
+      "main": [
+        [
+          {
+            "node": "Workflow_SystemMessage_ActorDuplicated",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check_ActorType_IsValid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Parser_StructuredOutput": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "LLM_Agent_ValidateActorRelevance",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Model_Parser": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM_Parser_StructuredOutput",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback_DuplicateActorError": {
+      "main": [
+        [
+          {
+            "node": "Response_Return_Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback_AIAgentError": {
+      "main": [
+        [
+          {
+            "node": "Response_Return_Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback_IrrelevantActorError": {
+      "main": [
+        [
+          {
+            "node": "Response_Return_Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback_SuccessResponse": {
+      "main": [
+        [
+          {
+            "node": "Response_Return_Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check_ActorType_IsValid": {
+      "main": [
+        [
+          {
+            "node": "LLM_Agent_ValidateActorRelevance",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LLM_Agent_ValidateActorType",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Agent_ValidateActorType": {
+      "main": [
+        [
+          {
+            "node": "LLM_Agent_ValidateActorRelevance",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Feedback_AIAgentError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Model_ActorTypePrimary": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM_Agent_ValidateActorType",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Model_ActorTypeSecondary": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM_Agent_ValidateActorType",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "LLM_Parser_ActorTypeStructuredOutput": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "LLM_Agent_ValidateActorType",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Model_ActorTypeParser": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM_Parser_ActorTypeStructuredOutput",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_SystemMessage_ActorNotRelevant": {
+      "main": [
+        [
+          {
+            "node": "Feedback_IrrelevantActorError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_SystemMessage_ActorAdded": {
+      "main": [
+        [
+          {
+            "node": "Feedback_SuccessResponse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_SystemMessage_ActorDuplicated": {
+      "main": [
+        [
+          {
+            "node": "Feedback_DuplicateActorError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool_WebSearch_Grounding": {
+      "ai_tool": [
+        [
+          {
+            "node": "LLM_Agent_ValidateActorRelevance",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Model_ActorTypePrimary1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM_Agent_ValidateActorRelevance",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM_Model_ActorTypeSecondary1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LLM_Agent_ValidateActorRelevance",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "saveExecutionProgress": true,
+    "executionTimeout": 300,
+    "timeSavedPerExecution": 60
+  },
+  "versionId": "a14e5b0a-db9d-45a6-a95c-bb7ff4b4bce4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "05e22d27620d1717ac398bbf3f2dbdaa9098598488c5baaa743d646b60379aaf"
+  },
+  "id": "HLe3ZYDy6oiBINzb",
+  "tags": []
+}

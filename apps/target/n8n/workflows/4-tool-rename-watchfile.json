@@ -1,0 +1,257 @@
+{
+  "updatedAt": "2026-01-06T10:43:49.444Z",
+  "createdAt": "2025-11-16T19:29:03.886Z",
+  "id": "S4B0z3DAiWx5GAcZ",
+  "name": "4. Tool - Rename WatchFile",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "watchFileId"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "context"
+            },
+            {
+              "name": "conversationId"
+            },
+            {
+              "name": "userMessageId"
+            },
+            {
+              "name": "language"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        32
+      ],
+      "id": "17769403-1bde-4e98-9fee-6757c89d18d1",
+      "name": "Workflow_Trigger_RenameWatchFile",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "queue": "agent_responses",
+        "sendInputData": false,
+        "message": "={\n  \"watchFileId\": {{ $json.watchFileId?.toJsonString() || 'null' }},\n  \"name\": {{ $json.name?.toJsonString() || 'null' }},\n  \"isManualRename\": false\n}",
+        "options": {
+          "headers": {
+            "header": [
+              {
+                "key": "type",
+                "value": "App\\Application\\WatchFile\\RenameWatchFileAction"
+              },
+              {
+                "key": "X-Message-Stamp-Symfony\\Component\\Messenger\\Stamp\\BusNameStamp",
+                "value": "={{ $json.context.BusNameStamp }}"
+              },
+              {
+                "key": "X-Message-Stamp-Symfony\\Component\\Messenger\\Stamp\\RouterContextStamp",
+                "value": "={{ $json.context.RouterContextStamp }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        32
+      ],
+      "id": "0eaacf8f-3bb0-4959-a171-0f97e3b26d5f",
+      "name": "RabbitMQ_Publish_RenameWatchFile",
+      "credentials": {
+        "rabbitmq": {
+          "id": "3qG3pn5Y4jG2mbfF",
+          "name": "RabbitMQ - Development"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  // Helper: parse JSON string safely\n  const safeJsonParse = (value) => {\n    if (typeof value === 'string') {\n      try {\n        return JSON.parse(value);\n      } catch (e) {\n        return value; // Not valid JSON, keep original\n      }\n    }\n    return value; // Already parsed or not a string\n  };\n\n  // Parse watchFile\n  if (item.json?.watchFile) {\n    item.json.watchFile = safeJsonParse(item.json.watchFile);\n  }\n\n  // Parse context\n  if (item.json?.context) {\n    item.json.context = safeJsonParse(item.json.context);\n\n    if (typeof item.json.context.BusNameStamp !== 'string') {\n      item.json.context.BusNameStamp = JSON.stringify(item.json.context.BusNameStamp);\n    }\n\n    if (typeof item.json.context.RouterContextStamp !== 'string') {\n      item.json.context.RouterContextStamp = JSON.stringify(item.json.context.RouterContextStamp);\n    }\n  }\n\n  // language default\n  item.json.language = item.json?.language || 'en';\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        32
+      ],
+      "id": "ace5ca00-7e3a-4f9f-96a3-cc83f731adf8",
+      "name": "Code_Initialize_WatchFileData"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": true,\n  \"message\": {{ ($('Code_Initialize_WatchFileData').last().json.language === 'en' ? `Your watchfile has been successfully renamed: \"${$('Code_Initialize_WatchFileData').last().json.name}\"` : `Votre dossier de veille a été renommé avec succès : \"${$('Code_Initialize_WatchFileData').last().json.name}\"`).toJsonString() }},\n  \"context\": {\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Code_Initialize_WatchFileData').last().json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Code_Initialize_WatchFileData').last().json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').last().json?.watchFileId?.toJsonString() || 'null' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        32
+      ],
+      "id": "5c358719-ad2f-432b-a56e-e9a95b2b0888",
+      "name": "Feedback_Success"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CBfOqvYkos1wGqRb",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CBfOqvYkos1wGqRb",
+          "cachedResultName": "Internal - System Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversationId": "={{ $('Code_Initialize_WatchFileData').last().json.conversationId }}",
+            "message": "={{ $('Code_Initialize_WatchFileData').last().json.language === 'fr' ? `Votre dossier de veille a été renommé avec succès : \"${$('Code_Initialize_WatchFileData').last().json.name}\"` : `Your watchfile has been successfully renamed: \"${$('Code_Initialize_WatchFileData').last().json.name}\"` }}",
+            "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}",
+            "data": "={\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').last().json.watchFileId?.toJsonString() || 'null' }},\n  \"name\": {{ $('Code_Initialize_WatchFileData').last().json.name?.toJsonString() || 'null' }},\n  \"isManualRename\": false,\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        32
+      ],
+      "id": "582f83dc-4900-456d-b8cd-2cb16a71bd98",
+      "name": "Workflow_SystemMessage_Renamed"
+    }
+  ],
+  "connections": {
+    "Workflow_Trigger_RenameWatchFile": {
+      "main": [
+        [
+          {
+            "node": "Code_Initialize_WatchFileData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Initialize_WatchFileData": {
+      "main": [
+        [
+          {
+            "node": "RabbitMQ_Publish_RenameWatchFile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RabbitMQ_Publish_RenameWatchFile": {
+      "main": [
+        [
+          {
+            "node": "Workflow_SystemMessage_Renamed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_SystemMessage_Renamed": {
+      "main": [
+        [
+          {
+            "node": "Feedback_Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "05e22d27620d1717ac398bbf3f2dbdaa9098598488c5baaa743d646b60379aaf"
+  },
+  "versionId": "2c387142-b24a-4271-9b97-9e755285d79f",
+  "versionCounter": 24,
+  "triggerCount": 0,
+  "tags": []
+}

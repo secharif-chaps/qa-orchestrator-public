@@ -1,0 +1,44 @@
+parameters:
+  env(SENTRY_DSN): ''
+  env(SENTRY_TRACES_SAMPLE_RATE): 0.2
+  env(SENTRY_PROFILES_SAMPLE_RATE): 0.2
+
+when@prod: &sentry_prod
+  sentry:
+    dsn: '%env(SENTRY_DSN)%'
+    options:
+      http_ssl_verify_peer: false
+      # Enable Sentry structured logs (requires sentry/sentry-symfony ^5.8)
+      enable_logs: true
+      # Specify a fixed sample rate for tracing (0.2 = 20% of transactions)
+      traces_sample_rate: '%env(float:SENTRY_TRACES_SAMPLE_RATE)%'
+      # Set a sampling rate for profiling - this is relative to traces_sample_rate (0.2 = 20% of traced transactions)
+      profiles_sample_rate: '%env(float:SENTRY_PROFILES_SAMPLE_RATE)%'
+      # Add request headers, cookies, IP address and the authenticated user
+      # see https://docs.sentry.io/platforms/php/data-management/data-collected/ for more info
+      # send_default_pii: true
+      ignore_exceptions:
+        - 'Symfony\Component\ErrorHandler\Error\FatalError'
+        - 'Symfony\Component\Debug\Exception\FatalErrorException'
+        - 'Symfony\Component\Security\Core\Exception\AccessDeniedException'
+        - 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException'
+        - 'Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException'
+        - 'Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException'
+
+    # If you are using Monolog, you also need this additional configuration to log the errors correctly:
+    # https://docs.sentry.io/platforms/php/guides/symfony/#monolog-integration
+    register_error_listener: false
+    register_error_handler: false
+
+  monolog:
+    handlers:
+      sentry_logs:
+        type: service
+        id: Sentry\SentryBundle\Monolog\LogsHandler
+
+  services:
+    Sentry\SentryBundle\Monolog\LogsHandler:
+      arguments:
+        - !php/const Monolog\Logger::INFO
+
+when@staging: *sentry_prod

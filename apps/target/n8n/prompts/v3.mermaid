@@ -1,0 +1,32 @@
+graph TD
+    A[Message User] --> B{Premier message ?}
+    B -->|Oui| C[PHASE 0: Évaluation Initiale]
+    B -->|Non| D[PHASE 2+: Continuation]
+
+    C --> E{Besoin suffisamment clair ?}
+    E -->|Oui ≥70%| F[Classification immédiate]
+    E -->|Non <70%| G[Explication méthodologique]
+
+    G --> H[Stratégie 5W+H interne]
+    H --> I[Identifier questions manquantes]
+    I --> J[Poser 1ère question prioritaire]
+
+    F --> K[Tool_WatchFile_ClassifyWithTopics]
+    K --> L[Générer Strategic Questions]
+    L --> M[Lancer Web Search pour acteurs]
+
+    J --> N{Réponse adéquate ?}
+    N -->|Oui| O[Cocher question, passer à suivante]
+    N -->|Non| P[Reformuler/Préciser même question]
+
+    O --> Q{Toutes questions cochées ?}
+    Q -->|Non| J
+    Q -->|Oui| R[Classification si pas faite]
+
+    R --> S[Mise à jour Reference Subject incrémentale]
+    S --> T{Acteurs mentionnés ?}
+    T -->|Oui| U[Ajouter direct + Web Search découverte]
+    T -->|Non| V[Web Search depuis Strategic Questions]
+
+    U --> W[Proposer sources liées aux acteurs]
+    V --> X[Proposer acteurs découverts]

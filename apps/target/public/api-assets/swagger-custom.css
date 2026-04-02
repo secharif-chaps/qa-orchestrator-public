@@ -1,0 +1,530 @@
+/**
+ * Custom Swagger UI Styles for Target API
+ * Based on ChapsVision Basil Design System
+ *
+ * Color Palette:
+ * - Primary (Sage): #445556, #607c7f, #374648
+ * - Secondary (Almond): #3d8c69, #2c6f52
+ * - Accent (Pink/Rose): #efc9f3, #926e9b
+ * - Success (Green): #4e8344
+ * - Error (Red): #d64a4c
+ * - Warning (Orange): #df884f
+ */
+
+:root {
+    /* Sage Color Palette */
+    --sage-950: #2d393a;
+    --sage-900: #374648;
+    --sage-800: #445556;
+    --sage-700: #4f6162;
+    --sage-600: #5d7374;
+    --sage-500: #607c7f;
+    --sage-400: #7a9b95;
+    --sage-300: #a9c1b8;
+    --sage-200: #d1e1dd;
+    --sage-100: #e8f0ee;
+    --sage-50: #f5f8f7;
+
+    /* Almond Color Palette */
+    --almond-800: #1e4737;
+    --almond-700: #235944;
+    --almond-600: #2c6f52;
+    --almond-500: #3d8c69;
+    --almond-400: #5fa884;
+    --almond-300: #8ec7a9;
+    --almond-200: #bbdfca;
+    --almond-100: #dcefe3;
+    --almond-50: #f1f8f4;
+
+    /* Pink/Rose Color Palette */
+    --pink-950: #4a325b;
+    --pink-800: #7f5a8b;
+    --pink-700: #926e9b;
+    --pink-600: #a582ab;
+    --pink-500: #b896bb;
+    --pink-400: #c9aacb;
+    --pink-300: #dbbade;
+    --pink-200: #efc9f3;
+    --pink-100: #faecfb;
+    --pink-50: #fcf7fd;
+
+    /* Semantic Colors */
+    --success-500: #4e8344;
+    --success-400: #709b67;
+    --success-100: #e5eee3;
+    --error-500: #d64a4c;
+    --error-400: #ff7d7f;
+    --error-100: #ffdedf;
+    --warning-500: #df884f;
+    --warning-400: #ffba8d;
+    --warning-100: #ffeee2;
+    --info-500: #5a87a4;
+    --info-400: #8cb8d5;
+    --info-100: #e2edf4;
+}
+
+/* Background */
+body {
+    background: var(--sage-50);
+}
+
+/* Header */
+header:before {
+    background-color: var(--sage-800);
+    height: 70px;
+}
+
+header #logo-container {
+    position: fixed;
+    top: 35px;
+    left: 60px;
+    z-index: 102;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+header .logo-text {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+header .logo-subtitle {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--sage-200);
+    letter-spacing: 0.3px;
+}
+
+/* Hide default API Platform logo */
+header #logo {
+    display: none;
+}
+
+/* Title color */
+#swagger-ui.api-platform .info .title {
+    color: var(--sage-800);
+}
+
+/* HTTP Methods - GET */
+#swagger-ui.api-platform .opblock.opblock-get .opblock-summary-method {
+    background-color: var(--info-500);
+}
+
+#swagger-ui.api-platform .opblock.opblock-get .opblock-summary {
+    border-color: var(--info-500);
+}
+
+#swagger-ui.api-platform .opblock.opblock-get {
+    background: rgba(90, 135, 164, 0.05);
+}
+
+#swagger-ui.api-platform .opblock.opblock-get .opblock-section-header {
+    background-color: rgba(90, 135, 164, 0.1);
+}
+
+/* HTTP Methods - POST */
+#swagger-ui.api-platform .opblock.opblock-post .opblock-summary-method {
+    background-color: var(--success-500);
+}
+
+#swagger-ui.api-platform .opblock.opblock-post .opblock-summary {
+    border-color: var(--success-500);
+}
+
+#swagger-ui.api-platform .opblock.opblock-post {
+    background: rgba(78, 131, 68, 0.05);
+}
+
+#swagger-ui.api-platform .opblock.opblock-post .opblock-section-header {
+    background-color: rgba(78, 131, 68, 0.1);
+}
+
+/* HTTP Methods - PUT */
+#swagger-ui.api-platform .opblock.opblock-put .opblock-summary-method {
+    background-color: var(--warning-500);
+}
+
+#swagger-ui.api-platform .opblock.opblock-put .opblock-summary {
+    border-color: var(--warning-500);
+}
+
+#swagger-ui.api-platform .opblock.opblock-put {
+    background: rgba(223, 136, 79, 0.05);
+}
+
+#swagger-ui.api-platform .opblock.opblock-put .opblock-section-header {
+    background-color: rgba(223, 136, 79, 0.1);
+}
+
+/* HTTP Methods - PATCH */
+#swagger-ui.api-platform .opblock.opblock-patch .opblock-summary-method {
+    background-color: var(--almond-500);
+}
+
+#swagger-ui.api-platform .opblock.opblock-patch .opblock-summary {
+    border-color: var(--almond-500);
+}
+
+#swagger-ui.api-platform .opblock.opblock-patch {
+    background: rgba(61, 140, 105, 0.05);
+}
+
+#swagger-ui.api-platform .opblock.opblock-patch .opblock-section-header {
+    background-color: rgba(61, 140, 105, 0.1);
+}
+
+/* HTTP Methods - DELETE */
+#swagger-ui.api-platform .opblock.opblock-delete .opblock-summary-method {
+    background-color: var(--error-500);
+}
+
+#swagger-ui.api-platform .opblock.opblock-delete .opblock-summary {
+    border-color: var(--error-500);
+}
+
+#swagger-ui.api-platform .opblock.opblock-delete {
+    background: rgba(214, 74, 76, 0.05);
+}
+
+#swagger-ui.api-platform .opblock.opblock-delete .opblock-section-header {
+    background-color: rgba(214, 74, 76, 0.1);
+}
+
+/* HTTP Methods - Deprecated */
+#swagger-ui.api-platform .opblock.opblock-deprecated .opblock-summary-method {
+    background-color: var(--sage-400);
+}
+
+#swagger-ui.api-platform .opblock.opblock-deprecated .opblock-summary {
+    border-color: var(--sage-400);
+}
+
+/* Operation blocks general styling */
+#swagger-ui.api-platform .opblock {
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(45, 57, 58, 0.08), 0 1px 2px rgba(45, 57, 58, 0.12);
+    margin: 0 0 12px;
+}
+
+#swagger-ui.api-platform .opblock-summary-method {
+    border-radius: 4px;
+    font-weight: 600;
+    min-width: 80px;
+}
+
+/* Tag headers */
+#swagger-ui.api-platform .opblock-tag {
+    color: var(--sage-900);
+    border-bottom: 2px solid var(--sage-200);
+    padding: 10px 0;
+}
+
+#swagger-ui.api-platform .opblock-tag:hover {
+    background-color: var(--sage-100);
+    border-radius: 4px;
+}
+
+/* Execute button */
+#swagger-ui.api-platform .btn.execute {
+    background-color: var(--sage-800);
+    border-color: var(--sage-800);
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all ease 0.2s;
+}
+
+#swagger-ui.api-platform .btn.execute:hover {
+    background-color: var(--sage-900);
+    border-color: var(--sage-900);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(45, 57, 58, 0.2);
+}
+
+/* Authorize button */
+#swagger-ui.api-platform .btn.authorize {
+    border-color: var(--almond-500);
+    color: var(--almond-600);
+    border-radius: 6px;
+}
+
+#swagger-ui.api-platform .btn.authorize:hover {
+    background-color: var(--almond-50);
+    border-color: var(--almond-600);
+}
+
+#swagger-ui.api-platform .btn.authorize svg {
+    fill: var(--almond-500);
+}
+
+/* Cancel button */
+#swagger-ui.api-platform .btn.cancel {
+    border-radius: 6px;
+}
+
+#swagger-ui.api-platform .btn.cancel:hover {
+    background-color: var(--error-100);
+    border-color: var(--error-500);
+}
+
+/* General buttons */
+#swagger-ui.api-platform .btn {
+    border-radius: 6px;
+    transition: all ease 0.2s;
+}
+
+/* Locked/Unlocked icons */
+#swagger-ui.api-platform .authorization__btn svg {
+    fill: var(--sage-600);
+}
+
+#swagger-ui.api-platform .authorization__btn.locked svg {
+    fill: var(--almond-500);
+}
+
+/* Information container */
+#swagger-ui.api-platform .information-container.wrapper {
+    background-color: white;
+    border-bottom: 2px solid var(--sage-200);
+}
+
+/* Models section */
+#swagger-ui.api-platform section.models {
+    border: 1px solid var(--sage-200);
+    border-radius: 8px;
+}
+
+#swagger-ui.api-platform section.models h4 {
+    color: var(--sage-800);
+}
+
+#swagger-ui.api-platform section.models .model-container {
+    background: var(--sage-50);
+}
+
+/* Response codes */
+#swagger-ui.api-platform .responses-inner h4,
+#swagger-ui.api-platform .responses-inner h5 {
+    color: var(--sage-800);
+}
+
+#swagger-ui.api-platform .response-col_status {
+    color: var(--sage-700);
+}
+
+/* Parameter names */
+#swagger-ui.api-platform .parameter__name {
+    color: var(--sage-900);
+}
+
+#swagger-ui.api-platform .parameter__name.required:after {
+    color: var(--error-500);
+}
+
+/* Links */
+#swagger-ui.api-platform a {
+    color: var(--sage-700);
+}
+
+#swagger-ui.api-platform a:hover {
+    color: var(--sage-900);
+}
+
+/* Formats section */
+#formats {
+    max-width: 100%;
+    background-color: var(--sage-100);
+    border-top: 1px solid var(--sage-200);
+    padding: 15px 0;
+}
+
+#formats a {
+    color: var(--sage-700);
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all ease 0.2s;
+}
+
+#formats a:hover {
+    background-color: var(--sage-200);
+    color: var(--sage-900);
+}
+
+/* Select dropdowns */
+#swagger-ui.api-platform select {
+    border-color: var(--sage-300);
+    border-radius: 4px;
+}
+
+#swagger-ui.api-platform select:focus {
+    border-color: var(--sage-500);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(96, 124, 127, 0.2);
+}
+
+/* Input fields */
+#swagger-ui.api-platform input[type="text"],
+#swagger-ui.api-platform input[type="password"],
+#swagger-ui.api-platform textarea {
+    border-color: var(--sage-300);
+    border-radius: 4px;
+}
+
+#swagger-ui.api-platform input[type="text"]:focus,
+#swagger-ui.api-platform input[type="password"]:focus,
+#swagger-ui.api-platform textarea:focus {
+    border-color: var(--sage-500);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(96, 124, 127, 0.2);
+}
+
+/* Response section styling */
+#swagger-ui.api-platform .responses-wrapper {
+    border-radius: 4px;
+}
+
+#swagger-ui.api-platform .response {
+    border-radius: 4px;
+}
+
+/* JSON highlighting */
+#swagger-ui.api-platform .highlight-code {
+    border-radius: 4px;
+}
+
+/* Model toggle */
+#swagger-ui.api-platform .model-toggle:after {
+    background: var(--sage-500);
+}
+
+/* Scheme container */
+#swagger-ui.api-platform .scheme-container {
+    background: var(--sage-100);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: none;
+}
+
+/* Dialog/Modal styling */
+#swagger-ui.api-platform .dialog-ux .modal-ux {
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(45, 57, 58, 0.15);
+}
+
+#swagger-ui.api-platform .dialog-ux .modal-ux-header {
+    background: var(--sage-800);
+    border-radius: 8px 8px 0 0;
+}
+
+#swagger-ui.api-platform .dialog-ux .modal-ux-header h3 {
+    color: white;
+}
+
+#swagger-ui.api-platform .dialog-ux .modal-ux-header .close-modal {
+    fill: white;
+}
+
+/* Try it out button */
+#swagger-ui.api-platform .try-out__btn {
+    border-color: var(--sage-500);
+    color: var(--sage-700);
+    border-radius: 6px;
+}
+
+#swagger-ui.api-platform .try-out__btn:hover {
+    background-color: var(--sage-100);
+    border-color: var(--sage-600);
+}
+
+/* Loading spinner */
+#swagger-ui.api-platform .loading-container .loading:after {
+    color: var(--sage-600);
+}
+
+/* Copy to clipboard button */
+#swagger-ui.api-platform .copy-to-clipboard {
+    background: var(--sage-100);
+    border-radius: 4px;
+}
+
+#swagger-ui.api-platform .copy-to-clipboard:hover {
+    background: var(--sage-200);
+}
+
+/* Scrollbar styling */
+#swagger-ui.api-platform ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#swagger-ui.api-platform ::-webkit-scrollbar-track {
+    background: var(--sage-100);
+    border-radius: 4px;
+}
+
+#swagger-ui.api-platform ::-webkit-scrollbar-thumb {
+    background: var(--sage-400);
+    border-radius: 4px;
+}
+
+#swagger-ui.api-platform ::-webkit-scrollbar-thumb:hover {
+    background: var(--sage-500);
+}
+
+/* Server selection dropdown */
+#swagger-ui.api-platform .servers > label select {
+    border-color: var(--sage-300);
+}
+
+/* Accent color for special highlights */
+#swagger-ui.api-platform .opblock-description-wrapper p strong,
+#swagger-ui.api-platform .markdown strong {
+    color: var(--sage-900);
+}
+
+/* Code blocks in description */
+#swagger-ui.api-platform .markdown code,
+#swagger-ui.api-platform .renderedMarkdown code {
+    background-color: var(--sage-100);
+    color: var(--sage-800);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+/* Tab styling */
+#swagger-ui.api-platform .tab li {
+    color: var(--sage-700);
+}
+
+#swagger-ui.api-platform .tab li.active {
+    color: var(--sage-900);
+}
+
+#swagger-ui.api-platform .tab li button.tablinks {
+    color: inherit;
+}
+
+#swagger-ui.api-platform .tab li button.tablinks:hover {
+    color: var(--sage-800);
+}
+
+/* Response status codes */
+#swagger-ui.api-platform .responses-table .response-col_status {
+    font-weight: 600;
+}
+
+/* Expand/collapse all operations */
+#swagger-ui.api-platform .expand-operation svg {
+    fill: var(--sage-600);
+}
+
+#swagger-ui.api-platform .expand-operation:hover svg {
+    fill: var(--sage-800);
+}

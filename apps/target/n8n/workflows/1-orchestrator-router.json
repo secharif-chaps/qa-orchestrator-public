@@ -1,0 +1,994 @@
+{
+  "updatedAt": "2026-01-06T11:09:58.679Z",
+  "createdAt": "2025-11-16T19:29:03.886Z",
+  "id": "m3ykymXVS32Bdbph",
+  "name": "1. Orchestrator Router",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "queue": "agent_commands",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rabbitmqTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        592
+      ],
+      "id": "357e144a-e256-49b2-be71-a9d8dcc94bba",
+      "name": "RabbitMQ_Trigger_AgentCommands",
+      "credentials": {
+        "rabbitmq": {
+          "id": "3qG3pn5Y4jG2mbfF",
+          "name": "RabbitMQ - Development"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "command_name",
+              "name": "command_name",
+              "value": "={{ JSON.parse($json.content).name }}",
+              "type": "string"
+            },
+            {
+              "id": "message_content",
+              "name": "message",
+              "value": "={{ JSON.parse($json.content) }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1248,
+        496
+      ],
+      "id": "6c596272-12ae-4efc-a4b3-a27223af32ee",
+      "name": "Set_Format_CommandData"
+    },
+    {
+      "parameters": {
+        "queue": "agent_responses",
+        "sendInputData": false,
+        "message": "={\n  \"executionId\": {{ $execution.id.toJsonString() }},\n  \"commandName\": {{ $json.command_name.toJsonString() }},\n  \"conversationId\": {{ $json.message.data?.conversationId?.toJsonString() || 'null' }}\n}",
+        "options": {
+          "headers": {
+            "header": [
+              {
+                "key": "type",
+                "value": "App\\Application\\Agent\\AgentAcknowledgeAction"
+              },
+              {
+                "key": "X-Message-Stamp-Symfony\\Component\\Messenger\\Stamp\\BusNameStamp",
+                "value": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp'] }}"
+              },
+              {
+                "key": "X-Message-Stamp-Symfony\\Component\\Messenger\\Stamp\\RouterContextStamp",
+                "value": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1,
+      "position": [
+        -1136,
+        496
+      ],
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "RabbitMQ_Publish_AcknowledgeExecution",
+      "credentials": {
+        "rabbitmq": {
+          "id": "3qG3pn5Y4jG2mbfF",
+          "name": "RabbitMQ - Development"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bd6188b8-7ad1-454c-96da-bb5033334bb2",
+                    "leftValue": "={{ $('Set_Format_CommandData').item.json.command_name }}",
+                    "rightValue": "ChatSessionMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ChatSessionMessage"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d535c4f4-d278-4db3-a3a2-83591be40564",
+                    "leftValue": "={{ $('Set_Format_CommandData').item.json.command_name }}",
+                    "rightValue": "DocumentSummary",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "DocumentSummary"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a7cf6356-7bfc-42e8-993e-23aaa4de2ad2",
+                    "leftValue": "={{ $('Set_Format_CommandData').item.json.command_name }}",
+                    "rightValue": "ValidateDocumentAI",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ValidateDocumentAI"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "extract-events-condition",
+                    "leftValue": "={{ $('Set_Format_CommandData').item.json.command_name }}",
+                    "rightValue": "ExtractEventsFromDocument",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ExtractEventsFromDocument"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1024,
+        448
+      ],
+      "id": "5716123e-bf0d-4808-bacc-e62261f6f113",
+      "name": "Router_Switch_WorkflowType",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "3iVDecGBIZGuJJVy",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/3iVDecGBIZGuJJVy",
+          "cachedResultName": "2. Chat Session Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "watchFileId": "={{ $('Set_Format_CommandData').item.json.message.watchFileId }}",
+            "watchFile": "={{ $('Set_Format_CommandData').item.json.message.data.watchFile }}",
+            "userMessage": "={{ $('Set_Format_CommandData').item.json.message.data.userMessageContentText }}",
+            "BusNameStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp'] }}",
+            "RouterContextStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}",
+            "metadata": "={{ $('Set_Format_CommandData').item.json.message.data.metadata }}",
+            "conversationId": "={{ $('Set_Format_CommandData').item.json.message.data.conversationId }}",
+            "userMessageId": "={{ $('Set_Format_CommandData').item.json.message.data.userMessageId }}",
+            "userLanguage": "={{ $('Set_Format_CommandData').item.json.message.data.conversationLanguage }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "watchFileId",
+              "displayName": "watchFileId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "watchFile",
+              "displayName": "watchFile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "userMessage",
+              "displayName": "userMessage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "userLanguage",
+              "displayName": "userLanguage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "userMessageId",
+              "displayName": "userMessageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "metadata",
+              "displayName": "metadata",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -800,
+        160
+      ],
+      "id": "c7012a1c-8a27-4fce-aacc-00f137386e0a",
+      "name": "Workflow_Execute_ChatSessionMessage",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "UkhiqV71k4S7lGoT",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/UkhiqV71k4S7lGoT",
+          "cachedResultName": "Generate Document Summary"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "BusNameStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp'] }}",
+            "RouterContextStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}",
+            "document": "={{ $('Set_Format_CommandData').item.json.message.data }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "document",
+              "displayName": "document",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -800,
+        400
+      ],
+      "id": "34825f93-fcf2-4c16-b0c9-812ccd241a08",
+      "name": "Workflow_Execute_GenerateDocumentSummary",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "aOu4E7hGStB1y8hQ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/aOu4E7hGStB1y8hQ",
+          "cachedResultName": "Validate Document"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "BusNameStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp'] }}",
+            "RouterContextStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}",
+            "document": "={{ $('Set_Format_CommandData').item.json.message.data }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "document",
+              "displayName": "document",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -800,
+        592
+      ],
+      "id": "3573b5d6-190d-4eae-8b33-d62e6a3fa409",
+      "name": "Workflow_Execute_ValidateDocument",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Sv548dj2ztUV6HLG",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Sv548dj2ztUV6HLG",
+          "cachedResultName": "Extract Document Events"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "documentId": "={{ $('Set_Format_CommandData').item.json.message.data.documentId }}",
+            "watchFileId": "={{ $('Set_Format_CommandData').item.json.message.data.watchFileId }}",
+            "documentContent": "={{ $('Set_Format_CommandData').item.json.message.data.documentContent }}",
+            "referenceSubject": "={{ $('Set_Format_CommandData').item.json.message.data.referenceSubject }}",
+            "recentEvents": "={{ $('Set_Format_CommandData').item.json.message.data.recentEvents }}",
+            "BusNameStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp'] }}",
+            "RouterContextStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "documentId",
+              "displayName": "documentId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "watchFileId",
+              "displayName": "watchFileId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "documentContent",
+              "displayName": "documentContent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "referenceSubject",
+              "displayName": "referenceSubject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "recentEvents",
+              "displayName": "recentEvents",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -800,
+        832
+      ],
+      "id": "b034a744-4aaf-49f7-9f05-6fecde51d945",
+      "name": "Workflow_Execute_ExtractEvents",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ $json.error.toJsonString() }},\n  \"messageId\": {{ $('Set_Format_CommandData').item.json.message?.data?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Set_Format_CommandData').item.json.message?.data?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Set_Format_CommandData').item.json.message?.watchFileId?.toJsonString() || 'null' }},\n  \"context\": {\n    \"data\": {{ $('Set_Format_CommandData').item.json?.toJsonString() || 'null' }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -352,
+        576
+      ],
+      "id": "38b40441-5cc2-4dc2-9bd6-44792621d7f7",
+      "name": "Feedback_OrchestratorError"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": true,\n  \"message\": {{ ($('Set_Format_CommandData').item.json.message?.data?.conversationLanguage === 'fr' ? `L'orchestrateur a correctement transmis votre message).` : `The orchestrator has correctly delivered your message.`).toJsonString() }},\n  \"messageId\": {{ $('Set_Format_CommandData').item.json.message?.data?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Set_Format_CommandData').item.json.message?.data?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Set_Format_CommandData').item.json.message?.watchFileId?.toJsonString() || 'null' }},\n  \"context\": {\n    \"commandName\": {{ $('Set_Format_CommandData').item.json?.command_name?.toJsonString() || 'null' }},\n    \"data\": {{ $json?.toJsonString() || 'null' }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -576,
+        400
+      ],
+      "id": "42fb5e49-8a60-49a6-a09c-f2bcc61a7c4f",
+      "name": "Feedback_OrchestratorSuccess"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "= {{ $json.body.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1696,
+        400
+      ],
+      "id": "08a15080-01a7-4112-9845-f8b2f06e6f0c",
+      "name": "Set_Format_TestInput"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "runId",
+              "value": "={{ $json._testMetadata.runId }}"
+            },
+            {
+              "key": "testCaseId",
+              "value": "={{ $json._testMetadata.testCaseId }}"
+            },
+            {
+              "key": "testCaseName",
+              "value": "={{ $json._testMetadata.testCaseName }}"
+            },
+            {
+              "key": "datasetFile",
+              "value": "={{ $json._testMetadata.datasetFile }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -1472,
+        400
+      ],
+      "id": "dab24d1b-ac57-4458-b4fb-6a0a40bb4633",
+      "name": "ExecutionData_Store_TestMetadata"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "974118e7-db23-4a4c-aaad-d7d8e95d5fd8",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1920,
+        400
+      ],
+      "id": "5980d221-6cd4-4923-b9fc-dcdf4191477f",
+      "name": "Webhook_Trigger_TestInput",
+      "webhookId": "974118e7-db23-4a4c-aaad-d7d8e95d5fd8"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "awIrrfRyMWHUrTch",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/awIrrfRyMWHUrTch",
+          "cachedResultName": "Internal - Error Message"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "watchFileId": "={{ $('Set_Format_CommandData').item.json.message.watchFileId }}",
+            "conversationId": "={{ $('Set_Format_CommandData').item.json.message?.data?.conversationId || 'null' }}",
+            "userMessageId": "={{ $('Set_Format_CommandData').item.json.message?.data?.userMessageId || 'null' }}",
+            "error": "={{ $('Set_Format_CommandData').item.json.message?.data?.conversationLanguage === 'fr' ? `L'agent AI rencontre un problème. Veuillez réessayer plus tard.` : `The AI agent is experiencing a problem. Please try again later.` }}\n{{ $json.error?.toJsonString() || '' }}",
+            "BusNameStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp'] }}",
+            "RouterContextStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}",
+            "data": "={{ $('Set_Format_CommandData').item.json || 'null' }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversationId",
+              "displayName": "conversationId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "error",
+              "displayName": "error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BusNameStamp",
+              "displayName": "BusNameStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "RouterContextStamp",
+              "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "userMessageId",
+              "displayName": "userMessageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "watchFileId",
+              "displayName": "watchFileId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -576,
+        576
+      ],
+      "id": "1d3a9e0b-7243-4afa-bd7a-4d369b8d6c41",
+      "name": "Subworkflow_Call_ErrorMessage",
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "RabbitMQ_Trigger_AgentCommands": {
+      "main": [
+        [
+          {
+            "node": "Set_Format_CommandData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Router_Switch_WorkflowType": {
+      "main": [
+        [
+          {
+            "node": "Workflow_Execute_ChatSessionMessage",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Workflow_Execute_GenerateDocumentSummary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Workflow_Execute_ValidateDocument",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Workflow_Execute_ExtractEvents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set_Format_CommandData": {
+      "main": [
+        [
+          {
+            "node": "RabbitMQ_Publish_AcknowledgeExecution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RabbitMQ_Publish_AcknowledgeExecution": {
+      "main": [
+        [
+          {
+            "node": "Router_Switch_WorkflowType",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Execute_ChatSessionMessage": {
+      "main": [
+        [
+          {
+            "node": "Feedback_OrchestratorSuccess",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Subworkflow_Call_ErrorMessage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Execute_GenerateDocumentSummary": {
+      "main": [
+        [
+          {
+            "node": "Feedback_OrchestratorSuccess",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Subworkflow_Call_ErrorMessage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Execute_ValidateDocument": {
+      "main": [
+        [
+          {
+            "node": "Feedback_OrchestratorSuccess",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Subworkflow_Call_ErrorMessage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow_Execute_ExtractEvents": {
+      "main": [
+        [
+          {
+            "node": "Feedback_OrchestratorSuccess",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Subworkflow_Call_ErrorMessage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set_Format_TestInput": {
+      "main": [
+        [
+          {
+            "node": "ExecutionData_Store_TestMetadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExecutionData_Store_TestMetadata": {
+      "main": [
+        [
+          {
+            "node": "Set_Format_CommandData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook_Trigger_TestInput": {
+      "main": [
+        [
+          {
+            "node": "Set_Format_TestInput",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subworkflow_Call_ErrorMessage": {
+      "main": [
+        [
+          {
+            "node": "Feedback_OrchestratorError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "executionTimeout": 600
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": "05e22d27620d1717ac398bbf3f2dbdaa9098598488c5baaa743d646b60379aaf",
+    "templateCredsSetupCompleted": true
+  },
+  "versionId": "7c80ec79-0a96-4885-9e9d-e50c9d7c7cbc",
+  "versionCounter": 135,
+  "triggerCount": 2,
+  "tags": []
+}

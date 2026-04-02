@@ -1,0 +1,3 @@
+```
+{{ watchfile|serialize(format = 'json', context = {'groups': ['watch_file:read', 'watch_file:llm'], 'json_encode_options': constant('\JSON_PRETTY_PRINT')}) | raw }}
+```
