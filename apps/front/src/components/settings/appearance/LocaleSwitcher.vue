@@ -4,7 +4,10 @@
       v-for="localeOption in localeOptions"
       :key="localeOption.value"
       class="border-primary-stroke hover:border-primary/70 flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-colors"
-      :class="{ 'border-primary bg-base-200': currentLocale === localeOption.value }"
+      :class="{
+        'border-primary bg-base-200': currentLocale === localeOption.value,
+        'pointer-events-none opacity-50': isLoading,
+      }"
       @click="changeLocale(localeOption.value)"
     >
       <div class="flex items-center gap-4">
@@ -16,7 +19,14 @@
               : 'bg-base-200 text-secondary'
           "
         >
-          <i :class="localeOption.icon" class="text-lg"></i>
+          <i
+            :class="
+              isLoading && localeOption.value === pendingLocale
+                ? 'fas fa-spinner fa-spin'
+                : localeOption.icon
+            "
+            class="text-lg"
+          ></i>
         </div>
         <div>
           <h3 class="text-sm font-medium">{{ localeOption.label }}</h3>
@@ -27,6 +37,7 @@
         <Switch
           :id="`locale-${localeOption.value}`"
           :model-value="currentLocale === localeOption.value"
+          :disabled="isLoading"
           @update:model-value="() => changeLocale(localeOption.value)"
         />
       </div>
@@ -38,9 +49,13 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Switch } from '@owlint/feathers-vue'
+import { loadLocaleMessages } from '@/i18n'
+import { toast } from '@/utils/toast'
 
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 const currentLocale = ref(locale.value)
+const isLoading = ref(false)
+const pendingLocale = ref<string | null>(null)
 
 const STORAGE_KEY = 'user-locale'
 
@@ -59,10 +74,23 @@ const localeOptions = [
   },
 ]
 
-function changeLocale(value: string) {
-  currentLocale.value = value
-  locale.value = value
-  localStorage.setItem(STORAGE_KEY, value)
+const changeLocale = async (value: string) => {
+  if (value === currentLocale.value || isLoading.value) return
+
+  isLoading.value = true
+  pendingLocale.value = value
+
+  try {
+    await loadLocaleMessages(value)
+    locale.value = value
+    currentLocale.value = value
+    localStorage.setItem(STORAGE_KEY, value)
+  } catch {
+    toast.error(t('settings.appearance.language.loadError'))
+  } finally {
+    isLoading.value = false
+    pendingLocale.value = null
+  }
 }
 
 // Keep the select in sync with the current locale
