@@ -1561,6 +1561,9 @@
         "running": "{count} en cours ({percentage}%)",
         "runningShort": "{count} en cours",
         "startAll": "Démarrer toutes les tâches",
+        "startAllError": "Échec du redémarrage des tâches",
+        "startAllPartial": "{failed, plural, one {# tâche sur {total} n'a pas pu être redémarrée} other {# tâches sur {total} n'ont pas pu être redémarrées}}",
+        "startAllSuccess": "Toutes les tâches ont été redémarrées",
         "types": {
           "corporate_structure": {
             "description": "Maison mère, filiales, affiliés, branches",
