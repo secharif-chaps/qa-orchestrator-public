@@ -1546,6 +1546,53 @@
       },
       "sections": {
         "analyses": "Analyses",
+        "financial": {
+          "desc": "Revenus, rentabilité et financement",
+          "funding": {
+            "amount": "Montant",
+            "date": "Date",
+            "lastValuation": "Dernière valorisation",
+            "leadInvestor": "Investisseur principal",
+            "noRounds": "Aucun tour de financement trouvé",
+            "round": "Tour",
+            "title": "Historique de financement",
+            "totalFunding": "Financement total"
+          },
+          "history": {
+            "noData": "Aucune donnée historique disponible",
+            "period": "Période",
+            "title": "Historique financier"
+          },
+          "identity": {
+            "currency": "Devise",
+            "exchange": "Bourse",
+            "fiscalYear": "Clôture exercice",
+            "private": "Société privée",
+            "public": "Société cotée",
+            "subsidiary": "Filiale",
+            "ticker": "Ticker"
+          },
+          "insights": "Analyse financière",
+          "metrics": {
+            "debtToEquity": "Dette / Capitaux propres",
+            "ebitdaMargin": "Marge EBITDA",
+            "freeCashFlow": "Flux de trésorerie libre",
+            "grossMargin": "Marge brute",
+            "netMargin": "Marge nette",
+            "revenue": "Chiffre d'affaires",
+            "revenueGrowth": "Croissance CA"
+          },
+          "noData": "Aucune donnée financière disponible pour cette entreprise",
+          "title": "Financier",
+          "valuation": {
+            "enterpriseValue": "Valeur d'entreprise",
+            "evEbitda": "EV / EBITDA",
+            "evRevenue": "EV / CA",
+            "marketCap": "Capitalisation boursière",
+            "peRatio": "Ratio C/B",
+            "title": "Valorisation"
+          }
+        },
         "notAvailable": "Section non disponible"
       },
       "tasks": {
