@@ -1,5 +1,20 @@
 # ─── Local dev anchors ─────────────────────────────────
 
+x-target-app-volume: &target-app-volume
+  volumes:
+    - ../apps/target:/app
+
+x-target-env: &target-env
+  DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${TARGET_DB:-target_db}
+  MESSENGER_TRANSPORT_DSN: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/%2f/messages
+  VALKEY_DSN: redis://target-valkey:6379
+  OPENSEARCH_URL: http://target-opensearch:9200
+  KEYCLOAK_SERVER_URL: http://keycloak:8080
+  KEYCLOAK_REALM: chapsmind
+  APP_ENV: dev
+  APP_SECRET: ${TARGET_APP_SECRET:-local-dev-target-app-secret-32chars}
+  XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+
 x-local-keycloak: &local-keycloak
   KEYCLOAK_SERVER_URL: http://keycloak:8080
   KEYCLOAK_REALM: chapsmind
@@ -25,7 +40,7 @@ services:
       - "80:80"
     volumes:
       - ./files/nginx.conf:/etc/nginx/conf.d/default.conf
-    depends_on: [screen, global-service, keycloak, frontend]
+    depends_on: [global-service, keycloak, frontend]
 
   # Frontend with hot-reload for local development
   frontend:
@@ -44,6 +59,7 @@ services:
     depends_on:
       db: { condition: service_healthy }
       keycloak: { condition: service_healthy }
+    profiles: [screen]
     environment:
       <<: [*local-keycloak, *local-keycloak-admin, *local-internal-auth]
       CORS_ORIGIN: http://localhost
@@ -70,7 +86,6 @@ services:
     image: chapsmind-global-service:local
     depends_on:
       db: { condition: service_healthy }
-      screen: { condition: service_started }
       keycloak: { condition: service_healthy }
     environment:
       <<: [*local-keycloak, *local-keycloak-admin, *local-internal-auth]
@@ -112,3 +127,61 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
+
+  # RabbitMQ management UI exposed locally
+  rabbitmq:
+    profiles: [target]
+    ports:
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+
+  # ─── Target services — local dev overrides (profile: target) ────
+
+  # Target — local build, source mounted from ../apps/target for hot-reload
+  target:
+    <<: *target-app-volume
+    build:
+      context: ../apps/target
+      target: frankenphp_dev
+    image: chapsmind-target:local
+    profiles: [target]
+    depends_on:
+      db: { condition: service_healthy }
+      rabbitmq: { condition: service_started }
+      target-valkey: { condition: service_healthy }
+      target-opensearch: { condition: service_healthy }
+      keycloak: { condition: service_healthy }
+    environment:
+      <<: *target-env
+      SERVER_NAME: "0.0.0.0:8002"
+
+  # Target runner — local build for Symfony Messenger consumers (1 replica in local dev)
+  target-runner:
+    <<: *target-app-volume
+    build:
+      context: ../apps/target
+      target: frankenphp_dev
+    image: chapsmind-target:local
+    profiles: [target]
+    deploy:
+      replicas: 1
+    environment:
+      <<: *target-env
+
+  # OpenSearch — expose port for local debugging
+  target-opensearch:
+    profiles: [target]
+    environment:
+      - discovery.type=single-node
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - DISABLE_SECURITY_PLUGIN=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+    ports:
+      - "${TARGET_OPENSEARCH_PORT:-9201}:9200"
+
+  # Valkey — expose port for local debugging
+  target-valkey:
+    profiles: [target]
+    ports:
+      - "${TARGET_VALKEY_PORT:-6380}:6379"
+
+
