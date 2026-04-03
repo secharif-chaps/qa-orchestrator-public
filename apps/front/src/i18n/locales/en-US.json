@@ -1561,6 +1561,9 @@
         "running": "{count} running ({percentage}%)",
         "runningShort": "{count} running",
         "startAll": "Start all tasks",
+        "startAllError": "Failed to restart tasks",
+        "startAllPartial": "{failed} of {total} tasks failed to restart",
+        "startAllSuccess": "All tasks restarted successfully",
         "types": {
           "corporate_structure": {
             "description": "Parent company, subsidiaries, affiliates, branches",

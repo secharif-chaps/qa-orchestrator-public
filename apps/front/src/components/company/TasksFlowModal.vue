@@ -225,6 +225,7 @@ import { companyTasksQuery } from '@/queries/tasks'
 import { useQuery } from '@pinia/colada'
 import { useRestartTask } from '@/mutations/tasks'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { toast } from '@/utils/toast'
 import { useAuthStore } from '@/stores/auth'
 
 const { t } = useI18n()
@@ -506,12 +507,27 @@ const startAllPendingTasks = async () => {
     return
   }
 
+  const pendingOrErrorTasks = tasks.value?.filter(
+    (task: TaskResponse) => task.status === 'pending' || task.status === 'error',
+  )
+  if (!pendingOrErrorTasks?.length) return
+
   isStartingAll.value = true
   try {
-    // TODO: Implement start all pending tasks logic
-    console.log('Starting all pending tasks...')
-  } catch (error) {
-    console.error('❌ Error starting all tasks:', error)
+    const results = await Promise.allSettled(pendingOrErrorTasks.map((task) => restart(task.id)))
+    const failed = results.filter((r) => r.status === 'rejected')
+    if (failed.length === pendingOrErrorTasks.length) {
+      toast.error(t('screen.company.tasks.startAllError'))
+    } else if (failed.length > 0) {
+      toast.warning(
+        t('screen.company.tasks.startAllPartial', {
+          failed: failed.length,
+          total: pendingOrErrorTasks.length,
+        }),
+      )
+    } else {
+      toast.success(t('screen.company.tasks.startAllSuccess'))
+    }
   } finally {
     isStartingAll.value = false
   }
