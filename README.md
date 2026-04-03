@@ -1,134 +1,123 @@
-# QA Orchestrator — Multi-Agent QA System
+# QA Orchestrator — Multi-Agent AI Platform for QA Testing
 
-9 specialized AI agents that handle the full QA lifecycle: from MR analysis
-to X-Ray test management to Playwright automation.
+**Version:** 1.1.0 | **Status:** Production Ready ✅ | **Date:** April 2, 2025
 
-## Quick Start
+A complete, structured QA testing system powered by 11 AI agents and integrated with a comprehensive QA methodology guide.
 
+## 🎯 What's New in v1.1.0
+
+✅ **SessionManager Agent (◎)** — Session state tracking & persistence  
+✅ **GherkinWriter Agent (⬡)** — Automatic Gherkin scenario generation  
+✅ **New `qa-workflow`** — Main workflow, structured 9-phase QA methodology  
+✅ **Session Persistence** — JSON + Confluence auto-drafts  
+✅ **Complete Documentation** — 9-phase guide, examples, troubleshooting  
+✅ **Backward Compatible** — No breaking changes, all old workflows still work  
+
+## 💻 11 AI Agents
+
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| Orchestrator | Opus | Routes tasks, coordinates workflows |
+| Scanner | Sonnet | Scans repo, detects stack |
+| MR Analyzer | Sonnet | Analyzes GitLab MRs |
+| Code Reviewer | Opus | Compares code vs AC |
+| Bug Hunter | Sonnet | Creates bug tickets + Gherkin AC |
+| Test Generator | Opus | Creates X-Ray tests + Gherkin |
+| Automator | Sonnet | Writes Playwright tests |
+| Validator | Sonnet | Validates with feedback loop |
+| Project Manager | Sonnet | Sprint health & metrics |
+| **SessionManager** | Sonnet | **NEW: Session state & persistence** |
+| **GherkinWriter** | Sonnet | **NEW: Automatic Gherkin generation** |
+
+## 🔄 7 Workflows
+
+| Workflow | Agents | Purpose |
+|----------|--------|---------|
+| **qa-workflow** (NEW) | 7 agents | **Main: structured 9-phase QA** |
+| scan-adapt | 2 agents | First discovery on new project |
+| mr-to-tests | 4 agents | MR analysis → test generation |
+| full-ticket | 4 agents | [DEPRECATED] Use qa-workflow |
+| bug-cycle | 4 agents | Bug discovery cycle |
+| xray-sync | 2 agents | Test library maintenance |
+| sprint-health | 3 agents | Sprint review preparation |
+
+## 🚀 Quick Start
 ```bash
-npm install
-cp .env.example .env
-# Fill in your Anthropic API key and GitLab token
-
-# List agents and their models
-node index.js --list-agents
-
-# List available workflows
-node index.js --list-workflows
-
-# Run a single agent
-node index.js --project target --agent reviewer --message "Review TAR-1332"
-
-# Run a full workflow
-node index.js --project target --workflow full-ticket \
+# Main QA workflow (recommended)
+node index.js --project target --workflow qa-workflow \
   --message "Test TAR-1332" --ticket TAR-1332
 ```
 
-## Agents
+**What happens:**
+1. Optional peer-review of AC
+2. Test case generation
+3. Automated test writing (Playwright)
+4. Gherkin scenarios auto-generated
+5. [You test on staging + post findings to Jira]
+6. Validator reads findings
+7. SessionManager finalizes session → JSON + Confluence + Jira
 
-| Agent | Model | Why | What it does |
-|-------|-------|-----|-------------|
-| ⬡ Orchestrator | **Opus** | Intent analysis, multi-step planning | Routes tasks to correct agents, coordinates workflows |
-| ⏣ Scanner | Sonnet | File parsing, pattern matching | Scans any repo → detects stack, tests, routes, components |
-| ⎔ MR Analyzer | Sonnet | Diff parsing, summarization | Fetches GitLab MRs, pre-testing functional review |
-| ◈ Code Reviewer | **Opus** | Deep AC↔code reasoning | Compares code vs acceptance criteria, finds edge cases |
-| ◉ Bug Hunter | Sonnet | Structured template output | Creates bug tickets in Jira with full repro steps |
-| ◆ Test Generator | **Opus** | X-Ray logic, multi-source | Creates/updates X-Ray tests, test plans, Confluence |
-| ⬢ Automator | Sonnet | Fast code generation | Writes Playwright E2E + integration tests |
-| ◇ Validator | Sonnet | Checklist execution | Manual validation, Jira comments, ticket transitions |
-| ⬟ Project Manager | Sonnet | JQL + metric aggregation | Sprint health, coverage, bug trends |
+## ✨ Key Features
 
-**3 agents on Opus** = complex reasoning (Orchestrator, Code Reviewer, Test Generator)
-**6 agents on Sonnet** = fast structured output (Scanner, MR Analyzer, Bug Hunter, Automator, Validator, PM)
+✅ **Structured 9-Phase QA Methodology** — TODO → peer-review → exploratory → test cases → automation → validation → heuristics  
+✅ **Session Persistence** — JSON + Confluence auto-drafts  
+✅ **Gherkin Everywhere** — Automatic generation, no manual work  
+✅ **Exploratory ↔ Automated Loop** — User tests feed findings back to agents  
+✅ **Risk-Based Heuristics** — Learn from bugs, prevent regressions  
+✅ **Project-Agnostic** — Works for TARGET, SCREEN, any project  
 
-## Workflows
+## 📚 Documentation
 
-| Workflow | Chain | When to use |
-|----------|-------|-------------|
-| ⏣ Scan & Adapt | Scanner → PM | First time on a new project |
-| ⎔ MR → Review → Tests | MR Analyzer → Reviewer → TestGen → Automator | Before testing sprint |
-| ⟐ Full Ticket QA | Reviewer → TestGen → Automator → Validator | Ticket ready for QA |
-| ◉ Bug Discovery | BugHunter → TestGen → Automator → PM | Bug found during testing |
-| ◆ X-Ray Sync | TestGen → PM | Periodic test library maintenance |
-| ⬟ Sprint Health | PM → MR Analyzer → Reviewer | Sprint review prep |
+Complete documentation in `/docs/` folder:
+- `QA_WORKFLOW_GUIDE.md` — Full 9-phase methodology
+- `INTEGRATION_GUIDE.md` — Architecture overview
+- `EXAMPLES.md` — 6 real-world scenarios
+- `TROUBLESHOOTING.md` — Common issues + solutions
+- And more...
 
-## Project-Agnostic
+Start with: `/docs/README.md`
 
-Every agent adapts to the active project. Switch projects with `--project`:
-
+## 🔧 Installation
 ```bash
-# TARGET (staging)
-node index.js --project target --agent reviewer --message "Review TAR-1456"
+npm install
 
-# SCREEN (local)
-node index.js --project screen --agent reviewer --message "Review SCR-100"
+# Create .env
+echo "QA_HUB_ANTHROPIC_KEY=sk-ant-..." >> .env
+echo "QA_HUB_GITLAB_TOKEN=glpat-..." >> .env
+
+# Test
+node index.js --list-agents     # Should show 11
+node index.js --list-workflows  # Should show 7
 ```
 
-Add new projects in `config/projects.js` — copy the template and fill in
-Jira key, Git repo, env URL, and auth config.
+## 📋 What's Changed
 
-## Programmatic Usage
+### New Files
+- `core/session-manager.js` — Session persistence module
+- `docs/` folder — Complete documentation
 
-```javascript
-const { createEngine } = require('./index');
+### Modified Files
+- `agents/registry.js` — Added 2 new agents, new workflow
+- `core/engine.js` — SessionManager integration
+- `README.md` — Updated with new features
 
-// Create engine for TARGET
-const engine = createEngine('target');
+### Backward Compatible
+✅ Old workflows still work (`full-ticket` marked deprecated)  
+✅ No breaking changes  
+✅ All existing agents compatible  
 
-// Listen to events
-engine.on('agent:start', ({ agentId }) => console.log(`Running: ${agentId}`));
-engine.on('agent:done', ({ agentId, output, duration }) => {
-  console.log(`${agentId} done in ${duration}ms`);
-});
+## 🔗 Resources
 
-// Run single agent
-const result = await engine.runAgent('reviewer', 'Review TAR-1332');
-console.log(result.text);
+- **GitLab:** https://git.mediaspeech.com/mint/qa-orchestrator
+- **Confluence:** https://chapsvisiondev.atlassian.net/wiki/spaces/QCD/
+- **Documentation:** See `/docs/` folder
 
-// Run workflow (agents chain automatically)
-const results = await engine.runWorkflow('full-ticket', 'Test TAR-1332', {
-  ticketKey: 'TAR-1332',
-});
+## 📞 Support
 
-// Each result: { agentId, text, toolCalls, mcpResults, usage }
-for (const r of results) {
-  console.log(`${r.agentId}: ${r.text.slice(0, 100)}...`);
-}
+See `/docs/TROUBLESHOOTING.md` for common issues and solutions.
 
-// Switch project
-const { PROJECTS } = require('./config/projects');
-engine.setProject(PROJECTS.screen);
-await engine.runAgent('projectManager', 'Sprint health for SCREEN');
-```
+---
 
-## File Structure
-
-```
-qa-system/
-├── index.js              ← Entry point (CLI + programmatic)
-├── package.json
-├── .env.example
-├── core/
-│   └── engine.js         ← Orchestration runtime (API calls, chaining, events)
-├── agents/
-│   └── registry.js       ← 9 agent definitions (prompts + model assignments)
-└── config/
-    └── projects.js       ← TARGET, SCREEN, + template for new projects
-```
-
-## How Agents Interact with Tools
-
-**Atlassian MCP** (Jira, X-Ray, Confluence):
-Agents with `useMCP: true` get the Atlassian MCP server attached to their
-API call. Claude handles the tool invocation internally — the agent prompt
-tells it which MCP operations to use (getJiraIssue, createJiraIssue,
-searchJiraIssuesUsingJql, addCommentToJiraIssue, transitionJiraIssue,
-searchConfluenceUsingCql, createConfluencePage, updateConfluencePage).
-
-**GitLab** (MR analysis):
-The engine fetches MR data (list, diffs, commits) via GitLab REST API
-and injects it as context into the MR Analyzer agent's prompt.
-
-**Playwright** (test automation):
-The Automator agent generates Playwright test code as text output.
-The generated files can be saved to disk and run with `npx playwright test`.
+**Status:** Production Ready ✅  
+**Version:** 1.1.0  
+**Last Updated:** April 2, 2025
