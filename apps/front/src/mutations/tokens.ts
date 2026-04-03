@@ -36,7 +36,7 @@ export const useAddGlobalTokens = defineMutation(() => {
     mutation: ({ organizationId, amount }: { organizationId: string; amount: number }) =>
       addOrganizationTokens(organizationId, amount),
     onSuccess: (response, { organizationId }) => {
-      toast.success(`Added ${response.balance} tokens to organization`)
+      toast.success(`Added ${amount.value} tokens to organization`)
 
       // Invalidate balance and history queries for this organization
       queryCache.invalidateQueries({ key: ORGANIZATION_TOKEN_KEYS.balance(organizationId) })
