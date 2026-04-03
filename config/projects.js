@@ -35,7 +35,7 @@ const PROJECTS = {
     name: 'ChapsMind SCREEN',
     key: 'SCR',
     cloudId: '60cc5e3d-8230-41aa-9611-5c348537a1ea',
-    env: { type: 'local', url: 'http://localhost:3000' },
+    env: { type: 'local', url: 'http://localhost' },
     git: {
       host: 'git.mediaspeech.com',
       port: 17890,
