@@ -795,6 +795,62 @@ task screen:shell
 
 ---
 
+## Internationalization (i18n)
+
+### Architecture
+
+- **Library**: vue-i18n v11 with Composition API (`legacy: false`)
+- **Lazy loading**: Only `en-US` is bundled statically. Other locales are loaded on demand via `loadLocaleMessages()` from `@/i18n`
+- **File format**: Nested JSON, one file per language in `src/i18n/locales/`
+- **Fallback chain**: default → `en-US`
+- **ADR**: See `docs/architecture/adr/0012-frontend-translation-management-strategy.md`
+
+### Key Naming Convention
+
+Format: `module.feature.element` in camelCase
+
+```
+common.actions.save          # Shared UI actions
+common.validation.required   # Shared validation messages
+screen.company.title         # Screen module, company feature
+dashboard.recentProjects     # Dashboard feature
+settings.team.permissions    # Settings, team management
+admin.users.create           # Admin section
+```
+
+**Namespaces** (top-level keys): `common`, `target`, `screen`, `dashboard`, `settings`, `admin`
+
+### Usage Rules
+
+```typescript
+// CORRECT: key + named params
+t('company.create.inFolder', { folder: folderName })
+
+// CORRECT: key only
+t('common.actions.save')
+
+// WRONG: never use fallback as 2nd argument
+t('key', 'Fallback text')                    // ❌
+t('key', 'Fallback', { param: value })       // ❌
+```
+
+### Adding a New Language
+
+1. Create `src/i18n/locales/{locale}.json` (copy structure from `en-US.json`)
+2. Add datetime formats in `src/i18n/datetime-formats.ts`
+3. Add the locale option in `LocaleSwitcher.vue`
+4. Update fallback chain in `src/i18n/index.ts` if needed
+5. No other changes needed — lazy loading handles the rest
+
+### Adding/Modifying Translation Keys
+
+1. Add the key in **all** locale files (`en-US.json`, `fr-FR.json`, etc.)
+2. Follow the `module.feature.element` naming convention
+3. Use nested JSON structure (not flat dot-notation)
+4. Keep keys alphabetically sorted within each level
+
+---
+
 ## Key Reminders
 
 1. Use appropriate specialized agents for frontend work or commits

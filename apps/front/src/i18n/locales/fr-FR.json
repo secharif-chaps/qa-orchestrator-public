@@ -2134,6 +2134,7 @@
       },
       "language": {
         "description": "Sélectionnez votre langue préférée",
+        "loadError": "Impossible de charger la langue. Veuillez réessayer.",
         "title": "Langue"
       },
       "preview": {

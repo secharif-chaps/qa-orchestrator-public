@@ -2134,6 +2134,7 @@
       },
       "language": {
         "description": "Select your preferred language",
+        "loadError": "Failed to load language. Please try again.",
         "title": "Language"
       },
       "preview": {

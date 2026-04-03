@@ -26,6 +26,7 @@ import AuthLoader from './components/ui/AuthLoader.vue'
 import { useAuthStore } from './stores/auth'
 import { useSidebarStore } from './stores/sidebar'
 import { useTaskEvents } from './composables/useTaskEvents'
+import { loadLocaleMessages } from '@/i18n'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useIconConfig } from '@owlint/feathers-vue'
@@ -49,8 +50,19 @@ onMounted(async () => {
 
   if (typeof localStorage !== 'undefined') {
     const savedLocale = localStorage.getItem(STORAGE_KEY)
-    if (savedLocale) {
-      locale.value = savedLocale
+    if (savedLocale && savedLocale !== 'en-US') {
+      try {
+        const localeBeforeLoad = locale.value
+        await loadLocaleMessages(savedLocale)
+        // Only apply saved locale if user hasn't changed it during loading
+        if (locale.value === localeBeforeLoad) {
+          locale.value = savedLocale
+        }
+      } catch {
+        // Don't clear locale preference on error:
+        // - transient error → preference should survive for next successful load
+        // - locale removed from build → user can change it manually
+      }
     }
     // Load saved accent color
     const savedAccent = localStorage.getItem('accent-color')
