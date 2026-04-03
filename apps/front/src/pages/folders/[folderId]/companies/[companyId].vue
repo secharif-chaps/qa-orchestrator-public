@@ -1,11 +1,11 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Company Header -->
-    <div class="flex items-center justify-between gap-4">
-      <div class="flex items-center gap-4">
+    <div class="flex items-center gap-4">
+      <div class="flex min-w-0 shrink items-center gap-4">
         <!-- Loading around the image when task running -->
         <SquareProgressRing :segments="progressSegments" :show-progress="showProgressRing">
-          <div class="relative size-12 flex-shrink-0 overflow-hidden rounded-lg bg-white">
+          <div class="relative size-12 shrink-0 overflow-hidden rounded-lg bg-white">
             <img
               v-if="getCompanyDomain(company?.website)"
               :src="getLogoUrl(company?.website)"
@@ -56,8 +56,11 @@
         </div>
       </div>
 
+      <!-- Tabs — flex-1 gives the wrapper a stable width for overflow calc -->
+      <CompanyHeaderTabs class="min-w-0 flex-1" :folder-id="folderId" :company-id="companyId" />
+
       <!-- Action Buttons -->
-      <div class="flex items-center gap-2">
+      <div class="flex shrink-0 items-center gap-2">
         <CompanyTranslation v-model="selectedLanguage" :company-id="companyId" />
         <Export />
         <span v-if="isOwner" :title="refreshButtonTooltip">
@@ -99,6 +102,7 @@
 <script lang="ts" setup>
 import CompanyRefreshModal from '@/components/companies/CompanyRefreshModal.vue'
 import CompanyDeleteButton from '@/components/company/CompanyDeleteButton.vue'
+import CompanyHeaderTabs from '@/components/company/CompanyHeaderTabs.vue'
 import CompanyTranslation from '@/components/company/CompanyTranslation.vue'
 import Export from '@/components/company/Export.vue'
 import TasksFlowModal from '@/components/company/TasksFlowModal.vue'
