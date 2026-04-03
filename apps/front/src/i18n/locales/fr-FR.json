@@ -1548,6 +1548,16 @@
         "analyses": "Analyses",
         "notAvailable": "Section non disponible"
       },
+      "tabs": {
+        "csr": "RSE",
+        "jobs": "Offres d'emploi",
+        "more": "Plus ({count})",
+        "press": "Presse & Médias",
+        "products": "Produits et services",
+        "profile": "Profil",
+        "team": "Équipes & management",
+        "timeline": "Chronologie"
+      },
       "tasks": {
         "canBeRestarted": "Des tâches peuvent être redémarrées ou ne sont pas encore lancées",
         "completed": "{count} terminées ({percentage}%)",

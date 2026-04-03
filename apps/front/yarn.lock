@@ -1280,17 +1280,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@owlint/feathers-vue@npm:^0.3.12":
-  version: 0.3.19
-  resolution: "@owlint/feathers-vue@npm:0.3.19::__archiveUrl=https%3A%2F%2Fgit.fenrys.io%2Fapi%2Fv4%2Fprojects%2F454%2Fpackages%2Fnpm%2F%40owlint%2Ffeathers-vue%2F-%2F%40owlint%2Ffeathers-vue-0.3.19.tgz"
+"@owlint/feathers-vue@npm:^0.3.26":
+  version: 0.3.26
+  resolution: "@owlint/feathers-vue@npm:0.3.26::__archiveUrl=https%3A%2F%2Fgit.fenrys.io%2Fapi%2Fv4%2Fprojects%2F454%2Fpackages%2Fnpm%2F%40owlint%2Ffeathers-vue%2F-%2F%40owlint%2Ffeathers-vue-0.3.26.tgz"
   dependencies:
     "@headlessui/vue": "npm:^1.7.23"
     gsap: "npm:^3.12.5"
-    reka-ui: "npm:^2.6.0"
+    reka-ui: "npm:^2.8.2"
     tailwindcss: "npm:4.1.10"
     vue: "npm:^3.5.13"
     vue-i18n: "npm:^10.0.5"
-  checksum: 10c0/ec34145411aac86dce59d4f9e48af62c26912dc28769ea28538d0eab905858eb6c5f96f63a35ccad19fdfc45d0d5b7276958dde6aa9d719aae766d5904d60d1c
+  checksum: 10c0/436df799445fe3d5a43270102d1831a3f9a18941dd32b570eb3df842449bfe816e619c069ce8e6886eee6c8a5224ecf68d82d1cbd1d5a68f72cb8b63fa32e618
   languageName: node
   linkType: hard
 
@@ -3201,7 +3201,7 @@ __metadata:
     "@internationalized/date": "npm:^3.11.0"
     "@intlify/eslint-plugin-vue-i18n": "npm:^4.3.0"
     "@messageformat/core": "npm:^3.4.0"
-    "@owlint/feathers-vue": "npm:^0.3.12"
+    "@owlint/feathers-vue": "npm:^0.3.26"
     "@pinia/colada": "npm:^1.0.0"
     "@pinia/colada-devtools": "npm:^0.1.5"
     "@tailwindcss/vite": "npm:^4.1.11"
@@ -6875,7 +6875,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"reka-ui@npm:^2.6.0, reka-ui@npm:^2.8.0":
+"reka-ui@npm:^2.8.0":
   version: 2.8.0
   resolution: "reka-ui@npm:2.8.0"
   dependencies:
@@ -6892,6 +6892,26 @@ __metadata:
   peerDependencies:
     vue: ">= 3.2.0"
   checksum: 10c0/483ae7c9e7d4024c8f044620db054e6140dbe8ef3bdebb2ef3875248bcf269a1910684be6e2c2b7bb4a6f07e5225b7c5e8906535ee687cec89d4f31fec90eab5
+  languageName: node
+  linkType: hard
+
+"reka-ui@npm:^2.8.2":
+  version: 2.9.2
+  resolution: "reka-ui@npm:2.9.2"
+  dependencies:
+    "@floating-ui/dom": "npm:^1.6.13"
+    "@floating-ui/vue": "npm:^1.1.6"
+    "@internationalized/date": "npm:^3.5.0"
+    "@internationalized/number": "npm:^3.5.0"
+    "@tanstack/vue-virtual": "npm:^3.12.0"
+    "@vueuse/core": "npm:^14.1.0"
+    "@vueuse/shared": "npm:^14.1.0"
+    aria-hidden: "npm:^1.2.4"
+    defu: "npm:^6.1.4"
+    ohash: "npm:^2.0.11"
+  peerDependencies:
+    vue: ">= 3.4.0"
+  checksum: 10c0/2e4ce57a44d0495a2f858868baf63914a134384ed0bfbcd8186e6bcd915a473bdc7e79dd72110a6d5ffa94b48439c97d92cdfda9669e3ac8639ce5c01571bfe8
   languageName: node
   linkType: hard
 

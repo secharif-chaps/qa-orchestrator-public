@@ -1548,6 +1548,16 @@
         "analyses": "Analysis",
         "notAvailable": "Section not available"
       },
+      "tabs": {
+        "csr": "CSR",
+        "jobs": "Job Offers",
+        "more": "More ({count})",
+        "press": "Press & Media",
+        "products": "Products & Services",
+        "profile": "Profile",
+        "team": "Team & Management",
+        "timeline": "Timeline"
+      },
       "tasks": {
         "canBeRestarted": "Tasks can be restarted or have not been started yet",
         "completed": "{count} completed ({percentage}%)",
