@@ -1,17 +1,17 @@
 # QA Orchestrator — Multi-Agent AI Platform for QA Testing
 
-**Version:** 1.1.0 | **Status:** Production Ready ✅ | **Date:** April 2, 2025
+**Version:** 1.3.0 | **Status:** Production Ready ✅ | **Date:** April 5, 2026
 
-A complete, structured QA testing system powered by 11 AI agents and integrated with a comprehensive QA methodology guide.
+A complete, structured QA testing system powered by 11 AI agents with automatic test execution, X-Ray integration, and comprehensive documentation for all QA teams.
 
-## 🎯 What's New in v1.1.0
+## 🎯 What's New in v1.3.0
 
-✅ **SessionManager Agent (◎)** — Session state tracking & persistence  
-✅ **GherkinWriter Agent (⬡)** — Automatic Gherkin scenario generation  
-✅ **New `qa-workflow`** — Main workflow, structured 9-phase QA methodology  
-✅ **Session Persistence** — JSON + Confluence auto-drafts  
-✅ **Complete Documentation** — 9-phase guide, examples, troubleshooting  
-✅ **Backward Compatible** — No breaking changes, all old workflows still work  
+✅ **Automatic Branch Detection** — Feature branches auto-detected by ticket key  
+✅ **Real Test Execution** — Pytest (backend) + Playwright (E2E) integrated  
+✅ **Generic Documentation** — QA Usage Guide works for all projects  
+✅ **X-Ray Auto-Linking** — Test results auto-linked to Jira X-Ray  
+✅ **Session Management** — Complete QA audit trail in JSON  
+✅ **Test Report Integration** — HTML + JUnit reports auto-generated  
 
 ## 💻 11 AI Agents
 
@@ -68,14 +68,24 @@ node index.js --project target --workflow qa-workflow \
 
 ## 📚 Documentation
 
-Complete documentation in `/docs/` folder:
-- `QA_WORKFLOW_GUIDE.md` — Full 9-phase methodology
-- `INTEGRATION_GUIDE.md` — Architecture overview
-- `EXAMPLES.md` — 6 real-world scenarios
-- `TROUBLESHOOTING.md` — Common issues + solutions
-- And more...
+### 🚀 Start Here
+**[📖 QA_USAGE_GUIDE.md](docs/QA_USAGE_GUIDE.md)** — Complete guide for all QA teams (v1.3.0)
 
-Start with: `/docs/README.md`
+Covers:
+- 5-minute quick start
+- All workflows (qa-workflow, scan-adapt, mr-to-tests, bug-cycle, xray-sync, sprint-health)
+- Manual test execution with auto-branch detection
+- Pytest + Playwright integration
+- X-Ray Jira integration
+- Configuration guide
+- Session management
+- Troubleshooting (9 solutions)
+- Performance optimization
+- Security best practices
+
+### 📋 Example Files
+- `examples/workflows.yml.example` — Configuration template for your project
+- `examples/qa-test-ticket.sh` — Manual test execution script (copy to scripts/)
 
 ## 🔧 Installation
 ```bash
