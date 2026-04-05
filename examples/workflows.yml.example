@@ -1,0 +1,84 @@
+# QA Orchestrator Workflow Configuration Example
+# Copy this file to .gitlab/agent/workflows.yml and customize for your project
+
+workflows:
+  qa-workflow:
+    # Full QA workflow - generates plans AND executes tests
+    steps:
+      - id: review
+        agent: code-reviewer
+        description: Review implementation code
+
+      - id: test-plan
+        agent: test-generator
+        description: Generate comprehensive test plan
+
+      - id: e2e-tests
+        agent: automator
+        description: Generate E2E test code (Playwright)
+
+      - id: test-execution
+        description: Execute actual test suites
+        script: |
+          # Run backend tests
+          task myproject:test
+
+          # Run E2E tests
+          cd testing/e2e
+          npx playwright test myproject-*.spec.ts --reporter=html
+          cd -
+
+      - id: validation
+        agent: validator
+        description: Validate test results
+
+      - id: session-finalize
+        agent: session-manager
+        description: Finalize QA session with results
+
+  test-execution-only:
+    # Fast workflow - only execute tests (no plan generation)
+    steps:
+      - id: test-execution-backend
+        description: Run backend tests
+        script: task myproject:test
+
+      - id: test-execution-e2e
+        description: Run E2E tests
+        script: |
+          cd testing/e2e
+          npx playwright test myproject-*.spec.ts --reporter=html
+          cd -
+
+test-files:
+  # Map ticket patterns to test file locations
+  patterns:
+    - ticket: "MON-PROJET-1234"
+      pytest: "apps/myproject/tests/test_feature.py"
+      playwright: "testing/e2e/mon-projet-1234-feature.spec.ts"
+
+    - ticket: "MON-PROJET-*"
+      pytest: "apps/myproject/tests/test_*.py"
+      playwright: "testing/e2e/mon-projet-*.spec.ts"
+
+# Test execution timeouts (seconds)
+timeouts:
+  pytest: 300
+  playwright: 600
+
+# Report generation
+reports:
+  pytest:
+    format: "junit"
+    output: "test-reports/pytest-${TICKET}.xml"
+
+  playwright:
+    format: "html"
+    output: "testing/e2e/playwright-report/index.html"
+
+# Integration with X-Ray (Jira)
+xray:
+  enabled: true
+  auto-link-tests: true
+  ticket-type: "QA"
+  comment-on-original: true
