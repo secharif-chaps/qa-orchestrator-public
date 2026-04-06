@@ -37,11 +37,11 @@ from app.schemas.company import (
 from app.schemas.pagination import PaginatedResponse, PaginationParams, SortOrder
 from app.services.company import CompanyService, _build_company_response
 from app.services.global_service_client import (
-    TOKENS_PER_COMPANY,
     GlobalServiceClient,
     ModuleName,
     ReferenceType,
 )
+from app.services.token_manager import TOKENS_PER_COMPANY
 
 logger = get_logger(__name__)
 
