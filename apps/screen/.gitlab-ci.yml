@@ -2,10 +2,6 @@
 # Lints, tests, and publishes Docker image to GitLab Container Registry
 # Stages are defined in the root .gitlab-ci.yml
 
-variables:
-  IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-screen
-  DOCKER_BUILDKIT: 1
-
 # ─── Reusable blocks ───────────────────────────────────
 # Run all jobs on any branch (not just when files change)
 .screen-changes: &screen-changes
@@ -82,7 +78,7 @@ screen:test:integration:
   <<: *screen-test-base
   needs: []
   services:
-    - name: postgres:15-alpine
+    - name: postgres:17-alpine
       alias: postgres
   variables:
     POSTGRES_DB: chapsmind_db_test
@@ -93,8 +89,23 @@ screen:test:integration:
   before_script:
     - cd apps/screen
     - poetry config virtualenvs.create false && poetry install --no-interaction
-    # Create schema and run migrations so migration tests find existing tables
-    - PGPASSWORD=postgres psql -h postgres -U postgres -d chapsmind_db_test -c "CREATE SCHEMA IF NOT EXISTS screen_schema;" || true
+    # Wait for Postgres to be ready, create schema, run migrations
+    - |
+      python -c "
+      import time, psycopg2
+      for i in range(30):
+          try:
+              c = psycopg2.connect('$DATABASE_URL')
+              c.autocommit = True
+              c.cursor().execute('CREATE SCHEMA IF NOT EXISTS screen_schema')
+              c.close()
+              print('Postgres ready')
+              break
+          except Exception:
+              time.sleep(1)
+      else:
+          raise RuntimeError('Postgres ($DATABASE_URL) not ready after 30s')
+      "
     - alembic upgrade head
   script:
     - pytest tests/integration/ -v --no-cov --junitxml=report-integration.xml
@@ -103,41 +114,10 @@ screen:test:integration:
     reports:
       junit: apps/screen/report-integration.xml
 
-# ─── Build Stage (Docker) ─────────────────────────────
-.screen-docker-build:
-  image: docker:29-cli
-  script:
-    - echo "Building $IMAGE_NAME:${IMAGE_TAG}"
-    - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" apps/screen/
-
-# Build test (don't push) - runs on all branches
-screen:docker-build:
-  stage: build
-  extends: .screen-docker-build
+# ─── Publish (build + tag + push) ─────────────────────
+screen:publish:
+  extends: .docker-publish
   needs: [screen:lint, screen:poetry-check, screen:poetry-audit, screen:test:unit, screen:test:integration]
   variables:
-    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-      when: never
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH
-
-# Main branch: build + push with SHA tag and :latest
-# DISABLED: Do not publish on this test branch
-screen:publish:
-  stage: publish
-  extends: .screen-docker-build
-  needs: [screen:docker-build]
-  variables:
-    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-  after_script:
-    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
-    - docker tag "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}" "${IMAGE_NAME}:latest"
-    - docker push "${IMAGE_NAME}:latest"
-    - docker logout $CI_REGISTRY
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: never
+    IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-screen
+    DOCKER_CONTEXT: apps/screen

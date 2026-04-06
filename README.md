@@ -8,7 +8,7 @@ A modern platform for monitoring companies online. Built as a monorepo with a Vu
 chapsmind/
 ├── apps/
 │   ├── front/              # Vue 3 frontend (TypeScript, Tailwind CSS v4)
-│   ├── screen/             # FastAPI backend (Python, SQLAlchemy, Celery)
+│   ├── screen/             # FastAPI backend (Python, SQLAlchemy)
 │   └── global-service/     # API gateway
 ├── infra/                  # Docker Compose, Keycloak realm, nginx, scripts
 ├── docs/                   # Documentation (getting started, ADRs, architecture)

@@ -20,6 +20,7 @@ logger = get_logger(__name__)
 _DEFAULT_TIMEOUT = httpx.Timeout(connect=10.0, read=60.0, write=10.0, pool=10.0)
 _DEFAULT_LIMITS = httpx.Limits(max_keepalive_connections=20, max_connections=100, keepalive_expiry=30.0)
 _STREAMING_TIMEOUT = httpx.Timeout(connect=10.0, read=None, write=10.0, pool=10.0)
+_POOL_EXHAUSTION_THRESHOLD = 0.8  # Warn when pool usage exceeds 80%
 
 
 class ProxyClientPool:
@@ -44,6 +45,56 @@ class ProxyClientPool:
             )
             logger.info("Proxy client created", extra={"base_url": base_url})
         return self._clients[base_url]
+
+    def health_check(self) -> tuple[bool, dict]:
+        """Check pool health: client state and connection pool usage.
+
+        Returns:
+            Tuple of (is_healthy, diagnostics dict)
+        """
+        # No clients yet — lazy init, not an error
+        if not self._clients:
+            return True, {"status": "idle", "clients": 0}
+
+        diagnostics: dict = {"clients": {}}
+        healthy = True
+
+        for base_url, client in self._clients.items():
+            client_info: dict = {}
+
+            if client.is_closed:
+                client_info["status"] = "closed"
+                healthy = False
+            else:
+                client_info["status"] = "open"
+
+                # Inspect httpcore connection pool
+                try:
+                    pool = client._transport._pool  # type: ignore[attr-defined]
+                    connections = pool.connections
+                    total = len(connections)
+                    idle = sum(1 for c in connections if c.is_idle)
+                    active = total - idle
+                    client_info["connections"] = {
+                        "active": active,
+                        "idle": idle,
+                        "total": total,
+                        "max": _DEFAULT_LIMITS.max_connections,
+                    }
+                    # Warn if pool usage > 80%
+                    if total > 0 and active / _DEFAULT_LIMITS.max_connections > _POOL_EXHAUSTION_THRESHOLD:
+                        client_info["warning"] = "pool near exhaustion"
+                        logger.warning(
+                            "Proxy client pool near exhaustion",
+                            extra={"base_url": base_url, "active": active, "max": _DEFAULT_LIMITS.max_connections},
+                        )
+                except Exception:
+                    client_info["connections"] = "unavailable"
+
+            diagnostics["clients"][base_url] = client_info
+
+        diagnostics["status"] = "healthy" if healthy else "degraded"
+        return healthy, diagnostics
 
     async def close_all(self) -> None:
         """Close all pooled clients."""

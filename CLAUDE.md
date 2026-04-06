@@ -700,14 +700,14 @@ const { data: companies } = useQuery(companiesQuery, () => ({
 
 ## Test Users
 
-All test users are defined in `infra/files/realm-chapsmind.json` and added to the **ChapsMind Dev** organization by `init-keycloak.sh`.
+All test users are defined in `infra/files/realm-chapsmind.json` and added to the **ChapsMind Dev** organization by `setup-keycloak.sh`.
 
-| Username | Password | Roles | Description |
-|----------|----------|-------|-------------|
-| `admin` | `admin123` | admin (composite: all roles) | Full access |
-| `company_manager` | `manager123` | company.create, organization.read, organization.write | Company + team management |
-| `company_viewer` | `viewer123` | organization.read | Read-only access |
-| `no_access` | `noaccess123` | (none) | For testing 403 errors |
+| Username          | Password      | Roles                                                 | Description               |
+|-------------------|---------------|-------------------------------------------------------|---------------------------|
+| `admin`           | `admin123`    | admin (composite: all roles)                          | Full access               |
+| `company_manager` | `manager123`  | company.create, organization.read, organization.write | Company + team management |
+| `company_viewer`  | `viewer123`   | organization.read                                     | Read-only access          |
+| `no_access`       | `noaccess123` | (none)                                                | For testing 403 errors    |
 
 ---
 
@@ -953,7 +953,6 @@ task init
 - **frontend**: Vue.js app (internal, behind nginx)
 - **global-service**: API gateway (internal, behind nginx at `/api`)
 - **screen**: FastAPI backend (internal, never exposed directly)
-- **screen_celery_worker**: Background task processor
 - **db**: PostgreSQL database
 - **rabbitmq**: Message broker (management UI at `http://localhost:15672`)
 - **keycloak**: Auth server at `http://localhost:8080` (local dev only)

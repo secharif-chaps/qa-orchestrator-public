@@ -27,6 +27,17 @@ RUN yarn build-only
 # Production stage
 FROM nginx:1.29-alpine
 
+ARG VERSION=dev
+LABEL org.opencontainers.image.title="chapsmind-front" \
+      org.opencontainers.image.description="ChapsMind frontend — Vue 3 SPA served by nginx with runtime env injection" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.vendor="ChapsVision" \
+      org.opencontainers.image.authors="ChapsVision <dev-chapsmind@chapsvision.com>" \
+      org.opencontainers.image.url="https://git.mediaspeech.com/chapsmind/chapsmind" \
+      org.opencontainers.image.source="https://git.mediaspeech.com/chapsmind/chapsmind/-/tree/main/apps/front" \
+      org.opencontainers.image.licenses="Proprietary" \
+      org.opencontainers.image.base.name="docker.io/library/nginx:1.29-alpine"
+
 # Copy built app to nginx
 COPY --chown=nginx:nginx --from=build-stage /app/dist /usr/share/nginx/html
 

@@ -30,7 +30,6 @@ That's it. Everything else (Node, Python, Yarn, Poetry, Ruff, Lefthook, Taskfile
 5. Open the app:
    - Frontend: http://localhost
    - Backend API: http://localhost/api
-   - Flower (Celery): http://localhost:5555
    - RabbitMQ: http://localhost:15672
 
 ### Option B: Local setup (without Dev Container)

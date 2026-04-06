@@ -9,7 +9,7 @@ DC="${DC:-docker compose}"
 
 echo "🔧 Seeding workflow_configs with Dify API keys..."
 
-$DC exec -T db psql -U postgres -d chapsmind_db << 'EOF'
+$DC exec -T db psql -U postgres -d screen_db << 'EOF'
 SET search_path TO screen_schema;
 
 -- Clear existing configs (if any) and insert fresh data
@@ -33,4 +33,4 @@ echo ""
 echo "✅ Workflow configs seeded successfully!"
 echo ""
 echo "You can verify with:"
-echo "  $DC exec db psql -U postgres -d chapsmind_db -c 'SELECT * FROM workflow_configs;'"
+echo "  $DC exec db psql -U postgres -d screen_db -c 'SELECT * FROM workflow_configs;'"

@@ -108,12 +108,14 @@ class TestProxyRoutes:
         """Test that hop-by-hop headers are filtered from responses."""
         from app.proxy.routes import filter_response_headers
 
-        headers = httpx.Headers({
-            "Content-Type": "application/json",
-            "X-Custom-Header": "value",
-            "Connection": "keep-alive",  # Should be filtered
-            "Transfer-Encoding": "chunked",  # Should be filtered
-        })
+        headers = httpx.Headers(
+            {
+                "Content-Type": "application/json",
+                "X-Custom-Header": "value",
+                "Connection": "keep-alive",  # Should be filtered
+                "Transfer-Encoding": "chunked",  # Should be filtered
+            }
+        )
 
         filtered = filter_response_headers(headers)
 
@@ -181,6 +183,7 @@ class TestProxyIntegration:
     def _mock_auth_success(self):
         """Helper to create auth mock that returns success with internal JWT header."""
         from app.core.auth_middleware import GatewayUser
+
         mock_user = GatewayUser(
             sub="user-123",
             preferred_username="testuser",
@@ -241,9 +244,7 @@ class TestProxyIntegration:
             with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
                 mock_client = AsyncMock()
                 mock_client.build_request = MagicMock(return_value=MagicMock())
-                mock_client.send = AsyncMock(
-                    return_value=self._create_mock_streaming_response(201, b'{"id": 1}')
-                )
+                mock_client.send = AsyncMock(return_value=self._create_mock_streaming_response(201, b'{"id": 1}'))
                 mock_get_client.return_value = mock_client
 
                 with TestClient(app) as client:
@@ -273,9 +274,7 @@ class TestProxyIntegration:
             with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
                 mock_client = AsyncMock()
                 mock_client.build_request = MagicMock(return_value=MagicMock())
-                mock_client.send = AsyncMock(
-                    return_value=self._create_mock_streaming_response(200, b'[]')
-                )
+                mock_client.send = AsyncMock(return_value=self._create_mock_streaming_response(200, b"[]"))
                 mock_get_client.return_value = mock_client
 
                 with TestClient(app) as client:
@@ -403,6 +402,140 @@ class TestIsClientReady:
             assert is_client_ready() is False
 
 
+class TestProxyClientPoolHealthCheck:
+    """Tests for ProxyClientPool.health_check()."""
+
+    def test_empty_pool_is_healthy(self):
+        """No clients yet (idle) → healthy."""
+        from app.proxy.client import ProxyClientPool
+
+        pool = ProxyClientPool()
+        healthy, diagnostics = pool.health_check()
+        assert healthy is True
+        assert diagnostics["status"] == "idle"
+        assert diagnostics["clients"] == 0
+
+    @pytest.mark.asyncio
+    async def test_open_client_is_healthy(self):
+        """Pool with open client → healthy."""
+        from app.proxy.client import ProxyClientPool
+
+        pool = ProxyClientPool()
+        try:
+            await pool.get_client("http://backend:8000")
+            healthy, diagnostics = pool.health_check()
+            assert healthy is True
+            assert diagnostics["status"] == "healthy"
+            assert "http://backend:8000" in diagnostics["clients"]
+            assert diagnostics["clients"]["http://backend:8000"]["status"] == "open"
+        finally:
+            await pool.close_all()
+
+    @pytest.mark.asyncio
+    async def test_closed_client_is_unhealthy(self):
+        """Pool with closed client → unhealthy."""
+        from app.proxy.client import ProxyClientPool
+
+        pool = ProxyClientPool()
+        try:
+            await pool.get_client("http://backend:8000")
+            client = pool._clients["http://backend:8000"]
+            await client.aclose()
+            healthy, diagnostics = pool.health_check()
+            assert healthy is False
+            assert diagnostics["status"] == "degraded"
+            assert diagnostics["clients"]["http://backend:8000"]["status"] == "closed"
+        finally:
+            pool._clients.clear()
+
+    @pytest.mark.asyncio
+    async def test_mixed_clients_one_closed(self):
+        """One open + one closed client → unhealthy."""
+        from app.proxy.client import ProxyClientPool
+
+        pool = ProxyClientPool()
+        try:
+            await pool.get_client("http://backend-a:8000")
+            await pool.get_client("http://backend-b:8000")
+            # Close only one
+            await pool._clients["http://backend-a:8000"].aclose()
+            healthy, diagnostics = pool.health_check()
+            assert healthy is False
+            assert diagnostics["clients"]["http://backend-a:8000"]["status"] == "closed"
+            assert diagnostics["clients"]["http://backend-b:8000"]["status"] == "open"
+        finally:
+            await pool.close_all()
+
+    @pytest.mark.asyncio
+    async def test_connection_info_available(self):
+        """Health check includes connection pool stats."""
+        from app.proxy.client import ProxyClientPool
+
+        pool = ProxyClientPool()
+        try:
+            await pool.get_client("http://backend:8000")
+            healthy, diagnostics = pool.health_check()
+            client_info = diagnostics["clients"]["http://backend:8000"]
+            assert "connections" in client_info
+            conn = client_info["connections"]
+            if isinstance(conn, dict):
+                assert "active" in conn
+                assert "idle" in conn
+                assert "total" in conn
+                assert "max" in conn
+        finally:
+            await pool.close_all()
+
+    @pytest.mark.asyncio
+    async def test_after_close_all_is_healthy(self):
+        """After close_all(), pool is empty → idle (healthy)."""
+        from app.proxy.client import ProxyClientPool
+
+        pool = ProxyClientPool()
+        await pool.get_client("http://backend:8000")
+        await pool.close_all()
+        healthy, diagnostics = pool.health_check()
+        assert healthy is True
+        assert diagnostics["status"] == "idle"
+
+    @pytest.mark.asyncio
+    async def test_transport_introspection_failure(self):
+        """If internal transport access fails, connections show as unavailable."""
+        from app.proxy.client import ProxyClientPool
+
+        pool = ProxyClientPool()
+        try:
+            await pool.get_client("http://backend:8000")
+            # Sabotage the transport to simulate introspection failure
+            client = pool._clients["http://backend:8000"]
+            original_transport = client._transport
+            client._transport = object()  # type: ignore[assignment]
+            healthy, diagnostics = pool.health_check()
+            assert healthy is True  # Still healthy, just can't inspect connections
+            assert diagnostics["clients"]["http://backend:8000"]["connections"] == "unavailable"
+            client._transport = original_transport
+        finally:
+            await pool.close_all()
+
+    @pytest.mark.asyncio
+    async def test_multiple_backends_all_healthy(self):
+        """Multiple backends all open → healthy with per-client diagnostics."""
+        from app.proxy.client import ProxyClientPool
+
+        pool = ProxyClientPool()
+        try:
+            await pool.get_client("http://screen:8000")
+            await pool.get_client("http://target:8000")
+            await pool.get_client("http://stream:8000")
+            healthy, diagnostics = pool.health_check()
+            assert healthy is True
+            assert len(diagnostics["clients"]) == 3
+            for url in ["http://screen:8000", "http://target:8000", "http://stream:8000"]:
+                assert diagnostics["clients"][url]["status"] == "open"
+        finally:
+            await pool.close_all()
+
+
 class TestProxyGenericError:
     """Tests for generic exception handling in proxy_request."""
 
@@ -450,9 +583,7 @@ class TestProxyGenericError:
             with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
                 mock_client = AsyncMock()
                 mock_client.build_request = MagicMock(return_value=MagicMock())
-                mock_client.send = AsyncMock(
-                    side_effect=RuntimeError("secret-host.internal:5432 connection refused")
-                )
+                mock_client.send = AsyncMock(side_effect=RuntimeError("secret-host.internal:5432 connection refused"))
                 mock_get_client.return_value = mock_client
 
                 with TestClient(app) as client:
@@ -1005,6 +1136,533 @@ class TestHeaderEdgeCases:
         # The important thing is that it doesn't crash
         assert "X-Safe" in filtered
         assert "Content-Type" in filtered
+
+
+class TestRewriteLocationHeader:
+    """Tests for rewrite_location_header() — internal-to-public URL rewriting."""
+
+    def _make_request(
+        self,
+        url: str = "https://exemple.chapsmind.com/api/companies",
+        forwarded_proto: str | None = None,
+        forwarded_host: str | None = None,
+        client_ip: str = "172.18.0.5",
+    ) -> MagicMock:
+        """Create a mock Request with the given URL and optional forwarded headers."""
+        from urllib.parse import urlparse
+
+        mock = MagicMock()
+        parsed = urlparse(url)
+        mock.url.scheme = parsed.scheme
+        mock.url.netloc = parsed.netloc
+        mock.client.host = client_ip
+
+        headers: dict[str, str] = {}
+        if forwarded_proto:
+            headers["x-forwarded-proto"] = forwarded_proto
+        if forwarded_host:
+            headers["x-forwarded-host"] = forwarded_host
+        mock.headers = headers
+        return mock
+
+    # ─── Internal absolute URLs ───────────────────────
+
+    def test_internal_url_rewritten_to_public(self):
+        """http://screen:8000/api/companies/ → https://exemple.chapsmind.com/api/companies/"""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/companies")
+        result = rewrite_location_header(
+            "http://screen:8000/api/companies/",
+            "http://screen:8000",
+            request,
+        )
+        assert result == "https://exemple.chapsmind.com/api/companies/"
+
+    def test_internal_url_with_query_string(self):
+        """http://screen:8000/api/companies?page=2 → https://exemple.chapsmind.com/api/companies?page=2"""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/companies")
+        result = rewrite_location_header(
+            "http://screen:8000/api/companies?page=2",
+            "http://screen:8000",
+            request,
+        )
+        assert result == "https://exemple.chapsmind.com/api/companies?page=2"
+
+    def test_internal_url_with_trailing_slash_on_backend(self):
+        """Backend URL with trailing slash is normalized."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/test")
+        result = rewrite_location_header(
+            "http://screen:8000/api/test",
+            "http://screen:8000/",
+            request,
+        )
+        assert result == "https://exemple.chapsmind.com/api/test"
+
+    def test_internal_url_different_port(self):
+        """http://target:9000/api/watchfiles → rewritten."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/watchfiles")
+        result = rewrite_location_header(
+            "http://target:9000/api/watchfiles",
+            "http://target:9000",
+            request,
+        )
+        assert result == "https://exemple.chapsmind.com/api/watchfiles"
+
+    # ─── Relative paths ───────────────────────────────
+
+    def test_relative_path_gets_public_base(self):
+        """/api/companies/ → https://exemple.chapsmind.com/api/companies/"""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/companies")
+        result = rewrite_location_header(
+            "/api/companies/",
+            "http://screen:8000",
+            request,
+        )
+        assert result == "https://exemple.chapsmind.com/api/companies/"
+
+    def test_relative_path_with_query(self):
+        """/api/items?sort=name → https://exemple.chapsmind.com/api/items?sort=name"""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/items")
+        result = rewrite_location_header(
+            "/api/items?sort=name",
+            "http://screen:8000",
+            request,
+        )
+        assert result == "https://exemple.chapsmind.com/api/items?sort=name"
+
+    def test_relative_root_path(self):
+        """/ → https://exemple.chapsmind.com/"""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/test")
+        result = rewrite_location_header(
+            "/",
+            "http://screen:8000",
+            request,
+        )
+        assert result == "https://exemple.chapsmind.com/"
+
+    # ─── External URLs (must NOT be rewritten) ────────
+
+    def test_external_url_unchanged(self):
+        """External URL is not rewritten."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/test")
+        result = rewrite_location_header(
+            "https://sso.deveryware.team/auth/realms/chapsmind",
+            "http://screen:8000",
+            request,
+        )
+        assert result == "https://sso.deveryware.team/auth/realms/chapsmind"
+
+    def test_already_public_url_unchanged(self):
+        """URL already pointing to public host is not double-rewritten."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/test")
+        result = rewrite_location_header(
+            "https://exemple.chapsmind.com/api/companies/",
+            "http://screen:8000",
+            request,
+        )
+        assert result == "https://exemple.chapsmind.com/api/companies/"
+
+    # ─── Edge cases ───────────────────────────────────
+
+    def test_empty_location(self):
+        """Empty location → returned as-is."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/test")
+        result = rewrite_location_header("", "http://screen:8000", request)
+        assert result == ""
+
+    def test_none_backend_url(self):
+        """No backend URL → location unchanged."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/test")
+        result = rewrite_location_header(
+            "http://unknown:8000/api/test",
+            None,
+            request,
+        )
+        assert result == "http://unknown:8000/api/test"
+
+    def test_none_backend_url_with_relative_path(self):
+        """No backend URL + relative path → still gets public base."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/test")
+        result = rewrite_location_header("/api/test", None, request)
+        assert result == "https://exemple.chapsmind.com/api/test"
+
+    def test_backend_url_partial_match_not_rewritten(self):
+        """Backend URL that partially matches (different port) is not rewritten."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/test")
+        result = rewrite_location_header(
+            "http://screen:9999/api/test",
+            "http://screen:8000",
+            request,
+        )
+        assert result == "http://screen:9999/api/test"
+
+    def test_http_public_request_preserves_scheme(self):
+        """HTTP (non-TLS) public request preserves http scheme."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("http://localhost/api/companies")
+        result = rewrite_location_header(
+            "http://screen:8000/api/companies/",
+            "http://screen:8000",
+            request,
+        )
+        assert result == "http://localhost/api/companies/"
+
+    def test_backend_url_empty_string(self):
+        """Empty backend URL → location unchanged (absolute) or gets public base (relative)."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/test")
+        result = rewrite_location_header(
+            "http://screen:8000/api/test",
+            "",
+            request,
+        )
+        assert result == "http://screen:8000/api/test"
+
+    def test_backend_url_not_matching_any_known_service(self):
+        """Location points to an unknown internal service → not rewritten."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/test")
+        result = rewrite_location_header(
+            "http://unknown-service:3000/api/callback",
+            "http://screen:8000",
+            request,
+        )
+        assert result == "http://unknown-service:3000/api/callback"
+
+    def test_location_with_fragment(self):
+        """Location with URL fragment is preserved."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/docs")
+        result = rewrite_location_header(
+            "http://screen:8000/api/docs#section",
+            "http://screen:8000",
+            request,
+        )
+        assert result == "https://exemple.chapsmind.com/api/docs#section"
+
+    # ─── Reverse proxy / TLS termination ──────────────
+
+    def test_x_forwarded_proto_overrides_scheme(self):
+        """Behind TLS-terminating proxy: internal HTTP → public HTTPS via X-Forwarded-Proto."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/companies",
+            forwarded_proto="https",
+            forwarded_host="exemple.chapsmind.com",
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_HOSTS = r"^exemple\.chapsmind\.com$"
+            s.TRUSTED_PROXIES = "172.16.0.0/12,10.0.0.0/8"
+            result = rewrite_location_header(
+                "http://screen:8000/api/companies/",
+                "http://screen:8000",
+                request,
+            )
+        assert result == "https://exemple.chapsmind.com/api/companies/"
+
+    def test_x_forwarded_host_overrides_netloc(self):
+        """Behind reverse proxy: internal host → public host via X-Forwarded-Host."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/test",
+            forwarded_host="mr-115.staging.target.localnet",
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_HOSTS = r"^.*\.staging\.target\.localnet$"
+            s.TRUSTED_PROXIES = "172.16.0.0/12,10.0.0.0/8"
+            result = rewrite_location_header(
+                "http://screen:8000/api/test",
+                "http://screen:8000",
+                request,
+            )
+        assert result == "http://mr-115.staging.target.localnet/api/test"
+
+    def test_x_forwarded_proto_and_host_combined(self):
+        """Both headers: full rewrite to public HTTPS URL."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/companies",
+            forwarded_proto="https",
+            forwarded_host="mr-115.staging.target.localnet",
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_HOSTS = r"^.*\.staging\.target\.localnet$"
+            s.TRUSTED_PROXIES = "172.16.0.0/12,10.0.0.0/8"
+            result = rewrite_location_header(
+                "http://screen:8000/api/companies/",
+                "http://screen:8000",
+                request,
+            )
+        assert result == "https://mr-115.staging.target.localnet/api/companies/"
+
+    def test_x_forwarded_host_rejected_if_untrusted(self):
+        """Spoofed X-Forwarded-Host not matching TRUSTED_HOSTS → fallback to request URL."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/test",
+            forwarded_host="evil.com",
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_HOSTS = r"^exemple\.chapsmind\.com$"
+            s.TRUSTED_PROXIES = "172.16.0.0/12,10.0.0.0/8"
+            result = rewrite_location_header(
+                "http://screen:8000/api/test",
+                "http://screen:8000",
+                request,
+            )
+        assert "evil.com" not in result
+        assert result == "http://global-service:8001/api/test"
+
+    def test_empty_trusted_hosts_rejects_forwarded(self):
+        """Empty TRUSTED_HOSTS → forwarded host ignored, fallback to request URL."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/test",
+            forwarded_host="anything.com",
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_HOSTS = ""
+            s.TRUSTED_PROXIES = "172.16.0.0/12,10.0.0.0/8"
+            result = rewrite_location_header(
+                "http://screen:8000/api/test",
+                "http://screen:8000",
+                request,
+            )
+        assert result == "http://global-service:8001/api/test"
+
+    def test_no_forwarded_headers_falls_back_to_request_url(self):
+        """Without forwarded headers: use request URL as-is."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request("https://exemple.chapsmind.com/api/companies")
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_HOSTS = r"^exemple\.chapsmind\.com$"
+            s.TRUSTED_PROXIES = "172.16.0.0/12,10.0.0.0/8"
+            result = rewrite_location_header(
+                "http://screen:8000/api/companies/",
+                "http://screen:8000",
+                request,
+            )
+        assert result == "https://exemple.chapsmind.com/api/companies/"
+
+    def test_relative_path_with_forwarded_headers(self):
+        """Relative path + forwarded headers → uses forwarded public base."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/companies",
+            forwarded_proto="https",
+            forwarded_host="mr-115.staging.target.localnet",
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_HOSTS = r"^.*\.staging\.target\.localnet$"
+            s.TRUSTED_PROXIES = "172.16.0.0/12,10.0.0.0/8"
+            result = rewrite_location_header(
+                "/api/companies/",
+                "http://screen:8000",
+                request,
+            )
+        assert result == "https://mr-115.staging.target.localnet/api/companies/"
+
+    # ─── TRUSTED_PROXIES validation ───────────────────
+
+    def test_untrusted_proxy_ip_ignores_forwarded_headers(self):
+        """Request from non-trusted IP → X-Forwarded-* headers ignored."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/test",
+            forwarded_proto="https",
+            forwarded_host="mr-115.staging.target.localnet",
+            client_ip="203.0.113.1",  # Public IP, not in trusted proxies
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_PROXIES = "172.16.0.0/12,10.0.0.0/8"
+            s.TRUSTED_HOSTS = r"^.*\.staging\.target\.localnet$"
+            result = rewrite_location_header(
+                "http://screen:8000/api/test",
+                "http://screen:8000",
+                request,
+            )
+        # Falls back to request URL (http, internal host)
+        assert result == "http://global-service:8001/api/test"
+        assert "staging.target.localnet" not in result
+
+    def test_trusted_proxy_ip_accepts_forwarded_headers(self):
+        """Request from trusted IP → X-Forwarded-* headers used."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/test",
+            forwarded_proto="https",
+            forwarded_host="mr-115.staging.target.localnet",
+            client_ip="172.18.0.5",  # Docker network, in trusted proxies
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_PROXIES = "172.16.0.0/12,10.0.0.0/8"
+            s.TRUSTED_HOSTS = r"^.*\.staging\.target\.localnet$"
+            result = rewrite_location_header(
+                "http://screen:8000/api/test",
+                "http://screen:8000",
+                request,
+            )
+        assert result == "https://mr-115.staging.target.localnet/api/test"
+
+    def test_localhost_is_trusted_proxy(self):
+        """127.0.0.1 is always in default trusted proxies."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://localhost:8001/api/test",
+            forwarded_proto="https",
+            forwarded_host="exemple.chapsmind.com",
+            client_ip="127.0.0.1",
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_PROXIES = "127.0.0.0/8"
+            s.TRUSTED_HOSTS = r"^exemple\.chapsmind\.com$"
+            result = rewrite_location_header(
+                "http://screen:8000/api/test",
+                "http://screen:8000",
+                request,
+            )
+        assert result == "https://exemple.chapsmind.com/api/test"
+
+    def test_empty_trusted_proxies_ignores_all_forwarded(self):
+        """Empty TRUSTED_PROXIES → no IP is trusted → forwarded headers ignored."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/test",
+            forwarded_proto="https",
+            forwarded_host="mr-115.staging.target.localnet",
+            client_ip="172.18.0.5",
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_PROXIES = ""
+            s.TRUSTED_HOSTS = r"^.*\.staging\.target\.localnet$"
+            result = rewrite_location_header(
+                "http://screen:8000/api/test",
+                "http://screen:8000",
+                request,
+            )
+        assert result == "http://global-service:8001/api/test"
+
+    def test_invalid_client_ip_ignores_forwarded(self):
+        """Invalid client IP → forwarded headers ignored (no crash)."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/test",
+            forwarded_proto="https",
+            forwarded_host="mr-115.staging.target.localnet",
+            client_ip="not-an-ip",
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_PROXIES = "172.16.0.0/12"
+            s.TRUSTED_HOSTS = r"^.*\.staging\.target\.localnet$"
+            result = rewrite_location_header(
+                "http://screen:8000/api/test",
+                "http://screen:8000",
+                request,
+            )
+        assert result == "http://global-service:8001/api/test"
+
+    def test_no_client_ignores_forwarded(self):
+        """No request.client → forwarded headers ignored."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/test",
+            forwarded_proto="https",
+            forwarded_host="mr-115.staging.target.localnet",
+        )
+        request.client = None
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_PROXIES = "172.16.0.0/12"
+            s.TRUSTED_HOSTS = r"^.*\.staging\.target\.localnet$"
+            result = rewrite_location_header(
+                "http://screen:8000/api/test",
+                "http://screen:8000",
+                request,
+            )
+        assert result == "http://global-service:8001/api/test"
+
+    def test_trusted_proxy_but_untrusted_host(self):
+        """Trusted proxy IP but spoofed host not matching TRUSTED_HOSTS → host rejected."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/test",
+            forwarded_proto="https",
+            forwarded_host="evil.com",
+            client_ip="172.18.0.5",
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_PROXIES = "172.16.0.0/12"
+            s.TRUSTED_HOSTS = r"^exemple\.chapsmind\.com$"
+            result = rewrite_location_header(
+                "http://screen:8000/api/test",
+                "http://screen:8000",
+                request,
+            )
+        # Scheme is trusted (from proxy) but host falls back
+        assert "evil.com" not in result
+        assert result == "https://global-service:8001/api/test"
+
+    def test_forwarded_proto_invalid_value_rejected(self):
+        """Invalid X-Forwarded-Proto value → ignored, uses request scheme."""
+        from app.proxy.routes import rewrite_location_header
+
+        request = self._make_request(
+            "http://global-service:8001/api/test",
+            forwarded_proto="ftp",
+            forwarded_host="exemple.chapsmind.com",
+            client_ip="172.18.0.5",
+        )
+        with patch("app.proxy.routes.settings") as s:
+            s.TRUSTED_PROXIES = "172.16.0.0/12"
+            s.TRUSTED_HOSTS = r"^exemple\.chapsmind\.com$"
+            result = rewrite_location_header(
+                "http://screen:8000/api/test",
+                "http://screen:8000",
+                request,
+            )
+        assert result == "http://exemple.chapsmind.com/api/test"
 
 
 if __name__ == "__main__":

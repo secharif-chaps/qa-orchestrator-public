@@ -34,33 +34,12 @@ class ApiClient {
       headers['Authorization'] = `Bearer ${token}`
     }
 
-    // Use manual redirect handling to preserve HTTPS on 307 redirects
+    // Let the browser handle redirects automatically.
+    // The proxy rewrites internal Location headers to public HTTPS URLs.
     const response = await fetch(url, {
       headers,
-      redirect: 'manual',
       ...options,
     })
-
-    // Handle 307/308 redirects manually to preserve HTTPS protocol
-    if (response.status === 307 || response.status === 308) {
-      const redirectUrl = response.headers.get('Location')
-      if (redirectUrl) {
-        // Ensure redirect URL uses same protocol as original request
-        const originalProtocol = new URL(url).protocol
-        let finalRedirectUrl = redirectUrl
-
-        // If redirect switches to HTTP but original was HTTPS, fix it
-        if (originalProtocol === 'https:' && redirectUrl.startsWith('http://')) {
-          finalRedirectUrl = redirectUrl.replace('http://', 'https://')
-        }
-
-        const redirectResponse = await fetch(finalRedirectUrl, {
-          headers,
-          ...options,
-        })
-        return this.handleResponse<T>(redirectResponse, endpoint, options, retry, authStore)
-      }
-    }
 
     return this.handleResponse<T>(response, endpoint, options, retry, authStore)
   }

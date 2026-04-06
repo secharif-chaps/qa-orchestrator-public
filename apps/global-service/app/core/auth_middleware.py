@@ -169,11 +169,18 @@ def extract_organization_info(user: GatewayUser) -> tuple[str, str]:
 
     org_info = user.organization
 
-    # Organization claim format: ["OrgName", {"OrgName": {"id": "uuid"}}]
+    # Organization claim format (order varies by client):
+    #   ["OrgName", {"OrgName": {"id": "uuid"}}]
+    #   [{"OrgName": {"id": "uuid"}}, "OrgName"]
     if isinstance(org_info, list) and len(org_info) >= 2:
-        org_name = org_info[0] if isinstance(org_info[0], str) else ""
-        org_dict = org_info[1] if len(org_info) > 1 else {}
-        if isinstance(org_dict, dict) and org_name in org_dict:
+        org_name = ""
+        org_dict = {}
+        for element in org_info:
+            if isinstance(element, str):
+                org_name = element
+            elif isinstance(element, dict):
+                org_dict = element
+        if org_dict and org_name and org_name in org_dict:
             org_id = org_dict[org_name].get("id", "")
             return org_id, org_name
         return "", org_name

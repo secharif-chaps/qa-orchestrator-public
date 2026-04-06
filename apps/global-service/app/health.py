@@ -14,7 +14,7 @@ from sqlalchemy import text
 from app.core.config import settings
 from app.core.logging_config import get_logger
 from app.database import engine
-from app.proxy.client import is_client_ready
+from app.proxy.client import _pool
 
 logger = get_logger(__name__)
 
@@ -28,9 +28,7 @@ _health_http_client: httpx.AsyncClient | None = None
 def _get_health_http_client() -> httpx.AsyncClient:
     global _health_http_client
     if _health_http_client is None or _health_http_client.is_closed:
-        _health_http_client = httpx.AsyncClient(
-            timeout=httpx.Timeout(CHECK_TIMEOUT_SECONDS)
-        )
+        _health_http_client = httpx.AsyncClient(timeout=httpx.Timeout(CHECK_TIMEOUT_SECONDS))
     return _health_http_client
 
 
@@ -77,12 +75,12 @@ async def check_grpc() -> bool:
 
 
 async def check_proxy_client() -> bool:
-    """Verify that the httpx proxy client is initialized and open."""
+    """Verify that the proxy client pool is healthy."""
     try:
-        if not is_client_ready():
-            logger.warning("Health check failed: proxy_client not ready")
-            return False
-        return True
+        healthy, diagnostics = _pool.health_check()
+        if not healthy:
+            logger.warning("Health check failed: proxy_client", extra=diagnostics)
+        return healthy
     except Exception:
         logger.warning("Health check failed: proxy_client", exc_info=True)
         return False
@@ -94,10 +92,7 @@ async def check_keycloak() -> bool:
     This check is optional and controlled by HEALTH_CHECK_KEYCLOAK_ENABLED.
     Uses a short timeout to avoid blocking other checks.
     """
-    url = (
-        f"{settings.KEYCLOAK_SERVER_URL}/realms/{settings.KEYCLOAK_REALM}"
-        f"/.well-known/openid-configuration"
-    )
+    url = f"{settings.KEYCLOAK_SERVER_URL}/realms/{settings.KEYCLOAK_REALM}/.well-known/openid-configuration"
     try:
         client = _get_health_http_client()
         response = await client.get(url)

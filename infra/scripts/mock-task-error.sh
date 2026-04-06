@@ -9,7 +9,7 @@ set -e
 
 DC="${DC:-docker compose}"
 DB_CONTAINER="infra-db-1"
-DB_NAME="chapsmind_db"
+DB_NAME="screen_db"
 DB_USER="postgres"
 
 psql() {

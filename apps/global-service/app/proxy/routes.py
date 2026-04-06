@@ -138,6 +138,81 @@ def filter_response_headers(headers: httpx.Headers) -> dict:
     return {key: value for key, value in headers.items() if key.lower() not in EXCLUDED_RESPONSE_HEADERS}
 
 
+def rewrite_location_header(location: str, backend_url: str | None, request: Request) -> str:
+    """Rewrite a Location header from internal backend URL to public URL.
+
+    Handles these cases:
+    - Internal absolute URL → public absolute URL
+      http://screen:8000/api/companies/ → https://exemple.chapsmind.com/api/companies/
+    - Already-public URL → unchanged
+    - Relative path → converted to public absolute URL
+    - External URL (different host) → unchanged
+    - Empty/None backend_url → return location unchanged
+
+    Args:
+        location: The Location header value from the backend response
+        backend_url: The internal backend base URL (e.g. http://screen:8000)
+        request: The original client request (used to derive the public URL)
+
+    Returns:
+        Rewritten Location header value
+    """
+    if not location:
+        return location
+
+    # Use X-Forwarded-* headers only from trusted proxies, validated against
+    # TRUSTED_HOSTS regex. Same conventions as Symfony TRUSTED_PROXIES/TRUSTED_HOSTS.
+    import ipaddress
+    import re
+
+    # Check if the request comes from a trusted proxy
+    client_ip = request.client.host if request.client else ""
+    is_trusted_proxy = False
+    if client_ip:
+        try:
+            addr = ipaddress.ip_address(client_ip)
+            is_trusted_proxy = any(
+                addr in ipaddress.ip_network(cidr.strip(), strict=False)
+                for cidr in settings.TRUSTED_PROXIES.split(",")
+                if cidr.strip()
+            )
+        except ValueError:
+            pass
+
+    scheme = request.url.scheme
+    host = request.url.netloc
+
+    if is_trusted_proxy:
+        forwarded_proto = request.headers.get("x-forwarded-proto", "")
+        if forwarded_proto in ("http", "https"):
+            scheme = forwarded_proto
+
+        forwarded_host = request.headers.get("x-forwarded-host", "")
+        trusted = settings.TRUSTED_HOSTS
+        if forwarded_host and trusted and re.fullmatch(trusted, forwarded_host):
+            host = forwarded_host
+
+    public_base = f"{scheme}://{host}"
+
+    # Relative path (starts with /) → prepend public base
+    if location.startswith("/"):
+        return f"{public_base}{location}"
+
+    # No backend URL to compare → return as-is
+    if not backend_url:
+        return location
+
+    backend_base = backend_url.rstrip("/")
+
+    # Internal absolute URL → rewrite to public
+    if location.startswith(backend_base):
+        internal_path = location[len(backend_base) :]
+        return f"{public_base}{internal_path}"
+
+    # Anything else (external URL, already public) → unchanged
+    return location
+
+
 def has_request_body(request: Request) -> bool:
     """Check if request has a body using headers (without reading it)."""
     content_length = request.headers.get("content-length")
@@ -302,8 +377,11 @@ async def proxy_request(request: Request, path: str) -> Response:
     if denied:
         return denied
 
-    # Build the target URL
+    # Build the target URL — preserve trailing slash from original request
+    # (Starlette's {path:path} strips trailing slashes from the captured parameter)
     target_path = backend_path
+    if request.url.path.endswith("/") and not target_path.endswith("/"):
+        target_path += "/"
     if request.url.query:
         target_path = f"{target_path}?{request.url.query}"
 
@@ -441,10 +519,18 @@ async def _handle_regular_request(
             await response.aclose()
             logger.debug(f"🔄 PROXY response stream closed: {target_path}")
 
+    response_headers = filter_response_headers(response.headers)
+
+    # Rewrite Location header: replace internal backend URL with public URL
+    # e.g. http://screen:8000/api/companies/ → https://exemple.chapsmind.com/api/companies/
+    location = response_headers.get("location")
+    if location:
+        response_headers["location"] = rewrite_location_header(location, backend_url, request)
+
     return StreamingResponse(
         stream_response_body(),
         status_code=response.status_code,
-        headers=filter_response_headers(response.headers),
+        headers=response_headers,
         media_type=response.headers.get("content-type"),
     )
 

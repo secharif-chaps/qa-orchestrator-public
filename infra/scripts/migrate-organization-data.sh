@@ -1,7 +1,7 @@
 #!/bin/bash
 # Data migration wrapper: Copy organization data from backend to global-service
 #
-# This script migrates data from the backend's chapsmind_db to global-service's
+# This script migrates data from the backend's screen_db to global-service's
 # global_db.global_schema for Phase 2.5 of the Global Service API Gateway migration.
 #
 # Tables migrated:

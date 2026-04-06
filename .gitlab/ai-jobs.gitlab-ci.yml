@@ -69,7 +69,7 @@ ai:review-mr:
 # Triggered manually or by the ticket scanner pipeline.
 # Pass AGENT_ISSUE as a variable (e.g. TAR-1234).
 ai:dev-agent:
-  stage: build
+  stage: publish
   needs: []
   image: ${CI_REGISTRY}/chapsmind/ci-images/agent:latest
   # One resource group per ticket: prevents duplicate runs for the same issue

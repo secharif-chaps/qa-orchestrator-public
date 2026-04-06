@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
     # Database settings
-    DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/chapsmind_db"
+    DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/screen_db"
 
     # CORS settings
     CORS_ORIGIN: str = "http://localhost"
@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     # Keycloak settings
     KEYCLOAK_SERVER_URL: str = "https://keycloak.preprod.chapsmind.com"
     KEYCLOAK_REALM: str = "chapsmind"
-    KEYCLOAK_CLIENT_ID: str = "chapsmind-screen-back"
+    KEYCLOAK_CLIENT_ID: str = "chapsmind-global-service-back"
     KEYCLOAK_CLIENT_SECRET: str | None = None
     KEYCLOAK_CALLBACK_URI: str = "http://localhost/callback"
     KEYCLOAK_ADMIN_CLIENT_ID: str = "admin-cli"

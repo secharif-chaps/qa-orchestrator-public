@@ -121,7 +121,10 @@ done
 
 echo ""
 echo "🔐 Initializing Keycloak (realm, clients, test users)..."
-bash infra/scripts/init-keycloak.sh
+bash infra/scripts/setup-keycloak.sh \
+  --wait --theme \
+  --create-org "ChapsMind Dev" --org-domain chapsmind.local \
+  --add-users admin,company_manager,company_viewer,no_access
 
 # ─── 8. Run migrations ───────────────────────────────
 

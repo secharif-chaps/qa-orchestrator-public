@@ -6,8 +6,8 @@ stages:
   - install
   - lint
   - test
-  - build
   - publish
+  - deploy
   - maintenance
 
 variables:
@@ -25,14 +25,75 @@ include:
   - template: Jobs/SAST.gitlab-ci.yml
   - template: Jobs/Secret-Detection.gitlab-ci.yml
 
-# ─── Shared Docker templates ──────────────────────────
-# Used by publish jobs in app CI files via `extends`
-.docker-login:
+# ─── Shared Docker publish template ──────────────────
+# Single job per image: build + tag + push.
+#
+# Tag policy:
+#   MR          → mr-{IID}, sha-{SHORT_SHA}
+#   main        → main, sha-{SHORT_SHA}
+#   tag X.Y.Z-rc.N → X.Y.Z-rc.N, rc, sha-{SHORT_SHA}
+#   tag X.Y.Z      → X.Y.Z, latest, sha-{SHORT_SHA}
+#
+# Usage in app CI:
+#   extends: .docker-publish
+#   variables:
+#     IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-screen
+#     DOCKER_CONTEXT: apps/screen
+#     DOCKER_BUILD_ARGS: ""  # optional extra --build-arg or --secret flags
+.docker-publish:
+  stage: publish
+  image: docker:29-cli
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+  script:
+    # Determine tags based on context
+    - TAGS=""
+    - SHA_TAG="sha-${CI_COMMIT_SHORT_SHA}"
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        # Release tag: X.Y.Z or X.Y.Z-rc.N
+        TAGS="$CI_COMMIT_TAG"
+        if echo "$CI_COMMIT_TAG" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+$'; then
+          TAGS="$TAGS rc"
+        elif echo "$CI_COMMIT_TAG" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+          TAGS="$TAGS latest"
+        fi
+      elif [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then
+        TAGS="main"
+      elif [ -n "$CI_MERGE_REQUEST_IID" ]; then
+        TAGS="mr-${CI_MERGE_REQUEST_IID}"
+      else
+        TAGS="$CI_COMMIT_REF_SLUG"
+      fi
+    # Build image with OCI labels
+    - VERSION=$(echo "$TAGS" | awk '{print $1}')
+    - CREATED=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+    - echo "Building ${IMAGE_NAME} — tags:${TAGS} ${SHA_TAG}"
+    - >
+      docker build --pull
+      --build-arg VERSION="${VERSION}"
+      --label "org.opencontainers.image.created=${CREATED}"
+      --label "org.opencontainers.image.revision=${CI_COMMIT_SHA}"
+      ${DOCKER_BUILD_ARGS}
+      -t "${IMAGE_NAME}:build"
+      "${DOCKER_CONTEXT}/"
+    # Tag and push all tags
+    - |
+      for TAG in $TAGS $SHA_TAG; do
+        docker tag "${IMAGE_NAME}:build" "${IMAGE_NAME}:${TAG}"
+        docker push "${IMAGE_NAME}:${TAG}"
+        echo "  → pushed ${IMAGE_NAME}:${TAG}"
+      done
+  after_script:
+    - docker logout $CI_REGISTRY || true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$/
 
 # ─── Override security template stages ────────────────
-# SAST and Secret Detection templates default to stage: test which doesn't exist
 sast:
   stage: lint
   needs: []
@@ -41,7 +102,6 @@ secret_detection:
   stage: lint
   needs: []
 
-# ─── Commit message lint ──────────────────────────────
 # ─── Skills validation ──────────────────────────────
 main:validate-skills:
   stage: lint
@@ -67,7 +127,6 @@ main:commitlint:
     - commitlint --from "origin/main" --to HEAD --config commitlint.config.mjs
 
 # ─── Assign reviewers based on CODEOWNERS ─────────────
-# Only runs on MRs (requires CI_MERGE_REQUEST_IID)
 main:assign-reviewers:
   stage: lint
   needs: []

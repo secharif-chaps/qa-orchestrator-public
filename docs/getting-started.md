@@ -109,7 +109,7 @@ task logs        # Tail all logs
 
 ## Test Users
 
-All test users are added to the **ChapsMind Dev** organization by `init-keycloak.sh`:
+All test users are added to the **ChapsMind Dev** organization by `setup-keycloak.sh`:
 
 | Username          | Password      | Roles                                                 | Description               |
 |-------------------|---------------|-------------------------------------------------------|---------------------------|

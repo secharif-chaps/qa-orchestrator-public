@@ -65,6 +65,18 @@ else
   err "jq not installed"
 fi
 
+# glab (GitLab CLI — used by pre-commit to lint .gitlab-ci.yml)
+if command -v glab &> /dev/null; then
+  GLAB_V=$(glab --version 2>/dev/null | head -1 | sed 's/glab version //')
+  if glab auth status &> /dev/null; then
+    ok "glab ${GLAB_V} (authenticated)"
+  else
+    warn "glab ${GLAB_V} installed but not authenticated — run: glab auth login"
+  fi
+else
+  warn "glab not installed — CI lint in pre-commit will be skipped (install: https://gitlab.com/gitlab-org/cli)"
+fi
+
 # ─── Connectivity ─────────────────────────────────────
 
 echo ""
