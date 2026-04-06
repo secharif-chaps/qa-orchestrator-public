@@ -200,16 +200,19 @@ class ModuleRegistry:
         Returns:
             (ModuleDefinition, backend_path) or None if no module matches.
             backend_path is the path to forward to the backend (e.g. "/api/companies/123").
+            The original trailing slash is preserved to avoid 307 redirects from FastAPI.
         """
-        # Normalize: strip trailing slash for consistent matching
-        api_path = f"/api/{path}".rstrip("/") or "/api"
+        # Keep the original path to forward as-is (preserving trailing slash)
+        original_api_path = f"/api/{path}"
+        # Normalize for route matching only
+        api_path = original_api_path.rstrip("/") or "/api"
         method_upper = method.upper()
 
         # Exact match first
         key = (api_path, method_upper)
         if key in self._route_index:
             module = self._modules[self._route_index[key]]
-            return module, api_path
+            return module, original_api_path
 
         # Try prefix matching for parameterized paths like /api/companies/{id}
         # Complexity: O(n) where n = number of routes in _route_index.
@@ -231,7 +234,7 @@ class ModuleRegistry:
             if not _matches_on_segment_boundary(api_path, static_prefix):
                 continue
             if len(static_prefix) > best_length:
-                best_match = (module_name, api_path)
+                best_match = (module_name, original_api_path)
                 best_length = len(static_prefix)
 
         if best_match:

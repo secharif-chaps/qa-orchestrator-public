@@ -3,7 +3,7 @@
 Tests the folder access control endpoints used by the screen backend:
 - GET /{org_id}/folders/accessible-company-ids
 - GET /{org_id}/folders/company-access/{company_id}
-- GET /{org_id}/folders/company/{company_id}/folder-id
+- GET /{org_id}/folders/company/{company_id}/folder-info
 """
 
 import uuid
@@ -232,24 +232,25 @@ class TestCheckCompanyAccess:
 
 
 # ---------------------------------------------------------------------------
-# Tests: get_company_folder_id
+# Tests: get_company_folder_info
 # ---------------------------------------------------------------------------
 
 
-class TestGetCompanyFolderId:
-    """Tests for GET /{org_id}/folders/company/{company_id}/folder-id."""
+class TestGetCompanyFolderInfo:
+    """Tests for GET /{org_id}/folders/company/{company_id}/folder-info."""
 
     @pytest.mark.asyncio
-    async def test_returns_folder_id_for_existing_company(self, client, seed_folders):
-        """Should return the folder ID containing the company."""
+    async def test_returns_folder_info_for_existing_company(self, client, seed_folders):
+        """Should return folder_id and folder_name for a company in a folder."""
         payload = _make_token_payload()
         client.app.dependency_overrides[get_internal_token] = lambda: payload
 
-        response = await client.get(f"/api/internal/organizations/{ORG_ID}/folders/company/100/folder-id")
+        response = await client.get(f"/api/internal/organizations/{ORG_ID}/folders/company/100/folder-info")
 
         assert response.status_code == 200
-        folder_id = response.json()
-        assert folder_id == str(seed_folders["folder_owned"].id)
+        data = response.json()
+        assert data["folder_id"] == str(seed_folders["folder_owned"].id)
+        assert "folder_name" in data
 
     @pytest.mark.asyncio
     async def test_returns_null_for_nonexistent_company(self, client, seed_folders):
@@ -257,7 +258,7 @@ class TestGetCompanyFolderId:
         payload = _make_token_payload()
         client.app.dependency_overrides[get_internal_token] = lambda: payload
 
-        response = await client.get(f"/api/internal/organizations/{ORG_ID}/folders/company/99999/folder-id")
+        response = await client.get(f"/api/internal/organizations/{ORG_ID}/folders/company/99999/folder-info")
 
         assert response.status_code == 200
         assert response.json() is None
@@ -269,6 +270,6 @@ class TestGetCompanyFolderId:
         client.app.dependency_overrides[get_internal_token] = lambda: payload
 
         wrong_org = str(uuid.uuid4())
-        response = await client.get(f"/api/internal/organizations/{wrong_org}/folders/company/100/folder-id")
+        response = await client.get(f"/api/internal/organizations/{wrong_org}/folders/company/100/folder-info")
 
         assert response.status_code == 403

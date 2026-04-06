@@ -405,13 +405,14 @@ async def dify_task_callback(
                 success_count = sum(1 for t in all_tasks if t.status == TaskStatus.SUCCEEDED)
                 error_count = sum(1 for t in all_tasks if t.status == TaskStatus.ERROR)
 
-                # Get folder_id from global-service
-                folder_id = await global_service.get_company_folder_id(
+                # Get folder info from global-service
+                folder_info = await global_service.get_company_folder_info(
                     org_id=company.organization_id,
                     company_id=company.id,
                     user_id=company.owner_id,
                     username=company.owner_username or "unknown",
                 )
+                folder_id = folder_info["folder_id"] if folder_info else None
 
                 asyncio.create_task(
                     task_event_manager.broadcast_all_tasks_completed(

@@ -14,6 +14,7 @@ from app.core.internal_jwt import InternalTokenPayload, get_internal_token
 from app.core.logging_config import get_logger
 from app.database import get_global_db
 from app.models.organization import ModuleName, ReferenceType
+from app.schemas.folder import CompanyFolderInfoResponse
 from app.schemas.token import ConsumeTokensRequest, ConsumeTokensResponse, TokenTransactionRead
 from app.services.folder import FolderService
 from app.services.token_manager import (
@@ -290,20 +291,20 @@ async def check_company_access(
 
 
 @router.get(
-    "/{org_id}/folders/company/{company_id}/folder-id",
-    response_model=str | None,
+    "/{org_id}/folders/company/{company_id}/folder-info",
+    response_model=CompanyFolderInfoResponse | None,
     status_code=status.HTTP_200_OK,
 )
-async def get_company_folder_id(
+async def get_company_folder_info(
     org_id: UUID = Path(..., description="Organization UUID"),
     company_id: int = Path(..., description="Company ID"),
     token_payload: InternalTokenPayload = Depends(get_internal_token),
     db: AsyncSession = Depends(get_global_db),
-) -> str | None:
-    """Get the folder ID containing a company (internal API).
+) -> CompanyFolderInfoResponse | None:
+    """Get folder info (id + name) for a company (internal API).
 
-    Returns the folder_id of the first folder containing this company
-    in the specified organization, or null if not found.
+    Returns the folder_id and folder_name of the first folder containing
+    this company in the specified organization, or null if not found.
 
     Security:
     - Requires valid internal JWT token in Authorization header
@@ -324,4 +325,10 @@ async def get_company_folder_id(
         organization_id=org_id_str,
     )
 
-    return str(folders[0].id) if folders else None
+    if not folders:
+        return None
+
+    return CompanyFolderInfoResponse(
+        folder_id=str(folders[0].id),
+        folder_name=folders[0].name,
+    )

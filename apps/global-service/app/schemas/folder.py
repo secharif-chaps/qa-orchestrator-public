@@ -267,6 +267,12 @@ class FolderShareResponse(BaseModel):
 # ==============================================================================
 
 
+class CompanyFolderInfoResponse(BaseModel):
+    """Response containing folder info for a company (internal API)."""
+    folder_id: str = Field(..., description="Folder UUID")
+    folder_name: str = Field(..., description="Folder name")
+
+
 class UserSearchResult(BaseModel):
     """Schema for user search result in share modal.
 
