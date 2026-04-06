@@ -2,10 +2,6 @@
 # Lints, tests, and publishes Docker image to GitLab Container Registry
 # Stages are defined in the root .gitlab-ci.yml
 
-variables:
-  IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-global-service
-  DOCKER_BUILDKIT: 1
-
 # ─── Reusable blocks ───────────────────────────────────
 # Run all jobs on any branch (not just when files change)
 .gs-changes: &gs-changes
@@ -72,41 +68,10 @@ global-service:test:
   coverage: '/TOTAL.*\s+(\d+%)/'
   <<: *gs-changes
 
-# ─── Build Stage (Docker) ─────────────────────────────
-.gs-docker-build:
-  image: docker:29-cli
-  script:
-    - echo "Building $IMAGE_NAME:${IMAGE_TAG}"
-    - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" apps/global-service/
-
-# Build test (don't push) - runs on all branches
-global-service:docker-build:
-  stage: build
-  extends: .gs-docker-build
+# ─── Publish (build + tag + push) ─────────────────────
+global-service:publish:
+  extends: .docker-publish
   needs: [global-service:lint, global-service:poetry-check, global-service:poetry-audit, global-service:test]
   variables:
-    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-      when: never
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH
-
-# Main branch: build + push with SHA tag and :latest
-# DISABLED: Do not publish on this test branch
-global-service:publish:
-  stage: publish
-  extends: .gs-docker-build
-  needs: [global-service:docker-build]
-  variables:
-    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-  after_script:
-    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
-    - docker tag "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}" "${IMAGE_NAME}:latest"
-    - docker push "${IMAGE_NAME}:latest"
-    - docker logout $CI_REGISTRY
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: never
+    IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-global-service
+    DOCKER_CONTEXT: apps/global-service

@@ -390,6 +390,7 @@ class TestProxyIntegrationWithRegistry:
             mock_request.method = "GET"
             mock_request.headers = {"accept": "application/json"}
             mock_request.url = MagicMock()
+            mock_request.url.path = "/api/unknown/path"
             mock_request.url.query = "page=1&size=10"
             mock_request.state = MagicMock()
 

@@ -572,14 +572,6 @@ KEYCLOAK_REALM=mint-realm
 KEYCLOAK_CLIENT_ID=mint-backend
 KEYCLOAK_CLIENT_SECRET=secret
 KEYCLOAK_ADMIN_SECRET=admin-secret
-
-# Dify
-DIFY_API_KEY=your-api-key
-DIFY_BASE_URL=https://10.0.1.1
-
-# Celery
-CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
-CELERY_RESULT_BACKEND=redis://redis:6379/0
 ```
 
 ---

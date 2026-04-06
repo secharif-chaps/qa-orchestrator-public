@@ -1,5 +1,16 @@
 FROM python:3.12-slim
 
+ARG VERSION=dev
+LABEL org.opencontainers.image.title="chapsmind-global-service" \
+      org.opencontainers.image.description="ChapsMind API gateway — auth, routing, token management, user/org admin" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.vendor="ChapsVision" \
+      org.opencontainers.image.authors="ChapsVision <dev-chapsmind@chapsvision.com>" \
+      org.opencontainers.image.url="https://git.mediaspeech.com/chapsmind/chapsmind" \
+      org.opencontainers.image.source="https://git.mediaspeech.com/chapsmind/chapsmind/-/tree/main/apps/global-service" \
+      org.opencontainers.image.licenses="Proprietary" \
+      org.opencontainers.image.base.name="docker.io/library/python:3.12-slim"
+
 WORKDIR /app
 
 # System dependencies

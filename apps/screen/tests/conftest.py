@@ -18,8 +18,8 @@ os.environ.setdefault("SKIP_KEYCLOAK_INIT", "true")
 # These must be set before any app imports
 os.environ["KEYCLOAK_SERVER_URL"] = os.environ.get("KEYCLOAK_SERVER_URL", "http://keycloak:8080")
 os.environ["KEYCLOAK_REALM"] = os.environ.get("KEYCLOAK_REALM", "chapsmind")
-os.environ["KEYCLOAK_CLIENT_ID"] = os.environ.get("KEYCLOAK_CLIENT_ID", "chapsmind-screen-back")
-os.environ["KEYCLOAK_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_CLIENT_SECRET", "chapsmind-screen-back-secret")
+os.environ["KEYCLOAK_CLIENT_ID"] = os.environ.get("KEYCLOAK_CLIENT_ID", "chapsmind-global-service-back")
+os.environ["KEYCLOAK_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_CLIENT_SECRET", "chapsmind-global-service-secret")
 os.environ["KEYCLOAK_ADMIN_CLIENT_ID"] = os.environ.get("KEYCLOAK_ADMIN_CLIENT_ID", "chapsmind-admin")
 os.environ["KEYCLOAK_ADMIN_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_ADMIN_CLIENT_SECRET", "chapsmind-admin-secret")
 os.environ["ENCRYPTION_KEY"] = "WIxh6MTz5Zx3tRvLWBFJuzm4VFMe9kxecYjFZF23FRM="

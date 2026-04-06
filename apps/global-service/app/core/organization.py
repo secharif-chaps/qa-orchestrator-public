@@ -8,15 +8,25 @@ and manage organization-based access control.
 Copied and adapted from mint-server/app/core/organization.py
 """
 
+from collections import OrderedDict
 from typing import Any
 
 from fastapi import Depends, HTTPException, Request, status
 from pydantic import BaseModel
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.keycloak import OIDCUser, idp
 from app.core.logging_config import get_logger
+from app.database import get_global_db
+from app.models.organization import Organization
 
 logger = get_logger(__name__)
+
+# LRU cache of recently seen org IDs (avoids upsert on every request).
+# Evicts least recently used when full — evicted orgs will be re-upserted on next access.
+_MAX_SYNCED_ORGS = 10_000
+_synced_orgs: OrderedDict[str, None] = OrderedDict()
 
 
 class OrganizationContext(BaseModel):
@@ -155,24 +165,21 @@ _keycloak_user_dependency = idp.get_current_user(
 )
 
 
-def get_user_organization(
-    request: Request, user: OIDCUser = Depends(_keycloak_user_dependency)
+async def get_user_organization(
+    request: Request,
+    user: OIDCUser = Depends(_keycloak_user_dependency),
+    db: AsyncSession = Depends(get_global_db),
 ) -> OrganizationContext:
     """FastAPI dependency to extract organization context from authenticated user.
 
-    This dependency should be used in API endpoints that require organization-scoped
-    access. It extracts the organization UUID and name from the already-validated
-    OIDCUser object (validated by fastapi-keycloak via the dependency chain).
-
-    SECURITY NOTE: We use user.extra_fields from the validated OIDCUser
-    instead of re-decoding the JWT token. This is safer because:
-    1. The token has already been cryptographically verified by fastapi-keycloak
-    2. The claims are extracted during that validation and stored in extra_fields
-    3. No risk of accidentally using this with an unvalidated token
+    Extracts the organization from the validated JWT token and ensures the
+    organization record exists in the database (lazy initialization).
+    This syncs Keycloak organizations with the application database on first access.
 
     Args:
         request: FastAPI Request object (unused but kept for API compatibility)
         user: Current authenticated user from Keycloak (injected by FastAPI)
+        db: Async database session for organization upsert
 
     Returns:
         OrganizationContext with organization ID, name, user ID, and username
@@ -180,7 +187,6 @@ def get_user_organization(
     Raises:
         HTTPException: 403 Forbidden if user has no organization assignment
     """
-    # Get organization from extra_fields (fastapi-keycloak puts custom claims there)
     organization_claim = user.extra_fields.get("organization")
 
     if not organization_claim:
@@ -193,7 +199,6 @@ def get_user_organization(
             detail="User must be assigned to an organization",
         )
 
-    # Extract organization from the validated user object
     org_info = extract_organization_from_validated_user(user)
 
     if not org_info:
@@ -212,7 +217,23 @@ def get_user_organization(
 
     org_id, org_name = org_info
 
-    # Get enabled_modules from extra_fields
+    # Lazy init: ensure organization exists in DB (skip if recently seen)
+    if org_id in _synced_orgs:
+        # Move to end (most recently used)
+        _synced_orgs.move_to_end(org_id)
+    else:
+        stmt = (
+            insert(Organization)
+            .values(organization_id=org_id, token_balance=0)
+            .on_conflict_do_nothing(index_elements=["organization_id"])
+        )
+        await db.execute(stmt)
+        await db.commit()
+        _synced_orgs[org_id] = None
+        # Evict least recently used if cache is full
+        if len(_synced_orgs) > _MAX_SYNCED_ORGS:
+            _synced_orgs.popitem(last=False)
+
     enabled_modules = user.extra_fields.get("enabled_modules") or []
 
     return OrganizationContext(

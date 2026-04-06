@@ -89,14 +89,30 @@ class TestCheckProxyClient:
     """Tests for the httpx proxy client health check."""
 
     async def test_proxy_client_healthy(self):
-        """Client is ready → True."""
-        with patch("app.health.is_client_ready", return_value=True):
+        """Pool reports healthy → True."""
+        with patch("app.health._pool") as mock_pool:
+            mock_pool.health_check.return_value = (True, {"status": "healthy"})
             result = await check_proxy_client()
         assert result is True
 
-    async def test_proxy_client_not_ready(self):
-        """Client is not ready → False."""
-        with patch("app.health.is_client_ready", return_value=False):
+    async def test_proxy_client_idle(self):
+        """No clients yet (idle) → True."""
+        with patch("app.health._pool") as mock_pool:
+            mock_pool.health_check.return_value = (True, {"status": "idle", "clients": 0})
+            result = await check_proxy_client()
+        assert result is True
+
+    async def test_proxy_client_degraded(self):
+        """Pool reports degraded → False."""
+        with patch("app.health._pool") as mock_pool:
+            mock_pool.health_check.return_value = (False, {"status": "degraded"})
+            result = await check_proxy_client()
+        assert result is False
+
+    async def test_proxy_client_exception(self):
+        """Pool health_check raises → False (graceful degradation)."""
+        with patch("app.health._pool") as mock_pool:
+            mock_pool.health_check.side_effect = RuntimeError("pool corrupted")
             result = await check_proxy_client()
         assert result is False
 

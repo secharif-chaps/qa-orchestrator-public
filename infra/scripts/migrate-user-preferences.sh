@@ -1,7 +1,7 @@
 #!/bin/bash
 # Data migration wrapper: Copy user preferences from backend to global-service
 #
-# This script migrates user_preferences data from the backend's chapsmind_db to
+# This script migrates user_preferences data from the backend's screen_db to
 # global-service's global_db.global_schema for Phase 4.6 of the Global Service
 # API Gateway migration.
 #

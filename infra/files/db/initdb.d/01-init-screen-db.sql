@@ -1,0 +1,3 @@
+-- Screen database is created automatically by POSTGRES_DB env var.
+-- This file exists only for documentation and consistency with other init scripts.
+-- If POSTGRES_DB is changed, rename this file accordingly.

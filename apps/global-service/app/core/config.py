@@ -5,13 +5,10 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    # API settings
+    # Server
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8001
-    SCREEN_BASE_URL: str = "http://screen:8000"  # Internal Docker service name for screen backend
-
-    # Public Keycloak URL for Swagger UI OAuth flows
-    KEYCLOAK_PUBLIC_URL: str = "http://localhost:8080"
+    SCREEN_BASE_URL: str = "http://screen:8000"
 
     # Token lock timeout (seconds) for the lock/unlock pattern
     TOKEN_LOCK_TIMEOUT_SECONDS: int = 30
@@ -19,32 +16,39 @@ class Settings(BaseSettings):
     # GRPC settings
     GRPC_PORT: int = 50051
 
-    # Logging settings
-    LOG_LEVEL: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+    # Logging
+    LOG_LEVEL: str = "INFO"
 
-    # Database settings
+    # Database
     DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/global_db"
-
-    # CORS settings (comma-separated list of allowed origins)
-    CORS_ORIGINS: str = "http://localhost"
-
-    # Keycloak settings
-
-    KEYCLOAK_SERVER_URL: str = "https://keycloak.preprod.chapsmind.com"
-    KEYCLOAK_REALM: str = "mint-preprod"
-    KEYCLOAK_CLIENT_ID: str = "mint-back"
-    KEYCLOAK_CLIENT_SECRET: str | None = None
-    KEYCLOAK_CALLBACK_URI: str = "http://localhost/callback"
-    KEYCLOAK_ADMIN_CLIENT_ID: str = "admin-cli"
-    KEYCLOAK_ADMIN_CLIENT_SECRET: str = "admin-cli-secret"
-
-    # SQLAlchemy tuning
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 20
     DB_POOL_TIMEOUT: int = 30
     DB_POOL_RECYCLE: int = 1800
 
-    # Health check settings
+    # CORS
+    CORS_ORIGINS: str = "http://localhost"
+
+    # Trusted proxies — CIDR ranges that are allowed to set X-Forwarded-* headers.
+    # Same format as Symfony TRUSTED_PROXIES (comma-separated CIDRs).
+    TRUSTED_PROXIES: str = "127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+
+    # Trusted hosts regex for X-Forwarded-Host validation.
+    # Same format as Symfony TRUSTED_HOSTS: ^(host1|host2\.example\.com)$
+    # Used by the proxy to validate forwarded hosts and prevent open redirects.
+    TRUSTED_HOSTS: str = "^localhost$"
+
+    # Keycloak
+    KEYCLOAK_SERVER_URL: str = "http://localhost:8080"
+    KEYCLOAK_PUBLIC_URL: str = "http://localhost:8080"
+    KEYCLOAK_REALM: str = "chapsmind"
+    KEYCLOAK_CLIENT_ID: str = "chapsmind-global-service-back"
+    KEYCLOAK_CLIENT_SECRET: str | None = None
+    KEYCLOAK_CALLBACK_URI: str = "http://localhost/callback"
+    KEYCLOAK_ADMIN_CLIENT_ID: str = "admin-cli"
+    KEYCLOAK_ADMIN_CLIENT_SECRET: str = "admin-cli-secret"
+
+    # Health checks
     HEALTH_CHECK_KEYCLOAK_ENABLED: bool = False
 
     # OpenAPI docs — active by default, disable with ENABLE_DOCS=false if needed
@@ -67,10 +71,7 @@ class Settings(BaseSettings):
             or os.environ.get("CI", "").lower() in ("1", "true", "yes")  # CI pipeline
         )
         if not self.INTERNAL_JWT_SECRET and not is_test:
-            raise ValueError(
-                "INTERNAL_JWT_SECRET must be set. "
-                "Generate one with: openssl rand -base64 32"
-            )
+            raise ValueError("INTERNAL_JWT_SECRET must be set. Generate one with: openssl rand -base64 32")
         return self
 
 

@@ -121,23 +121,11 @@ front:test:
     when: always
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
-# ─── Build Stage (Docker) ─────────────────────────────
-.front-docker-build:
-  image: docker:29-cli
-  script:
-    - echo "Building $IMAGE_NAME:${IMAGE_TAG}"
-    - echo "$OWLINT_REGISTRY_URL" > owlint_registry_url.txt
-    - echo "$OWLINT_DEPLOY_KEY" > owlint_deploy_key.txt
-    - docker build --no-cache --pull
-      --secret id=OWLINT_REGISTRY_URL,src=owlint_registry_url.txt
-      --secret id=OWLINT_DEPLOY_KEY,src=owlint_deploy_key.txt
-      -t "${IMAGE_NAME}:${IMAGE_TAG}" apps/front/
-    - rm -f owlint_registry_url.txt owlint_deploy_key.txt
-
-# Build test (don't push) - runs on all branches
-front:docker-build:
-  stage: build
-  extends: .front-docker-build
+# ─── Publish (build + tag + push) ─────────────────────
+# Front needs Owlint registry secrets for private npm packages.
+# Secrets are written to temp files before build (docker --secret requires files).
+front:publish:
+  extends: .docker-publish
   needs:
     [
       front:eslint,
@@ -149,28 +137,16 @@ front:docker-build:
       front:i18n,
     ]
   variables:
-    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-      when: never
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH
-
-# Main branch: build + push with SHA tag and :latest
-# DISABLED: Do not publish on this test branch
-front:publish:
-  stage: publish
-  extends: .front-docker-build
-  needs: [front:docker-build]
-  variables:
-    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
+    IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-front
+    DOCKER_CONTEXT: apps/front
+    DOCKER_BUILD_ARGS: >-
+      --secret id=OWLINT_REGISTRY_URL,src=owlint_registry_url.txt
+      --secret id=OWLINT_DEPLOY_KEY,src=owlint_deploy_key.txt
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+    # Write secrets to temp files (docker --secret requires file sources)
+    - echo "$OWLINT_REGISTRY_URL" > owlint_registry_url.txt
+    - echo "$OWLINT_DEPLOY_KEY" > owlint_deploy_key.txt
   after_script:
-    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
-    - docker tag "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}" "${IMAGE_NAME}:latest"
-    - docker push "${IMAGE_NAME}:latest"
-    - docker logout $CI_REGISTRY
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: never
+    - rm -f owlint_registry_url.txt owlint_deploy_key.txt
+    - docker logout $CI_REGISTRY || true

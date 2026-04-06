@@ -35,7 +35,7 @@ ORG_ID=$(curl -sf "$KEYCLOAK_URL/admin/realms/chapsmind/organizations" \
     -H "Authorization: Bearer $ADMIN_TOKEN" | jq -r '.[0].id')
 
 if [ -z "$ORG_ID" ] || [ "$ORG_ID" == "null" ]; then
-    echo "❌ No organization found. Run ./scripts/init-keycloak.sh first."
+    echo "❌ No organization found. Run 'bash infra/scripts/setup-keycloak.sh --create-org \"ChapsMind Dev\"' first."
     exit 1
 fi
 
@@ -49,7 +49,7 @@ echo "   Admin User ID: $ADMIN_USER_ID"
 echo ""
 echo "📦 Inserting sample data into database..."
 
-$DC exec -T db psql -U postgres -d chapsmind_db << EOF
+$DC exec -T db psql -U postgres -d screen_db << EOF
 -- Create a sample folder
 INSERT INTO folders (id, organization_id, owner_id, owner, name, color, icon, tags, is_deleted, created_at, updated_at)
 VALUES (

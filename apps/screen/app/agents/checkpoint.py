@@ -31,6 +31,7 @@ async def get_checkpointer() -> AsyncPostgresSaver:
             conninfo=_get_conn_string(),
             max_size=5,
             kwargs={"autocommit": True, "row_factory": dict_row},
+            open=False,
         )
         await _pool.open()
 
