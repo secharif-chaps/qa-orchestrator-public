@@ -193,9 +193,9 @@ import { InsufficientTokensError } from '@/api/client'
 import TokenCounter from '@/components/tokens/TokenCounter.vue'
 import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
 import FormInput from '@/components/forms/FormInput.vue'
+import { useTokenConfig } from '@/composables/useGlobalTokens'
 
-// Token cost for company creation
-const TOKENS_PER_COMPANY = 35
+const { tokensPerCompany } = useTokenConfig()
 
 const { t, locale } = useI18n()
 const router = useRouter()
@@ -408,7 +408,7 @@ const canPerformSearch = computed(() => {
   if (!currentOrganization.value?.id || tokenDataLoading.value) {
     return false
   }
-  return screenModuleEnabled.value && tokenBalance.value >= TOKENS_PER_COMPANY
+  return screenModuleEnabled.value && tokenBalance.value >= tokensPerCompany.value
 })
 
 const showInsufficientTokenAlert = computed(() => {
@@ -416,7 +416,9 @@ const showInsufficientTokenAlert = computed(() => {
     return false
   }
   return (
-    screenModuleEnabled.value && tokenBalance.value < TOKENS_PER_COMPANY && !showTokenAlert.value
+    screenModuleEnabled.value &&
+    tokenBalance.value < tokensPerCompany.value &&
+    !showTokenAlert.value
   )
 })
 

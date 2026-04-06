@@ -22,13 +22,29 @@ from app.schemas.token import (
     AddTokensRequest,
     PaginatedTokenTransactionResponse,
     TokenBalanceResponse,
+    TokenConfigResponse,
     TokenTransactionRead,
 )
-from app.services.token_manager import TokenManager
+from app.services.token_manager import TOKENS_PER_COMPANY, TokenManager
 
 logger = get_logger(__name__)
 
 router = APIRouter(prefix="/organizations", tags=["tokens"])
+
+
+@router.get(
+    "/tokens/config",
+    response_model=TokenConfigResponse,
+)
+async def get_token_config(
+    user: OIDCUser = Depends(idp.get_current_user()),
+) -> TokenConfigResponse:
+    """Get token configuration (cost per company creation).
+
+    Returns the number of tokens consumed when creating a company.
+    Available to all authenticated users.
+    """
+    return TokenConfigResponse(tokens_per_company=TOKENS_PER_COMPANY)
 
 
 @router.get(

@@ -31,6 +31,13 @@ export interface ModulesResponse {
 }
 
 /**
+ * Response for token configuration (cost per company).
+ */
+export interface TokenConfigResponse {
+  tokens_per_company: number
+}
+
+/**
  * Response for organization token balance queries.
  */
 export interface TokenBalanceResponse {

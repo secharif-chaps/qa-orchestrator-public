@@ -161,11 +161,10 @@ import { Alert, Button, Input } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
 import { organizationBalanceQuery } from '@/queries/tokens'
 import { useAddGlobalTokens } from '@/mutations/tokens'
+import { useTokenConfig } from '@/composables/useGlobalTokens'
 
 const { t } = useI18n()
-
-// Token cost per company creation
-const TOKENS_PER_COMPANY = 35
+const { tokensPerCompany } = useTokenConfig()
 
 // Inject organization ID from parent layout
 const organizationId = inject<ReturnType<typeof computed<string>>>('organizationId')
@@ -201,7 +200,7 @@ const errorMessage = computed(() => {
 })
 
 const balance = computed(() => balanceData.value?.balance ?? 0)
-const companyEquivalent = computed(() => Math.floor(balance.value / TOKENS_PER_COMPANY))
+const companyEquivalent = computed(() => Math.floor(balance.value / tokensPerCompany.value))
 
 const companyEquivalentColor = computed(() => {
   if (companyEquivalent.value === 0) return 'text-error'
@@ -211,11 +210,11 @@ const companyEquivalentColor = computed(() => {
 
 // Quick add amounts: 5, 10, 25, 50, 100 companies
 const quickAddAmounts = computed(() => [
-  { companies: 5, tokens: 5 * TOKENS_PER_COMPANY },
-  { companies: 10, tokens: 10 * TOKENS_PER_COMPANY },
-  { companies: 25, tokens: 25 * TOKENS_PER_COMPANY },
-  { companies: 50, tokens: 50 * TOKENS_PER_COMPANY },
-  { companies: 100, tokens: 100 * TOKENS_PER_COMPANY },
+  { companies: 5, tokens: 5 * tokensPerCompany.value },
+  { companies: 10, tokens: 10 * tokensPerCompany.value },
+  { companies: 25, tokens: 25 * tokensPerCompany.value },
+  { companies: 50, tokens: 50 * tokensPerCompany.value },
+  { companies: 100, tokens: 100 * tokensPerCompany.value },
 ])
 
 const canAddCustomAmount = computed(() => {

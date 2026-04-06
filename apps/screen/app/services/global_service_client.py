@@ -23,9 +23,6 @@ from app.models.organization import ModuleName, ReferenceType
 
 logger = get_logger(__name__)
 
-# Token cost for company creation - consistent with global-service
-TOKENS_PER_COMPANY = 35
-
 # Retry configuration
 MAX_RETRIES = 3
 BASE_DELAY_SECONDS = 0.5

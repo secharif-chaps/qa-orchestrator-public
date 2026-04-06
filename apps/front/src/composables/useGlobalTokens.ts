@@ -8,10 +8,31 @@
 
 import { ref, computed } from 'vue'
 import { useQuery, useQueryCache } from '@pinia/colada'
-import { organizationBalanceQuery, ORGANIZATION_TOKEN_KEYS } from '@/queries/tokens'
+import {
+  organizationBalanceQuery,
+  tokenConfigQuery,
+  ORGANIZATION_TOKEN_KEYS,
+} from '@/queries/tokens'
 
-// Token cost for company creation - consistent with backend
-export const TOKENS_PER_COMPANY = 35
+// Default fallback if the backend config endpoint is unavailable
+export const DEFAULT_TOKENS_PER_COMPANY = 35
+
+/**
+ * Composable for accessing token configuration from the backend.
+ * Returns a reactive `tokensPerCompany` value fetched from the API.
+ */
+export function useTokenConfig() {
+  const { data, isLoading } = useQuery(tokenConfigQuery)
+
+  const tokensPerCompany = computed(
+    () => data.value?.tokens_per_company ?? DEFAULT_TOKENS_PER_COMPANY,
+  )
+
+  return { tokensPerCompany, isLoading }
+}
+
+// Re-export for backwards compatibility (non-reactive, for non-component contexts)
+export const TOKENS_PER_COMPANY = DEFAULT_TOKENS_PER_COMPANY
 
 /**
  * Composable for accessing and managing global token balance.
@@ -31,6 +52,7 @@ export const TOKENS_PER_COMPANY = 35
  */
 export function useGlobalTokens(organizationId: string) {
   const queryCache = useQueryCache()
+  const { tokensPerCompany } = useTokenConfig()
 
   // Query the global token balance using the spread pattern
   const { data, isLoading, error, refetch } = useQuery({
@@ -42,15 +64,15 @@ export function useGlobalTokens(organizationId: string) {
   const balance = computed(() => data.value?.balance ?? 0)
 
   // Calculate how many companies can be created with current balance
-  const companyEquivalent = computed(() => Math.floor(balance.value / TOKENS_PER_COMPANY))
+  const companyEquivalent = computed(() => Math.floor(balance.value / tokensPerCompany.value))
 
   // Check if there are sufficient tokens for an action
   function hasSufficientTokens(required: number): boolean {
     return balance.value >= required
   }
 
-  // Check if user can create a company (has at least TOKENS_PER_COMPANY tokens)
-  const canCreateCompany = computed(() => hasSufficientTokens(TOKENS_PER_COMPANY))
+  // Check if user can create a company (has at least tokensPerCompany tokens)
+  const canCreateCompany = computed(() => hasSufficientTokens(tokensPerCompany.value))
 
   // Invalidate the balance query to force a refresh
   function refreshTokenData() {
@@ -108,6 +130,7 @@ export function useGlobalTokens(organizationId: string) {
     balance,
     companyEquivalent,
     canCreateCompany,
+    tokensPerCompany,
     isLoading,
     error,
 

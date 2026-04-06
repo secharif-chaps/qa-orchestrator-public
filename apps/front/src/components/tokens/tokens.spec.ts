@@ -128,6 +128,29 @@ vi.mock('@owlint/feathers-vue', () => ({
   },
 }))
 
+// Mock useTokenConfig composable
+vi.mock('@/composables/useGlobalTokens', () => ({
+  useTokenConfig: () => ({
+    tokensPerCompany: ref(35),
+    isLoading: ref(false),
+  }),
+  useGlobalTokens: () => ({
+    balance: ref(175),
+    companyEquivalent: ref(5),
+    canCreateCompany: ref(true),
+    tokensPerCompany: ref(35),
+    isLoading: ref(false),
+    error: ref(null),
+    hasSufficientTokens: () => true,
+    refreshTokenData: vi.fn(),
+    refreshAllTokenData: vi.fn(),
+    refetch: vi.fn(),
+    subscribeToTokenUpdates: () => ({ startSubscription: vi.fn(), stopSubscription: vi.fn() }),
+  }),
+  TOKENS_PER_COMPANY: 35,
+  DEFAULT_TOKENS_PER_COMPANY: 35,
+}))
+
 // Mock companies query
 vi.mock('@/queries/companies', () => ({
   recentCompaniesQuery: () => ({
@@ -152,7 +175,7 @@ vi.mock('@/utils/toast', () => ({
   },
 }))
 
-// Constants
+// Expected value from backend config (used for test assertions)
 const TOKENS_PER_COMPANY = 35
 
 describe('Global Token System UI Components', () => {

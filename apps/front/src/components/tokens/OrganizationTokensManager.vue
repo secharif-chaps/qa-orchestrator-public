@@ -182,9 +182,9 @@ import Card from '../ui/Card.vue'
 import ModuleStatusCard from './ModuleStatusCard.vue'
 import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'
 import { useAddGlobalTokens } from '@/mutations/tokens'
+import { useTokenConfig } from '@/composables/useGlobalTokens'
 
-// Token cost per company creation
-const TOKENS_PER_COMPANY = 35
+const { tokensPerCompany } = useTokenConfig()
 
 interface Props {
   organizationId: string
@@ -238,7 +238,7 @@ const errorMessage = computed(() => {
 })
 
 const balance = computed(() => balanceData.value?.balance ?? 0)
-const companyEquivalent = computed(() => Math.floor(balance.value / TOKENS_PER_COMPANY))
+const companyEquivalent = computed(() => Math.floor(balance.value / tokensPerCompany.value))
 
 const modules = computed(() => modulesData.value?.modules ?? [])
 
@@ -250,11 +250,11 @@ const companyEquivalentColor = computed(() => {
 
 // Quick add amounts: 5, 10, 25, 50, 100 companies
 const quickAddAmounts = computed(() => [
-  { companies: 5, tokens: 5 * TOKENS_PER_COMPANY },
-  { companies: 10, tokens: 10 * TOKENS_PER_COMPANY },
-  { companies: 25, tokens: 25 * TOKENS_PER_COMPANY },
-  { companies: 50, tokens: 50 * TOKENS_PER_COMPANY },
-  { companies: 100, tokens: 100 * TOKENS_PER_COMPANY },
+  { companies: 5, tokens: 5 * tokensPerCompany.value },
+  { companies: 10, tokens: 10 * tokensPerCompany.value },
+  { companies: 25, tokens: 25 * tokensPerCompany.value },
+  { companies: 50, tokens: 50 * tokensPerCompany.value },
+  { companies: 100, tokens: 100 * tokensPerCompany.value },
 ])
 
 const canAddCustomAmount = computed(() => {
