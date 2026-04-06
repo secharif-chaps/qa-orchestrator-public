@@ -1119,6 +1119,15 @@
   },
   "dashboard": {
     "home": {
+      "chapse": {
+        "actionPrompt": "What would you like to do today?",
+        "actions": {
+          "discover": "Discover",
+          "explore": "Mapping",
+          "screen": "Company Screen",
+          "target": "Watch"
+        }
+      },
       "modules": {
         "actions": {
           "companyScreen": "Create a Screen",
@@ -1175,7 +1184,7 @@
         "viewAll": "View all"
       },
       "welcome": {
-        "title": "Welcome back, {name}!"
+        "title": "Hello, {name}!"
       }
     },
     "quickActions": {

@@ -17,17 +17,17 @@ export interface ModuleDisplayConfig {
 export const MODULE_CONFIG: Record<ModuleName, Omit<ModuleDisplayConfig, 'status' | 'name'>> = {
   screen: {
     labelKey: 'common.modules.screen',
-    icon: 'fa-solid fa-magnifying-glass',
+    icon: 'fa-regular fa-buildings',
     color: 'indigo',
   },
   target: {
     labelKey: 'common.modules.target',
-    icon: 'fa-solid fa-bullseye',
+    icon: 'fa-regular fa-file-lines',
     color: 'cherry',
   },
   explore: {
     labelKey: 'common.modules.explore',
-    icon: 'fa-solid fa-project-diagram',
+    icon: 'fa-regular fa-chart-network',
     color: 'almond',
   },
 }
