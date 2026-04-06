@@ -51,7 +51,7 @@ class Settings(BaseSettings):
 
     # Global-service URL for internal API calls (token consumption)
     # In Docker/K8s, this is the internal service name
-    GLOBAL_SERVICE_URL: str = "http://global-service:8001/api"
+    GLOBAL_SERVICE_URL: str = "http://global-service:8000/api"
 
     # LLM settings (OpenAI-compatible: Azure AI Foundry, LiteLLM, etc.)
     LLM_PROVIDER: LLMProvider = LLMProvider.OPENAI

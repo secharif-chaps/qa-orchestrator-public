@@ -72,6 +72,7 @@ class ModuleName(StrEnum):
     SCREEN = "screen"
     TARGET = "target"
     EXPLORE = "explore"
+    STREAM = "stream"
 
 
 # Module priority for overlap resolution (lower index = higher priority)
@@ -79,6 +80,7 @@ MODULE_PRIORITY: list[ModuleName] = [
     ModuleName.SCREEN,
     ModuleName.TARGET,
     ModuleName.EXPLORE,
+    ModuleName.STREAM,
 ]
 
 

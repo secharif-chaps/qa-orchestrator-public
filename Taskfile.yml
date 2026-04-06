@@ -7,6 +7,8 @@ includes:
     dir: apps/front
   screen:
     taskfile: apps/screen/Taskfile.yaml
+  stream:
+    taskfile: apps/stream/Taskfile.yaml
 
 dotenv: ['.env']
 
@@ -29,7 +31,7 @@ tasks:
   up:
     desc: Start all services (docker compose up)
     cmds:
-      - "{{.COMPOSE}} build screen"
+      - "{{.COMPOSE}} build screen stream"
       - "{{.COMPOSE}} up -d --build --remove-orphans"
 
   down:

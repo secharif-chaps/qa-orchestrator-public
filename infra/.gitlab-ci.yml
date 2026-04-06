@@ -42,6 +42,7 @@ infra:validate-staging:
   needs:
     - front:publish
     - screen:publish
+    - stream:publish
     - global-service:publish
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
@@ -96,6 +97,7 @@ infra:validate-staging:
       POSTGRES_PASSWORD=$(openssl rand -hex 16)
       POSTGRES_DB=screen_db
       GLOBAL_DB=global_db
+      STREAM_DB=stream_db
       INTERNAL_JWT_SECRET=$(openssl rand -hex 32)
       ENCRYPTION_KEY=$(openssl rand -base64 32 | tr '+/' '-_')
       KEYCLOAK_SERVER_URL=${DEPLOY_KEYCLOAK_URL:-https://sso.deveryware.team/auth}

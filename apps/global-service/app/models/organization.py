@@ -37,14 +37,14 @@ from app.database import GLOBAL_SCHEMA, GlobalBase
 class ModuleName(StrEnum):
     """Available core modules for feature gating.
 
-    Valid modules are: screen, target, explore.
-    Note: 'stream' module has been removed from the system.
+    Valid modules are: screen, target, explore, stream.
     Note: 'translation' is now a FeatureFlag, not a core module.
     """
 
     SCREEN = "screen"
     TARGET = "target"
     EXPLORE = "explore"
+    STREAM = "stream"
 
 
 class TransactionType(StrEnum):
@@ -92,12 +92,14 @@ class FeatureFlag(StrEnum):
         DISCOVER: External Discover dashboard integration with configurable URL
         PAPPERS: Pappers API integration for company data enrichment
         WORLDCHECK: WorldCheck One API for due diligence screening (sanctions, PEP, adverse media)
+        STREAM: Multi-channel event distribution (Teams, Slack, Webhook)
     """
 
     TRANSLATION = "translation"
     DISCOVER = "discover"
     PAPPERS = "pappers"
     WORLDCHECK = "worldcheck"
+    STREAM = "stream"
 
 
 class Organization(GlobalBase):

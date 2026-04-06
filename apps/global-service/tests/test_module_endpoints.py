@@ -32,7 +32,7 @@ async def setup_test_modules(global_db_session, test_org_id):
     org = Organization(organization_id=test_org_id, token_balance=1000)
     global_db_session.add(org)
 
-    # Create modules (screen enabled, target/explore disabled)
+    # Create modules (screen enabled, all others disabled)
     modules = [
         OrganizationModule(
             organization_id=test_org_id,
@@ -47,6 +47,11 @@ async def setup_test_modules(global_db_session, test_org_id):
         OrganizationModule(
             organization_id=test_org_id,
             module_name=ModuleName.EXPLORE,
+            enabled=False,
+        ),
+        OrganizationModule(
+            organization_id=test_org_id,
+            module_name=ModuleName.STREAM,
             enabled=False,
         ),
     ]
@@ -107,11 +112,12 @@ class TestTokenManagerModuleOperations:
 
         modules = await token_manager.get_all_organization_modules(test_org_id)
 
-        assert len(modules) == 3
+        assert len(modules) == 4
         modules_by_name = {m.module_name: m for m in modules}
         assert modules_by_name[ModuleName.SCREEN].enabled is True
         assert modules_by_name[ModuleName.TARGET].enabled is False
         assert modules_by_name[ModuleName.EXPLORE].enabled is False
+        assert modules_by_name[ModuleName.STREAM].enabled is False
 
     async def test_get_or_create_module(
         self, global_db_session, test_org_id, setup_test_modules
@@ -179,7 +185,7 @@ class TestModuleBulkOperations:
         token_manager = TokenManager(db=global_db_session)
 
         # Enable all modules
-        for module_name in [ModuleName.TARGET, ModuleName.EXPLORE]:
+        for module_name in [ModuleName.TARGET, ModuleName.EXPLORE, ModuleName.STREAM]:
             await token_manager.update_module_config(
                 organization_id=test_org_id,
                 module_name=module_name,
@@ -201,6 +207,7 @@ class TestModuleBulkOperations:
             ModuleName.SCREEN,
             ModuleName.TARGET,
             ModuleName.EXPLORE,
+            ModuleName.STREAM,
         ]:
             await token_manager.update_module_config(
                 organization_id=test_org_id,
@@ -231,6 +238,7 @@ class TestModuleBulkOperations:
         assert modules_by_name[ModuleName.SCREEN].enabled is True
         assert modules_by_name[ModuleName.TARGET].enabled is True
         assert modules_by_name[ModuleName.EXPLORE].enabled is False
+        assert modules_by_name[ModuleName.STREAM].enabled is False
 
 
 if __name__ == "__main__":

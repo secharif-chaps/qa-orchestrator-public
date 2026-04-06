@@ -78,6 +78,23 @@ services:
       - ../apps/screen/scripts:/app/scripts
       - ../apps/screen/tests:/app/tests
 
+  # Stream Service — local build with hot-reload
+  stream:
+    image: chapsmind-stream:local
+    build:
+      context: ../apps/stream
+      dockerfile: Dockerfile
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      <<: [*local-internal-auth]
+      LOG_LEVEL: INFO
+    volumes:
+      - ../apps/stream/app:/app/app
+      - ../apps/stream/alembic:/app/alembic
+      - ../apps/stream/alembic.ini:/app/alembic.ini
+      - ../apps/stream/tests:/app/tests
+
   # Global Service — local build with hot-reload
   global-service:
     build:

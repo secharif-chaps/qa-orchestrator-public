@@ -7,8 +7,9 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     # Server
     API_HOST: str = "0.0.0.0"
-    API_PORT: int = 8001
+    API_PORT: int = 8000
     SCREEN_BASE_URL: str = "http://screen:8000"
+    STREAM_BASE_URL: str = "http://stream:8000"
 
     # Token lock timeout (seconds) for the lock/unlock pattern
     TOKEN_LOCK_TIMEOUT_SECONDS: int = 30
