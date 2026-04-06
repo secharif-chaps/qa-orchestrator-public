@@ -277,6 +277,7 @@ class CompanyResponse(CompanyBase):
     jobs: dict[str, Any] = Field(default_factory=dict)
     csr: dict[str, Any] = Field(default_factory=dict)
     press: dict[str, Any] = Field(default_factory=dict)
+    financial: dict[str, Any] = Field(default_factory=dict)
     team: list[dict[str, Any]] = Field(default_factory=list)
     corporate_structure: dict[str, Any] = Field(default_factory=dict)
     sanctions: dict[str, Any] = Field(default_factory=dict)
