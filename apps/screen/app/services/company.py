@@ -35,7 +35,7 @@ from app.services.company_section_service import (
     apply_translations_to_section_data,
     read_all_section_data,
 )
-from app.services.global_service_client import TOKENS_PER_COMPANY
+from app.services.token_manager import TOKENS_PER_COMPANY
 from app.services.translation import (
     SUPPORTED_LANGUAGE_CODES,
     TranslationService,

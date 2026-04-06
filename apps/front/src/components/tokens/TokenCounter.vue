@@ -72,11 +72,10 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Button } from '@owlint/feathers-vue'
+import { useTokenConfig } from '@/composables/useGlobalTokens'
 
 const { t } = useI18n()
-
-// Token cost for company creation - 35 tokens per company
-const TOKENS_PER_COMPANY = 35
+const { tokensPerCompany } = useTokenConfig()
 
 interface Props {
   tokenCount: number
@@ -115,7 +114,7 @@ const tokenLabel = computed(() => {
 })
 
 const companyEquivalenceText = computed(() => {
-  const companiesCount = Math.floor(props.tokenCount / TOKENS_PER_COMPANY)
+  const companiesCount = Math.floor(props.tokenCount / tokensPerCompany.value)
 
   if (companiesCount === 0) {
     return t('settings.tokens.companyEquivalence.none')
@@ -130,13 +129,13 @@ const companyEquivalenceText = computed(() => {
 
 const tokenIconClasses = computed(() => {
   if (props.tokenCount === 0) return 'bg-warning/10 text-warning'
-  if (props.tokenCount < TOKENS_PER_COMPANY) return 'bg-warning/15 text-warning'
+  if (props.tokenCount < tokensPerCompany.value) return 'bg-warning/15 text-warning'
   return 'bg-success/10 text-success'
 })
 
 const tokenCountClasses = computed(() => {
   if (props.tokenCount === 0) return 'text-warning'
-  if (props.tokenCount < TOKENS_PER_COMPANY) return 'text-warning'
+  if (props.tokenCount < tokensPerCompany.value) return 'text-warning'
   return 'text-success'
 })
 </script>

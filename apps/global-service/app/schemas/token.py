@@ -7,6 +7,12 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.models.organization import ReferenceType, TransactionType
 
 
+class TokenConfigResponse(BaseModel):
+    """Response schema for token configuration."""
+
+    tokens_per_company: int = Field(..., gt=0, description="Number of tokens consumed per company creation")
+
+
 class TokenBalanceResponse(BaseModel):
     """Response schema for token balance queries."""
 

@@ -6,7 +6,12 @@
  */
 
 import { defineQueryOptions } from '@pinia/colada'
-import { getOrganizationBalance, getTokenHistory, getOrganizationModules } from '@/api/tokens'
+import {
+  getOrganizationBalance,
+  getTokenConfig,
+  getTokenHistory,
+  getOrganizationModules,
+} from '@/api/tokens'
 import type { TokenHistoryFilters } from '@/types/tokens'
 
 // ============================================================================
@@ -39,6 +44,20 @@ export const ORGANIZATION_TOKEN_KEYS = {
   modules: (organizationId: string) =>
     [...ORGANIZATION_TOKEN_KEYS.root, 'modules', organizationId] as const,
 }
+
+// ============================================================================
+// Token Config Query
+// ============================================================================
+
+/**
+ * Query for global token configuration (tokens per company).
+ * Cached for 1 hour since this value rarely changes.
+ */
+export const tokenConfigQuery = defineQueryOptions(() => ({
+  key: [...ORGANIZATION_TOKEN_KEYS.root, 'config'] as const,
+  query: () => getTokenConfig(),
+  staleTime: 1000 * 60 * 60, // 1h
+}))
 
 // ============================================================================
 // Balance Query

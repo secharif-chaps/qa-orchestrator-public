@@ -10,12 +10,11 @@ import type { Company } from '@/types/company'
 import type { TokenBalanceResponse } from '@/types/tokens'
 import { toast } from '@/utils/toast'
 import { useI18n } from 'vue-i18n'
-
-// Cost per company creation (screen module)
-const TOKENS_PER_COMPANY = 35
+import { useTokenConfig } from '@/composables/useGlobalTokens'
 
 export const useCreateCompany = defineMutation(() => {
   const queryCache = useQueryCache()
+  const { tokensPerCompany } = useTokenConfig()
   const name = ref('')
   const website = ref('')
   const organizationId = ref('')
@@ -47,7 +46,7 @@ export const useCreateCompany = defineMutation(() => {
         if (currentBalance) {
           queryCache.setQueryData(balanceKey, {
             ...currentBalance,
-            balance: Math.max(0, currentBalance.balance - TOKENS_PER_COMPANY),
+            balance: Math.max(0, currentBalance.balance - tokensPerCompany.value),
           })
         }
       }

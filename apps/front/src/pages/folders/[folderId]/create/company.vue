@@ -109,9 +109,9 @@ import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/to
 import { InsufficientTokensError } from '@/api/client'
 import TokenCounter from '@/components/tokens/TokenCounter.vue'
 import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
+import { useTokenConfig } from '@/composables/useGlobalTokens'
 
-// Token cost for company creation
-const TOKENS_PER_COMPANY = 35
+const { tokensPerCompany, isLoading: isTokenConfigLoading } = useTokenConfig()
 
 const { t } = useI18n()
 const router = useRouter()
@@ -172,22 +172,24 @@ const screenModuleEnabled = computed(() => {
 })
 
 const canPerformSearch = computed(() => {
-  // Don't allow search if organization or token data is not loaded yet
-  if (!currentOrganization.value?.id || tokenDataLoading.value) {
+  // Don't allow search if organization, token data, or token config is not loaded yet
+  if (!currentOrganization.value?.id || tokenDataLoading.value || isTokenConfigLoading.value) {
     return false
   }
-  // Require at least 35 tokens (cost of 1 company creation)
-  return screenModuleEnabled.value && tokenBalance.value >= TOKENS_PER_COMPANY
+  // Require at least tokensPerCompany tokens (cost of 1 company creation)
+  return screenModuleEnabled.value && tokenBalance.value >= tokensPerCompany.value
 })
 
 const showInsufficientTokenAlert = computed(() => {
   // Don't show alert if data is still loading
-  if (!currentOrganization.value?.id || tokenDataLoading.value) {
+  if (!currentOrganization.value?.id || tokenDataLoading.value || isTokenConfigLoading.value) {
     return false
   }
-  // Show alert if tokens are below 35 (cost of 1 company creation)
+  // Show alert if tokens are below tokensPerCompany (cost of 1 company creation)
   return (
-    screenModuleEnabled.value && tokenBalance.value < TOKENS_PER_COMPANY && !showTokenAlert.value
+    screenModuleEnabled.value &&
+    tokenBalance.value < tokensPerCompany.value &&
+    !showTokenAlert.value
   )
 })
 

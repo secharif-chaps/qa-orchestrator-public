@@ -9,6 +9,7 @@ import { apiClient } from './client'
 import type {
   ModulesResponse,
   TokenBalanceResponse,
+  TokenConfigResponse,
   AddTokensRequest,
   TokenHistoryFilters,
   TokenHistoryResponse,
@@ -19,6 +20,16 @@ import type {
 // ============================================================================
 // Global Token Endpoints
 // ============================================================================
+
+/**
+ * Get token configuration (cost per company creation).
+ * Available to all authenticated users.
+ *
+ * @returns Token config with tokens_per_company value
+ */
+export const getTokenConfig = async (): Promise<TokenConfigResponse> => {
+  return apiClient.get<TokenConfigResponse>('/organizations/tokens/config')
+}
 
 /**
  * Get the current token balance for an organization.

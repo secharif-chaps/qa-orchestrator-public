@@ -7,26 +7,11 @@
  */
 
 import { computed } from 'vue'
-import { useGlobalTokens, TOKENS_PER_COMPANY } from './useGlobalTokens'
+import { useGlobalTokens, useTokenConfig } from './useGlobalTokens'
 import { useCompanyPermissions } from './useCompanyPermissions'
 import { useQuery } from '@pinia/colada'
 import { organizationModulesQuery } from '@/queries/tokens'
 import type { ModuleName, InsufficientTokensError } from '@/types/tokens'
-
-// Token costs for different actions (unchanged from before)
-// These represent how many tokens are consumed per action
-const ACTION_TOKEN_COSTS: Record<string, number> = {
-  // Company creation always costs TOKENS_PER_COMPANY (35)
-  create_company: TOKENS_PER_COMPANY,
-  search_company: TOKENS_PER_COMPANY,
-  bulk_search: TOKENS_PER_COMPANY * 5,
-  advanced_search: TOKENS_PER_COMPANY,
-  // Future actions can be added here
-  basic_targeting: TOKENS_PER_COMPANY,
-  advanced_targeting: TOKENS_PER_COMPANY,
-  basic_exploration: TOKENS_PER_COMPANY,
-  deep_dive: TOKENS_PER_COMPANY,
-}
 
 /**
  * Composable for validating token availability for actions.
@@ -48,6 +33,13 @@ const ACTION_TOKEN_COSTS: Record<string, number> = {
 export function useTokenValidation(organizationId: string) {
   const globalTokens = useGlobalTokens(organizationId)
   const companyPermissions = useCompanyPermissions()
+  const { tokensPerCompany } = useTokenConfig()
+
+  // Token costs for different actions — derived from backend config
+  const getActionCost = (action: string): number => {
+    if (action === 'bulk_search') return tokensPerCompany.value * 5
+    return tokensPerCompany.value
+  }
 
   // Query modules to check enablement status using the spread pattern
   const { data: modulesData, isLoading: isLoadingModules } = useQuery({
@@ -67,7 +59,7 @@ export function useTokenValidation(organizationId: string) {
    * Checks both module enablement AND global token balance.
    */
   function validateAction(module: ModuleName, action: string) {
-    const tokenCost = ACTION_TOKEN_COSTS[action] ?? TOKENS_PER_COMPANY
+    const tokenCost = getActionCost(action)
     const hasTokens = computed(() => globalTokens.hasSufficientTokens(tokenCost))
     const moduleEnabled = computed(() => isModuleEnabled(module))
 
@@ -101,7 +93,7 @@ export function useTokenValidation(organizationId: string) {
     module: ModuleName,
     action: string = 'create_company',
   ): InsufficientTokensError | null {
-    const tokenCost = ACTION_TOKEN_COSTS[action] ?? TOKENS_PER_COMPANY
+    const tokenCost = getActionCost(action)
     const moduleEnabled = isModuleEnabled(module)
 
     // If module is disabled, no token error (different error type)
@@ -143,7 +135,7 @@ export function useTokenValidation(organizationId: string) {
       error: globalTokens.error,
       hasAnyTokens: computed(() => globalTokens.balance.value > 0),
       canUseModule: computed(
-        () => moduleEnabled.value && globalTokens.balance.value >= TOKENS_PER_COMPANY,
+        () => moduleEnabled.value && globalTokens.balance.value >= tokensPerCompany.value,
       ),
       companyEquivalent: globalTokens.companyEquivalent,
     }
