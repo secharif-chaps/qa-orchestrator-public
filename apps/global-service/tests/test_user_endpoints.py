@@ -23,6 +23,7 @@ import pytest
 from fastapi import HTTPException, status
 from fastapi.testclient import TestClient
 
+from app.core.config import settings
 from app.core.keycloak import OIDCUser
 from app.main import app
 
@@ -165,6 +166,120 @@ class TestGetAllUsers:
     def test_get_users_requires_admin_role(self, client, deny_auth):
         """GET /api/users requires admin.organizations role."""
         response = client.get("/api/users?page=1&limit=20")
+
+        assert response.status_code == 403
+
+
+class TestGetUserOrganization:
+    """Test GET /api/users/{user_id}/organization endpoint."""
+
+    @patch(f"{KC_SERVICE}.get_user_organization_optimized", new_callable=AsyncMock)
+    @patch(f"{KC_SERVICE}.get_user", new_callable=AsyncMock)
+    def test_get_user_organization_success(
+        self, mock_get_user, mock_get_org, client
+    ):
+        """GET /api/users/{user_id}/organization returns user's organization."""
+        mock_get_user.return_value = SAMPLE_KC_USER_1
+        mock_get_org.return_value = {"id": "org-uuid-1", "name": "Test Org"}
+
+        response = client.get("/api/users/user-uuid-1/organization")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["user_id"] == "user-uuid-1"
+        assert data["username"] == "john.doe"
+        assert data["organization"]["id"] == "org-uuid-1"
+        assert data["organization"]["name"] == "Test Org"
+
+    @patch(f"{KC_SERVICE}.get_user_organization_optimized", new_callable=AsyncMock)
+    @patch(f"{KC_SERVICE}.get_user", new_callable=AsyncMock)
+    def test_get_user_organization_no_org(
+        self, mock_get_user, mock_get_org, client
+    ):
+        """GET /api/users/{user_id}/organization returns null when user has no org."""
+        mock_get_user.return_value = SAMPLE_KC_USER_2
+        mock_get_org.return_value = None
+
+        response = client.get("/api/users/user-uuid-2/organization")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["user_id"] == "user-uuid-2"
+        assert data["organization"] is None
+
+    @patch(f"{KC_SERVICE}.get_user", new_callable=AsyncMock)
+    def test_get_user_organization_user_not_found(self, mock_get_user, client):
+        """GET /api/users/{user_id}/organization returns 404 for unknown user."""
+        mock_get_user.return_value = None
+
+        response = client.get("/api/users/unknown-uuid/organization")
+
+        assert response.status_code == 404
+
+    def test_get_user_organization_requires_admin_role(self, client, deny_auth):
+        """GET /api/users/{user_id}/organization requires admin.organizations."""
+        response = client.get("/api/users/user-uuid-1/organization")
+
+        assert response.status_code == 403
+
+
+class TestGetUserPermissions:
+    """Test GET /api/users/{user_id}/permissions endpoint."""
+
+    @patch(f"{KC_SERVICE}.get_user_realm_roles", new_callable=AsyncMock)
+    @patch(f"{KC_SERVICE}.get_user", new_callable=AsyncMock)
+    def test_get_user_permissions_success(
+        self, mock_get_user, mock_get_roles, client
+    ):
+        """GET /api/users/{user_id}/permissions returns filtered permissions."""
+        mock_get_user.return_value = SAMPLE_KC_USER_1
+        mock_get_roles.return_value = [
+            {"name": "company.create"},
+            {"name": "organization.read"},
+            {"name": "uma_authorization"},
+            {"name": "offline_access"},
+            {"name": f"default-roles-{settings.KEYCLOAK_REALM.lower()}"},
+            {"name": "realm-management/manage-users"},
+        ]
+
+        response = client.get("/api/users/user-uuid-1/permissions")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["user_id"] == "user-uuid-1"
+        assert data["username"] == "john.doe"
+        assert set(data["permissions"]) == {"company.create", "organization.read"}
+
+    @patch(f"{KC_SERVICE}.get_user_realm_roles", new_callable=AsyncMock)
+    @patch(f"{KC_SERVICE}.get_user", new_callable=AsyncMock)
+    def test_get_user_permissions_empty(
+        self, mock_get_user, mock_get_roles, client
+    ):
+        """GET /api/users/{user_id}/permissions returns empty list when no app roles."""
+        mock_get_user.return_value = SAMPLE_KC_USER_2
+        mock_get_roles.return_value = [
+            {"name": "uma_authorization"},
+            {"name": "offline_access"},
+        ]
+
+        response = client.get("/api/users/user-uuid-2/permissions")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["permissions"] == []
+
+    @patch(f"{KC_SERVICE}.get_user", new_callable=AsyncMock)
+    def test_get_user_permissions_user_not_found(self, mock_get_user, client):
+        """GET /api/users/{user_id}/permissions returns 404 for unknown user."""
+        mock_get_user.return_value = None
+
+        response = client.get("/api/users/unknown-uuid/permissions")
+
+        assert response.status_code == 404
+
+    def test_get_user_permissions_requires_admin_role(self, client, deny_auth):
+        """GET /api/users/{user_id}/permissions requires admin.organizations."""
+        response = client.get("/api/users/user-uuid-1/permissions")
 
         assert response.status_code == 403
 
