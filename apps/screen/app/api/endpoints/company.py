@@ -76,25 +76,30 @@ async def get_recent_companies(
     )
 
     # Enrich companies with folder info from global-service (parallel calls)
-    async def fetch_folder_id(company: CompanyResponse) -> tuple[int | None, str | None]:
+    async def fetch_folder_info(company: CompanyResponse) -> tuple[int | None, dict[str, str] | None]:
         if company.id is None:
             return None, None
-        folder_id = await global_service.get_company_folder_id(
+        folder_info = await global_service.get_company_folder_info(
             org_id=org_context.organization_id,
             company_id=company.id,
             user_id=org_context.user_id,
             username=org_context.username,
         )
-        return company.id, folder_id
+        return company.id, folder_info
 
-    folder_results = await asyncio.gather(
-        *(fetch_folder_id(c) for c in companies)
-    )
-    folder_map = {cid: fid for cid, fid in folder_results if cid is not None}
+    folder_results = await asyncio.gather(*(fetch_folder_info(c) for c in companies))
+    folder_map = {cid: info for cid, info in folder_results if cid is not None and info is not None}
 
     for company in companies:
         if company.id in folder_map:
-            company.folder_id = folder_map[company.id]
+            info = folder_map[company.id]
+            company.folder_id = info.get("folder_id", None)
+            company.folder_name = info.get("folder_name", None)
+        else:
+            logger.warning(
+                f"Company {company.id} ({company.name}) has no folder info - every company should belong to a folder",
+                extra={"company_id": company.id, "organization_id": org_context.organization_id},
+            )
 
     return companies
 

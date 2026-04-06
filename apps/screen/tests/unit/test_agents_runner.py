@@ -267,7 +267,9 @@ class TestBroadcastCompletion:
     async def test_folder_id_via_global_service(self, mock_events, mock_get_client, runner, mock_db):
         """REGRESSION: folder_id must be looked up via GlobalServiceClient."""
         mock_client = MagicMock()
-        mock_client.get_company_folder_id = AsyncMock(return_value="folder-uuid-123")
+        mock_client.get_company_folder_info = AsyncMock(
+            return_value={"folder_id": "folder-uuid-123", "folder_name": "Test Folder"}
+        )
         mock_get_client.return_value = mock_client
 
         task_map = {"profile": MagicMock(status=TaskStatus.SUCCEEDED)}
@@ -284,7 +286,7 @@ class TestBroadcastCompletion:
     @patch("app.agents.runner.task_event_manager")
     async def test_no_folder_item_returns_none(self, mock_events, mock_get_client, runner, mock_db):
         mock_client = MagicMock()
-        mock_client.get_company_folder_id = AsyncMock(return_value=None)
+        mock_client.get_company_folder_info = AsyncMock(return_value=None)
         mock_get_client.return_value = mock_client
 
         task_map = {"profile": MagicMock(status=TaskStatus.SUCCEEDED)}
@@ -300,7 +302,7 @@ class TestBroadcastCompletion:
     @patch("app.agents.runner.task_event_manager")
     async def test_correct_success_error_counts(self, mock_events, mock_get_client, runner, mock_db):
         mock_client = MagicMock()
-        mock_client.get_company_folder_id = AsyncMock(return_value=None)
+        mock_client.get_company_folder_info = AsyncMock(return_value=None)
         mock_get_client.return_value = mock_client
         mock_events.broadcast_all_tasks_completed = AsyncMock()
 
@@ -545,7 +547,7 @@ class TestRunFullAnalysis:
             patch("app.agents.runner.get_global_service_client") as mock_get_gsc,
         ):
             mock_gsc_instance = MagicMock()
-            mock_gsc_instance.get_company_folder_id = AsyncMock(return_value=None)
+            mock_gsc_instance.get_company_folder_info = AsyncMock(return_value=None)
             mock_get_gsc.return_value = mock_gsc_instance
 
             await runner.run(mock_db, 1, "Test", "https://test.com", "org-1", "owner-1")
@@ -566,7 +568,7 @@ class TestRunFullAnalysis:
         mock_events.broadcast_task_update = AsyncMock()
         mock_events.broadcast_all_tasks_completed = AsyncMock()
         mock_gsc_instance = MagicMock()
-        mock_gsc_instance.get_company_folder_id = AsyncMock(return_value=None)
+        mock_gsc_instance.get_company_folder_info = AsyncMock(return_value=None)
         mock_get_gsc.return_value = mock_gsc_instance
 
         mock_graph = MagicMock()
@@ -651,7 +653,7 @@ class TestRunFullAnalysis:
         mock_events.broadcast_task_update = AsyncMock()
         mock_events.broadcast_all_tasks_completed = AsyncMock()
         mock_gsc_instance = MagicMock()
-        mock_gsc_instance.get_company_folder_id = AsyncMock(return_value=None)
+        mock_gsc_instance.get_company_folder_info = AsyncMock(return_value=None)
         mock_get_gsc.return_value = mock_gsc_instance
 
         mock_graph = MagicMock()

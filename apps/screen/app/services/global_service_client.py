@@ -614,17 +614,17 @@ class GlobalServiceClient:
                 detail="Folder service temporarily unavailable",
             )
 
-    async def get_company_folder_id(
+    async def get_company_folder_info(
         self,
         org_id: str,
         company_id: int,
         user_id: str,
         username: str = "unknown",
-    ) -> str | None:
-        """Get the folder ID containing a company.
+    ) -> dict[str, str] | None:
+        """Get folder info (id + name) for a company.
 
-        Calls global-service internal API to get the folder_id of the first
-        folder containing this company in the organization.
+        Calls global-service internal API to get the folder_id and folder_name
+        of the first folder containing this company in the organization.
 
         Args:
             org_id: Keycloak organization UUID
@@ -633,9 +633,9 @@ class GlobalServiceClient:
             username: Username for internal JWT
 
         Returns:
-            Folder ID as string, or None if company is not in any folder
+            Dict with folder_id and folder_name, or None if not found
         """
-        url = f"{self.base_url}/internal/organizations/{org_id}/folders/company/{company_id}/folder-id"
+        url = f"{self.base_url}/internal/organizations/{org_id}/folders/company/{company_id}/folder-info"
 
         token = self._create_internal_token(
             user_id=user_id,
@@ -650,20 +650,23 @@ class GlobalServiceClient:
                 return await client.get(url, headers=headers)
 
         try:
-            response = await self._retry_with_backoff(make_request, "Get company folder ID")
+            response = await self._retry_with_backoff(make_request, "Get company folder info")
 
             if response.status_code == 200:
-                return response.json()
+                data = response.json()
+                if data is None:
+                    return None
+                return data
 
             logger.warning(
-                f"Global-service returned {response.status_code} getting company folder ID",
+                f"Global-service returned {response.status_code} getting company folder info",
                 extra={"organization_id": org_id, "company_id": company_id},
             )
             return None
 
         except (httpx.RequestError, HTTPException) as e:
             logger.warning(
-                f"Failed to get company folder ID: {e}",
+                f"Failed to get company folder info: {e}",
                 extra={"organization_id": org_id, "company_id": company_id},
             )
             return None

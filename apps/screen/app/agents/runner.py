@@ -400,11 +400,12 @@ class CompanyAnalysisRunner:
         # Look up folder_id via global-service
         try:
             client = get_global_service_client()
-            folder_id = await client.get_company_folder_id(
+            folder_info = await client.get_company_folder_info(
                 org_id=organization_id,
                 company_id=company_id,
                 user_id=owner_id,
             )
+            folder_id = folder_info["folder_id"] if folder_info else None
         except Exception as e:
             logger.warning("Failed to get folder_id from global-service", extra={"error": str(e)})
             folder_id = None
