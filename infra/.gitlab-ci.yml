@@ -62,7 +62,7 @@ infra:validate-staging:
       else
         # main branch — .docker-publish pushes tag "main"
         IMAGE_TAG="main"
-        SUB_DOMAIN="$CI_COMMIT_REF_SLUG"
+        SUB_DOMAIN="${DEPLOY_SUB_DOMAIN:-chapsmind}"
       fi
     - DYNAMIC_ENVIRONMENT_URL="https://${SUB_DOMAIN}.${BASE_DOMAIN}"
     - echo "DYNAMIC_ENVIRONMENT_URL=${DYNAMIC_ENVIRONMENT_URL}" >> deploy.env
