@@ -40,6 +40,7 @@ from app.models.company_children import (
     RiskLevel,
     SanctionType,
 )
+from app.models.company_financial import CompanyFinancial, CompanyFinancialMetric, CompanyFundingRound
 from app.models.company_sections import (
     CompanyCsr,
     CompanyDigital,
@@ -1552,6 +1553,173 @@ def get_corporate_structure_data(db: Session, company_id: int) -> dict[str, Any]
 
 
 # =============================================================================
+# FINANCIAL DATA - WRITER AND READER
+# =============================================================================
+
+# Map: camelCase key in agent data -> (snake_case value column, snake_case source column)
+_FINANCIAL_SOURCED_FIELDS: dict[str, tuple[str, str]] = {
+    "companyType": ("company_type", "company_type_source"),
+    "tickerSymbol": ("ticker_symbol", "ticker_symbol_source"),
+    "stockExchange": ("stock_exchange", "stock_exchange_source"),
+    "currency": ("currency", "currency_source"),
+    "fiscalYearEnd": ("fiscal_year_end", "fiscal_year_end_source"),
+    "revenue": ("revenue", "revenue_source"),
+    "revenueGrowth": ("revenue_growth", "revenue_growth_source"),
+    "grossMargin": ("gross_margin", "gross_margin_source"),
+    "ebitdaMargin": ("ebitda_margin", "ebitda_margin_source"),
+    "netMargin": ("net_margin", "net_margin_source"),
+    "marketCap": ("market_cap", "market_cap_source"),
+    "enterpriseValue": ("enterprise_value", "enterprise_value_source"),
+    "peRatio": ("pe_ratio", "pe_ratio_source"),
+    "evEbitda": ("ev_ebitda", "ev_ebitda_source"),
+    "evRevenue": ("ev_revenue", "ev_revenue_source"),
+    "employeeCount": ("employee_count", "employee_count_source"),
+    "totalFunding": ("total_funding", "total_funding_source"),
+    "lastValuation": ("last_valuation", "last_valuation_source"),
+    "debtToEquity": ("debt_to_equity", "debt_to_equity_source"),
+    "freeCashFlow": ("free_cash_flow", "free_cash_flow_source"),
+}
+
+
+def save_financial_data(db: Session, company_id: int, data: dict) -> None:
+    """Save financial data from agent callback to normalized tables."""
+    # Get or create
+    existing = db.query(CompanyFinancial).filter(CompanyFinancial.company_id == company_id).first()
+    if existing:
+        financial = existing
+    else:
+        financial = CompanyFinancial(company_id=company_id)
+        db.add(financial)
+
+    # Extract insights
+    financial.insights = _get_string_value(data, "insights")
+    financial.insights_source = "Chaps-e"
+
+    # Extract 20 SourcedValue pairs (using _get_sourced_value helper)
+    for camel_key, (value_col, source_col) in _FINANCIAL_SOURCED_FIELDS.items():
+        value, source = _get_sourced_value(data, camel_key)
+        setattr(financial, value_col, value)
+        setattr(financial, source_col, source)
+
+    db.flush()
+
+    # Save 1:N children: metrics
+    _save_financial_metrics(db, company_id, data.get("metrics") or [])
+    # Save 1:N children: funding rounds
+    _save_funding_rounds(db, company_id, data.get("fundingRounds") or [])
+
+    logger.info("Saved financial data for company %s", company_id)
+
+
+def _save_financial_metrics(db: Session, company_id: int, metrics: list[dict]) -> None:
+    """Save financial metrics to normalized table (full replace)."""
+    db.query(CompanyFinancialMetric).filter(
+        CompanyFinancialMetric.company_id == company_id
+    ).delete()
+
+    for metric_data in metrics:
+        metric_name = metric_data.get("metricName") or metric_data.get("metric_name")
+        if not metric_name:
+            logger.warning("Metric without name skipped for company %s", company_id)
+            continue
+        metric = CompanyFinancialMetric(
+            company_id=company_id,
+            metric_name=metric_name,
+            period=metric_data.get("period"),
+            value=metric_data.get("value"),
+            unit=metric_data.get("unit"),
+            source=metric_data.get("source"),
+        )
+        db.add(metric)
+
+    db.flush()
+
+
+def _save_funding_rounds(db: Session, company_id: int, rounds: list[dict]) -> None:
+    """Save funding rounds to normalized table (full replace)."""
+    db.query(CompanyFundingRound).filter(
+        CompanyFundingRound.company_id == company_id
+    ).delete()
+
+    for round_data in rounds:
+        funding_round = CompanyFundingRound(
+            company_id=company_id,
+            round_type=round_data.get("roundType") or round_data.get("round_type"),
+            amount=round_data.get("amount"),
+            date=round_data.get("date"),
+            lead_investor=round_data.get("leadInvestor") or round_data.get("lead_investor"),
+            valuation=round_data.get("valuation"),
+            source=round_data.get("source"),
+        )
+        db.add(funding_round)
+
+    db.flush()
+
+
+def get_financial_data(db: Session, company_id: int) -> dict[str, Any]:
+    """Read financial data from normalized tables for API response."""
+    financial = db.query(CompanyFinancial).filter(
+        CompanyFinancial.company_id == company_id
+    ).first()
+
+    if not financial:
+        return {}
+
+    result: dict[str, Any] = {}
+
+    # Add insights
+    if financial.insights:
+        result["insights"] = {
+            "value": financial.insights,
+            "source": financial.insights_source or "Chaps-e",
+        }
+
+    # Add SourcedValue fields
+    for camel_key, (value_attr, source_attr) in _FINANCIAL_SOURCED_FIELDS.items():
+        value = getattr(financial, value_attr)
+        if value is not None:
+            result[camel_key] = {
+                "value": value,
+                "source": getattr(financial, source_attr),
+            }
+
+    # Add 1:N: financial metrics
+    metrics = db.query(CompanyFinancialMetric).filter(
+        CompanyFinancialMetric.company_id == company_id
+    ).all()
+    if metrics:
+        result["metrics"] = [
+            {
+                "metric_name": m.metric_name,
+                "period": m.period,
+                "value": m.value,
+                "unit": m.unit,
+                "source": m.source,
+            }
+            for m in metrics
+        ]
+
+    # Add 1:N: funding rounds
+    rounds = db.query(CompanyFundingRound).filter(
+        CompanyFundingRound.company_id == company_id
+    ).all()
+    if rounds:
+        result["fundingRounds"] = [
+            {
+                "round_type": r.round_type,
+                "amount": r.amount,
+                "date": r.date,
+                "lead_investor": r.lead_investor,
+                "valuation": r.valuation,
+                "source": r.source,
+            }
+            for r in rounds
+        ]
+
+    return result
+
+
+# =============================================================================
 # SANCTIONS DATA - WRITER AND READER
 # =============================================================================
 
@@ -1744,6 +1912,7 @@ def write_section_data(
         "jobs": save_jobs_data,
         "csr": save_csr_data,
         "press": save_press_data,
+        "financial": save_financial_data,
         "team": save_team_data,
         "corporate_structure": save_corporate_structure_data,
         "sanctions": save_sanctions_data,
@@ -1776,6 +1945,7 @@ def read_all_section_data(db: Session, company_id: int) -> dict[str, Any]:
         "jobs": get_jobs_data(db, company_id),
         "csr": get_csr_data(db, company_id),
         "press": get_press_data(db, company_id),
+        "financial": get_financial_data(db, company_id),
         "team": get_team_data(db, company_id),
         "corporate_structure": get_corporate_structure_data(db, company_id),
         "sanctions": get_sanctions_data(db, company_id),

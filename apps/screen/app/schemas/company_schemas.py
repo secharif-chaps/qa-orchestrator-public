@@ -602,6 +602,64 @@ TeamMemberResponse.model_rebuild()
 TeamMemberSourced.model_rebuild()
 
 
+# Financial section schemas
+
+
+class FinancialMetricResponse(BaseModel):
+    """Individual financial metric for a reporting period."""
+
+    metric_name: str
+    period: str | None = None
+    value: str | None = None
+    unit: str | None = None
+    source: str | None = None
+
+    model_config = ConfigDict(from_attributes=True, extra="ignore")
+
+
+class FundingRoundResponse(BaseModel):
+    """Funding round in company's financing history."""
+
+    round_type: str | None = None
+    amount: str | None = None
+    date: str | None = None
+    lead_investor: str | None = None
+    valuation: str | None = None
+    source: str | None = None
+
+    model_config = ConfigDict(from_attributes=True, extra="ignore")
+
+
+class FinancialResponse(BaseModel):
+    """Financial section response with overview, metrics, and funding rounds."""
+
+    insights: SourcedValue[str] | None = None
+    companyType: SourcedValue[str] | None = None
+    tickerSymbol: SourcedValue[str] | None = None
+    stockExchange: SourcedValue[str] | None = None
+    currency: SourcedValue[str] | None = None
+    fiscalYearEnd: SourcedValue[str] | None = None
+    revenue: SourcedValue[str] | None = None
+    revenueGrowth: SourcedValue[str] | None = None
+    grossMargin: SourcedValue[str] | None = None
+    ebitdaMargin: SourcedValue[str] | None = None
+    netMargin: SourcedValue[str] | None = None
+    marketCap: SourcedValue[str] | None = None
+    enterpriseValue: SourcedValue[str] | None = None
+    peRatio: SourcedValue[str] | None = None
+    evEbitda: SourcedValue[str] | None = None
+    evRevenue: SourcedValue[str] | None = None
+    employeeCount: SourcedValue[str] | None = None
+    totalFunding: SourcedValue[str] | None = None
+    lastValuation: SourcedValue[str] | None = None
+    debtToEquity: SourcedValue[str] | None = None
+    freeCashFlow: SourcedValue[str] | None = None
+    metrics: list[FinancialMetricResponse] | None = None
+    fundingRounds: list[FundingRoundResponse] | None = None
+
+    model_config = ConfigDict(from_attributes=True, extra="ignore")
+
+
 # Complete company sections response
 
 
@@ -619,6 +677,7 @@ class CompanySectionsResponse(BaseModel):
     jobs: JobsResponse = Field(default_factory=JobsResponse)
     csr: CsrResponse = Field(default_factory=CsrResponse)
     press: PressResponse = Field(default_factory=PressResponse)
+    financial: FinancialResponse = Field(default_factory=FinancialResponse)
     team: list[TeamMemberResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
