@@ -1,0 +1,75 @@
+# Stream Service GitLab CI/CD Pipeline
+# Lints, tests, and publishes Docker image to GitLab Container Registry
+# Stages are defined in the root .gitlab-ci.yml
+
+# ─── Reusable blocks ───────────────────────────────────
+# Run all jobs on any branch (not just when files change)
+.stream-changes: &stream-changes
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+# ─── Lint Stage ────────────────────────────────────────
+stream:poetry-check:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  script:
+    - cd apps/stream && poetry check && poetry check --lock
+  <<: *stream-changes
+
+stream:lint:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  script:
+    - cd apps/stream && ruff check app/
+  <<: *stream-changes
+
+stream:mypy:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  script:
+    - cd apps/stream
+    - poetry config virtualenvs.create false && poetry install --no-interaction
+    - mypy app/ --ignore-missing-imports
+  <<: *stream-changes
+
+stream:poetry-audit:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  script:
+    - cd apps/stream && poetry audit --ignore-package=ecdsa
+  <<: *stream-changes
+
+# ─── Test Stage ────────────────────────────────────────
+stream:test:
+  stage: test
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  before_script:
+    - cd apps/stream
+    - poetry config virtualenvs.create false && poetry install --no-interaction
+  script:
+    - pytest tests/ -v --cov=app --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: apps/stream/report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: apps/stream/coverage.xml
+  coverage: '/TOTAL.*\s+(\d+%)/'
+  <<: *stream-changes
+
+# ─── Publish (build + tag + push) ─────────────────────
+stream:publish:
+  extends: .docker-publish
+  needs: [stream:lint, stream:mypy, stream:poetry-check, stream:poetry-audit, stream:test]
+  variables:
+    IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-stream
+    DOCKER_CONTEXT: apps/stream

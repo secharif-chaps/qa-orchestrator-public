@@ -9,7 +9,7 @@ These tests verify the full flow:
 
 Requirements:
 - Running Keycloak instance
-- Running gateway (global-service) on port 8001
+- Running gateway (global-service) on port 8000
 - Running backend (screen-poc) on port 8000
 - Valid test user in Keycloak
 
@@ -35,7 +35,7 @@ def pytest_configure(config):
 @pytest.fixture
 def gateway_url():
     """Gateway service URL."""
-    return "http://localhost:8001"
+    return "http://localhost:8000"
 
 
 @pytest.fixture

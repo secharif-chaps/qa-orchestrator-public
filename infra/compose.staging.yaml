@@ -81,6 +81,19 @@ services:
     depends_on:
       db: { condition: service_healthy }
 
+  stream:
+    deploy:
+      <<: *resource_limits_medium
+    environment:
+      INTERNAL_JWT_SECRET: ${INTERNAL_JWT_SECRET}
+      INTERNAL_ALLOWED_IPS: ${INTERNAL_ALLOWED_IPS:-172.16.0.0/12,192.168.0.0/16,10.0.0.0/8}
+      DATABASE_URL: >-
+        postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${STREAM_DB:-stream_db}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    pull_policy: always
+    depends_on:
+      db: { condition: service_healthy }
+
   global-service:
     deploy:
       <<: *resource_limits_medium
@@ -102,7 +115,7 @@ services:
         traefik.http.routers.api-${ENV_NAME_SLUG}.rule=Host(`${SERVER_NAME}`)
         && (PathPrefix(`/api`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/openapi.json`) || PathPrefix(`/static`) || PathPrefix(`/health`))
       - 'traefik.http.routers.api-${ENV_NAME_SLUG}.tls=true'
-      - 'traefik.http.services.api-${ENV_NAME_SLUG}.loadbalancer.server.port=8001'
+      - 'traefik.http.services.api-${ENV_NAME_SLUG}.loadbalancer.server.port=8000'
       - 'traefik.http.services.api-${ENV_NAME_SLUG}.loadbalancer.healthcheck.path=/health/ready'
       - 'traefik.http.services.api-${ENV_NAME_SLUG}.loadbalancer.healthcheck.interval=30s'
     networks: *common_networks
@@ -110,6 +123,7 @@ services:
     depends_on:
       db: { condition: service_healthy }
       screen: { condition: service_started }
+      stream: { condition: service_started }
 
   # ─── Target services disabled for now (no CI publish yet) ──
   target:

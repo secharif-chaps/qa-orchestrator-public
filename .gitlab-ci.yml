@@ -18,6 +18,7 @@ include:
   - local: apps/front/.gitlab-ci.yml
   - local: apps/screen/.gitlab-ci.yml
   - local: apps/global-service/.gitlab-ci.yml
+  - local: apps/stream/.gitlab-ci.yml
   - local: infra/.gitlab-ci.yml
   # AI-powered jobs (auto-review, dev-agent, ticket scanner)
   - local: .gitlab/ai-jobs.gitlab-ci.yml

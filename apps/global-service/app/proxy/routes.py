@@ -52,7 +52,10 @@ async def init_module_registry() -> ModuleRegistry:
     Called at startup from main.py. Discovers all backend schemas.
     """
     global _registry
-    backends = {"screen": settings.SCREEN_BASE_URL}
+    backends = {
+        "screen": settings.SCREEN_BASE_URL,
+        "stream": settings.STREAM_BASE_URL,
+    }
     _registry = ModuleRegistry(backends=backends)
     await _registry.discover_all()
     return _registry

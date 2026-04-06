@@ -50,6 +50,6 @@ RUN python scripts/generate_protos.py
 # Make entrypoint executable
 RUN chmod +x entrypoint.sh && sed -i 's/\r$//' entrypoint.sh
 
-EXPOSE 8001 50051
+EXPOSE 8000 50051
 
 ENTRYPOINT ["./entrypoint.sh"]

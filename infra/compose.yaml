@@ -19,7 +19,6 @@ x-internal-auth: &internal-auth
 x-encryption: &encryption
   ENCRYPTION_KEY: ${ENCRYPTION_KEY}
 
-
 # ─── Services ──────────────────────────────────────────
 services:
   # Vue Frontend
@@ -46,6 +45,17 @@ services:
       LLM_API_VERSION: ${LLM_API_VERSION:-}
 
 
+  # FastAPI Backend (Stream) — Multi-channel event distribution
+  stream:
+    image: ${DOCKER_REGISTRY:-registry.git.mediaspeech.com/chapsmind/chapsmind}/chapsmind-stream:${DOCKER_CHAPSMIND_VERSION:-latest}
+    depends_on:
+      db: { condition: service_healthy }
+    restart: unless-stopped
+    environment:
+      <<: [*internal-auth]
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${STREAM_DB:-stream_db}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
   # Global Service (Gateway) — always up, routes to screen and target
   # No depends_on screen/target: they are optional modules (profiled in local dev)
   global-service:
@@ -58,14 +68,15 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       SERVICE_NAME: global-service
       API_HOST: "0.0.0.0"
-      API_PORT: 8001
+      API_PORT: 8000
       GRPC_PORT: 50051
       SCREEN_BASE_URL: http://screen:8000
+      STREAM_BASE_URL: http://stream:8000
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${GLOBAL_DB:-global_db}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
 
   # PostgreSQL Database — shared instance, multiple databases (no profile — always up)
-  # Databases: screen_db, global_db, keycloak, target_db, n8n_db, agent_memory_db
+  # Databases: screen_db, global_db, stream_db, keycloak, target_db, n8n_db, agent_memory_db
   db:
     image: postgres:17-alpine
     restart: unless-stopped
