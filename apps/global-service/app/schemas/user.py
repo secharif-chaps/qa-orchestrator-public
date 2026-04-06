@@ -5,6 +5,29 @@ import re
 from pydantic import BaseModel, EmailStr, field_validator
 
 
+class OrganizationInfo(BaseModel):
+    """Organization summary returned by Keycloak."""
+
+    id: str
+    name: str
+
+
+class UserOrganizationResponse(BaseModel):
+    """Response for user's current organization membership."""
+
+    user_id: str
+    username: str | None = None
+    organization: OrganizationInfo | None = None
+
+
+class UserPermissionsResponse(BaseModel):
+    """Response for user's current permissions."""
+
+    user_id: str
+    username: str | None = None
+    permissions: list[str]
+
+
 class AssignOrganizationRequest(BaseModel):
     """Request body for assigning user to organization."""
 

@@ -20,12 +20,19 @@ from app.schemas.user import (
     BulkUserImportResponse,
     ResetPasswordRequest,
     UpdatePermissionsRequest,
+    UserOrganizationResponse,
+    UserPermissionsResponse,
 )
 from app.services.keycloak_admin import keycloak_admin_service
 from app.services.user_import import import_users_bulk
 
 router = APIRouter(prefix="/users", tags=["users"])
 logger = get_logger(__name__)
+
+
+def _get_internal_roles() -> set[str]:
+    """Internal Keycloak roles to exclude from application permissions."""
+    return {"uma_authorization", "offline_access", "default-roles-" + settings.KEYCLOAK_REALM.lower()}
 
 # Performance limits for organization-based user search
 MAX_ORGS_TO_SEARCH = 10
@@ -189,16 +196,13 @@ async def update_user_enabled_status(
 
         user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
 
-        internal_roles = {
-            "uma_authorization",
-            "offline_access",
-            "default-roles-" + settings.KEYCLOAK_REALM.lower(),
-        }
+        internal_roles = _get_internal_roles()
         permissions = [
-            role["name"]
+            role.get("name", "")
             for role in user_roles
-            if role["name"] not in internal_roles
-            and not role["name"].startswith("realm-management")
+            if role.get("name")
+            and role.get("name", "") not in internal_roles
+            and not role.get("name", "").startswith("realm-management")
         ]
 
         attributes = kc_user.get("attributes", {})
@@ -288,16 +292,13 @@ async def get_all_users(
         async def fetch_user_role(user_id: str) -> tuple[str, str | None]:
             try:
                 user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
-                internal_roles = {
-                    "uma_authorization",
-                    "offline_access",
-                    "default-roles-" + settings.KEYCLOAK_REALM.lower(),
-                }
+                internal_roles = _get_internal_roles()
                 permissions = [
-                    role["name"]
+                    role.get("name", "")
                     for role in user_roles
-                    if role["name"] not in internal_roles
-                    and not role["name"].startswith("realm-management")
+                    if role.get("name")
+                    and role.get("name", "") not in internal_roles
+                    and not role.get("name", "").startswith("realm-management")
                 ]
                 tier = get_tier_from_roles(permissions)
                 return user_id, tier.value
@@ -379,6 +380,59 @@ async def get_all_users(
                 "error": "fetch_users_failed",
                 "message": "Failed to fetch users",
             },
+        )
+
+
+@router.get("/{user_id}/organization", response_model=UserOrganizationResponse)
+async def get_user_organization(
+    user_id: str, user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+):
+    """Get user's current organization membership.
+
+    This endpoint fetches the user's organization from Keycloak Organizations.
+    Returns null for organization if the user is not a member of any organization.
+
+    Requires admin.organizations role for access.
+
+    Args:
+        user_id: Keycloak user UUID
+
+    Returns:
+        User organization object with user_id, username, and organization (or null)
+
+    Raises:
+        HTTPException 404: If user not found
+        HTTPException 500: If Keycloak API call fails
+    """
+    logger.info("Fetching user organization", extra={"admin_user": user.preferred_username, "user_id": user_id})
+
+    try:
+        # Fetch user to verify they exist and get username
+        kc_user = await keycloak_admin_service.get_user(user_id)
+        if not kc_user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User {user_id} not found")
+
+        # Fetch user's organization using optimized method
+        organization = await keycloak_admin_service.get_user_organization_optimized(user_id)
+
+        logger.info(
+            "Successfully fetched user organization",
+            extra={"user_id": user_id, "username": kc_user.get("username"), "organization": organization},
+        )
+
+        return UserOrganizationResponse(
+            user_id=user_id,
+            username=kc_user.get("username"),
+            organization=organization,
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Failed to fetch user organization", exc_info=e, extra={"user_id": user_id})
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": "internal_error", "message": "Failed to fetch user organization"},
         )
 
 
@@ -522,6 +576,70 @@ async def assign_user_to_organization(
         )
 
 
+@router.get("/{user_id}/permissions", response_model=UserPermissionsResponse)
+async def get_user_permissions(
+    user_id: str, user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+):
+    """Get user's current permissions (realm roles).
+
+    This endpoint fetches the user's realm roles from Keycloak and filters out
+    internal Keycloak roles, returning only application-level permissions.
+
+    Requires admin.organizations role for access.
+
+    Args:
+        user_id: Keycloak user UUID
+
+    Returns:
+        User permissions object with user_id, username, and permissions array
+
+    Raises:
+        HTTPException 404: If user not found
+        HTTPException 500: If Keycloak API call fails
+    """
+    logger.info("Fetching user permissions", extra={"admin_user": user.preferred_username, "user_id": user_id})
+
+    try:
+        # Fetch user to verify they exist and get username
+        kc_user = await keycloak_admin_service.get_user(user_id)
+        if not kc_user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User {user_id} not found")
+
+        # Fetch user's realm roles from Keycloak
+        user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
+
+        internal_roles = _get_internal_roles()
+
+        # Filter out internal Keycloak roles, keep only application permissions
+        permissions = [
+            role.get("name", "")
+            for role in user_roles
+            if role.get("name")
+            and role.get("name", "") not in internal_roles
+            and not role.get("name", "").startswith("realm-management")
+        ]
+
+        logger.info(
+            "Successfully fetched user permissions",
+            extra={"user_id": user_id, "username": kc_user.get("username"), "permissions": permissions},
+        )
+
+        return UserPermissionsResponse(
+            user_id=user_id,
+            username=kc_user.get("username"),
+            permissions=permissions,
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Failed to fetch user permissions", exc_info=e, extra={"user_id": user_id})
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": "internal_error", "message": "Failed to fetch user permissions"},
+        )
+
+
 @router.put("/{user_id}/permissions")
 async def update_user_permissions(
     user_id: str,
@@ -570,16 +688,13 @@ async def update_user_permissions(
         # Fetch updated roles
         user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
 
-        internal_roles = {
-            "uma_authorization",
-            "offline_access",
-            "default-roles-" + settings.KEYCLOAK_REALM.lower(),
-        }
+        internal_roles = _get_internal_roles()
         permissions = [
-            role["name"]
+            role.get("name", "")
             for role in user_roles
-            if role["name"] not in internal_roles
-            and not role["name"].startswith("realm-management")
+            if role.get("name")
+            and role.get("name", "") not in internal_roles
+            and not role.get("name", "").startswith("realm-management")
         ]
 
         attributes = kc_user.get("attributes", {})
