@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.api.endpoints.health import router as health_router
+from app.api.endpoints.internal import router as internal_router
 from app.api.router import api_router
 from app.core.config import settings
 from app.core.logging_config import get_logger, setup_logging
@@ -29,8 +30,11 @@ app = FastAPI(
 # Health check endpoints (before /api to avoid auth)
 app.include_router(health_router)
 
-# API routes
+# API routes (visible in OpenAPI → auto-discovered by gateway)
 app.include_router(api_router, prefix="/api")
+
+# Internal routes (NOT in OpenAPI → invisible to gateway discovery)
+app.include_router(internal_router, prefix="/internal", include_in_schema=False)
 
 if __name__ == "__main__":
     import uvicorn

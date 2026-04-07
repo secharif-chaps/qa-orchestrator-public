@@ -68,6 +68,9 @@ class Stream(Base):
         default=StreamStatus.ACTIVE,
     )
 
+    # Folder scoping
+    folder_id = Column(String, index=True, nullable=False)
+
     # Multi-tenancy
     organization_id = Column(String, index=True, nullable=False)
     owner_id = Column(String, nullable=False)

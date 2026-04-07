@@ -130,7 +130,7 @@ bash infra/scripts/setup-keycloak.sh \
 
 echo ""
 echo "🗃️  Running database migrations..."
-docker compose exec screen alembic upgrade head
+docker compose exec screen alembic upgrade head 2>/dev/null || echo "  ⚠️  Screen service not running — skipping screen migrations"
 docker compose exec stream alembic upgrade head 2>/dev/null || echo "  ⚠️  Stream service not running — skipping stream migrations"
 
 # ─── 9. Done ─────────────────────────────────────────

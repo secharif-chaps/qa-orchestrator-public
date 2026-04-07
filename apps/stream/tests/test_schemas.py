@@ -7,7 +7,7 @@ from app.models.delivery import DeliveryStatus
 from app.models.stream import ChannelType, StreamMode, StreamStatus
 from app.schemas.delivery import DeliveryRead
 from app.schemas.event import EventIngest, EventRead
-from app.schemas.stream import StreamCreate, StreamRead, StreamUpdate
+from app.schemas.stream import StreamCreate, StreamRead, StreamStatusUpdate, StreamUpdate
 
 
 class TestStreamCreate:
@@ -219,11 +219,6 @@ class TestStreamUpdate:
         schema = StreamUpdate(name="New Name")
         assert schema.name == "New Name"
         assert schema.description is None
-        assert schema.status is None
-
-    def test_status_update(self):
-        schema = StreamUpdate(status=StreamStatus.PAUSED)
-        assert schema.status == StreamStatus.PAUSED
 
     def test_empty_update(self):
         schema = StreamUpdate()
@@ -247,12 +242,17 @@ class TestStreamUpdate:
         schema = StreamUpdate(
             name="Updated Name",
             description="New description",
-            status=StreamStatus.ARCHIVED,
             subscribed_events=["screen.company.created"],
         )
         assert schema.name == "Updated Name"
-        assert schema.status == StreamStatus.ARCHIVED
+        assert schema.description == "New description"
         assert schema.subscribed_events == ["screen.company.created"]
+
+
+class TestStreamStatusUpdate:
+    def test_status_update(self):
+        schema = StreamStatusUpdate(status=StreamStatus.PAUSED)
+        assert schema.status == StreamStatus.PAUSED
 
 
 class TestStreamRead:
@@ -263,6 +263,7 @@ class TestStreamRead:
             id = 1
             name = "Test Stream"
             description = None
+            folder_id = "folder-abc"
             channel_type = ChannelType.TEAMS
             channel_config = {"webhook_url": "https://example.com"}
             mode = StreamMode.LIVE
@@ -278,6 +279,7 @@ class TestStreamRead:
         schema = StreamRead.model_validate(FakeORM())
         assert schema.id == 1
         assert schema.name == "Test Stream"
+        assert schema.folder_id == "folder-abc"
 
 
 class TestEventIngest:

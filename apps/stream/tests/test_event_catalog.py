@@ -8,6 +8,7 @@ from app.schemas.event_catalog import (
     EventCatalogEntry,
     get_available_events,
     get_event_by_type,
+    get_grouped_catalog,
     is_valid_event_type,
 )
 
@@ -42,6 +43,12 @@ class TestEventCatalog:
             assert len(parts) == 3, f"Bad format: {entry.event_type}"
             assert parts[0] == entry.source, f"Source mismatch: {entry.event_type}"
 
+    def test_all_entries_have_labels(self):
+        """All catalog entries have a non-empty French label."""
+        for entry in EVENT_CATALOG:
+            assert entry.label, f"Missing label for {entry.event_type}"
+            assert isinstance(entry.label, str)
+
 
 class TestEventCatalogEntry:
     def test_frozen_dataclass(self):
@@ -50,6 +57,7 @@ class TestEventCatalogEntry:
             event_type="test.resource.action",
             source="test",
             description="Test event",
+            label="Test label",
             available=True,
         )
         with pytest.raises(AttributeError):
@@ -98,3 +106,45 @@ class TestAvailableEventTypes:
     def test_frozenset_immutable(self):
         with pytest.raises(AttributeError):
             AVAILABLE_EVENT_TYPES.add("hacked.event.type")
+
+
+class TestGroupedCatalog:
+    def test_grouped_catalog_returns_list(self):
+        groups = get_grouped_catalog()
+        assert isinstance(groups, list)
+
+    def test_grouped_catalog_has_2_sources(self):
+        """Catalog groups into screen and target sources."""
+        groups = get_grouped_catalog()
+        assert len(groups) == 2
+
+    def test_grouped_catalog_source_names(self):
+        groups = get_grouped_catalog()
+        sources = [g.source for g in groups]
+        assert "screen" in sources
+        assert "target" in sources
+
+    def test_grouped_catalog_source_labels(self):
+        groups = get_grouped_catalog()
+        label_map = {g.source: g.label for g in groups}
+        assert label_map["screen"] == "Screen"
+        assert label_map["target"] == "Target"
+
+    def test_grouped_catalog_screen_events(self):
+        groups = get_grouped_catalog()
+        screen_group = next(g for g in groups if g.source == "screen")
+        assert len(screen_group.events) == 2
+        assert screen_group.available is True
+
+    def test_grouped_catalog_target_events(self):
+        groups = get_grouped_catalog()
+        target_group = next(g for g in groups if g.source == "target")
+        assert len(target_group.events) == 3
+        assert target_group.available is False
+
+    def test_grouped_catalog_event_entries_have_type_and_label(self):
+        groups = get_grouped_catalog()
+        for group in groups:
+            for event in group.events:
+                assert event.type, "Event type must be non-empty"
+                assert event.label, "Event label must be non-empty"
