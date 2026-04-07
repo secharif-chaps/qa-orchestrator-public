@@ -57,7 +57,7 @@ class Settings(BaseSettings):
     LLM_PROVIDER: LLMProvider = LLMProvider.OPENAI
     LLM_API_KEY: str = ""
     LLM_BASE_URL: str = ""
-    LLM_MODEL: str = "gpt-5.1"
+    LLM_MODEL: str = "gpt-5.1-sweden"
     LLM_API_VERSION: str = ""  # Azure only: e.g. "2024-05-01-preview"
 
     # Task timeout settings
