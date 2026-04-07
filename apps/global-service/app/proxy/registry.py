@@ -18,6 +18,9 @@ Usage:
 from __future__ import annotations
 
 import asyncio
+import hashlib
+import json
+import time
 from dataclasses import dataclass, field
 from enum import StrEnum
 
@@ -114,6 +117,13 @@ class ModuleRegistry:
     extracts paths and x-* extensions, and builds a lookup table.
     """
 
+    _STALE_CHECK_TTL_SECONDS = 300  # Only check schema staleness every 5 minutes
+
+    @staticmethod
+    def _compute_schema_hash(schema: dict) -> str:
+        """Compute a deterministic SHA-256 hash of an OpenAPI schema."""
+        return hashlib.sha256(json.dumps(schema, sort_keys=True).encode()).hexdigest()
+
     def __init__(self, backends: dict[str, str]) -> None:
         """Initialize with a mapping of module_name -> backend_url."""
         self._backends = backends
@@ -122,6 +132,8 @@ class ModuleRegistry:
         self._route_index: dict[tuple[str, str], ModuleName] = {}
         # Protects _modules and _route_index during rediscovery
         self._lock = asyncio.Lock()
+        # TTL tracking for stale schema checks (per-instance, not shared)
+        self._last_stale_check: float = 0
 
     @property
     def modules(self) -> dict[ModuleName, ModuleDefinition]:
@@ -150,25 +162,37 @@ class ModuleRegistry:
                 },
             )
 
-    async def _fetch_and_register(self, name: ModuleName, backend_url: str) -> None:
+    async def _fetch_and_register(
+        self, name: ModuleName, backend_url: str, prefetched_schema: dict | None = None
+    ) -> None:
         """Fetch a single module's OpenAPI schema and register its routes.
 
         Must be called under self._lock.
-        """
-        url = f"{backend_url.rstrip('/')}/openapi.json"
-        try:
-            async with httpx.AsyncClient(timeout=10) as client:
-                resp = await client.get(url)
-                resp.raise_for_status()
-                schema = resp.json()
-        except Exception as e:
-            logger.warning(
-                "Failed to discover module, skipping",
-                extra={"module_name": name, "url": url, "error": str(e)},
-            )
-            return
 
-        module_def = ModuleDefinition(name=name, backend_url=backend_url.rstrip("/"))
+        Args:
+            prefetched_schema: If provided, skip the HTTP fetch and use this schema directly.
+        """
+        if prefetched_schema is not None:
+            schema = prefetched_schema
+        else:
+            url = f"{backend_url.rstrip('/')}/openapi.json"
+            try:
+                async with httpx.AsyncClient(timeout=10) as client:
+                    resp = await client.get(url)
+                    resp.raise_for_status()
+                    schema = resp.json()
+            except Exception as e:
+                logger.warning(
+                    "Failed to discover module, skipping",
+                    extra={"module_name": name, "url": url, "error": str(e)},
+                )
+                return
+
+        schema_hash = self._compute_schema_hash(schema)
+
+        module_def = ModuleDefinition(
+            name=name, backend_url=backend_url.rstrip("/"), openapi_hash=schema_hash
+        )
         self._extract_routes(module_def, schema)
         self._modules[name] = module_def
 
@@ -178,19 +202,79 @@ class ModuleRegistry:
                 "module_name": name,
                 "routes": len(module_def.routes),
                 "url": backend_url,
+                "openapi_hash": schema_hash,
             },
         )
 
-    async def rediscover_module(self, name: ModuleName) -> None:
-        """Re-fetch a module's schema (after announce or hash change)."""
+    async def rediscover_module(self, name: ModuleName, prefetched_schema: dict | None = None) -> None:
+        """Re-fetch a module's schema (after announce or hash change).
+
+        Args:
+            prefetched_schema: If provided, skip the HTTP fetch and use this schema directly.
+        """
         async with self._lock:
             module = self._modules.get(name)
             if not module:
                 logger.warning("Cannot rediscover unknown module", extra={"module_name": name})
                 return
 
-            await self._fetch_and_register(name, module.backend_url)
+            await self._fetch_and_register(name, module.backend_url, prefetched_schema=prefetched_schema)
             self._build_route_index()
+
+    def get_module_hash(self, name: ModuleName) -> str | None:
+        """Get the stored openapi_hash for a module."""
+        module = self._modules.get(name)
+        return module.openapi_hash if module else None
+
+    async def check_and_rediscover_stale(self) -> dict[str, str]:
+        """Check all backends for schema changes and rediscover if needed.
+
+        Fetches each module's /openapi.json, computes its hash, and triggers
+        rediscovery if the hash differs from the stored value.
+
+        Uses a per-instance TTL to avoid fetching schemas on every healthcheck probe.
+
+        Returns:
+            dict of module_name -> action ("unchanged" | "rediscovered" | "error" | "skipped")
+        """
+        now = time.monotonic()
+        if (now - self._last_stale_check) < self._STALE_CHECK_TTL_SECONDS:
+            return {name.value: "skipped" for name in self._modules}
+        self._last_stale_check = now
+
+        results: dict[str, str] = {}
+        async with httpx.AsyncClient(timeout=5) as client:
+            for name, module in list(self._modules.items()):
+                url = f"{module.backend_url}/openapi.json"
+                try:
+                    resp = await client.get(url)
+                    resp.raise_for_status()
+                    schema = resp.json()
+
+                    new_hash = self._compute_schema_hash(schema)
+
+                    # Re-read current hash after await — a concurrent announce
+                    # may have already updated it
+                    current_module = self._modules.get(name)
+                    current_hash = current_module.openapi_hash if current_module else None
+
+                    if current_module is None or new_hash == current_hash:
+                        results[name.value] = "unchanged"
+                    else:
+                        logger.info(
+                            "Schema hash changed, rediscovering module",
+                            extra={"module_name": name, "old_hash": current_hash, "new_hash": new_hash},
+                        )
+                        await self.rediscover_module(name, prefetched_schema=schema)
+                        results[name.value] = "rediscovered"
+                except Exception as e:
+                    logger.warning(
+                        "Failed to check schema for module",
+                        extra={"module_name": name, "error": str(e)},
+                    )
+                    results[name.value] = "error"
+
+        return results
 
     def resolve(self, path: str, method: str = "GET") -> tuple[ModuleDefinition, str] | None:
         """Resolve an API path to its owning module.
