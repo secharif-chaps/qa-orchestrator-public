@@ -32,9 +32,10 @@ screen:mypy:
   stage: lint
   needs: []
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
-  script:
+  before_script:
     - cd apps/screen
     - poetry config virtualenvs.create false && poetry install --no-interaction
+  script:
     - mypy app/ --ignore-missing-imports
   allow_failure: true
   <<: *screen-changes

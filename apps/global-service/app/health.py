@@ -111,6 +111,29 @@ async def close_health_http_client() -> None:
         _health_http_client = None
 
 
+async def check_registry_schemas() -> dict:
+    """Check if any backend schema has changed since last discovery.
+
+    Runs as a non-blocking side-effect during readiness checks.
+    Triggers rediscovery for modules whose OpenAPI hash has drifted.
+
+    Returns:
+        dict with "status" key and per-module results.
+    """
+    from app.proxy.routes import get_module_registry
+
+    registry = get_module_registry()
+    if registry is None:
+        return {"status": "ok", "detail": "registry not initialized"}
+
+    try:
+        results = await registry.check_and_rediscover_stale()
+        return {"status": "ok", "modules": results}
+    except Exception as e:
+        logger.warning("Registry schema check failed", extra={"error": str(e)})
+        return {"status": "error", "detail": str(e)}
+
+
 async def run_readiness_checks(
     include_keycloak: bool = False,
 ) -> tuple[dict[str, bool], bool]:
@@ -129,6 +152,12 @@ async def run_readiness_checks(
     if include_keycloak:
         check_names.append("keycloak")
         check_coros.append(check_keycloak())
+
+    # Fire-and-forget: check if any backend schema has drifted.
+    # Launched as a background task so it never blocks the readiness probe.
+    # Keep a strong reference to prevent GC from collecting the task mid-execution.
+    _task = asyncio.create_task(check_registry_schemas())
+    _task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
 
     results = await asyncio.gather(*check_coros, return_exceptions=True)
 

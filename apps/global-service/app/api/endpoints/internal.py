@@ -4,9 +4,11 @@ These endpoints use internal JWT authentication and are not exposed to end users
 Used by backend services (monolith) to call global-service functionality.
 """
 
+from typing import Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
+from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import get_token_manager
@@ -14,6 +16,8 @@ from app.core.internal_jwt import InternalTokenPayload, get_internal_token
 from app.core.logging_config import get_logger
 from app.database import get_global_db
 from app.models.organization import ModuleName, ReferenceType
+from app.proxy.registry import ModuleName as ProxyModuleName
+from app.proxy.routes import get_module_registry
 from app.schemas.folder import CompanyFolderInfoResponse
 from app.schemas.token import ConsumeTokensRequest, ConsumeTokensResponse, TokenTransactionRead
 from app.services.folder import FolderService
@@ -25,11 +29,110 @@ from app.services.token_manager import (
 
 logger = get_logger(__name__)
 
-router = APIRouter(prefix="/internal/organizations", tags=["internal"])
+router = APIRouter(prefix="/internal", tags=["internal"])
+
+
+# ── Registry announce models ──
+
+
+class AnnounceRequest(BaseModel):
+    """Payload sent by a backend service to announce a schema change."""
+
+    openapi_hash: str = Field(
+        min_length=64,
+        max_length=64,
+        pattern=r"^[a-f0-9]{64}$",
+        description="SHA-256 hex digest of the OpenAPI schema JSON",
+    )
+
+
+class AnnounceResponse(BaseModel):
+    """Response from the announce endpoint."""
+
+    module: str
+    action: Literal["rediscovered", "unchanged", "error"]
 
 
 @router.post(
-    "/{org_id}/tokens/consume",
+    "/registry/announce/{module_name}",
+    response_model=AnnounceResponse,
+    tags=["internal"],
+)
+async def announce_module(
+    module_name: str,
+    request: AnnounceRequest,
+    token_payload: InternalTokenPayload = Depends(get_internal_token),
+) -> AnnounceResponse:
+    """Handle a self-announce from a backend service.
+
+    Compares the provided hash with the stored hash. If they differ,
+    triggers rediscovery of the module's OpenAPI schema.
+
+    Args:
+        module_name: Name of the backend module (e.g. "screen")
+        request: Announce payload containing the new openapi_hash
+        token_payload: Verified internal JWT payload
+
+    Returns:
+        AnnounceResponse with the action taken
+
+    Raises:
+        HTTPException 400: If module_name is not a valid module
+        HTTPException 401: If internal JWT is invalid or missing
+    """
+    # Validate module name
+    try:
+        name = ProxyModuleName(module_name)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"message": f"Unknown module: {module_name}"},
+        )
+
+    registry = get_module_registry()
+    if not registry:
+        logger.warning("Announce received but registry not initialized", extra={"module_name": module_name})
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Registry not initialized",
+        )
+
+    current_hash = registry.get_module_hash(name)
+
+    if current_hash == request.openapi_hash:
+        logger.info(
+            "Announce: hash unchanged",
+            extra={"module_name": module_name, "hash": request.openapi_hash},
+        )
+        return AnnounceResponse(module=module_name, action="unchanged")
+
+    logger.info(
+        "Announce: hash changed, rediscovering",
+        extra={
+            "module_name": module_name,
+            "old_hash": current_hash,
+            "new_hash": request.openapi_hash,
+        },
+    )
+    try:
+        await registry.rediscover_module(name)
+        return AnnounceResponse(module=module_name, action="rediscovered")
+    except Exception as e:
+        logger.error(
+            "Announce: rediscovery failed",
+            extra={"module_name": module_name, "error": str(e)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Rediscovery failed for module {module_name}",
+        )
+
+
+# ── Organization token and folder endpoints ──
+
+
+@router.post(
+    "/organizations/{org_id}/tokens/consume",
     response_model=ConsumeTokensResponse,
     status_code=status.HTTP_200_OK,
 )
@@ -82,9 +185,7 @@ async def consume_organization_tokens(
         )
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "message": "Organization ID in path does not match token organization"
-            },
+            detail={"message": "Organization ID in path does not match token organization"},
         )
 
     # Parse enum values from strings
@@ -189,7 +290,7 @@ async def consume_organization_tokens(
 
 
 @router.get(
-    "/{org_id}/folders/accessible-company-ids",
+    "/organizations/{org_id}/folders/accessible-company-ids",
     response_model=list[int],
     status_code=status.HTTP_200_OK,
 )
@@ -238,7 +339,7 @@ async def get_accessible_company_ids(
 
 
 @router.get(
-    "/{org_id}/folders/company-access/{company_id}",
+    "/organizations/{org_id}/folders/company-access/{company_id}",
     response_model=bool,
     status_code=status.HTTP_200_OK,
 )
@@ -291,7 +392,7 @@ async def check_company_access(
 
 
 @router.get(
-    "/{org_id}/folders/company/{company_id}/folder-info",
+    "/organizations/{org_id}/folders/company/{company_id}/folder-info",
     response_model=CompanyFolderInfoResponse | None,
     status_code=status.HTTP_200_OK,
 )

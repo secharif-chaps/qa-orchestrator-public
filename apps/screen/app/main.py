@@ -1,5 +1,9 @@
+import asyncio
+import hashlib
+import json
 from contextlib import asynccontextmanager
 
+import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -7,6 +11,7 @@ from app.api.endpoints.health import router as health_router
 from app.api.router import api_router
 from app.core.config import settings
 from app.core.database_security import setup_database_security
+from app.core.internal_jwt import create_internal_token
 from app.core.logging_config import get_logger, setup_logging
 from app.core.middleware import JSONValidationMiddleware, SecurityMiddleware
 from app.database import engine
@@ -14,6 +19,53 @@ from app.database import engine
 # Initialize logging with configured level
 setup_logging(level=getattr(settings, "LOG_LEVEL", "INFO"))
 logger = get_logger(__name__)
+
+
+async def _announce_to_gateway(app: FastAPI) -> None:
+    """Notify the global-service gateway that screen is ready.
+
+    Non-blocking: if the announce fails, log a warning and continue.
+    The gateway's healthcheck will detect the change later.
+
+    Args:
+        app: The FastAPI application instance (needed for openapi() schema).
+    """
+    try:
+        gateway_url = settings.GLOBAL_SERVICE_URL
+        if not gateway_url:
+            logger.info("GLOBAL_SERVICE_URL not set, skipping registry announce")
+            return
+
+        # Calculate our own OpenAPI schema hash
+        schema = app.openapi()
+        schema_hash = hashlib.sha256(json.dumps(schema, sort_keys=True).encode()).hexdigest()
+
+        # Create internal JWT for authentication
+        token = create_internal_token(
+            user_id="screen-service",
+            username="screen",
+            org_id="system",
+            org_name="system",
+            roles=["service"],
+        )
+
+        async with httpx.AsyncClient(timeout=5) as client:
+            resp = await client.post(
+                f"{gateway_url.rstrip('/')}/internal/registry/announce/screen",
+                json={"openapi_hash": schema_hash},
+                headers={"Authorization": f"Bearer {token}"},
+            )
+            resp.raise_for_status()
+            result = resp.json()
+            logger.info(
+                "Registry announce completed",
+                extra={"action": result.get("action")},
+            )
+    except Exception as e:
+        logger.warning(
+            "Registry announce failed (gateway will detect via healthcheck)",
+            extra={"error": str(e)},
+        )
 
 
 @asynccontextmanager
@@ -24,6 +76,12 @@ async def lifespan(app: FastAPI):
 
     await get_analysis_graph()
     logger.info("Analysis graph compiled and checkpoint pool opened")
+
+    # Announce to global-service registry (fire-and-forget, non-blocking)
+    # Keep a strong reference to prevent GC from collecting the task mid-execution.
+    _announce_task = asyncio.create_task(_announce_to_gateway(app))
+    _announce_task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
+
     yield
     # Shutdown: close checkpoint pool
     from app.agents.checkpoint import _pool
