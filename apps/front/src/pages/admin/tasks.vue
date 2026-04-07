@@ -572,19 +572,19 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { ref, computed, watch, onUnmounted, defineComponent, h } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useQuery } from '@pinia/colada'
-import { adminTasksQuery, adminOrganizationsQuery } from '@/queries/admin'
+import Card from '@/components/ui/Card.vue'
+import Dropdown from '@/components/ui/Dropdown.vue'
+import DropdownDivider from '@/components/ui/DropdownDivider.vue'
+import DropdownItem from '@/components/ui/DropdownItem.vue'
+import Tag from '@/components/ui/Tag.vue'
 import { useRestartAdminTasks } from '@/mutations/admin'
+import { adminOrganizationsQuery, adminTasksQuery } from '@/queries/admin'
 import type { AdminTaskResponse, AdminTasksFilters, BulkRestartResponse } from '@/types/admin'
 import type { TaskStatus, TaskType } from '@/types/task'
 import { Alert, Badge, Button, OModal } from '@owlint/feathers-vue'
-import Card from '@/components/ui/Card.vue'
-import Tag from '@/components/ui/Tag.vue'
-import Dropdown from '@/components/ui/Dropdown.vue'
-import DropdownItem from '@/components/ui/DropdownItem.vue'
-import DropdownDivider from '@/components/ui/DropdownDivider.vue'
+import { useQuery } from '@pinia/colada'
+import { computed, defineComponent, h, onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 // Stat Card Component (inline using render function with Badge for icon)
 const StatCard = defineComponent({
@@ -810,6 +810,7 @@ const taskTypeKeys: Record<TaskType, string> = {
   team: 'admin.tasks.taskTypes.team',
   corporate_structure: 'admin.tasks.taskTypes.corporateStructure',
   sanctions: 'admin.tasks.taskTypes.sanctions',
+  financial: 'admin.tasks.taskTypes.financial',
 }
 
 function formatTaskType(type: TaskType): string {

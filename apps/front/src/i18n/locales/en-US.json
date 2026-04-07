@@ -356,6 +356,7 @@
         "corporate_structure": "Corporate Structure",
         "csr": "CSR",
         "digital": "Digital",
+        "financial": "Financial",
         "jobs": "Jobs",
         "press": "Press",
         "products": "Products",
@@ -1293,6 +1294,10 @@
           "description": "CSR initiatives, sustainability programs, and social impact",
           "title": "Corporate Social Responsibility"
         },
+        "financial": {
+          "description": "Revenue, funding, valuations, and key financial metrics",
+          "title": "Financial Data"
+        },
         "jobs": {
           "description": "Current job openings and career opportunities",
           "insights": "Job Insights",
@@ -1872,6 +1877,9 @@
           "onlineServices": "Online Services",
           "overallStrategy": "Overall Strategy",
           "strategy": "Digital Strategy"
+        },
+        "financial": {
+          "noData": "No financial data available yet."
         },
         "group": {
           "notFound": "Not found",

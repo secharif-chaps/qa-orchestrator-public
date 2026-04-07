@@ -77,6 +77,47 @@ export interface SanctionsData {
   items?: SanctionItem[]
 }
 
+export interface FinancialMetric {
+  metric_name: string
+  period: string
+  value: string | null
+  unit: string | null
+  source: string | null
+}
+
+export interface FundingRound {
+  round_type: string | null
+  amount: string | null
+  date: string | null
+  lead_investor: string | null
+  valuation: string | null
+  source: string | null
+}
+
+export interface FinancialData {
+  insights: SourcedValue<string> | null
+  company_type: SourcedValue<string> | null
+  ticker_symbol: SourcedValue<string> | null
+  stock_exchange: SourcedValue<string> | null
+  currency: SourcedValue<string> | null
+  revenue: SourcedValue<string> | null
+  revenue_growth: SourcedValue<string> | null
+  gross_margin: SourcedValue<string> | null
+  ebitda_margin: SourcedValue<string> | null
+  net_margin: SourcedValue<string> | null
+  market_cap: SourcedValue<string> | null
+  enterprise_value: SourcedValue<string> | null
+  pe_ratio: SourcedValue<string> | null
+  ev_ebitda: SourcedValue<string> | null
+  ev_revenue: SourcedValue<string> | null
+  total_funding: SourcedValue<string> | null
+  last_valuation: SourcedValue<string> | null
+  debt_to_equity: SourcedValue<string> | null
+  free_cash_flow: SourcedValue<string> | null
+  metrics: FinancialMetric[]
+  funding_rounds: FundingRound[]
+}
+
 export interface TeamMember {
   position: string
   firstName: string
@@ -227,6 +268,8 @@ export interface Company {
   }
 
   sanctions?: SanctionsData
+
+  financial?: FinancialData
 
   // Raw knowledge fields (debug/admin only)
   raw_mistral_knowledge?: string | null

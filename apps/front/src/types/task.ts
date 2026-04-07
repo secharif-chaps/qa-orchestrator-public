@@ -9,6 +9,7 @@ export type TaskType =
   | 'team'
   | 'corporate_structure'
   | 'sanctions'
+  | 'financial'
 export type TaskStatus = 'pending' | 'running' | 'succeeded' | 'error'
 
 export interface AgentErrorDetails {

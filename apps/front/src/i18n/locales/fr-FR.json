@@ -356,6 +356,7 @@
         "corporate_structure": "Structure Corporate",
         "csr": "RSE",
         "digital": "Digital",
+        "financial": "Financier",
         "jobs": "Emplois",
         "press": "Presse",
         "products": "Produits",
@@ -1293,6 +1294,10 @@
           "description": "Initiatives RSE, programmes de durabilité et impact social",
           "title": "Responsabilité Sociale d'Entreprise"
         },
+        "financial": {
+          "description": "Chiffre d'affaires, financements, valorisations et indicateurs financiers clés",
+          "title": "Données Financières"
+        },
         "jobs": {
           "description": "Postes vacants actuels et opportunités de carrière",
           "insights": "Informations Emplois",
@@ -1872,6 +1877,9 @@
           "onlineServices": "Services en ligne",
           "overallStrategy": "Stratégie globale",
           "strategy": "Stratégie digitale"
+        },
+        "financial": {
+          "noData": "Aucune donnée financière disponible pour le moment."
         },
         "group": {
           "notFound": "Non trouvé",
