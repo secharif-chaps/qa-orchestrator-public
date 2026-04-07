@@ -1119,6 +1119,15 @@
   },
   "dashboard": {
     "home": {
+      "chapse": {
+        "actionPrompt": "Que souhaitez-vous faire aujourd'hui ?",
+        "actions": {
+          "discover": "Discover",
+          "explore": "Cartographie",
+          "screen": "Fiche entreprise",
+          "target": "Veille"
+        }
+      },
       "modules": {
         "actions": {
           "companyScreen": "Créer un Screen",
@@ -1175,7 +1184,7 @@
         "viewAll": "Voir tout"
       },
       "welcome": {
-        "title": "Bienvenue, {name} !"
+        "title": "Bonjour {name} !"
       }
     },
     "quickActions": {
