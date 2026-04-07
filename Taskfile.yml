@@ -52,12 +52,18 @@ tasks:
 
   # ─── Database ──────────────────────────────────────
   migrate:
-    desc: Run Alembic migrations
-    cmd: "{{.COMPOSE}} exec screen alembic upgrade head"
+    desc: Run Alembic migrations (screen + stream)
+    cmds:
+      - "{{.COMPOSE}} exec screen alembic upgrade head"
+      - "{{.COMPOSE}} exec stream alembic upgrade head"
 
   migrate:status:
-    desc: Show current migration version
-    cmd: "{{.COMPOSE}} exec screen alembic current"
+    desc: Show current migration version (screen + stream)
+    cmds:
+      - echo "── screen ──"
+      - "{{.COMPOSE}} exec screen alembic current"
+      - echo "── stream ──"
+      - "{{.COMPOSE}} exec stream alembic current"
 
   seed:
     desc: Seed sample data
@@ -75,8 +81,8 @@ tasks:
   # ─── All ────────────────────────────────────────────
   lint:
     desc: Lint all projects
-    deps: [front:lint, screen:lint]
+    deps: [front:lint, screen:lint, stream:lint]
 
   test:
     desc: Run all tests
-    deps: [front:test, screen:test]
+    deps: [front:test, screen:test, stream:test]

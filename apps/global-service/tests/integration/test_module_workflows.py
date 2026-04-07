@@ -49,6 +49,11 @@ def setup_org_with_modules(global_db_session, test_org_id):
             module_name=ModuleName.EXPLORE,
             enabled=False,
         ),
+        OrganizationModule(
+            organization_id=test_org_id,
+            module_name=ModuleName.STREAM,
+            enabled=False,
+        ),
     ]
     for module in modules:
         global_db_session.add(module)
@@ -269,6 +274,7 @@ class TestMultipleModuleEnablementScenarios:
             ModuleName.SCREEN,
             ModuleName.TARGET,
             ModuleName.EXPLORE,
+            ModuleName.STREAM,
         ]:
             token_manager.update_module_config(
                 organization_id=test_org_id,
@@ -285,6 +291,7 @@ class TestMultipleModuleEnablementScenarios:
             ModuleName.SCREEN,
             ModuleName.TARGET,
             ModuleName.EXPLORE,
+            ModuleName.STREAM,
         ]:
             with pytest.raises(ModuleNotEnabledException):
                 token_manager.consume_tokens(

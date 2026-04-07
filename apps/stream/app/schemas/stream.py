@@ -1,0 +1,92 @@
+from datetime import datetime
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, model_validator
+
+from app.models.stream import ChannelType, StreamMode, StreamStatus
+
+# --- Channel config models (for API validation) ---
+
+
+class TeamsConfig(BaseModel):
+    webhook_url: HttpUrl = Field(..., description="Microsoft Teams incoming webhook URL")
+
+
+class SlackWebhookConfig(BaseModel):
+    webhook_url: HttpUrl = Field(..., description="Slack incoming webhook URL")
+
+
+class WebhookConfig(BaseModel):
+    url: HttpUrl = Field(..., description="Target webhook URL")
+    headers: dict[str, str] = Field(default_factory=dict, description="Custom headers to include")
+    secret: str | None = Field(None, description="Shared secret for HMAC signature verification")
+
+
+# --- Stream schemas ---
+
+
+class StreamCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=255, description="Stream name")
+    description: str | None = Field(None, description="Optional description")
+    channel_type: ChannelType
+    channel_config: dict[str, Any] = Field(..., description="Channel-specific configuration")
+    mode: StreamMode
+    cron_expression: str | None = Field(None, description="Cron expression (required for recurrence mode)")
+    subscribed_events: list[str] = Field(default_factory=list, description="Event types to subscribe to")
+
+    @field_validator("subscribed_events", mode="before")
+    @classmethod
+    def validate_subscribed_events(cls, v: list) -> list:
+        for item in v:
+            parts = str(item).split(".")
+            if len(parts) != 3 or not all(p.strip() for p in parts):
+                raise ValueError(f"subscribed_events item '{item}' must follow source.resource.action format")
+        return v
+
+    @model_validator(mode="after")
+    def validate_mode_and_channel(self) -> "StreamCreate":
+        if self.mode == StreamMode.RECURRENCE and not self.cron_expression:
+            raise ValueError("cron_expression is required for recurrence mode")
+        if self.mode == StreamMode.LIVE and self.cron_expression:
+            raise ValueError("cron_expression is forbidden for live mode")
+
+        config_validators = {
+            ChannelType.TEAMS: TeamsConfig,
+            ChannelType.SLACK_WEBHOOK: SlackWebhookConfig,
+            ChannelType.WEBHOOK: WebhookConfig,
+        }
+        validator = config_validators.get(self.channel_type)
+        if validator:
+            try:
+                validator(**self.channel_config)
+            except Exception as exc:
+                raise ValueError(f"channel_config is invalid for {self.channel_type}: {exc}") from exc
+        return self
+
+
+class StreamUpdate(BaseModel):
+    name: str | None = Field(None, min_length=1, max_length=255)
+    description: str | None = None
+    channel_config: dict[str, Any] | None = None
+    cron_expression: str | None = None
+    status: StreamStatus | None = None
+    subscribed_events: list[str] | None = None
+
+
+class StreamRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    description: str | None
+    channel_type: ChannelType
+    channel_config: dict[str, Any]
+    mode: StreamMode
+    cron_expression: str | None
+    status: StreamStatus
+    organization_id: str
+    owner_id: str
+    owner_username: str | None
+    subscribed_events: list[str]
+    created_at: datetime
+    updated_at: datetime

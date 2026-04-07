@@ -10,6 +10,7 @@ from alembic import context
 # Add the app directory to the Python path
 sys.path.append(str(Path(__file__).parent.parent))
 
+import app.models  # noqa: F401 — register models in Base.metadata
 from app.database import Base
 
 config = context.config

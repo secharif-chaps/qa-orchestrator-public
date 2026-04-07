@@ -54,6 +54,7 @@ services:
     environment:
       <<: [*internal-auth]
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${STREAM_DB:-stream_db}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
 
   # Global Service (Gateway) — always up, routes to screen and target

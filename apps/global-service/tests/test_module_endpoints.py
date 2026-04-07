@@ -32,7 +32,7 @@ async def setup_test_modules(global_db_session, test_org_id):
     org = Organization(organization_id=test_org_id, token_balance=1000)
     global_db_session.add(org)
 
-    # Create modules (screen enabled, all others disabled)
+    # Create modules (screen enabled, target/explore/stream disabled)
     modules = [
         OrganizationModule(
             organization_id=test_org_id,
