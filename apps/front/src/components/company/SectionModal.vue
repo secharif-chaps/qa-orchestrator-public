@@ -42,11 +42,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, defineAsyncComponent } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { Button } from '@owlint/feathers-vue'
 import type { TaskType } from '@/types/task'
+import { Button } from '@owlint/feathers-vue'
+import { computed, defineAsyncComponent, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 
 const { t } = useI18n()
 
@@ -78,6 +78,9 @@ const CorporateStructurePage = defineAsyncComponent(
 const SanctionsPage = defineAsyncComponent(
   () => import('@/pages/folders/[folderId]/companies/[companyId]/sanctions.vue'),
 )
+const FinancialPage = defineAsyncComponent(
+  () => import('@/pages/folders/[folderId]/companies/[companyId]/financial.vue'),
+)
 
 interface SectionConfig {
   name: string
@@ -86,17 +89,8 @@ interface SectionConfig {
   component: ReturnType<typeof defineAsyncComponent>
 }
 
-interface Props {
-  modelValue: boolean
-  section?: TaskType | null
-}
-
-const props = defineProps<Props>()
-
-const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  'update:section': [value: TaskType | null]
-}>()
+const section = defineModel<TaskType | null>('section', { required: false })
+const modelValue = defineModel<boolean>()
 
 const router = useRouter()
 const route = useRoute()
@@ -163,11 +157,17 @@ const sections: Record<TaskType, SectionConfig> = {
     icon: 'fas fa-shield-halved',
     component: SanctionsPage,
   },
+  financial: {
+    name: t('screen.company.analysisCards.financial.title'),
+    description: t('screen.company.analysisCards.financial.description'),
+    icon: 'fas fa-chart-line',
+    component: FinancialPage,
+  },
 }
 
 const sectionConfig = computed(() => {
-  if (!props.section) return null
-  return sections[props.section]
+  if (!section.value) return null
+  return sections[section.value]
 })
 
 const sectionComponent = computed(() => {
@@ -175,8 +175,8 @@ const sectionComponent = computed(() => {
 })
 
 const close = () => {
-  emit('update:modelValue', false)
-  emit('update:section', null)
+  modelValue.value = false
+  section.value = null
 
   // Remove query param from URL
   const query = { ...route.query }
@@ -189,29 +189,26 @@ watch(
   () => route.query.section,
   (newSection) => {
     if (newSection && typeof newSection === 'string') {
-      emit('update:section', newSection as TaskType)
-      emit('update:modelValue', true)
-    } else if (!newSection && props.modelValue) {
-      emit('update:modelValue', false)
-      emit('update:section', null)
+      section.value = newSection as TaskType
+      modelValue.value = true
+    } else if (!newSection && modelValue.value) {
+      modelValue.value = false
+      section.value = null
     }
   },
   { immediate: true },
 )
 
 // Watch for modal close to update URL
-watch(
-  () => props.modelValue,
-  (isOpen) => {
-    if (!isOpen) {
-      const query = { ...route.query }
-      delete query.section
-      if (JSON.stringify(query) !== JSON.stringify(route.query)) {
-        router.replace({ query })
-      }
+watch(modelValue, (isOpen) => {
+  if (!isOpen) {
+    const query = { ...route.query }
+    delete query.section
+    if (JSON.stringify(query) !== JSON.stringify(route.query)) {
+      router.replace({ query })
     }
-  },
-)
+  }
+})
 </script>
 
 <style scoped>

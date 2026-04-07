@@ -216,17 +216,17 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Tag, Icon } from '@owlint/feathers-vue'
-import type { TaskType, TaskStatus, TaskResponse } from '@/types/task'
-import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { companyTasksQuery } from '@/queries/tasks'
-import { useQuery } from '@pinia/colada'
-import { useRestartTask } from '@/mutations/tasks'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
-import { toast } from '@/utils/toast'
+import { useRestartTask } from '@/mutations/tasks'
+import { companyTasksQuery } from '@/queries/tasks'
 import { useAuthStore } from '@/stores/auth'
+import type { TaskResponse, TaskStatus, TaskType } from '@/types/task'
+import { toast } from '@/utils/toast'
+import { Button, Icon, Tag } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 const { t } = useI18n()
 
@@ -352,6 +352,7 @@ const getTaskIcon = (taskType: TaskType): string => {
     team: 'fas fa-users',
     corporate_structure: 'fas fa-sitemap',
     sanctions: 'fas fa-shield-halved',
+    financial: 'fas fa-chart-line',
   }
   return iconMap[taskType] || 'fas fa-question'
 }
