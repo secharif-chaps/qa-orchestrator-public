@@ -22,6 +22,12 @@ class WebhookConfig(BaseModel):
     secret: str | None = Field(None, description="Shared secret for HMAC signature verification")
 
 
+CHANNEL_CONFIG_MAP: dict[ChannelType, type[BaseModel]] = {
+    ChannelType.TEAMS: TeamsConfig,
+    ChannelType.SLACK_WEBHOOK: SlackWebhookConfig,
+    ChannelType.WEBHOOK: WebhookConfig,
+}
+
 # --- Stream schemas ---
 
 
@@ -69,8 +75,11 @@ class StreamUpdate(BaseModel):
     description: str | None = None
     channel_config: dict[str, Any] | None = None
     cron_expression: str | None = None
-    status: StreamStatus | None = None
     subscribed_events: list[str] | None = None
+
+
+class StreamStatusUpdate(BaseModel):
+    status: StreamStatus = Field(..., description="New status for the stream")
 
 
 class StreamRead(BaseModel):
@@ -79,6 +88,7 @@ class StreamRead(BaseModel):
     id: int
     name: str
     description: str | None
+    folder_id: str
     channel_type: ChannelType
     channel_config: dict[str, Any]
     mode: StreamMode

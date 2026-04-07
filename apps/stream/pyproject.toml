@@ -57,6 +57,7 @@ ignore = [
     "SIM102",  # nested if statements
     "SIM105",  # use contextlib.suppress
     "SIM108",  # use ternary operator
+    "UP046",   # Generic[T] subclass (PEP 695 syntax requires Python 3.12+)
 ]
 
 [tool.ruff.lint.isort]

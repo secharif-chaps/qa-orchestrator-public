@@ -5,15 +5,24 @@ Adapted from global-service's conftest pattern.
 """
 
 import uuid as _uuid
+from datetime import UTC, datetime, timedelta
+from unittest.mock import patch
 
+import jwt as pyjwt
 import pytest
 import sqlalchemy as _sa
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy import event as _sa_event
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.database import Base
+from app.database import Base, get_db
+
+# Auth constants matching app/core/auth.py
+_JWT_SECRET = "test-jwt-secret"
+_JWT_ALGORITHM = "HS256"
+_JWT_ISSUER = "global-gateway"
 
 
 def _strip_schema_from_metadata(base):
@@ -134,3 +143,96 @@ def mock_user():
         "preferred_username": "testuser",
         "organization_id": "test-org-123",
     }
+
+
+# --- Service fixtures ---
+
+
+@pytest.fixture
+def stream_service(db_session):
+    """Create a StreamService instance with test DB session."""
+    from app.services.stream_service import StreamService
+
+    return StreamService(db_session)
+
+
+@pytest.fixture
+def event_service(db_session):
+    """Create an EventService instance with test DB session."""
+    from app.services.event_service import EventService
+
+    return EventService(db_session)
+
+
+# --- Auth fixtures ---
+
+
+def _make_internal_token(
+    user_id: str = "test-user-123",
+    username: str = "testuser",
+    org_id: str = "test-org-123",
+    org_name: str = "Test Org",
+    roles: list[str] | None = None,
+    expired: bool = False,
+) -> str:
+    """Create a signed Internal JWT for testing."""
+    now = datetime.now(UTC)
+    exp = now - timedelta(minutes=5) if expired else now + timedelta(minutes=5)
+    payload = {
+        "sub": user_id,
+        "username": username,
+        "org_id": org_id,
+        "org_name": org_name,
+        "roles": roles or ["stream.read", "stream.write"],
+        "iss": _JWT_ISSUER,
+        "iat": int(now.timestamp()),
+        "exp": int(exp.timestamp()),
+    }
+    return pyjwt.encode(payload, _JWT_SECRET, algorithm=_JWT_ALGORITHM)
+
+
+@pytest.fixture
+def internal_token():
+    """Return a valid Internal JWT string."""
+    return _make_internal_token()
+
+
+@pytest.fixture
+def internal_auth_header(internal_token):
+    """Return Authorization header dict with valid Internal JWT."""
+    return {"Authorization": f"Internal {internal_token}"}
+
+
+@pytest.fixture
+def read_only_auth_header():
+    """Return Authorization header with stream.read only."""
+    token = _make_internal_token(roles=["stream.read"])
+    return {"Authorization": f"Internal {token}"}
+
+
+@pytest.fixture
+def no_roles_auth_header():
+    """Return Authorization header with no stream roles."""
+    token = _make_internal_token(roles=["other.role"])
+    return {"Authorization": f"Internal {token}"}
+
+
+@pytest.fixture
+def test_client(db_session):
+    """Create a FastAPI TestClient with test DB session and JWT secret configured."""
+    from app.main import app
+
+    def _override_get_db():
+        try:
+            yield db_session
+        finally:
+            pass
+
+    app.dependency_overrides[get_db] = _override_get_db
+
+    with patch("app.core.auth.settings") as mock_settings:
+        mock_settings.INTERNAL_JWT_SECRET = _JWT_SECRET
+        with TestClient(app) as client:
+            yield client
+
+    app.dependency_overrides.clear()
