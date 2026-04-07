@@ -69,7 +69,7 @@ services:
       LLM_PROVIDER: ${LLM_PROVIDER:-openai}
       LLM_API_KEY: ${LLM_API_KEY:-}
       LLM_BASE_URL: ${LLM_BASE_URL:-}
-      LLM_MODEL: ${LLM_MODEL:-gpt-5.1}
+      LLM_MODEL: ${LLM_MODEL:-gpt-5.1-sweden}
       LLM_API_VERSION: ${LLM_API_VERSION:-}
     volumes:
       - ../apps/screen/app:/app/app
