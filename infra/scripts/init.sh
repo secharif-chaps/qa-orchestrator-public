@@ -96,7 +96,7 @@ fi
 
 echo ""
 echo "🐳 Building and starting services..."
-docker compose build screen
+docker compose build screen stream
 docker compose up -d --build
 
 # ─── 7. Wait for Keycloak + init ─────────────────────
@@ -131,6 +131,7 @@ bash infra/scripts/setup-keycloak.sh \
 echo ""
 echo "🗃️  Running database migrations..."
 docker compose exec screen alembic upgrade head
+docker compose exec stream alembic upgrade head 2>/dev/null || echo "  ⚠️  Stream service not running — skipping stream migrations"
 
 # ─── 9. Done ─────────────────────────────────────────
 
@@ -158,9 +159,11 @@ echo "    task logs            Tail all logs"
 echo "    task logs:service -- screen   Tail a specific service"
 echo ""
 echo "  Development:"
-echo "    task screen:shell    Open shell in backend container"
-echo "    task screen:test     Run backend tests"
-echo "    task screen:lint     Lint backend code"
+echo "    task screen:shell    Open shell in screen container"
+echo "    task screen:test     Run screen tests"
+echo "    task screen:lint     Lint screen code"
+echo "    task stream:test     Run stream tests"
+echo "    task stream:lint     Lint stream code"
 echo "    task front:lint      Lint frontend code"
 echo "    task front:typecheck TypeScript type checking"
 echo ""

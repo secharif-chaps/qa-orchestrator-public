@@ -86,6 +86,7 @@ services:
       dockerfile: Dockerfile
     depends_on:
       db: { condition: service_healthy }
+    profiles: [stream]
     environment:
       <<: [*local-internal-auth]
       LOG_LEVEL: INFO
