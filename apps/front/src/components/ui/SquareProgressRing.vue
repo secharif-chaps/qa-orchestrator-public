@@ -18,7 +18,7 @@
         fill="none"
         :stroke-width="strokeWidth"
         :stroke-opacity="showProgress && segments.length > 0 ? 0.25 : 1"
-        class="stroke-primary-stroke transition-[stroke-opacity] duration-300"
+        class="stroke-primary-lighter-stroke transition-[stroke-opacity] duration-300"
       />
       <!-- Colored progress segments -->
       <rect

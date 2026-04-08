@@ -14,9 +14,7 @@
 
     <!-- Header -->
     <div class="flex items-start gap-4">
-      <div
-        class="rounded-card flex size-8 flex-shrink-0 items-center justify-center transition-colors"
-      >
+      <div class="rounded-card flex size-8 shrink-0 items-center justify-center transition-colors">
         <i v-if="isLoading" class="fas fa-spinner fa-spin text-xl" :class="iconColorClass"></i>
         <i v-else :class="[icon, 'text-xl', iconColorClass]"></i>
       </div>
@@ -79,10 +77,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import Tag from '@/components/ui/Tag.vue'
 import TaskErrorOverlay from '@/components/company/TaskErrorOverlay.vue'
+import Tag from '@/components/ui/Tag.vue'
 import type { AgentErrorDetails, TaskStatus } from '@/types/task'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

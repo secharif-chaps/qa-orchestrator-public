@@ -1609,7 +1609,6 @@
       "tabs": {
         "csr": "CSR",
         "jobs": "Job Offers",
-        "more": "More ({count})",
         "press": "Press & Media",
         "products": "Products & Services",
         "profile": "Profile",
@@ -1971,7 +1970,8 @@
         "digitalStrategy": "Digital Strategy",
         "partnersLabels": "Partners & Labels",
         "productsOverview": "Products Overview"
-      }
+      },
+      "title": "Overview"
     },
     "search": {
       "actions": {

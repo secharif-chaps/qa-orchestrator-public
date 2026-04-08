@@ -5,7 +5,7 @@
       <div class="flex min-w-0 shrink items-center gap-4">
         <!-- Loading around the image when task running -->
         <SquareProgressRing :segments="progressSegments" :show-progress="showProgressRing">
-          <div class="relative size-12 shrink-0 overflow-hidden rounded-lg bg-white">
+          <div class="relative size-12 shrink-0 overflow-hidden rounded-md bg-white">
             <img
               v-if="getCompanyDomain(company?.website)"
               :src="getLogoUrl(company?.website)"
@@ -87,7 +87,6 @@
     </div>
 
     <RouterView />
-
     <!-- Refresh company Modal -->
     <CompanyRefreshModal
       v-if="company"

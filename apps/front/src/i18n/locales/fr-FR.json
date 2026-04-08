@@ -1609,7 +1609,6 @@
       "tabs": {
         "csr": "RSE",
         "jobs": "Offres d'emploi",
-        "more": "Plus ({count})",
         "press": "Presse & Médias",
         "products": "Produits et services",
         "profile": "Profil",
@@ -1971,7 +1970,8 @@
         "digitalStrategy": "Stratégie digitale",
         "partnersLabels": "Partenaires & Marques",
         "productsOverview": "Aperçu des produits"
-      }
+      },
+      "title": "Aperçus"
     },
     "search": {
       "actions": {
