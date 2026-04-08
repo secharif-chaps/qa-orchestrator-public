@@ -35,29 +35,6 @@
       </div>
 
       <!-- Tab Section -->
-      <Card class="col-span-12">
-        <div class="flex flex-col gap-4">
-          <!-- Header Row: Title on left, Tabs on right -->
-          <div class="flex items-center justify-between">
-            <h3 class="text-secondary flex items-center gap-2 font-bold">
-              <div
-                class="bg-base-300 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg"
-              >
-                <i class="text-secondary text-md" :class="currentTabIcon"></i>
-              </div>
-              <span>{{ currentTabTitle }}</span>
-            </h3>
-            <Toggle v-model="currentTab" :options="tabOptions" />
-          </div>
-
-          <!-- Tab Content with transition -->
-          <Transition name="tab-fade" mode="out-in">
-            <ProfileTabProductsOverview v-if="currentTab === 'products-overview'" key="products" />
-            <ProfileTabPartnersLabels v-else-if="currentTab === 'partners'" key="partners" />
-            <ProfileTabDigitalStrategy v-else-if="currentTab === 'strategy'" key="strategy" />
-          </Transition>
-        </div>
-      </Card>
     </div>
   </div>
 </template>
@@ -69,30 +46,23 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { computed, ref, inject, type Ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useQuery } from '@pinia/colada'
-import { useI18n } from 'vue-i18n'
-import { Toggle } from '@owlint/feathers-vue'
-import { companyByIdQuery } from '@/queries/companies'
-import { companyTasksQuery } from '@/queries/tasks'
+import ProfileBusinessLine from '@/components/company/profile/ProfileBusinessLine.vue'
+import ProfileEmployees from '@/components/company/profile/ProfileEmployees.vue'
+import ProfileEstablishment from '@/components/company/profile/ProfileEstablishment.vue'
+import ProfileGroup from '@/components/company/profile/ProfileGroup.vue'
+import ProfileHeader from '@/components/company/profile/ProfileHeader.vue'
+import ProfileRevenue from '@/components/company/profile/ProfileRevenue.vue'
+
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import NoData from '@/components/ui/NoData.vue'
-import ProfileHeader from '@/components/company/profile/ProfileHeader.vue'
-import ProfileGroup from '@/components/company/profile/ProfileGroup.vue'
-import ProfileBusinessLine from '@/components/company/profile/ProfileBusinessLine.vue'
-import ProfileEstablishment from '@/components/company/profile/ProfileEstablishment.vue'
-import ProfileEmployees from '@/components/company/profile/ProfileEmployees.vue'
-import ProfileRevenue from '@/components/company/profile/ProfileRevenue.vue'
-import ProfileTabProductsOverview from '@/components/company/profile/ProfileTabProductsOverview.vue'
-import ProfileTabPartnersLabels from '@/components/company/profile/ProfileTabPartnersLabels.vue'
-import ProfileTabDigitalStrategy from '@/components/company/profile/ProfileTabDigitalStrategy.vue'
-import Card from '@/components/ui/Card.vue'
+import { companyByIdQuery } from '@/queries/companies'
+import { companyTasksQuery } from '@/queries/tasks'
+import { useQuery } from '@pinia/colada'
+import { computed, inject, ref, type Ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const route = useRoute('/folders/[folderId]/companies/[companyId]/profile')
-const router = useRouter()
-const { t } = useI18n()
 
 const companyId = computed(() => route.params.companyId)
 
@@ -125,65 +95,4 @@ const hasAnyProfileData = computed(() => {
   // Profile contains nested fields like establishmentYear, employeeCount, revenue
   return !!(comp.profile || comp.digital)
 })
-
-// Tab configuration
-const tabOptions = computed(() => [
-  {
-    value: 'products-overview',
-    icon: 'fa fa-box-open',
-    label: t('screen.profile.tabs.productsOverview'),
-  },
-  {
-    value: 'partners',
-    icon: 'fa fa-handshake',
-    label: t('screen.profile.tabs.partnersLabels'),
-  },
-  {
-    value: 'strategy',
-    icon: 'fa fa-chart-line',
-    label: t('screen.profile.tabs.digitalStrategy'),
-  },
-])
-
-// Current tab based on query param - synced with Toggle
-const currentTab = computed({
-  get: () => {
-    const tab = route.query.tab as string | undefined
-    if (tab === 'partners') return 'partners'
-    if (tab === 'strategy') return 'strategy'
-    return 'products-overview'
-  },
-  set: (value: string) => {
-    const query = { ...route.query }
-    if (value === 'products-overview') {
-      delete query.tab
-    } else {
-      query.tab = value
-    }
-    router.push({ query })
-  },
-})
-
-// Current tab title and icon for header
-const currentTabTitle = computed(() => {
-  const option = tabOptions.value.find((opt) => opt.value === currentTab.value)
-  return option?.label ?? ''
-})
-
-const currentTabIcon = computed(() => {
-  const option = tabOptions.value.find((opt) => opt.value === currentTab.value)
-  return option?.icon ?? ''
-})
 </script>
-
-<style scoped>
-.tab-fade-enter-active,
-.tab-fade-leave-active {
-  transition: opacity 0.15s ease;
-}
-
-.tab-fade-enter-from,
-.tab-fade-leave-to {
-  opacity: 0;
-}
-</style>

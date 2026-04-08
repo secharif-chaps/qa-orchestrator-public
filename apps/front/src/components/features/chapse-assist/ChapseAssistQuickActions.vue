@@ -11,10 +11,10 @@
       <h3 class="text-lg font-semibold">{{ title }}</h3>
     </div>
     <div
-      class="bg-base-200 rounded-card border-primary-stroke flex flex-col items-center justify-center gap-4 border p-6"
+      class="bg-primary-lighter rounded-card border-primary-lighter-stroke gap-xl p-xl flex flex-col items-center justify-center border"
     >
       <div class="border-primary h-10 w-10 animate-spin rounded-full border-b-2"></div>
-      <p class="text-secondary text-sm">
+      <p class="text-neutral-black-font text-sm">
         {{ $t('screen.chapseAssist.quickActions.checkingPreferences') }}
       </p>
     </div>
@@ -42,7 +42,7 @@
         <Button
           variant="secondary"
           size="sm"
-          icon="fa fa-refresh"
+          icon="fa-refresh"
           :label="$t('screen.chapseAssist.quickActions.tryAgain')"
           @click="retryPreferencesCheck"
         />
@@ -67,7 +67,7 @@
         v-if="!isLoadingActions && hasActions && !hasError"
         variant="tertiary"
         size="sm"
-        icon="fa fa-refresh"
+        icon="fa-refresh"
         :label="$t('screen.chapseAssist.quickActions.refresh')"
         @click="handleRefresh"
         :disabled="isLoadingActions"
@@ -77,10 +77,10 @@
     <!-- Loading State (generating actions) -->
     <div
       v-if="isLoadingActions"
-      class="bg-base-200 rounded-card border-primary-stroke flex flex-col items-center justify-center gap-4 border p-6"
+      class="bg-primary-lighter rounded-card border-primary-lighter-stroke gap-xl p-xl flex flex-col items-center justify-center border"
     >
       <div class="border-primary h-10 w-10 animate-spin rounded-full border-b-2"></div>
-      <p class="text-secondary text-sm">
+      <p class="text-neutral-black-font text-sm">
         {{ $t('screen.chapseAssist.quickActions.loading') }}
       </p>
     </div>
@@ -97,7 +97,7 @@
         <Button
           variant="secondary"
           size="sm"
-          icon="fa fa-refresh"
+          icon="fa-refresh"
           :label="$t('screen.chapseAssist.quickActions.tryAgain')"
           @click="handleRetry"
         />
@@ -105,7 +105,7 @@
           v-if="actionsError?.includes('preferences')"
           variant="primary"
           size="sm"
-          icon="fa fa-cog"
+          icon="fa-cog"
           :label="$t('screen.chapseAssist.quickActions.configure')"
           @click="goToSetup"
         />
@@ -119,7 +119,7 @@
         :key="action.id"
         @click="handleActionClick(action)"
         :disabled="!areTasksSuccessful"
-        class="group bg-base-200 border-primary-stroke rounded-lg border p-4 text-left transition-all duration-200"
+        class="group bg-primary-lighter border-primary-lighter-stroke p-xl rounded-xl border text-left transition-all duration-200"
         :class="{
           'cursor-not-allowed opacity-50': !areTasksSuccessful,
           'hover:bg-accent-100 dark:hover:bg-accent-400/20 hover:border-accent-500 hover:shadow-shadow-2':
@@ -129,12 +129,12 @@
         <div class="flex items-start gap-4">
           <!-- Icon -->
           <div
-            class="bg-sage-200 dark:bg-sage-950 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full transition-all duration-300"
+            class="bg-sage-200 dark:bg-sage-950 flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-300"
             :class="{
               'group-hover:bg-accent-500 group-hover:text-accent-50': areTasksSuccessful,
             }"
           >
-            <i :class="action.icon" class="text-lg"></i>
+            <Icon :icon="action.icon" class="text-lg" />
           </div>
 
           <!-- Content -->
@@ -148,7 +148,7 @@
               {{ action.label }}
             </h4>
             <p
-              class="text-secondary line-clamp-2 text-sm transition-colors"
+              class="text-neutral-black-font line-clamp-2 text-sm transition-colors"
               :class="{
                 'group-hover:text-accent-900 dark:group-hover:text-accent-100': areTasksSuccessful,
               }"
@@ -158,13 +158,14 @@
           </div>
 
           <!-- Arrow Icon -->
-          <div class="flex-shrink-0">
-            <i
-              class="fa fa-arrow-right text-secondary transition-colors"
+          <div class="shrink-0">
+            <Icon
+              icon="fa-arrow-right"
+              class="text-neutral-black-font transition-colors"
               :class="{
                 'group-hover:text-accent-500': areTasksSuccessful,
               }"
-            ></i>
+            />
           </div>
         </div>
       </button>
@@ -175,17 +176,17 @@
       v-else-if="hasLoadedOnce"
       class="bg-base-200 rounded-card border-primary-stroke border p-6 text-center"
     >
-      <i class="fa fa-magic text-secondary mb-3 text-3xl"></i>
+      <Icon icon="fa-magic" class="text-neutral-black-font mb-3 text-3xl" />
       <h4 class="mb-2 font-semibold">
         {{ $t('screen.chapseAssist.quickActions.empty.title') }}
       </h4>
-      <p class="text-secondary text-sm">
+      <p class="text-neutral-black-font text-sm">
         {{ $t('screen.chapseAssist.quickActions.empty.loadedMessage') }}
       </p>
       <Button
         variant="secondary"
         size="sm"
-        icon="fa fa-refresh"
+        icon="fa-refresh"
         class="mt-4"
         :label="$t('screen.chapseAssist.quickActions.tryAgain')"
         @click="handleRetry"
@@ -197,14 +198,14 @@
 </template>
 
 <script setup lang="ts">
-import { Alert, Button } from '@owlint/feathers-vue'
 import { useChapseAssist } from '@/composables/useChapseAssist'
 import type { QuickAction } from '@/types/ai-preferences'
 import type { Company } from '@/types/company'
 import type { TaskResponse } from '@/types/task'
+import { Alert, Button, Icon } from '@owlint/feathers-vue'
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 const { t } = useI18n()
 

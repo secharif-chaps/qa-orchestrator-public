@@ -1,39 +1,43 @@
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="text-neutral-black-font gap-md flex flex-col text-base">
     <!-- Customer Type -->
-    <div v-if="getSourcedValue(company?.products?.customerType)">
-      <h4 class="text-secondary mb-2 flex items-center gap-2 font-medium">
-        {{ $t('screen.profile.sections.products.customerType') }}
-      </h4>
-      <p class="text-secondary text-sm">
-        {{ getSourcedValue(company?.products?.customerType) }}
+    <div v-if="getSourcedValue(company?.products?.customerType)" class="space-y-2xs">
+      <div class="gap-2xs flex items-center">
+        <h4 class="font-bold">
+          {{ $t('screen.profile.sections.products.customerType') }}
+        </h4>
         <Source :sourced-value="company?.products?.customerType" />
+      </div>
+      <p>
+        {{ getSourcedValue(company?.products?.customerType) }}
       </p>
     </div>
 
     <!-- Marketing Positioning -->
-    <div v-if="getSourcedValue(company?.products?.marketingPositioning)">
-      <h4 class="text-secondary mb-2 flex items-center gap-2 font-medium">
-        {{ $t('screen.profile.sections.products.marketingPositioning') }}
-      </h4>
-      <p class="text-secondary text-sm">
-        {{ getSourcedValue(company?.products?.marketingPositioning) }}
+    <div v-if="getSourcedValue(company?.products?.marketingPositioning)" class="space-y-2xs">
+      <div class="gap-2xs flex items-center">
+        <h4 class="font-bold">
+          {{ $t('screen.profile.sections.products.marketingPositioning') }}
+        </h4>
         <Source :sourced-value="company?.products?.marketingPositioning" />
+      </div>
+      <p>
+        {{ getSourcedValue(company?.products?.marketingPositioning) }}
       </p>
     </div>
 
     <!-- No data message -->
-    <div v-if="!hasAnyProductData" class="text-secondary py-4 text-center">
+    <div v-if="!hasAnyProductData" class="py-4 text-center">
       {{ $t('common.noData') }}
     </div>
 
     <!-- View Products Button -->
-    <div v-if="hasAnyProductData" class="flex justify-end">
+    <div v-if="hasAnyProductData">
       <Button
-        variant="secondary"
+        variant="accent"
         :label="$t('screen.profile.sections.products.viewProducts')"
-        icon="fa fa-arrow-right"
-        icon-position="right"
+        icon-right="fa-arrow-circle-right"
+        size="sm"
         @click="viewProducts"
       />
     </div>
@@ -41,13 +45,13 @@
 </template>
 
 <script lang="ts" setup>
-import { useQuery } from '@pinia/colada'
-import { companyByIdQuery } from '@/queries/companies'
-import { useRoute, useRouter } from 'vue-router'
-import { computed } from 'vue'
-import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '@/components/company/Source.vue'
+import { getSourcedValue } from '@/components/helpers/sourcedValues'
+import { companyByIdQuery } from '@/queries/companies'
 import { Button } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
@@ -56,7 +60,7 @@ const companyId = computed(() => String((route.params as Record<string, string>)
 
 const viewProducts = () => {
   router.push({
-    query: { ...route.query, section: 'products' },
+    name: '/folders/[folderId]/companies/[companyId]/products',
   })
 }
 

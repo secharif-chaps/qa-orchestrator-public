@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="shouldShow"
-    class="bg-base-300 rounded-card border-primary-stroke flex items-center gap-8 border-2 p-6"
+    class="rounded-card border-primary-lighter-stroke bg-primary-lighter gap-xl p-xl flex items-center border"
   >
     <!-- Chapse Character -->
     <img
@@ -36,10 +36,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useChapseAssist } from '@/composables/useChapseAssist'
 import { Button } from '@owlint/feathers-vue'
+import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 

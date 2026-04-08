@@ -23,14 +23,14 @@
           data-tab-id="__overflow"
           class="flex shrink-0 items-center gap-1 rounded-lg px-2 py-2 text-sm whitespace-nowrap"
         >
-          <Icon icon="fa-plus" class="text-xs" aria-hidden="true" />
-          {{ t('screen.company.tabs.more', { count: 99 }) }}
+          99
+          <Icon icon="fa-chevron-right" class="text-xs" aria-hidden="true" />
         </span>
       </div>
     </div>
 
     <!-- Tab bar -->
-    <nav class="bg-sage-50 border-sage-200 inline-flex items-center gap-1 rounded-xl border p-1">
+    <nav class="bg-sage-50 border-sage-200 inline-flex items-center gap-1 rounded-md border p-1">
       <TabItem v-for="tab in visibleNavigationTabs" :key="tab.id" :tab="tab" variant="primary" />
 
       <!-- Overflow menu -->
@@ -38,13 +38,13 @@
         <template #trigger>
           <button
             type="button"
-            class="flex shrink-0 cursor-pointer items-center gap-1 rounded-lg px-2 py-2 text-sm whitespace-nowrap transition-colors"
+            class="flex shrink-0 cursor-pointer items-center gap-1 rounded-md px-2 py-2 text-sm whitespace-nowrap transition-colors"
             :class="
               hasActiveOverflowTab ? 'bg-sage-800 text-white' : 'text-sage-800 hover:bg-sage-100'
             "
           >
-            <Icon icon="fa-plus" class="text-xs" aria-hidden="true" />
-            {{ t('screen.company.tabs.more', { count: overflowNavigationTabs.length }) }}
+            {{ overflowNavigationTabs.length }}
+            <Icon icon="fa-chevron-right" class="text-xs" aria-hidden="true" />
           </button>
         </template>
         <template #content>

@@ -1,53 +1,60 @@
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="text-neutral-black-font gap-md flex flex-col text-base">
     <!-- Partner Brands -->
-    <div v-if="company?.products?.partnerBrands?.length">
-      <h4 class="text-secondary mb-2 flex items-center gap-2 font-medium">
+    <div v-if="company?.products?.partnerBrands?.length" class="space-y-2xs">
+      <h4 class="font-bold">
         {{ $t('screen.profile.sections.products.partnerBrands') }}
       </h4>
-      <div class="grid grid-cols-2 gap-2">
-        <div
+      <div class="gap-2xs flex flex-wrap items-center">
+        <Tag
           v-for="brand in company.products.partnerBrands"
           :key="getSourcedValue(brand)"
-          class="bg-base-200 flex items-center justify-between rounded p-3"
+          color="yellow"
+          size="sm"
         >
-          <span class="text-secondary">{{ getSourcedValue(brand) }}</span>
-          <Source :sourced-value="brand" />
-        </div>
+          <div class="gap-3xs flex items-center">
+            <span>{{ getSourcedValue(brand)?.split('(')[0] }}</span>
+            <Source :sourced-value="brand" />
+          </div>
+        </Tag>
       </div>
     </div>
 
     <!-- Private Labels -->
-    <div v-if="company?.products?.privateLabels?.length">
-      <h4 class="text-secondary mb-2 flex items-center gap-2 font-medium">
+    <div v-if="company?.products?.privateLabels?.length" class="space-y-2xs">
+      <h4 class="font-bold">
         {{ $t('screen.profile.sections.products.privateLabels', { company: company?.name }) }}
       </h4>
-      <div class="grid grid-cols-2 gap-2">
-        <div
+      <div class="gap-2xs flex flex-wrap items-center">
+        <Tag
           v-for="label in company.products.privateLabels"
           :key="getSourcedValue(label)"
-          class="bg-base-200 flex items-center justify-between rounded p-3"
+          color="yellow"
+          size="sm"
         >
-          <span class="text-secondary">{{ getSourcedValue(label) }}</span>
-          <Source :sourced-value="label" />
-        </div>
+          <div class="gap-3xs flex items-center">
+            <span>{{ getSourcedValue(label)?.split('(')[0] }}</span>
+            <Source :sourced-value="label" />
+          </div>
+        </Tag>
       </div>
     </div>
 
     <!-- No data message -->
-    <div v-if="!hasAnyPartnerData" class="text-secondary py-4 text-center">
+    <div v-if="!hasAnyPartnerData" class="py-4 text-center">
       {{ $t('common.noData') }}
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useQuery } from '@pinia/colada'
-import { companyByIdQuery } from '@/queries/companies'
-import { useRoute } from 'vue-router'
-import { computed } from 'vue'
-import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '@/components/company/Source.vue'
+import { getSourcedValue } from '@/components/helpers/sourcedValues'
+import { companyByIdQuery } from '@/queries/companies'
+import { Tag } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 

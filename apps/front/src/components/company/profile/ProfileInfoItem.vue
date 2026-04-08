@@ -1,20 +1,20 @@
 <template>
-  <div class="border-base-300 flex items-center gap-4 rounded-xl border p-4">
-    <div class="bg-base-300 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg">
-      <i class="text-secondary text-md" :class="icon"></i>
-    </div>
-    <div class="min-w-0">
-      <p class="text-secondary/70 text-xs">{{ label }}</p>
-      <div v-if="loading" class="bg-base-300 h-4 w-20 animate-pulse rounded-full"></div>
-      <p v-else-if="value" class="text-secondary text-sm font-medium">
+  <div class="bg-absolute-white gap-md p-xs flex items-center rounded-lg">
+    <Icon :icon class="text-lg" />
+    <div class="text-neutral-black-font min-w-0">
+      <p class="font-bold">{{ label }}</p>
+      <div v-if="loading" class="bg-grey-300 h-4 w-20 animate-pulse rounded-full"></div>
+      <p v-else-if="value" class="text-sm">
         {{ value }}
       </p>
-      <p v-else class="text-secondary/70 text-sm font-medium">{{ placeholder }}</p>
+      <p v-else class="text-sm">{{ placeholder }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { Icon } from '@owlint/feathers-vue'
+
 interface Props {
   icon: string
   label: string
@@ -23,8 +23,5 @@ interface Props {
   placeholder?: string
 }
 
-withDefaults(defineProps<Props>(), {
-  loading: false,
-  placeholder: 'Unknown',
-})
+const { loading = false, placeholder = 'Unknown' } = defineProps<Props>()
 </script>
