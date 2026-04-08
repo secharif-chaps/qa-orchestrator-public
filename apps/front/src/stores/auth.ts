@@ -14,7 +14,16 @@ export const useAuthStore = defineStore(
     const initialized = ref(false)
 
     // Getters
-    const isAuthenticated = computed(() => !!user.value && !user.value.expired)
+    // Use expires_at directly instead of the `expired` getter.
+    // Pinia persistence JSON-serializes the User object, which strips
+    // prototype getters like `expired`. Checking expires_at works on
+    // both real User instances and deserialized plain objects.
+    const isAuthenticated = computed(() => {
+      if (!user.value) return false
+      const expiresAt = user.value.expires_at
+      if (!expiresAt) return false
+      return Math.floor(Date.now() / 1000) < expiresAt
+    })
     const currentUser = computed(() => user.value)
     const accessToken = computed(() => user.value?.access_token || null)
     const userId = computed(() => user.value?.profile?.sub || null)
@@ -68,6 +77,44 @@ export const useAuthStore = defineStore(
 
     const { endpoints } = useEndpointResolver()
 
+    // Mutex: when multiple concurrent requests get 401, they all call
+    // refreshToken(). Without deduplication, each would fire signinSilent()
+    // in parallel, which can cause Keycloak to reject some of them.
+    let pendingRefresh: Promise<User | null> | null = null
+
+    const refreshToken = async (): Promise<User | null> => {
+      // Deduplicate: if a refresh is already in flight, reuse it
+      if (pendingRefresh) return pendingRefresh
+
+      pendingRefresh = (async () => {
+        const manager = initializeUserManager()
+        if (!manager) return null
+
+        try {
+          const currentUser = await manager.getUser()
+          if (
+            currentUser &&
+            currentUser.expires_at !== undefined &&
+            Math.floor(Date.now() / 1000) >= currentUser.expires_at
+          ) {
+            const refreshedUser = await manager.signinSilent()
+            user.value = refreshedUser
+            return refreshedUser
+          }
+          return currentUser
+        } catch (error) {
+          console.error('Refresh token error:', error)
+          return null
+        }
+      })()
+
+      try {
+        return await pendingRefresh
+      } finally {
+        pendingRefresh = null
+      }
+    }
+
     // Initialize UserManager
     const initializeUserManager = () => {
       if (userManager.value) return userManager.value
@@ -106,8 +153,7 @@ export const useAuthStore = defineStore(
 
       manager.events.addAccessTokenExpired(async () => {
         try {
-          const refreshedUser = await manager.signinSilent()
-          user.value = refreshedUser
+          await refreshToken()
         } catch {
           user.value = null
         }
@@ -132,12 +178,13 @@ export const useAuthStore = defineStore(
       const manager = initializeUserManager()
       if (!manager) return
 
-      if (initialized.value) return
-
+      // Always sync the user from UserManager, even if `initialized` was
+      // persisted as true from a previous session. The Pinia-persisted user
+      // is a plain object (missing getters), while UserManager holds the
+      // canonical token state including a valid refresh_token.
       try {
         const currentUser = await manager.getUser()
         user.value = currentUser
-        console.log('Auth initialized:', { user: user.value })
         initialized.value = true
       } catch (error) {
         console.error('Initialize auth error:', error)
@@ -219,25 +266,6 @@ export const useAuthStore = defineStore(
     const getCurrentUsername = async () => {
       const currentUser = await getUser()
       return currentUser?.profile?.preferred_username || currentUser?.profile?.sub || 'unknown'
-    }
-
-    const refreshToken = async () => {
-      const manager = initializeUserManager()
-      if (!manager) return null
-
-      try {
-        const currentUser = await manager.getUser()
-        if (currentUser && currentUser.expired) {
-          const refreshedUser = await manager.signinSilent()
-          user.value = refreshedUser
-          return refreshedUser
-        }
-        console.log('Refresh token:', currentUser)
-        return currentUser
-      } catch (error) {
-        console.error('Refresh token error:', error)
-        return null
-      }
     }
 
     // Permission checking utilities
