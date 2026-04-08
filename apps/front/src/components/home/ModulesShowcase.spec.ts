@@ -1,32 +1,32 @@
 /**
  * Tests for ModulesShowcase component.
  *
- * These tests verify the dynamic Discover module behavior based on feature flags.
+ * Verifies dynamic module card rendering based on feature flags and module data.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import type { FeatureFlagConfig } from '@/types/feature-flags'
+import type { ModuleConfig } from '@/types/tokens'
 
-// Mock vue-i18n with meaningful translations for test assertions
+// Mock vue-i18n
 const translations: Record<string, string> = {
-  'dashboard.home.modules.screen.name': 'Screen',
-  'dashboard.home.modules.screen.description': 'Automated company cards',
-  'dashboard.home.modules.screen.category': 'Intelligence',
-  'dashboard.home.modules.target.name': 'Target',
-  'dashboard.home.modules.target.description': 'Strategic monitoring',
-  'dashboard.home.modules.target.category': 'Monitoring',
-  'dashboard.home.modules.explore.name': 'Explore',
-  'dashboard.home.modules.explore.description': 'Knowledge graph',
-  'dashboard.home.modules.explore.category': 'Data',
-  'dashboard.home.modules.discover.name': 'Discover',
-  'dashboard.home.modules.discover.description': 'Data exploration',
-  'dashboard.home.modules.discover.category': 'Exploration',
-  'dashboard.home.modules.actions.companyScreen': 'Screen',
-  'dashboard.home.modules.actions.contactSales': 'Contact Sales',
-  'dashboard.home.modules.actions.open': 'Open',
-  'dashboard.home.modules.status.active': 'Active',
-  'dashboard.home.modules.status.proFeature': 'Pro Feature',
+  'dashboard.home.modules.screen.cardTitle': 'Screen',
+  'dashboard.home.modules.screen.cardDescription': 'Analyze your stakeholders',
+  'dashboard.home.modules.screen.cardStat': '12 analyses',
+  'dashboard.home.modules.screen.cardAction': 'New card',
+  'dashboard.home.modules.target.cardTitle': 'Target',
+  'dashboard.home.modules.target.cardDescription': 'Master your strategic issues',
+  'dashboard.home.modules.target.cardStat': '8 active watchfiles',
+  'dashboard.home.modules.target.cardAction': 'New watchfile',
+  'dashboard.home.modules.explore.cardTitle': 'Cartography',
+  'dashboard.home.modules.explore.cardDescription': 'Decode your ecosystem',
+  'dashboard.home.modules.explore.cardStat': '24 graphs',
+  'dashboard.home.modules.explore.cardAction': 'New cartography',
+  'dashboard.home.modules.discover.cardTitle': 'Discover',
+  'dashboard.home.modules.discover.cardDescription': 'Give access to information',
+  'dashboard.home.modules.discover.cardStat': '8 active dashboards',
+  'dashboard.home.modules.discover.cardAction': 'New dashboard',
   'dashboard.home.modules.status.comingSoon': 'Coming Soon',
 }
 vi.mock('vue-i18n', () => ({
@@ -36,39 +36,44 @@ vi.mock('vue-i18n', () => ({
 }))
 
 // Mock vue-router
+const mockPush = vi.fn()
 vi.mock('vue-router', () => ({
   useRouter: () => ({
-    push: vi.fn(),
+    push: mockPush,
   }),
 }))
 
 // Mock Vuellar components
 vi.mock('@owlint/feathers-vue', () => ({
-  Tag: {
-    name: 'Tag',
-    template: '<span class="tag"><slot /></span>',
-    props: ['intent', 'label', 'size'],
-  },
   Button: {
     name: 'Button',
     template:
-      '<button class="button" :disabled="disabled" @click="$emit(\'click\')"><slot />{{ label }}</button>',
-    props: ['variant', 'intent', 'size', 'label', 'icon', 'disabled'],
+      '<button class="button" :disabled="disabled" @click="$emit(\'click\')">{{ label }}</button>',
+    props: ['variant', 'size', 'label', 'iconRight', 'disabled'],
     emits: ['click'],
   },
-  Badge: {
-    name: 'Badge',
-    template: '<span class="badge"><slot /></span>',
-    props: ['color', 'icon', 'variant'],
+  Icon: {
+    name: 'Icon',
+    template: '<i :class="icon"></i>',
+    props: ['icon'],
   },
 }))
 
-// Mock Card component
-vi.mock('../ui/Card.vue', () => ({
+// Mock Tag component
+vi.mock('../ui/Tag.vue', () => ({
   default: {
-    name: 'Card',
-    template: '<div class="card" :data-disabled="disabled"><slot /></div>',
-    props: ['hoverable', 'clickable', 'disabled'],
+    name: 'Tag',
+    template: '<span class="tag">{{ label }}<slot /></span>',
+    props: ['variant', 'size', 'label', 'icon'],
+  },
+}))
+
+// Mock CmdBadge component
+vi.mock('../ui/CmdBadge.vue', () => ({
+  default: {
+    name: 'CmdBadge',
+    template: '<div class="cmd-badge" :data-color="color"><i :class="icon"></i></div>',
+    props: ['icon', 'color'],
   },
 }))
 
@@ -84,101 +89,91 @@ const globalMocks = {
   },
 }
 
+const enabledModules: ModuleConfig[] = [
+  { name: 'screen', enabled: true, created_at: '2024-01-01T00:00:00Z', updated_at: '' },
+  { name: 'target', enabled: true, created_at: '2024-01-01T00:00:00Z', updated_at: '' },
+  { name: 'explore', enabled: false, created_at: '2024-01-01T00:00:00Z', updated_at: '' },
+]
+
 describe('ModulesShowcase', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockWindowOpen.mockReset()
   })
 
-  it('shows Discover module with Contact Sales button when feature flag is disabled', async () => {
+  it('renders all 4 module cards', async () => {
     const { default: ModulesShowcase } = await import('./ModulesShowcase.vue')
 
-    const featureFlags: FeatureFlagConfig[] = [
-      {
-        flag: 'discover',
-        enabled: false,
-        enabled_at: null,
-        config: null,
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: null,
-      },
-    ]
-
     const wrapper = mount(ModulesShowcase, {
-      props: { featureFlags },
+      props: { featureFlags: [], modulesData: enabledModules },
       ...globalMocks,
     })
 
     await flushPromises()
 
-    // Should show 4 modules (Screen, Target, Explore, Discover)
-    const cards = wrapper.findAll('.card')
-    expect(cards.length).toBe(4)
-
-    // Discover should be visible
     const html = wrapper.html()
+    expect(html).toContain('Screen')
+    expect(html).toContain('Target')
+    expect(html).toContain('Cartography')
     expect(html).toContain('Discover')
-
-    // Should show Contact Sales button (not Open)
-    expect(html).toContain('Contact Sales')
   })
 
-  it('shows Discover module with Contact Sales button when no feature flags provided', async () => {
+  it('shows default state for enabled modules', async () => {
     const { default: ModulesShowcase } = await import('./ModulesShowcase.vue')
 
     const wrapper = mount(ModulesShowcase, {
-      props: { featureFlags: [] },
+      props: { featureFlags: [], modulesData: enabledModules },
       ...globalMocks,
     })
 
     await flushPromises()
 
-    // Should show 4 modules (including Discover as Pro Feature)
-    const cards = wrapper.findAll('.card')
-    expect(cards.length).toBe(4)
-
-    // Discover should be visible with Contact Sales
-    const html = wrapper.html()
-    expect(html).toContain('Discover')
-    expect(html).toContain('Contact Sales')
-  })
-
-  it('shows Discover module with disabled button when enabled but no URL configured', async () => {
-    const { default: ModulesShowcase } = await import('./ModulesShowcase.vue')
-
-    const featureFlags: FeatureFlagConfig[] = [
-      {
-        flag: 'discover',
-        enabled: true,
-        enabled_at: '2024-01-01T00:00:00Z',
-        config: null, // No URL configured
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: null,
-      },
-    ]
-
-    const wrapper = mount(ModulesShowcase, {
-      props: { featureFlags },
-      ...globalMocks,
-    })
-
-    await flushPromises()
-
-    // Should show 4 modules now (including Discover)
-    const cards = wrapper.findAll('.card')
-    expect(cards.length).toBe(4)
-
-    // Discover should be visible
-    const html = wrapper.html()
-    expect(html).toContain('Discover')
-
-    // Find the Open button and verify it's disabled
+    // Screen is enabled — should have action button
     const buttons = wrapper.findAll('.button')
-    const openButton = buttons.find((btn) => btn.html().includes('Open'))
-    expect(openButton?.attributes('disabled')).toBeDefined()
+    const screenButton = buttons.find((btn) => btn.html().includes('New card'))
+    expect(screenButton).toBeDefined()
+    expect(screenButton?.attributes('disabled')).toBeUndefined()
   })
 
-  it('shows Discover module with enabled button when URL is configured', async () => {
+  it('shows disabled state for disabled modules', async () => {
+    const { default: ModulesShowcase } = await import('./ModulesShowcase.vue')
+
+    const wrapper = mount(ModulesShowcase, {
+      props: { featureFlags: [], modulesData: enabledModules },
+      ...globalMocks,
+    })
+
+    await flushPromises()
+
+    // Explore is disabled — badge should have disabled color
+    const badges = wrapper.findAll('.cmd-badge')
+    const disabledBadge = badges.find((b) => b.attributes('data-color') === 'disabled')
+    expect(disabledBadge).toBeDefined()
+  })
+
+  it('shows soon state for modules not in modulesData', async () => {
+    const { default: ModulesShowcase } = await import('./ModulesShowcase.vue')
+
+    // Only screen in modulesData — target and explore are "soon"
+    const wrapper = mount(ModulesShowcase, {
+      props: {
+        featureFlags: [],
+        modulesData: [
+          { name: 'screen', enabled: true, created_at: '2024-01-01T00:00:00Z', updated_at: '' },
+        ],
+      },
+      ...globalMocks,
+    })
+
+    await flushPromises()
+
+    // Should have "Coming Soon" tags for modules not in data
+    const tags = wrapper.findAll('.tag')
+    const soonTags = tags.filter((t) => t.html().includes('Coming Soon'))
+    expect(soonTags.length).toBeGreaterThanOrEqual(2) // target, explore, discover
+  })
+
+  it('shows Discover as default when feature flag is enabled', async () => {
     const { default: ModulesShowcase } = await import('./ModulesShowcase.vue')
 
     const featureFlags: FeatureFlagConfig[] = [
@@ -193,27 +188,47 @@ describe('ModulesShowcase', () => {
     ]
 
     const wrapper = mount(ModulesShowcase, {
-      props: { featureFlags },
+      props: { featureFlags, modulesData: enabledModules },
       ...globalMocks,
     })
 
     await flushPromises()
 
-    // Should show 4 modules
-    const cards = wrapper.findAll('.card')
-    expect(cards.length).toBe(4)
-
-    // Discover should be visible
-    const html = wrapper.html()
-    expect(html).toContain('Discover')
-
-    // Find the Open button and verify it's NOT disabled
+    // Discover should have an action button
     const buttons = wrapper.findAll('.button')
-    const openButton = buttons.find((btn) => btn.html().includes('Open'))
-    expect(openButton?.attributes('disabled')).toBeUndefined()
+    const discoverButton = buttons.find((btn) => btn.html().includes('New dashboard'))
+    expect(discoverButton).toBeDefined()
   })
 
-  it('opens URL in new tab when enabled button is clicked', async () => {
+  it('shows Discover as soon when feature flag is disabled', async () => {
+    const { default: ModulesShowcase } = await import('./ModulesShowcase.vue')
+
+    const wrapper = mount(ModulesShowcase, {
+      props: {
+        featureFlags: [
+          {
+            flag: 'discover',
+            enabled: false,
+            enabled_at: null,
+            config: null,
+            created_at: '2024-01-01T00:00:00Z',
+            updated_at: null,
+          },
+        ],
+        modulesData: enabledModules,
+      },
+      ...globalMocks,
+    })
+
+    await flushPromises()
+
+    // Discover badge should have cyan color (soon, not disabled)
+    const badges = wrapper.findAll('.cmd-badge')
+    const cyanBadge = badges.find((b) => b.attributes('data-color') === 'cyan')
+    expect(cyanBadge).toBeDefined()
+  })
+
+  it('opens URL in new tab when Discover action is clicked', async () => {
     const { default: ModulesShowcase } = await import('./ModulesShowcase.vue')
 
     const discoverUrl = 'https://discover.example.com'
@@ -229,118 +244,18 @@ describe('ModulesShowcase', () => {
     ]
 
     const wrapper = mount(ModulesShowcase, {
-      props: { featureFlags },
+      props: { featureFlags, modulesData: enabledModules },
       ...globalMocks,
     })
 
     await flushPromises()
 
-    // Find the Open button for Discover module
+    // Find and click Discover button
     const buttons = wrapper.findAll('.button')
-    const openButton = buttons.find((btn) => btn.html().includes('Open'))
-    expect(openButton).toBeDefined()
-
-    // Click the button
-    await openButton?.trigger('click')
+    const discoverButton = buttons.find((btn) => btn.html().includes('New dashboard'))
+    await discoverButton?.trigger('click')
     await flushPromises()
 
-    // Verify window.open was called with correct arguments
-    expect(mockWindowOpen).toHaveBeenCalledWith(discoverUrl, '_blank')
-  })
-
-  it('does not call window.open when button is disabled (no URL)', async () => {
-    const { default: ModulesShowcase } = await import('./ModulesShowcase.vue')
-
-    const featureFlags: FeatureFlagConfig[] = [
-      {
-        flag: 'discover',
-        enabled: true,
-        enabled_at: '2024-01-01T00:00:00Z',
-        config: null, // No URL
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: null,
-      },
-    ]
-
-    const wrapper = mount(ModulesShowcase, {
-      props: { featureFlags },
-      ...globalMocks,
-    })
-
-    await flushPromises()
-
-    // Find the Open button for Discover module
-    const buttons = wrapper.findAll('.button')
-    const openButton = buttons.find((btn) => btn.html().includes('Open'))
-
-    // The button should be disabled, but we still test the handler
-    // In real implementation, disabled button won't trigger click
-    // But the handler also has a check for externalUrl
-    await openButton?.trigger('click')
-    await flushPromises()
-
-    // window.open should NOT have been called
-    expect(mockWindowOpen).not.toHaveBeenCalled()
-  })
-
-  it('changes Discover button from Contact Sales to Open when toggled', async () => {
-    const { default: ModulesShowcase } = await import('./ModulesShowcase.vue')
-
-    // First render with Discover disabled
-    const wrapper = mount(ModulesShowcase, {
-      ...globalMocks,
-      props: {
-        featureFlags: [
-          {
-            flag: 'discover',
-            enabled: false,
-            enabled_at: null,
-            config: null,
-            created_at: '2024-01-01T00:00:00Z',
-            updated_at: null,
-          },
-        ],
-      },
-    })
-
-    await flushPromises()
-
-    // Should have 4 modules (Discover always visible now)
-    expect(wrapper.findAll('.card').length).toBe(4)
-
-    // Verify all modules are present, Discover shows Contact Sales
-    const html = wrapper.html()
-    expect(html).toContain('Screen')
-    expect(html).toContain('Target')
-    expect(html).toContain('Explore')
-    expect(html).toContain('Discover')
-    expect(html).toContain('Contact Sales')
-
-    // Update props to enable Discover
-    await wrapper.setProps({
-      featureFlags: [
-        {
-          flag: 'discover',
-          enabled: true,
-          enabled_at: '2024-01-01T00:00:00Z',
-          config: { url: 'https://discover.example.com' },
-          created_at: '2024-01-01T00:00:00Z',
-          updated_at: null,
-        },
-      ],
-    })
-
-    await flushPromises()
-
-    // Should still have 4 modules
-    expect(wrapper.findAll('.card').length).toBe(4)
-
-    // All modules should still be present, Discover now shows Open
-    const updatedHtml = wrapper.html()
-    expect(updatedHtml).toContain('Screen')
-    expect(updatedHtml).toContain('Target')
-    expect(updatedHtml).toContain('Explore')
-    expect(updatedHtml).toContain('Discover')
-    expect(updatedHtml).toContain('Open')
+    expect(mockWindowOpen).toHaveBeenCalledWith(discoverUrl, '_blank', 'noopener,noreferrer')
   })
 })

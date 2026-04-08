@@ -1129,35 +1129,32 @@
         }
       },
       "modules": {
-        "actions": {
-          "companyScreen": "Créer un Screen",
-          "contactSales": "Contacter les Ventes",
-          "open": "Ouvrir"
-        },
         "discover": {
-          "category": "Recherche de Données",
-          "description": "Partager des insights stratégiques",
-          "name": "Discover"
+          "cardAction": "Nouveau dashboard",
+          "cardDescription": "Donnez accès à l'information",
+          "cardStat": "{count, plural, one {# dashboard actif} other {# dashboards actifs}}",
+          "cardTitle": "Discover"
         },
         "explore": {
-          "category": "Cartographie",
-          "description": "Graphe de connaissances interactif pour visualisation et découverte avancées de données",
-          "name": "Explore"
+          "cardAction": "Nouvelle cartographie",
+          "cardDescription": "Décrypter votre écosystème",
+          "cardStat": "{count, plural, one {# graphique} other {# graphiques}}",
+          "cardTitle": "Cartographie"
         },
         "screen": {
-          "category": "Business Intelligence",
-          "description": "Intelligence approfondie des entreprises et screening complet avec analyses avancées",
-          "name": "Screen"
+          "cardAction": "Nouvelle fiche",
+          "cardDescription": "Analyser vos tiers d'intérêts",
+          "cardStat": "{count, plural, one {# analyse} other {# analyses}}",
+          "cardTitle": "Fiche entreprise"
         },
         "status": {
-          "active": "Actif",
-          "comingSoon": "Bientôt Disponible",
-          "proFeature": "Fonctionnalité Pro"
+          "comingSoon": "Bientôt disponible"
         },
         "target": {
-          "category": "Analyse de Marché",
-          "description": "Veille de marché alimentée par IA avec alertes intelligentes et outils de surveillance complets",
-          "name": "Target"
+          "cardAction": "Nouvelle veille",
+          "cardDescription": "Maîtriser vos enjeux stratégiques",
+          "cardStat": "{count, plural, one {# dossier actif} other {# dossiers actifs}}",
+          "cardTitle": "Veille"
         }
       },
       "recentActivities": {
