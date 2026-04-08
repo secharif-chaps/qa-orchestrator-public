@@ -1,15 +1,25 @@
 ---
 name: pinia-colada
-description: Data fetching with Pinia Colada queries and mutations. Use when fetching API data, creating/updating resources, handling loading states, or managing server cache. Never call API functions directly in components.
+description: Data fetching with Pinia Colada queries and mutations. CRITICAL - Activates when creating OR modifying any .vue file that fetches or mutates data. When modifying existing components, verify no direct API calls in components, proper query/mutation usage, and all 4 states handled (loading/error/empty/data). Fix any violations found.
 allowed-tools: Read, Write, Edit, Glob, Grep
 metadata:
-  author: chaps-e
-  version: "1.0"
+  author: Lucas Gault
+  version: "2.0"
 ---
 
 # Data Fetching with Pinia Colada
 
 **CRITICAL**: Never call API functions directly in components. Always use queries/mutations.
+
+## Conformity Check (when modifying existing components)
+
+When editing a `.vue` file that fetches data, verify:
+- No direct API calls (`apiClient.get`, `fetch`, `axios`) in components — use `useQuery`/`useMutation`
+- All 4 states handled in template: loading, error, empty, data
+- Query keys follow hierarchical pattern (`RESOURCE_QUERY_KEYS`)
+- Mutations invalidate relevant queries on success
+
+If any violation is found, **fix it as part of your change**.
 
 ## Architecture
 

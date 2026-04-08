@@ -591,7 +591,11 @@ import { useDeleteCompany } from '@/mutations/companies'
 import { Modal, Button } from '@owlint/feathers-vue'
 
 const props = defineProps<{ company: { id: number; name: string } }>()
-const emit = defineEmits<{ deleted: [] }>()
+interface Emits {
+  deleted: []
+}
+
+const emit = defineEmits<Emits>()
 
 const showConfirm = ref(false)
 const { deleteCompany, isPending, error } = useDeleteCompany()

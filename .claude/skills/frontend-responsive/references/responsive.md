@@ -4,17 +4,19 @@ Basil follows mobile-first principles with Tailwind CSS breakpoints.
 
 ---
 
-## Breakpoints
+## Breakpoints (Project Custom)
 
-Use Tailwind's standard breakpoints consistently:
+This project uses **custom breakpoints**, NOT Tailwind defaults:
 
-| Breakpoint | Min Width | Usage          |
-| ---------- | --------- | -------------- |
-| `sm`       | 640px     | Small tablets  |
-| `md`       | 768px     | Tablets        |
-| `lg`       | 1024px    | Small laptops  |
-| `xl`       | 1280px    | Desktops       |
-| `2xl`      | 1536px    | Large desktops |
+| Breakpoint | Min Width | Usage               |
+| ---------- | --------- | ------------------- |
+| `xs`       | 480px     | Mobile              |
+| `sm`       | 744px     | Large mobile/tablet |
+| `md`       | 1024px    | Laptop              |
+| `lg`       | 1440px    | Desktop             |
+| `xl`       | 1920px    | Large desktop       |
+
+**No `2xl:` breakpoint** in this project.
 
 ---
 
@@ -219,7 +221,7 @@ Maintain consistent proportions:
 
 ## Testing Checklist
 
-- [ ] Test at all standard breakpoints (sm, md, lg, xl, 2xl)
+- [ ] Test at all project breakpoints (xs, sm, md, lg, xl)
 - [ ] Verify no horizontal scrolling at any viewport
 - [ ] Check touch targets are 44x44px minimum
 - [ ] Ensure text remains readable without zooming

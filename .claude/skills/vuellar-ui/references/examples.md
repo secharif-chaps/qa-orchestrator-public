@@ -644,9 +644,11 @@ const props = defineProps<{
   isLoading: boolean
 }>()
 
-const emit = defineEmits<{
+interface Emits {
   toggle: []
-}>()
+}
+
+const emit = defineEmits<Emits>()
 
 function handleToggle() {
   // Parent handles the actual toggle logic
