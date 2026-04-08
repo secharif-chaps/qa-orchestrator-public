@@ -3,7 +3,6 @@ version: '3'
 tasks:
   export-workflows:
     desc: 'Export n8n workflows from n8n instance to workflows directory with kebab-case naming'
-    dir: '../../'
     cmds:
       - python3 scripts/export-n8n-workflows.py
     summary: |
@@ -15,7 +14,6 @@ tasks:
 
   export-credentials:
     desc: 'Export n8n credentials from n8n instance to credentials directory with kebab-case naming'
-    dir: '../../'
     cmds:
       - python3 scripts/export-n8n-credentials.py
     summary: |
@@ -29,27 +27,20 @@ tasks:
     desc: 'Reset n8n instance (data and database)'
     summary: |
       Note: This will delete all n8n data and database, use with caution!
-    dir: '../../'
-    vars:
-      VOL_FORMAT:
-        sh: |
-          echo -n '{' && echo -n '{.Name}}'
     cmds:
       - docker compose down n8n n8n-import
-      - docker volume rm --force "$(docker compose volumes --format \'{{.VOL_FORMAT}}\' | grep n8n_data)"
-      - docker compose exec database psql -U app -d n8n_db -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO n8n_user;" > /dev/null
-      - docker compose up -d --wait n8n
+      - docker volume rm --force "$(docker compose volumes --format '{{.Name}}' | grep n8n_data)"
+      - docker compose exec db psql -U ${POSTGRES_USER:-postgres} -d n8n_db -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO ${N8N_DB_USER:-postgres};"
+      - docker compose --profile target up -d --wait n8n
       - docker compose logs -n 45 n8n-import n8n
 
   test:setup:
     desc: 'Setup N8N test environment (install dependencies)'
-    dir: '../../'
     cmds:
       - docker compose exec n8n npm --prefix /tests install
 
   test:
     desc: 'Run N8N workflow tests with dataset, usage: task n8n:test -- <dataset-filename> [options]'
-    dir: '../../'
     cmds:
       - docker compose exec --workdir /tests n8n node /tests/test-workflow.js {{.CLI_ARGS}}
     summary: |
@@ -62,9 +53,8 @@ tasks:
 
   validate:
     desc: 'Validate N8N workflows (naming convention, agent config, feedback nodes)'
-    dir: '../../'
     cmds:
-      - docker compose run --rm devtools php api/tests/N8N/validate-n8n-workflows.php --workflows-dir=/app/docker/n8n/workflows {{.CLI_ARGS}}
+      - docker compose exec target php tests/N8N/validate-n8n-workflows.php --workflows-dir=n8n/workflows {{.CLI_ARGS}}
     summary: |
       Validates all N8N workflows against best practices:
         1. Naming Convention: Domain_Role_Action format (e.g., Folder_Agent_UpdateReferenceSubject)
@@ -82,7 +72,6 @@ tasks:
 
   validate:datasets:
     desc: 'Validate test datasets against JSON Schema'
-    dir: '../../'
     cmds:
       - docker compose exec --workdir /tests n8n node /tests/validate-datasets.js {{.CLI_ARGS}}
     summary: |

@@ -23,4 +23,13 @@ export default {
       `docker compose exec -T screen ruff format ${relative.join(' ')}`,
     ]
   },
+  // Target backend: PHP (via Docker — ECS + PHPStan not installed on host)
+  // ECS runs on staged files only, PHPStan must analyse the whole project
+  'apps/target/**/*.php': (filenames) => {
+    const relative = filenames.map((f) => f.replace(/.*apps\/target\//, ''))
+    return [
+      `docker compose exec -T target php vendor/bin/ecs check --config=ecs.php --fix ${relative.join(' ')}`,
+      `docker compose exec -T target php vendor/bin/phpstan --memory-limit=1G analyse`,
+    ]
+  },
 }
