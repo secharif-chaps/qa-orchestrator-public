@@ -251,6 +251,45 @@
   --color-indigo-900: #222c4f;
   --color-indigo-950: #171f3d;
 
+  /* Yellow Color Palette */
+  --color-yellow-50: #fef8ed;
+  --color-yellow-100: #fdf2dc;
+  --color-yellow-200: #fbe5b9;
+  --color-yellow-300: #f8d795;
+  --color-yellow-400: #f6ca72;
+  --color-yellow-500: #c89b40;
+  --color-yellow-600: #9d7930;
+  --color-yellow-700: #715621;
+  --color-yellow-800: #5b4519;
+  --color-yellow-900: #463411;
+  --color-yellow-950: #30230a;
+
+  /* Cherry Color Palette */
+  --color-cherry-50: #f8f0f1;
+  --color-cherry-100: #f1e0e4;
+  --color-cherry-200: #e2c1c8;
+  --color-cherry-300: #d4a3ad;
+  --color-cherry-400: #c58491;
+  --color-cherry-500: #bb6779;
+  --color-cherry-600: #6e3d47;
+  --color-cherry-700: #49282f;
+  --color-cherry-800: #371e23;
+  --color-cherry-900: #251418;
+  --color-cherry-950: #120a0c;
+
+  /* Cyan Color Palette */
+  --color-cyan-50: #e6eff0;
+  --color-cyan-100: #d4e3e4;
+  --color-cyan-200: #b1cccd;
+  --color-cyan-300: #8db4b5;
+  --color-cyan-400: #6a9d9e;
+  --color-cyan-500: #468586;
+  --color-cyan-600: #2a5050;
+  --color-cyan-700: #1c3536;
+  --color-cyan-800: #152828;
+  --color-cyan-900: #0e1b1b;
+  --color-cyan-950: #070d0d;
+
   --color-warning-50: var(--color-orange-50);
   --color-warning-100: var(--color-orange-100);
   --color-warning-200: var(--color-orange-200);

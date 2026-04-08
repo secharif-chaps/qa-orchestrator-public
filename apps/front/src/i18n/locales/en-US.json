@@ -1129,35 +1129,32 @@
         }
       },
       "modules": {
-        "actions": {
-          "companyScreen": "Create a Screen",
-          "contactSales": "Contact Sales",
-          "open": "Open"
-        },
         "discover": {
-          "category": "Search Data",
-          "description": "Share strategic insights",
-          "name": "Discover"
+          "cardAction": "New dashboard",
+          "cardDescription": "Give access to information",
+          "cardStat": "{count, plural, one {# active dashboard} other {# active dashboards}}",
+          "cardTitle": "Discover"
         },
         "explore": {
-          "category": "Cartography",
-          "description": "Interactive knowledge graph for advanced data visualization and discovery",
-          "name": "Explore"
+          "cardAction": "New cartography",
+          "cardDescription": "Decode your ecosystem",
+          "cardStat": "{count, plural, one {# graph} other {# graphs}}",
+          "cardTitle": "Cartography"
         },
         "screen": {
-          "category": "Business Intelligence",
-          "description": "Deep company intelligence and comprehensive business screening with advanced analytics",
-          "name": "Screen"
+          "cardAction": "New card",
+          "cardDescription": "Analyze your stakeholders",
+          "cardStat": "{count, plural, one {# analysis} other {# analyses}}",
+          "cardTitle": "Company Card"
         },
         "status": {
-          "active": "Active",
-          "comingSoon": "Coming Soon",
-          "proFeature": "Pro Feature"
+          "comingSoon": "Coming Soon"
         },
         "target": {
-          "category": "Market Analysis",
-          "description": "AI-powered market watch with smart alerts and comprehensive monitoring tools",
-          "name": "Target"
+          "cardAction": "New watchfile",
+          "cardDescription": "Master your strategic issues",
+          "cardStat": "{count, plural, one {# active watchfile} other {# active watchfiles}}",
+          "cardTitle": "Watchfile"
         }
       },
       "recentActivities": {

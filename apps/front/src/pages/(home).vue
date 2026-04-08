@@ -31,7 +31,7 @@
 
       <!-- Modules Showcase -->
       <div>
-        <ModulesShowcase :feature-flags="featureFlags" />
+        <ModulesShowcase :feature-flags="featureFlags" :modules-data="modulesData?.modules" />
       </div>
     </div>
   </div>
