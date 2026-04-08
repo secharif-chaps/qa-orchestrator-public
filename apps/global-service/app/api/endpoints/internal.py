@@ -132,12 +132,12 @@ async def announce_module(
 
 
 @router.post(
-    "/organizations/{org_id}/tokens/consume",
+    "/organizations/{organization_id}/tokens/consume",
     response_model=ConsumeTokensResponse,
     status_code=status.HTTP_200_OK,
 )
 async def consume_organization_tokens(
-    org_id: UUID = Path(
+    organization_id: UUID = Path(
         ...,
         description="Organization UUID",
         examples=["550e8400-e29b-41d4-a716-446655440000"],
@@ -154,10 +154,10 @@ async def consume_organization_tokens(
 
     Security:
     - Requires valid internal JWT token in Authorization header
-    - Validates that org_id in path matches org_id in JWT token
+    - Validates that organization_id in path matches org_id in JWT token
 
     Args:
-        org_id: Keycloak organization UUID from URL path
+        organization_id: Keycloak organization UUID from URL path
         request: Token consumption request with amount, module, reference details
         token_payload: Verified internal JWT payload (injected by dependency)
         token_manager: TokenManager service instance
@@ -169,11 +169,11 @@ async def consume_organization_tokens(
         HTTPException 401: If internal JWT is invalid or missing
         HTTPException 403: If org_id doesn't match JWT or module not enabled
         HTTPException 402: If insufficient tokens
-        HTTPException 422: If org_id is not a valid UUID format
+        HTTPException 422: If organization_id is not a valid UUID format
     """
-    org_id_str = str(org_id)
+    org_id_str = str(organization_id)
 
-    # Verify that the org_id in the path matches the org_id in the JWT
+    # Verify that the organization_id in the path matches the org_id in the JWT
     if org_id_str != token_payload.org_id:
         logger.warning(
             "Organization ID mismatch in internal token consumption",
@@ -290,12 +290,12 @@ async def consume_organization_tokens(
 
 
 @router.get(
-    "/organizations/{org_id}/folders/accessible-company-ids",
+    "/organizations/{organization_id}/folders/accessible-company-ids",
     response_model=list[int],
     status_code=status.HTTP_200_OK,
 )
 async def get_accessible_company_ids(
-    org_id: UUID = Path(
+    organization_id: UUID = Path(
         ...,
         description="Organization UUID",
     ),
@@ -309,9 +309,9 @@ async def get_accessible_company_ids(
 
     Security:
     - Requires valid internal JWT token in Authorization header
-    - Validates that org_id in path matches org_id in JWT token
+    - Validates that organization_id in path matches org_id in JWT token
     """
-    org_id_str = str(org_id)
+    org_id_str = str(organization_id)
 
     if org_id_str != token_payload.org_id:
         raise HTTPException(
@@ -339,12 +339,12 @@ async def get_accessible_company_ids(
 
 
 @router.get(
-    "/organizations/{org_id}/folders/company-access/{company_id}",
+    "/organizations/{organization_id}/folders/company-access/{company_id}",
     response_model=bool,
     status_code=status.HTTP_200_OK,
 )
 async def check_company_access(
-    org_id: UUID = Path(..., description="Organization UUID"),
+    organization_id: UUID = Path(..., description="Organization UUID"),
     company_id: int = Path(..., description="Company ID to check access for"),
     user_roles: str = Query("", description="Comma-separated list of user roles"),
     token_payload: InternalTokenPayload = Depends(get_internal_token),
@@ -357,9 +357,9 @@ async def check_company_access(
 
     Security:
     - Requires valid internal JWT token in Authorization header
-    - Validates that org_id in path matches org_id in JWT token
+    - Validates that organization_id in path matches org_id in JWT token
     """
-    org_id_str = str(org_id)
+    org_id_str = str(organization_id)
 
     if org_id_str != token_payload.org_id:
         raise HTTPException(
@@ -392,12 +392,12 @@ async def check_company_access(
 
 
 @router.get(
-    "/organizations/{org_id}/folders/company/{company_id}/folder-info",
+    "/organizations/{organization_id}/folders/company/{company_id}/folder-info",
     response_model=CompanyFolderInfoResponse | None,
     status_code=status.HTTP_200_OK,
 )
 async def get_company_folder_info(
-    org_id: UUID = Path(..., description="Organization UUID"),
+    organization_id: UUID = Path(..., description="Organization UUID"),
     company_id: int = Path(..., description="Company ID"),
     token_payload: InternalTokenPayload = Depends(get_internal_token),
     db: AsyncSession = Depends(get_global_db),
@@ -409,9 +409,9 @@ async def get_company_folder_info(
 
     Security:
     - Requires valid internal JWT token in Authorization header
-    - Validates that org_id in path matches org_id in JWT token
+    - Validates that organization_id in path matches org_id in JWT token
     """
-    org_id_str = str(org_id)
+    org_id_str = str(organization_id)
 
     if org_id_str != token_payload.org_id:
         raise HTTPException(

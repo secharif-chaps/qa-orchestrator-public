@@ -22,7 +22,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.logging_config import get_logger
-from app.core.organization import OrganizationContext, get_user_organization, require_feature
+from app.core.organization_context import OrganizationContext, get_user_organization, require_feature
 from app.core.security import verify_company_organization_access
 from app.database import get_db
 from app.models import Company, FeatureFlag, TranslationJob, TranslationJobStatus

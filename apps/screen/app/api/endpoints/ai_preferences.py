@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_company_service
-from app.core.organization import OrganizationContext, get_user_organization
+from app.core.organization_context import OrganizationContext, get_user_organization
 from app.database import get_db
 from app.schemas.ai_preferences import (
     QuickActionsRequest,

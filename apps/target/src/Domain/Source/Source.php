@@ -45,9 +45,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new GetCollection(
-            uriTemplate: '/watch_files/{id}/sources',
+            uriTemplate: '/watch_files/{watchFileId}/sources',
             uriVariables: [
-                'id' => new Link(fromProperty: 'sources', fromClass: WatchFile::class, description: 'WatchFile id'),
+                'watchFileId' => new Link(fromProperty: 'sources', fromClass: WatchFile::class, description: 'WatchFile id'),
             ],
             openapi: new Operation(
                 summary: 'Get sources for a specific watch file',
@@ -72,9 +72,9 @@ use Symfony\Component\Validator\Constraints as Assert;
             provider: WatchFileSourceProvider::class
         ),
         new Get(
-            uriTemplate: '/watch_files/{id}/sources/grouped',
+            uriTemplate: '/watch_files/{watchFileId}/sources/grouped',
             uriVariables: [
-                'id' => new Link(fromProperty: 'sources', fromClass: WatchFile::class, description: 'WatchFile id'),
+                'watchFileId' => new Link(fromProperty: 'sources', fromClass: WatchFile::class, description: 'WatchFile id'),
             ],
             openapi: new Operation(
                 summary: 'Get sources for a specific watch file grouped by type',
@@ -107,10 +107,10 @@ use Symfony\Component\Validator\Constraints as Assert;
             provider: WatchFileGroupedSourceProvider::class
         ),
         new Post(
-            uriTemplate: '/watch_files/{watchFileId}/source/{id}/change-status/',
+            uriTemplate: '/watch_files/{watchFileId}/sources/{sourceId}/change-status',
             uriVariables: [
                 'watchFileId' => new Link(fromProperty: 'sources', fromClass: WatchFile::class),
-                'id' => new Link(fromClass: Source::class, identifiers: ['id']),
+                'sourceId' => new Link(fromClass: Source::class, identifiers: ['id']),
             ],
             openapi: new Operation(
                 summary: 'Change source status',
@@ -130,7 +130,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                     - 403: Insufficient permissions to modify source
 
                     Example:
-                    POST /watch_files/{watchFileId}/source/{id}/change-status/
+                    POST /watch_files/{watchFileId}/sources/{sourceId}/change-status
                     {
                         "status": "enabled"
                     }
@@ -148,7 +148,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                         ],
                     ),
                     new Parameter(
-                        'id',
+                        'sourceId',
                         'path',
                         description: 'The ID of the source to change status',
                         required: true,

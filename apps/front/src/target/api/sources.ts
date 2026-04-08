@@ -68,7 +68,7 @@ export const changeSourceStatus = async (
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
   const response = await useApi().post<Source>(
-    `${ROOT_URL}/${watchFileId}/source/${sourceId}/change-status/`,
+    `${ROOT_URL}/${watchFileId}/sources/${sourceId}/change-status`,
     { status },
     { defaultErrorMessage },
   )

@@ -82,14 +82,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new Get(
+            uriTemplate: '/watch_files/{watchFileId}',
             openapi: new Operation(
                 summary: 'Get a watch file by ID',
                 description: 'Retrieves a specific watch file by its unique identifier. Only watch files accessible to the authenticated user are returned.',
                 parameters: [
                     new Parameter(
-                        name: 'id',
+                        name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier (UUID) of the watch file to retrieve',
+                        description: 'The unique identifier (UUID) of the watch file (watchFileId) to retrieve',
                         required: true,
                         schema: [
                             'type' => 'string',
@@ -130,14 +131,15 @@ use Symfony\Component\Validator\Constraints as Assert;
             processor: WatchFileProcessor::class,
         ),
         new Patch(
+            uriTemplate: '/watch_files/{watchFileId}',
             openapi: new Operation(
                 summary: 'Update a watch file',
                 description: 'Updates specific fields of an existing watch file. Only provided fields will be updated.',
                 parameters: [
                     new Parameter(
-                        name: 'id',
+                        name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier (UUID) of the watch file to update',
+                        description: 'The unique identifier (UUID) of the watch file (watchFileId) to update',
                         required: true,
                         schema: [
                             'type' => 'string',
@@ -151,7 +153,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             processor: UpdateWatchFileProcessor::class,
         ),
         new Post(
-            uriTemplate: '/watch_files/{id}/status/{status}',
+            uriTemplate: '/watch_files/{watchFileId}/status/{status}',
             openapi: new Operation(
                 summary: 'Change watch file status',
                 description: 'Updates the status of a specific watch file. This operation allows changing the watch file state between enabled, archived, or draft. Status changes affect the watch file\'s visibility and accessibility within the application.',
@@ -380,15 +382,15 @@ use Symfony\Component\Validator\Constraints as Assert;
             provider: SourceTypesProvider::class,
         ),
         new Post(
-            uriTemplate: '/watch_files/{id}/conversations',
+            uriTemplate: '/watch_files/{watchFileId}/conversations',
             openapi: new Operation(
                 summary: 'Create a new conversation in watch file',
                 description: 'Creates a new conversation within the specified watch file. The conversation will be initialized with the provided user message.',
                 parameters: [
                     new Parameter(
-                        name: 'id',
+                        name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier (UUID) of the watch file where the conversation will be created',
+                        description: 'The unique identifier (UUID) of the watch file (watchFileId) where the conversation will be created',
                         required: true,
                         schema: [
                             'type' => 'string',
@@ -411,15 +413,15 @@ use Symfony\Component\Validator\Constraints as Assert;
             processor: WatchFileConversationProcessor::class,
         ),
         new Get(
-            uriTemplate: '/watch_files/{id}/conversations/last',
+            uriTemplate: '/watch_files/{watchFileId}/conversations/last',
             openapi: new Operation(
                 summary: 'Get the last conversation for a watch file',
                 description: 'Retrieves the most recent conversation from the specified watch file. If no conversations exist, returns null.',
                 parameters: [
                     new Parameter(
-                        name: 'id',
+                        name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier (UUID) of the watch file to get the last conversation from',
+                        description: 'The unique identifier (UUID) of the watch file (watchFileId) to get the last conversation from',
                         required: true,
                         schema: [
                             'type' => 'string',
@@ -438,7 +440,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             provider: LastWatchFileConversationProvider::class,
         ),
         new GetCollection(
-            uriTemplate: '/watch_files/{id}/share',
+            uriTemplate: '/watch_files/{watchFileId}/share',
             openapi: new Operation(
                 summary: 'Get watch file sharing details',
                 description: 'Retrieves the list of users who have access to the specified watch file, including their permission levels and sharing details.',
@@ -451,15 +453,15 @@ use Symfony\Component\Validator\Constraints as Assert;
             provider: WatchFileUserProvider::class
         ),
         new Post(
-            uriTemplate: '/watch_files/{id}/share',
+            uriTemplate: '/watch_files/{watchFileId}/share',
             openapi: new Operation(
                 summary: 'Share watch file with users',
                 description: 'Shares the specified watch file with one or more users, granting them access according to the defined permission level.',
                 parameters: [
                     new Parameter(
-                        name: 'id',
+                        name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier (UUID) of the watch file to share',
+                        description: 'The unique identifier (UUID) of the watch file (watchFileId) to share',
                         required: true,
                         schema: [
                             'type' => 'string',
@@ -480,9 +482,9 @@ use Symfony\Component\Validator\Constraints as Assert;
             processor: WatchFileUserProcessor::class
         ),
         new Delete(
-            uriTemplate: '/watch_files/{id}/share/{watchFileUserId}',
+            uriTemplate: '/watch_files/{watchFileId}/share/{watchFileUserId}',
             uriVariables: [
-                'id' => [
+                'watchFileId' => [
                     'from_class' => WatchFile::class,
                     'identifiers' => ['id'],
                 ],
@@ -497,9 +499,9 @@ use Symfony\Component\Validator\Constraints as Assert;
                 description: 'Removes sharing access for a specific user from the watch file. This will revoke all permissions the user had on the watch file.',
                 parameters: [
                     new Parameter(
-                        name: 'id',
+                        name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier (UUID) of the watch file to remove access from',
+                        description: 'The unique identifier (UUID) of the watch file (watchFileId) to remove access from',
                         required: true,
                         schema: [
                             'type' => 'string',
@@ -526,16 +528,16 @@ use Symfony\Component\Validator\Constraints as Assert;
             processor: WatchFileUserProcessor::class
         ),
         new Post(
-            uriTemplate: '/watch_files/{id}/favorite',
+            uriTemplate: '/watch_files/{watchFileId}/favorite',
             status: Response::HTTP_NO_CONTENT,
             openapi: new Operation(
                 summary: 'Add watch file to favorites',
                 description: 'Adds the specified watch file to the authenticated user\'s favorites list. Favorited watch files appear at the top of watch file lists and can be filtered separately.',
                 parameters: [
                     new Parameter(
-                        name: 'id',
+                        name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier (UUID) of the watch file to add to favorites',
+                        description: 'The unique identifier (UUID) of the watch file (watchFileId) to add to favorites',
                         required: true,
                         schema: [
                             'type' => 'string',
@@ -553,16 +555,16 @@ use Symfony\Component\Validator\Constraints as Assert;
             processor: FavoriteWatchFileProcessor::class,
         ),
         new Delete(
-            uriTemplate: '/watch_files/{id}/favorite',
+            uriTemplate: '/watch_files/{watchFileId}/favorite',
             status: Response::HTTP_NO_CONTENT,
             openapi: new Operation(
                 summary: 'Remove watch file from favorites',
                 description: 'Removes the specified watch file from the authenticated user\'s favorites list. The watch file remains accessible but will no longer be marked as favorite.',
                 parameters: [
                     new Parameter(
-                        name: 'id',
+                        name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier (UUID) of the watch file to remove from favorites',
+                        description: 'The unique identifier (UUID) of the watch file (watchFileId) to remove from favorites',
                         required: true,
                         schema: [
                             'type' => 'string',
@@ -579,15 +581,15 @@ use Symfony\Component\Validator\Constraints as Assert;
             processor: FavoriteWatchFileProcessor::class,
         ),
         new Get(
-            uriTemplate: '/watch_files/{id}/history',
+            uriTemplate: '/watch_files/{watchFileId}/history',
             openapi: new Operation(
                 summary: 'Get watch file history',
                 description: 'Retrieves the detailed history of all events that occurred for the specified watch file, grouped by day.',
                 parameters: [
                     new Parameter(
-                        name: 'id',
+                        name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier (UUID) of the watch file',
+                        description: 'The unique identifier (UUID) of the watch file (watchFileId)',
                         required: true,
                         schema: [
                             'type' => 'string',

@@ -432,7 +432,7 @@ class SourceApiTest extends AbstractApiTestCase
         $client = $this->createAuthenticatedClient($watchFileOwner);
         $response = $client->request(
             'POST',
-            '/api/watch_files/' . $watchFile->getId() . '/source/' . $source->getId() . '/change-status/',
+            '/api/watch_files/' . $watchFile->getId() . '/sources/' . $source->getId() . '/change-status',
             [
                 'json' => [
                     'status' => 'active',
@@ -477,7 +477,7 @@ class SourceApiTest extends AbstractApiTestCase
         $client = $this->createAuthenticatedClient($watchFileOwner);
         $response = $client->request(
             'POST',
-            '/api/watch_files/' . $watchFile->getId() . '/source/' . $source->getId() . '/change-status/',
+            '/api/watch_files/' . $watchFile->getId() . '/sources/' . $source->getId() . '/change-status',
             [
                 'json' => [
                     'status' => 'inactive',
@@ -523,7 +523,7 @@ class SourceApiTest extends AbstractApiTestCase
         $client = $this->createAuthenticatedClient($unauthorizedUser);
         $client->request(
             'POST',
-            '/api/watch_files/' . $watchFile->getId() . '/source/' . $source->getId() . '/change-status/',
+            '/api/watch_files/' . $watchFile->getId() . '/sources/' . $source->getId() . '/change-status',
             [
                 'json' => [
                     'status' => 'inactive',
@@ -560,7 +560,7 @@ class SourceApiTest extends AbstractApiTestCase
         $client = $this->createAuthenticatedClient($watchFileOwner);
         $client->request(
             'POST',
-            '/api/watch_files/' . $watchFile->getId() . '/source/' . $source->getId() . '/change-status/',
+            '/api/watch_files/' . $watchFile->getId() . '/sources/' . $source->getId() . '/change-status',
             [
                 'json' => [
                     'status' => 'invalid_status',
@@ -590,7 +590,7 @@ class SourceApiTest extends AbstractApiTestCase
         // Security check runs before resource resolution, returning 403 instead of 404
         $client->request(
             'POST',
-            '/api/watch_files/' . $watchFile->getId() . '/source/' . $nonExistentSourceId . '/change-status/',
+            '/api/watch_files/' . $watchFile->getId() . '/sources/' . $nonExistentSourceId . '/change-status',
             [
                 'json' => [
                     'status' => 'active',
@@ -630,7 +630,7 @@ class SourceApiTest extends AbstractApiTestCase
         // Security check runs before resource resolution, returning 403 instead of 404
         $client->request(
             'POST',
-            '/api/watch_files/' . $nonExistentWatchFileId . '/source/' . $source->getId() . '/change-status/',
+            '/api/watch_files/' . $nonExistentWatchFileId . '/sources/' . $source->getId() . '/change-status',
             [
                 'json' => [
                     'status' => 'active',
@@ -675,7 +675,7 @@ class SourceApiTest extends AbstractApiTestCase
         $client = $this->createAuthenticatedClient($watchFileOwner);
         $client->request(
             'POST',
-            '/api/watch_files/' . $watchFile2->getId() . '/source/' . $source->getId() . '/change-status/',
+            '/api/watch_files/' . $watchFile2->getId() . '/sources/' . $source->getId() . '/change-status',
             [
                 'json' => [
                     'status' => 'inactive',
@@ -712,7 +712,7 @@ class SourceApiTest extends AbstractApiTestCase
         $client = $this->createAuthenticatedClient($watchFileOwner);
         $client->request(
             'POST',
-            '/api/watch_files/' . $watchFile->getId() . '/source/' . $source->getId() . '/change-status/',
+            '/api/watch_files/' . $watchFile->getId() . '/sources/' . $source->getId() . '/change-status',
             [
                 'json' => [
                     'status' => 'inactive',

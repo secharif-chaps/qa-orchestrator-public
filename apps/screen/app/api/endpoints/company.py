@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from app.core.dependencies import get_company_service, get_global_service_client
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
-from app.core.organization import OrganizationContext, get_user_organization
+from app.core.organization_context import OrganizationContext, get_user_organization
 from app.core.security import (
     verify_company_modify_permission,
     verify_company_organization_access,

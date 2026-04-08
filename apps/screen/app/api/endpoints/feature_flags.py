@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
-from app.core.organization import OrganizationContext, get_user_organization
+from app.core.organization_context import OrganizationContext, get_user_organization
 from app.database import get_db
 from app.models.organization import FeatureFlag
 from app.services.feature_flags import (
