@@ -9,27 +9,66 @@
 
 ---
 
+## Tailwind v4 — Deprecated Classes
+
+This project uses **Tailwind v4.1**. Several v3 class names are deprecated. ALWAYS use the v4 equivalents:
+
+| Deprecated (v3) | Use instead (v4) |
+|---|---|
+| `flex-shrink-0` | `shrink-0` |
+| `flex-shrink` | `shrink` |
+| `flex-grow-0` | `grow-0` |
+| `flex-grow` | `grow` |
+| `overflow-clip` | `overflow-clip` (same, but check context) |
+| `decoration-clone` | `box-decoration-clone` |
+| `decoration-slice` | `box-decoration-slice` |
+
+When modifying an existing file, **fix any deprecated classes** found.
+
+---
+
+## Figma → CSS → Template Mapping
+
+When translating a Figma mockup to code, follow this mapping. Figma tokens use the format `{usage}-{semantic}-{variant}` where variant can be `base`, `hovered`, `pressed`, `light`, `lighter`, `muted`, etc.
+
+### Translation Rules
+
+1. Figma `-base` → **removed** (it's the default token)
+2. Figma `font-X-Y` → CSS `--color-X-Y-font` → Template `text-X-Y-font`
+3. Figma `bg-X-Y` → CSS `--color-X-Y` → Template `bg-X-Y`
+4. Figma `stroke-X-Y` → CSS `--color-X-Y-stroke` → Template `border-X-Y-stroke`
+5. Interactive variants (`hovered`, `pressed`) → add Tailwind modifier (`hover:`, `active:`)
+
+### Examples
+
+| Figma | CSS variable | Template class |
+|---|---|---|
+| `font-primary-base` | `--color-primary-font` | `text-primary-font` |
+| `font-primary-hovered` | `--color-primary-hovered-font` | `hover:text-primary-hovered-font` |
+| `font-error-base` | `--color-error-font` | `text-error-font` |
+| `font-success-light` | `--color-success-light-font` | `text-success-light-font` |
+| `bg-primary-base` | `--color-primary` | `bg-primary` |
+| `bg-primary-hovered` | `--color-primary-hovered` | `hover:bg-primary-hovered` |
+| `bg-primary-light` | `--color-primary-light` | `bg-primary-light` |
+| `bg-primary-muted` | `--color-primary-muted` | `bg-primary-muted` |
+| `stroke-primary-base` | `--color-primary-stroke` | `border-primary-stroke` |
+| `stroke-error-base` | `--color-error-stroke` | `border-error-stroke` |
+| `stroke-primary-hovered` | `--color-primary-hovered-stroke` | `hover:border-primary-hovered-stroke` |
+
+---
+
 ## Semantic Color System
-
-### Philosophy
-
-Use meaning-based tokens instead of palette-based colors. This ensures:
-- Automatic theme adaptation (light/dark mode)
-- WCAG accessibility compliance
-- Consistent visual language
-- Easy maintenance and theming
 
 ### Semantic Color Tokens
 
 | Token | Purpose | Use Case |
-|-------|---------|----------|
-| `primary` | Main brand actions | Primary buttons, active states |
-| `secondary` | Secondary brand elements | Secondary buttons, badges |
-| `accent` | Emphasis and highlights | Special badges, callouts |
-| `success` | Positive feedback | Success messages, confirmations |
-| `warning` | Caution states | Warnings, pending states |
-| `error` | Negative feedback | Error messages, validation |
-| `info` | Informational | Info banners, help text |
+|---|---|---|
+| `primary` | Main brand (Sage) | Primary buttons, active states |
+| `accent` | Emphasis (Rose) | Special badges, callouts |
+| `success` | Positive (Green) | Success messages, confirmations |
+| `warning` | Caution (Orange) | Warnings, pending states |
+| `error` | Negative (Red) | Error messages, validation |
+| `info` | Informational (Blue) | Info banners, help text |
 
 ### Token Variants
 
@@ -43,39 +82,49 @@ Each semantic color has **5 variants**:
 {color}-stroke             → Borders and outlines
 ```
 
+Note: `primary` also has `primary-light-stroke`.
+
 ### Usage Patterns
 
-**Solid Button**
 ```vue
+<!-- Solid button -->
 <button class="bg-primary text-primary-content px-4 py-2 rounded-lg">
   Primary Action
 </button>
-```
 
-**Light Alert**
-```vue
+<!-- Light alert -->
 <div class="bg-success-light text-success-light-content border border-success-stroke rounded-lg p-4">
   Operation successful!
 </div>
-```
 
-**Badge (Light)**
-```vue
+<!-- Light badge -->
 <span class="bg-info-light text-info-light-content border border-info-stroke px-2 py-1 rounded">
   New
 </span>
 ```
 
-**Card with Border**
-```vue
-<div class="bg-base-200 border border-primary-stroke rounded-card p-6">
-  Card content
-</div>
-```
+### Color Palettes (for decoration only)
+
+Available palettes (each with shades 50-950):
+
+| Palette | Role |
+|---|---|
+| `sage` | Primary brand |
+| `almond` | Secondary brand |
+| `rose` | Accent |
+| `green` | Success |
+| `orange` | Warning |
+| `red` | Error |
+| `blue` | Info |
+| `gray` | Neutral |
+| `indigo` | Additional |
+| `yellow` | Additional (Target module) |
+| `cherry` | Additional (Target module) |
+| `cyan` | Additional (Target module) |
+
+Usage: `bg-sage-100`, `text-indigo-600`, etc. **Prefer semantic tokens** over palette colors when the color conveys meaning.
 
 ### Background Layering
-
-Use `base` colors for application hierarchy:
 
 ```vue
 <body class="bg-base-100">              <!-- Page background -->
@@ -86,20 +135,91 @@ Use `base` colors for application hierarchy:
 </body>
 ```
 
+Additional base tokens: `bg-sidebar`, `border-border-1`, `border-border-2`, `bg-sidebar-border`, `text-sidebar-count`.
+
 ### Color Rules
 
-✅ **DO**:
+**DO**:
 - Use semantic tokens: `bg-success`, `text-success-content`
 - Pair backgrounds with their matching `-content` color
-- Use `-light` variants for non-critical/informational UI
-- Use solid variants for primary actions
+- Use `-light` variants for alerts, toasts, subtle backgrounds
 - Use `-stroke` for borders
 
-❌ **DON'T**:
-- Use palette colors directly: ~~`bg-green-500`~~, ~~`text-red-600`~~
+**DON'T**:
+- Use raw Tailwind palette colors for meaning: ~~`bg-green-500`~~ → use `bg-success`
 - Use raw hex colors: ~~`bg-[#29ad72]`~~
 - Mix incompatible pairs: ~~`bg-success text-error-content`~~
 - Ignore content pairing: ~~`bg-primary text-black`~~
+
+---
+
+## Custom Tokens
+
+### Border Radius
+
+The project defines custom radius tokens. **NEVER** use arbitrary values.
+
+| Class | Value | Use |
+|---|---|---|
+| `rounded-none` | 0 | No rounding |
+| `rounded-card` | 16px | Cards, modals |
+| `rounded-block` | 24px | Large blocks, sections |
+| `rounded-full` | 9999px | Circles, pills |
+
+For smaller elements (badges, inputs), use standard Tailwind: `rounded`, `rounded-lg`, etc.
+
+### Shadows
+
+**Neutral shadows** (elevation levels):
+
+| Class | Use |
+|---|---|
+| `shadow-shadow-1` | Subtle elevation (dropdowns, hover) |
+| `shadow-shadow-2` | Medium elevation (cards) |
+| `shadow-shadow-3` | High elevation (modals) |
+| `shadow-shadow-4` | Maximum elevation (floating panels) |
+| `shadow-inner` | Inset shadow |
+| `shadow-volume` | 3D effect |
+
+**Colored shadows** (for decorative emphasis):
+
+| Class | Color |
+|---|---|
+| `shadow-pink` | Rose/accent |
+| `shadow-green` | Success |
+| `shadow-blue` | Info |
+| `shadow-orange` | Warning |
+| `shadow-red` | Error |
+
+### Breakpoints (Custom)
+
+These are **NOT standard Tailwind breakpoints**:
+
+| Prefix | Width | Use |
+|---|---|---|
+| `xs:` | 480px | Mobile |
+| `sm:` | 744px | Large mobile/tablet |
+| `md:` | 1024px | Laptop |
+| `lg:` | 1440px | Desktop |
+| `xl:` | 1920px | Large desktop |
+
+### Typography
+
+Font: **Hanken Grotesk**
+
+| Class | Size | Use |
+|---|---|---|
+| `text-3xl` | 24px | — |
+| `text-2xl` | 24px | Page titles |
+| `text-xl` | 20px | Section headers |
+| `text-lg` | 16px | Subheaders |
+| `text-base` | 14px | Body text |
+| `text-sm` | 12px | Small text, captions |
+| `text-xs` | 11px | Extra small |
+
+Font weights: `font-regular` (400), `font-semibold` (600), `font-bold` (700).
+
+Note: `font-medium` is NOT defined as a custom weight. Use `font-semibold` instead.
 
 ---
 
@@ -110,40 +230,26 @@ Use `base` colors for application hierarchy:
 **CRITICAL**: Use flexbox with gap utilities for spacing, NEVER margin-based spacing between siblings.
 
 ```vue
-<!-- ✅ CORRECT: Parent controls spacing with gap -->
-<template>
-  <div class="flex flex-col gap-4">
-    <PageHeader />
-    <Filters />
-    <Alert v-if="error" />
-    <DataTable />
-    <Pagination />
-  </div>
-</template>
+<!-- CORRECT: Parent controls spacing with gap -->
+<div class="flex flex-col gap-4">
+  <PageHeader />
+  <Filters />
+  <Alert v-if="error" />
+  <DataTable />
+  <Pagination />
+</div>
 
-<!-- ❌ INCORRECT: Margin-based spacing -->
-<template>
-  <div>
-    <PageHeader class="mb-8" />
-    <Filters class="mb-6" />
-    <Alert v-if="error" class="mb-6" />
-    <DataTable class="mb-4" />
-    <Pagination />
-  </div>
-</template>
+<!-- WRONG: Margin-based spacing -->
+<div>
+  <PageHeader class="mb-8" />
+  <Filters class="mb-6" />
+</div>
 ```
-
-### Benefits
-
-- **Consistent spacing** - one gap value controls all spacing
-- **Easier maintenance** - change spacing in one place
-- **Cleaner code** - no margin classes scattered throughout
-- **Predictable layouts** - parent always controls child spacing
 
 ### Spacing Scale (4px Grid)
 
 | Class | Size |
-|-------|------|
+|---|---|
 | `gap-1` | 4px |
 | `gap-2` | 8px |
 | `gap-3` | 12px |
@@ -157,95 +263,24 @@ Use `base` colors for application hierarchy:
 
 ### Mobile-First Approach
 
-Start with mobile layout and progressively enhance:
-
 ```vue
-<template>
-  <!-- Mobile-first grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-    <Card v-for="item in items" :key="item.id">
-      {{ item.title }}
-    </Card>
-  </div>
-
-  <!-- Responsive spacing -->
-  <div class="p-4 md:p-6 lg:p-8">
-    <h1 class="text-lg md:text-xl lg:text-2xl">
-      Responsive Title
-    </h1>
-  </div>
-
-  <!-- Responsive visibility -->
-  <div class="hidden md:block">Desktop only</div>
-  <div class="block md:hidden">Mobile only</div>
-</template>
-```
-
-### Breakpoints
-
-| Breakpoint | Width | Use |
-|------------|-------|-----|
-| `xs` | 480px | Mobile |
-| `sm` | 744px | Large mobile/tablet |
-| `md` | 1024px | Laptop |
-| `lg` | 1440px | Desktop |
-| `xl` | 1920px | Large desktop |
-
-### Multi-line CSS Classes
-
-For complex responsive styles, use multi-line formatting:
-
-```vue
-<div class="bg-gray-50 dark:bg-gray-900 p-4 rounded cursor-pointer w-full
-            hover:bg-gray-100 dark:hover:bg-gray-800
-            sm:p-8 sm:font-medium
-            md:p-10 md:text-lg
-            lg:p-12 lg:text-xl lg:font-semibold
-            xl:p-14 xl:text-2xl">
-  Content
+<!-- Mobile-first grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+  <Card v-for="item in items" :key="item.id" />
 </div>
+
+<!-- Responsive visibility -->
+<div class="hidden md:block">Desktop only</div>
+<div class="block md:hidden">Mobile only</div>
 ```
-
----
-
-## Typography
-
-### Scale
-
-| Class | Size | Use |
-|-------|------|-----|
-| `text-2xl` | 24px | Headline 3XL |
-| `text-xl` | 20px | Headline 2XL |
-| `text-lg` | 16px | Headline LG |
-| `text-base` | 14px | Body text |
-| `text-sm` | 12px | Small text |
-| `text-xs` | 11px | Extra small |
-
-### Font Weights
-
-- `font-normal` - Regular text
-- `font-medium` - Slightly emphasized
-- `font-semibold` - Section headers
-- `font-bold` - Page titles, important
 
 ---
 
 ## Dark Mode
 
-### Class-Based Dark Mode
+Dark mode is class-based (`@custom-variant dark`). Semantic tokens and Vuellar components adapt automatically.
 
-Dark mode is activated by adding `dark` class to parent:
-
-```vue
-<div class="dark">
-  <!-- All components inside use dark mode -->
-  <Button label="Dark mode button" />
-</div>
-```
-
-### Manual Dark Mode Classes
-
-When needed, use `dark:` prefix:
+When needed for custom elements, use `dark:` prefix:
 
 ```vue
 <div class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
@@ -253,29 +288,4 @@ When needed, use `dark:` prefix:
 </div>
 ```
 
-**Note**: Vuellar components and semantic tokens handle dark mode automatically.
-
----
-
-## Best Practices
-
-### Consistent Methodology
-Apply Tailwind patterns consistently across the entire project
-
-### Avoid Overriding Framework Styles
-Work with Tailwind patterns, don't fight against them
-
-### Maintain Design Tokens
-Use semantic color tokens for consistency
-
-### Minimize Custom CSS
-Leverage Tailwind utilities to reduce custom CSS maintenance
-
-### Performance
-Tailwind purges unused CSS in production automatically
-
-### Touch-Friendly Design
-Ensure tap targets are at least 44x44px for mobile
-
-### Readable Typography
-Maintain readable font sizes across all breakpoints
+Three themes available: `light` (default), `dark`, `contrast`.

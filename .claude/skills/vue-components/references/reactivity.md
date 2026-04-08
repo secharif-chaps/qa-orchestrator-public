@@ -229,7 +229,11 @@ const { count } = defineProps<Props>()
 const localCount = ref(count)
 
 // Or emit to parent
-const emit = defineEmits<{ update: [value: number] }>()
+interface Emits {
+  update: [value: number]
+}
+
+const emit = defineEmits<Emits>()
 
 const increment = () => {
   emit('update', count + 1)

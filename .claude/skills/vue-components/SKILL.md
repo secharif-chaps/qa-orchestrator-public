@@ -1,10 +1,10 @@
 ---
 name: vue-components
-description: Vue 3 component development with Composition API and TypeScript. Use when creating Vue components, pages, handling reactivity (ref, computed, watch), or setting up file-based routing. ALWAYS use script setup with TypeScript.
+description: Vue 3 component structure, props, emits, reactivity, and routing standards. CRITICAL - Activates when creating OR modifying any .vue file. When modifying an existing component, ALWAYS verify the entire file follows these rules (props interface, emits interface, arrow functions, import order, template first). Fix any violations found.
 allowed-tools: Read, Write, Edit, Glob, Grep
 metadata:
-  author: chaps-e
-  version: "1.0"
+  author: Lucas Gault
+  version: "1.1"
 ---
 
 # Vue 3 Component Development
@@ -12,6 +12,28 @@ metadata:
 **CRITICAL**: Always use Composition API with `<script setup lang="ts">`. Never use Options API.
 
 **Template first**: Place `<template>` above `<script setup>`.
+
+## Conformity Check (MANDATORY when modifying existing components)
+
+When editing an existing `.vue` file, **ALWAYS verify the entire file** follows these rules before finishing:
+
+1. `<template>` is above `<script setup>` (not below)
+2. Props use `interface Props` + destructuring (not inline, not `withDefaults`)
+3. Emits use `interface Emits` + `defineEmits<Emits>()` (not inline)
+4. All functions are arrow functions (no `function` keyword)
+5. Imports follow the order: Vue → Vuellar → External → Local
+6. No Options API patterns (`export default`, `data()`, `methods:`)
+
+If any violation is found, **fix it as part of your change**.
+
+## Component Design Principles
+
+- **Single responsibility**: one clear purpose per component
+- **Composability**: build complex UIs by combining smaller components
+- **Minimal props**: if a component needs many props, consider composition instead
+- **State local-first**: keep state as local as possible, lift only when needed by multiple components
+- **Clear interface**: explicit, well-documented props with sensible defaults
+- **Encapsulation**: keep internal implementation private, expose only necessary APIs
 
 ## Component Structure
 
@@ -37,11 +59,13 @@ interface Props {
 
 const { title, count, variant = 'primary' } = defineProps<Props>()
 
-// 3. Emits
-const emit = defineEmits<{
+// 3. Emits (ALWAYS use interface, like Props)
+interface Emits {
   save: [data: FormData]
   cancel: []
-}>()
+}
+
+const emit = defineEmits<Emits>()
 
 // 4. Composables
 const { data, isLoading } = useQuery(...)

@@ -49,12 +49,14 @@ interface Props {
 
 const { companyId, title, variant = 'primary', size = 'md' } = defineProps<Props>()
 
-// 6. Emits (ALWAYS TypeScript syntax)
-const emit = defineEmits<{
+// 6. Emits (ALWAYS interface, like Props)
+interface Emits {
   submit: [data: FormData]
   cancel: []
   update: [value: string]
-}>()
+}
+
+const emit = defineEmits<Emits>()
 
 // 7. Models (v-model binding)
 const searchQuery = defineModel<string>('query')
@@ -142,7 +144,7 @@ const { variant = 'primary', size = 'md', disabled = false } = defineProps<Props
 
 ## Emits Definition
 
-**ALWAYS** use TypeScript syntax with typed arguments:
+**ALWAYS** use a named `interface Emits` with typed arguments, same pattern as Props:
 
 ```vue
 <template>
@@ -150,13 +152,15 @@ const { variant = 'primary', size = 'md', disabled = false } = defineProps<Props
 </template>
 
 <script setup lang="ts">
-// Typed emits with argument types
-const emit = defineEmits<{
+// ALWAYS declare a named interface for emits
+interface Emits {
   click: [event: MouseEvent]
   update: [value: string]
   submit: [data: { name: string; email: string }]
   cancel: []  // No arguments
-}>()
+}
+
+const emit = defineEmits<Emits>()
 
 // Usage
 const handleClick = (event: MouseEvent) => {
@@ -177,8 +181,9 @@ const handleCancel = () => {
 
 | Do | Don't |
 |----|-------|
-| `defineEmits<{ click: [e: MouseEvent] }>()` | `defineEmits(['click'])` |
-| TypeScript tuple syntax | Runtime emits array |
+| `interface Emits { click: [e: MouseEvent] }` then `defineEmits<Emits>()` | Inline `defineEmits<{ click: [e: MouseEvent] }>()` |
+| Named interface (like Props) | Anonymous inline type |
+| TypeScript tuple syntax | `defineEmits(['click'])` runtime array |
 
 ---
 
@@ -282,9 +287,11 @@ interface Props {
 
 const { userName, isActive } = defineProps<Props>()
 
-const emit = defineEmits<{
+interface Emits {
   updateUser: [user: User]
-}>()
+}
+
+const emit = defineEmits<Emits>()
 </script>
 ```
 
@@ -417,9 +424,11 @@ const { userName } = defineProps<Props>()
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits<{
+interface Emits {
   update: [value: string]
-}>()
+}
+
+const emit = defineEmits<Emits>()
 
 const handleUpdate = (value: string) => {
   emit('update', value)

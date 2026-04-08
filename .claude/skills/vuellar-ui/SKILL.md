@@ -1,6 +1,6 @@
 ---
 name: vuellar-ui
-description: Use Vuellar component library (@owlint/feathers-vue) for all UI development. Activates when building forms, tables, modals, buttons, inputs, alerts, tags, or any Vue UI components. ALWAYS use Vuellar components first - never create custom UI blocks.
+description: Vuellar component library (@owlint/feathers-vue). CRITICAL - Activates when creating OR modifying any .vue file with UI elements. When modifying existing components, verify Vuellar components are used (not custom CSS for toggles, buttons, inputs, tags), correct props pattern (variant/intent/color/size), and Avatar vs Badge distinction. Fix any violations found.
 allowed-tools: Read, Write, Edit, Glob, Grep
 metadata:
   author: chaps-e
@@ -131,6 +131,26 @@ Use Badge for displaying icons (e.g., entity types, categories, actions). **Alwa
 ```
 
 **Never use Avatar for icons** - Avatar is strictly for user/person representation.
+
+## Creating Custom Components
+
+Only create custom components when Vuellar doesn't provide what you need.
+
+### Checklist Before Creating
+
+1. Is there a Vuellar component for this?
+2. Can I compose multiple Vuellar components?
+3. Is this truly reusable (used in 3+ places)?
+4. Does it follow the same props pattern as Vuellar?
+
+### Custom Component Guidelines
+
+If you must create a custom component:
+
+1. **Follow Vuellar props pattern** (variant, intent, color, size)
+2. **Use Vuellar primitives inside** your custom component
+3. **Document props and slots** with TypeScript
+4. **Place in `src/components/`** organized by feature or `ui/` for generic
 
 ## Documentation
 

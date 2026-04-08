@@ -1,14 +1,10 @@
 ---
 name: i18n-icu-messageformat
 description: >
-  ICU MessageFormat internationalization for Vue/Nuxt frontend with vue-i18n and
-  @messageformat/core custom compiler. Use when writing translation keys, adding
-  plurals with {count, plural, ...}, implementing gender/type/status branching with
-  {gender, select, ...}, nesting select+plural combinations, or adding new translation
-  keys to locale JSON files. Activates when working on files in src/i18n/locales/,
-  src/i18n/index.ts, or any Vue component using t() or $t().
-  CRITICAL - Never use vue-i18n pipe syntax (zero | one | many); always use ICU
-  MessageFormat syntax. Never pass a fallback string as 2nd argument to t().
+  ICU MessageFormat internationalization. CRITICAL - Activates when creating OR modifying
+  any .vue file that uses t() or $t(), or any file in src/i18n/locales/. When modifying
+  existing components, verify correct t() usage (no fallback as 2nd arg, no pipe syntax,
+  ICU plural/select syntax). When adding keys, add to ALL locale files. Fix violations found.
 license: MIT
 allowed-tools: Read, Write, Edit, Glob, Grep
 metadata:

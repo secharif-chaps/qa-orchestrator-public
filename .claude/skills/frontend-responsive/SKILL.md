@@ -1,31 +1,39 @@
 ---
 name: frontend-responsive
-description: Mobile-first responsive design standards for Vue/Nuxt with Tailwind CSS breakpoints. Use when applying responsive classes mobile-first (flex-col lg:flex-row), using breakpoints (sm:640px, md:768px, lg:1024px, xl:1280px), implementing responsive grids (grid-cols-1 sm:grid-cols-2 lg:grid-cols-4), or ensuring 44x44px minimum touch targets. Activates when handling show/hide content by breakpoint (hidden lg:flex), responsive typography scaling, or fluid container patterns.
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash
+description: Mobile-first responsive design with project custom breakpoints (xs:480, sm:744, md:1024, lg:1440, xl:1920). CRITICAL - Activates when adding responsive classes, grids, show/hide by breakpoint, or touch targets to any .vue file. When modifying existing files, verify breakpoints use project values (NOT Tailwind defaults) and mobile-first approach. Fix violations found.
+allowed-tools: Read, Write, Edit, Glob, Grep
 metadata:
-  author: chaps-e
-  version: "1.0"
+  author: Lucas Gault
+  version: "2.0"
 ---
-
-## When to use this skill
-
-- When building layouts mobile-first (`flex-col lg:flex-row`, NOT `flex-row max-lg:flex-col`)
-- When using Tailwind breakpoints (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`)
-- When creating responsive grids (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`)
-- When implementing fluid containers with `max-w-7xl mx-auto px-4 sm:px-6`
-- When showing/hiding content by breakpoint (`hidden lg:flex`, `lg:hidden`)
-- When scaling typography responsively (`text-2xl sm:text-3xl lg:text-4xl`)
-- When constraining text width for readability (`max-w-prose`)
-- When ensuring 44x44px minimum touch targets (`min-h-11 min-w-11`)
-- When adding adequate spacing between interactive elements
-- When using responsive images with `srcset` and `sizes`
-- When maintaining aspect ratios with `aspect-video`, `aspect-square`
-- When testing at all breakpoints and 200% browser zoom
 
 # Frontend Responsive
 
+## Critical Rules
+
+1. **ALWAYS mobile-first** — `flex-col lg:flex-row`, NEVER `flex-row max-lg:flex-col`
+2. **Use project breakpoints** — NOT Tailwind defaults (see table below)
+3. **Touch targets 44x44px minimum** — `min-h-11 min-w-11`
+
+## Conformity Check (when modifying existing files)
+
+When editing a `.vue` file with responsive classes, verify:
+- Mobile-first approach (no `max-*:` breakpoints, base styles are mobile)
+- No references to wrong breakpoint values in comments (640px, 768px, 1280px, 1536px are NOT our breakpoints)
+- Touch targets on interactive elements are at least 44x44px
+
+## Project Breakpoints
+
+| Prefix | Width | Use |
+|---|---|---|
+| `xs:` | 480px | Mobile |
+| `sm:` | 744px | Large mobile/tablet |
+| `md:` | 1024px | Laptop |
+| `lg:` | 1440px | Desktop |
+| `xl:` | 1920px | Large desktop |
+
+**No `2xl:` breakpoint** in this project.
+
 ## Documentation
 
-For detailed patterns, see:
-
-- [Responsive standards](references/responsive.md) - Breakpoints, mobile-first development, layout patterns, typography, touch-friendly design, visibility, images, testing checklist
+- [responsive.md](references/responsive.md) - Layout patterns, typography, touch design, visibility, images, testing checklist
