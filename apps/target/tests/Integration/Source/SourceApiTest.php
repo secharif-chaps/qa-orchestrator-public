@@ -176,7 +176,7 @@ class SourceApiTest extends AbstractApiTestCase
         $client = $this->createAuthenticatedClient($user);
         $response = $client->request(
             'POST',
-            '/api/watch_files/' . $watchFile->getId() . '/source/' . $source->getId() . '/change-status/',
+            '/api/watch_files/' . $watchFile->getId() . '/sources/' . $source->getId() . '/change-status',
             [
                 'json' => [
                     'status' => 'active',
@@ -212,7 +212,7 @@ class SourceApiTest extends AbstractApiTestCase
         $client = $this->createAuthenticatedClient($user);
         $response = $client->request(
             'POST',
-            '/api/watch_files/' . $watchFile->getId() . '/source/' . $source->getId() . '/change-status/',
+            '/api/watch_files/' . $watchFile->getId() . '/sources/' . $source->getId() . '/change-status',
             [
                 'json' => [
                     'status' => 'inactive',
@@ -345,7 +345,7 @@ class SourceApiTest extends AbstractApiTestCase
         // Security check runs before resource resolution, returning 403 instead of 404
         $client->request(
             'POST',
-            '/api/watch_files/' . $watchFile->getId() . '/source/00000000-0000-0000-0000-000000000000/change-status/',
+            '/api/watch_files/' . $watchFile->getId() . '/sources/00000000-0000-0000-0000-000000000000/change-status',
             [
                 'json' => [
                     'status' => 'active',

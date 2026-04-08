@@ -2,8 +2,8 @@
 Organization endpoints for Keycloak Organizations integration.
 
 This module provides organization context endpoints:
-- /current: Returns current organization from JWT
-- /activities: Returns recent activities (companies and folders) from other users
+- /organizations/current: Returns current organization from JWT
+- /organizations/current/activities: Returns recent activities (companies and folders) from other users
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -20,7 +20,7 @@ from app.services.folder import FolderService
 
 logger = get_logger(__name__)
 
-router = APIRouter(tags=["organization"])
+router = APIRouter(prefix="/organizations", tags=["organization"])
 
 
 @router.get("/current", response_model=OrganizationResponse)
@@ -47,7 +47,7 @@ async def get_current_organization(
     )
 
 
-@router.get("/activities", response_model=list[ActivityResponse])
+@router.get("/current/activities", response_model=list[ActivityResponse])
 async def get_organization_activities(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: AsyncSession = Depends(get_global_db),

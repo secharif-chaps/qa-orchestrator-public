@@ -13,7 +13,7 @@ import pytest
 from fastapi import HTTPException
 from fastapi_keycloak import OIDCUser
 
-from app.core.organization import OrganizationContext
+from app.core.organization_context import OrganizationContext
 from app.models.task import Task, TaskStatus, TaskType
 from app.schemas.task import TaskTokenUpdate
 from app.services.company import CompanyService

@@ -336,7 +336,7 @@ user: OIDCUser = Depends(idp.get_current_user(
 For user organization operations, combine role check with organization context:
 
 ```python
-from app.core.organization import get_user_organization, OrganizationContext
+from app.core.organization_context import get_user_organization, OrganizationContext
 
 @router.get("/folders")
 def list_folders(

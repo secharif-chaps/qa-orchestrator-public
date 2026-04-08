@@ -59,7 +59,7 @@ class TestCompanyModifyPermission:
 
     def test_company_modify_with_correct_permission(self):
         """Test that user with correct permission can modify companies."""
-        from app.core.organization import OrganizationContext
+        from app.core.organization_context import OrganizationContext
 
         user = TokenData(username="user", sub="user-uuid", roles=["company.update"])
         org_context = OrganizationContext(
@@ -71,7 +71,7 @@ class TestCompanyModifyPermission:
 
     def test_company_modify_without_permission(self):
         """Test that user without required permission cannot modify companies."""
-        from app.core.organization import OrganizationContext
+        from app.core.organization_context import OrganizationContext
 
         user = TokenData(username="user", sub="user-uuid", roles=["company.view"])
         org_context = OrganizationContext(

@@ -61,13 +61,13 @@ export const getOrganizationById = async (id: string): Promise<OrganizationAdmin
 // DEPRECATED: Organization info now comes from JWT token
 // Use useAuthStore().organizationId and useAuthStore().organizationName instead
 export const getCurrentOrganization = async (): Promise<OrganizationResponse> => {
-  const response = await apiClient.get<OrganizationResponse>('/current')
+  const response = await apiClient.get<OrganizationResponse>('/organizations/current')
   return response
 }
 
 // Organization activities (recent companies/folders created by other users)
 export const getOrganizationActivities = async (): Promise<Activity[]> => {
-  const response = await apiClient.get<Activity[]>('/activities')
+  const response = await apiClient.get<Activity[]>('/organizations/current/activities')
   return response
 }
 

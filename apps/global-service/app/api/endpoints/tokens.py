@@ -1,9 +1,9 @@
 """Token management API endpoints.
 
 Provides REST endpoints for managing organization token balances:
-- GET /{org_id}/tokens - Get current balance
-- POST /{org_id}/tokens - Add tokens (admin only)
-- GET /{org_id}/tokens/history - Get transaction history
+- GET /{organization_id}/tokens - Get current balance
+- POST /{organization_id}/tokens - Add tokens (admin only)
+- GET /{organization_id}/tokens/history - Get transaction history
 """
 
 from datetime import datetime
@@ -48,11 +48,11 @@ async def get_token_config(
 
 
 @router.get(
-    "/{org_id}/tokens",
+    "/{organization_id}/tokens",
     response_model=TokenBalanceResponse,
 )
 async def get_organization_token_balance(
-    org_id: UUID = Path(
+    organization_id: UUID = Path(
         ...,
         description="Organization UUID",
         examples=["550e8400-e29b-41d4-a716-446655440000"],
@@ -67,7 +67,7 @@ async def get_organization_token_balance(
     admin.organizations role can view any organization's balance.
 
     Args:
-        org_id: Keycloak organization UUID from URL path (automatically validated).
+        organization_id: Keycloak organization UUID from URL path (automatically validated).
         org_context: User's organization context extracted from JWT.
         user: Current authenticated user from Keycloak.
         token_manager: TokenManager service instance.
@@ -76,10 +76,10 @@ async def get_organization_token_balance(
         TokenBalanceResponse with organization_id and current balance.
 
     Raises:
-        HTTPException: 422 if org_id is not a valid UUID format.
+        HTTPException: 422 if organization_id is not a valid UUID format.
         HTTPException: 403 if user cannot access this organization's tokens.
     """
-    org_id_str = str(org_id)
+    org_id_str = str(organization_id)
     verify_organization_access(org_id_str, org_context, user, "tokens")
 
     balance = await token_manager.get_balance(org_id_str)
@@ -97,12 +97,12 @@ async def get_organization_token_balance(
 
 
 @router.post(
-    "/{org_id}/tokens",
+    "/{organization_id}/tokens",
     response_model=TokenBalanceResponse,
     status_code=status.HTTP_201_CREATED,
 )
 async def add_organization_tokens(
-    org_id: UUID = Path(
+    organization_id: UUID = Path(
         ...,
         description="Organization UUID",
         examples=["550e8400-e29b-41d4-a716-446655440000"],
@@ -119,7 +119,7 @@ async def add_organization_tokens(
     for audit purposes.
 
     Args:
-        org_id: Keycloak organization UUID from URL path (automatically validated).
+        organization_id: Keycloak organization UUID from URL path (automatically validated).
         request: AddTokensRequest containing the amount to add.
         user: Current authenticated admin user from Keycloak.
         token_manager: TokenManager service instance.
@@ -128,10 +128,10 @@ async def add_organization_tokens(
         TokenBalanceResponse with organization_id and new balance.
 
     Raises:
-        HTTPException: 422 if org_id is not a valid UUID format.
+        HTTPException: 422 if organization_id is not a valid UUID format.
         HTTPException: 403 if user doesn't have admin.organizations role.
     """
-    org_id_str = str(org_id)
+    org_id_str = str(organization_id)
     org = await token_manager.add_tokens(
         org_id=org_id_str,
         amount=request.amount,
@@ -155,11 +155,11 @@ async def add_organization_tokens(
 
 
 @router.get(
-    "/{org_id}/tokens/history",
+    "/{organization_id}/tokens/history",
     response_model=PaginatedTokenTransactionResponse,
 )
 async def get_transaction_history(
-    org_id: UUID = Path(
+    organization_id: UUID = Path(
         ...,
         description="Organization UUID",
         examples=["550e8400-e29b-41d4-a716-446655440000"],
@@ -188,7 +188,7 @@ async def get_transaction_history(
     admin.organizations role can view any organization's history.
 
     Args:
-        org_id: Keycloak organization UUID from URL path (automatically validated).
+        organization_id: Keycloak organization UUID from URL path (automatically validated).
         transaction_type: Optional filter by transaction type (add, consume, adjustment).
         reference_type: Optional filter by reference type (company, csv_import, etc.).
         date_from: Optional filter for transactions after this datetime.
@@ -203,10 +203,10 @@ async def get_transaction_history(
         PaginatedTokenTransactionResponse with items, total, page, size, and pages.
 
     Raises:
-        HTTPException: 422 if org_id is not a valid UUID format.
+        HTTPException: 422 if organization_id is not a valid UUID format.
         HTTPException: 403 if user cannot access this organization's tokens.
     """
-    org_id_str = str(org_id)
+    org_id_str = str(organization_id)
     verify_organization_access(org_id_str, org_context, user, "tokens")
 
     # Get transactions

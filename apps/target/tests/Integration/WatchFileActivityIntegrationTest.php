@@ -246,7 +246,7 @@ class WatchFileActivityIntegrationTest extends AbstractApiTestCase
 
         $response = $this->client->request(
             'POST',
-            "/api/watch_files/{$watchFile->getId()}/source/{$source->getId()}/change-status/",
+            "/api/watch_files/{$watchFile->getId()}/sources/{$source->getId()}/change-status",
             [
                 'json' => [
                     'status' => 'active',

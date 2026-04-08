@@ -15,7 +15,7 @@ from app.core.dependencies import get_db
 from app.core.exceptions import AuthorizationError, ExternalServiceError, ResourceNotFoundError
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
-from app.core.organization import OrganizationContext, get_user_organization
+from app.core.organization_context import OrganizationContext, get_user_organization
 from app.core.rate_limit import check_chapse_chat_rate_limit
 from app.schemas.chapse import (
     ChapseChatRequest,
