@@ -1,0 +1,167 @@
+# Target Backend GitLab CI/CD Pipeline (PHP / Symfony / FrankenPHP)
+# Lints, tests, validates n8n workflows, and publishes Docker image
+# Stages are defined in the root .gitlab-ci.yml
+
+# ─── Reusable blocks ───────────────────────────────────
+.target-changes: &target-changes
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - apps/target/**/*
+    - if: $CI_COMMIT_BRANCH
+      changes:
+        - apps/target/**/*
+
+.target-php-job: &target-php-job
+  image: ${CI_REGISTRY}/chapsmind/ci-images/php-target:latest
+  <<: *target-changes
+  before_script:
+    - cd apps/target
+    - composer install --no-interaction --no-progress --prefer-dist
+
+# ─── Lint Stage ────────────────────────────────────────
+target:cs-check:
+  <<: *target-php-job
+  stage: lint
+  needs: []
+  script:
+    - php vendor/bin/ecs check --config=ecs.php
+
+target:phpstan:
+  <<: *target-php-job
+  stage: lint
+  needs: []
+  script:
+    - php vendor/bin/phpstan --memory-limit=1G analyse
+
+# ─── Test Stage ────────────────────────────────────────
+target:test:unit:
+  <<: *target-php-job
+  stage: test
+  needs: []
+  script:
+    - php vendor/bin/phpunit --testsuite "Unit tests" --coverage-text --coverage-cobertura=coverage.xml --log-junit=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: apps/target/report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: apps/target/coverage.xml
+  coverage: '/Lines:\s+(\d+\.\d+)%/'
+
+target:test:integration:
+  <<: *target-php-job
+  stage: test
+  needs: []
+  services:
+    - name: postgres:17-alpine
+      alias: database-test
+    - name: opensearchproject/opensearch:2
+      alias: opensearch-test
+      variables:
+        discovery.type: single-node
+        DISABLE_SECURITY_PLUGIN: "true"
+        OPENSEARCH_INITIAL_ADMIN_PASSWORD: ""
+    - name: valkey/valkey:8-alpine
+      alias: valkey
+  variables:
+    # PostgreSQL
+    POSTGRES_DB: app_test
+    POSTGRES_USER: test
+    POSTGRES_PASSWORD: test
+    DATABASE_URL: "postgresql://test:test@database-test:5432/app_test?serverVersion=17&charset=utf8"
+    # OpenSearch
+    OPENSEARCH_URL: "http://opensearch-test:9200"
+    # Valkey
+    VALKEY_DSN: "redis://valkey:6379"
+  before_script:
+    - cd apps/target
+    - composer install --no-interaction --no-progress --prefer-dist
+    # Wait for services to be ready
+    - |
+      echo "Waiting for PostgreSQL..."
+      for i in $(seq 1 30); do
+        pg_isready -h database-test -p 5432 -U test && break
+        sleep 1
+      done
+    - |
+      echo "Waiting for OpenSearch..."
+      for i in $(seq 1 30); do
+        curl -sf http://opensearch-test:9200/_cluster/health && break
+        sleep 1
+      done
+    - |
+      echo "Waiting for Valkey..."
+      for i in $(seq 1 30); do
+        redis-cli -h valkey ping && break
+        sleep 1
+      done
+    # Setup test database and indices
+    - php bin/console doctrine:database:create --if-not-exists --env=test
+    - php bin/console doctrine:migrations:migrate --no-interaction --env=test
+    - php bin/console cache:clear --quiet --env=test
+    - php bin/console cache:warmup --quiet --env=test
+    - php bin/console opensearch:index:reset --no-interaction --env=test
+  script:
+    - php vendor/bin/phpunit --testsuite "Integration tests" --no-coverage --log-junit=report-integration.xml
+  artifacts:
+    when: always
+    reports:
+      junit: apps/target/report-integration.xml
+
+# ─── N8N Validation Stage ─────────────────────────────
+target:n8n-validate:
+  <<: *target-php-job
+  stage: test
+  needs: []
+  script:
+    - php tests/N8N/validate-n8n-workflows.php --workflows-dir=n8n/workflows --format=junit --output=n8n-validation.xml
+  artifacts:
+    when: always
+    reports:
+      junit: apps/target/n8n-validation.xml
+
+target:n8n-validate-datasets:
+  image: ${CI_REGISTRY}/chapsmind/ci-images/web-linters:latest
+  stage: test
+  needs: []
+  <<: *target-changes
+  script:
+    - cd apps/target/n8n/tests
+    - npm install --no-audit --no-fund
+    - node validate-datasets.js
+  artifacts:
+    when: always
+
+# ─── Publish (build + tag + push) ─────────────────────
+target:publish:
+  extends: .docker-publish
+  needs:
+    [
+      target:cs-check,
+      target:phpstan,
+      target:test:unit,
+      target:test:integration,
+      target:n8n-validate,
+      target:n8n-validate-datasets,
+    ]
+  variables:
+    IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-target
+    DOCKER_CONTEXT: apps/target
+
+# ─── OpenAPI Export ───────────────────────────────────
+target:openapi-export:
+  <<: *target-php-job
+  stage: publish
+  needs: [target:cs-check, target:phpstan]
+  script:
+    - php bin/console api:openapi:export --output=openapi.json
+    - php bin/console api:openapi:export --yaml --output=openapi.yaml
+  artifacts:
+    paths:
+      - apps/target/openapi.json
+      - apps/target/openapi.yaml
+    expire_in: 30 days

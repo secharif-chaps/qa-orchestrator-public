@@ -5,7 +5,7 @@ x-target-app-volume: &target-app-volume
     - ../apps/target:/app
 
 x-target-env: &target-env
-  DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${TARGET_DB:-target_db}
+  DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${TARGET_DB:-target_db}?serverVersion=17&charset=utf8
   MESSENGER_TRANSPORT_DSN: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/%2f/messages
   VALKEY_DSN: redis://target-valkey:6379
   OPENSEARCH_URL: http://target-opensearch:9200
@@ -202,4 +202,18 @@ services:
     ports:
       - "${TARGET_VALKEY_PORT:-6380}:6379"
 
+  # ─── N8N services — local dev overrides (profile: target) ────
+
+  # N8N — expose UI port, mount tests and workflows
+  n8n:
+    ports:
+      - "${N8N_PORT:-5678}:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./docker/n8n/entrypoint.sh:/chapsmind-entrypoint.sh:ro
+      - ../apps/target/n8n/tests:/tests
+      - ../apps/target/n8n/workflows:/data/workflows
+
+  # N8N Import — local dev override (profile inherited from base)
+  n8n-import:
 

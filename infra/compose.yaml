@@ -197,8 +197,86 @@ services:
       timeout: 10s
       retries: 5
 
+  # N8N — workflow automation engine (used by Target)
+  n8n:
+    image: n8nio/n8n:1.121.3
+    profiles: [target]
+    entrypoint: ['/chapsmind-entrypoint.sh']
+    restart: unless-stopped
+    depends_on:
+      db: { condition: service_healthy }
+      target: { condition: service_started }
+      n8n-import: { condition: service_completed_successfully }
+    environment:
+      N8N_HOST: "0.0.0.0"
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      GENERIC_TIMEZONE: Europe/Paris
+      N8N_METRICS: "true"
+      N8N_DEFAULT_BINARY_DATA_MODE: filesystem
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      N8N_RUNNERS_ENABLED: "true"
+      N8N_RUNNERS_MODE: internal
+      N8N_RUNNERS_MAX_PAYLOAD: 1073741824
+      N8N_RUNNERS_MAX_CONCURRENCY: ${N8N_RUNNERS_MAX_CONCURRENCY:-5}
+      N8N_CONCURRENCY_PRODUCTION_LIMIT: ${N8N_CONCURRENCY_PRODUCTION_LIMIT:-20}
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
+      N8N_TEMPLATES_ENABLED: "false"
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: db
+      DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME:-n8n_db}
+      DB_POSTGRESDB_USER: ${N8N_DB_USER:-n8n_user}
+      DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD:-n8n_pass}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-!ChangeThisN8nEncryptionKey!}
+      N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_JWT_SECRET:-!ChangeThisN8nJWTSecret!}
+      N8N_DEFAULT_EMAIL: ${N8N_DEFAULT_EMAIL:-admin@chapsmind.local}
+      N8N_DEFAULT_PASSWORD: ${N8N_DEFAULT_PASSWORD:-Chapsmind2025!}
+      N8N_DEFAULT_FIRSTNAME: ${N8N_DEFAULT_FIRSTNAME:-ChapsMind}
+      N8N_DEFAULT_LASTNAME: ${N8N_DEFAULT_LASTNAME:-Admin}
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./docker/n8n/entrypoint.sh:/chapsmind-entrypoint.sh:ro
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:5678/healthz/readiness']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # N8N Import — one-shot service to import workflows and credentials
+  n8n-import:
+    image: n8nio/n8n:1.121.3
+    profiles: [target]
+    entrypoint: /bin/sh
+    command:
+      - '-c'
+      - |
+        echo "Importing credentials..."
+        n8n import:credentials --separate --input=/data/credentials || echo "Warning: Some credential imports had issues"
+
+        echo "Importing workflows..."
+        n8n import:workflow --separate --input=/data/workflows 2>&1 || echo "Warning: Some workflow imports had issues (this is normal on first run)"
+
+        echo "Import completed successfully"
+    restart: "no"
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: db
+      DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME:-n8n_db}
+      DB_POSTGRESDB_USER: ${N8N_DB_USER:-n8n_user}
+      DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD:-n8n_pass}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-!ChangeThisN8nEncryptionKey!}
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ../apps/target/n8n/credentials:/data/credentials:ro
+      - ../apps/target/n8n/workflows:/data/workflows:ro
+
 volumes:
   postgres_data:
   rabbitmq_data:
   target_opensearch_data:
   target_valkey_data:
+  n8n_data:
