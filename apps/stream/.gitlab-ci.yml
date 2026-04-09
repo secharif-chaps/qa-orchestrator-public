@@ -66,6 +66,26 @@ stream:test:
   coverage: '/TOTAL.*\s+(\d+%)/'
   <<: *stream-changes
 
+# ─── Bandit — Python security analysis ───────────────
+stream:bandit:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  variables:
+    BANDIT_SKIPS: B104,B105,B106,B110,B112,B311
+  script:
+    - cd apps/stream
+    - pip install -q bandit==1.8.3
+    - bandit -r app/ --skip ${BANDIT_SKIPS} -f json -o bandit-report.json || BANDIT_RC=$?
+    - bandit -r app/ --skip ${BANDIT_SKIPS} || true
+    - exit ${BANDIT_RC:-0}
+  artifacts:
+    paths:
+      - apps/stream/bandit-report.json
+    when: always
+    expire_in: 7 days
+  <<: *stream-changes
+
 # ─── Publish (build + tag + push) ─────────────────────
 stream:publish:
   extends: .docker-publish

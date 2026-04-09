@@ -69,6 +69,26 @@ global-service:test:
   coverage: '/TOTAL.*\s+(\d+%)/'
   <<: *gs-changes
 
+# ─── Bandit — Python security analysis ───────────────
+global-service:bandit:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  variables:
+    BANDIT_SKIPS: B104,B105,B106,B110,B112,B311
+  script:
+    - cd apps/global-service
+    - pip install -q bandit==1.8.3
+    - bandit -r app/ --skip ${BANDIT_SKIPS} --exclude app/grpc_generated -f json -o bandit-report.json || BANDIT_RC=$?
+    - bandit -r app/ --skip ${BANDIT_SKIPS} --exclude app/grpc_generated || true
+    - exit ${BANDIT_RC:-0}
+  artifacts:
+    paths:
+      - apps/global-service/bandit-report.json
+    when: always
+    expire_in: 7 days
+  <<: *gs-changes
+
 # ─── Publish (build + tag + push) ─────────────────────
 global-service:publish:
   extends: .docker-publish
