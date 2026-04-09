@@ -8,11 +8,7 @@
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - apps/target/**/*
     - if: $CI_COMMIT_BRANCH
-      changes:
-        - apps/target/**/*
 
 .target-php-job: &target-php-job
   image: ${CI_REGISTRY}/chapsmind/ci-images/php-target:latest
