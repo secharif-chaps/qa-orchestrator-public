@@ -14,7 +14,7 @@ Additionally, it:
 Required environment variables:
   CI_PROJECT_ID        - GitLab project ID (set automatically by CI)
   CI_MERGE_REQUEST_IID - MR internal ID (set automatically by CI)
-  REVIEWER_BOT_TOKEN   - GitLab API token with api scope
+  GITLAB_TOKEN         - GitLab API token with api scope
   CI_SERVER_URL        - GitLab server URL (default: https://gitlab.com)
 """
 
@@ -334,7 +334,7 @@ def main() -> None:
     server_url = get_env("CI_SERVER_URL", "https://gitlab.com").rstrip("/")
     project_id = get_env("CI_PROJECT_ID")
     mr_iid = get_env("CI_MERGE_REQUEST_IID")
-    token = get_env("REVIEWER_BOT_TOKEN")
+    token = get_env("GITLAB_TOKEN")
 
     # Determine repo root (in CI this is the working directory)
     repo_root = os.getcwd()

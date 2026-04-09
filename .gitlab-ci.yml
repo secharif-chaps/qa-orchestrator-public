@@ -9,6 +9,7 @@ stages:
   - build
   - publish
   - maintenance
+  - notify
 
 variables:
   AST_ENABLE_MR_PIPELINES: true
@@ -111,3 +112,15 @@ main:update-codeowners:
         --data-urlencode "title=chore: update CODEOWNERS from git history" \
         --data-urlencode "remove_source_branch=true" \
         "https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/merge_requests"
+
+# ─── Daily MR report to Slack ────────────────────────────
+main:daily-mr-report:
+  stage: notify
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $JOB_TYPE == "daily-mr-report"
+  variables:
+    GITLAB_TOKEN: $REVIEWER_BOT_TOKEN
+  script:
+    - python .gitlab/scripts/daily_mr_report.py
