@@ -20,9 +20,11 @@ Security:
 
 from __future__ import annotations
 
+import ipaddress
 import re
 import time
 from collections.abc import AsyncGenerator
+from urllib.parse import urlparse, urlunparse
 
 import httpx
 from fastapi import APIRouter, Request, Response
@@ -34,6 +36,110 @@ from app.core.correlation import CORRELATION_HEADER
 from app.core.logging_config import get_logger
 from app.proxy.client import get_proxy_client, get_streaming_client
 from app.proxy.registry import ModuleDefinition, ModuleName, ModuleRegistry
+from app.proxy.utils import (
+    EXCLUDED_REQUEST_HEADERS,
+    EXCLUDED_RESPONSE_HEADERS,
+    STREAMING_CONTENT_TYPES,
+    filter_request_headers,
+    filter_response_headers,
+    has_request_body,
+    is_streaming_request,
+)
+
+# Re-export for backward compatibility (existing tests import from this module)
+__all__ = [
+    "filter_request_headers",
+    "filter_response_headers",
+    "has_request_body",
+    "is_streaming_request",
+    "rewrite_location_header",
+    "EXCLUDED_REQUEST_HEADERS",
+    "EXCLUDED_RESPONSE_HEADERS",
+    "STREAMING_CONTENT_TYPES",
+]
+
+
+def rewrite_location_header(
+    location: str,
+    backend_url: str | None,
+    request: Request,
+) -> str:
+    """Rewrite a Location response header from internal backend URL to the public URL.
+
+    Handles absolute internal URLs, relative paths, and X-Forwarded-* headers
+    from trusted reverse proxies (nginx, Traefik).
+
+    Args:
+        location:    The Location header value returned by the backend.
+        backend_url: The backend origin URL (e.g. "http://screen:8000").
+                     Used to detect and strip the internal origin.
+        request:     The incoming FastAPI request (provides public scheme/host).
+
+    Returns:
+        The rewritten location string, or the original if no rewrite is needed.
+    """
+    if not location:
+        return location
+
+    # ── Determine if the immediate client is a trusted reverse proxy ──────────
+    is_trusted_proxy = False
+    client_ip: str | None = None
+    try:
+        if request.client:
+            client_ip = request.client.host
+    except Exception:
+        pass
+
+    trusted_proxies_str = getattr(settings, "TRUSTED_PROXIES", "") or ""
+    if client_ip and trusted_proxies_str:
+        try:
+            addr = ipaddress.ip_address(client_ip)
+            for cidr in trusted_proxies_str.split(","):
+                cidr = cidr.strip()
+                if cidr and addr in ipaddress.ip_network(cidr, strict=False):
+                    is_trusted_proxy = True
+                    break
+        except (ValueError, TypeError):
+            pass
+
+    # ── Resolve the public scheme ──────────────────────────────────────────────
+    public_scheme = request.url.scheme
+    if is_trusted_proxy:
+        forwarded_proto = request.headers.get("x-forwarded-proto", "").lower()
+        if forwarded_proto in ("http", "https"):
+            public_scheme = forwarded_proto
+
+    # ── Resolve the public netloc ─────────────────────────────────────────────
+    public_netloc = request.url.netloc
+    trusted_hosts_pattern = getattr(settings, "TRUSTED_HOSTS", "") or ""
+    if is_trusted_proxy and trusted_hosts_pattern:
+        forwarded_host = request.headers.get("x-forwarded-host", "")
+        if forwarded_host:
+            try:
+                if re.fullmatch(trusted_hosts_pattern, forwarded_host):
+                    public_netloc = forwarded_host
+            except re.error:
+                pass
+
+    # ── Relative path → prepend public origin ─────────────────────────────────
+    if location.startswith("/"):
+        parsed = urlparse(location)
+        return urlunparse((public_scheme, public_netloc, parsed.path, parsed.params, parsed.query, parsed.fragment))
+
+    # ── Absolute URL: only rewrite if it matches the backend origin ───────────
+    if not backend_url:
+        return location
+
+    normalized_backend = backend_url.rstrip("/")
+    if not normalized_backend:
+        return location
+
+    if location.startswith(normalized_backend):
+        parsed = urlparse(location)
+        return urlunparse((public_scheme, public_netloc, parsed.path, parsed.params, parsed.query, parsed.fragment))
+
+    # External URL or non-matching backend — leave unchanged
+    return location
 
 logger = get_logger(__name__)
 
@@ -91,169 +197,6 @@ def _resolve_backend(registry: ModuleRegistry | None, path: str, method: str) ->
 
 
 router = APIRouter()
-
-# Headers to exclude from proxying
-EXCLUDED_REQUEST_HEADERS = {
-    # Hop-by-hop headers (RFC 2616) - must not be forwarded by proxies
-    "host",
-    "connection",
-    "keep-alive",
-    "proxy-authenticate",
-    "proxy-authorization",
-    "te",
-    "trailers",
-    "transfer-encoding",
-    "upgrade",
-    "content-length",  # httpx will recalculate this
-    # Security: Prevent client from spoofing forwarding headers
-    # Gateway sets these explicitly if needed via internal headers
-    "x-forwarded-for",
-    "x-forwarded-host",
-    "x-forwarded-proto",
-    "x-forwarded-port",
-    "x-real-ip",
-    "forwarded",  # RFC 7239 standard forwarding header
-    # Security: Prevent proxy chain info leakage
-    "via",
-}
-
-EXCLUDED_RESPONSE_HEADERS = {
-    "connection",
-    "keep-alive",
-    "proxy-authenticate",
-    "proxy-authorization",
-    "te",
-    "trailers",
-    "transfer-encoding",
-    "upgrade",
-    "content-encoding",  # Let FastAPI handle compression
-    "content-length",  # Will be recalculated
-}
-
-
-def filter_request_headers(headers: dict) -> dict:
-    """Filter out hop-by-hop headers from request."""
-    return {key: value for key, value in headers.items() if key.lower() not in EXCLUDED_REQUEST_HEADERS}
-
-
-def filter_response_headers(headers: httpx.Headers) -> dict:
-    """Filter out hop-by-hop headers from response."""
-    return {key: value for key, value in headers.items() if key.lower() not in EXCLUDED_RESPONSE_HEADERS}
-
-
-def rewrite_location_header(location: str, backend_url: str | None, request: Request) -> str:
-    """Rewrite a Location header from internal backend URL to public URL.
-
-    Handles these cases:
-    - Internal absolute URL → public absolute URL
-      http://screen:8000/api/companies/ → https://exemple.chapsmind.com/api/companies/
-    - Already-public URL → unchanged
-    - Relative path → converted to public absolute URL
-    - External URL (different host) → unchanged
-    - Empty/None backend_url → return location unchanged
-
-    Args:
-        location: The Location header value from the backend response
-        backend_url: The internal backend base URL (e.g. http://screen:8000)
-        request: The original client request (used to derive the public URL)
-
-    Returns:
-        Rewritten Location header value
-    """
-    if not location:
-        return location
-
-    # Use X-Forwarded-* headers only from trusted proxies, validated against
-    # TRUSTED_HOSTS regex. Same conventions as Symfony TRUSTED_PROXIES/TRUSTED_HOSTS.
-    import ipaddress
-    import re
-
-    # Check if the request comes from a trusted proxy
-    client_ip = request.client.host if request.client else ""
-    is_trusted_proxy = False
-    if client_ip:
-        try:
-            addr = ipaddress.ip_address(client_ip)
-            is_trusted_proxy = any(
-                addr in ipaddress.ip_network(cidr.strip(), strict=False)
-                for cidr in settings.TRUSTED_PROXIES.split(",")
-                if cidr.strip()
-            )
-        except ValueError:
-            pass
-
-    scheme = request.url.scheme
-    host = request.url.netloc
-
-    if is_trusted_proxy:
-        forwarded_proto = request.headers.get("x-forwarded-proto", "")
-        if forwarded_proto in ("http", "https"):
-            scheme = forwarded_proto
-
-        forwarded_host = request.headers.get("x-forwarded-host", "")
-        trusted = settings.TRUSTED_HOSTS
-        if forwarded_host and trusted and re.fullmatch(trusted, forwarded_host):
-            host = forwarded_host
-
-    public_base = f"{scheme}://{host}"
-
-    # Relative path (starts with /) → prepend public base
-    if location.startswith("/"):
-        return f"{public_base}{location}"
-
-    # No backend URL to compare → return as-is
-    if not backend_url:
-        return location
-
-    backend_base = backend_url.rstrip("/")
-
-    # Internal absolute URL → rewrite to public
-    if location.startswith(backend_base):
-        internal_path = location[len(backend_base) :]
-        return f"{public_base}{internal_path}"
-
-    # Anything else (external URL, already public) → unchanged
-    return location
-
-
-def has_request_body(request: Request) -> bool:
-    """Check if request has a body using headers (without reading it)."""
-    content_length = request.headers.get("content-length")
-    transfer_encoding = request.headers.get("transfer-encoding")
-    # Has body if content-length > 0 or chunked transfer encoding
-    if content_length:
-        try:
-            return int(content_length) > 0
-        except ValueError:
-            return False
-    return transfer_encoding == "chunked"
-
-
-# Content types that require streaming with dedicated client (long-lived connections)
-STREAMING_CONTENT_TYPES = {
-    "text/event-stream",  # Server-Sent Events (SSE)
-    "application/x-ndjson",  # Newline Delimited JSON (used by OpenAI, etc.)
-    "application/stream+json",  # JSON streaming
-}
-
-
-def is_streaming_request(request: Request) -> bool:
-    """
-    Check if this request expects a streaming response.
-
-    Detects requests that need long-lived connections with dedicated client:
-    - SSE (text/event-stream)
-    - NDJSON streaming (application/x-ndjson)
-    - JSON streaming (application/stream+json)
-
-    Limitations:
-    - Detection is based on Accept header only (client must explicitly request streaming)
-    - Backend may still return streaming response even if not requested (handled by
-      bidirectional streaming in regular requests)
-    """
-    accept = request.headers.get("accept", "")
-    accept_lower = accept.lower()
-    return any(ct in accept_lower for ct in STREAMING_CONTENT_TYPES)
 
 
 # Pattern to match GET /companies/{id} (single company access)

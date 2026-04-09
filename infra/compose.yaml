@@ -72,7 +72,7 @@ services:
       API_PORT: 8000
       GRPC_PORT: 50051
       SCREEN_BASE_URL: http://screen:8000
-      STREAM_BASE_URL: http://stream:8000
+      TARGET_BASE_URL: ${TARGET_BASE_URL:-http://target:8000}
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${GLOBAL_DB:-global_db}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
 
@@ -124,7 +124,7 @@ services:
       target-valkey: { condition: service_healthy }
       target-opensearch: { condition: service_healthy }
     environment:
-      SERVER_NAME: "0.0.0.0:8002"
+      SERVER_NAME: "0.0.0.0:8000"
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${TARGET_DB:-target_db}
       MESSENGER_TRANSPORT_DSN: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/%2f/messages
       VALKEY_DSN: redis://target-valkey:6379

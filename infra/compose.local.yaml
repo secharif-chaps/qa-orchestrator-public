@@ -108,6 +108,7 @@ services:
     environment:
       <<: [*local-keycloak, *local-keycloak-admin, *local-internal-auth]
       CORS_ORIGIN: http://localhost
+      TARGET_BASE_URL: http://target:8000
     volumes:
       - ../apps/global-service/app:/app/app
       - ../apps/global-service/protos:/app/protos
@@ -170,7 +171,7 @@ services:
       keycloak: { condition: service_healthy }
     environment:
       <<: *target-env
-      SERVER_NAME: "0.0.0.0:8002"
+      SERVER_NAME: "0.0.0.0:8000"
 
   # Target runner — local build for Symfony Messenger consumers (1 replica in local dev)
   target-runner:
