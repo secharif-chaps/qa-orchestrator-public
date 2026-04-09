@@ -96,13 +96,25 @@ include:
     - if: $CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$/
 
 # ─── Override security template stages ────────────────
+# The sast parent job is configuration-only (spawns child analyzers like
+# semgrep-sast). We only override stage and needs here — the template's
+# own rules handle MR/branch triggering via AST_ENABLE_MR_PIPELINES.
 sast:
   stage: lint
   needs: []
 
+# Secret Detection (gitleaks): exits with code 1 when secrets are found,
+# so allow_failure: false effectively blocks merges with hardcoded secrets.
 secret_detection:
   stage: lint
   needs: []
+  allow_failure: false
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 # ─── Skills validation ──────────────────────────────
 main:validate-skills:
