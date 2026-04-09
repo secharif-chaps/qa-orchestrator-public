@@ -73,3 +73,10 @@ stream:publish:
   variables:
     IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-stream
     DOCKER_CONTEXT: apps/stream
+
+# ─── Scan Stage (Trivy) ──────────────────────────────
+stream:trivy:
+  extends: .trivy-scan
+  needs: [stream:publish]
+  variables:
+    SCAN_IMAGE: ${CI_REGISTRY_IMAGE}/chapsmind-stream

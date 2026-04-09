@@ -76,3 +76,10 @@ global-service:publish:
   variables:
     IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-global-service
     DOCKER_CONTEXT: apps/global-service
+
+# ─── Scan Stage (Trivy) ──────────────────────────────
+global-service:trivy:
+  extends: .trivy-scan
+  needs: [global-service:publish]
+  variables:
+    SCAN_IMAGE: ${CI_REGISTRY_IMAGE}/chapsmind-global-service

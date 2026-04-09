@@ -7,6 +7,7 @@ stages:
   - lint
   - test
   - publish
+  - scan
   - deploy
   - maintenance
 
@@ -88,6 +89,66 @@ include:
       done
   after_script:
     - docker logout $CI_REGISTRY || true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$/
+
+# ─── Trivy container scanning template ───────────────
+# Reusable template for scanning Docker images with Trivy.
+# Each app extends this with its own image name and publish dependency.
+# Scans from the registry (images are pushed by .docker-publish).
+# Tag resolution mirrors .docker-publish tag policy.
+.trivy-scan:
+  stage: scan
+  image:
+    name: aquasec/trivy:0.69.3
+    entrypoint: [""]
+  allow_failure: true
+  variables:
+    TRIVY_SEVERITY: CRITICAL,HIGH
+    TRIVY_EXIT_CODE: "1"
+    TRIVY_USERNAME: ${CI_REGISTRY_USER}
+    TRIVY_PASSWORD: ${CI_REGISTRY_PASSWORD}
+    TRIVY_CACHE_DIR: .cache/trivy
+  script:
+    # Determine image tag (same logic as .docker-publish)
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        IMAGE_TAG="$CI_COMMIT_TAG"
+      elif [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then
+        IMAGE_TAG="main"
+      elif [ -n "$CI_MERGE_REQUEST_IID" ]; then
+        IMAGE_TAG="mr-${CI_MERGE_REQUEST_IID}"
+      else
+        IMAGE_TAG="$CI_COMMIT_REF_SLUG"
+      fi
+    - echo "Scanning ${SCAN_IMAGE}:${IMAGE_TAG}"
+    - trivy image
+      --severity ${TRIVY_SEVERITY}
+      --exit-code ${TRIVY_EXIT_CODE}
+      --format json
+      --output trivy-report.json
+      "${SCAN_IMAGE}:${IMAGE_TAG}" || TRIVY_RC=$?
+    # Print summary to job log (reuses cached DB and image layers)
+    - trivy image
+      --severity ${TRIVY_SEVERITY}
+      --format table
+      --skip-db-update
+      "${SCAN_IMAGE}:${IMAGE_TAG}"
+    - exit ${TRIVY_RC:-0}
+  artifacts:
+    paths:
+      - trivy-report.json
+    when: always
+    expire_in: 7 days
+  cache:
+    key: trivy-db
+    paths:
+      - .cache/trivy/
+    policy: pull-push
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never

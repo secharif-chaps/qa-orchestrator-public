@@ -150,3 +150,10 @@ front:publish:
   after_script:
     - rm -f owlint_registry_url.txt owlint_deploy_key.txt
     - docker logout $CI_REGISTRY || true
+
+# ─── Scan Stage (Trivy) ──────────────────────────────
+front:trivy:
+  extends: .trivy-scan
+  needs: [front:publish]
+  variables:
+    SCAN_IMAGE: ${CI_REGISTRY_IMAGE}/chapsmind-front

@@ -122,3 +122,10 @@ screen:publish:
   variables:
     IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-screen
     DOCKER_CONTEXT: apps/screen
+
+# ─── Scan Stage (Trivy) ──────────────────────────────
+screen:trivy:
+  extends: .trivy-scan
+  needs: [screen:publish]
+  variables:
+    SCAN_IMAGE: ${CI_REGISTRY_IMAGE}/chapsmind-screen
