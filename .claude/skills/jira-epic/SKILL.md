@@ -48,6 +48,7 @@ allowed-tools: Bash, Read, Grep
 
 **Titre** : [MODULE] Titre propose
 **Composant(s)** : [Deduit(s) du/des module(s)]
+**Labels** : Claude [+ Back / Front / Prompt si applicable]
 
 ### Description
 **Vision** : [Objectif et impact]

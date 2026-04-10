@@ -115,3 +115,7 @@ docs/update-readme
 3. **Keep descriptions short** - Max 72 characters in subject line
 4. **Use present tense** - "add" not "added", "fix" not "fixed"
 5. **Scope is optional** but recommended for clarity
+
+## Labels Jira
+
+6. **Always add the label `Claude`** to every Jira ticket created by the assistant (Epic, Story, Bug, Design) — this is mandatory and non-negotiable, it allows tracking AI-created tickets in Jira
