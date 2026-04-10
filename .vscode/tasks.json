@@ -3,9 +3,11 @@
   "tasks": [
     // ═══════════════════════════════════════════════
     //  DOCKER COMPOSE - Services
+    //  All commands run from workspace root where .env
+    //  defines COMPOSE_FILE and COMPOSE_PROFILES
     // ═══════════════════════════════════════════════
     {
-      "label": "Docker: Full Setup",
+      "label": "Docker: Full Setup (first time)",
       "type": "shell",
       "command": "task init",
       "options": { "cwd": "${workspaceFolder}" },
@@ -14,10 +16,19 @@
       "problemMatcher": []
     },
     {
+      "label": "Docker: Init & Start (build + keycloak + migrations)",
+      "type": "shell",
+      "command": "docker compose up -d --build --remove-orphans && echo '⏳ Waiting for Keycloak...' && until curl -sf http://localhost:8080/realms/master > /dev/null 2>&1; do sleep 2; done && echo '✅ Keycloak ready' && bash infra/scripts/setup-keycloak.sh --wait --theme --create-org 'ChapsMind Dev' --org-domain chapsmind.local --add-users admin,company_manager,company_viewer,no_access && echo '🗃️ Running migrations...' && docker compose exec screen alembic upgrade head && docker compose exec global-service alembic upgrade head && docker compose exec stream alembic upgrade head && echo '✅ All ready!'",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
       "label": "Docker: Start All Services (up -d --build)",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml up -d --build",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose up -d --build --remove-orphans",
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "build",
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
@@ -25,40 +36,40 @@
     {
       "label": "Docker: Stop All Services (down)",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml down",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose down",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
       "label": "Docker: Restart Service",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml restart ${input:service}",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose restart ${input:service}",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
       "label": "Docker: Rebuild Service",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml up -d --build ${input:service}",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose up -d --build ${input:service}",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
       "label": "Docker: Status (ps)",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml ps",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose ps",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
       "label": "Docker: Full Reset (down + volumes)",
       "type": "shell",
-      "command": "echo '⚠️  This will delete all data!' && docker compose -f compose.yaml -f compose.local.yaml down -v",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "echo 'This will delete all data!' && docker compose down -v",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
@@ -69,8 +80,8 @@
     {
       "label": "Logs: Follow Service",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml logs -f ${input:service}",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose logs -f ${input:service}",
+      "options": { "cwd": "${workspaceFolder}" },
       "isBackground": true,
       "presentation": { "reveal": "always", "panel": "dedicated" },
       "problemMatcher": []
@@ -134,13 +145,13 @@
     },
 
     // ═══════════════════════════════════════════════
-    //  BACKEND / GLOBAL SERVICE (inside Docker)
+    //  BACKEND SERVICES (inside Docker)
     // ═══════════════════════════════════════════════
     {
       "label": "Run Tests",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} pytest tests/ -v",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose exec ${input:testableService} pytest tests/ -v",
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
@@ -148,8 +159,8 @@
     {
       "label": "Run Tests (with coverage)",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} pytest tests/ -v --cov=app --cov-report=term-missing",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose exec ${input:testableService} pytest tests/ -v --cov=app --cov-report=term-missing",
+      "options": { "cwd": "${workspaceFolder}" },
       "group": "test",
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
@@ -157,8 +168,8 @@
     {
       "label": "Shell (bash)",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} bash",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose exec ${input:testableService} bash",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "dedicated" },
       "problemMatcher": []
     },
@@ -169,40 +180,40 @@
     {
       "label": "Alembic: Upgrade Head",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} alembic upgrade head",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose exec ${input:migratableService} alembic upgrade head",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
       "label": "Alembic: Current",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} alembic current",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose exec ${input:migratableService} alembic current",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
       "label": "Alembic: History",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} alembic history",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose exec ${input:migratableService} alembic history",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
       "label": "Alembic: New Migration",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} alembic revision -m \"${input:migrationMessage}\"",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose exec ${input:migratableService} alembic revision -m \"${input:migrationMessage}\"",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
     {
       "label": "Alembic: Downgrade -1",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} alembic downgrade -1",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose exec ${input:migratableService} alembic downgrade -1",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []
     },
@@ -213,8 +224,8 @@
     {
       "label": "Database: Connect (psql)",
       "type": "shell",
-      "command": "docker compose -f compose.yaml -f compose.local.yaml exec db psql -U postgres -d ${input:database}",
-      "options": { "cwd": "${workspaceFolder}/infra" },
+      "command": "docker compose exec db psql -U postgres -d ${input:database}",
+      "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "dedicated" },
       "problemMatcher": []
     }
@@ -226,7 +237,10 @@
       "description": "Which service?",
       "options": [
         "screen",
+        "stream",
         "global-service",
+        "frontend",
+        "nginx",
         "db",
         "keycloak"
       ]
@@ -237,6 +251,17 @@
       "description": "Which service?",
       "options": [
         "screen",
+        "stream",
+        "global-service"
+      ]
+    },
+    {
+      "id": "migratableService",
+      "type": "pickString",
+      "description": "Which service?",
+      "options": [
+        "screen",
+        "stream",
         "global-service"
       ]
     },
@@ -247,6 +272,7 @@
       "options": [
         "chapsmind_db",
         "global_db",
+        "stream_db",
         "keycloak"
       ]
     },

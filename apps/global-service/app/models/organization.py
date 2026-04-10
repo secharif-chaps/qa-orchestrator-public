@@ -5,6 +5,7 @@ This module contains models for Keycloak organization-based multi-tenancy:
 - OrganizationModule: Module configuration (enabled/disabled) per organization
 - OrganizationFeatureFlag: Feature flag configuration (add-on capabilities) per organization
 - TokenTransaction: Audit log for all token operations
+- TokenLock: Token reservation for lock/unlock pattern
 
 Organizations are managed in Keycloak, not in the database. The Organization
 table stores application-specific settings tied to Keycloak organization UUIDs.
@@ -17,6 +18,7 @@ from enum import StrEnum
 from sqlalchemy import (
     JSON,
     Boolean,
+    CheckConstraint,
     Column,
     DateTime,
     ForeignKey,
@@ -28,6 +30,7 @@ from sqlalchemy import (
 from sqlalchemy import (
     Enum as SQLEnum,
 )
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -102,6 +105,22 @@ class FeatureFlag(StrEnum):
     STREAM = "stream"
 
 
+class TokenLockStatus(StrEnum):
+    """Status of a token lock reservation.
+
+    Attributes:
+        locked: Tokens are reserved, awaiting confirmation or release
+        confirmed: Lock confirmed, tokens consumed from balance
+        released: Lock released, tokens returned to available balance
+        expired: Lock expired without confirmation (auto-released)
+    """
+
+    locked = "locked"
+    confirmed = "confirmed"
+    released = "released"
+    expired = "expired"
+
+
 class Organization(GlobalBase):
     """Organization-level settings for Keycloak organizations.
 
@@ -138,6 +157,14 @@ class Organization(GlobalBase):
         back_populates="organization",
         cascade="all, delete-orphan",
         order_by="TokenTransaction.created_at.desc()",
+    )
+
+    # Relationship to token locks
+    token_locks = relationship(
+        "TokenLock",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+        order_by="TokenLock.locked_at.desc()",
     )
 
 
@@ -312,3 +339,85 @@ class OrganizationFeatureFlag(GlobalBase):
     config = Column(JSON, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+class TokenLock(GlobalBase):
+    """Token reservation for the lock/unlock pattern.
+
+    Allows pre-reserving tokens before an operation (lock), then
+    confirming consumption (confirm) or releasing them (release).
+    Locks that exceed their timeout are auto-expired.
+
+    Designed for use with SELECT FOR UPDATE to prevent race conditions.
+
+    Attributes:
+        id: UUID primary key
+        organization_id: Foreign key to Organization
+        amount: Number of tokens reserved
+        module: Module that requested the lock (e.g. "screen")
+        user_id: Keycloak user ID who initiated the lock
+        correlation_id: Unique ID for tracing the lock lifecycle
+        reference_id: Optional reference filled by backend (e.g. company_id)
+        status: Current lock status (locked, confirmed, released, expired)
+        locked_at: When the lock was created
+        expires_at: When the lock will auto-expire
+        settled_at: When the lock was confirmed, released, or expired
+        organization: Relationship to parent Organization
+    """
+
+    __tablename__ = "token_locks"
+    __table_args__ = (
+        CheckConstraint("amount > 0", name="ck_token_locks_amount_positive"),
+        UniqueConstraint("correlation_id", name="uq_token_locks_correlation_id"),
+        Index("ix_token_locks_org_status", "organization_id", "status"),
+        Index("ix_token_locks_expires_at", "expires_at"),
+        {"schema": GLOBAL_SCHEMA},
+    )
+
+    id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        server_default=func.gen_random_uuid(),
+    )
+
+    organization_id = Column(
+        String,
+        ForeignKey(
+            f"{GLOBAL_SCHEMA}.organizations.organization_id", ondelete="CASCADE"
+        ),
+        nullable=False,
+    )
+
+    amount = Column(Integer, nullable=False)
+    module = Column(
+        SQLEnum(
+            ModuleName,
+            name="modulename",
+            schema=GLOBAL_SCHEMA,
+            create_type=False,
+            values_callable=lambda x: [e.value for e in x],
+        ),
+        nullable=False,
+    )
+    user_id = Column(String, nullable=False)
+    correlation_id = Column(String, nullable=False)
+    reference_id = Column(String, nullable=True)
+
+    status = Column(
+        SQLEnum(
+            TokenLockStatus,
+            name="token_lock_status",
+            schema=GLOBAL_SCHEMA,
+            values_callable=lambda x: [e.value for e in x],
+        ),
+        nullable=False,
+        server_default=TokenLockStatus.locked.value,
+    )
+
+    locked_at = Column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    settled_at = Column(DateTime(timezone=True), nullable=True)
+
+    organization = relationship("Organization", back_populates="token_locks")
