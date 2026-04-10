@@ -85,6 +85,7 @@ def _build_company_response(
         jobs=section_data.get("jobs", {}),
         csr=section_data.get("csr", {}),
         press=section_data.get("press", {}),
+        financial=section_data.get("financial") or {},
         team=section_data.get("team", []),
         corporate_structure=section_data.get("corporate_structure", {}),
         sanctions=section_data.get("sanctions", {}),
