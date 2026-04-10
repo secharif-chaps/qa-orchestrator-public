@@ -41,6 +41,7 @@ CODEOWNERS_PATH = ".gitlab/CODEOWNERS"
 PATH_LABELS: list[tuple[str, str]] = [
     ("apps/front/", "frontend"),
     ("apps/screen/", "screen"),
+    ("apps/target/", "target"),
     ("apps/global-service/", "global-service"),
     ("infra/", "infra"),
     ("docs/", "docs"),
