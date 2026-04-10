@@ -38,7 +38,7 @@ class CheckDocumentQuotaHandlerTest extends TestCase
     {
         $this->watchFileGateway = new NullWatchFileGateway();
         $this->documentGateway = new NullDocumentGateway();
-        $this->activityLogger = new WatchFileActivityLogger($this->createMock(TenantContext::class));
+        $this->activityLogger = new WatchFileActivityLogger($this->createStub(TenantContext::class));
         $this->activityGateway = new NullWatchFileActivityGateway();
         $this->messageBus = new NullMessageBus();
     }

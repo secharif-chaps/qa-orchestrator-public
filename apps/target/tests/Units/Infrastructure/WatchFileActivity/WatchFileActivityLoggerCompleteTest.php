@@ -32,7 +32,7 @@ class WatchFileActivityLoggerCompleteTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->logger = new WatchFileActivityLogger($this->createMock(TenantContext::class));
+        $this->logger = new WatchFileActivityLogger($this->createStub(TenantContext::class));
         $this->user = new User('test@example.com');
         $this->watchFile = new WatchFile('Test WatchFile', 'Test Objective', new Organisation(
             'Test Org',

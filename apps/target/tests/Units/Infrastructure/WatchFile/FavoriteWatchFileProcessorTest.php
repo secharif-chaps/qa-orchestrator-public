@@ -69,7 +69,7 @@ class FavoriteWatchFileProcessorTest extends TestCase
 
         $operation = new Post();
         $uriVariables = [
-            'id' => 'watchfile1',
+            'watchFileId' => 'watchfile1',
         ];
         $context = [];
 
@@ -119,7 +119,7 @@ class FavoriteWatchFileProcessorTest extends TestCase
 
         $operation = new Delete();
         $uriVariables = [
-            'id' => 'watchfile1',
+            'watchFileId' => 'watchfile1',
         ];
         $context = [];
 
@@ -166,7 +166,7 @@ class FavoriteWatchFileProcessorTest extends TestCase
 
         $operation = new Post();
         $uriVariables = [
-            'id' => 'watchfile1',
+            'watchFileId' => 'watchfile1',
         ];
         $context = [];
 
@@ -226,7 +226,7 @@ class FavoriteWatchFileProcessorTest extends TestCase
 
         $operation = new Post();
         $uriVariables = [
-            'id' => 123,
+            'watchFileId' => 123,
         ];
         $context = [];
 
@@ -258,7 +258,7 @@ class FavoriteWatchFileProcessorTest extends TestCase
 
         $operation = new Post();
         $uriVariables = [
-            'id' => 'watchfile1',
+            'watchFileId' => 'watchfile1',
         ];
         $context = [];
 
@@ -303,7 +303,7 @@ class FavoriteWatchFileProcessorTest extends TestCase
 
         $operation = new Post();
         $uriVariables = [
-            'id' => 'watchfile1',
+            'watchFileId' => 'watchfile1',
         ];
         $context = [];
 
@@ -351,7 +351,7 @@ class FavoriteWatchFileProcessorTest extends TestCase
         // Test with a custom operation that's not Delete (should default to Add)
         $operation = $this->createStub(\ApiPlatform\Metadata\Operation::class);
         $uriVariables = [
-            'id' => 'watchfile1',
+            'watchFileId' => 'watchfile1',
         ];
         $context = [];
 

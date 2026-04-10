@@ -64,7 +64,7 @@ class WatchFileActorProviderTest extends TestCase
         $actor = new Actor('test-actor', new Organisation('Test Org', 'test-org-id'));
         $operation = $this->createStub(Operation::class);
         $uriVariables = [
-            'id' => 'watch_file_id',
+            'watchFileId' => 'watch_file_id',
         ];
         $context = [];
         $expectedResult = [new WatchFileActor($actor, $watchFile)];
@@ -88,7 +88,7 @@ class WatchFileActorProviderTest extends TestCase
     {
         $operation = $this->createStub(Operation::class);
         $uriVariables = [
-            'id' => 'non-existent-watchfile-id',
+            'watchFileId' => 'non-existent-watchfile-id',
         ];
         $context = [];
 

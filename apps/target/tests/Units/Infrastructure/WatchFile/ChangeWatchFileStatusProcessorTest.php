@@ -80,7 +80,7 @@ class ChangeWatchFileStatusProcessorTest extends TestCase
             null,
             $this->createStub(Operation::class),
             [
-                'id' => 'watch_file_id',
+                'watchFileId' => 'watch_file_id',
                 'status' => WatchFileStatus::ENABLED->value,
             ]
         );
@@ -108,7 +108,7 @@ class ChangeWatchFileStatusProcessorTest extends TestCase
         $this->expectExceptionMessage('Status must be provided in the URL');
 
         $this->processor->process(null, $this->createStub(Operation::class), [
-            'id' => 'watch_file_id',
+            'watchFileId' => 'watch_file_id',
         ]);
     }
 
@@ -121,7 +121,7 @@ class ChangeWatchFileStatusProcessorTest extends TestCase
             null,
             $this->createStub(Operation::class),
             [
-                'id' => 'watch_file_id',
+                'watchFileId' => 'watch_file_id',
                 'status' => 'invalid',
             ]
         );
@@ -136,7 +136,7 @@ class ChangeWatchFileStatusProcessorTest extends TestCase
             null,
             $this->createStub(Operation::class),
             [
-                'id' => 123,
+                'watchFileId' => 123,
                 'status' => WatchFileStatus::ENABLED->value,
             ]
         );
@@ -145,13 +145,13 @@ class ChangeWatchFileStatusProcessorTest extends TestCase
     public function testNonStringStatusThrowsException(): void
     {
         $this->expectException(BadRequestHttpException::class);
-        $this->expectExceptionMessage('Status must be a string');
+        $this->expectExceptionMessage('Status must be provided in the URL');
 
         $this->processor->process(
             null,
             $this->createStub(Operation::class),
             [
-                'id' => 'watch_file_id',
+                'watchFileId' => 'watch_file_id',
                 'status' => 123,
             ]
         );
@@ -174,7 +174,7 @@ class ChangeWatchFileStatusProcessorTest extends TestCase
             null,
             $this->createStub(Operation::class),
             [
-                'id' => 'nonexistent_id',
+                'watchFileId' => 'nonexistent_id',
                 'status' => WatchFileStatus::ENABLED->value,
             ]
         );
@@ -209,7 +209,7 @@ class ChangeWatchFileStatusProcessorTest extends TestCase
             null,
             $this->createStub(Operation::class),
             [
-                'id' => 'watch_file_id',
+                'watchFileId' => 'watch_file_id',
                 'status' => WatchFileStatus::ENABLED->value,
             ]
         );

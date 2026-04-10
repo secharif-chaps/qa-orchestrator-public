@@ -82,7 +82,7 @@ class OpenApiCollectionConsistencyTest extends AbstractApiTestCase
             $this->fail('Could not extract ID from collection item: ' . json_encode($firstItem));
         }
 
-        $resolvedItemPath = str_replace('{id}', $itemId, $itemPath);
+        $resolvedItemPath = (string) preg_replace('/\{[^}]+\}/', $itemId, $itemPath, 1);
         $itemResponse = $client->request('GET', $resolvedItemPath);
         $this->assertEquals(200, $itemResponse->getStatusCode());
 
@@ -205,8 +205,11 @@ class OpenApiCollectionConsistencyTest extends AbstractApiTestCase
 
         // Try other common patterns
         $resourceName = self::extractResourceName($collectionPath);
+        $singularSnake = rtrim($resourceName, 's');
+        $singularCamel = self::snakeToCamel($singularSnake);
         $patterns = [
-            $collectionPath . '/{' . rtrim($resourceName, 's') . 'Id}',
+            $collectionPath . '/{' . $singularSnake . 'Id}',
+            $collectionPath . '/{' . $singularCamel . 'Id}',
             $collectionPath . '/{' . $resourceName . 'Id}',
             str_replace($resourceName, $resourceName . '/{id}', $collectionPath),
         ];
@@ -218,6 +221,11 @@ class OpenApiCollectionConsistencyTest extends AbstractApiTestCase
         }
 
         return null;
+    }
+
+    private static function snakeToCamel(string $input): string
+    {
+        return lcfirst(str_replace('_', '', ucwords($input, '_')));
     }
 
     private static function extractResourceName(string $path): string

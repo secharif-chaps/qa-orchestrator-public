@@ -74,7 +74,7 @@ class WatchFileUserProviderTest extends TestCase
 
         $operation = $this->createStub(Operation::class);
         $result = $this->provider->provide($operation, [
-            'id' => $watchFileId,
+            'watchFileId' => $watchFileId,
         ]);
 
         $this->assertCount(1, $result);
@@ -96,7 +96,7 @@ class WatchFileUserProviderTest extends TestCase
         $this->expectExceptionMessage('The watch file ID "not-a-uuid" is not a valid UUID.');
 
         $this->provider->provide($operation, [
-            'id' => 'not-a-uuid',
+            'watchFileId' => 'not-a-uuid',
         ]);
     }
 
@@ -115,7 +115,7 @@ class WatchFileUserProviderTest extends TestCase
         $this->expectExceptionMessage('The user must be authenticated.');
 
         $this->provider->provide($operation, [
-            'id' => Uuid::v4()->toString(),
+            'watchFileId' => Uuid::v4()->toString(),
         ]);
     }
 
@@ -136,7 +136,7 @@ class WatchFileUserProviderTest extends TestCase
         $this->expectException(WatchFileNotFoundException::class);
         $this->expectExceptionMessage(\sprintf('WatchFile with id %s not found', $watchFileId));
         $this->provider->provide($operation, [
-            'id' => $watchFileId,
+            'watchFileId' => $watchFileId,
         ]);
     }
 
@@ -171,7 +171,7 @@ class WatchFileUserProviderTest extends TestCase
         $this->expectExceptionMessage('The user must be granted access to the watch file.');
 
         $this->provider->provide($operation, [
-            'id' => $watchFileId,
+            'watchFileId' => $watchFileId,
         ]);
     }
 }

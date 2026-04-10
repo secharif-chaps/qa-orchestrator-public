@@ -35,7 +35,7 @@ class FavoriteWatchFileProcessor implements ProcessorInterface
             throw new \RuntimeException('User must be authenticated to favorite a watch file.');
         }
 
-        $watchFileId = $uriVariables['id'] ?? null;
+        $watchFileId = $uriVariables['watchFileId'] ?? null;
         if (!$watchFileId || !\is_string($watchFileId)) {
             throw new BadRequestHttpException('Watch file ID is required.');
         }

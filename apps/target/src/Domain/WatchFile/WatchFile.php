@@ -83,6 +83,9 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new Get(
             uriTemplate: '/watch_files/{watchFileId}',
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             openapi: new Operation(
                 summary: 'Get a watch file by ID',
                 description: 'Retrieves a specific watch file by its unique identifier. Only watch files accessible to the authenticated user are returned.',
@@ -132,6 +135,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Patch(
             uriTemplate: '/watch_files/{watchFileId}',
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             openapi: new Operation(
                 summary: 'Update a watch file',
                 description: 'Updates specific fields of an existing watch file. Only provided fields will be updated.',
@@ -154,6 +160,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Post(
             uriTemplate: '/watch_files/{watchFileId}/status/{status}',
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             openapi: new Operation(
                 summary: 'Change watch file status',
                 description: 'Updates the status of a specific watch file. This operation allows changing the watch file state between enabled, archived, or draft. Status changes affect the watch file\'s visibility and accessibility within the application.',
@@ -247,7 +256,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Post(
             uriTemplate: '/watch_files/{watchFileId}/actors/batch-change-status',
-            uriVariables: ['watchFileId'],
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             openapi: new Operation(
                 summary: 'Batch change actor status',
                 description: 'Changes the status of multiple actors and all their sources in a single request',
@@ -272,7 +283,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Post(
             uriTemplate: '/watch_files/{watchFileId}/sources/batch-change-status',
-            uriVariables: ['watchFileId'],
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             openapi: new Operation(
                 summary: 'Batch change source status',
                 description: 'Changes the status of multiple sources in a single request',
@@ -297,7 +310,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Get(
             uriTemplate: '/watch_files/{watchFileId}/actor-types',
-            uriVariables: ['watchFileId'],
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             openapi: new Operation(
                 summary: 'Get actor types with counts',
                 description: 'Retrieves all actor types linked to the watch file with their counts. Optionally filter by status and/or actor name.',
@@ -340,7 +355,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Get(
             uriTemplate: '/watch_files/{watchFileId}/source-types',
-            uriVariables: ['watchFileId'],
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             openapi: new Operation(
                 summary: 'Get source types with counts',
                 description: 'Retrieves all source types linked to the watch file with their counts. Optionally filter by status and/or name.',
@@ -383,6 +400,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Post(
             uriTemplate: '/watch_files/{watchFileId}/conversations',
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             openapi: new Operation(
                 summary: 'Create a new conversation in watch file',
                 description: 'Creates a new conversation within the specified watch file. The conversation will be initialized with the provided user message.',
@@ -414,6 +434,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Get(
             uriTemplate: '/watch_files/{watchFileId}/conversations/last',
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             openapi: new Operation(
                 summary: 'Get the last conversation for a watch file',
                 description: 'Retrieves the most recent conversation from the specified watch file. If no conversations exist, returns null.',
@@ -441,6 +464,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new GetCollection(
             uriTemplate: '/watch_files/{watchFileId}/share',
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             openapi: new Operation(
                 summary: 'Get watch file sharing details',
                 description: 'Retrieves the list of users who have access to the specified watch file, including their permission levels and sharing details.',
@@ -454,6 +480,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Post(
             uriTemplate: '/watch_files/{watchFileId}/share',
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             openapi: new Operation(
                 summary: 'Share watch file with users',
                 description: 'Shares the specified watch file with one or more users, granting them access according to the defined permission level.',
@@ -529,6 +558,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Post(
             uriTemplate: '/watch_files/{watchFileId}/favorite',
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             status: Response::HTTP_NO_CONTENT,
             openapi: new Operation(
                 summary: 'Add watch file to favorites',
@@ -556,6 +588,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Delete(
             uriTemplate: '/watch_files/{watchFileId}/favorite',
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             status: Response::HTTP_NO_CONTENT,
             openapi: new Operation(
                 summary: 'Remove watch file from favorites',
@@ -582,6 +617,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Get(
             uriTemplate: '/watch_files/{watchFileId}/history',
+            uriVariables: [
+                'watchFileId' => 'id',
+            ],
             openapi: new Operation(
                 summary: 'Get watch file history',
                 description: 'Retrieves the detailed history of all events that occurred for the specified watch file, grouped by day.',

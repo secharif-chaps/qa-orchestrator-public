@@ -39,25 +39,28 @@ class ChangeWatchFileStatusProcessor implements ProcessorInterface
      */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): WatchFile
     {
-        if (!isset($uriVariables['id'])) {
+        if (!isset($uriVariables['watchFileId'])) {
             throw new BadRequestHttpException('WatchFile ID must be provided in the URL');
         }
 
-        if (!isset($uriVariables['status'])) {
-            throw new BadRequestHttpException('Status must be provided in the URL');
-        }
-
-        $watchFileId = $uriVariables['id'];
+        $watchFileId = $uriVariables['watchFileId'];
         if (!\is_string($watchFileId)) {
             throw new BadRequestHttpException('WatchFile ID must be a string');
         }
 
-        if (!\is_string($uriVariables['status'])) {
-            throw new BadRequestHttpException('Status must be a string');
+        // {status} is a path parameter, not an entity identifier — extract from request attributes
+        /** @var \Symfony\Component\HttpFoundation\Request|null $request */
+        $request = $context['request'] ?? null;
+        $statusValue = $request?->attributes->get('status')
+            ?? $uriVariables['status']
+            ?? null;
+
+        if (!\is_string($statusValue) || '' === $statusValue) {
+            throw new BadRequestHttpException('Status must be provided in the URL');
         }
 
         try {
-            $status = WatchFileStatus::from($uriVariables['status']);
+            $status = WatchFileStatus::from($statusValue);
         } catch (\ValueError $e) {
             throw new BadRequestHttpException(\sprintf(
                 'Invalid status value. Valid statuses are: %s',

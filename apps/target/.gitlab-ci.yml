@@ -53,56 +53,85 @@ target:test:integration:
   stage: test
   needs: []
   services:
+    - name: valkey/valkey:8
+      alias: valkey
     - name: postgres:17-alpine
       alias: database-test
+      variables:
+        DOCKER_SHM_SIZE: 268435456
+        POSTGRES_DB: app_test
+        POSTGRES_PASSWORD: test
+        POSTGRES_USER: test
+        POSTGRES_INITDB_ARGS: --auth-host=trust --auth-local=trust
     - name: opensearchproject/opensearch:2
       alias: opensearch-test
       variables:
         discovery.type: single-node
+        OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
         DISABLE_SECURITY_PLUGIN: "true"
-        OPENSEARCH_INITIAL_ADMIN_PASSWORD: ""
-    - name: valkey/valkey:8-alpine
-      alias: valkey
+        DISABLE_INSTALL_DEMO_CONFIG: "true"
+        cluster.routing.allocation.disk.threshold_enabled: "false"
   variables:
-    # PostgreSQL
-    POSTGRES_DB: app_test
-    POSTGRES_USER: test
-    POSTGRES_PASSWORD: test
+    APP_ENV: test
     DATABASE_URL: "postgresql://test:test@database-test:5432/app_test?serverVersion=17&charset=utf8"
-    # OpenSearch
     OPENSEARCH_URL: "http://opensearch-test:9200"
-    # Valkey
     VALKEY_DSN: "redis://valkey:6379"
+    DB_HOST: database-test
+    DB_PORT: 5432
+    ATTEMPTS_LEFT_TO_REACH_DATABASE: 60
+    ATTEMPTS_LEFT_TO_REACH_OPENSEARCH: 120
   before_script:
     - cd apps/target
     - composer install --no-interaction --no-progress --prefer-dist
-    # Wait for services to be ready
+    # Wait for PostgreSQL
     - |
-      echo "Waiting for PostgreSQL..."
-      for i in $(seq 1 30); do
-        pg_isready -h database-test -p 5432 -U test && break
+      until [ $ATTEMPTS_LEFT_TO_REACH_DATABASE -eq 0 ] || pg_isready -h "$DB_HOST" -p "$DB_PORT" -U test 2>/dev/null; do
         sleep 1
+        ATTEMPTS_LEFT_TO_REACH_DATABASE=$((ATTEMPTS_LEFT_TO_REACH_DATABASE - 1))
+        echo "Waiting for database... $ATTEMPTS_LEFT_TO_REACH_DATABASE attempts left."
       done
+      if [ $ATTEMPTS_LEFT_TO_REACH_DATABASE -eq 0 ]; then
+        echo "Database not ready"; exit 1
+      fi
+      echo "Database is ready"
+    # Wait for OpenSearch
     - |
       echo "Waiting for OpenSearch..."
-      for i in $(seq 1 30); do
-        curl -sf http://opensearch-test:9200/_cluster/health && break
-        sleep 1
+      until [ $ATTEMPTS_LEFT_TO_REACH_OPENSEARCH -eq 0 ]; do
+        OS_HEALTH=$(curl -s "$OPENSEARCH_URL/_cluster/health" 2>/dev/null || echo "")
+        if echo "$OS_HEALTH" | grep -qE '"status":"(green|yellow)"'; then
+          echo "OpenSearch cluster is healthy"
+          break
+        fi
+        sleep 2
+        ATTEMPTS_LEFT_TO_REACH_OPENSEARCH=$((ATTEMPTS_LEFT_TO_REACH_OPENSEARCH - 1))
       done
+      if [ $ATTEMPTS_LEFT_TO_REACH_OPENSEARCH -eq 0 ]; then
+        echo "OpenSearch is not ready after timeout"; exit 1
+      fi
+    # Wait for Valkey
     - |
-      echo "Waiting for Valkey..."
-      for i in $(seq 1 30); do
-        redis-cli -h valkey ping && break
+      ATTEMPTS_LEFT_TO_REACH_VALKEY=30
+      until [ $ATTEMPTS_LEFT_TO_REACH_VALKEY -eq 0 ] || redis-cli -h valkey ping 2>/dev/null | grep -q PONG; do
         sleep 1
+        ATTEMPTS_LEFT_TO_REACH_VALKEY=$((ATTEMPTS_LEFT_TO_REACH_VALKEY - 1))
+        echo "Waiting for Valkey... $ATTEMPTS_LEFT_TO_REACH_VALKEY attempts left."
       done
-    # Setup test database and indices
+      if [ $ATTEMPTS_LEFT_TO_REACH_VALKEY -eq 0 ]; then
+        echo "Valkey not ready"; exit 1
+      fi
+      echo "Valkey is ready"
+    # Setup test environment (order: db → schema → cache)
     - php bin/console doctrine:database:create --if-not-exists --env=test
-    - php bin/console doctrine:migrations:migrate --no-interaction --env=test
-    - php bin/console cache:clear --quiet --env=test
-    - php bin/console cache:warmup --quiet --env=test
-    - php bin/console opensearch:index:reset --no-interaction --env=test
+    - php bin/console doctrine:schema:create --no-interaction --env=test
+    - php bin/console doctrine:migrations:sync-metadata-storage --no-interaction --env=test
+    - php bin/console doctrine:migrations:version --add --all --no-interaction --env=test
+    - php bin/console cache:clear --env=test
+    - php bin/console cache:warmup --env=test
+    - php bin/console opensearch:migrations:migrate --no-interaction --force --env=test
+    - php -d memory_limit=2G bin/console doctrine:fixture:load --no-interaction --env=test
   script:
-    - php vendor/bin/phpunit --testsuite "Integration tests" --no-coverage --log-junit=report-integration.xml
+    - php -d memory_limit=2G vendor/bin/phpunit --testsuite "Integration tests" --no-coverage --log-junit=report-integration.xml
   artifacts:
     when: always
     reports:
@@ -151,8 +180,8 @@ target:publish:
 # ─── OpenAPI Export ───────────────────────────────────
 target:openapi-export:
   <<: *target-php-job
-  stage: publish
-  needs: [target:cs-check, target:phpstan]
+  stage: test
+  needs: []
   script:
     - php bin/console api:openapi:export --output=openapi.json
     - php bin/console api:openapi:export --yaml --output=openapi.yaml

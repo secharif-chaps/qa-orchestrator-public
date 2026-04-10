@@ -41,7 +41,7 @@ class WatchFileTitleModificationTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->activityLogger = new WatchFileActivityLogger($this->createMock(TenantContext::class));
+        $this->activityLogger = new WatchFileActivityLogger($this->createStub(TenantContext::class));
         $this->eventDispatcher = $this->createStub(EventDispatcherInterface::class);
         $this->realTimeUpdatePublisher = $this->createStub(RealTimeUpdatePublisherInterface::class);
         $this->logger = $this->createStub(LoggerInterface::class);

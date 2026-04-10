@@ -45,7 +45,7 @@ class WatchFileHistoryProvider implements ProviderInterface
      */
     private function extractWatchFileId(array $uriVariables): string
     {
-        $watchFileId = $uriVariables['id'] ?? null;
+        $watchFileId = $uriVariables['watchFileId'] ?? null;
         Assert::notNull($watchFileId, 'WatchFile ID must be provided');
         Assert::stringNotEmpty($watchFileId, 'WatchFile ID must be a non-empty string');
 

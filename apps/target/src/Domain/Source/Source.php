@@ -47,7 +47,11 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(
             uriTemplate: '/watch_files/{watchFileId}/sources',
             uriVariables: [
-                'watchFileId' => new Link(fromProperty: 'sources', fromClass: WatchFile::class, description: 'WatchFile id'),
+                'watchFileId' => new Link(
+                    fromProperty: 'sources',
+                    fromClass: WatchFile::class,
+                    description: 'WatchFile id'
+                ),
             ],
             openapi: new Operation(
                 summary: 'Get sources for a specific watch file',
@@ -74,7 +78,11 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(
             uriTemplate: '/watch_files/{watchFileId}/sources/grouped',
             uriVariables: [
-                'watchFileId' => new Link(fromProperty: 'sources', fromClass: WatchFile::class, description: 'WatchFile id'),
+                'watchFileId' => new Link(
+                    fromProperty: 'sources',
+                    fromClass: WatchFile::class,
+                    description: 'WatchFile id'
+                ),
             ],
             openapi: new Operation(
                 summary: 'Get sources for a specific watch file grouped by type',

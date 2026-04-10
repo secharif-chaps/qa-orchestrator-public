@@ -14,13 +14,12 @@ FROM frankenphp_upstream AS frankenphp_base
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG USER=basil
-ARG APT_OPTION=
 
 WORKDIR /app
 
 # persistent / runtime deps
 # hadolint ignore=DL3008
-RUN apt-get update ${APT_OPTION} && apt-get install --no-install-recommends -y \
+RUN apt-get update && apt-get install --no-install-recommends -y \
 		acl \
 		file \
 		gettext \
@@ -90,10 +89,15 @@ CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile", "--watch" ]
 FROM frankenphp_base AS frankenphp_prod
 
 ARG VERSION=dev
-LABEL org.opencontainers.image.version="${VERSION}" \
-      org.opencontainers.image.title="ChapsMind - Module Target API" \
-      org.opencontainers.image.description="Module Target API running on FrankenPHP" \
-	  org.opencontainers.image.authors="ChapsVision Target development team"
+LABEL org.opencontainers.image.title="chapsmind-target" \
+      org.opencontainers.image.description="ChapsMind Target module — competitive intelligence and strategic monitoring" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.vendor="ChapsVision" \
+      org.opencontainers.image.authors="ChapsVision <dev-chapsmind@chapsvision.com>" \
+      org.opencontainers.image.url="https://git.mediaspeech.com/chapsmind/chapsmind" \
+      org.opencontainers.image.source="https://git.mediaspeech.com/chapsmind/chapsmind/-/tree/main/apps/target" \
+      org.opencontainers.image.licenses="Proprietary" \
+      org.opencontainers.image.base.name="docker.io/dunglas/frankenphp:1-php8.4"
 
 ENV APP_ENV=prod
 ENV APP_VERSION=${VERSION}

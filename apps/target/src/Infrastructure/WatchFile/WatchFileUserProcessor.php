@@ -57,7 +57,7 @@ class WatchFileUserProcessor implements ProcessorInterface, ProviderInterface
      */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): array
     {
-        $watchFileId = $uriVariables['id'] ?? null;
+        $watchFileId = $uriVariables['watchFileId'] ?? null;
         if (!\is_string($watchFileId) || !Uuid::isValid($watchFileId)) {
             throw new \RuntimeException('WatchFile ID is required.');
         }

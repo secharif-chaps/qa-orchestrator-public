@@ -171,7 +171,7 @@ services:
       keycloak: { condition: service_healthy }
     environment:
       <<: *target-env
-      SERVER_NAME: "0.0.0.0:8000"
+      SERVER_NAME: ":8000"
 
   # Target runner — local build for Symfony Messenger consumers (1 replica in local dev)
   target-runner:
@@ -197,11 +197,49 @@ services:
     ports:
       - "${TARGET_OPENSEARCH_PORT:-9201}:9200"
 
+  db-test:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    profiles: [target-test]
+    tmpfs:
+      - /var/lib/postgresql/data:rw,noexec,nosuid,size=1g
+      - /tmp:rw,noexec,nosuid,size=256m
+    shm_size: 256mb
+    environment:
+      - TZ=Europe/Paris
+      - POSTGRES_DB=${POSTGRES_TEST_DB:-app_test}
+      - POSTGRES_PASSWORD=${POSTGRES_TEST_PASSWORD:-test}
+      - POSTGRES_USER=${POSTGRES_TEST_USER:-test}
+      - POSTGRES_INITDB_ARGS=--auth-host=trust --auth-local=trust
+    command: >
+      postgres
+        -c fsync=off
+        -c synchronous_commit=off
+        -c full_page_writes=off
+        -c log_statement=all
+        -c max_connections=50
+        -c shared_buffers=256MB
+
+  opensearch-test:
+    image: opensearchproject/opensearch:${OPENSEARCH_VERSION:-2.19.1}
+    restart: unless-stopped
+    profiles: [target-test]
+    tmpfs:
+      - /usr/share/opensearch/data:rw,noexec,nosuid,size=1g,uid=1000,gid=1000
+    environment:
+      - discovery.type=single-node
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - DISABLE_SECURITY_PLUGIN=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9200']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   # Valkey — expose port for local debugging
   target-valkey:
     profiles: [target]
-    ports:
-      - "${TARGET_VALKEY_PORT:-6380}:6379"
 
   # ─── N8N services — local dev overrides (profile: target) ────
 
@@ -214,7 +252,3 @@ services:
       - ./docker/n8n/entrypoint.sh:/chapsmind-entrypoint.sh:ro
       - ../apps/target/n8n/tests:/tests
       - ../apps/target/n8n/workflows:/data/workflows
-
-  # N8N Import — local dev override (profile inherited from base)
-  n8n-import:
-

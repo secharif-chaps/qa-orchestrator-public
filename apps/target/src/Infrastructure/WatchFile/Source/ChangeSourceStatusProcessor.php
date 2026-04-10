@@ -42,7 +42,7 @@ class ChangeSourceStatusProcessor implements ProcessorInterface
             throw new BadRequestHttpException('WatchFile ID must be provided in the URL');
         }
 
-        if (!isset($uriVariables['id'])) {
+        if (!isset($uriVariables['sourceId'])) {
             throw new BadRequestHttpException('Source ID must be provided in the URL');
         }
 
@@ -51,7 +51,7 @@ class ChangeSourceStatusProcessor implements ProcessorInterface
             throw new BadRequestHttpException('WatchFile ID must be a string');
         }
 
-        $sourceId = $uriVariables['id'];
+        $sourceId = $uriVariables['sourceId'];
         if (!\is_string($sourceId)) {
             throw new BadRequestHttpException('Source ID must be a string');
         }
