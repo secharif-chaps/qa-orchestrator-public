@@ -10,54 +10,54 @@
     <!-- No Data State -->
     <NoData v-else-if="!hasTimelineData">
       <p class="text-neutral-black-font text-lg font-medium">
-        {{ $t('screen.profile.sections.timeline.noData') }}
+        {{ t('screen.profile.sections.timeline.noData') }}
       </p>
     </NoData>
 
     <!-- Timeline visualization -->
-    <div v-else class="relative">
+    <div v-else class="space-y-xl relative">
+      <div class="gap-xl flex items-center justify-between">
+        <div v-if="company" class="text-neutral-black-font flex items-center gap-2">
+          <Badge icon="fa-pen" variant="secondary" size="xs" />
+          <span class="text-sm">
+            {{
+              t('screen.company.footer.createdBy', {
+                username: company.owner_username,
+                date: formatFullDate(company.created_at),
+              })
+            }}
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <Searchbar
+            v-model="searchQuery"
+            class="w-64"
+            id="timeline-search"
+            :placeholder="t('screen.timeline.search.placeholder')"
+          />
+          <Button
+            variant="tertiary"
+            :icon="sortAscending ? 'fa-arrow-up' : 'fa-arrow-down'"
+            size="sm"
+            @click="toggleSortOrder"
+          >
+            {{
+              sortAscending
+                ? t('screen.timeline.sort.oldestFirst')
+                : t('screen.timeline.sort.newestFirst')
+            }}
+          </Button>
+        </div>
+      </div>
       <!-- Timeline events -->
-      <div class="rounded-sm bg-white p-4">
-        <div class="mb-6 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="text-lg font-semibold">{{ $t('screen.timeline.title') }}</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <Button
-              variant="tertiary"
-              :icon="sortAscending ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"
-              size="sm"
-              :title="
-                sortAscending
-                  ? $t('screen.timeline.sort.oldestFirst')
-                  : $t('screen.timeline.sort.newestFirst')
-              "
-              @click="toggleSortOrder"
-            >
-              {{
-                sortAscending
-                  ? $t('screen.timeline.sort.oldestFirst')
-                  : $t('screen.timeline.sort.newestFirst')
-              }}
-            </Button>
-            <div class="w-64">
-              <Searchbar
-                id="timeline-search"
-                v-model="searchQuery"
-                :placeholder="$t('screen.timeline.search.placeholder')"
-              />
-            </div>
-          </div>
-        </div>
-        <div>
-          <Event v-for="(event, index) in filteredEvents" :key="index" :event="event" />
-        </div>
+      <div>
+        <TimelineEvent v-for="(event, index) in filteredEvents" :key="index" :event="event" />
 
         <!-- No results message -->
         <div v-if="filteredEvents.length === 0 && searchQuery">
           <NoData>
             <p class="text-neutral-black-font text-lg font-medium">
-              {{ $t('screen.timeline.search.noResults', { query: searchQuery }) }}
+              {{ t('screen.timeline.search.noResults', { query: searchQuery }) }}
             </p>
           </NoData>
         </div>
@@ -69,18 +69,21 @@
 <script lang="ts" setup>
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
-import Event from '@/components/company/timeline/Event.vue'
+import TimelineEvent from '@/components/company/timeline/TimelineEvent.vue'
 import NoData from '@/components/ui/NoData.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import type { SourcedValue } from '@/types/company'
-import { Button, Searchbar } from '@owlint/feathers-vue'
+import { formatFullDate } from '@/utils/time'
+import { Badge, Button, Searchbar } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import type { Ref } from 'vue'
 import { computed, inject, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 const route = useRoute('/folders/[folderId]/companies/[companyId]/timeline')
+const { t } = useI18n()
 
 const companyId = computed(() => route.params.companyId)
 

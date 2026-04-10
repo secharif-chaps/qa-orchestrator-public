@@ -10,29 +10,15 @@
         vertical-align="center"
       />
       <div v-else class="overflow-hidden">
-        <div
+        <TimelineItem
           v-for="dayGroup in eventsByDay"
           :key="dayGroup.date"
-          class="relative flex items-start gap-6 pb-6"
+          :date="eventsDatesTitle(dayGroup.date, dayGroup.events.length)"
         >
-          <div class="w-36 pt-3 text-right">
-            <div class="text-neutral-black-font-font pt-2.5 text-sm font-medium">
-              {{ eventsDatesTitle(dayGroup.date, dayGroup.events.length) }}
-            </div>
-          </div>
-          <div class="bg-primary-light absolute top-6 left-[163px] h-full w-0.5" />
-          <div class="relative">
-            <Indicator size="md" class="absolute top-6 -left-3" />
-          </div>
-
-          <div class="flex-1 space-y-2">
-            <AnalysisTimeline
-              v-for="watchfileEvent in dayGroup.events"
-              :key="watchfileEvent.id"
-              :watch-file-event="watchfileEvent"
-            />
-          </div>
-        </div>
+          <TimelineCard v-for="watchfileEvent in dayGroup.events" :key="watchfileEvent.id">
+            <AnalysisTimeline :watch-file-event="watchfileEvent" />
+          </TimelineCard>
+        </TimelineItem>
         <div v-if="allEvents.length > 0" class="flex justify-center py-4">
           <Button v-if="hasMore && !isLoadingMore" variant="secondary" @click="loadMoreEvents">
             {{ t('target.watchFiles.analysis.timeline.loadMore') }}
@@ -51,7 +37,9 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, Icon, Indicator } from '@owlint/feathers-vue'
+import TimelineCard from '@/components/ui/TimelineCard.vue'
+import TimelineItem from '@/components/ui/TimelineItem.vue'
+import { Button, Icon } from '@owlint/feathers-vue'
 import { useWatchFileEventsInfiniteQuery } from '@target/api/queries/watchFileEvents'
 import EmptyState from '@target/components/global/EmptyState.vue'
 import AnalysisTimelineSkeleton from '@target/components/skeletons/AnalysisTimelineSkeleton.vue'

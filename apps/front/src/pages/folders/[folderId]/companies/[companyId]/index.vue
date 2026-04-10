@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <div v-if="company" class="flex items-center gap-2 text-black">
+    <div v-if="company" class="text-neutral-black-font flex items-center gap-2">
       <Badge icon="fa-pen" variant="secondary" size="xs" />
       <span class="text-sm">
         {{

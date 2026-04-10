@@ -13,7 +13,7 @@
           size="sm"
         >
           <div class="gap-3xs flex items-center">
-            <span>{{ getSourcedValue(brand)?.split('(')[0] }}</span>
+            <span>{{ stripParensSuffix(getSourcedValue(brand)) }}</span>
             <Source :sourced-value="brand" />
           </div>
         </Tag>
@@ -33,7 +33,7 @@
           size="sm"
         >
           <div class="gap-3xs flex items-center">
-            <span>{{ getSourcedValue(label)?.split('(')[0] }}</span>
+            <span>{{ stripParensSuffix(getSourcedValue(label)) }}</span>
             <Source :sourced-value="label" />
           </div>
         </Tag>
@@ -55,6 +55,10 @@ import { Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+
+// TEMPORARY: Dify sometimes returns brand names with a parenthesized suffix like "Brand (FR)".
+// Strip it until the workflow output is cleaned up upstream.
+const stripParensSuffix = (value: string | undefined) => value?.split('(')[0]?.trim()
 
 const route = useRoute()
 
