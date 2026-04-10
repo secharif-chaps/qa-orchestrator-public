@@ -60,7 +60,7 @@ Pattern:
 
 **Titre** : [MODULE] Titre propose
 **Composant** : [Deduit du module]
-**Labels** : Back / Front / Prompt
+**Labels** : Claude, Back / Front / Prompt
 **Epic parente** : [Lien ou "Aucune"]
 
 ### User Story

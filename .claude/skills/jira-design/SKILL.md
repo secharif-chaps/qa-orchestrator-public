@@ -50,6 +50,7 @@ allowed-tools: Bash, Read, Grep
 
 **Titre** : [MODULE] Design - Titre propose
 **Composant** : [Deduit du module]
+**Labels** : Claude, Front
 **Type** : Wireframe / Mockup / Prototype / Specs UI
 **Epic parente** : [Lien]
 
