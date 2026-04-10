@@ -164,17 +164,19 @@ include:
 sast:
   stage: lint
   needs: []
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-# Secret Detection (gitleaks): exits with code 1 when secrets are found,
-# so allow_failure: false effectively blocks merges with hardcoded secrets.
 secret_detection:
   stage: lint
   needs: []
   allow_failure: false
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
@@ -184,6 +186,8 @@ main:validate-skills:
   needs: []
   image: node:22-alpine
   rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
     - changes:
         - .claude/skills/**/*
   script:
@@ -196,6 +200,8 @@ main:commitlint:
     name: commitlint/commitlint:latest
     entrypoint: [""]
   rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
   script:
