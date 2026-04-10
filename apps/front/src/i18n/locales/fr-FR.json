@@ -1813,14 +1813,8 @@
       "loading": "Chargement des offres..."
     },
     "products": {
-      "badges": {
-        "new": "Nouveau"
-      },
-      "categories": {
-        "all": "Toutes les catégories"
-      },
-      "count": "{count} produits",
-      "countInCategory": "{count} produits dans cette catégorie",
+      "associatedBrands": "Marques associées",
+      "categoryCount": "{count, plural, =0 {Aucun produit} one {# produit} other {# produits}}",
       "header": {
         "summary": "{total} produits dans {categories} catégories",
         "title": "Portefeuille Produits"
@@ -1831,12 +1825,6 @@
       "noResults": "Aucun produit trouvé correspondant à votre recherche",
       "search": {
         "placeholder": "Rechercher des produits..."
-      },
-      "showLess": "Voir moins",
-      "showMore": "Voir {count} de plus",
-      "viewMode": {
-        "grid": "Vue grille",
-        "list": "Vue liste"
       }
     },
     "profile": {

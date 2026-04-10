@@ -13,7 +13,7 @@
           size="sm"
         >
           <div class="gap-3xs flex items-center">
-            <span>{{ stripParensSuffix(getSourcedValue(brand)) }}</span>
+            <span>{{ stripParenthesisSuffix(getSourcedValue(brand)) }}</span>
             <Source :sourced-value="brand" />
           </div>
         </Tag>
@@ -33,7 +33,7 @@
           size="sm"
         >
           <div class="gap-3xs flex items-center">
-            <span>{{ stripParensSuffix(getSourcedValue(label)) }}</span>
+            <span>{{ stripParenthesisSuffix(getSourcedValue(label)) }}</span>
             <Source :sourced-value="label" />
           </div>
         </Tag>
@@ -58,7 +58,7 @@ import { useRoute } from 'vue-router'
 
 // TEMPORARY: Dify sometimes returns brand names with a parenthesized suffix like "Brand (FR)".
 // Strip it until the workflow output is cleaned up upstream.
-const stripParensSuffix = (value: string | undefined) => value?.split('(')[0]?.trim()
+const stripParenthesisSuffix = (value: string | undefined) => value?.split('(')[0]?.trim()
 
 const route = useRoute()
 

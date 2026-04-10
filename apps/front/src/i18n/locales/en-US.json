@@ -1813,14 +1813,8 @@
       "loading": "Loading job offers..."
     },
     "products": {
-      "badges": {
-        "new": "New"
-      },
-      "categories": {
-        "all": "All Categories"
-      },
-      "count": "{count} products",
-      "countInCategory": "{count} products in this category",
+      "associatedBrands": "Associated brands",
+      "categoryCount": "{count, plural, one {# product} other {# products}}",
       "header": {
         "summary": "{total} products across {categories} categories",
         "title": "Product Portfolio"
@@ -1831,12 +1825,6 @@
       "noResults": "No products found matching your search",
       "search": {
         "placeholder": "Search products..."
-      },
-      "showLess": "Show Less",
-      "showMore": "Show {count} More",
-      "viewMode": {
-        "grid": "Grid View",
-        "list": "List View"
       }
     },
     "profile": {
