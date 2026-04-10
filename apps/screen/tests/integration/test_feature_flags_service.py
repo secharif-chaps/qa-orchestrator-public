@@ -1,3 +1,5 @@
+import pytest
+
 from app.core.encryption import decrypt, encrypt
 from app.models.organization import FeatureFlag, OrganizationFeatureFlag
 from app.services.feature_flags import (
@@ -5,6 +7,9 @@ from app.services.feature_flags import (
     get_feature_config,
     update_feature_config,
 )
+
+
+pytestmark = pytest.mark.integration
 
 
 class TestFeatureFlagsService:

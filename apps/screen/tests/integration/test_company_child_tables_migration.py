@@ -16,15 +16,6 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker
 
-# Set environment variables before importing app modules
-os.environ["KEYCLOAK_SERVER_URL"] = os.environ.get("KEYCLOAK_SERVER_URL", "http://localhost:8080")
-os.environ["KEYCLOAK_REALM"] = os.environ.get("KEYCLOAK_REALM", "test")
-os.environ["KEYCLOAK_CLIENT_ID"] = os.environ.get("KEYCLOAK_CLIENT_ID", "test")
-os.environ["KEYCLOAK_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_CLIENT_SECRET", "test")
-os.environ["KEYCLOAK_ADMIN_CLIENT_ID"] = os.environ.get("KEYCLOAK_ADMIN_CLIENT_ID", "test-admin")
-os.environ["KEYCLOAK_ADMIN_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_ADMIN_CLIENT_SECRET", "test-admin-secret")
-
-
 # Use main PostgreSQL database - tests verify migration created correct schema
 # The migration must be applied before running these tests
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://postgres:postgres@db:5432/chapsmind_db")
@@ -44,10 +35,14 @@ def _db_connectable() -> bool:
         return False
 
 
-pytestmark = pytest.mark.skipif(
-    not _db_connectable(),
-    reason="Database not reachable (not running inside Docker network)",
-)
+pytestmark = [
+    pytest.mark.integration,
+    pytest.mark.skipif(
+        not _db_connectable(),
+        reason="Database not reachable (not running inside Docker network)",
+    ),
+]
+
 
 # List of all 10 child tables created by the migration
 CHILD_TABLES = [

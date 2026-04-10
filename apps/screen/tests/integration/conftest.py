@@ -1,7 +1,9 @@
 """Pytest configuration for integration tests.
 
-This conftest.py provides fixtures for model and service layer tests
-that require PostgreSQL (ARRAY, UUID, materialized views, etc.).
+This conftest.py provides the db_session fixture for tests that require
+PostgreSQL (ARRAY, UUID, materialized views, etc.).
+
+Keycloak env vars are set by the root tests/conftest.py — no need to duplicate.
 """
 
 import os
@@ -9,17 +11,6 @@ import os
 import pytest
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-
-# Skip Keycloak initialization in tests - set BEFORE any app imports
-os.environ.setdefault("SKIP_KEYCLOAK_INIT", "true")
-
-# Set environment variables before importing app modules
-os.environ["KEYCLOAK_SERVER_URL"] = "http://localhost:8080"
-os.environ["KEYCLOAK_REALM"] = "test"
-os.environ["KEYCLOAK_CLIENT_ID"] = "test"
-os.environ["KEYCLOAK_CLIENT_SECRET"] = "test"
-os.environ["KEYCLOAK_ADMIN_CLIENT_ID"] = "test-admin"
-os.environ["KEYCLOAK_ADMIN_CLIENT_SECRET"] = "test-admin-secret"
 
 from app.database import Base
 
@@ -32,6 +23,9 @@ def db_session():
 
     Uses PostgreSQL test database because the models use PostgreSQL-specific
     features (ARRAY, UUID, etc.) that are not supported in SQLite.
+
+    Uses connection-level transaction rollback for fast isolation without
+    breaking alembic-created objects (materialized views, enums).
     """
     engine = create_engine(TEST_DATABASE_URL)
 

@@ -1,4 +1,9 @@
+import pytest
+
 from app.models.organization import FeatureFlag, OrganizationFeatureFlag
+
+
+pytestmark = pytest.mark.integration
 
 
 class TestPappersFeatureFlag:

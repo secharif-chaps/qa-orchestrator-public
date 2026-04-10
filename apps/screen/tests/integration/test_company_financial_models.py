@@ -17,6 +17,9 @@ from app.models.company import Company
 from app.models.company_financial import CompanyFinancial, CompanyFinancialMetric, CompanyFundingRound
 
 
+pytestmark = pytest.mark.integration
+
+
 @pytest.fixture
 def sample_company(db_session):
     """Create a sample company for financial model tests."""

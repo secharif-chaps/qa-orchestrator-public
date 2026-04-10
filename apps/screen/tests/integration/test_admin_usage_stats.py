@@ -28,6 +28,9 @@ from app.schemas.admin_usage import (
 )
 
 
+pytestmark = pytest.mark.integration
+
+
 class TestUsageStatsResponseStructure:
     """Test that response schema contains all required fields with correct types."""
 

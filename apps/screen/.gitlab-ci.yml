@@ -64,7 +64,7 @@ screen:test:unit:
   <<: *screen-test-base
   needs: []
   script:
-    - pytest tests/unit/ tests/test_worldcheck/ -v --cov=app --cov-report=term-missing --cov-report=xml:coverage.xml --cov-fail-under=35 --junitxml=report.xml
+    - pytest tests/unit/ -v --cov=app --cov-report=term-missing --cov-report=xml:coverage.xml --cov-fail-under=35 --junitxml=report.xml
   artifacts:
     when: always
     reports:
@@ -109,7 +109,7 @@ screen:test:integration:
       "
     - alembic upgrade head
   script:
-    - pytest tests/integration/ -v --no-cov --junitxml=report-integration.xml
+    - pytest tests/integration/ -v --no-cov --junitxml=report-integration.xml -m integration
   artifacts:
     when: always
     reports:

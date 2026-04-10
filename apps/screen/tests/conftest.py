@@ -1,14 +1,12 @@
-"""Pytest configuration and fixtures for integration tests.
+"""Pytest configuration and shared fixtures.
 
-This conftest provides fixtures for tests that need the full FastAPI app.
-For unit tests that don't need the app, use tests/unit/conftest.py instead.
+This conftest provides shared fixtures (user mocks, test client) for all tests.
+Database fixtures are defined in unit/conftest.py and integration/conftest.py.
 """
 
 import os
 
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 # Skip Keycloak initialization in CI where Keycloak is not available
 # Set this BEFORE any app imports to prevent connection attempts
@@ -24,27 +22,7 @@ os.environ["KEYCLOAK_ADMIN_CLIENT_ID"] = os.environ.get("KEYCLOAK_ADMIN_CLIENT_I
 os.environ["KEYCLOAK_ADMIN_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_ADMIN_CLIENT_SECRET", "chapsmind-admin-secret")
 os.environ["ENCRYPTION_KEY"] = "WIxh6MTz5Zx3tRvLWBFJuzm4VFMe9kxecYjFZF23FRM="
 
-from app.database import Base
 from app.schemas.user import TokenData
-
-# Test database URL - use in-memory SQLite for fast tests
-TEST_DATABASE_URL = "sqlite:///:memory:"
-
-
-@pytest.fixture(scope="function")
-def db_session():
-    """Create a fresh database session for each test."""
-    engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
-    Base.metadata.create_all(bind=engine)
-
-    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    session = TestingSessionLocal()
-
-    try:
-        yield session
-    finally:
-        session.close()
-        Base.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture
