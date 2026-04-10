@@ -42,6 +42,7 @@ PATH_LABELS: list[tuple[str, str]] = [
     ("apps/front/", "frontend"),
     ("apps/screen/", "screen"),
     ("apps/target/", "target"),
+    ("apps/stream/", "stream"),
     ("apps/global-service/", "global-service"),
     ("infra/", "infra"),
     ("docs/", "docs"),
