@@ -165,7 +165,7 @@ sast:
   stage: lint
   needs: []
   rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $AGENT_ISSUE
       when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -175,7 +175,7 @@ secret_detection:
   needs: []
   allow_failure: false
   rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $AGENT_ISSUE
       when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -186,7 +186,7 @@ main:validate-skills:
   needs: []
   image: node:22-alpine
   rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $AGENT_ISSUE
       when: never
     - changes:
         - .claude/skills/**/*
@@ -200,7 +200,7 @@ main:commitlint:
     name: commitlint/commitlint:latest
     entrypoint: [""]
   rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $AGENT_ISSUE
       when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
