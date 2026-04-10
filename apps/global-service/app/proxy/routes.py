@@ -30,7 +30,7 @@ import httpx
 from fastapi import APIRouter, Request, Response
 from fastapi.responses import StreamingResponse
 
-from app.core.auth_middleware import auth_middleware, extract_organization_info
+from app.core.auth_middleware import GatewayUser, auth_middleware, extract_organization_info
 from app.core.config import settings
 from app.core.correlation import CORRELATION_HEADER
 from app.core.logging_config import get_logger
@@ -325,6 +325,54 @@ async def _check_company_folder_access(path: str, method: str, user) -> Response
     return None
 
 
+def _check_permission_gate(
+    path: str, method: str, user: GatewayUser | None, registry: ModuleRegistry | None, module: ModuleDefinition,
+) -> Response | None:
+    """Fast-reject requests where user lacks required permissions (x-permissions).
+
+    Returns a 403 Response if the user doesn't have any of the required permissions,
+    None if access is granted. Uses OR logic: any matching role is sufficient.
+    """
+    # Public routes (no user) — already validated by auth gate
+    if not user:
+        return None
+
+    # No registry — fail-open (backend still does its own checks)
+    if not registry:
+        logger.warning(
+            "⚠️ Permission gate bypassed: registry not initialized",
+            extra={"path": path, "method": method},
+        )
+        return None
+
+    backend_path = f"/api/{path}"
+    operation = registry.resolve_operation(module.name, method, backend_path)
+
+    # No operation metadata or no permissions declared — auth alone is enough
+    if not operation or not operation.permissions:
+        return None
+
+    # Extract user roles from Keycloak JWT
+    user_roles: list[str] = []
+    if user.realm_access:
+        user_roles = user.realm_access.get("roles", [])
+
+    # OR logic: user needs at least one of the declared permissions
+    if any(role in user_roles for role in operation.permissions):
+        return None
+
+    logger.warning(
+        f"🚫 PERMISSION DENIED: {user.preferred_username} → {method} /api/{path} "
+        f"(requires any of {operation.permissions}, user has no matching role)",
+        extra={"path": path, "method": method, "user": user.preferred_username},
+    )
+    return Response(
+        content=b'{"detail": "Insufficient permissions"}',
+        status_code=403,
+        media_type="application/json",
+    )
+
+
 @router.api_route(
     "/{path:path}",
     methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
@@ -408,13 +456,18 @@ async def proxy_request(request: Request, path: str) -> Response:
         },
     )
 
+    # Permission gate: check x-permissions from OpenAPI spec (fast-reject, no I/O)
+    denied = _check_permission_gate(path, request.method, user, _registry, module)
+    if denied:
+        return denied
+
     # Module gate: check if module is enabled for user's organization
     if not route_is_public and user:
         module_denied = await _check_module_enabled(module.name, user)
         if module_denied:
             return module_denied
 
-    # Folder-based access control at the gateway (before proxying to screen)
+    # Folder-based access control at the gateway (DB query, after permission gate)
     denied = await _check_company_folder_access(path, request.method, user)
     if denied:
         return denied

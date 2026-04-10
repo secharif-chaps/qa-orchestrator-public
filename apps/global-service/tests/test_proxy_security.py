@@ -1,9 +1,10 @@
 """
-Tests for proxy security hardening (TAR-1249).
+Tests for proxy security hardening.
 
 Tests cover:
-1. Proxy rejects forwarding authenticated requests without internal headers
-2. INTERNAL_JWT_SECRET validation at startup
+1. Proxy rejects forwarding authenticated requests without internal headers (TAR-1249)
+2. INTERNAL_JWT_SECRET validation at startup (TAR-1249)
+3. Permission gate rejects users without required x-permissions (TAR-1384)
 """
 
 import os
@@ -114,3 +115,201 @@ class TestInternalJwtSecretValidation:
         with patch.dict(os.environ, {"SKIP_KEYCLOAK_INIT": ""}, clear=False):
             s = Settings(INTERNAL_JWT_SECRET="my-super-secret-key-at-least-32-chars")
             assert s.INTERNAL_JWT_SECRET == "my-super-secret-key-at-least-32-chars"
+
+
+class TestPermissionGate:
+    """Test that proxy rejects users without required x-permissions (TAR-1384)."""
+
+    def test_rejects_user_without_required_permission(self):
+        """User with wrong roles + endpoint requiring company.view → 403."""
+        from app.proxy.registry import ModuleDefinition, ModuleName, ModuleRegistry, RouteOperation
+        from app.proxy.routes import _check_permission_gate
+
+        user = MagicMock()
+        user.preferred_username = "testuser"
+        user.realm_access = {"roles": ["organization.read"]}
+
+        registry = ModuleRegistry(backends={})
+        screen = ModuleDefinition(
+            name=ModuleName.SCREEN,
+            backend_url="http://screen:8000",
+            routes={
+                "/api/companies": {
+                    "GET": RouteOperation(method="GET", path="/api/companies", permissions=["company.view"]),
+                },
+            },
+        )
+        registry._modules[ModuleName.SCREEN] = screen
+        registry._build_route_index()
+
+        response = _check_permission_gate("companies", "GET", user, registry, screen)
+
+        assert response is not None
+        assert response.status_code == 403
+        assert b"Insufficient permissions" in response.body
+
+    def test_allows_user_with_matching_permission(self):
+        """User with company.view + endpoint requiring company.view → pass."""
+        from app.proxy.registry import ModuleDefinition, ModuleName, ModuleRegistry, RouteOperation
+        from app.proxy.routes import _check_permission_gate
+
+        user = MagicMock()
+        user.preferred_username = "testuser"
+        user.realm_access = {"roles": ["company.view", "organization.read"]}
+
+        registry = ModuleRegistry(backends={})
+        screen = ModuleDefinition(
+            name=ModuleName.SCREEN,
+            backend_url="http://screen:8000",
+            routes={
+                "/api/companies": {
+                    "GET": RouteOperation(method="GET", path="/api/companies", permissions=["company.view"]),
+                },
+            },
+        )
+        registry._modules[ModuleName.SCREEN] = screen
+        registry._build_route_index()
+
+        response = _check_permission_gate("companies", "GET", user, registry, screen)
+
+        assert response is None
+
+    def test_allows_user_with_second_permission_or_logic(self):
+        """User has only the second of two required permissions → pass (OR logic)."""
+        from app.proxy.registry import ModuleDefinition, ModuleName, ModuleRegistry, RouteOperation
+        from app.proxy.routes import _check_permission_gate
+
+        user = MagicMock()
+        user.preferred_username = "testuser"
+        user.realm_access = {"roles": ["admin.organizations"]}
+
+        registry = ModuleRegistry(backends={})
+        screen = ModuleDefinition(
+            name=ModuleName.SCREEN,
+            backend_url="http://screen:8000",
+            routes={
+                "/api/companies": {
+                    "GET": RouteOperation(
+                        method="GET", path="/api/companies",
+                        permissions=["company.view", "admin.organizations"],
+                    ),
+                },
+            },
+        )
+        registry._modules[ModuleName.SCREEN] = screen
+        registry._build_route_index()
+
+        response = _check_permission_gate("companies", "GET", user, registry, screen)
+
+        assert response is None
+
+    def test_allows_endpoint_without_permissions(self):
+        """Endpoint with no x-permissions → pass (auth alone is enough)."""
+        from app.proxy.registry import ModuleDefinition, ModuleName, ModuleRegistry, RouteOperation
+        from app.proxy.routes import _check_permission_gate
+
+        user = MagicMock()
+        user.preferred_username = "testuser"
+        user.realm_access = {"roles": ["organization.read"]}
+
+        registry = ModuleRegistry(backends={})
+        screen = ModuleDefinition(
+            name=ModuleName.SCREEN,
+            backend_url="http://screen:8000",
+            routes={
+                "/api/health": {
+                    "GET": RouteOperation(method="GET", path="/api/health", permissions=[]),
+                },
+            },
+        )
+        registry._modules[ModuleName.SCREEN] = screen
+        registry._build_route_index()
+
+        response = _check_permission_gate("health", "GET", user, registry, screen)
+
+        assert response is None
+
+    def test_allows_public_route_without_user(self):
+        """No user (public route) → pass regardless of permissions."""
+        from app.proxy.registry import ModuleDefinition, ModuleName
+        from app.proxy.routes import _check_permission_gate
+
+        module = ModuleDefinition(name=ModuleName.SCREEN, backend_url="http://screen:8000")
+
+        response = _check_permission_gate("health/live", "GET", None, None, module)
+
+        assert response is None
+
+    def test_allows_authenticated_user_when_registry_is_none(self):
+        """Registry not initialized + authenticated user → fail-open (pass)."""
+        from app.proxy.registry import ModuleDefinition, ModuleName
+        from app.proxy.routes import _check_permission_gate
+
+        user = MagicMock()
+        user.preferred_username = "testuser"
+        user.realm_access = {"roles": ["organization.read"]}
+
+        module = ModuleDefinition(name=ModuleName.SCREEN, backend_url="http://screen:8000")
+
+        response = _check_permission_gate("companies", "GET", user, None, module)
+
+        # Fail-open: backend is still responsible for its own permission checks
+        assert response is None
+
+    def test_rejects_user_without_permission_on_parameterized_route(self):
+        """Parameterized route /api/companies/{id} → permission required, wrong role → 403."""
+        from app.proxy.registry import ModuleDefinition, ModuleName, ModuleRegistry, RouteOperation
+        from app.proxy.routes import _check_permission_gate
+
+        user = MagicMock()
+        user.preferred_username = "testuser"
+        user.realm_access = {"roles": ["organization.read"]}
+
+        registry = ModuleRegistry(backends={})
+        screen = ModuleDefinition(
+            name=ModuleName.SCREEN,
+            backend_url="http://screen:8000",
+            routes={
+                "/api/companies/{company_id}": {
+                    "GET": RouteOperation(
+                        method="GET", path="/api/companies/{company_id}", permissions=["company.view"]
+                    ),
+                },
+            },
+        )
+        registry._modules[ModuleName.SCREEN] = screen
+        registry._build_route_index()
+
+        # resolve_operation handles parameterized routes via prefix matching
+        response = _check_permission_gate("companies/some-uuid", "GET", user, registry, screen)
+
+        assert response is not None
+        assert response.status_code == 403
+
+    def test_allows_user_with_permission_on_parameterized_route(self):
+        """User with company.view + parameterized route /api/companies/{id} → pass."""
+        from app.proxy.registry import ModuleDefinition, ModuleName, ModuleRegistry, RouteOperation
+        from app.proxy.routes import _check_permission_gate
+
+        user = MagicMock()
+        user.preferred_username = "testuser"
+        user.realm_access = {"roles": ["company.view"]}
+
+        registry = ModuleRegistry(backends={})
+        screen = ModuleDefinition(
+            name=ModuleName.SCREEN,
+            backend_url="http://screen:8000",
+            routes={
+                "/api/companies/{company_id}": {
+                    "GET": RouteOperation(
+                        method="GET", path="/api/companies/{company_id}", permissions=["company.view"]
+                    ),
+                },
+            },
+        )
+        registry._modules[ModuleName.SCREEN] = screen
+        registry._build_route_index()
+
+        response = _check_permission_gate("companies/some-uuid", "GET", user, registry, screen)
+
+        assert response is None
