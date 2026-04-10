@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=https://www.promptfoo.dev/config-schema.json
+description: "Screen Profile AI Workflow - Evaluation Config"
+
+# Environment variables (loaded via --env-file .env):
+#   LLM_GATEWAY_API_KEY   - API key for the LLM gateway
+#   LLM_GATEWAY_BASE_URL  - Base URL for the LLM gateway
+#   LLM_RUBRIC_MODEL      - Model used for llm-rubric judge assertions
+#
+# Run all evals:
+#   promptfoo eval
+#
+# Filter by scenario (prompt + its tests):
+#   promptfoo eval --filter-pattern "prompt01"
+#   promptfoo eval --filter-pattern "prompt02"
+#
+# Timestamped output:
+#   promptfoo eval -o eval-results/results_$(date +%Y%m%d_%H%M%S).json
+
+providers:
+  - id: openai:chat:gpt-4o-mini-sweden
+    config: &provider_config
+      apiKey: "{{env.LLM_GATEWAY_API_KEY}}"
+      apiBaseUrl: "{{env.LLM_GATEWAY_BASE_URL}}"
+      temperature: 0.1
+      max_tokens: 4096
+  - id: openai:chat:gpt-oss-120b-ovh
+    config: *provider_config
+  - id: openai:chat:gemini-2.5-flash
+    config: *provider_config
+
+defaultTest:
+  options:
+    provider:
+      id: "openai:chat:{{env.LLM_RUBRIC_MODEL}}"
+      config:
+        apiKey: "{{env.LLM_GATEWAY_API_KEY}}"
+        apiBaseUrl: "{{env.LLM_GATEWAY_BASE_URL}}"
+
+prompts:
+  - id: file://prompt_samples/screen_profile/01_profile_queries_finder.yaml
+    label: queries_finder
+
+  - id: file://prompt_samples/screen_profile/02_profile_analyzer.yaml
+    label: profile_analyzer
+
+tests:
+  - file://tests/tests_prompt_01.yaml
+  - file://tests/tests_prompt_02.yaml
+
+outputPath: eval-results/results_latest.json
+
+evaluateOptions:
+  showProgressBar: true
+  cache: true

@@ -1,0 +1,80 @@
+# Tests for Prompt 02: Profile Analyzer
+# Run: promptfoo eval --filter-pattern "prompt02"
+
+- description: "[prompt02] Apple full data - all tiers available"
+  vars:
+    company: "Apple"
+    scraped: file://tests-data/prompt_02/case_apple_full/scraped.txt
+    wikipedia: file://tests-data/prompt_02/case_apple_full/wikipedia.txt
+    items: file://tests-data/prompt_02/case_apple_full/items.txt
+    mistral: file://tests-data/prompt_02/case_apple_full/mistral.txt
+    gpt: file://tests-data/prompt_02/case_apple_full/gpt.txt
+  prompts:
+    - profile_analyzer
+  assert:
+    - type: python
+      value: file://assertion-scripts/assert_valid_json.py
+    - type: python
+      value: file://assertion-scripts/assert_profile_schema.py
+    - type: python
+      value: file://assertion-scripts/assert_source_tier_priority.py
+    - type: llm-rubric
+      value: >
+        Evaluate this company profile JSON for Apple Inc. The output must be valid JSON
+        with fields: insights, businessLine, catchphrase, establishmentYear, employeeCount,
+        revenue, ceo, hq. Each field (except insights) should have value and source sub-fields.
+        CEO should be Tim Cook. Founded 1976. HQ should mention Cupertino.
+        The insights field should be a 2-3 sentence meaningful analysis.
+        Sources should be attributed correctly (not generic or made up).
+
+- description: "[prompt02] Apple empty scraped - Tier 1A missing, fallback to lower tiers"
+  vars:
+    company: "Apple"
+    scraped: ""
+    wikipedia: file://tests-data/prompt_02/case_apple_empty_scraped/wikipedia.txt
+    items: file://tests-data/prompt_02/case_apple_empty_scraped/items.txt
+    mistral: file://tests-data/prompt_02/case_apple_empty_scraped/mistral.txt
+    gpt: file://tests-data/prompt_02/case_apple_empty_scraped/gpt.txt
+  prompts:
+    - profile_analyzer
+  assert:
+    - type: python
+      value: file://assertion-scripts/assert_valid_json.py
+    - type: python
+      value: file://assertion-scripts/assert_profile_schema.py
+    - type: python
+      value: file://assertion-scripts/assert_source_tier_priority.py
+    - type: python
+      value: file://assertion-scripts/assert_no_empty_fields.py
+    - type: llm-rubric
+      value: >
+        Evaluate this company profile JSON for Apple Inc. The website scraping data was empty,
+        so the model should have fallen back to Wikipedia (Tier 1B), Google results (Tier 2),
+        or knowledge bases (Tier 3). No fields should be empty since lower-tier data was available.
+        CEO should be Tim Cook. Founded 1976. Sources should NOT reference the company website
+        since no scraped data was provided.
+
+- description: "[prompt02] Tesla full data - all tiers available"
+  vars:
+    company: "Tesla"
+    scraped: file://tests-data/prompt_02/case_tesla_full/scraped.txt
+    wikipedia: file://tests-data/prompt_02/case_tesla_full/wikipedia.txt
+    items: file://tests-data/prompt_02/case_tesla_full/items.txt
+    mistral: file://tests-data/prompt_02/case_tesla_full/mistral.txt
+    gpt: file://tests-data/prompt_02/case_tesla_full/gpt.txt
+  prompts:
+    - profile_analyzer
+  assert:
+    - type: python
+      value: file://assertion-scripts/assert_valid_json.py
+    - type: python
+      value: file://assertion-scripts/assert_profile_schema.py
+    - type: python
+      value: file://assertion-scripts/assert_source_tier_priority.py
+    - type: llm-rubric
+      value: >
+        Evaluate this company profile JSON for Tesla Inc. CEO should be Elon Musk.
+        Founded 2003. HQ should mention Austin, Texas. Revenue should be around $96-97B.
+        Employee count around 140k. Business line should relate to electric vehicles or clean energy.
+        The insights should be a meaningful 2-3 sentence analysis.
+        Source attribution should be correct and prefer higher-tier sources.

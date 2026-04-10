@@ -34,6 +34,7 @@ All ADRs follow a consistent format. See [template.md](./template.md) for the st
 | [ADR-0014](./0014-frontend-translation-management-strategy.md) | Frontend Translation Management Strategy | Proposed | frontend, i18n, internationalization, vue, ci, architecture, monorepo |
 | [ADR-0015](./0015-multi-module-gateway.md) | Multi-Module API Gateway | Accepted | backend, architecture, api-gateway, global-service, multi-module |
 | [ADR-0016](./0016-documentation-strategy.md) | Centralized Documentation and Tooling Strategy | Proposed | documentation, architecture, migration, adr, onboarding, tooling |
+| [ADR-0017](./0017-promptfoo-llm-evaluation.md) | Promptfoo for LLM Prompt Evaluation | Proposed | backend, ai, testing, evaluation, promptfoo |
 
 ## Status Definitions
 

@@ -1,0 +1,3 @@
+# PromptFoo evaluation results (generated, not committed)
+eval-results/*.json
+!eval-results/.gitkeep
