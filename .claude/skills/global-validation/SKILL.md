@@ -34,3 +34,7 @@ metadata:
 - **Sanitize Input**: Sanitize user input to prevent injection attacks (SQL, XSS, command injection)
 - **Business Rule Validation**: Validate business rules at the Application layer
 - **Consistent Validation**: Apply validation consistently across all entry points (API, CLI, background jobs)
+
+## ISO 27001 Compliance
+
+This skill touches security-sensitive areas (A.8.26). Consult the `security-iso27001` skill for applicable controls on input sanitization and injection prevention.

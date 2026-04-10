@@ -76,3 +76,7 @@ private WatchFileStatus $status = WatchFileStatus::NEW;
 - **Indexes**: Index columns used in WHERE/JOIN/ORDER BY: `#[ORM\Index(columns: ['status'])]`
 - **Relationship Clarity**: Define cascade behaviors explicitly (`cascade: ['persist']`, `orphanRemoval: true`)
 - **Avoid Over-Normalization**: Balance normalization with query performance
+
+## ISO 27001 Compliance
+
+This skill touches security-sensitive areas (A.8.10, A.8.11, A.5.34). Consult the `security-iso27001` skill for applicable controls on data protection, PII handling, and data retention.

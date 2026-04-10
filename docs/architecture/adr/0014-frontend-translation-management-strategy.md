@@ -1,4 +1,4 @@
-# ADR-0012: Frontend Translation Management Strategy
+# ADR-0014: Frontend Translation Management Strategy
 
 ## Status
 

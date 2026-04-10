@@ -107,3 +107,7 @@ Doctrine dans `Infrastructure/Persistence/DoctrineSourceGateway.php`.
 Bonne utilisation du pattern readonly Action avec injection par constructeur !
 Ca garantit l'immutabilite et la testabilite. Continue comme ca.
 ```
+
+## ISO 27001 Compliance
+
+Code reviews must include a security check (A.8.25). Consult the `security-iso27001` skill for the quick checklist to verify during every review: auth, input validation, secrets, logging, data exposure.

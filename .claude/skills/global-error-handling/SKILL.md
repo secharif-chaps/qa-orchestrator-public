@@ -31,3 +31,7 @@ metadata:
 - **Graceful Degradation**: Design systems to degrade gracefully when non-critical services fail
 - **Retry Strategies**: Implement exponential backoff for transient failures in external service calls
 - **Clean Up Resources**: Always clean up resources (file handles, connections) in finally blocks
+
+## ISO 27001 Compliance
+
+This skill touches security-sensitive areas (A.8.11, A.8.15). Consult the `security-iso27001` skill for applicable controls on information leakage in error responses and security event logging.
