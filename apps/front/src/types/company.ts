@@ -78,7 +78,7 @@ export interface SanctionsData {
 }
 
 export interface FinancialMetric {
-  metric_name: string
+  metricName: string
   period: string
   value: string | null
   unit: string | null
@@ -86,36 +86,36 @@ export interface FinancialMetric {
 }
 
 export interface FundingRound {
-  round_type: string | null
+  roundType: string | null
   amount: string | null
   date: string | null
-  lead_investor: string | null
+  leadInvestor: string | null
   valuation: string | null
   source: string | null
 }
 
 export interface FinancialData {
   insights: SourcedValue<string> | null
-  company_type: SourcedValue<string> | null
-  ticker_symbol: SourcedValue<string> | null
-  stock_exchange: SourcedValue<string> | null
+  companyType: SourcedValue<string> | null
+  tickerSymbol: SourcedValue<string> | null
+  stockExchange: SourcedValue<string> | null
   currency: SourcedValue<string> | null
   revenue: SourcedValue<string> | null
-  revenue_growth: SourcedValue<string> | null
-  gross_margin: SourcedValue<string> | null
-  ebitda_margin: SourcedValue<string> | null
-  net_margin: SourcedValue<string> | null
-  market_cap: SourcedValue<string> | null
-  enterprise_value: SourcedValue<string> | null
-  pe_ratio: SourcedValue<string> | null
-  ev_ebitda: SourcedValue<string> | null
-  ev_revenue: SourcedValue<string> | null
-  total_funding: SourcedValue<string> | null
-  last_valuation: SourcedValue<string> | null
-  debt_to_equity: SourcedValue<string> | null
-  free_cash_flow: SourcedValue<string> | null
+  revenueGrowth: SourcedValue<string> | null
+  grossMargin: SourcedValue<string> | null
+  ebitdaMargin: SourcedValue<string> | null
+  netMargin: SourcedValue<string> | null
+  marketCap: SourcedValue<string> | null
+  enterpriseValue: SourcedValue<string> | null
+  peRatio: SourcedValue<string> | null
+  evEbitda: SourcedValue<string> | null
+  evRevenue: SourcedValue<string> | null
+  totalFunding: SourcedValue<string> | null
+  lastValuation: SourcedValue<string> | null
+  debtToEquity: SourcedValue<string> | null
+  freeCashFlow: SourcedValue<string> | null
   metrics: FinancialMetric[]
-  funding_rounds: FundingRound[]
+  fundingRounds: FundingRound[]
 }
 
 export interface TeamMember {
