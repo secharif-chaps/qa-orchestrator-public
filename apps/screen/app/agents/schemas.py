@@ -354,6 +354,83 @@ class TeamAgentOutput(BaseModel):
 
 
 # =============================================================================
+# FINANCIAL AGENT
+# =============================================================================
+
+
+class FinancialMetric(BaseModel):
+    """Individual financial metric with period tracking.
+
+    Field names use camelCase to match what _save_financial_metrics() reads
+    via metric_data.get("metricName", metric_data.get("metric_name", "")).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    metricName: str | None = None
+    period: str | None = None
+    value: str | None = None
+    unit: str | None = None
+    source: str | None = None
+
+
+class FundingRound(BaseModel):
+    """Funding round entry for private companies.
+
+    Field names use camelCase to match what _save_funding_rounds() reads
+    via round_data.get("roundType", round_data.get("round_type")).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    roundType: str | None = None
+    amount: str | None = None
+    date: str | None = None
+    leadInvestor: str | None = None
+    valuation: str | None = None
+    source: str | None = None
+
+
+class FinancialAgentOutput(BaseModel):
+    """Output schema for the financial agent.
+
+    Field names use camelCase to match what save_financial_data() reads
+    via _get_sourced_value(data, "companyType"), etc.
+
+    Covers all three company paths:
+    - Public US: ticker, exchange, market data, valuation, SEC fundamentals
+    - Public non-US: ticker, exchange, market data, valuation
+    - Private: funding rounds, total funding, last valuation, revenue estimates
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    insights: str | None = None
+    companyType: SourcedValue | None = None
+    tickerSymbol: SourcedValue | None = None
+    stockExchange: SourcedValue | None = None
+    currency: SourcedValue | None = None
+    fiscalYearEnd: SourcedValue | None = None
+    revenue: SourcedValue | None = None
+    revenueGrowth: SourcedValue | None = None
+    grossMargin: SourcedValue | None = None
+    ebitdaMargin: SourcedValue | None = None
+    netMargin: SourcedValue | None = None
+    marketCap: SourcedValue | None = None
+    enterpriseValue: SourcedValue | None = None
+    peRatio: SourcedValue | None = None
+    evEbitda: SourcedValue | None = None
+    evRevenue: SourcedValue | None = None
+    employeeCount: SourcedValue | None = None
+    totalFunding: SourcedValue | None = None
+    lastValuation: SourcedValue | None = None
+    debtToEquity: SourcedValue | None = None
+    freeCashFlow: SourcedValue | None = None
+    metrics: list[FinancialMetric] | None = None
+    fundingRounds: list[FundingRound] | None = None
+
+
+# =============================================================================
 # REGISTRY
 # =============================================================================
 
@@ -366,4 +443,5 @@ AGENT_OUTPUT_SCHEMAS: dict[str, type[BaseModel]] = {
     "timeline": TimelineAgentOutput,
     "csr": CsrAgentOutput,
     "team": TeamAgentOutput,
+    "financial": FinancialAgentOutput,
 }

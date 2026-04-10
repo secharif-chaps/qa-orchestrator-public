@@ -14,6 +14,9 @@ from app.agents.schemas import (
     CsrInitiative,
     CsrInitiativeTypeEnum,
     DigitalAgentOutput,
+    FinancialAgentOutput,
+    FinancialMetric,
+    FundingRound,
     PressAgentOutput,
     PressItem,
     PressItemTypeEnum,
@@ -35,8 +38,8 @@ from app.models.company_children import (
 class TestAgentOutputSchemas:
     """Tests for AGENT_OUTPUT_SCHEMAS registry."""
 
-    def test_all_eight_agents_registered(self):
-        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team"}
+    def test_all_nine_agents_registered(self):
+        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team", "financial"}
         assert set(AGENT_OUTPUT_SCHEMAS.keys()) == expected
 
     def test_all_schemas_are_pydantic_models(self):
@@ -271,6 +274,106 @@ class TestTeamSchema:
 
 
 # ---------------------------------------------------------------------------
+# Financial Schema
+# ---------------------------------------------------------------------------
+
+
+class TestFinancialSchema:
+    """Tests for FinancialAgentOutput, FinancialMetric, and FundingRound."""
+
+    def test_public_company_output(self):
+        data = {
+            "insights": "Strong performer in the semiconductor space.",
+            "companyType": {"value": "public", "source": "https://nasdaq.com"},
+            "tickerSymbol": {"value": "AAPL", "source": "https://finance.yahoo.com/quote/AAPL"},
+            "stockExchange": {"value": "NASDAQ", "source": "https://nasdaq.com"},
+            "revenue": {"value": "$394.3B", "source": "https://finance.yahoo.com/quote/AAPL"},
+            "marketCap": {"value": "$3.0T", "source": "https://finance.yahoo.com/quote/AAPL"},
+            "peRatio": {"value": "29.5", "source": "https://finance.yahoo.com/quote/AAPL"},
+        }
+        result = FinancialAgentOutput.model_validate(data)
+        assert result.insights == "Strong performer in the semiconductor space."
+        assert result.companyType.value == "public"
+        assert result.tickerSymbol.value == "AAPL"
+        assert result.revenue.value == "$394.3B"
+        assert result.marketCap.value == "$3.0T"
+        assert result.fundingRounds is None
+
+    def test_private_company_output(self):
+        data = {
+            "insights": "Fast-growing SaaS startup.",
+            "companyType": {"value": "private", "source": "https://crunchbase.com/acme"},
+            "totalFunding": {"value": "$150M", "source": "https://crunchbase.com/acme"},
+            "lastValuation": {"value": "$1.2B", "source": "https://techcrunch.com/acme"},
+            "fundingRounds": [
+                {
+                    "roundType": "Series B",
+                    "amount": "$80M",
+                    "date": "2023-06-15",
+                    "leadInvestor": "Sequoia Capital",
+                    "valuation": "$800M",
+                    "source": "https://techcrunch.com/acme-series-b",
+                }
+            ],
+        }
+        result = FinancialAgentOutput.model_validate(data)
+        assert result.companyType.value == "private"
+        assert result.totalFunding.value == "$150M"
+        assert result.marketCap is None
+        assert len(result.fundingRounds) == 1
+        assert result.fundingRounds[0].roundType == "Series B"
+        assert result.fundingRounds[0].leadInvestor == "Sequoia Capital"
+
+    def test_metrics_list(self):
+        data = {
+            "metrics": [
+                {"metricName": "revenue", "period": "FY2023", "value": "$394.3B", "unit": "USD", "source": "https://sec.gov"},
+                {"metricName": "netIncome", "period": "FY2023", "value": "$96.9B", "unit": "USD", "source": "https://sec.gov"},
+            ]
+        }
+        result = FinancialAgentOutput.model_validate(data)
+        assert len(result.metrics) == 2
+        assert result.metrics[0].metricName == "revenue"
+        assert result.metrics[0].period == "FY2023"
+        assert result.metrics[1].metricName == "netIncome"
+
+    def test_empty_output(self):
+        result = FinancialAgentOutput.model_validate({})
+        assert result.insights is None
+        assert result.companyType is None
+        assert result.metrics is None
+        assert result.fundingRounds is None
+
+    def test_extra_fields_forbidden(self):
+        with pytest.raises(ValueError):
+            FinancialAgentOutput.model_validate({"unknown_field": "value"})
+
+    def test_financial_metric_extra_forbidden(self):
+        with pytest.raises(ValueError):
+            FinancialMetric(metricName="revenue", bad_field="x")
+
+    def test_funding_round_extra_forbidden(self):
+        with pytest.raises(ValueError):
+            FundingRound(roundType="Series A", bad_field="x")
+
+    def test_round_trip_serialization(self):
+        data = {
+            "insights": "Test",
+            "revenue": {"value": "$1B", "source": "https://example.com"},
+            "metrics": [{"metricName": "revenue", "period": "FY2023", "value": "$1B"}],
+        }
+        result = FinancialAgentOutput.model_validate(data)
+        dumped = result.model_dump(exclude_none=True)
+        assert dumped["insights"] == "Test"
+        assert dumped["revenue"]["value"] == "$1B"
+        assert dumped["metrics"][0]["metricName"] == "revenue"
+
+    def test_registered_in_agent_output_schemas(self):
+        assert "financial" in AGENT_OUTPUT_SCHEMAS
+        assert AGENT_OUTPUT_SCHEMAS["financial"] is FinancialAgentOutput
+
+
+# ---------------------------------------------------------------------------
 # Enum Alignment with DB
 # ---------------------------------------------------------------------------
 
@@ -327,7 +430,7 @@ class TestOutputFormatsAutoGeneration:
     def test_all_agents_have_output_formats(self):
         from app.agents.prompts.output_formats import AGENT_OUTPUT_FORMATS
 
-        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team"}
+        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team", "financial"}
         assert set(AGENT_OUTPUT_FORMATS.keys()) == expected
 
     def test_output_formats_are_valid_json(self):

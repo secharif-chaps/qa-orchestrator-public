@@ -1,10 +1,13 @@
-"""Tests for all 8 agent node wrappers.
+"""Tests for all 9 agent node wrappers.
 
-Each node follows the identical pattern: call run_agent with the correct
-agent_name, company_name, website, company_brief, and country_code, then
-return {"agent_results": [result]}.
+The 8 standard nodes follow the identical pattern: call run_agent with the
+correct agent_name, company_name, website, company_brief, and country_code,
+then return {"agent_results": [result]}.
 
-Uses parametrize to test all 8 nodes with a single test class.
+The financial node uses a custom multi-tool orchestration pipeline and is
+tested separately in test_agents_financial_node.py.
+
+Uses parametrize to test all 8 standard nodes with a single test class.
 """
 
 from unittest.mock import AsyncMock, patch
@@ -71,7 +74,7 @@ def _mock_agent_result(agent_name: str) -> AgentResult:
 
 
 class TestAgentNodes:
-    """Parametrized tests for all 8 agent node wrappers."""
+    """Parametrized tests for all 8 standard agent node wrappers."""
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("agent_name,node_fn,module_path", AGENT_NODES)
