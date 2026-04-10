@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     SCREEN_BASE_URL: str = "http://screen:8000"
     STREAM_BASE_URL: str = "http://stream:8000"
     TARGET_BASE_URL: str = "http://target:8000"
+    TARGET_MERCURE_URL: str = "http://target:8000"
 
     # Token lock timeout (seconds) for the lock/unlock pattern
     TOKEN_LOCK_TIMEOUT_SECONDS: int = 30

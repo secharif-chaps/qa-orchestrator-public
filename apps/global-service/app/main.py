@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api import api_router
+from app.api.routes.target_mercure_proxy import router as mercure_router
 from app.core.config import settings
 from app.core.correlation import CorrelationIdMiddleware
 from app.core.keycloak import get_idp
@@ -116,6 +117,10 @@ async def health_ready():
         status_code=200 if all_ready else 503,
     )
 
+
+# Mercure SSE proxy — must be at root level (/.well-known/mercure, not under /api)
+# No Keycloak auth: Mercure JWT is self-sufficient, EventSource cannot set Bearer header
+app.include_router(mercure_router)
 
 # Register token API endpoints - these are handled locally by global-service
 # Must be registered BEFORE proxy router so they're matched first
