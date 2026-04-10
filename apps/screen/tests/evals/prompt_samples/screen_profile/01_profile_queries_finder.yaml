@@ -1,0 +1,9 @@
+- role: system
+  content: You have access to google search through Serp API determine the best search queries to make in order to get maximum information about {{company}} company profile and corporate information. Focus on company structure, business sector, financial data, leadership, headquarters. Website {{website}}.
+- role: user
+  content: |
+    Find the 3 best google search queries. They must remain simple enough to get result on google.
+
+    OUTPUT FORMAT:
+
+    DO NOT INCLUDE ANY CONTEXT IN THE ANSWER, JUST REPLY WITH THE QUERIES separated by " | "
