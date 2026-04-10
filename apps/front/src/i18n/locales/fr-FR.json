@@ -1884,7 +1884,47 @@
           "strategy": "Stratégie digitale"
         },
         "financial": {
-          "noData": "Aucune donnée financière disponible pour le moment."
+          "funding": {
+            "lastValuation": "Dernière valorisation",
+            "leadInvestor": "Investisseur principal",
+            "noRounds": "Aucun détail de tour de financement disponible.",
+            "rounds": "Tours de financement",
+            "title": "Financement",
+            "totalFunding": "Financement total",
+            "valuation": "Valorisation"
+          },
+          "history": {
+            "ebitda": "EBITDA",
+            "fcf": "Flux de trésorerie disponible",
+            "netIncome": "Résultat net",
+            "period": "Période",
+            "revenue": "Chiffre d'affaires",
+            "title": "Historique des indicateurs"
+          },
+          "identity": {
+            "currency": "Devise",
+            "exchange": "Place boursière",
+            "ticker": "Symbole boursier",
+            "title": "Identité de l'entreprise"
+          },
+          "keyMetrics": {
+            "debtToEquity": "Dette / Capitaux propres",
+            "ebitdaMargin": "Marge EBITDA",
+            "freeCashFlow": "Flux de trésorerie disponible",
+            "grossMargin": "Marge brute",
+            "netMargin": "Marge nette",
+            "revenue": "Chiffre d'affaires",
+            "title": "Indicateurs financiers clés"
+          },
+          "noData": "Aucune donnée financière disponible pour le moment.",
+          "valuation": {
+            "enterpriseValue": "Valeur d'entreprise",
+            "evEbitda": "VE / EBITDA",
+            "evRevenue": "VE / Chiffre d'affaires",
+            "marketCap": "Capitalisation boursière",
+            "peRatio": "Ratio P/E",
+            "title": "Valorisation"
+          }
         },
         "group": {
           "notFound": "Non trouvé",

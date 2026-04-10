@@ -1884,7 +1884,47 @@
           "strategy": "Digital Strategy"
         },
         "financial": {
-          "noData": "No financial data available yet."
+          "funding": {
+            "lastValuation": "Last Valuation",
+            "leadInvestor": "Lead Investor",
+            "noRounds": "No funding round details available.",
+            "rounds": "Funding Rounds",
+            "title": "Funding",
+            "totalFunding": "Total Funding",
+            "valuation": "Valuation"
+          },
+          "history": {
+            "ebitda": "EBITDA",
+            "fcf": "Free Cash Flow",
+            "netIncome": "Net Income",
+            "period": "Period",
+            "revenue": "Revenue",
+            "title": "Historical Metrics"
+          },
+          "identity": {
+            "currency": "Currency",
+            "exchange": "Exchange",
+            "ticker": "Ticker",
+            "title": "Company Identity"
+          },
+          "keyMetrics": {
+            "debtToEquity": "Debt / Equity",
+            "ebitdaMargin": "EBITDA Margin",
+            "freeCashFlow": "Free Cash Flow",
+            "grossMargin": "Gross Margin",
+            "netMargin": "Net Margin",
+            "revenue": "Revenue",
+            "title": "Key Financial Metrics"
+          },
+          "noData": "No financial data available yet.",
+          "valuation": {
+            "enterpriseValue": "Enterprise Value",
+            "evEbitda": "EV / EBITDA",
+            "evRevenue": "EV / Revenue",
+            "marketCap": "Market Capitalization",
+            "peRatio": "P/E Ratio",
+            "title": "Valuation"
+          }
         },
         "group": {
           "notFound": "Not found",
