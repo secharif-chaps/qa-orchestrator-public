@@ -5,6 +5,8 @@ includes:
   front:
     taskfile: apps/front/Taskfile.yaml
     dir: apps/front
+  global-service:
+    taskfile: apps/global-service/Taskfile.yaml
   screen:
     taskfile: apps/screen/Taskfile.yaml
   stream:

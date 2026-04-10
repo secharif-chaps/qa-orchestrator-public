@@ -163,9 +163,7 @@ def verify_internal_token(token: str) -> InternalTokenPayload:
         raise TokenExpiredError("Internal token has expired") from e
 
     except jwt.InvalidTokenError as e:
-        logger.warning(
-            "Invalid internal token", extra={"error": str(e), "error_type": type(e).__name__}
-        )
+        logger.warning("Invalid internal token", extra={"error": str(e), "error_type": type(e).__name__})
         raise TokenInvalidError(f"Invalid internal token: {str(e)}") from e
 
 
@@ -173,11 +171,11 @@ async def get_internal_token(authorization: str = Header(...)) -> InternalTokenP
     """
     FastAPI dependency to extract and verify internal JWT from Authorization header.
 
-    Validates the token format, extracts the bearer token, and verifies its signature.
+    Validates the token format, extracts the internal token, and verifies its signature.
     Use as a dependency in internal API endpoints that require service-to-service auth.
 
     Args:
-        authorization: Authorization header value (format: "Bearer <token>")
+        authorization: Authorization header value (format: "Internal <token>")
 
     Returns:
         Validated token payload with user context
@@ -191,12 +189,12 @@ async def get_internal_token(authorization: str = Header(...)) -> InternalTokenP
             detail="Missing authorization header",
         )
 
-    # Extract bearer token
+    # Extract internal token
     parts = authorization.split()
-    if len(parts) != 2 or parts[0].lower() != "bearer":
+    if len(parts) != 2 or parts[0].lower() != "internal":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authorization header format. Expected: Bearer <token>",
+            detail="Invalid authorization header format. Expected: Internal <token>",
         )
 
     token = parts[1]

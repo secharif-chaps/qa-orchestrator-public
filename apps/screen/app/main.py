@@ -53,7 +53,7 @@ async def _announce_to_gateway(app: FastAPI) -> None:
             resp = await client.post(
                 f"{gateway_url.rstrip('/')}/internal/registry/announce/screen",
                 json={"openapi_hash": schema_hash},
-                headers={"Authorization": f"Bearer {token}"},
+                headers={"Authorization": f"Internal {token}"},
             )
             resp.raise_for_status()
             result = resp.json()

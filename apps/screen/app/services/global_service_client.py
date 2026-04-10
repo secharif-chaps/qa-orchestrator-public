@@ -256,7 +256,7 @@ class GlobalServiceClient:
         )
 
         headers = {
-            "Authorization": f"Bearer {token}",
+            "Authorization": f"Internal {token}",
             "Content-Type": "application/json",
         }
 
@@ -396,7 +396,7 @@ class GlobalServiceClient:
         )
 
         headers = {
-            "Authorization": f"Bearer {token}",
+            "Authorization": f"Internal {token}",
         }
 
         logger.debug(
@@ -484,7 +484,7 @@ class GlobalServiceClient:
             org_id=org_id,
         )
 
-        headers = {"Authorization": f"Bearer {token}"}
+        headers = {"Authorization": f"Internal {token}"}
 
         logger.debug(
             f"Calling global-service to get accessible company IDs for user {user_id}",
@@ -567,7 +567,7 @@ class GlobalServiceClient:
             org_id=org_id,
         )
 
-        headers = {"Authorization": f"Bearer {token}"}
+        headers = {"Authorization": f"Internal {token}"}
 
         logger.debug(
             "Calling global-service to check company access",
@@ -640,7 +640,7 @@ class GlobalServiceClient:
             org_id=org_id,
         )
 
-        headers = {"Authorization": f"Bearer {token}"}
+        headers = {"Authorization": f"Internal {token}"}
 
         async def make_request() -> httpx.Response:
             async with httpx.AsyncClient(timeout=self.timeout) as client:

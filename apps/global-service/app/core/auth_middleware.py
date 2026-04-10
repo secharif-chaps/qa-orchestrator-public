@@ -31,6 +31,7 @@ _public_key_cache: TTLCache = TTLCache(maxsize=1, ttl=3600)
 
 class GatewayUser(BaseModel):
     """User information extracted from JWT token."""
+
     sub: str
     preferred_username: str | None = None
     email: str | None = None
@@ -38,29 +39,27 @@ class GatewayUser(BaseModel):
     organization: Any | None = None
 
 
-# Public routes that don't require authentication
-# These paths are relative to /api/
-PUBLIC_ROUTES: set[str] = {
-    "health",
-    "health/live",
-    "health/ready",
-}
-
-# Routes that use different auth (e.g., API keys, webhooks)
-WEBHOOK_PREFIXES = ("webhooks/",)
+_FALLBACK_PUBLIC = frozenset({"health", "health/live", "health/ready"})
 
 
 def is_public_route(path: str) -> bool:
-    """Check if the path is a public route that doesn't require JWT auth."""
-    # Remove leading slash if present
+    """Check if the path is a public route that doesn't require JWT auth.
+
+    DEPRECATED: This function only serves as a fallback for routes that are
+    not yet discovered by the ModuleRegistry (e.g., during startup before
+    backends announce). Prefer using x-public: true in OpenAPI schemas.
+
+    Will be removed once all backends expose x-public in their OpenAPI specs.
+    Webhook routes will migrate to x-public when the webhook module is added
+    to the registry; until then they rely on this fallback.
+    """
     clean_path = path.lstrip("/")
 
-    # Check exact matches
-    if clean_path in PUBLIC_ROUTES:
+    if clean_path in _FALLBACK_PUBLIC:
         return True
 
-    # Check webhook prefixes (use different auth mechanism)
-    return bool(clean_path.startswith(WEBHOOK_PREFIXES))
+    # Webhook routes use a different auth mechanism (API keys, not JWT)
+    return clean_path.startswith("webhooks/")
 
 
 async def get_keycloak_public_key() -> str:
@@ -128,7 +127,7 @@ async def validate_jwt_token(token: str) -> GatewayUser | None:
                 "verify_signature": True,
                 "verify_exp": True,
                 "verify_aud": False,  # Keycloak tokens may not have audience
-            }
+            },
         )
 
         # Extract user info from payload
@@ -249,9 +248,7 @@ class GatewayAuthMiddleware:
     This is used by the proxy routes to validate tokens before forwarding.
     """
 
-    async def validate_request(
-        self, request: Request, path: str
-    ) -> tuple[bool, GatewayUser | None, dict]:
+    async def validate_request(self, request: Request, path: str) -> tuple[bool, GatewayUser | None, dict]:
         """
         Validate the request and return auth status.
 

@@ -281,19 +281,37 @@ async def proxy_request(request: Request, path: str) -> Response:
     module, backend_path = _resolve_backend(_registry, path, request.method)
     backend_url = module.backend_url
 
-    # Phase 1: Validate JWT at gateway
-    is_valid, user, internal_headers = await auth_middleware.validate_request(request, path)
+    # Phase 0b: Check if the operation is marked as public (x-public: true in OpenAPI).
+    # Trust boundary: backends are trusted internal services that control their own auth
+    # policy via x-public. If a backend marks an endpoint as public, the gateway skips
+    # JWT validation entirely. This is by design — backends own their security posture.
+    route_is_public = False
+    if _registry:
+        operation = _registry.resolve_operation(module.name, request.method, backend_path)
+        if operation and operation.is_public:
+            route_is_public = True
 
-    if not is_valid:
-        logger.warning(
-            f"🔒 AUTH REJECTED: {request.method} /api/{path}",
-            extra={"path": path, "method": request.method},
+    # Phase 1: Validate JWT at gateway (skip if route is public)
+    if route_is_public:
+        logger.info(
+            "Public route (x-public), skipping auth",
+            extra={"path": path, "method": request.method, "module": module.name},
         )
-        return Response(
-            content=b'{"detail": "Not authenticated"}',
-            status_code=401,
-            media_type="application/json",
-        )
+        user = None
+        internal_headers = {}
+    else:
+        is_valid, user, internal_headers = await auth_middleware.validate_request(request, path)
+
+        if not is_valid:
+            logger.warning(
+                f"🔒 AUTH REJECTED: {request.method} /api/{path}",
+                extra={"path": path, "method": request.method},
+            )
+            return Response(
+                content=b'{"detail": "Not authenticated"}',
+                status_code=401,
+                media_type="application/json",
+            )
 
     # Guard: authenticated routes must have internal headers
     # If user is authenticated but internal headers are empty, the backend
@@ -311,11 +329,17 @@ async def proxy_request(request: Request, path: str) -> Response:
             media_type="application/json",
         )
 
-    # Log authenticated request
+    # Log request
     username = user.preferred_username if user else "anonymous"
     logger.info(
-        f"🔐 AUTH OK: {username} → {request.method} /api/{path} → {module.name}",
-        extra={"path": path, "method": request.method, "user": username, "backend": module.name},
+        f"🔐 {'PUBLIC' if route_is_public else 'AUTH OK'}: {username} → {request.method} /api/{path} → {module.name}",
+        extra={
+            "path": path,
+            "method": request.method,
+            "user": username,
+            "backend": module.name,
+            "public": route_is_public,
+        },
     )
 
     # Folder-based access control at the gateway (before proxying to screen)

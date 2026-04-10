@@ -3,7 +3,7 @@
 Covers:
 - Skip when GLOBAL_SERVICE_URL not set
 - Graceful error handling on network failure
-- Correct Authorization header (Bearer prefix)
+- Correct Authorization header (Internal prefix)
 - Correct URL path
 """
 
@@ -53,8 +53,8 @@ class TestAnnounceToGateway:
         mock_app.openapi.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_sends_bearer_auth_header(self):
-        """Should send 'Bearer' prefix (get_internal_token expects Bearer)."""
+    async def test_sends_internal_auth_header(self):
+        """Should send 'Internal' prefix for service-to-service auth."""
         from app.main import _announce_to_gateway
 
         mock_app = MagicMock()
@@ -80,7 +80,7 @@ class TestAnnounceToGateway:
 
             call_args = mock_client.post.call_args
             auth_header = call_args.kwargs.get("headers", {}).get("Authorization", "")
-            assert auth_header.startswith("Bearer "), f"Expected 'Bearer' prefix, got: {auth_header}"
+            assert auth_header.startswith("Internal "), f"Expected 'Internal' prefix, got: {auth_header}"
 
     @pytest.mark.asyncio
     async def test_sends_correct_url_path(self):
