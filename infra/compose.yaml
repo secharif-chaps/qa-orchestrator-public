@@ -80,7 +80,9 @@ services:
       API_PORT: 8000
       GRPC_PORT: 50051
       SCREEN_BASE_URL: http://screen:8000
+      STREAM_BASE_URL: ${STREAM_BASE_URL:-http://stream:8000}
       TARGET_BASE_URL: ${TARGET_BASE_URL:-http://target:8000}
+      TARGET_MERCURE_URL: ${TARGET_MERCURE_URL:-http://target:8000}
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${GLOBAL_DB:-global_db}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
 
@@ -275,7 +277,6 @@ services:
       - n8n_data:/home/node/.n8n
       - ../apps/target/n8n/credentials:/data/credentials:ro
       - ../apps/target/n8n/workflows:/data/workflows:ro
-
 volumes:
   postgres_data:
   rabbitmq_data:

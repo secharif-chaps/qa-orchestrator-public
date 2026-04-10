@@ -109,6 +109,7 @@ services:
       <<: [*local-keycloak, *local-keycloak-admin, *local-internal-auth]
       CORS_ORIGIN: http://localhost
       TARGET_BASE_URL: http://target:8000
+      TARGET_MERCURE_URL: http://target:8000
     volumes:
       - ../apps/global-service/app:/app/app
       - ../apps/global-service/protos:/app/protos
