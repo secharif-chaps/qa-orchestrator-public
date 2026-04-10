@@ -67,6 +67,7 @@ apps/global-service/app/grpc_generated/*
 
 # ─── Claude Code ──────────────────────────────────
 .claude/settings.local.json
+.grepai/
 
 # ─── OS ────────────────────────────────────────────
 .DS_Store

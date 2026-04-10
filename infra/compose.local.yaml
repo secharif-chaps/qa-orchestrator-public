@@ -116,6 +116,8 @@ services:
       - ../apps/global-service/alembic.ini:/app/alembic.ini
       - ../apps/global-service/tests:/app/tests
       - ../apps/global-service/scripts:/app/scripts
+      # Mount sibling apps (read-only) for cross-module contract tests
+      - ../apps:/app/apps:ro
 
   # Keycloak (local dev only — staging uses shared Keycloak)
   keycloak:

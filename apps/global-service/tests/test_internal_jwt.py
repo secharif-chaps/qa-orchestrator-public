@@ -8,10 +8,12 @@ Tests cover:
 4. Token payload structure
 """
 
-import pytest
+import pathlib
 import time
+from unittest.mock import MagicMock, patch
+
 import jwt as pyjwt
-from unittest.mock import patch, MagicMock
+import pytest
 
 from app.core.internal_jwt import (
     create_internal_token,
@@ -244,6 +246,144 @@ class TestTokenSignature:
                 "wrong-secret-also-at-least-32-characters",
                 algorithms=[ALGORITHM],
             )
+
+
+class TestInternalAuthSchemeContract:
+    """Contract tests: verify Internal auth scheme is enforced.
+
+    These tests ensure that services using internal JWT communication
+    must use the "Internal" scheme (not "Bearer"). This catches
+    mismatches like screen sending "Bearer {token}" while global-service
+    expects "Internal {token}".
+    """
+
+    @pytest.fixture
+    def mock_settings(self):
+        with patch("app.core.internal_jwt.settings") as mock:
+            mock.INTERNAL_JWT_SECRET = "test-secret-at-least-32-characters-long"
+            mock.INTERNAL_JWT_EXPIRY_SECONDS = 60
+            yield mock
+
+    @pytest.mark.asyncio
+    async def test_internal_scheme_accepted(self, mock_settings):
+        """Internal scheme must be accepted by get_internal_token."""
+        from app.core.internal_jwt import get_internal_token
+
+        token = create_internal_token(
+            user_id="user-123",
+            username="testuser",
+            org_id="org-456",
+            org_name="Test Org",
+            roles=["company.view"],
+        )
+
+        payload = await get_internal_token(f"Internal {token}")
+        assert payload.sub == "user-123"
+        assert payload.username == "testuser"
+
+    @pytest.mark.asyncio
+    async def test_bearer_scheme_rejected(self, mock_settings):
+        """Bearer scheme must be rejected — internal endpoints use Internal scheme only."""
+        from fastapi import HTTPException
+        from app.core.internal_jwt import get_internal_token
+
+        token = create_internal_token(
+            user_id="user-123",
+            username="testuser",
+            org_id="org-456",
+            org_name="Test Org",
+            roles=[],
+        )
+
+        with pytest.raises(HTTPException) as exc_info:
+            await get_internal_token(f"Bearer {token}")
+
+        assert exc_info.value.status_code == 401
+        assert "Internal" in exc_info.value.detail
+
+    @pytest.mark.asyncio
+    async def test_empty_authorization_rejected(self, mock_settings):
+        """Empty authorization header must be rejected."""
+        from fastapi import HTTPException
+        from app.core.internal_jwt import get_internal_token
+
+        with pytest.raises(HTTPException) as exc_info:
+            await get_internal_token("")
+
+        assert exc_info.value.status_code == 401
+
+    @pytest.mark.asyncio
+    async def test_missing_token_value_rejected(self, mock_settings):
+        """Scheme without token value must be rejected."""
+        from fastapi import HTTPException
+        from app.core.internal_jwt import get_internal_token
+
+        with pytest.raises(HTTPException) as exc_info:
+            await get_internal_token("Internal")
+
+        assert exc_info.value.status_code == 401
+
+
+class TestInternalSchemeSourceContract:
+    """Contract tests: verify all modules use Internal scheme for service-to-service calls.
+
+    Scans Python source files across all app modules for Authorization headers
+    that incorrectly use Bearer for internal JWT tokens (created via create_internal_token).
+    This prevents regressions where someone changes Internal back to Bearer.
+
+    Excluded from scanning:
+    - keycloak_admin.py (uses Bearer for Keycloak Admin API — legitimate)
+    - tests/ (test files may intentionally use Bearer to test rejection)
+    """
+
+    EXCLUDED_PATTERNS = ["keycloak_admin", "/tests/"]
+
+    @staticmethod
+    def _find_monorepo_root() -> pathlib.Path | None:
+        """Walk up from this file to find the monorepo root (has apps/ dir with subdirs)."""
+        for parent in pathlib.Path(__file__).resolve().parents:
+            apps_dir = parent / "apps"
+            if apps_dir.is_dir() and any(apps_dir.iterdir()):
+                return parent
+        return None
+
+    def _scan_module(self, root: pathlib.Path, module: str) -> list[str]:
+        """Scan a module's source for Bearer used with internal tokens."""
+        module_dir = root / "apps" / module / "app"
+        if not module_dir.exists():
+            return []
+
+        offending: list[str] = []
+        for py_file in module_dir.rglob("*.py"):
+            rel = str(py_file.relative_to(root))
+            if any(excl in rel for excl in self.EXCLUDED_PATTERNS):
+                continue
+
+            content = py_file.read_text()
+            for i, line in enumerate(content.splitlines(), 1):
+                if '"Authorization"' in line and "Bearer" in line and "internal" in line.lower():
+                    offending.append(f"{rel}:{i}: {line.strip()}")
+
+        return offending
+
+    def test_no_bearer_for_internal_calls_across_modules(self):
+        """No module should use Bearer scheme for internal service-to-service calls."""
+        root = self._find_monorepo_root()
+        if root is None:
+            pytest.skip("Monorepo root not found (running in Docker container)")
+
+        apps_dir = root / "apps"
+        modules = [d.name for d in apps_dir.iterdir() if d.is_dir() and (d / "app").is_dir()]
+
+        all_offending: list[str] = []
+        for module in modules:
+            all_offending.extend(self._scan_module(root, module))
+
+        assert all_offending == [], (
+            "Found Bearer scheme used for internal service calls. "
+            "All internal JWT calls must use 'Internal' scheme.\n"
+            "Offending lines:\n" + "\n".join(all_offending)
+        )
 
 
 if __name__ == "__main__":
