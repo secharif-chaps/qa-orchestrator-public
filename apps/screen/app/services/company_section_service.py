@@ -19,6 +19,7 @@ import json
 import logging
 from typing import Any
 
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.models.company_children import (
@@ -296,12 +297,20 @@ def save_digital_data(db: Session, company_id: int, data: dict) -> None:
     db.flush()
 
     # Save online services (1:N) - snake_case key
-    online_services = digital_data.get("online_services", [])
-    if isinstance(online_services, list):
-        _save_online_services(db, company_id, online_services)
+    try:
+        online_services = digital_data.get("online_services", [])
+        if isinstance(online_services, list):
+            with db.begin_nested():
+                _save_online_services(db, company_id, online_services)
+    except SQLAlchemyError:
+        logger.error(f"Failed to save online_services for company {company_id}", exc_info=True)
 
     # Save social media accounts (1:N) - snake_case key
-    _save_social_media_accounts(db, company_id, digital_data.get("social_media_accounts", []))
+    try:
+        with db.begin_nested():
+            _save_social_media_accounts(db, company_id, digital_data.get("social_media_accounts", []))
+    except SQLAlchemyError:
+        logger.error(f"Failed to save social_media_accounts for company {company_id}", exc_info=True)
 
     logger.info(f"Saved digital data for company {company_id}")
 
@@ -334,6 +343,12 @@ def _save_online_services(db: Session, company_id: int, services: list[dict]) ->
             desc_source = desc_data.get("source")
         elif isinstance(desc_data, str):
             desc = desc_data
+
+        # Use top-level source as fallback when name/desc don't have their own source
+        if not name_source:
+            name_source = service_data.get("source")
+        if not desc_source:
+            desc_source = service_data.get("source")
 
         service = CompanyOnlineService(
             company_id=company_id,
@@ -375,6 +390,12 @@ def _save_social_media_accounts(db: Session, company_id: int, accounts: list[dic
             url_source = url_data.get("source")
         elif isinstance(url_data, str):
             url = url_data
+
+        # Use top-level source as fallback
+        if not platform_source:
+            platform_source = account_data.get("source")
+        if not url_source:
+            url_source = account_data.get("source")
 
         account = CompanySocialMediaAccount(
             company_id=company_id,
@@ -646,10 +667,18 @@ def save_products_data(db: Session, company_id: int, data: dict) -> None:
     db.flush()
 
     # Save product items (1:N) - range, partner brands, private labels
-    _save_product_items(db, company_id, products_data)
+    try:
+        with db.begin_nested():
+            _save_product_items(db, company_id, products_data)
+    except SQLAlchemyError:
+        logger.error(f"Failed to save product_items for company {company_id}", exc_info=True)
 
     # Save product categories (1:N)
-    _save_product_categories(db, company_id, products_data.get("categories", {}))
+    try:
+        with db.begin_nested():
+            _save_product_categories(db, company_id, products_data.get("categories", []))
+    except SQLAlchemyError:
+        logger.error(f"Failed to save product_categories for company {company_id}", exc_info=True)
 
     logger.info(f"Saved products data for company {company_id}")
 
@@ -1026,8 +1055,12 @@ def save_csr_data(db: Session, company_id: int, data: dict) -> None:
 
     db.flush()
 
-    # Save CSR initiatives (1:N) - from unified initiatives array
-    _save_csr_initiatives(db, company_id, csr_data)
+    # Save CSR initiatives (1:N) - from unified items array
+    try:
+        with db.begin_nested():
+            _save_csr_initiatives(db, company_id, csr_data)
+    except SQLAlchemyError:
+        logger.error(f"Failed to save csr_initiatives for company {company_id}", exc_info=True)
 
     logger.info(f"Saved CSR data for company {company_id}")
 
@@ -1048,8 +1081,8 @@ def _save_csr_initiatives(db: Session, company_id: int, csr_data: dict) -> None:
         "awards": CsrInitiativeType.awards,
     }
 
-    # Read from unified initiatives array with type field
-    initiatives = csr_data.get("initiatives", [])
+    # Read from unified items array with type field (key matches CsrAgentOutput.items)
+    initiatives = csr_data.get("items", [])
     if not isinstance(initiatives, list):
         return
 
@@ -1175,7 +1208,11 @@ def save_press_data(db: Session, company_id: int, data: dict) -> None:
     db.flush()
 
     # Save press items (1:N)
-    _save_press_items(db, company_id, press_data)
+    try:
+        with db.begin_nested():
+            _save_press_items(db, company_id, press_data)
+    except SQLAlchemyError:
+        logger.error(f"Failed to save press_items for company {company_id}", exc_info=True)
 
     logger.info(f"Saved press data for company {company_id}")
 
@@ -1917,6 +1954,13 @@ def write_section_data(
         "corporate_structure": save_corporate_structure_data,
         "sanctions": save_sanctions_data,
     }
+
+    # Log child list sizes for diagnostics
+    child_list_keys = [k for k, v in data.items() if isinstance(v, list)]
+    logger.info(
+        f"write_section_data: {query_type} for company {company_id}",
+        extra={"data_keys": list(data.keys()), "list_fields": {k: len(data[k]) for k in child_list_keys}},
+    )
 
     writer = writers.get(query_type)
     if writer:

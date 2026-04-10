@@ -14,7 +14,7 @@ Key design decisions:
 
 from enum import StrEnum
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 # =============================================================================
 # SHARED MODELS
@@ -115,10 +115,12 @@ class DigitalAgentOutput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     insights: str | None = None
-    social_media_accounts: list[SocialMediaAccount] | None = None
-    online_services: list[OnlineService] | None = None
+    # Use Field(default_factory=list) so _make_strict_compatible() strips `default`
+    # and adds these to `required`, forcing the LLM to return an array (not null)
+    social_media_accounts: list[SocialMediaAccount] = Field(default_factory=list)
+    online_services: list[OnlineService] = Field(default_factory=list)
     digital_strategy: DigitalStrategyItem | None = None
-    loyalty_programs: list[LoyaltyProgram] | None = None
+    loyalty_programs: list[LoyaltyProgram] = Field(default_factory=list)
 
 
 # =============================================================================
@@ -159,7 +161,7 @@ class PressAgentOutput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     insights: str | None = None
-    items: list[PressItem] | None = None
+    items: list[PressItem] = Field(default_factory=list)
 
 
 # =============================================================================
@@ -201,7 +203,7 @@ class JobsAgentOutput(BaseModel):
 
     insights: str | None = None
     insights_data: JobsInsightsData | None = None
-    offers: list[JobOffer] | None = None
+    offers: list[JobOffer] = Field(default_factory=list)
 
 
 # =============================================================================
@@ -240,10 +242,10 @@ class ProductsAgentOutput(BaseModel):
     insights: str | None = None
     customer_type: SourcedValue | None = None
     marketing_positioning: SourcedValue | None = None
-    range: list[ProductItem] | None = None
-    partner_brands: list[ProductItem] | None = None
-    private_labels: list[ProductItem] | None = None
-    categories: list[ProductCategory] | None = None
+    range: list[ProductItem] = Field(default_factory=list)
+    partner_brands: list[ProductItem] = Field(default_factory=list)
+    private_labels: list[ProductItem] = Field(default_factory=list)
+    categories: list[ProductCategory] = Field(default_factory=list)
 
 
 # =============================================================================
@@ -273,7 +275,7 @@ class TimelineAgentOutput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     insights: str | None = None
-    events: list[TimelineEvent] | None = None
+    events: list[TimelineEvent] = Field(default_factory=list)
 
 
 # =============================================================================
@@ -307,14 +309,17 @@ class CsrAgentOutput(BaseModel):
     """Output schema for the CSR agent.
 
     Uses DB enum values (sustainability, not environmental).
-    The initiatives list with type field matches _save_csr_initiatives().
+    The items list with type field matches _save_csr_initiatives().
     """
 
     model_config = ConfigDict(extra="forbid")
 
     insights: str | None = None
     responsibility: SourcedValue | None = None
-    initiatives: list[CsrInitiative] | None = None
+    # Renamed from "initiatives" to "items" so the JSON key sent to OpenAI
+    # is also "items", matching what _save_csr_initiatives() reads via
+    # csr_data.get("items", []) after the corresponding fix in the writer.
+    items: list[CsrInitiative] = Field(default_factory=list)
 
 
 # =============================================================================
@@ -338,7 +343,7 @@ class TeamMember(BaseModel):
     last_name: str | None = None
     position: str | None = None
     linkedin_url: str | None = None
-    subordinates: list["TeamMember"] | None = None
+    subordinates: list["TeamMember"] = Field(default_factory=list)
 
 
 class TeamAgentOutput(BaseModel):
@@ -350,7 +355,7 @@ class TeamAgentOutput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     insights: str | None = None
-    team: list[TeamMember] | None = None
+    team: list[TeamMember] = Field(default_factory=list)
 
 
 # =============================================================================
