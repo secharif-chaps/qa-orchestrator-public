@@ -12,6 +12,8 @@ from app.models.organization import (
     OrganizationFeatureFlag,
     OrganizationModule,
     ReferenceType,
+    TokenLock,
+    TokenLockStatus,
     TokenTransaction,
     TransactionType,
 )
@@ -24,6 +26,7 @@ __all__ = [
     "TokenTransaction",
     "OrganizationModule",
     "OrganizationFeatureFlag",
+    "TokenLock",
     "UserPreferences",
     "Folder",
     "FolderItem",
@@ -35,5 +38,6 @@ __all__ = [
     "TransactionType",
     "ReferenceType",
     "FeatureFlag",
+    "TokenLockStatus",
     "ItemType",
 ]
