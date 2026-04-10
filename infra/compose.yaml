@@ -27,6 +27,16 @@ x-n8n-db: &n8n-db
   DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD:-n8n_pass}
   N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-!ChangeThisN8nEncryptionKey!}
 
+x-target-env: &target-env
+  DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${TARGET_DB:-target_db}
+  MESSENGER_TRANSPORT_DSN: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/%2f/messages
+  VALKEY_DSN: redis://target-valkey:6379
+  OPENSEARCH_URL: http://target-opensearch:9200
+  APP_ENV: ${APP_ENV:-prod}
+  APP_SECRET: ${TARGET_APP_SECRET:-!ChangeThisTargetAppSecret!}
+  INTERNAL_JWT_SECRET: ${INTERNAL_JWT_SECRET:-!ChangeThisInternalJWTSecretKey!!}
+  INTERNAL_ALLOWED_IPS: ${INTERNAL_ALLOWED_IPS:-}
+
 # ─── Services ──────────────────────────────────────────
 services:
   # Vue Frontend
@@ -134,20 +144,11 @@ services:
       target-valkey: { condition: service_healthy }
       target-opensearch: { condition: service_healthy }
     environment:
-      SERVER_NAME: "0.0.0.0:8000"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${TARGET_DB:-target_db}
-      MESSENGER_TRANSPORT_DSN: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/%2f/messages
-      VALKEY_DSN: redis://target-valkey:6379
-      OPENSEARCH_URL: http://target-opensearch:9200
-      KEYCLOAK_SERVER_URL: ${KEYCLOAK_SERVER_URL:-}
-      KEYCLOAK_REALM: ${KEYCLOAK_REALM:-chapsmind}
-      APP_ENV: ${APP_ENV:-prod}
-      APP_SECRET: ${TARGET_APP_SECRET:-!ChangeThisTargetAppSecret!}
+      <<: *target-env
+      SERVER_NAME: ":8000"
       # Mercure (FrankenPHP/Caddy embedded hub)
       MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_SECRET}
       MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_JWT_SECRET}
-      INTERNAL_JWT_SECRET: ${INTERNAL_JWT_SECRET:-!ChangeThisInternalJWTSecretKey!!}
-      INTERNAL_ALLOWED_IPS: ${INTERNAL_ALLOWED_IPS:-}
 
   # Target runner — Symfony Messenger consumers
   target-runner:
@@ -160,19 +161,15 @@ services:
       rabbitmq: { condition: service_healthy }
       target-valkey: { condition: service_healthy }
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${TARGET_DB:-target_db}
-      MESSENGER_TRANSPORT_DSN: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/%2f/messages
-      VALKEY_DSN: redis://target-valkey:6379
-      APP_ENV: ${APP_ENV:-prod}
-      APP_SECRET: ${TARGET_APP_SECRET:-!ChangeThisTargetAppSecret!}
+      <<: *target-env
     command:
       - "php"
       - "bin/console"
       - "messenger:consume"
-      - "target_async_priority_high"
-      - "target_async_priority_low"
-      - "target_agent_commands"
-      - "target_agent_responses"
+      - "async_priority_high"
+      - "async_priority_low"
+      - "agent_commands"
+      - "agent_responses"
       - "--time-limit=3600"
       - "--memory-limit=2G"
     healthcheck:
