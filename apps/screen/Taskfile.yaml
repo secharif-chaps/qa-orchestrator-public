@@ -4,6 +4,10 @@ vars:
   COMPOSE: docker compose
 
 tasks:
+  up:
+    desc: Start screen service and run migrations
+    cmds: 
+      - bash infra/scripts/init-profile.sh screen
   lint:
     desc: Lint backend code (ruff)
     cmd: "{{.COMPOSE}} exec screen ruff check . {{.CLI_ARGS}}"

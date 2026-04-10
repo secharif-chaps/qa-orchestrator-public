@@ -6,6 +6,11 @@ includes:
     dir: ../../
 
 tasks:
+  up:
+    desc: Start target service
+    cmds:
+      - bash infra/scripts/init-profile.sh target
+
   # ─── Aggregate tasks ──────────────────────────────────
   lint:
     desc: 'Run all linters (ECS + PHPStan)'

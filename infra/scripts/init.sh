@@ -28,6 +28,49 @@ set -a
 source .env
 set +a
 
+# ─── 1b. Select optional profiles ────────────────────
+
+CURRENT_PROFILES="${COMPOSE_PROFILES:-}"
+if [ -n "$CURRENT_PROFILES" ]; then
+  echo "ℹ️  Active profiles: ${CURRENT_PROFILES}  (edit COMPOSE_PROFILES in .env to change)"
+else
+  KNOWN_PROFILES=$(grep -roh 'profiles: \[.*\]' infra/compose.yaml infra/compose.local.yaml 2>/dev/null \
+    | sed 's/profiles: \[//;s/\]//' | tr ',' '\n' | sed 's/ //g' | sort -u | tr '\n' ' ' | sed 's/ $//')
+  echo ""
+  echo "🧩 Optional modules (space-separated, Enter to skip):"
+  echo "   Available: ${KNOWN_PROFILES// /  }"
+  read -r -p "   Profiles [none]: " PROFILES_INPUT
+  if [ -n "$PROFILES_INPUT" ]; then
+    # Validate each token against known profiles
+    PROFILES_VALID=""
+    PROFILES_UNKNOWN=""
+    for token in $PROFILES_INPUT; do
+      if echo "$KNOWN_PROFILES" | grep -qw "$token"; then
+        PROFILES_VALID="${PROFILES_VALID:+${PROFILES_VALID},}${token}"
+      else
+        PROFILES_UNKNOWN="${PROFILES_UNKNOWN} ${token}"
+      fi
+    done
+    if [ -n "$PROFILES_UNKNOWN" ]; then
+      echo "❌ Unknown profile(s):${PROFILES_UNKNOWN}. Available: ${KNOWN_PROFILES// /, }"
+      exit 1
+    fi
+    # Input is validated against KNOWN_PROFILES (no special chars possible) — sed with | delimiter is safe
+    if grep -q '^COMPOSE_PROFILES=' .env; then
+      sed -i "s|^COMPOSE_PROFILES=.*|COMPOSE_PROFILES=${PROFILES_VALID}|" .env
+    else
+      echo "COMPOSE_PROFILES=${PROFILES_VALID}" >> .env
+    fi
+    # Reload .env so docker compose picks up the new value
+    set -a
+    source .env
+    set +a
+    echo "✅ Set COMPOSE_PROFILES=${PROFILES_VALID}"
+  else
+    echo "ℹ️  No profiles selected — starting base stack only"
+  fi
+fi
+
 # ─── 2. Auto-generate secrets ────────────────────────
 
 if grep -q '^ENCRYPTION_KEY=changeme$' .env; then
@@ -96,7 +139,6 @@ fi
 
 echo ""
 echo "🐳 Building and starting services..."
-docker compose build screen stream
 docker compose up -d --build
 
 # ─── 7. Wait for Keycloak + init ─────────────────────

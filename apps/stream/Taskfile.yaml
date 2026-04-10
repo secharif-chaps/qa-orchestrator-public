@@ -4,6 +4,11 @@ vars:
   COMPOSE: docker compose
 
 tasks:
+  up:
+    desc: Start stream service and run migrations
+    cmds:
+      - bash infra/scripts/init-profile.sh stream
+
   lint:
     desc: Lint stream backend code (ruff)
     cmd: "{{.COMPOSE}} exec stream ruff check . {{.CLI_ARGS}}"
