@@ -196,6 +196,72 @@ def _resolve_backend(registry: ModuleRegistry | None, path: str, method: str) ->
     return _get_screen_fallback(), f"/api/{path}"
 
 
+# ── Module gate: check if module is enabled for user's organization ──
+
+# Cache: (org_id, module_name) -> (enabled: bool, timestamp: float)
+_module_enabled_cache: dict[tuple[str, str], tuple[bool, float]] = {}
+_MODULE_GATE_CACHE_TTL = 30  # seconds
+
+
+async def _check_module_enabled(module_name: ModuleName, user: object) -> Response | None:
+    """Check if the resolved module is enabled for the user's organization.
+
+    Returns a 403 Response if the module is disabled, None if enabled (allow).
+    Skips the check if user has no organization context (e.g., service accounts).
+
+    Uses a TTL cache to avoid querying the DB on every request.
+    Fails open on DB errors (logs warning, allows request).
+    """
+    org_id, _ = extract_organization_info(user)
+    if not org_id:
+        return None
+
+    cache_key = (org_id, module_name.value)
+    now = time.time()
+
+    # Check cache
+    cached = _module_enabled_cache.get(cache_key)
+    if cached and (now - cached[1]) < _MODULE_GATE_CACHE_TTL:
+        enabled = cached[0]
+    else:
+        # Query DB
+        try:
+            from sqlalchemy import select
+
+            from app.database import get_global_db_context
+            from app.models.organization import OrganizationModule
+
+            async with get_global_db_context() as db:
+                stmt = select(OrganizationModule).where(
+                    OrganizationModule.organization_id == org_id,
+                    OrganizationModule.module_name == module_name.value,
+                )
+                result = await db.execute(stmt)
+                record = result.scalar_one_or_none()
+                enabled = record.enabled if record else False
+
+            _module_enabled_cache[cache_key] = (enabled, now)
+        except Exception as e:
+            logger.warning(
+                "Module gate DB check failed, allowing request",
+                extra={"module_name": module_name, "org_id": org_id, "error": str(e)},
+            )
+            return None
+
+    if not enabled:
+        logger.warning(
+            "Module gate: access denied",
+            extra={"module_name": module_name, "org_id": org_id},
+        )
+        return Response(
+            content=f'{{"detail":"Module \'{module_name.value}\' not enabled for your organization"}}'.encode(),
+            status_code=403,
+            media_type="application/json",
+        )
+
+    return None
+
+
 router = APIRouter()
 
 
@@ -341,6 +407,12 @@ async def proxy_request(request: Request, path: str) -> Response:
             "public": route_is_public,
         },
     )
+
+    # Module gate: check if module is enabled for user's organization
+    if not route_is_public and user:
+        module_denied = await _check_module_enabled(module.name, user)
+        if module_denied:
+            return module_denied
 
     # Folder-based access control at the gateway (before proxying to screen)
     denied = await _check_company_folder_access(path, request.method, user)
