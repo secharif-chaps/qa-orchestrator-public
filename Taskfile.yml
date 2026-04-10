@@ -34,9 +34,7 @@ tasks:
   # ─── Infrastructure ────────────────────────────────
   up:
     desc: Start all services (docker compose up)
-    cmds:
-      - "{{.COMPOSE}} build screen stream"
-      - "{{.COMPOSE}} up -d --build --remove-orphans"
+    cmd: "{{.COMPOSE}} up -d --build --remove-orphans"
 
   down:
     desc: Stop all services
