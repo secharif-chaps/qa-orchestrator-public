@@ -48,7 +48,7 @@ class TestAgentNodeMap:
     """Tests for the AGENT_NODE_MAP constant."""
 
     def test_all_agent_types_present(self):
-        """All 8 agent types have entries."""
+        """All 9 agent types have entries."""
         for agent_type in ALL_AGENT_TYPES:
             assert agent_type in AGENT_NODE_MAP
 
@@ -60,7 +60,7 @@ class TestAgentNodeMap:
             assert callable(fn), f"{name} node function is not callable"
 
     def test_expected_agent_names(self):
-        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team", "corporate_structure", "sanctions"}
+        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team", "corporate_structure", "sanctions", "financial"}
         assert set(AGENT_NODE_MAP.keys()) == expected
 
 

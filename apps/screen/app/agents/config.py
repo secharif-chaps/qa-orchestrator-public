@@ -32,6 +32,7 @@ ALL_AGENT_TYPES = [
     "team",
     "corporate_structure",
     "sanctions",
+    "financial",
 ]
 
 

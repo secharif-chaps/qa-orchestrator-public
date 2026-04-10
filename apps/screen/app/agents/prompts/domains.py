@@ -69,4 +69,5 @@ AGENT_ALLOWED_DOMAINS: dict[str, list[str]] = {
         "opencorporates.com",
         "bloomberg.com",
     ],
+    "financial": [],  # No domain restriction — financial data comes from many heterogeneous sources
 }

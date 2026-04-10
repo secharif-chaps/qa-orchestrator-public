@@ -16,7 +16,7 @@ class TestAgentConfig:
     """Tests for config.py constants."""
 
     def test_all_agent_types_count(self):
-        assert len(ALL_AGENT_TYPES) == 10
+        assert len(ALL_AGENT_TYPES) == 11
 
     def test_every_agent_has_prompt(self):
         for agent_name in ALL_AGENT_TYPES:
@@ -43,5 +43,5 @@ class TestAgentConfig:
         assert 0 <= MAX_AGENT_RETRIES <= 5
 
     def test_agent_types_are_expected(self):
-        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team", "corporate_structure", "sanctions"}
+        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team", "corporate_structure", "sanctions", "financial"}
         assert set(ALL_AGENT_TYPES) == expected
