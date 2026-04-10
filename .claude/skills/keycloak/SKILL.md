@@ -183,3 +183,7 @@ class Company(Base):
 - `apps/screen/app/core/internal_jwt.py` - Service-to-service JWT
 - `apps/screen/app/services/keycloak_admin.py` - Admin API
 - `apps/front/src/stores/auth.ts` - Frontend auth store
+
+## ISO 27001 Compliance
+
+This skill touches security-sensitive areas (A.8.2, A.8.3, A.8.5). Consult the `security-iso27001` skill for applicable controls on access rights, authentication, and token handling.

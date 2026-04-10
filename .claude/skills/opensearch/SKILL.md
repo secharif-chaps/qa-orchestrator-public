@@ -175,3 +175,7 @@ async def bulk_index_companies(client: AsyncOpenSearch, companies: list[Company]
 4. **Bulk operations for indexing** - Never index one document at a time in loops
 5. **Alias-based reindexing** - Use aliases to swap indices without downtime
 6. **Monitor index health** - Check cluster status before bulk operations
+
+## ISO 27001 Compliance
+
+This skill touches security-sensitive areas (A.8.12). Consult the `security-iso27001` skill for applicable controls on data indexing and access control on search results.

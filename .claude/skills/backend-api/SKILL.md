@@ -28,3 +28,7 @@ metadata:
 For detailed patterns, see:
 
 - [API standards](references/api.md) - API Platform best practices, authorization, error handling, HTTP methods, RESTful design
+
+## ISO 27001 Compliance
+
+This skill touches security-sensitive areas (A.8.26, A.8.12). Consult the `security-iso27001` skill for applicable controls on input validation, response filtering, and data leakage prevention.

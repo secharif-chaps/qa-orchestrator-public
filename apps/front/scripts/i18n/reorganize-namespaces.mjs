@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * One-time script to reorganize i18n namespaces according to ADR-0012.
+ * One-time script to reorganize i18n namespaces according to ADR-0014.
  *
  * 1. Moves top-level keys into target namespaces in JSON files
  * 2. Updates all translation function references in source files
