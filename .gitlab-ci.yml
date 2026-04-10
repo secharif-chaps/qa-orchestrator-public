@@ -216,6 +216,47 @@ main:assign-reviewers:
   variables:
     GITLAB_TOKEN: $REVIEWER_BOT_TOKEN
 
+# ─── Jira automation (TAR-1070) ──────────────────────
+# Automatically transition Jira tickets based on MR lifecycle events.
+# Uses jira-tools CLI from ci-images/jira (auto-detects issue key from branch name).
+#
+# MR created  → "To Review"
+# MR merged   → "Functional To Review"
+main:jira-transition:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/jira:latest
+  allow_failure: true
+  variables:
+    JIRA_CLOUD_ID: $JIRA_CLOUD_ID
+    JIRA_API_TOKEN: $JIRA_API_TOKEN
+    JIRA_PROJECT_KEY: TAR
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - |
+      # Link the MR to the Jira issue
+      jira-tools link-mr || echo "Warning: could not link MR to Jira"
+
+      # Transition to "To Review" on MR creation
+      jira-tools transition "To Review" || echo "Warning: could not transition to 'To Review'"
+
+main:jira-merged:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/jira:latest
+  allow_failure: true
+  variables:
+    JIRA_CLOUD_ID: $JIRA_CLOUD_ID
+    JIRA_API_TOKEN: $JIRA_API_TOKEN
+    JIRA_PROJECT_KEY: TAR
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $AGENT_ISSUE
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - jira-tools transition "Functional To Review" || echo "Warning: could not transition to 'Functional To Review'"
+
 # ─── Scheduled maintenance jobs ──────────────────────
 main:update-codeowners:
   stage: maintenance
