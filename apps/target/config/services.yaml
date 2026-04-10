@@ -81,8 +81,10 @@ services:
 
   # Internal JWT Authenticator (Global Service gateway)
   App\Infrastructure\Organisation\Security\InternalJwtAuthenticator:
+    factory: ['App\Infrastructure\Organisation\Security\InternalJwtAuthenticator', 'create']
     arguments:
       $internalJwtSecret: '%env(string:INTERNAL_JWT_SECRET)%'
+      $internalAllowedIps: '%env(default::string:INTERNAL_ALLOWED_IPS)%'
 
   App\Domain\Encryption\EncryptorInterface:
     class: App\Infrastructure\Encryption\Encryptor
