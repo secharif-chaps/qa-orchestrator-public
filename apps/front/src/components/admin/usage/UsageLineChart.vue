@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-lg border p-6">
+  <div class="border-primary-lighter-stroke rounded-sm border bg-white p-6">
     <h3 class="mb-4 text-lg font-semibold">{{ t('admin.usage.lineChart.title') }}</h3>
 
     <!-- Loading state -->
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
-        <p class="text-secondary text-sm">
+        <i class="fa fa-spinner text-neutral-black-font mb-2 animate-spin text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">
           {{ t('admin.usage.lineChart.loading') }}
         </p>
       </div>
@@ -19,8 +19,8 @@
       class="flex justify-center py-12"
     >
       <div class="text-center">
-        <i class="fa fa-chart-line text-secondary mb-2 text-2xl"></i>
-        <p class="text-secondary text-sm">
+        <i class="fa fa-chart-line text-neutral-black-font mb-2 text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">
           {{ t('admin.usage.lineChart.noData') }}
         </p>
       </div>
@@ -46,21 +46,21 @@
  * - Loading and empty states
  * - Formatted date labels
  */
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
+import type { TimeSeriesDataPoint } from '@/types/usage'
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  Filler,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
-  Filler,
 } from 'chart.js'
+import { computed } from 'vue'
 import { Line } from 'vue-chartjs'
-import type { TimeSeriesDataPoint } from '@/types/usage'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 

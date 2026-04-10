@@ -1,10 +1,10 @@
 <template>
   <div
-    class="bg-base-100/20 fixed inset-0 z-20 flex items-center justify-center backdrop-blur-sm"
+    class="fixed inset-0 z-20 flex items-center justify-center bg-white/20 backdrop-blur-sm"
     @click.self="$emit('close')"
   >
     <div
-      class="bg-base-100 border-primary-stroke mx-4 flex max-h-[90vh] w-full max-w-2xl flex-col gap-6 overflow-y-auto rounded-xl border p-6 shadow-2xl"
+      class="border-primary-lighter-stroke mx-4 flex max-h-[90vh] w-full max-w-168 flex-col gap-6 overflow-y-auto rounded-md border bg-white p-6 shadow-2xl"
     >
       <!-- Header -->
       <div class="mb-6 flex items-center justify-between">
@@ -12,7 +12,7 @@
           <h3 class="text-lg font-semibold">
             {{ $t('admin.permissions.title') }}
           </h3>
-          <p class="text-secondary mt-1 text-sm">
+          <p class="text-neutral-black-font mt-1 text-sm">
             {{
               $t(
                 'admin.permissions.description',
@@ -28,7 +28,7 @@
       <!-- Loading State -->
       <div v-if="isLoading" class="py-12 text-center">
         <div class="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
-        <p class="text-secondary text-sm">
+        <p class="text-neutral-black-font text-sm">
           {{ $t('admin.permissions.loading') }}
         </p>
       </div>
@@ -71,13 +71,13 @@
         />
 
         <!-- Tab Selection: Roles vs Custom -->
-        <div class="border-primary-stroke mb-6 flex gap-2 border-b">
+        <div class="border-primary-lighter-stroke mb-6 flex gap-2 border-b">
           <button
             class="px-4 py-2 text-sm font-medium transition-colors"
             :class="
               mode === 'roles'
                 ? 'text-sage-700 border-sage-700 border-b-2'
-                : 'text-secondary hover:text-base'
+                : 'text-neutral-black-font hover:text-base'
             "
             @click="mode = 'roles'"
           >
@@ -88,7 +88,7 @@
             :class="
               mode === 'custom'
                 ? 'text-sage-700 border-sage-700 border-b-2'
-                : 'text-secondary hover:text-base'
+                : 'text-neutral-black-font hover:text-base'
             "
             @click="mode = 'custom'"
           >
@@ -116,17 +116,17 @@
         <!-- Custom Permissions Mode -->
         <div v-else class="mb-6 flex flex-col gap-6">
           <!-- Base Access Section -->
-          <div class="border-primary-stroke rounded-lg border p-4">
+          <div class="border-primary-lighter-stroke rounded-sm border p-4">
             <h4 class="mb-3 flex items-center gap-2 text-sm font-semibold">
               <i class="fa fa-shield text-sage-700"></i>
               {{ $t('admin.permissions.sections.base') }}
             </h4>
             <div class="flex flex-col gap-3">
               <!-- organization.read (always on) -->
-              <div class="bg-base-200 flex items-center justify-between rounded-lg p-3">
+              <div class="bg-primary-lightest flex items-center justify-between rounded-sm p-3">
                 <div class="flex items-center gap-3">
                   <div
-                    class="bg-sage-100 dark:bg-sage-800/30 flex h-8 w-8 items-center justify-center rounded-lg"
+                    class="bg-sage-100 dark:bg-sage-800/30 flex h-8 w-8 items-center justify-center rounded-sm"
                   >
                     <i class="fa fa-eye text-sage-700 text-sm"></i>
                   </div>
@@ -134,7 +134,7 @@
                     <p class="text-sm font-medium">
                       {{ $t('admin.permissions.organizationRead.label') }}
                     </p>
-                    <p class="text-secondary text-xs">
+                    <p class="text-neutral-black-font text-xs">
                       {{ $t('admin.permissions.organizationRead.description') }}
                     </p>
                   </div>
@@ -163,12 +163,12 @@
           </div>
 
           <!-- Module Permissions Section -->
-          <div class="border-primary-stroke rounded-lg border p-4">
+          <div class="border-primary-lighter-stroke rounded-sm border p-4">
             <h4 class="mb-3 flex items-center gap-2 text-sm font-semibold">
               <i class="fa fa-puzzle-piece text-sage-700"></i>
               {{ $t('admin.permissions.sections.modules') }}
             </h4>
-            <p class="text-secondary mb-3 text-xs">
+            <p class="text-neutral-black-font mb-3 text-xs">
               {{ $t('admin.permissions.sections.modulesDescription') }}
             </p>
             <div class="flex flex-col gap-3">
@@ -197,12 +197,12 @@
           </div>
 
           <!-- Admin Permissions Section -->
-          <div class="border-error-stroke rounded-lg border p-4">
+          <div class="border-error-stroke rounded-sm border p-4">
             <h4 class="text-error-light-content mb-3 flex items-center gap-2 text-sm font-semibold">
               <i class="fa fa-shield-check"></i>
               {{ $t('admin.permissions.sections.admin') }}
             </h4>
-            <p class="text-secondary mb-3 text-xs">
+            <p class="text-neutral-black-font mb-3 text-xs">
               {{ $t('admin.permissions.sections.adminDescription') }}
             </p>
             <div class="flex flex-col gap-3">
@@ -224,7 +224,7 @@
           </div>
 
           <!-- Current Permissions Summary -->
-          <div class="bg-base-200 rounded-lg p-4">
+          <div class="bg-primary-lightest rounded-sm p-4">
             <h4 class="mb-2 text-sm font-semibold">
               {{ $t('admin.permissions.summary.title') }}
             </h4>
@@ -236,7 +236,10 @@
                 size="sm"
                 variant="slate"
               />
-              <span v-if="effectivePermissions.length === 0" class="text-secondary text-sm">
+              <span
+                v-if="effectivePermissions.length === 0"
+                class="text-neutral-black-font text-sm"
+              >
                 {{ $t('admin.permissions.summary.noPermissions') }}
               </span>
             </div>
@@ -262,15 +265,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { useQuery } from '@pinia/colada'
-import { userPermissionsQuery } from '@/queries/admin-users'
-import { useRoles } from '@/composables/useRoles'
-import { Alert, Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
-import RoleBlock from './RoleBlock.vue'
-import PermissionCheckbox from './PermissionCheckbox.vue'
+import { useRoles } from '@/composables/useRoles'
+import { userPermissionsQuery } from '@/queries/admin-users'
+import { Alert, Button } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, ref, watch } from 'vue'
 import ConfirmAdminRoleModal from './ConfirmAdminRoleModal.vue'
+import PermissionCheckbox from './PermissionCheckbox.vue'
+import RoleBlock from './RoleBlock.vue'
 
 const props = defineProps<{
   userId: string

@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke flex items-center rounded-lg border p-6">
+  <div class="border-primary-lighter-stroke flex items-center rounded-sm border bg-white p-6">
     <div class="flex w-full items-center">
       <div class="flex-shrink-0">
         <div
-          class="flex h-12 w-12 items-center justify-center rounded-lg"
+          class="flex h-12 w-12 items-center justify-center rounded-sm"
           :class="iconBackgroundClass"
         >
           <i :class="iconClass" class="text-xl"></i>
@@ -12,7 +12,7 @@
       <div class="ml-4 flex-1">
         <h4 class="text-sm font-medium tracking-wide uppercase">{{ title }}</h4>
         <p class="text-2xl font-bold">{{ formattedValue }}</p>
-        <p v-if="subtitle" class="text-secondary mt-1 text-xs">
+        <p v-if="subtitle" class="text-neutral-black-font mt-1 text-xs">
           {{ subtitle }}
         </p>
       </div>

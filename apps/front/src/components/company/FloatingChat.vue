@@ -14,7 +14,7 @@
   <Transition name="chat-window">
     <div
       v-if="isOpen"
-      class="bg-base-100 border-primary-stroke animate-slideUp fixed right-6 bottom-6 z-50 flex h-[600px] max-h-[80vh] w-96 flex-col overflow-hidden rounded-2xl border shadow-2xl dark:border-slate-700 dark:bg-slate-900"
+      class="border-primary-lighter-stroke animate-slideUp fixed right-6 bottom-6 z-50 flex h-[600px] max-h-[80vh] w-96 flex-col overflow-hidden rounded-lg border bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900"
     >
       <!-- Chat header with glass effect -->
       <div
@@ -85,9 +85,9 @@
 
 <script lang="ts" setup>
 import Chat from '@/components/company/Chat.vue'
-import { ref, onMounted, watch, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 const { t } = useI18n()
 const route = useRoute()

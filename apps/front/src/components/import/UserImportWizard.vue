@@ -19,7 +19,7 @@
         <select
           id="organization-select"
           v-model="selectedOrganizationId"
-          class="bg-base-100 border-primary-stroke text-sage-700 dark:text-sage-200 focus:ring-primary focus:border-primary w-full max-w-md rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+          class="border-primary-lighter-stroke text-sage-700 dark:text-sage-200 focus:ring-primary focus:border-primary w-full max-w-112 rounded-sm border bg-white px-3 py-2 text-sm focus:ring-2 focus:outline-none"
         >
           <option value="" disabled>
             {{ $t('admin.import.selectOrganizationPlaceholder') }}
@@ -67,7 +67,7 @@
     <!-- Navigation Buttons -->
     <div
       v-if="currentStep < 4"
-      class="border-primary-stroke flex items-center justify-between border-t pt-4"
+      class="border-primary-lighter-stroke flex items-center justify-between border-t pt-4"
     >
       <Button variant="tertiary" :label="$t('common.cancel')" @click="handleCancel" />
 
@@ -127,27 +127,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import { Modal, Button } from '@owlint/feathers-vue'
 import Stepper from '@/components/ui/Stepper.vue'
-import ImportFileUploader from './ImportFileUploader.vue'
-import ImportColumnMapper from './ImportColumnMapper.vue'
-import ImportPreview from './ImportPreview.vue'
-import ImportResults from './ImportResults.vue'
 import { useColumnMapper } from '@/composables/useColumnMapper'
 import { useImportUsers } from '@/mutations/user-import'
+import { Button, Modal } from '@owlint/feathers-vue'
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import ImportColumnMapper from './ImportColumnMapper.vue'
+import ImportFileUploader from './ImportFileUploader.vue'
+import ImportPreview from './ImportPreview.vue'
+import ImportResults from './ImportResults.vue'
 
+import type { StepperStep } from '@/components/ui/Stepper.vue'
 import type {
+  BulkImportResponse,
+  ColumnMapping,
+  DuplicateInfo,
   ParsedFileData,
   UserImportRow,
-  ColumnMapping,
-  BulkImportResponse,
   ValidationError,
-  DuplicateInfo,
 } from '@/types/user-import'
-import type { StepperStep } from '@/components/ui/Stepper.vue'
 
 interface Organization {
   id: string

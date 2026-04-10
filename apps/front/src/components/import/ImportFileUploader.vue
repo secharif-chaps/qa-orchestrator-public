@@ -21,10 +21,10 @@
     <div
       :class="[
         'relative flex flex-col items-center justify-center gap-4 p-8',
-        'rounded-xl border-2 border-dashed transition-all duration-200',
+        'rounded-md border-2 border-dashed transition-all duration-200',
         isDragging
           ? 'border-primary bg-primary-light/30'
-          : 'border-primary-stroke bg-base-100 hover:border-sage-500',
+          : 'border-primary-lighter-stroke hover:border-sage-500 bg-white',
         disabled && 'cursor-not-allowed opacity-50',
       ]"
       @dragover.prevent="handleDragOver"
@@ -35,7 +35,7 @@
       <div
         :class="[
           'flex h-16 w-16 items-center justify-center rounded-full',
-          isDragging ? 'bg-primary text-primary-content' : 'bg-base-200 text-sage-500',
+          isDragging ? 'bg-primary text-primary-content' : 'bg-primary-lightest text-sage-500',
         ]"
       >
         <i
@@ -78,7 +78,7 @@
     <!-- File Info (when file is selected) -->
     <div
       v-if="parsedData"
-      class="bg-success-light border-success-stroke flex items-center gap-4 rounded-xl border p-4"
+      class="bg-success-light border-success-stroke flex items-center gap-4 rounded-md border p-4"
     >
       <div class="bg-success flex h-10 w-10 items-center justify-center rounded-full">
         <i class="fa-solid fa-check text-success-content" />
@@ -111,12 +111,12 @@
 </template>
 
 <script setup lang="ts">
+import { useCsvParser } from '@/composables/useCsvParser'
+import type { ParsedFileData } from '@/types/user-import'
+import { downloadSampleUsersCsv } from '@/utils/downloadSampleCsv'
+import { Alert, Button } from '@owlint/feathers-vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Button, Alert } from '@owlint/feathers-vue'
-import { useCsvParser } from '@/composables/useCsvParser'
-import { downloadSampleUsersCsv } from '@/utils/downloadSampleCsv'
-import type { ParsedFileData } from '@/types/user-import'
 
 interface Props {
   /** Disable the uploader */

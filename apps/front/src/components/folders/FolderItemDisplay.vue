@@ -11,7 +11,7 @@
     <div class="mb-4 flex items-start justify-between">
       <div class="flex items-center gap-3">
         <div
-          class="ring-primary-stroke flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-white ring-1"
+          class="ring-primary-stroke flex h-12 w-12 items-center justify-center overflow-hidden rounded-sm bg-white ring-1"
         >
           <img
             v-if="item.type === 'company' && getCompanyDomain(item.website)"
@@ -25,14 +25,14 @@
             v-show="showFallbackIcon || !getCompanyDomain(item.website) || item.type !== 'company'"
             class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
           >
-            <i class="fas fa-building text-secondary text-xl"></i>
+            <i class="fas fa-building text-neutral-black-font text-xl"></i>
           </div>
         </div>
         <div class="max-w-32 min-w-0 flex-1">
           <h3 class="truncate text-lg font-semibold transition-colors">
             {{ item.name }}
           </h3>
-          <p class="text-secondary truncate text-sm">
+          <p class="text-neutral-black-font truncate text-sm">
             {{ formatType(item.type) }}
           </p>
         </div>
@@ -72,7 +72,7 @@
       </div>
     </div>
 
-    <div class="text-secondary flex items-center justify-between text-sm">
+    <div class="text-neutral-black-font flex items-center justify-between text-sm">
       <span>{{ $t('common.folder.item.created') }} {{ formatDate(item.created_at) }}</span>
       <span v-if="item.owner">{{ $t('common.folder.grid.by') }} @{{ item.owner }}</span>
     </div>
@@ -86,13 +86,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Button } from '@owlint/feathers-vue'
-import type { FolderItem } from '@/types/folder'
-import { useI18n } from 'vue-i18n'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
-import Card from '../ui/Card.vue'
+import type { FolderItem } from '@/types/folder'
 import { formatDate } from '@/utils/time'
+import { Button } from '@owlint/feathers-vue'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import Card from '../ui/Card.vue'
 
 interface Props {
   item: FolderItem

@@ -117,16 +117,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import {
-  StepperRoot,
-  StepperItem,
-  StepperTrigger,
-  StepperIndicator,
-  StepperTitle,
   StepperDescription,
+  StepperIndicator,
+  StepperItem,
+  StepperRoot,
   StepperSeparator,
+  StepperTitle,
+  StepperTrigger,
 } from 'reka-ui'
+import { computed } from 'vue'
 
 export interface StepperStep {
   /** Unique step value/identifier */
@@ -211,7 +211,7 @@ function getIndicatorClasses(state: StepState): string {
     case 'active':
       return 'bg-accent text-accent-content border-accent shadow-lg shadow-accent/30'
     default: // inactive
-      return 'bg-base-100 text-sage-400 border-primary-stroke group-data-[disabled]:opacity-50 group-data-[disabled]:cursor-not-allowed'
+      return 'bg-white text-sage-400 border-primary-lighter-stroke group-data-[disabled]:opacity-50 group-data-[disabled]:cursor-not-allowed'
   }
 }
 

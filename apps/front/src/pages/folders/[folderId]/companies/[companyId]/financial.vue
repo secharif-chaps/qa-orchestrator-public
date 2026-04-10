@@ -10,7 +10,7 @@
 
     <!-- No Data State -->
     <NoData v-else-if="company && !hasFinancialData">
-      <p class="text-secondary text-lg font-medium">
+      <p class="text-neutral-black-font text-lg font-medium">
         {{ $t('screen.profile.sections.financial.noData') }}
       </p>
     </NoData>

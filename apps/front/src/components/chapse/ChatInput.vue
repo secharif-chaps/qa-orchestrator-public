@@ -34,7 +34,7 @@
           v-model="message"
           :placeholder="placeholder"
           :disabled="disabled"
-          class="bg-sage-50 dark:bg-sage-900 border-sage-300 text-sage-950 dark:text-sage-100 placeholder-sage-500 focus:ring-primary/50 max-h-[200px] min-h-[80px] w-full resize-none rounded-xl border p-4 pr-14 text-sm focus:ring-2 focus:outline-none disabled:opacity-50"
+          class="bg-sage-50 dark:bg-sage-900 border-sage-300 text-sage-950 dark:text-sage-100 placeholder-sage-500 focus:ring-primary/50 max-h-[200px] min-h-[80px] w-full resize-none rounded-md border p-4 pr-14 text-sm focus:ring-2 focus:outline-none disabled:opacity-50"
           @keydown.enter.ctrl.prevent="handleSend"
           @keydown.enter.meta.prevent="handleSend"
           @input="autoResize"

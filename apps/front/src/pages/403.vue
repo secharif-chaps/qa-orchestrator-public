@@ -1,24 +1,24 @@
 <template>
-  <div class="bg-base-300 flex min-h-screen items-center justify-center">
+  <div class="bg-primary-lighter flex min-h-screen items-center justify-center">
     <div class="text-center">
       <div class="mb-8">
-        <h1 class="text-secondary text-6xl font-bold">403</h1>
+        <h1 class="text-neutral-black-font text-6xl font-bold">403</h1>
 
         <!-- Token-specific error messages -->
         <div v-if="isTokenError">
           <h2 class="mt-4 text-2xl font-semibold">
             {{ tokenErrorTitle }}
           </h2>
-          <p class="text-secondary mt-2">
+          <p class="text-neutral-black-font mt-2">
             {{ tokenErrorMessage }}
           </p>
 
           <!-- Token status display -->
           <div
             v-if="errorModule"
-            class="bg-base-200 mt-4 inline-flex items-center gap-2 rounded-lg px-4 py-2"
+            class="bg-primary-lightest mt-4 inline-flex items-center gap-2 rounded-sm px-4 py-2"
           >
-            <i class="fa fa-coins text-secondary"></i>
+            <i class="fa fa-coins text-neutral-black-font"></i>
             <span class="text-sm">
               <span class="font-medium capitalize">{{ errorModule }}</span> Module
               <span v-if="reason === 'module_disabled'" class="ml-2 text-red-600"
@@ -36,7 +36,7 @@
           <h2 class="mt-4 text-2xl font-semibold">
             {{ $t('common.errors.forbidden.title') }}
           </h2>
-          <p class="text-secondary mt-2">
+          <p class="text-neutral-black-font mt-2">
             {{ $t('common.errors.forbidden.message') }}
           </p>
         </div>
@@ -55,7 +55,7 @@
         />
       </div>
 
-      <div class="text-secondary mt-8 text-sm">
+      <div class="text-neutral-black-font mt-8 text-sm">
         <p>
           {{ $t('common.errors.forbidden.contact') }}
         </p>
@@ -65,10 +65,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { Button } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const { t } = useI18n()

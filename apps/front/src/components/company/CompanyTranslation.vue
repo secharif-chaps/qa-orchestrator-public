@@ -20,7 +20,7 @@
         </div>
       </DropdownItem>
       <!-- Separator -->
-      <div class="border-base-300 my-1 border-t" />
+      <div class="border-primary-lighter-stroke my-1 border-t" />
       <!-- Language options -->
       <DropdownItem
         v-for="lang in translationLanguages"
@@ -43,7 +43,7 @@
           <!-- Download icon for untranslated -->
           <i
             v-else-if="getLanguageStatus(lang.code) === 'none'"
-            class="fa fa-download text-secondary"
+            class="fa fa-download text-neutral-black-font"
             :title="t('screen.company.translation.clickToTranslate')"
           />
           <!-- Eye icon for currently viewing -->
@@ -65,18 +65,18 @@
 </template>
 
 <script lang="ts" setup>
-import { Button } from '@owlint/feathers-vue'
+import type { TranslationJob } from '@/api/translation'
+import { requestTranslation } from '@/api/translation'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
-import { translationLanguagesQuery, companyTranslationStatusQuery } from '@/queries/translation'
 import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
 import { currentOrganizationQuery } from '@/queries/organization'
-import { requestTranslation } from '@/api/translation'
-import { useQuery } from '@pinia/colada'
-import { computed, ref, watch, onUnmounted } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { companyTranslationStatusQuery, translationLanguagesQuery } from '@/queries/translation'
 import { toast } from '@/utils/toast'
-import type { TranslationJob } from '@/api/translation'
+import { Button } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   companyId: string

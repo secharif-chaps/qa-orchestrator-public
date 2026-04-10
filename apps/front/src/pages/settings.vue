@@ -4,7 +4,7 @@
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-2xl font-bold">{{ $t('settings.title') }}</h1>
-        <p class="text-secondary mt-1">{{ $t('settings.description') }}</p>
+        <p class="text-neutral-black-font mt-1">{{ $t('settings.description') }}</p>
       </div>
 
       <!-- Navigation Tabs (only show when on a subpage) -->
@@ -24,11 +24,11 @@
         v-for="section in sections"
         :key="section.id"
         :to="`/settings/${section.id}`"
-        class="group bg-base-100 border-primary-stroke rounded-card hover:border-primary/50 hover:shadow-shadow-2 flex h-full flex-col border p-6 transition-all duration-200"
+        class="group border-primary-lighter-stroke rounded-card hover:border-primary/50 hover:shadow-2 flex h-full flex-col border bg-white p-6 transition-all duration-200"
       >
         <!-- Icon -->
         <div
-          class="flex h-12 w-12 items-center justify-center rounded-lg transition-colors"
+          class="flex h-12 w-12 items-center justify-center rounded-sm transition-colors"
           :class="section.bgColor"
         >
           <i :class="[section.icon, 'text-xl', section.iconColor]"></i>
@@ -39,14 +39,14 @@
           <h3 class="group-hover:text-primary text-lg font-semibold transition-colors">
             {{ section.title }}
           </h3>
-          <p class="text-secondary text-sm">
+          <p class="text-neutral-black-font text-sm">
             {{ section.description }}
           </p>
         </div>
 
         <!-- Arrow - Always at bottom -->
         <div
-          class="text-secondary group-hover:text-primary border-primary-stroke/50 mt-4 flex items-center border-t pt-4 transition-colors"
+          class="text-neutral-black-font group-hover:text-primary border-primary-lighter-stroke/50 mt-4 flex items-center border-t pt-4 transition-colors"
         >
           <span class="text-sm font-medium">{{ $t('settings.viewSection') }}</span>
           <i
@@ -59,11 +59,11 @@
 </template>
 
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
 import { Tab } from '@owlint/feathers-vue'
 import { computed } from 'vue'
-import { RouterView, RouterLink, useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useAuthStore } from '@/stores/auth'
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()

@@ -6,17 +6,17 @@
     <div class="relative">
       <button
         type="button"
-        class="bg-base-200 border-primary-stroke hover:border-primary/50 flex w-full items-center gap-3 rounded-lg border px-4 py-3 transition-colors"
+        class="bg-primary-lightest border-primary-lighter-stroke hover:border-primary/50 flex w-full items-center gap-3 rounded-sm border px-4 py-3 transition-colors"
         @click="showDropdown = !showDropdown"
       >
         <div
           :class="getSelectedIconColorClasses()"
-          class="flex h-10 w-10 items-center justify-center rounded-lg"
+          class="flex h-10 w-10 items-center justify-center rounded-sm"
         >
           <i :class="selectedIcon" class="text-lg"></i>
         </div>
         <span class="flex-1 text-left">{{ getIconDisplayName(selectedIcon) }}</span>
-        <i class="fas fa-chevron-down text-secondary"></i>
+        <i class="fas fa-chevron-down text-neutral-black-font"></i>
       </button>
 
       <!-- Backdrop -->
@@ -25,21 +25,21 @@
       <!-- Icon Grid Dropdown -->
       <div
         v-if="showDropdown"
-        class="bg-base-100 border-primary-stroke absolute top-full z-50 mt-2 rounded-lg border p-4 shadow-lg"
+        class="border-primary-lighter-stroke absolute top-full z-50 mt-2 rounded-sm border bg-white p-4 shadow-lg"
       >
         <div class="grid grid-cols-5 gap-2">
           <button
             v-for="icon in availableIcons"
             :key="icon.class"
             type="button"
-            class="hover:bg-base-200 flex h-12 w-12 items-center justify-center rounded-lg border-2 transition-all"
+            class="hover:bg-primary-lightest flex h-12 w-12 items-center justify-center rounded-sm border-2 transition-all"
             :class="
               selectedIcon === icon.class ? 'border-primary bg-primary/10' : 'border-transparent'
             "
             @click="selectIcon(icon.class)"
             :title="icon.name"
           >
-            <i :class="icon.class" class="text-secondary text-lg"></i>
+            <i :class="icon.class" class="text-neutral-black-font text-lg"></i>
           </button>
         </div>
       </div>
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 
 interface Props {
   modelValue?: string

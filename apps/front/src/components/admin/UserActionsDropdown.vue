@@ -6,27 +6,27 @@
 
     <template #content="{ close }">
       <button
-        class="hover:bg-base-200 flex w-full items-center gap-3 px-4 py-2 text-base text-sm transition-colors"
+        class="hover:bg-primary-lightest flex w-full items-center gap-3 px-4 py-2 text-base text-sm transition-colors"
         @click="handleChangeOrganization(close)"
       >
-        <Icon icon="fa-building" class="text-secondary" />
+        <Icon icon="fa-building" class="text-neutral-black-font" />
         <span class="flex-1 text-left">{{ t('admin.userActions.changeOrganization') }}</span>
       </button>
 
       <button
-        class="hover:bg-base-200 flex w-full items-center gap-3 px-4 py-2 text-base text-sm transition-colors"
+        class="hover:bg-primary-lightest flex w-full items-center gap-3 px-4 py-2 text-base text-sm transition-colors"
         @click="handleManagePermissions(close)"
       >
-        <Icon icon="fa-shield" class="text-secondary" />
+        <Icon icon="fa-shield" class="text-neutral-black-font" />
         <span class="flex-1 text-left">{{ t('admin.userActions.managePermissions') }}</span>
       </button>
 
-      <div class="border-primary-stroke my-1 border-t"></div>
+      <div class="border-primary-lighter-stroke my-1 border-t"></div>
 
       <!-- Show Enable User if user is revoked, otherwise show Disable User -->
       <button
         v-if="isRevoked"
-        class="text-success hover:bg-base-200 flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
+        class="text-success hover:bg-primary-lightest flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
         @click="handleEnableUser(close)"
       >
         <Icon icon="fa-user-check" class="text-success" />
@@ -35,7 +35,7 @@
 
       <button
         v-else
-        class="text-warning hover:bg-base-200 flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
+        class="text-warning hover:bg-primary-lightest flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
         @click="handleDisableUser(close)"
       >
         <Icon icon="fa-user-slash" class="text-warning" />
@@ -43,7 +43,7 @@
       </button>
 
       <button
-        class="text-info hover:bg-base-200 flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
+        class="text-info hover:bg-primary-lightest flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
         @click="handleResetPassword(close)"
       >
         <Icon icon="fa-key" class="text-info" />
@@ -54,10 +54,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import { Button, Icon } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 

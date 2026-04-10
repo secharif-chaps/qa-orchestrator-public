@@ -1,10 +1,10 @@
 <template>
-  <div class="border-base-200 border-b pb-6 last:border-b-0 last:pb-0">
+  <div class="border-primary-lightest border-b pb-6 last:border-b-0 last:pb-0">
     <div class="mb-4 flex items-center gap-3">
       <Badge :icon="categoryIcon" variant="secondary" size="lg" rounded class="shrink-0"> </Badge>
       <div class="flex-1">
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
-        <p class="text-secondary text-sm">
+        <p class="text-neutral-black-font text-sm">
           {{ t('screen.products.countInCategory', { count: productList.length }) }}
         </p>
       </div>
@@ -15,9 +15,9 @@
       <div
         v-for="(product, index) in productList"
         :key="index"
-        class="bg-base-300 flex items-center gap-2 rounded p-2 text-sm"
+        class="bg-primary-lighter flex items-center gap-2 rounded p-2 text-sm"
       >
-        <span class="text-secondary flex-1 capitalize">{{ product }}</span>
+        <span class="text-neutral-black-font flex-1 capitalize">{{ product }}</span>
         <Tag v-if="isNewProduct(product)" variant="success" size="xs">
           <i class="fa-solid fa-star"></i>
           {{ t('screen.products.badges.new') }}

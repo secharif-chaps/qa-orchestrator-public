@@ -1,6 +1,6 @@
 <template>
   <div
-    class="border-sage-300 dark:bg-sage-800/50 dark:hover:bg-sage-800 rounded-lg border bg-white p-3 transition-colors"
+    class="border-sage-300 dark:bg-sage-800/50 dark:hover:bg-sage-800 rounded-sm border bg-white p-3 transition-colors"
   >
     <div class="flex items-start gap-3">
       <Badge variant="secondary" color="indigo" icon="fa-building" />

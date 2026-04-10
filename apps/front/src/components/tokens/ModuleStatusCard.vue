@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-lg border p-4">
+  <div class="border-primary-lighter-stroke rounded-sm border bg-white p-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
         <!-- Module Icon -->
@@ -16,7 +16,7 @@
           <h3 class="font-medium capitalize">
             {{ $t(`settings.tokens.modules.${module}.name`, module) }}
           </h3>
-          <p class="text-secondary text-sm">
+          <p class="text-neutral-black-font text-sm">
             {{ moduleDescription }}
           </p>
         </div>
@@ -34,11 +34,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useToggleModule } from '@/mutations/tokens'
 import type { ModuleName } from '@/types/tokens'
 import { Badge, Switch } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 

@@ -7,31 +7,31 @@
       </h2>
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
-          <label class="text-secondary mb-1 block text-sm font-medium">{{
+          <label class="text-neutral-black-font mb-1 block text-sm font-medium">{{
             $t('admin.organization.name')
           }}</label>
           <p class="text-base font-medium">{{ organization?.name }}</p>
         </div>
         <div>
-          <label class="text-secondary mb-1 block text-sm font-medium">{{
+          <label class="text-neutral-black-font mb-1 block text-sm font-medium">{{
             $t('admin.organization.id')
           }}</label>
-          <code class="bg-base-300 rounded px-2 py-1 text-sm">{{ organization?.id }}</code>
+          <code class="bg-primary-lighter rounded px-2 py-1 text-sm">{{ organization?.id }}</code>
         </div>
         <div class="md:col-span-2" v-if="organization?.description">
-          <label class="text-secondary mb-1 block text-sm font-medium">{{
+          <label class="text-neutral-black-font mb-1 block text-sm font-medium">{{
             $t('admin.organization.description')
           }}</label>
           <p class="text-base">{{ organization?.description }}</p>
         </div>
         <div v-if="organization?.created_at">
-          <label class="text-secondary mb-1 block text-sm font-medium">{{
+          <label class="text-neutral-black-font mb-1 block text-sm font-medium">{{
             $t('admin.organization.created')
           }}</label>
           <p class="text-base">{{ formatDateTime(organization.created_at) }}</p>
         </div>
         <div v-if="organization?.updated_at">
-          <label class="text-secondary mb-1 block text-sm font-medium">{{
+          <label class="text-neutral-black-font mb-1 block text-sm font-medium">{{
             $t('admin.organization.updated')
           }}</label>
           <p class="text-base">{{ formatDateTime(organization.updated_at) }}</p>
@@ -68,7 +68,7 @@
       <h2 class="mb-4 text-xl font-semibold">
         {{ $t('settings.featureFlags.globalFeatures') }}
       </h2>
-      <p class="text-secondary mb-4 text-sm">
+      <p class="text-neutral-black-font mb-4 text-sm">
         {{ $t('settings.featureFlags.description') }}
       </p>
 
@@ -94,16 +94,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from 'vue'
-import { useQuery } from '@pinia/colada'
-import Card from '@/components/ui/Card.vue'
-import ModuleStatusCard from '@/components/tokens/ModuleStatusCard.vue'
 import FeatureFlagCard from '@/components/tokens/FeatureFlagCard.vue'
-import { organizationModulesQuery } from '@/queries/tokens'
+import ModuleStatusCard from '@/components/tokens/ModuleStatusCard.vue'
+import Card from '@/components/ui/Card.vue'
 import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
-import { formatDateTime } from '@/utils/time'
-import type { OrganizationAdminResponse } from '@/types/organization'
+import { organizationModulesQuery } from '@/queries/tokens'
 import type { FeatureFlagName } from '@/types/feature-flags'
+import type { OrganizationAdminResponse } from '@/types/organization'
+import { formatDateTime } from '@/utils/time'
+import { useQuery } from '@pinia/colada'
+import { computed, inject } from 'vue'
 
 // Inject organization data from parent layout
 const organization =

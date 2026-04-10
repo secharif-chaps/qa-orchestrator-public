@@ -18,7 +18,7 @@
     >
       <div
         v-if="isOpen"
-        class="bg-sage-800 border-sage-700 absolute z-9999 mt-1 w-[145px] overflow-hidden rounded-xl border shadow-lg"
+        class="bg-sage-800 border-sage-700 absolute z-9999 mt-1 w-[145px] overflow-hidden rounded-md border shadow-lg"
         :class="dropdownPosition"
       >
         <!-- Search Input -->
@@ -32,7 +32,7 @@
               v-model="searchQuery"
               type="text"
               :placeholder="$t('common.sidebar.chapse.searchCompanies')"
-              class="bg-sage-900 text-sage-100 placeholder-sage-500 focus:ring-primary/50 w-full rounded-lg py-1.5 pr-2 pl-7 text-xs focus:ring-2 focus:outline-none"
+              class="bg-sage-900 text-sage-100 placeholder-sage-500 focus:ring-primary/50 w-full rounded-sm py-1.5 pr-2 pl-7 text-xs focus:ring-2 focus:outline-none"
               @input="handleSearch"
             />
           </div>

@@ -15,7 +15,7 @@
           <Icon icon="fa-shield-check" />
           {{ $t('screen.profile.sections.sanctions.clean') }}
         </span>
-        <p class="text-secondary text-sm">
+        <p class="text-neutral-black-font text-sm">
           {{ $t('screen.profile.sections.sanctions.noData') }}
         </p>
       </div>
@@ -25,7 +25,7 @@
     <div v-else class="flex flex-col gap-6">
       <!-- Section Header with Overall Risk -->
       <div class="flex items-center justify-between">
-        <h3 class="text-secondary flex items-center gap-2 font-bold">
+        <h3 class="text-neutral-black-font flex items-center gap-2 font-bold">
           <Icon icon="fa-shield-halved" />
           <span>{{ $t('screen.profile.sections.sanctions.title') }}</span>
         </h3>
@@ -40,8 +40,8 @@
       </div>
 
       <!-- Insights -->
-      <div v-if="sanctionsData?.insights" class="bg-base-100 rounded-lg p-4">
-        <p class="text-secondary text-sm leading-relaxed">
+      <div v-if="sanctionsData?.insights" class="rounded-sm bg-white p-4">
+        <p class="text-neutral-black-font text-sm leading-relaxed">
           {{ sanctionsData.insights }}
         </p>
       </div>
@@ -49,19 +49,19 @@
       <!-- Overall Risk Justification -->
       <div
         v-if="sanctionsData?.overall_risk_justification"
-        class="border-primary-stroke rounded-lg border p-4"
+        class="border-primary-lighter-stroke rounded-sm border p-4"
       >
-        <p class="text-secondary text-xs font-medium tracking-wider uppercase">
+        <p class="text-neutral-black-font text-xs font-medium tracking-wider uppercase">
           {{ $t('screen.profile.sections.sanctions.riskAssessment') }}
         </p>
-        <p class="text-secondary mt-1 text-sm">
+        <p class="text-neutral-black-font mt-1 text-sm">
           {{ sanctionsData.overall_risk_justification }}
         </p>
       </div>
 
       <!-- Sanctions Items Table -->
       <div v-if="sanctionsData?.items?.length" class="flex flex-col gap-3">
-        <p class="text-secondary text-sm font-semibold">
+        <p class="text-neutral-black-font text-sm font-semibold">
           {{
             $t('screen.profile.sections.sanctions.itemsCount', {
               count: sanctionsData.items.length,
@@ -73,7 +73,7 @@
           <div
             v-for="(item, index) in sortedItems"
             :key="index"
-            class="bg-base-100 border-primary-stroke rounded-lg border"
+            class="border-primary-lighter-stroke rounded-sm border bg-white"
           >
             <!-- Item Header -->
             <button
@@ -93,7 +93,7 @@
                 <div class="flex min-w-0 flex-1 flex-col gap-0.5">
                   <div class="flex items-center gap-2">
                     <span class="text-sm font-semibold">{{ item.entity_name }}</span>
-                    <span v-if="item.country" class="text-secondary text-xs">
+                    <span v-if="item.country" class="text-neutral-black-font text-xs">
                       ({{ item.country }})
                     </span>
                     <span
@@ -103,19 +103,19 @@
                       ONU/EU/OFAC
                     </span>
                   </div>
-                  <span v-if="item.sanction_type" class="text-secondary text-xs">
+                  <span v-if="item.sanction_type" class="text-neutral-black-font text-xs">
                     {{ formatSanctionType(item.sanction_type) }}
                   </span>
                 </div>
               </div>
 
               <div class="flex items-center gap-3">
-                <span v-if="item.date" class="text-secondary text-xs">
+                <span v-if="item.date" class="text-neutral-black-font text-xs">
                   {{ item.date }}
                 </span>
                 <Icon
                   :icon="expandedItems.has(index) ? 'fa-chevron-up' : 'fa-chevron-down'"
-                  class="text-secondary text-xs transition-transform duration-200"
+                  class="text-neutral-black-font text-xs transition-transform duration-200"
                 />
               </div>
             </button>
@@ -123,35 +123,37 @@
             <!-- Expanded Details -->
             <div
               v-if="expandedItems.has(index)"
-              class="border-primary-stroke flex flex-col gap-3 border-t px-4 py-3"
+              class="border-primary-lighter-stroke flex flex-col gap-3 border-t px-4 py-3"
             >
-              <p v-if="item.description" class="text-secondary text-sm">
+              <p v-if="item.description" class="text-neutral-black-font text-sm">
                 {{ item.description }}
               </p>
 
               <div v-if="item.sanction_nature" class="flex items-start gap-2">
-                <span class="text-secondary text-xs font-medium">
+                <span class="text-neutral-black-font text-xs font-medium">
                   {{ $t('screen.profile.sections.sanctions.nature') }}:
                 </span>
-                <span class="text-secondary text-xs">{{ item.sanction_nature }}</span>
+                <span class="text-neutral-black-font text-xs">{{ item.sanction_nature }}</span>
               </div>
 
               <div v-if="item.source_code" class="flex items-start gap-2">
-                <span class="text-secondary text-xs font-medium">
+                <span class="text-neutral-black-font text-xs font-medium">
                   {{ $t('screen.profile.sections.sanctions.sourceCode') }}:
                 </span>
-                <span class="text-secondary font-mono text-xs">{{ item.source_code }}</span>
+                <span class="text-neutral-black-font font-mono text-xs">{{
+                  item.source_code
+                }}</span>
               </div>
 
               <div v-if="item.risk_justification" class="flex items-start gap-2">
-                <span class="text-secondary text-xs font-medium">
+                <span class="text-neutral-black-font text-xs font-medium">
                   {{ $t('screen.profile.sections.sanctions.riskJustification') }}:
                 </span>
-                <span class="text-secondary text-xs">{{ item.risk_justification }}</span>
+                <span class="text-neutral-black-font text-xs">{{ item.risk_justification }}</span>
               </div>
 
               <div v-if="item.weblinks?.length" class="flex flex-col gap-1">
-                <span class="text-secondary text-xs font-medium">
+                <span class="text-neutral-black-font text-xs font-medium">
                   {{ $t('screen.profile.sections.sanctions.sources') }}:
                 </span>
                 <div class="flex flex-col gap-1">
@@ -185,12 +187,12 @@ meta:
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import NoData from '@/components/ui/NoData.vue'
-import { Icon } from '@owlint/feathers-vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
+import { Icon } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
-import { computed, inject, ref, reactive } from 'vue'
 import type { Ref } from 'vue'
+import { computed, inject, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
@@ -273,7 +275,7 @@ const getRiskBadgeClass = (level: string): string => {
     case 'critical':
       return 'bg-error text-error-content'
     default:
-      return 'bg-base-200 text-secondary'
+      return 'bg-primary-lightest text-neutral-black-font'
   }
 }
 

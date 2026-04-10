@@ -1,10 +1,10 @@
 <template>
   <div
-    class="bg-sage-light border-primary-stroke rounded-lg border p-4 transition-all duration-300"
+    class="bg-sage-light border-primary-lighter-stroke rounded-sm border p-4 transition-all duration-300"
   >
     <div class="flex items-start justify-between">
       <div>
-        <h3 class="text-secondary text-lg font-semibold">
+        <h3 class="text-neutral-black-font text-lg font-semibold">
           {{ jobTitle }}
         </h3>
         <div class="mt-2 space-y-2">
@@ -20,7 +20,7 @@
           >
             {{ jobDepartment }}
           </Tag>
-          <div v-if="jobPostedDate" class="text-secondary flex items-center text-sm">
+          <div v-if="jobPostedDate" class="text-neutral-black-font flex items-center text-sm">
             <i class="fa fa-calendar w-4"></i>
             {{ t('screen.jobs.card.postedDate') }} {{ jobPostedDate }}
           </div>
@@ -30,14 +30,14 @@
 
     <div v-if="jobDescription" class="mt-4">
       <h4 class="mb-2 font-medium">{{ t('screen.jobs.card.description') }}</h4>
-      <p class="text-secondary text-sm">
+      <p class="text-neutral-black-font text-sm">
         {{ jobDescription }}
       </p>
     </div>
 
     <div v-if="jobRequirements" class="mt-4">
       <h4 class="mb-2 font-medium">{{ t('screen.jobs.card.requirements') }}</h4>
-      <p class="text-secondary text-sm">
+      <p class="text-neutral-black-font text-sm">
         {{ jobRequirements }}
       </p>
     </div>
@@ -49,11 +49,11 @@
 </template>
 
 <script lang="ts" setup>
+import type { SourcedValue } from '@/types/company'
+import { Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Source from '../Source.vue'
-import type { SourcedValue } from '@/types/company'
-import { Tag } from '@owlint/feathers-vue'
 
 const { t } = useI18n()
 

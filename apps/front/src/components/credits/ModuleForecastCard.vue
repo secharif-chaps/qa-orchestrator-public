@@ -1,10 +1,10 @@
 <template>
   <div
-    class="rounded-xl border p-4"
+    class="rounded-md border p-4"
     :class="[
       forecast.enabled
         ? [moduleConfig.cardBg, moduleConfig.cardBorder]
-        : 'bg-base-100 border-base-300',
+        : 'border-primary-lighter-stroke bg-white',
       { 'opacity-60': !forecast.enabled },
     ]"
   >
@@ -13,20 +13,23 @@
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div
-            class="flex h-10 w-10 items-center justify-center rounded-lg"
-            :class="forecast.enabled ? moduleConfig.iconBg : 'bg-base-200'"
+            class="flex h-10 w-10 items-center justify-center rounded-sm"
+            :class="forecast.enabled ? moduleConfig.iconBg : 'bg-primary-lightest'"
           >
             <i
               :class="[
                 moduleConfig.icon,
-                forecast.enabled ? moduleConfig.iconText : 'text-secondary',
+                forecast.enabled ? moduleConfig.iconText : 'text-neutral-black-font',
               ]"
             ></i>
           </div>
           <h4 class="text-base font-semibold">{{ moduleLabel }}</h4>
         </div>
         <!-- Refresh icon for enabled, disabled badge for disabled -->
-        <button v-if="forecast.enabled" class="text-secondary hover:text-primary transition-colors">
+        <button
+          v-if="forecast.enabled"
+          class="text-neutral-black-font hover:text-primary transition-colors"
+        >
           <i class="fa fa-rotate-right"></i>
         </button>
         <Tag v-else variant="secondary" size="sm" :label="$t('settings.credits.module.disabled')" />
@@ -35,7 +38,7 @@
       <!-- Enabled state with count -->
       <template v-if="forecast.enabled">
         <!-- Cost per item info -->
-        <div v-if="forecast.cost" class="text-secondary flex items-center gap-2 text-sm">
+        <div v-if="forecast.cost" class="text-neutral-black-font flex items-center gap-2 text-sm">
           <i class="fa fa-circle-info"></i>
           <span>{{
             $t('settings.credits.module.costPerItem', {
@@ -46,11 +49,13 @@
         </div>
 
         <!-- Remaining info -->
-        <div class="text-secondary text-sm">{{ $t('settings.credits.module.canCreate') }} :</div>
+        <div class="text-neutral-black-font text-sm">
+          {{ $t('settings.credits.module.canCreate') }} :
+        </div>
 
         <!-- Remaining count pill - smaller with white background -->
         <div
-          class="border-base-300 inline-flex w-fit items-center rounded-full border bg-white px-3 py-1.5 shadow-sm"
+          class="border-primary-lighter-stroke inline-flex w-fit items-center rounded-full border bg-white px-3 py-1.5 shadow-sm"
         >
           <span class="text-base-content text-sm font-medium">
             {{ formattedCount }} {{ itemPluralLabel }}
@@ -66,10 +71,10 @@
  * Single module forecast card showing remaining capacity.
  * Displays how many more items can be created with remaining credits.
  */
+import type { ModuleForecast, ModuleName } from '@/types/credits'
+import { Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Tag } from '@owlint/feathers-vue'
-import type { ModuleForecast, ModuleName } from '@/types/credits'
 
 const { t } = useI18n()
 

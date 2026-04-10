@@ -11,10 +11,13 @@
 
       <div class="mt-4 flex flex-col gap-6">
         <!-- Company Info Display -->
-        <div v-if="company" class="bg-base-200 border-primary-stroke rounded-lg border p-4">
+        <div
+          v-if="company"
+          class="bg-primary-lightest border-primary-lighter-stroke rounded-sm border p-4"
+        >
           <div class="flex items-center gap-3">
             <div
-              class="bg-base-100 border-primary-stroke flex h-12 w-12 items-center justify-center rounded-lg border"
+              class="border-primary-lighter-stroke flex h-12 w-12 items-center justify-center rounded-sm border bg-white"
             >
               <img
                 v-if="companyLogoUrl"
@@ -22,11 +25,13 @@
                 :alt="`${company.name} logo`"
                 class="h-10 w-10 object-contain"
               />
-              <i v-else class="fa fa-building text-secondary text-2xl"></i>
+              <i v-else class="fa fa-building text-neutral-black-font text-2xl"></i>
             </div>
             <div>
               <div class="font-medium">{{ company.name }}</div>
-              <div v-if="company.website" class="text-secondary text-xs">{{ company.website }}</div>
+              <div v-if="company.website" class="text-neutral-black-font text-xs">
+                {{ company.website }}
+              </div>
             </div>
           </div>
         </div>
@@ -47,7 +52,7 @@
         <!-- Folder List -->
         <div class="flex flex-col gap-3">
           <!-- Loading state -->
-          <div v-if="isLoadingFolders" class="text-secondary py-8 text-center">
+          <div v-if="isLoadingFolders" class="text-neutral-black-font py-8 text-center">
             <i class="fa fa-spinner fa-spin mr-2"></i>
             {{ $t('common.loading') }}
           </div>
@@ -55,7 +60,7 @@
           <!-- Error state -->
           <div
             v-else-if="folderError"
-            class="bg-error-light text-error-light-content border-error-stroke rounded-lg border p-4 text-sm"
+            class="bg-error-light text-error-light-content border-error-stroke rounded-sm border p-4 text-sm"
           >
             <i class="fa fa-exclamation-triangle mr-2"></i>
             {{ $t('common.folder.moveCompany.loadError') }}
@@ -64,7 +69,7 @@
           <!-- Empty state -->
           <div
             v-else-if="!writableFolders || writableFolders.length === 0"
-            class="text-secondary bg-base-200 rounded-lg py-8 text-center"
+            class="text-neutral-black-font bg-primary-lightest rounded-sm py-8 text-center"
           >
             <i class="fa fa-folder-open mb-3 text-3xl opacity-50"></i>
             <p>{{ $t('common.folder.moveCompany.noFolders') }}</p>
@@ -73,28 +78,29 @@
           <!-- Folder list -->
           <div
             v-else
-            class="border-primary-stroke divide-primary-stroke max-h-96 divide-y overflow-y-auto rounded-lg border"
+            class="border-primary-lighter-stroke divide-primary-stroke max-h-96 divide-y overflow-y-auto rounded-sm border"
           >
             <button
               v-for="folder in writableFolders"
               :key="folder.id"
               type="button"
-              class="hover:bg-base-200 flex w-full items-center justify-between p-4 text-left transition-colors"
+              class="hover:bg-primary-lightest flex w-full items-center justify-between p-4 text-left transition-colors"
               :class="{
-                'bg-primary-light border-primary-stroke border-2': selectedFolderId === folder.id,
+                'bg-primary-light border-primary-lighter-stroke border-2':
+                  selectedFolderId === folder.id,
               }"
               @click="selectFolder(folder.id)"
             >
               <div class="flex items-center gap-3">
                 <div
-                  class="flex h-10 w-10 items-center justify-center rounded-lg"
+                  class="flex h-10 w-10 items-center justify-center rounded-sm"
                   :style="{ backgroundColor: getFolderColor(folder.color) }"
                 >
                   <i :class="folder.icon || 'fa fa-folder'" class="text-lg text-white"></i>
                 </div>
                 <div>
                   <div class="font-medium">{{ folder.name }}</div>
-                  <div class="text-secondary text-xs">
+                  <div class="text-neutral-black-font text-xs">
                     {{ folder.items?.length || 0 }} {{ $t('common.folder.items') }}
                   </div>
                 </div>
@@ -142,13 +148,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { refDebounced } from '@vueuse/core'
+import { foldersQuery } from '@/queries/folders'
+import type { Folder, FolderItem } from '@/types/folder'
 import { Button, Label, Modal, Searchbar, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
+import { refDebounced } from '@vueuse/core'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { foldersQuery } from '@/queries/folders'
-import type { FolderItem, Folder } from '@/types/folder'
 
 interface Props {
   company: FolderItem | null

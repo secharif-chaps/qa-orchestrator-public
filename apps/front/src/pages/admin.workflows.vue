@@ -8,7 +8,7 @@
             <h1 class="text-3xl font-bold">
               {{ $t('admin.workflows.title') }}
             </h1>
-            <p class="text-secondary mt-2">
+            <p class="text-neutral-black-font mt-2">
               {{ $t('admin.workflows.description') }}
             </p>
           </div>
@@ -24,7 +24,7 @@
 
         <!-- Status Overview -->
         <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div class="bg-base-100 border-primary-stroke rounded-lg border p-4">
+          <div class="border-primary-lighter-stroke rounded-sm border bg-white p-4">
             <div class="flex items-center">
               <Tag variant="success" icon="fa fa-check" size="sm" />
               <span class="ml-3 text-sm font-medium"
@@ -32,7 +32,7 @@
               >
             </div>
           </div>
-          <div class="bg-base-100 border-primary-stroke rounded-lg border p-4">
+          <div class="border-primary-lighter-stroke rounded-sm border bg-white p-4">
             <div class="flex items-center">
               <Tag variant="slate" icon="fa fa-times" size="sm" />
               <span class="ml-3 text-sm font-medium"
@@ -46,8 +46,8 @@
       <!-- Loading State -->
       <div v-if="loading && !workflows.length" class="flex justify-center py-16">
         <div class="text-center">
-          <i class="fa fa-spinner text-secondary mb-4 animate-spin text-4xl"></i>
-          <p class="text-secondary">
+          <i class="fa fa-spinner text-neutral-black-font mb-4 animate-spin text-4xl"></i>
+          <p class="text-neutral-black-font">
             {{ $t('admin.workflows.loading') }}
           </p>
         </div>
@@ -77,7 +77,7 @@
       <!-- Success Toast -->
       <div
         v-if="showSuccessToast"
-        class="bg-success fixed right-4 bottom-4 z-50 rounded-lg px-4 py-3 text-white shadow-lg transition-all duration-300"
+        class="bg-success fixed right-4 bottom-4 z-50 rounded-sm px-4 py-3 text-white shadow-lg transition-all duration-300"
       >
         <div class="flex items-center">
           <i class="fa fa-check-circle mr-2"></i>
@@ -95,11 +95,11 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
 import { workflowsApi, type WorkflowConfig } from '@/api/workflows'
-import { Alert, Button } from '@owlint/feathers-vue'
-import Tag from '@/components/ui/Tag.vue'
 import WorkflowCard from '@/components/admin/WorkflowCard.vue'
+import Tag from '@/components/ui/Tag.vue'
+import { Alert, Button } from '@owlint/feathers-vue'
+import { computed, onMounted, ref } from 'vue'
 
 // Reactive state
 const workflows = ref<WorkflowConfig[]>([])

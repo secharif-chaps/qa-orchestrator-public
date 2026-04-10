@@ -1,10 +1,10 @@
 <template>
   <div
-    class="bg-base-100/20 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-white/20 backdrop-blur-sm"
     @click.self="handleClose"
   >
     <div
-      class="bg-base-100 border-primary-stroke mx-4 w-full max-w-md rounded-xl border p-6 shadow-2xl"
+      class="border-primary-lighter-stroke mx-4 w-full max-w-112 rounded-md border bg-white p-6 shadow-2xl"
     >
       <!-- Header -->
       <div class="mb-6 flex items-center justify-between">
@@ -26,7 +26,7 @@
 
         <!-- New Password Display -->
         <div class="mb-6">
-          <label class="text-secondary mb-2 block text-sm font-medium">
+          <label class="text-neutral-black-font mb-2 block text-sm font-medium">
             {{ $t('settings.user.resetPassword.newPassword') }}
           </label>
           <div class="flex gap-2">
@@ -35,11 +35,11 @@
                 :type="showPassword ? 'text' : 'password'"
                 :value="newPassword"
                 readonly
-                class="border-primary-stroke bg-base-200 w-full rounded-lg border px-3 py-2 pr-10 font-mono text-sm"
+                class="border-primary-lighter-stroke bg-primary-lightest w-full rounded-sm border px-3 py-2 pr-10 font-mono text-sm"
               />
               <button
                 type="button"
-                class="text-secondary absolute top-1/2 right-3 -translate-y-1/2 transform hover:text-base"
+                class="text-neutral-black-font absolute top-1/2 right-3 -translate-y-1/2 transform hover:text-base"
                 @click="showPassword = !showPassword"
               >
                 <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
@@ -63,7 +63,7 @@
       <template v-else>
         <!-- User Info -->
         <div class="mb-6">
-          <p class="text-secondary text-sm">
+          <p class="text-neutral-black-font text-sm">
             {{ $t('settings.user.resetPassword.description') }}
             <span class="font-semibold">{{ memberDisplayName }}</span>
           </p>
@@ -71,7 +71,7 @@
 
         <!-- Password Input -->
         <div class="mb-4">
-          <label class="text-secondary mb-2 block text-sm font-medium">
+          <label class="text-neutral-black-font mb-2 block text-sm font-medium">
             {{ $t('settings.user.resetPassword.temporaryPassword') }} *
           </label>
           <div class="relative">
@@ -79,12 +79,12 @@
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               :disabled="isLoading"
-              class="border-primary-stroke focus:ring-primary w-full rounded-lg border px-3 py-2 pr-10 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+              class="border-primary-lighter-stroke focus:ring-primary w-full rounded-sm border px-3 py-2 pr-10 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
               :placeholder="$t('settings.user.resetPassword.placeholder')"
             />
             <button
               type="button"
-              class="text-secondary absolute top-1/2 right-3 -translate-y-1/2 transform hover:text-base"
+              class="text-neutral-black-font absolute top-1/2 right-3 -translate-y-1/2 transform hover:text-base"
               :disabled="isLoading"
               @click="showPassword = !showPassword"
             >
@@ -99,7 +99,7 @@
           <button
             type="button"
             :disabled="isLoading"
-            class="text-secondary hover:text-primary text-sm font-medium disabled:opacity-50"
+            class="text-neutral-black-font hover:text-primary text-sm font-medium disabled:opacity-50"
             @click="generatePassword"
           >
             <i class="fa fa-refresh mr-1"></i>
@@ -138,10 +138,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { useResetMemberPassword } from '@/mutations/team'
 import type { TeamMemberListItem } from '@/types/team'
 import { Alert, Button } from '@owlint/feathers-vue'
-import { useResetMemberPassword } from '@/mutations/team'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

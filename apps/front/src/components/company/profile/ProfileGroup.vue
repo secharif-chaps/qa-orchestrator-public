@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-base-100 relative flex-1 rounded-lg p-4">
+  <div class="relative flex-1 rounded-sm bg-white p-4">
     <div class="flex flex-col gap-2">
       <h4>{{ t('screen.profile.sections.group.title') }}</h4>
       <!-- Group name - individual property loading -->
       <div>
-        <p class="text-secondary">
+        <p class="text-neutral-black-font">
           {{
             getSourcedValue(company?.profile?.groupName) ??
             t('screen.profile.sections.group.notFound')
@@ -19,13 +19,13 @@
 </template>
 
 <script lang="ts" setup>
-import { useQuery } from '@pinia/colada'
-import { companyByIdQuery } from '@/queries/companies'
-import { useRoute } from 'vue-router'
-import { computed } from 'vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
-import Source from '../Source.vue'
+import { companyByIdQuery } from '@/queries/companies'
+import { useQuery } from '@pinia/colada'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+import Source from '../Source.vue'
 
 const { t } = useI18n()
 const route = useRoute()

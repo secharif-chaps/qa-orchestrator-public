@@ -3,7 +3,7 @@
     <!-- Success Card -->
     <div
       v-if="results.success_count > 0"
-      class="bg-success-light border-success-stroke flex items-center gap-4 rounded-xl border p-6"
+      class="bg-success-light border-success-stroke flex items-center gap-4 rounded-md border p-6"
     >
       <div class="bg-success flex h-12 w-12 items-center justify-center rounded-full">
         <i class="fa-solid fa-check text-success-content text-xl" />
@@ -21,7 +21,7 @@
     <!-- Error Summary -->
     <div
       v-if="results.error_count > 0"
-      class="bg-error-light border-error-stroke flex flex-col gap-4 rounded-xl border p-6"
+      class="bg-error-light border-error-stroke flex flex-col gap-4 rounded-md border p-6"
     >
       <div class="flex items-center gap-4">
         <div class="bg-error flex h-12 w-12 items-center justify-center rounded-full">
@@ -56,7 +56,7 @@
           <div
             v-for="error in failedResults"
             :key="error.row_index"
-            class="bg-error/10 rounded-lg p-3 text-sm"
+            class="bg-error/10 rounded-sm p-3 text-sm"
           >
             <p class="text-error-light-content font-medium">
               Row {{ error.row_index + 1 }}: {{ error.username }} ({{ error.email }})
@@ -70,7 +70,7 @@
     <!-- Password Download Section -->
     <div
       v-if="hasGeneratedPasswords"
-      class="bg-info-light border-info-stroke flex flex-col gap-4 rounded-xl border p-6"
+      class="bg-info-light border-info-stroke flex flex-col gap-4 rounded-md border p-6"
     >
       <div class="flex items-center gap-4">
         <div class="bg-info flex h-12 w-12 items-center justify-center rounded-full">

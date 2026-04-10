@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Loading State -->
-    <div v-if="isLoading" class="bg-base-100 rounded-lg p-8 text-center shadow-sm">
+    <div v-if="isLoading" class="rounded-sm bg-white p-8 text-center shadow-sm">
       <div class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
-      <p class="text-secondary">
+      <p class="text-neutral-black-font">
         {{ $t('admin.organization.loading') }}
       </p>
     </div>
@@ -22,7 +22,7 @@
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 class="text-2xl font-bold">{{ organization.name }}</h1>
-          <p class="text-secondary mt-1">
+          <p class="text-neutral-black-font mt-1">
             {{ $t('admin.organization.detail.description') }}
           </p>
         </div>
@@ -46,11 +46,11 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { computed, provide } from 'vue'
-import { useQuery } from '@pinia/colada'
-import { useRoute, useRouter, RouterView } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { Alert, Toggle } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, provide } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { RouterView, useRoute, useRouter } from 'vue-router'
 
 // Queries
 import { organizationByIdQuery } from '@/queries/organization-admin'

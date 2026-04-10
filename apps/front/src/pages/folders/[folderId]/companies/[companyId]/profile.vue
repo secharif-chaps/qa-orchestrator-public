@@ -10,7 +10,7 @@
 
     <!-- No Data State - Show if all tasks completed but no data -->
     <NoData v-else-if="task?.status === 'succeeded' && !hasAnyProfileData">
-      <p class="text-secondary text-lg font-medium">
+      <p class="text-neutral-black-font text-lg font-medium">
         {{ $t('screen.profile.sections.profile.noData') }}
       </p>
     </NoData>

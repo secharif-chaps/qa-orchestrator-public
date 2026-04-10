@@ -4,7 +4,7 @@
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-3xl font-bold">{{ $t('admin.usage.title') }}</h1>
-        <p class="text-secondary mt-1">
+        <p class="text-neutral-black-font mt-1">
           {{ $t('admin.usage.description') }}
         </p>
       </div>
@@ -69,16 +69,16 @@ meta:
  *
  * Data is filtered by a configurable time range (7D, 30D, 90D, All time).
  */
-import { ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useQuery } from '@pinia/colada'
-import { Alert } from '@owlint/feathers-vue'
-import { usageStatsQuery } from '@/queries/admin-usage'
-import UsageTimeRangeToggle from '@/components/admin/usage/UsageTimeRangeToggle.vue'
+import OrganizationUsageTable from '@/components/admin/usage/OrganizationUsageTable.vue'
 import UsageKpiGrid from '@/components/admin/usage/UsageKpiGrid.vue'
 import UsageLineChart from '@/components/admin/usage/UsageLineChart.vue'
 import UsageStackedBarChart from '@/components/admin/usage/UsageStackedBarChart.vue'
-import OrganizationUsageTable from '@/components/admin/usage/OrganizationUsageTable.vue'
+import UsageTimeRangeToggle from '@/components/admin/usage/UsageTimeRangeToggle.vue'
+import { usageStatsQuery } from '@/queries/admin-usage'
+import { Alert } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 

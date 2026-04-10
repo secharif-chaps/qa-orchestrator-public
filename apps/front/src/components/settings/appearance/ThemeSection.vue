@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-card border">
-    <div class="border-primary-stroke border-b px-6 py-4">
+  <div class="border-primary-lighter-stroke rounded-card border bg-white">
+    <div class="border-primary-lighter-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.theme.title') }}</h2>
-      <p class="text-secondary mt-1 text-sm">
+      <p class="text-neutral-black-font mt-1 text-sm">
         {{ $t('settings.appearance.theme.description') }}
       </p>
     </div>
@@ -11,17 +11,17 @@
         <div
           v-for="themeOption in themeOptions"
           :key="themeOption.value"
-          class="border-primary-stroke hover:border-primary/70 flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-colors"
-          :class="{ 'border-primary bg-base-200': currentTheme === themeOption.value }"
+          class="border-primary-lighter-stroke hover:border-primary/70 flex cursor-pointer items-center justify-between rounded-sm border p-4 transition-colors"
+          :class="{ 'border-primary bg-primary-lightest': currentTheme === themeOption.value }"
           @click="handleThemeChange(themeOption.value)"
         >
           <div class="flex items-center gap-4">
             <div
-              class="flex h-10 w-10 items-center justify-center rounded-lg"
+              class="flex h-10 w-10 items-center justify-center rounded-sm"
               :class="
                 currentTheme === themeOption.value
                   ? 'border border-rose-200 bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
-                  : 'bg-base-200 text-secondary'
+                  : 'bg-primary-lightest text-neutral-black-font'
               "
             >
               <i :class="themeOption.icon" class="text-lg"></i>
@@ -30,7 +30,7 @@
               <h3 class="text-sm font-medium">
                 {{ $t(`settings.appearance.theme.options.${themeOption.value}.title`) }}
               </h3>
-              <p class="text-secondary text-sm">
+              <p class="text-neutral-black-font text-sm">
                 {{ $t(`settings.appearance.theme.options.${themeOption.value}.description`) }}
               </p>
             </div>

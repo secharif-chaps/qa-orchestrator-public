@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-card border">
-    <div class="border-primary-stroke border-b px-6 py-4">
+  <div class="border-primary-lighter-stroke rounded-card border bg-white">
+    <div class="border-primary-lighter-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.security.sessions.title') }}</h2>
-      <p class="text-secondary mt-1 text-sm">
+      <p class="text-neutral-black-font mt-1 text-sm">
         {{ $t('settings.security.sessions.description') }}
       </p>
     </div>
@@ -12,13 +12,13 @@
         <div
           v-for="i in 3"
           :key="i"
-          class="border-primary-stroke animate-pulse rounded-lg border p-4"
+          class="border-primary-lighter-stroke animate-pulse rounded-sm border p-4"
         >
           <div class="flex items-center gap-3">
-            <div class="bg-base-200 h-10 w-10 rounded-lg"></div>
+            <div class="bg-primary-lightest h-10 w-10 rounded-sm"></div>
             <div class="flex flex-1 flex-col gap-2">
-              <div class="bg-base-200 h-4 w-1/3 rounded"></div>
-              <div class="bg-base-200 h-3 w-1/4 rounded"></div>
+              <div class="bg-primary-lightest h-4 w-1/3 rounded"></div>
+              <div class="bg-primary-lightest h-3 w-1/4 rounded"></div>
             </div>
           </div>
         </div>
@@ -50,19 +50,19 @@
         <!-- No Other Sessions -->
         <p
           v-if="otherSessions.length === 0 && currentSession"
-          class="text-secondary py-4 text-center text-sm"
+          class="text-neutral-black-font py-4 text-center text-sm"
         >
           {{ $t('settings.security.sessions.noOtherSessions') }}
         </p>
 
         <!-- Sign Out All Devices -->
-        <div v-if="otherSessions.length > 0" class="border-primary-stroke border-t pt-4">
+        <div v-if="otherSessions.length > 0" class="border-primary-lighter-stroke border-t pt-4">
           <div class="flex items-center justify-between">
             <div>
               <h3 class="text-sm font-medium">
                 {{ $t('settings.security.sessions.signOutAll.title') }}
               </h3>
-              <p class="text-secondary text-sm">
+              <p class="text-neutral-black-font text-sm">
                 {{ $t('settings.security.sessions.signOutAll.description') }}
               </p>
             </div>
@@ -81,10 +81,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { Alert, Button } from '@owlint/feathers-vue'
-import SessionItem from './SessionItem.vue'
 import type { Session } from '@/types/account'
+import { Alert, Button } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import SessionItem from './SessionItem.vue'
 
 const props = defineProps<{
   sessions: Session[]

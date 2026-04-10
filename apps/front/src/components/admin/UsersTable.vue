@@ -10,7 +10,7 @@
     <!-- Email column -->
     <template #cell(email)="{ item }">
       <td class="px-4 py-3">
-        <div class="text-secondary text-sm">{{ item.email }}</div>
+        <div class="text-neutral-black-font text-sm">{{ item.email }}</div>
       </td>
     </template>
 
@@ -19,7 +19,7 @@
       <td class="px-4 py-3">
         <div class="text-sm">
           <template v-if="getFullName(item)">{{ getFullName(item) }}</template>
-          <span v-else class="text-secondary italic">—</span>
+          <span v-else class="text-neutral-black-font italic">—</span>
         </div>
       </td>
     </template>
@@ -42,7 +42,7 @@
       <td class="px-4 py-3">
         <div class="text-sm">
           <template v-if="item.organization_name">{{ item.organization_name }}</template>
-          <span v-else class="text-secondary italic">—</span>
+          <span v-else class="text-neutral-black-font italic">—</span>
         </div>
       </td>
     </template>
@@ -77,11 +77,11 @@
     <!-- Empty state -->
     <template #empty>
       <div class="p-12 text-center">
-        <i class="fa fa-users text-secondary/50 mb-4 text-4xl"></i>
+        <i class="fa fa-users text-neutral-black-font/50 mb-4 text-4xl"></i>
         <h3 class="mb-2 text-base text-lg font-medium">
           {{ hasFilters ? $t('admin.users.empty.filtered') : $t('admin.users.empty.title') }}
         </h3>
-        <p class="text-secondary mb-6">
+        <p class="text-neutral-black-font mb-6">
           {{
             hasFilters
               ? $t('admin.users.empty.filteredDescription')

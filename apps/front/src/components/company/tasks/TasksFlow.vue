@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke overflow-hidden rounded-lg border">
+  <div class="border-primary-lighter-stroke overflow-hidden rounded-lg border bg-white">
     <button
       class="flex w-full cursor-pointer items-center justify-between border-b border-gray-200 px-4 py-3 text-left dark:border-slate-700"
       @click="isOpen = !isOpen"
@@ -10,7 +10,7 @@
       <div class="flex items-center gap-3">
         <span class="font-medium">{{ t('screen.company.debug.workflowTitle') }}</span>
         <div class="flex items-center">
-          <span class="text-secondary text-xs font-medium"
+          <span class="text-neutral-black-font text-xs font-medium"
             >{{ completedCount }}/{{ totalTasks }}</span
           >
         </div>
@@ -77,7 +77,7 @@
         </div>
 
         <!-- Status summary -->
-        <div class="text-secondary mt-2 flex items-center justify-between text-xs">
+        <div class="text-neutral-black-font mt-2 flex items-center justify-between text-xs">
           <div class="flex items-center gap-4">
             <span class="flex items-center gap-1">
               <div class="h-2 w-2 rounded-full bg-green-400"></div>
@@ -126,14 +126,14 @@
                   size="xs"
                 />
               </div>
-              <p class="text-secondary truncate text-xs">
+              <p class="text-neutral-black-font truncate text-xs">
                 {{ task.description }}
               </p>
 
               <!-- Token information for admins -->
               <div
                 v-if="hasAdminAccess && getTokenInfo(task.type)?.hasTokenData"
-                class="text-secondary mt-1 flex items-center gap-3 text-xs"
+                class="text-neutral-black-font mt-1 flex items-center gap-3 text-xs"
               >
                 <span v-if="getTokenInfo(task.type)?.inputTokens">
                   <i class="fa fa-arrow-down text-blue-500"></i>
@@ -174,9 +174,9 @@
       </div>
 
       <!-- Global Actions -->
-      <div v-if="hasErrorsOrPending" class="border-primary-stroke mt-6 border-t pt-6">
+      <div v-if="hasErrorsOrPending" class="border-primary-lighter-stroke mt-6 border-t pt-6">
         <div class="flex items-center justify-between">
-          <div class="text-secondary text-sm">
+          <div class="text-neutral-black-font text-sm">
             {{ t('screen.company.tasks.canBeRestarted') }}
           </div>
           <Button
@@ -365,7 +365,7 @@ const getTaskIcon = (taskType: TaskType): string => {
 }
 
 const getTaskClass = (task: { status: TaskStatus | null }): string => {
-  const baseClasses = 'bg-base-100'
+  const baseClasses = 'bg-white'
 
   switch (task.status) {
     case 'succeeded':

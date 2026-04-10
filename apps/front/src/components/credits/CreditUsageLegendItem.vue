@@ -3,7 +3,7 @@
     <div class="h-3 w-3 flex-shrink-0 rounded-full" :style="{ backgroundColor: color }"></div>
     <div class="min-w-0 flex-1">
       <div class="truncate text-sm font-medium">{{ label }}</div>
-      <div class="text-secondary text-xs">{{ formattedValue }}</div>
+      <div class="text-neutral-black-font text-xs">{{ formattedValue }}</div>
     </div>
   </div>
 </template>

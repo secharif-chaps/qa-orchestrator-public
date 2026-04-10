@@ -26,8 +26,8 @@
     <!-- Loading state -->
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
-        <p class="text-secondary text-sm">{{ $t('common.loading') }}</p>
+        <i class="fa fa-spinner text-neutral-black-font mb-2 animate-spin text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">{{ $t('common.loading') }}</p>
       </div>
     </div>
 
@@ -51,14 +51,14 @@
 /**
  * Top credit users card with filters, table, and pagination.
  */
-import { Searchbar } from '@owlint/feathers-vue'
+import Card from '@/components/ui/Card.vue'
+import Pagination from '@/components/ui/Pagination.vue'
 import type { TopCreditUser } from '@/types/credits'
 import type { PaginationMeta } from '@/types/pagination'
-import Card from '@/components/ui/Card.vue'
-import CreditModuleFilter from './CreditModuleFilter.vue'
+import { Searchbar } from '@owlint/feathers-vue'
 import CreditDateFilter from './CreditDateFilter.vue'
+import CreditModuleFilter from './CreditModuleFilter.vue'
 import TopCreditUsersTable from './TopCreditUsersTable.vue'
-import Pagination from '@/components/ui/Pagination.vue'
 
 interface Props {
   users: TopCreditUser[]

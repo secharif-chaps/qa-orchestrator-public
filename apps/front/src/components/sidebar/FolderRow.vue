@@ -55,7 +55,7 @@
           class="rounded-bl-card border-sage-300 absolute -top-8 bottom-0 -left-[10px] h-12 w-3 border-b-2 border-l-2"
         ></div>
         <div
-          class="hover:bg-sage-300/80 dark:hover:bg-sage-800/50 group ml-1 flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1.5 transition-colors"
+          class="hover:bg-sage-300/80 dark:hover:bg-sage-800/50 group ml-1 flex cursor-pointer items-center gap-2 rounded-sm px-1.5 py-1.5 transition-colors"
           @click.prevent="$emit('navigateCompany', folder.id, item.id)"
         >
           <!-- Item Icon -->

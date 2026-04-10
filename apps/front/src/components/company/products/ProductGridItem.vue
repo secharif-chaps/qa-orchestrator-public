@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-base-100 dark:bg-base-200 rounded-lg p-4">
+  <div class="dark:bg-primary-lightest rounded-sm bg-white p-4">
     <div class="mb-4 flex items-center gap-3">
       <Badge :icon="categoryIcon" variant="secondary" size="lg" rounded class="shrink-0"> </Badge>
       <div>
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
-        <p class="text-secondary text-sm">
+        <p class="text-neutral-black-font text-sm">
           {{ t('screen.products.count', { count: productList.length }) }}
         </p>
       </div>
@@ -14,7 +14,7 @@
       <div
         v-for="(product, index) in displayedProducts"
         :key="index"
-        class="bg-base-300 flex items-center gap-3 rounded-lg p-3 transition-colors"
+        class="bg-primary-lighter flex items-center gap-3 rounded-sm p-3 transition-colors"
       >
         <span class="flex-1 text-sm capitalize">{{ product }}</span>
         <Tag v-if="isNewProduct(product)" variant="success" size="xs">
@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import Tag from '@/components/ui/Tag.vue'
 import { Badge, Button } from '@owlint/feathers-vue'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

@@ -18,16 +18,16 @@
     <!-- Loading state -->
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
-        <p class="text-secondary text-sm">{{ $t('common.loading') }}</p>
+        <i class="fa fa-spinner text-neutral-black-font mb-2 animate-spin text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">{{ $t('common.loading') }}</p>
       </div>
     </div>
 
     <!-- Empty state -->
     <div v-else-if="!hasData" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-chart-bar text-secondary mb-2 text-2xl"></i>
-        <p class="text-secondary text-sm">
+        <i class="fa fa-chart-bar text-neutral-black-font mb-2 text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">
           {{ $t('settings.credits.dailyUsage.noData') }}
         </p>
       </div>
@@ -42,11 +42,11 @@
 /**
  * Daily credit usage card with filters and bar chart.
  */
-import { computed } from 'vue'
-import type { DailyUsage } from '@/types/credits'
 import Card from '@/components/ui/Card.vue'
-import CreditModuleFilter from './CreditModuleFilter.vue'
+import type { DailyUsage } from '@/types/credits'
+import { computed } from 'vue'
 import CreditDateFilter from './CreditDateFilter.vue'
+import CreditModuleFilter from './CreditModuleFilter.vue'
 import DailyCreditUsageChart from './DailyCreditUsageChart.vue'
 
 interface Props {

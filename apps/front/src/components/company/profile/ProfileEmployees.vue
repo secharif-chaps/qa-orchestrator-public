@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-base-200 rounded-card border-primary-stroke border p-4">
+  <div class="bg-primary-lightest rounded-card border-primary-lighter-stroke border p-4">
     <div class="relative flex items-center gap-6">
-      <i class="fa fa-users text-secondary text-2xl"></i>
+      <i class="fa fa-users text-neutral-black-font text-2xl"></i>
       <div>
         <h2>
           {{ getSourcedValue(company?.profile?.employeeCount) ?? $t('common.notFound') }}
@@ -17,11 +17,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useQuery } from '@pinia/colada'
-import { companyByIdQuery } from '@/queries/companies'
-import { useRoute } from 'vue-router'
-import { computed } from 'vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
+import { companyByIdQuery } from '@/queries/companies'
+import { useQuery } from '@pinia/colada'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import Source from '../Source.vue'
 
 const route = useRoute()

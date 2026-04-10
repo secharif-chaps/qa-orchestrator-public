@@ -7,19 +7,19 @@
         @click.self="close"
       >
         <div
-          class="bg-base-100 rounded-card border-primary-stroke shadow-shadow-3 flex max-h-[90vh] w-full max-w-6xl flex-col overflow-hidden border"
+          class="rounded-card border-primary-lighter-stroke shadow-3 flex max-h-[90vh] w-full max-w-6xl flex-col overflow-hidden border bg-white"
         >
           <!-- Header -->
           <div
-            class="border-primary-stroke bg-base-200 flex items-center justify-between border-b p-6"
+            class="border-primary-lighter-stroke bg-primary-lightest flex items-center justify-between border-b p-6"
           >
             <div class="flex items-center gap-3">
               <div class="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full">
-                <i :class="[sectionConfig?.icon, 'text-secondary text-lg']"></i>
+                <i :class="[sectionConfig?.icon, 'text-neutral-black-font text-lg']"></i>
               </div>
               <div>
                 <h2 class="text-xl font-semibold">{{ sectionConfig?.name }}</h2>
-                <p class="text-secondary text-sm">
+                <p class="text-neutral-black-font text-sm">
                   {{ sectionConfig?.description }}
                 </p>
               </div>
@@ -30,7 +30,7 @@
           <!-- Content -->
           <div class="flex-1 overflow-x-hidden overflow-y-auto p-6">
             <component :is="sectionComponent" v-if="sectionComponent" />
-            <div v-else class="text-secondary py-12 text-center">
+            <div v-else class="text-neutral-black-font py-12 text-center">
               <i class="fas fa-exclamation-triangle mb-4 text-4xl"></i>
               <p>{{ t('screen.company.sections.notAvailable') }}</p>
             </div>
@@ -222,13 +222,13 @@ watch(modelValue, (isOpen) => {
   opacity: 0;
 }
 
-.modal-enter-active .bg-base-100,
-.modal-leave-active .bg-base-100 {
+.modal-enter-active .bg-white,
+.modal-leave-active .bg-white {
   transition: transform 0.3s ease;
 }
 
-.modal-enter-from .bg-base-100,
-.modal-leave-to .bg-base-100 {
+.modal-enter-from .bg-white,
+.modal-leave-to .bg-white {
   transform: scale(0.95);
 }
 </style>

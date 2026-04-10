@@ -1,6 +1,6 @@
 <template>
   <div
-    class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-medium transition-all"
+    class="inline-flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs font-medium transition-all"
     :class="badgeClasses"
   >
     <Icon :icon class="text-xs" />

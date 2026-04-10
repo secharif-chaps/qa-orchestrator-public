@@ -8,7 +8,7 @@
     <!-- Not Configured State -->
     <div
       v-else-if="!hasPreferences"
-      class="bg-base-100 rounded-card border-primary-stroke border p-8"
+      class="rounded-card border-primary-lighter-stroke border bg-white p-8"
     >
       <div class="flex flex-col items-center gap-4 text-center">
         <img
@@ -21,7 +21,7 @@
           <h3 class="text-xl font-semibold">
             {{ $t('settings.aiPreferences.settings.notConfigured') }}
           </h3>
-          <p class="text-secondary">
+          <p class="text-neutral-black-font">
             {{ $t('settings.aiPreferences.settings.setUpDescription') }}
           </p>
         </div>
@@ -35,9 +35,9 @@
     </div>
 
     <!-- Edit Form -->
-    <div v-else class="bg-base-100 rounded-card border-primary-stroke border p-6">
+    <div v-else class="rounded-card border-primary-lighter-stroke border bg-white p-6">
       <!-- Last Updated Info -->
-      <div v-if="lastUpdated" class="text-secondary mb-6 flex items-center gap-2 text-sm">
+      <div v-if="lastUpdated" class="text-neutral-black-font mb-6 flex items-center gap-2 text-sm">
         <i class="fas fa-clock"></i>
         <span>{{ $t('settings.aiPreferences.settings.lastUpdated', { date: lastUpdated }) }}</span>
       </div>
@@ -94,7 +94,7 @@
         <div>
           <label for="documentation">
             {{ $t('settings.aiPreferences.setup.fields.documentation.label') }}
-            <span class="text-secondary ml-2 text-sm font-normal"
+            <span class="text-neutral-black-font ml-2 text-sm font-normal"
               >({{ $t('settings.aiPreferences.setup.optional') }})</span
             >
           </label>
@@ -141,12 +141,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { getAiPreferences, saveAiPreferences } from '@/api/ai-preferences'
-import { Input, Textarea, Button, Alert } from '@owlint/feathers-vue'
 import type { AiPreferencesCreate } from '@/types/ai-preferences'
+import { Alert, Button, Input, Textarea } from '@owlint/feathers-vue'
+import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const { t } = useI18n()

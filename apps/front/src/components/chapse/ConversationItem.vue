@@ -1,6 +1,6 @@
 <template>
   <div
-    class="group text-sage-900 inset-ring-sage-300 flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 inset-ring transition-colors"
+    class="group text-sage-900 inset-ring-sage-300 flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2 inset-ring transition-colors"
     :class="[
       isActive
         ? 'dark:bg-sage-700 bg-sage-50 dark:text-white'

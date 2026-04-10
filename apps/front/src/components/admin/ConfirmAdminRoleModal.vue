@@ -21,7 +21,7 @@
       />
 
       <!-- Description -->
-      <div class="text-secondary flex flex-col gap-3 text-sm">
+      <div class="text-neutral-black-font flex flex-col gap-3 text-sm">
         <p>
           {{ $t('admin.organization.admin.confirmAdminRole.description') }}
         </p>

@@ -2,11 +2,11 @@
   <div class="min-h-screen">
     <div class="flex flex-col gap-4">
       <!-- Loading State -->
-      <div v-if="isLoading" class="bg-base-100 rounded-lg p-8 text-center shadow-sm">
+      <div v-if="isLoading" class="rounded-sm bg-white p-8 text-center shadow-sm">
         <div
           class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
         ></div>
-        <p class="text-secondary">
+        <p class="text-neutral-black-font">
           {{ $t('common.folder.loading') }}
         </p>
       </div>
@@ -56,12 +56,15 @@
           </div>
 
           <!-- Table View -->
-          <div v-else class="bg-base-100 border-primary-stroke overflow-hidden rounded-lg border">
+          <div
+            v-else
+            class="border-primary-lighter-stroke overflow-hidden rounded-sm border bg-white"
+          >
             <!-- Add Items Row -->
 
             <!-- Table Header -->
-            <div class="border-primary-stroke bg-base-200 border-b px-6 py-4">
-              <div class="text-secondary grid grid-cols-12 gap-4 text-sm font-medium">
+            <div class="border-primary-lighter-stroke bg-primary-lightest border-b px-6 py-4">
+              <div class="text-neutral-black-font grid grid-cols-12 gap-4 text-sm font-medium">
                 <div class="col-span-4">{{ $t('common.folder.item.name') }}</div>
                 <div class="col-span-2">{{ $t('common.folder.item.type') }}</div>
                 <div class="col-span-2">{{ $t('common.folder.item.created') }}</div>
@@ -77,7 +80,7 @@
               <div
                 v-for="item in filteredItems"
                 :key="item.id"
-                class="hover:bg-base-200 px-6 py-4 transition-colors"
+                class="hover:bg-primary-lightest px-6 py-4 transition-colors"
                 :class="{
                   'cursor-auto': companyFilter === 'archived',
                   'cursor-pointer': companyFilter !== 'archived',
@@ -88,7 +91,7 @@
                   <div class="col-span-4">
                     <div class="flex items-center gap-3">
                       <div
-                        class="ring-primary-stroke flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1"
+                        class="ring-primary-stroke flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white ring-1"
                       >
                         <img
                           v-if="item.type === 'company' && getCompanyDomain(item.website)"
@@ -107,7 +110,7 @@
                           "
                           class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
                         >
-                          <i class="fas fa-building text-secondary"></i>
+                          <i class="fas fa-building text-neutral-black-font"></i>
                         </div>
                       </div>
                       <div class="flex-1">
@@ -119,10 +122,14 @@
                     <Tag intent="accent" :label="formatItemType(item.type)" size="sm" />
                   </div>
                   <div class="col-span-2">
-                    <span class="text-secondary text-sm">{{ formatDate(item.created_at) }}</span>
+                    <span class="text-neutral-black-font text-sm">{{
+                      formatDate(item.created_at)
+                    }}</span>
                   </div>
                   <div class="col-span-2">
-                    <span class="text-secondary text-sm">{{ item.owner || $t('common.na') }}</span>
+                    <span class="text-neutral-black-font text-sm">{{
+                      item.owner || $t('common.na')
+                    }}</span>
                   </div>
                   <div class="col-span-2 text-right">
                     <div class="flex items-center justify-end gap-2">
@@ -250,13 +257,13 @@ import CompanyMoveModal from '@/components/folders/CompanyMoveModal.vue'
 import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
 import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
 import FoldersHeader from '@/components/folders/FoldersHeader.vue'
-import { Alert, Button, Tag } from '@owlint/feathers-vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
-import { folderByIdQuery } from '@/queries/folders'
 import { useMoveCompanyToFolder } from '@/mutations/folders'
+import { folderByIdQuery } from '@/queries/folders'
 import type { Company } from '@/types/company'
 import type { FolderItem } from '@/types/folder'
+import { Alert, Button, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto flex max-w-4xl flex-col gap-6" data-cy="company-csv-upload-page">
+  <div class="mx-auto flex max-w-224 flex-col gap-6" data-cy="company-csv-upload-page">
     <!-- Page Header -->
     <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between">
@@ -7,7 +7,7 @@
           <h1 class="text-3xl font-semibold">
             {{ $t('screen.csv.upload.title') }}
           </h1>
-          <p class="text-secondary">
+          <p class="text-neutral-black-font">
             {{ $t('screen.csv.upload.description') }}
           </p>
         </div>
@@ -41,7 +41,7 @@
     />
 
     <!-- CSV Upload Form -->
-    <div class="bg-base-100 border-primary-stroke flex flex-col gap-6 rounded-lg border p-6">
+    <div class="border-primary-lighter-stroke flex flex-col gap-6 rounded-sm border bg-white p-6">
       <!-- File Upload -->
       <div class="flex flex-col gap-4">
         <h2 class="text-lg font-medium">
@@ -50,7 +50,9 @@
 
         <div class="flex flex-col gap-4">
           <!-- File Input -->
-          <div class="border-primary-stroke rounded-lg border-2 border-dashed p-6 text-center">
+          <div
+            class="border-primary-lighter-stroke rounded-sm border-2 border-dashed p-6 text-center"
+          >
             <input
               ref="fileInput"
               type="file"
@@ -60,9 +62,9 @@
             />
 
             <div v-if="!selectedFile" class="flex flex-col gap-2">
-              <i class="fa fa-upload text-secondary text-3xl"></i>
+              <i class="fa fa-upload text-neutral-black-font text-3xl"></i>
               <div>
-                <p class="text-secondary">
+                <p class="text-neutral-black-font">
                   {{ $t('screen.csv.upload.dragDrop') }}
                 </p>
                 <Button
@@ -76,7 +78,7 @@
             <div v-else class="flex flex-col gap-2">
               <i class="fa fa-file-csv text-success text-3xl"></i>
               <p class="font-medium">{{ selectedFile.name }}</p>
-              <p class="text-secondary text-sm">
+              <p class="text-neutral-black-font text-sm">
                 {{ formatFileSize(selectedFile.size) }}
               </p>
               <Button
@@ -90,7 +92,7 @@
           </div>
 
           <!-- CSV Format Help -->
-          <div class="bg-info/5 border-info/20 rounded-lg border p-4">
+          <div class="bg-info/5 border-info/20 rounded-sm border p-4">
             <h3 class="text-info mb-2 font-medium">
               <i class="fa fa-info-circle mr-2"></i>
               {{ $t('screen.csv.upload.formatTitle') }}
@@ -139,7 +141,7 @@
         <!-- Parsed Companies Preview -->
         <div v-if="parseResult.companies.length > 0" class="flex flex-col gap-4">
           <div class="flex items-center justify-between">
-            <p class="text-secondary text-sm">
+            <p class="text-neutral-black-font text-sm">
               {{
                 $t('screen.csv.upload.companiesFoundCount', { count: parseResult.companies.length })
               }}
@@ -155,28 +157,28 @@
           </div>
 
           <!-- Preview Table -->
-          <div class="border-primary-stroke overflow-x-auto rounded-lg border">
+          <div class="border-primary-lighter-stroke overflow-x-auto rounded-sm border">
             <table class="divide-primary-stroke min-w-full divide-y">
-              <thead class="bg-base-200">
+              <thead class="bg-primary-lightest">
                 <tr>
                   <th
-                    class="text-secondary px-4 py-3 text-left text-xs font-medium tracking-wider uppercase"
+                    class="text-neutral-black-font px-4 py-3 text-left text-xs font-medium tracking-wider uppercase"
                   >
                     {{ $t('screen.csv.upload.table.row') }}
                   </th>
                   <th
-                    class="text-secondary px-4 py-3 text-left text-xs font-medium tracking-wider uppercase"
+                    class="text-neutral-black-font px-4 py-3 text-left text-xs font-medium tracking-wider uppercase"
                   >
                     {{ $t('screen.csv.upload.table.companyName') }}
                   </th>
                   <th
-                    class="text-secondary px-4 py-3 text-left text-xs font-medium tracking-wider uppercase"
+                    class="text-neutral-black-font px-4 py-3 text-left text-xs font-medium tracking-wider uppercase"
                   >
                     {{ $t('screen.csv.upload.table.website') }}
                   </th>
                 </tr>
               </thead>
-              <tbody class="bg-base-100 divide-primary-stroke divide-y">
+              <tbody class="divide-primary-stroke divide-y bg-white">
                 <tr v-for="company in parseResult.companies.slice(0, 5)" :key="company.row_number">
                   <td class="px-4 py-3 text-sm">{{ company.row_number }}</td>
                   <td class="px-4 py-3 text-sm">{{ company.name || '-' }}</td>
@@ -186,7 +188,7 @@
             </table>
             <div
               v-if="parseResult.companies.length > 5"
-              class="text-secondary bg-base-200 px-4 py-3 text-sm"
+              class="text-neutral-black-font bg-primary-lightest px-4 py-3 text-sm"
             >
               {{ $t('screen.csv.upload.moreRows', { count: parseResult.companies.length - 5 }) }}
             </div>
@@ -202,19 +204,19 @@
 
         <!-- Token Info -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div class="bg-success/10 border-success/20 rounded-lg border p-4">
+          <div class="bg-success/10 border-success/20 rounded-sm border p-4">
             <div class="text-success text-sm">
               {{ $t('screen.csv.upload.validation.validCompaniesLabel') }}
             </div>
             <div class="text-success text-2xl font-bold">{{ validationResult.valid_count }}</div>
           </div>
-          <div class="bg-error/10 border-error/20 rounded-lg border p-4">
+          <div class="bg-error/10 border-error/20 rounded-sm border p-4">
             <div class="text-error text-sm">
               {{ $t('screen.csv.upload.validation.invalidCompaniesLabel') }}
             </div>
             <div class="text-error text-2xl font-bold">{{ validationResult.error_count }}</div>
           </div>
-          <div class="bg-info/10 border-info/20 rounded-lg border p-4">
+          <div class="bg-info/10 border-info/20 rounded-sm border p-4">
             <div class="text-info text-sm">
               {{ $t('screen.csv.upload.tokens.tokensRequiredLabel') }}
             </div>
@@ -245,7 +247,7 @@
             <div
               v-for="error in validationResult.errors"
               :key="`${error.row_number}-${error.field}`"
-              class="bg-error/5 border-error/20 rounded-lg border p-3 text-sm"
+              class="bg-error/5 border-error/20 rounded-sm border p-3 text-sm"
             >
               <span class="font-medium">Row {{ error.row_number }}</span>
               - {{ error.field }}: {{ error.error }}
@@ -288,19 +290,19 @@
         <h2 class="text-lg font-medium">{{ $t('screen.csv.upload.results') }}</h2>
 
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div class="bg-success/10 border-success/20 rounded-lg border p-4">
+          <div class="bg-success/10 border-success/20 rounded-sm border p-4">
             <div class="text-success text-sm">
               {{ $t('screen.csv.upload.results.successful') }}
             </div>
             <div class="text-success text-2xl font-bold">{{ importResult.successful }}</div>
           </div>
-          <div class="bg-error/10 border-error/20 rounded-lg border p-4">
+          <div class="bg-error/10 border-error/20 rounded-sm border p-4">
             <div class="text-error text-sm">
               {{ $t('screen.csv.upload.results.failedLabel') }}
             </div>
             <div class="text-error text-2xl font-bold">{{ importResult.failed }}</div>
           </div>
-          <div class="bg-info/10 border-info/20 rounded-lg border p-4">
+          <div class="bg-info/10 border-info/20 rounded-sm border p-4">
             <div class="text-info text-sm">
               {{ $t('screen.csv.upload.results.totalProcessed') }}
             </div>
@@ -316,7 +318,7 @@
           <div
             v-for="result in importResult.results.filter((r) => !r.success)"
             :key="result.row_number"
-            class="bg-error/5 border-error/20 rounded-lg border p-3 text-sm"
+            class="bg-error/5 border-error/20 rounded-sm border p-3 text-sm"
           >
             <span class="font-medium">Row {{ result.row_number }}</span>
             - {{ result.name }}: {{ result.error }}
@@ -351,23 +353,23 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useRouter, useRoute } from 'vue-router'
-import { useQuery } from '@pinia/colada'
-import { Alert, Button } from '@owlint/feathers-vue'
-import TokenCounter from '@/components/tokens/TokenCounter.vue'
-import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
-import { parseCSVAdvanced, type CSVParseResult } from '@/utils/csvParser'
 import {
-  validateCSV,
   importCSV,
-  type CSVValidationResponse,
+  validateCSV,
   type CSVImportResponse,
+  type CSVValidationResponse,
 } from '@/api/companies'
+import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
+import TokenCounter from '@/components/tokens/TokenCounter.vue'
 import { useAddItemToFolder } from '@/mutations/folders'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'
+import { parseCSVAdvanced, type CSVParseResult } from '@/utils/csvParser'
+import { Alert, Button } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 
 const { t } = useI18n()
 const router = useRouter()

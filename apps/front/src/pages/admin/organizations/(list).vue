@@ -6,7 +6,7 @@
         <h1 class="text-3xl font-bold">
           {{ $t('admin.organizations.title') }}
         </h1>
-        <p class="text-secondary mt-2">
+        <p class="text-neutral-black-font mt-2">
           {{ $t('admin.organizations.description') }}
         </p>
       </div>
@@ -18,7 +18,7 @@
         id="search-organizations"
         v-model="searchQuery"
         :placeholder="$t('admin.organizations.search')"
-        class="max-w-md"
+        class="max-w-112"
       />
     </div>
 
@@ -40,7 +40,7 @@
       <div
         v-for="org in organizations"
         :key="org.id"
-        class="bg-base-200 rounded-card border-primary-stroke hover:shadow-shadow-2 cursor-pointer border p-6 transition-all"
+        class="bg-primary-lightest rounded-card border-primary-lighter-stroke hover:shadow-2 cursor-pointer border p-6 transition-all"
         @click="router.push(`/admin/organizations/${org.id}/profile`)"
       >
         <div class="flex items-center justify-between">
@@ -50,10 +50,10 @@
             </div>
             <div>
               <h3 class="text-lg font-semibold">{{ org.name }}</h3>
-              <p class="text-secondary text-sm">
+              <p class="text-neutral-black-font text-sm">
                 {{ org.description || $t('admin.organization.noDescription') }}
               </p>
-              <p class="text-secondary mt-1 text-xs">ID: {{ org.id }}</p>
+              <p class="text-neutral-black-font mt-1 text-xs">ID: {{ org.id }}</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
@@ -62,7 +62,7 @@
               :label="`${org.member_count} ${$t('admin.organizations.members')}`"
               size="sm"
             />
-            <i class="fa fa-chevron-right text-secondary"></i>
+            <i class="fa fa-chevron-right text-neutral-black-font"></i>
           </div>
         </div>
       </div>
@@ -70,8 +70,8 @@
 
     <!-- Empty State -->
     <div v-else class="py-12 text-center">
-      <i class="fa fa-building text-secondary mb-4 text-4xl"></i>
-      <p class="text-secondary">{{ $t('admin.organizations.empty') }}</p>
+      <i class="fa fa-building text-neutral-black-font mb-4 text-4xl"></i>
+      <p class="text-neutral-black-font">{{ $t('admin.organizations.empty') }}</p>
     </div>
 
     <!-- Pagination -->
@@ -94,14 +94,14 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useQuery } from '@pinia/colada'
 import { getAllOrganizations } from '@/api/organization'
-import { Alert, Searchbar } from '@owlint/feathers-vue'
-import Tag from '@/components/ui/Tag.vue'
 import Pagination from '@/components/ui/Pagination.vue'
+import Tag from '@/components/ui/Tag.vue'
 import { transformToPaginationMeta } from '@/utils/pagination'
+import { Alert, Searchbar } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 

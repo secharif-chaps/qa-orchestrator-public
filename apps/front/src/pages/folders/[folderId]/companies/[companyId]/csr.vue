@@ -10,7 +10,7 @@
 
     <!-- No Data State -->
     <NoData v-else-if="!hasCsrData">
-      <p class="text-secondary text-lg font-medium">
+      <p class="text-neutral-black-font text-lg font-medium">
         {{ $t('screen.profile.sections.csr.noData') }}
       </p>
     </NoData>
@@ -23,11 +23,11 @@
       </ChapseAlert>
 
       <!-- CSR Responsibility Statement -->
-      <div v-if="responsibilityValue" class="bg-base-100 rounded-lg p-6">
-        <h4 class="text-secondary mb-3 font-semibold">
+      <div v-if="responsibilityValue" class="rounded-sm bg-white p-6">
+        <h4 class="text-neutral-black-font mb-3 font-semibold">
           {{ $t('screen.profile.sections.csr.responsibility') }}
         </h4>
-        <p class="text-secondary text-sm leading-relaxed">
+        <p class="text-neutral-black-font text-sm leading-relaxed">
           {{ responsibilityValue }}
           <Source
             v-if="company?.csr?.responsibility && typeof company.csr.responsibility !== 'string'"
@@ -39,18 +39,18 @@
       <!-- CSR Sections Grid -->
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         <!-- Responsibility Initiatives -->
-        <div class="bg-base-100 rounded-lg p-6">
-          <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
+        <div class="rounded-sm bg-white p-6">
+          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-handshake"></i>
             {{ $t('screen.profile.sections.csr.responsibility_initiatives') }}
           </h4>
           <ul class="space-y-2">
             <li
-              class="text-secondary flex items-start gap-2"
+              class="text-neutral-black-font flex items-start gap-2"
               v-for="initiative in company?.csr?.responsibility_initiatives || []"
               :key="initiative.value"
             >
-              <i class="fa-solid fa-circle text-secondary mt-1.5 text-[6px]"></i>
+              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
               <div class="min-w-0 flex-1">
                 <span class="text-sm">{{ getSourcedValue(initiative) }}</span>
                 <Source :source="initiative.source" />
@@ -58,7 +58,7 @@
             </li>
             <li
               v-if="!company?.csr?.responsibility_initiatives?.length"
-              class="text-secondary text-sm italic"
+              class="text-neutral-black-font text-sm italic"
             >
               {{ $t('common.notFound') }}
             </li>
@@ -66,42 +66,45 @@
         </div>
 
         <!-- Charity Actions -->
-        <div class="bg-base-100 rounded-lg p-6">
-          <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
+        <div class="rounded-sm bg-white p-6">
+          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-heart"></i>
             {{ $t('screen.profile.sections.csr.charity') }}
           </h4>
           <ul class="space-y-2">
             <li
-              class="text-secondary flex items-start gap-2"
+              class="text-neutral-black-font flex items-start gap-2"
               v-for="action in company?.csr?.charity_actions || []"
               :key="action.value"
             >
-              <i class="fa-solid fa-circle text-secondary mt-1.5 text-[6px]"></i>
+              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
               <div class="min-w-0 flex-1">
                 <span class="text-sm">{{ getSourcedValue(action) }}</span>
                 <Source :source="action.source" />
               </div>
             </li>
-            <li v-if="!company?.csr?.charity_actions?.length" class="text-secondary text-sm italic">
+            <li
+              v-if="!company?.csr?.charity_actions?.length"
+              class="text-neutral-black-font text-sm italic"
+            >
               {{ $t('common.notFound') }}
             </li>
           </ul>
         </div>
 
         <!-- Sustainability Programs -->
-        <div class="bg-base-100 rounded-lg p-6">
-          <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
+        <div class="rounded-sm bg-white p-6">
+          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-leaf"></i>
             {{ $t('screen.profile.sections.csr.sustainability') }}
           </h4>
           <ul class="space-y-2">
             <li
-              class="text-secondary flex items-start gap-2"
+              class="text-neutral-black-font flex items-start gap-2"
               v-for="program in company?.csr?.sustainability_programs || []"
               :key="program.value"
             >
-              <i class="fa-solid fa-circle text-secondary mt-1.5 text-[6px]"></i>
+              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
               <div class="min-w-0 flex-1">
                 <span class="text-sm">{{ getSourcedValue(program) }}</span>
                 <Source :source="program.source" />
@@ -109,7 +112,7 @@
             </li>
             <li
               v-if="!company?.csr?.sustainability_programs?.length"
-              class="text-secondary text-sm italic"
+              class="text-neutral-black-font text-sm italic"
             >
               {{ $t('common.notFound') }}
             </li>
@@ -117,18 +120,18 @@
         </div>
 
         <!-- Community Involvement -->
-        <div class="bg-base-100 rounded-lg p-6">
-          <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
+        <div class="rounded-sm bg-white p-6">
+          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-users"></i>
             {{ $t('screen.profile.sections.csr.community') }}
           </h4>
           <ul class="space-y-2">
             <li
-              class="text-secondary flex items-start gap-2"
+              class="text-neutral-black-font flex items-start gap-2"
               v-for="involvement in company?.csr?.community_involvement || []"
               :key="involvement.value"
             >
-              <i class="fa-solid fa-circle text-secondary mt-1.5 text-[6px]"></i>
+              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
               <div class="min-w-0 flex-1">
                 <span class="text-sm">{{ getSourcedValue(involvement) }}</span>
                 <Source :source="involvement.source" />
@@ -136,7 +139,7 @@
             </li>
             <li
               v-if="!company?.csr?.community_involvement?.length"
-              class="text-secondary text-sm italic"
+              class="text-neutral-black-font text-sm italic"
             >
               {{ $t('common.notFound') }}
             </li>
@@ -144,18 +147,18 @@
         </div>
 
         <!-- Diversity & Inclusion -->
-        <div class="bg-base-100 rounded-lg p-6">
-          <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
+        <div class="rounded-sm bg-white p-6">
+          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-people-group"></i>
             {{ $t('screen.profile.sections.csr.diversity') }}
           </h4>
           <ul class="space-y-2">
             <li
-              class="text-secondary flex items-start gap-2"
+              class="text-neutral-black-font flex items-start gap-2"
               v-for="initiative in company?.csr?.diversity_inclusion || []"
               :key="initiative.value"
             >
-              <i class="fa-solid fa-circle text-secondary mt-1.5 text-[6px]"></i>
+              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
               <div class="min-w-0 flex-1">
                 <span class="text-sm">{{ getSourcedValue(initiative) }}</span>
                 <Source :source="initiative.source" />
@@ -163,7 +166,7 @@
             </li>
             <li
               v-if="!company?.csr?.diversity_inclusion?.length"
-              class="text-secondary text-sm italic"
+              class="text-neutral-black-font text-sm italic"
             >
               {{ $t('common.notFound') }}
             </li>
@@ -171,18 +174,18 @@
         </div>
 
         <!-- Ethical Practices -->
-        <div class="bg-base-100 rounded-lg p-6">
-          <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
+        <div class="rounded-sm bg-white p-6">
+          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-scale-balanced"></i>
             {{ $t('screen.profile.sections.csr.ethics') }}
           </h4>
           <ul class="space-y-2">
             <li
-              class="text-secondary flex items-start gap-2"
+              class="text-neutral-black-font flex items-start gap-2"
               v-for="practice in company?.csr?.ethical_practices || []"
               :key="practice.value"
             >
-              <i class="fa-solid fa-circle text-secondary mt-1.5 text-[6px]"></i>
+              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
               <div class="min-w-0 flex-1">
                 <span class="text-sm">{{ getSourcedValue(practice) }}</span>
                 <Source :source="practice.source" />
@@ -190,7 +193,7 @@
             </li>
             <li
               v-if="!company?.csr?.ethical_practices?.length"
-              class="text-secondary text-sm italic"
+              class="text-neutral-black-font text-sm italic"
             >
               {{ $t('common.notFound') }}
             </li>
@@ -198,18 +201,18 @@
         </div>
 
         <!-- Awards & Certifications -->
-        <div class="bg-base-100 rounded-lg p-6 md:col-span-2">
-          <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
+        <div class="rounded-sm bg-white p-6 md:col-span-2">
+          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
             <i class="fa fa-award"></i>
             {{ $t('screen.profile.sections.csr.awards') }}
           </h4>
           <ul class="space-y-2">
             <li
-              class="text-secondary flex items-start gap-2"
+              class="text-neutral-black-font flex items-start gap-2"
               v-for="award in company?.csr?.awards_certifications || []"
               :key="award.value"
             >
-              <i class="fa-solid fa-circle text-secondary mt-1.5 text-[6px]"></i>
+              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
               <div class="min-w-0 flex-1">
                 <span class="text-sm">{{ getSourcedValue(award) }}</span>
                 <Source :source="award.source" />
@@ -217,7 +220,7 @@
             </li>
             <li
               v-if="!company?.csr?.awards_certifications?.length"
-              class="text-secondary text-sm italic"
+              class="text-neutral-black-font text-sm italic"
             >
               {{ $t('common.notFound') }}
             </li>
@@ -238,14 +241,14 @@ meta:
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import Source from '@/components/company/Source.vue'
-import { getSourcedValue, getSourcedSource } from '@/components/helpers/sourcedValues'
+import { getSourcedSource, getSourcedValue } from '@/components/helpers/sourcedValues'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
 import NoData from '@/components/ui/NoData.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import { useQuery } from '@pinia/colada'
-import { computed, inject, ref } from 'vue'
 import type { Ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute('/folders/[folderId]/companies/[companyId]/csr')

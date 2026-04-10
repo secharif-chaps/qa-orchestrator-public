@@ -5,7 +5,7 @@
       <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-4">
           <div
-            class="flex h-16 w-16 items-center justify-center rounded-lg"
+            class="flex h-16 w-16 items-center justify-center rounded-sm"
             :class="folderColorClasses"
           >
             <i :class="folderIcon" class="text-3xl"></i>
@@ -30,7 +30,7 @@
                 size="sm"
               />
             </div>
-            <p class="text-secondary mt-2" v-if="folder">
+            <p class="text-neutral-black-font mt-2" v-if="folder">
               {{ $t('common.folder.header.itemsCount', itemsCount) }} |
               {{ $t('common.folder.header.createdOn', { date: formatDate(folder.created_at) }) }}
               <!-- Show owner info differently for shared vs owned folders -->
@@ -82,9 +82,9 @@
       </div>
 
       <!-- Search and Filters -->
-      <div class="flex items-center justify-between gap-4 rounded-lg">
+      <div class="flex items-center justify-between gap-4 rounded-sm">
         <!-- Search Input -->
-        <div class="max-w-md flex-1">
+        <div class="max-w-112 flex-1">
           <Searchbar
             id="folder-search-input"
             v-model="searchTerm"
@@ -160,17 +160,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from 'vue'
-import { Button, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
-import { useI18n } from 'vue-i18n'
-import type { Folder } from '@/types/folder'
-import { useToggleFolderFavorite } from '@/mutations/folders'
-import { useFolderPermissions } from '@/composables/useFolderPermissions'
-import { useScreenModule } from '@/composables/useScreenModule'
 import FolderShareButton from '@/components/features/folders/FolderShareButton.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
+import { useFolderPermissions } from '@/composables/useFolderPermissions'
+import { useScreenModule } from '@/composables/useScreenModule'
+import { useToggleFolderFavorite } from '@/mutations/folders'
+import type { Folder } from '@/types/folder'
 import { formatDate } from '@/utils/time'
+import { Button, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
+import { computed, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   folder?: Folder | null

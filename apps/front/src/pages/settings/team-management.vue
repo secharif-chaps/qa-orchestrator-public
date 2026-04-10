@@ -19,7 +19,7 @@
       <div v-if="isLoading" class="flex items-center justify-center py-12">
         <div class="text-center">
           <i class="fa fa-spinner fa-spin text-primary mb-3 text-3xl"></i>
-          <p class="text-secondary">
+          <p class="text-neutral-black-font">
             {{ t('settings.team.loading') }}
           </p>
         </div>
@@ -39,11 +39,11 @@
       <template v-else>
         <!-- Empty state -->
         <div v-if="teamMembers.length === 0" class="p-12 text-center">
-          <i class="fa fa-users text-secondary/30 mb-4 text-5xl"></i>
+          <i class="fa fa-users text-neutral-black-font/30 mb-4 text-5xl"></i>
           <h3 class="mb-2 text-lg font-semibold">
             {{ t('settings.team.empty.title') }}
           </h3>
-          <p class="text-secondary">
+          <p class="text-neutral-black-font">
             {{
               searchQuery
                 ? t('settings.team.empty.searchDescription')
@@ -89,18 +89,18 @@ title: 'Team Management'
 </route>
 
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
-import { useQuery } from '@pinia/colada'
-import { Alert, Searchbar } from '@owlint/feathers-vue'
-import { useI18n } from 'vue-i18n'
-import { teamMembersQuery } from '@/queries/team'
-import { useUpdateMemberPermissions } from '@/mutations/team'
-import { useTeamPermissions } from '@/composables/useTeamPermissions'
-import TeamMembersTable from '@/components/team/TeamMembersTable.vue'
 import ResetPasswordModal from '@/components/team/ResetPasswordModal.vue'
+import TeamMembersTable from '@/components/team/TeamMembersTable.vue'
 import Pagination from '@/components/ui/Pagination.vue'
+import { useTeamPermissions } from '@/composables/useTeamPermissions'
+import { useUpdateMemberPermissions } from '@/mutations/team'
+import { teamMembersQuery } from '@/queries/team'
+import type { PermissionTier, TeamMemberListItem } from '@/types/team'
 import { transformToPaginationMeta } from '@/utils/pagination'
-import type { TeamMemberListItem, PermissionTier } from '@/types/team'
+import { Alert, Searchbar } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const { canManageTeam } = useTeamPermissions()

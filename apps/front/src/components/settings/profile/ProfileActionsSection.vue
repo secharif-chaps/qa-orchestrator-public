@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-lg border">
+  <div class="border-primary-lighter-stroke rounded-sm border bg-white">
     <div class="px-6 py-6">
       <div class="flex flex-wrap gap-4">
         <Button

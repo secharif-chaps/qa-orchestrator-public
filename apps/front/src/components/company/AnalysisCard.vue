@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-base-200 rounded-card border-primary-stroke hover:shadow-shadow-2 group relative flex h-full min-h-52 cursor-pointer flex-col gap-4 overflow-hidden border p-6 transition-all duration-300"
+    class="bg-primary-lightest rounded-card border-primary-lighter-stroke hover:shadow-2 group relative flex h-full min-h-52 cursor-pointer flex-col gap-4 overflow-hidden border p-6 transition-all duration-300"
     :class="{
       'cursor-not-allowed opacity-60': disabled,
       'hover:border-primary/50': !disabled && !isLoading,
@@ -28,11 +28,11 @@
 
     <!-- AI Insights Preview -->
     <div v-if="hasInsights" class="flex flex-1 flex-col">
-      <p class="text-secondary text-sm">
+      <p class="text-neutral-black-font text-sm">
         {{ insights }}
       </p>
       <button
-        class="text-secondary hover:text-secondary/80 mt-2 flex items-center gap-1 self-start text-xs font-medium transition-colors"
+        class="text-neutral-black-font hover:text-neutral-black-font/80 mt-2 flex items-center gap-1 self-start text-xs font-medium transition-colors"
       >
         <span>{{ $t('screen.company.analysisCard.viewMore') }}</span>
         <i class="fas fa-arrow-right text-[10px]"></i>
@@ -42,9 +42,9 @@
     <!-- Loading State Overlay -->
     <div
       v-if="isLoading"
-      class="bg-base-100/80 rounded-card absolute inset-0 flex items-center justify-center backdrop-blur-sm"
+      class="rounded-card absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm"
     >
-      <div class="text-secondary flex items-center gap-3 text-base">
+      <div class="text-neutral-black-font flex items-center gap-3 text-base">
         <i class="fas fa-spinner fa-spin text-xl"></i>
         <span>{{ $t('screen.company.analysisCard.loading') }}</span>
       </div>
@@ -60,8 +60,11 @@
     />
 
     <!-- No Data State -->
-    <div v-else-if="!hasInsights && !isLoading" class="border-primary-stroke mt-4 border-t pt-4">
-      <p class="text-secondary text-sm italic">
+    <div
+      v-else-if="!hasInsights && !isLoading"
+      class="border-primary-lighter-stroke mt-4 border-t pt-4"
+    >
+      <p class="text-neutral-black-font text-sm italic">
         {{ $t('screen.company.analysisCard.noData') }}
       </p>
     </div>
@@ -69,7 +72,7 @@
     <!-- Disabled Overlay -->
     <div
       v-if="disabled"
-      class="bg-base-100/80 rounded-card absolute inset-0 flex items-center justify-center backdrop-blur-sm"
+      class="rounded-card absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm"
     >
       <Tag variant="accent" :label="$t('screen.company.analysisCard.comingSoon')" size="sm" />
     </div>
@@ -148,7 +151,7 @@ const statusLabel = computed(() => {
 
 const iconColorClass = computed(() => {
   if (props.disabled) {
-    return 'text-secondary'
+    return 'text-neutral-black-font'
   }
   if (isLoading.value) {
     return 'text-warning-500'
@@ -156,7 +159,7 @@ const iconColorClass = computed(() => {
   if (hasError.value) {
     return 'text-error-500'
   }
-  return 'text-secondary'
+  return 'text-neutral-black-font'
 })
 
 const handleClick = () => {

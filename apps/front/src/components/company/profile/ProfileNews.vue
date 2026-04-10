@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-base-100 rounded-lg p-4">
+  <div class="rounded-sm bg-white p-4">
     <div class="flex flex-col gap-4">
       <div class="flex items-center justify-between">
-        <h3 class="text-secondary space-x-2 font-bold">
+        <h3 class="text-neutral-black-font space-x-2 font-bold">
           <i class="fa fa-bullhorn"></i>
           <span>{{ $t('screen.profile.sections.news.title') }}</span>
         </h3>
@@ -19,33 +19,36 @@
 
       <!-- Press Summary Stats -->
       <div v-if="hasAnyPressData" class="grid grid-cols-2 gap-2">
-        <div v-if="totalPressItems > 0" class="bg-base-200 rounded p-3">
-          <div class="text-secondary text-2xl font-bold">{{ totalPressItems }}</div>
-          <div class="text-secondary text-xs">
+        <div v-if="totalPressItems > 0" class="bg-primary-lightest rounded p-3">
+          <div class="text-neutral-black-font text-2xl font-bold">{{ totalPressItems }}</div>
+          <div class="text-neutral-black-font text-xs">
             {{ $t('screen.profile.sections.news.stats.totalPressItems') }}
           </div>
         </div>
-        <div v-if="company?.press?.financial_news?.length" class="bg-base-200 rounded p-3">
-          <div class="text-secondary text-2xl font-bold">
+        <div v-if="company?.press?.financial_news?.length" class="bg-primary-lightest rounded p-3">
+          <div class="text-neutral-black-font text-2xl font-bold">
             {{ company.press.financial_news.length }}
           </div>
-          <div class="text-secondary text-xs">
+          <div class="text-neutral-black-font text-xs">
             {{ $t('screen.profile.sections.news.stats.financialNews') }}
           </div>
         </div>
-        <div v-if="company?.press?.media_mentions?.length" class="bg-base-200 rounded p-3">
-          <div class="text-secondary text-2xl font-bold">
+        <div v-if="company?.press?.media_mentions?.length" class="bg-primary-lightest rounded p-3">
+          <div class="text-neutral-black-font text-2xl font-bold">
             {{ company.press.media_mentions.length }}
           </div>
-          <div class="text-secondary text-xs">
+          <div class="text-neutral-black-font text-xs">
             {{ $t('screen.profile.sections.news.stats.mediaMentions') }}
           </div>
         </div>
-        <div v-if="company?.press?.product_launches?.length" class="bg-base-200 rounded p-3">
-          <div class="text-secondary text-2xl font-bold">
+        <div
+          v-if="company?.press?.product_launches?.length"
+          class="bg-primary-lightest rounded p-3"
+        >
+          <div class="text-neutral-black-font text-2xl font-bold">
             {{ company.press.product_launches.length }}
           </div>
-          <div class="text-secondary text-xs">
+          <div class="text-neutral-black-font text-xs">
             {{ $t('screen.profile.sections.news.stats.productLaunches') }}
           </div>
         </div>
@@ -53,25 +56,25 @@
 
       <!-- Latest Press Items Preview -->
       <div v-if="latestPressItems.length > 0" class="space-y-2">
-        <h4 class="text-secondary text-sm font-medium">
+        <h4 class="text-neutral-black-font text-sm font-medium">
           {{ $t('screen.profile.sections.news.latestUpdates') }}
         </h4>
         <div class="space-y-2">
           <div
             v-for="item in latestPressItems"
             :key="item.value"
-            class="bg-base-200 rounded p-3 text-sm"
+            class="bg-primary-lightest rounded p-3 text-sm"
           >
             <div class="flex items-start justify-between gap-2">
-              <p class="text-secondary line-clamp-2">{{ item.value }}</p>
-              <i :class="[item.icon]" class="text-secondary/50 mt-1 text-xs"></i>
+              <p class="text-neutral-black-font line-clamp-2">{{ item.value }}</p>
+              <i :class="[item.icon]" class="text-neutral-black-font/50 mt-1 text-xs"></i>
             </div>
           </div>
         </div>
       </div>
 
       <!-- No data message -->
-      <div v-if="!hasAnyPressData" class="text-secondary py-4 text-center">
+      <div v-if="!hasAnyPressData" class="text-neutral-black-font py-4 text-center">
         {{ $t('common.noData') }}
       </div>
     </div>
@@ -79,11 +82,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
-import { useRoute, RouterLink } from 'vue-router'
-import { computed } from 'vue'
 import { Button } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
 
 const route = useRoute()
 

@@ -15,7 +15,7 @@
         <!-- Level Filter -->
         <select
           v-model="selectedLevel"
-          class="bg-base-200 border-border text-secondary focus:ring-primary/50 rounded-lg border px-4 py-2 focus:ring-2 focus:outline-none"
+          class="bg-primary-lightest border-border text-neutral-black-font focus:ring-primary/50 rounded-sm border px-4 py-2 focus:ring-2 focus:outline-none"
         >
           <option value="">{{ $t('screen.team.levels.all') }}</option>
           <option value="0">{{ $t('screen.team.levels.ceo') }}</option>
@@ -25,7 +25,7 @@
         </select>
 
         <!-- View Mode Toggle -->
-        <div class="bg-base-200 flex rounded-lg p-1">
+        <div class="bg-primary-lightest flex rounded-sm p-1">
           <Button
             @click="viewMode = 'grid'"
             :variant="viewMode === 'grid' ? 'primary' : 'tertiary'"
@@ -72,11 +72,11 @@
     </div>
 
     <!-- No Results -->
-    <div v-else class="bg-base-100 rounded-lg p-8 text-center">
-      <div class="text-secondary mb-3 text-4xl">
+    <div v-else class="rounded-sm bg-white p-8 text-center">
+      <div class="text-neutral-black-font mb-3 text-4xl">
         <i class="fa fa-search"></i>
       </div>
-      <p class="text-secondary">
+      <p class="text-neutral-black-font">
         {{ $t('screen.team.noResults') }}
       </p>
     </div>
@@ -84,10 +84,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
 import type { TeamMember } from '@/types/company'
-import TeamMemberCard from './TeamMemberCard.vue'
 import { Button, Input } from '@owlint/feathers-vue'
+import { computed, ref } from 'vue'
+import TeamMemberCard from './TeamMemberCard.vue'
 
 const props = defineProps<{
   team: TeamMember[]

@@ -62,7 +62,7 @@
         class="border-sage-300 dark:border-sage-700 border-b px-4 py-2"
       >
         <button
-          class="bg-sage-800 hover:bg-sage-700 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors"
+          class="bg-sage-800 hover:bg-sage-700 flex w-full items-center gap-2 rounded-sm px-3 py-2 text-left transition-colors"
           @click="handleAddPageContext"
         >
           <i class="fa fa-building text-sage-400 text-sm"></i>
@@ -83,7 +83,7 @@
           class="flex h-full flex-col items-center justify-center gap-4"
         >
           <img :src="withBody" class="h-32 w-32" alt="Chaps-e" />
-          <p class="text-sage-900 dark:text-sage-300 max-w-xs text-center">
+          <p class="text-sage-900 dark:text-sage-300 max-w-80 text-center">
             {{
               $t(
                 'common.sidebar.chapse.welcomeMessage',
@@ -114,7 +114,7 @@
             <div class="flex-shrink-0 w-8 h-8 rounded-full bg-sage-800 flex items-center justify-center">
               <img :src="chapseAvatar" class="w-6 h-6" alt="Chaps-e" />
             </div>
-            <div class="bg-sage-800 text-sage-200 text-sm rounded-xl px-4 py-3">
+            <div class="bg-sage-800 text-sage-200 text-sm rounded-md px-4 py-3">
               <i class="fa fa-circle fa-beat text-primary text-xs mr-2"></i>
               {{ $t('common.sidebar.chapse.thinking') }}
             </div>

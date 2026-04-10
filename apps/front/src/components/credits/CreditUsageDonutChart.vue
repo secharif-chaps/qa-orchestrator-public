@@ -7,16 +7,16 @@
     <!-- Loading state -->
     <div v-if="loading" class="flex flex-1 justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
-        <p class="text-secondary text-sm">{{ $t('common.loading') }}</p>
+        <i class="fa fa-spinner text-neutral-black-font mb-2 animate-spin text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">{{ $t('common.loading') }}</p>
       </div>
     </div>
 
     <!-- Empty state -->
     <div v-else-if="!hasData" class="flex flex-1 justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-chart-pie text-secondary mb-2 text-2xl"></i>
-        <p class="text-secondary text-sm">
+        <i class="fa fa-chart-pie text-neutral-black-font mb-2 text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">
           {{ $t('settings.credits.usage.noData') }}
         </p>
       </div>
@@ -39,7 +39,7 @@
             class="absolute -top-2 -right-4 translate-x-full transform"
           >
             <span
-              class="inline-block rounded-md border px-2 py-1 text-xs font-medium whitespace-nowrap"
+              class="inline-block rounded-sm border px-2 py-1 text-xs font-medium whitespace-nowrap"
               :style="getLabelStyle(usageData[2].module)"
             >
               {{ usageData[2].percentage.toFixed(0) }}% de {{ usageData[2].label }}
@@ -52,7 +52,7 @@
             class="absolute top-1/2 -right-4 translate-x-full -translate-y-1/2 transform"
           >
             <span
-              class="inline-block rounded-md border px-2 py-1 text-xs font-medium whitespace-nowrap"
+              class="inline-block rounded-sm border px-2 py-1 text-xs font-medium whitespace-nowrap"
               :style="getLabelStyle(usageData[0].module)"
             >
               {{ usageData[0].percentage.toFixed(0) }}% de {{ usageData[0].label }}
@@ -65,7 +65,7 @@
             class="absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full transform"
           >
             <span
-              class="inline-block rounded-md border px-2 py-1 text-xs font-medium whitespace-nowrap"
+              class="inline-block rounded-sm border px-2 py-1 text-xs font-medium whitespace-nowrap"
               :style="getLabelStyle(usageData[1].module)"
             >
               {{ usageData[1].percentage.toFixed(0) }}% de {{ usageData[1].label }}
@@ -75,13 +75,17 @@
       </div>
 
       <!-- Total - at bottom -->
-      <div class="border-primary-stroke mt-auto flex items-center justify-between border-t pt-4">
-        <span class="text-secondary text-sm">
+      <div
+        class="border-primary-lighter-stroke mt-auto flex items-center justify-between border-t pt-4"
+      >
+        <span class="text-neutral-black-font text-sm">
           {{ $t('settings.credits.usage.total') }}
         </span>
         <span class="font-semibold">
           {{ formattedTotal }}
-          <span class="text-secondary ml-1 text-sm">{{ $t('settings.credits.unit') }}</span>
+          <span class="text-neutral-black-font ml-1 text-sm">{{
+            $t('settings.credits.unit')
+          }}</span>
         </span>
       </div>
     </template>
@@ -92,12 +96,12 @@
 /**
  * Donut chart showing credit usage breakdown by module.
  */
-import { computed } from 'vue'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, type TooltipItem } from 'chart.js'
-import { Doughnut } from 'vue-chartjs'
-import type { ModuleUsage, ModuleName } from '@/types/credits'
-import { MODULE_CHART_COLORS } from '@/types/credits'
 import Card from '@/components/ui/Card.vue'
+import type { ModuleName, ModuleUsage } from '@/types/credits'
+import { MODULE_CHART_COLORS } from '@/types/credits'
+import { ArcElement, Chart as ChartJS, Legend, Tooltip, type TooltipItem } from 'chart.js'
+import { computed } from 'vue'
+import { Doughnut } from 'vue-chartjs'
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend)

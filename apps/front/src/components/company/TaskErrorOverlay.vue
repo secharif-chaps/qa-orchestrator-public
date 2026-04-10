@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-base-100/80 rounded-card absolute inset-0 flex items-center justify-center p-6 backdrop-blur-sm"
+    class="rounded-card absolute inset-0 flex items-center justify-center bg-white/80 p-6 backdrop-blur-sm"
   >
     <div class="flex w-full flex-col items-center gap-4">
       <!-- Rate limit with countdown -->
@@ -78,10 +78,10 @@
 </template>
 
 <script setup lang="ts">
+import type { AgentErrorDetails } from '@/types/task'
+import { Alert, Button } from '@owlint/feathers-vue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Alert, Button } from '@owlint/feathers-vue'
-import type { AgentErrorDetails } from '@/types/task'
 
 const { t } = useI18n()
 

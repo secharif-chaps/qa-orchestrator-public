@@ -1,11 +1,11 @@
 <template>
-  <div class="mx-auto flex max-w-4xl flex-col gap-6" data-cy="company-search-page">
+  <div class="mx-auto flex max-w-224 flex-col gap-6" data-cy="company-search-page">
     <!-- Page Header -->
     <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-semibold">{{ $t('screen.search.title') }}</h1>
-          <p class="text-secondary">{{ $t('screen.search.companyIdentity') }}</p>
+          <p class="text-neutral-black-font">{{ $t('screen.search.companyIdentity') }}</p>
         </div>
 
         <!-- Token Counter -->
@@ -38,7 +38,7 @@
 
     <!-- Search Form Card -->
     <div
-      class="bg-base-100 border-primary-stroke rounded-lg border p-6"
+      class="border-primary-lighter-stroke rounded-lg border bg-white p-6"
       :title="$t('screen.search.companyIdentity')"
     >
       <form @submit.prevent="submit" class="flex flex-col gap-6">
@@ -97,19 +97,19 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { Button, Input } from '@owlint/feathers-vue'
-import { computed, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useRouter, useRoute } from 'vue-router'
-import { useQuery } from '@pinia/colada'
+import { InsufficientTokensError } from '@/api/client'
+import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
+import TokenCounter from '@/components/tokens/TokenCounter.vue'
+import { useTokenConfig } from '@/composables/useGlobalTokens'
 import { useCreateCompany } from '@/mutations/companies'
 import { useAddItemToFolder } from '@/mutations/folders'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'
-import { InsufficientTokensError } from '@/api/client'
-import TokenCounter from '@/components/tokens/TokenCounter.vue'
-import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
-import { useTokenConfig } from '@/composables/useGlobalTokens'
+import { Button, Input } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 
 const { tokensPerCompany, isLoading: isTokenConfigLoading } = useTokenConfig()
 

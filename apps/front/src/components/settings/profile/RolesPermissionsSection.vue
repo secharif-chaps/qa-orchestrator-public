@@ -1,8 +1,8 @@
 <template>
-  <div v-if="isDev" class="bg-base-100 border-primary-stroke rounded-lg border">
-    <div class="border-primary-stroke border-b px-6 py-4">
+  <div v-if="isDev" class="border-primary-lighter-stroke rounded-sm border bg-white">
+    <div class="border-primary-lighter-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.profile.roles.title') }}</h2>
-      <p class="text-secondary mt-1 text-sm">
+      <p class="text-neutral-black-font mt-1 text-sm">
         {{ $t('settings.profile.roles.description') }}
       </p>
     </div>
@@ -12,7 +12,7 @@
           <span
             v-for="permission in userPermissions"
             :key="permission"
-            class="bg-base-200/50 rounded-md px-2 py-1 text-sm"
+            class="bg-primary-lightest/50 rounded-sm px-2 py-1 text-sm"
           >
             {{ permission }}
           </span>

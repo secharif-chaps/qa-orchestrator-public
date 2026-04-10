@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Mapping Table -->
-    <div class="border-primary-stroke overflow-hidden rounded-xl border">
+    <div class="border-primary-lighter-stroke overflow-hidden rounded-md border">
       <table class="w-full">
-        <thead class="bg-base-200">
+        <thead class="bg-primary-lightest">
           <tr>
             <th class="text-sage-700 dark:text-sage-200 px-4 py-3 text-left text-sm font-semibold">
               {{ $t('admin.import.csvColumn') }}
@@ -14,10 +14,10 @@
           </tr>
         </thead>
         <tbody class="divide-primary-stroke divide-y">
-          <tr v-for="mapping in mappings" :key="mapping.csvColumn" class="bg-base-100">
+          <tr v-for="mapping in mappings" :key="mapping.csvColumn" class="bg-white">
             <td class="px-4 py-3">
               <div class="flex items-center gap-2">
-                <code class="bg-base-200 rounded px-2 py-1 text-sm">
+                <code class="bg-primary-lightest rounded px-2 py-1 text-sm">
                   {{ mapping.csvColumn }}
                 </code>
                 <span
@@ -32,7 +32,7 @@
             <td class="px-4 py-3">
               <select
                 :value="mapping.targetField || 'ignore'"
-                class="bg-base-100 border-primary-stroke text-sage-700 dark:text-sage-200 focus:ring-primary focus:border-primary w-full max-w-xs rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+                class="border-primary-lighter-stroke text-sage-700 dark:text-sage-200 focus:ring-primary focus:border-primary w-full max-w-80 rounded-sm border bg-white px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                 @change="
                   handleMappingChange(mapping.csvColumn, ($event.target as HTMLSelectElement).value)
                 "
@@ -95,7 +95,7 @@
       />
 
       <!-- Password mode selection when password column exists -->
-      <div v-if="hasPasswordColumn" class="bg-base-200 rounded-xl p-4">
+      <div v-if="hasPasswordColumn" class="bg-primary-lightest rounded-md p-4">
         <p class="text-sage-700 dark:text-sage-200 mb-3 font-medium">
           {{ $t('admin.import.passwordHandling') }}
         </p>
@@ -145,11 +145,11 @@
 </template>
 
 <script setup lang="ts">
+import type { TargetField } from '@/composables/useColumnMapper'
+import type { ColumnMapping } from '@/types/user-import'
+import { Alert } from '@owlint/feathers-vue'
 import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Alert } from '@owlint/feathers-vue'
-import type { ColumnMapping } from '@/types/user-import'
-import type { TargetField } from '@/composables/useColumnMapper'
 
 interface Props {
   /** Column mappings */

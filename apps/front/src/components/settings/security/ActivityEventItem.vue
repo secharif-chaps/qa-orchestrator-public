@@ -1,25 +1,25 @@
 <template>
-  <div class="border-primary-stroke flex items-center gap-3 rounded-lg border p-3">
-    <div class="flex h-10 w-10 items-center justify-center rounded-lg" :class="iconClass">
+  <div class="border-primary-lighter-stroke flex items-center gap-3 rounded-sm border p-3">
+    <div class="flex h-10 w-10 items-center justify-center rounded-sm" :class="iconClass">
       <i :class="event.icon"></i>
     </div>
     <div class="flex-1">
       <p class="text-sm font-medium">{{ event.title }}</p>
-      <p class="text-secondary text-xs">{{ event.description }}</p>
-      <p class="text-secondary text-xs">
+      <p class="text-neutral-black-font text-xs">{{ event.description }}</p>
+      <p class="text-neutral-black-font text-xs">
         {{ formatDate(event.timestamp) }}
       </p>
     </div>
-    <div v-if="event.ipAddress" class="text-secondary text-xs">
+    <div v-if="event.ipAddress" class="text-neutral-black-font text-xs">
       {{ event.ipAddress }}
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { formatDate } from '@/utils/time'
 import type { ActivityEvent, ActivityEventType } from '@/types/account'
+import { formatDate } from '@/utils/time'
+import { computed } from 'vue'
 
 const props = defineProps<{
   event: ActivityEvent

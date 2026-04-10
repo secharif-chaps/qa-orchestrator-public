@@ -22,7 +22,7 @@
         <!-- Regular rank for others -->
         <span
           v-else
-          class="bg-base-200 text-secondary inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium"
+          class="bg-primary-lightest text-neutral-black-font inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium"
         >
           {{ item.rank }}
         </span>
@@ -43,7 +43,7 @@
           <!-- Name and email -->
           <div>
             <div class="font-medium">{{ item.fullName }}</div>
-            <div class="text-secondary text-sm">{{ item.email }}</div>
+            <div class="text-neutral-black-font text-sm">{{ item.email }}</div>
           </div>
         </div>
       </td>
@@ -63,8 +63,8 @@
     <!-- Empty state -->
     <template #empty>
       <div class="p-8 text-center">
-        <i class="fa fa-users text-secondary mb-2 text-2xl"></i>
-        <p class="text-secondary text-sm">
+        <i class="fa fa-users text-neutral-black-font mb-2 text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">
           {{ $t('settings.credits.topUsers.noData') }}
         </p>
       </div>
@@ -76,10 +76,10 @@
 /**
  * Table displaying top credit-consuming users using Vuellar Table component.
  */
+import type { TopCreditUser } from '@/types/credits'
+import { Table } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Table } from '@owlint/feathers-vue'
-import type { TopCreditUser } from '@/types/credits'
 
 interface Props {
   users: TopCreditUser[]

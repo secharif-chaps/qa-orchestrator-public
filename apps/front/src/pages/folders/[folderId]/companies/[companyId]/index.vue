@@ -27,7 +27,7 @@
       <Card class="relative flex-1">
         <div
           v-if="isTaskRunning('profile')"
-          class="bg-base-100/80 rounded-card absolute inset-0 flex items-center justify-center backdrop-blur-sm"
+          class="rounded-card absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm"
         >
           <div class="text-neutral-black-font flex items-center gap-3 text-base">
             <Icon icon="fas fa-spinner" class="fa-spin text-xl" />
@@ -76,7 +76,7 @@
       <Card class="relative">
         <div
           v-if="isTaskRunning('digital')"
-          class="bg-base-100/80 rounded-card absolute inset-0 flex items-center justify-center backdrop-blur-sm"
+          class="rounded-card absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm"
         >
           <div class="text-neutral-black-font flex items-center gap-3 text-base">
             <Icon icon="fas fa-spinner" class="fa-spin text-xl" />
@@ -93,7 +93,7 @@
               :href="formatWebsiteUrl(company.website)"
               target="_blank"
               rel="noopener noreferrer"
-              class="bg-primary-lighter border-primary-lighter-stroke hover:bg-base-300 p-xs gap-md flex cursor-pointer items-center rounded-lg border transition-colors"
+              class="bg-primary-lighter border-primary-lighter-stroke hover:bg-primary-lighter p-xs gap-md flex cursor-pointer items-center rounded-lg border transition-colors"
             >
               <Icon icon="fa-link" class="fa-fw text-neutral-black-font" />
               <div class="flex w-44 flex-col">
@@ -108,7 +108,7 @@
                 </span>
               </div>
             </a>
-            <div v-else class="bg-base-200 rounded-card flex items-center gap-3 px-4 py-3">
+            <div v-else class="bg-primary-lightest rounded-card flex items-center gap-3 px-4 py-3">
               <Icon icon="fas fa-link" class="fa-fw text-neutral-black-font" />
               <div class="flex w-44 flex-col gap-1">
                 <span class="truncate text-sm">

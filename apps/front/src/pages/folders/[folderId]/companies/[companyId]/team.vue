@@ -9,7 +9,7 @@
 
     <!-- No Data State -->
     <NoData v-else-if="!hasTeamData">
-      <p class="text-secondary text-lg font-medium">
+      <p class="text-neutral-black-font text-lg font-medium">
         {{ $t('screen.profile.sections.team.noData') }}
       </p>
     </NoData>
@@ -24,8 +24,8 @@
       />
 
       <!-- Team Members List -->
-      <div class="bg-base-100 rounded-lg p-6">
-        <h3 class="text-secondary mb-4 flex items-center gap-2 text-lg font-semibold">
+      <div class="rounded-sm bg-white p-6">
+        <h3 class="text-neutral-black-font mb-4 flex items-center gap-2 text-lg font-semibold">
           <i class="fa fa-address-card"></i>
           <span>{{ $t('screen.team.members.title') }}</span>
         </h3>
@@ -36,9 +36,9 @@
       </div>
 
       <!-- Hierarchy Graph -->
-      <div class="bg-base-100 rounded-lg p-6">
+      <div class="rounded-sm bg-white p-6">
         <div class="mb-4 flex items-center justify-between">
-          <h3 class="text-secondary flex items-center gap-2 text-lg font-semibold">
+          <h3 class="text-neutral-black-font flex items-center gap-2 text-lg font-semibold">
             <i class="fa fa-sitemap"></i>
             <span>{{ $t('screen.team.hierarchy.title') }}</span>
           </h3>
@@ -72,7 +72,7 @@
                 applyLayoutAndFitView()
               }
             "
-            class="rounded-lg border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800"
+            class="rounded-sm border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800"
           >
             <template #node-team-member="props">
               <TeamMemberNode
@@ -92,7 +92,7 @@
             <Panel
               position="top-left"
               v-if="selectedNode"
-              class="bg-base-100 ring-offset-bg1 max-w-[300px] rounded-lg ring-4 ring-offset-2"
+              class="ring-offset-bg1 max-w-[300px] rounded-sm bg-white ring-4 ring-offset-2"
               :class="{
                 'ring-orange-400 dark:ring-orange-500/20': selectedNode.level > 1,
                 'ring-purple-600 dark:ring-purple-500/20': selectedNode.level <= 1,
@@ -100,7 +100,7 @@
             >
               <div v-if="selectedNode" class="p-0.5">
                 <div
-                  class="flex items-center gap-3 rounded-lg p-2"
+                  class="flex items-center gap-3 rounded-sm p-2"
                   :class="[
                     selectedNode.level > 1
                       ? 'bg-orange-50 dark:bg-orange-900'
@@ -111,8 +111,8 @@
                     class="flex h-12 min-w-12 grow-0 items-center justify-center rounded-full"
                     :class="[
                       selectedNode.level > 1
-                        ? 'dark:bg-base-300 bg-orange-200 text-orange-600'
-                        : 'dark:bg-base-300 bg-purple-200 text-purple-600',
+                        ? 'dark:bg-primary-lighter bg-orange-200 text-orange-600'
+                        : 'dark:bg-primary-lighter bg-purple-200 text-purple-600',
                     ]"
                   >
                     <i class="fa fa-user text-xl"></i>
@@ -143,28 +143,28 @@
 </template>
 
 <script lang="ts" setup>
-import { Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
+import { Button } from '@owlint/feathers-vue'
 import { Background } from '@vue-flow/background'
 import { Panel, VueFlow, useVueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
-import { computed, nextTick, ref, watch, inject } from 'vue'
 import type { Ref } from 'vue'
+import { computed, inject, nextTick, ref, watch } from 'vue'
 
-import { useTheme } from '@/composables/useTheme'
-import { useRoute } from 'vue-router'
-import { useQuery } from '@pinia/colada'
-import { companyByIdQuery } from '@/queries/companies'
-import { companyTasksQuery } from '@/queries/tasks'
-import TeamMemberNode from '@/components/company/team/TeamMemberNode.vue'
-import TeamPageHeader from '@/components/company/team/TeamPageHeader.vue'
-import TeamMembersList from '@/components/company/team/TeamMembersList.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
+import TeamMemberNode from '@/components/company/team/TeamMemberNode.vue'
+import TeamMembersList from '@/components/company/team/TeamMembersList.vue'
+import TeamPageHeader from '@/components/company/team/TeamPageHeader.vue'
 import NoData from '@/components/ui/NoData.vue'
 import { useScreenshot } from '@/composables/useScreenshot'
+import { useTheme } from '@/composables/useTheme'
+import { companyByIdQuery } from '@/queries/companies'
+import { companyTasksQuery } from '@/queries/tasks'
 import type { TeamMember } from '@/types/company'
+import { useQuery } from '@pinia/colada'
+import { useRoute } from 'vue-router'
 
 interface TeamNodeData {
   position: string

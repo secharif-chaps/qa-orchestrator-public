@@ -3,13 +3,13 @@
     <!-- Left: Per page selector with results info -->
     <div class="flex flex-col gap-2">
       <div class="flex items-center gap-2">
-        <label class="text-secondary sr-only text-sm whitespace-nowrap">{{
+        <label class="text-neutral-black-font sr-only text-sm whitespace-nowrap">{{
           $t('common.pagination.show')
         }}</label>
         <select
           :value="meta.per_page"
           @change="$emit('updatePerPage', parseInt(($event.target as HTMLSelectElement).value))"
-          class="bg-base-200 border-primary-stroke focus:ring-primary/20 focus:border-primary min-w-16 rounded-md border px-3 py-1.5 text-sm focus:ring-2 focus:outline-none"
+          class="bg-primary-lightest border-primary-lighter-stroke focus:ring-primary/20 focus:border-primary min-w-16 rounded-sm border px-3 py-1.5 text-sm focus:ring-2 focus:outline-none"
         >
           <option v-for="option in pageSizeOptions" :key="option" :value="option">
             {{ option }}
@@ -17,7 +17,7 @@
         </select>
       </div>
 
-      <div class="text-secondary text-sm whitespace-nowrap">
+      <div class="text-neutral-black-font text-sm whitespace-nowrap">
         {{ resultText }}
       </div>
     </div>
@@ -33,12 +33,12 @@
       >
         <Pagination.List v-slot="{ items }" class="flex items-center gap-2">
           <Pagination.First
-            class="bg-base-200 hover:bg-base-300 ring-primary ring-offset-bg1 text-secondary hover:text-secondary flex h-10 w-10 items-center justify-center rounded-md p-0 ring-offset-2 transition-colors hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:ring-0 disabled:hover:ring-offset-0"
+            class="bg-primary-lightest hover:bg-primary-lighter ring-primary ring-offset-bg1 text-neutral-black-font hover:text-neutral-black-font flex h-10 w-10 items-center justify-center rounded-sm p-0 ring-offset-2 transition-colors hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:ring-0 disabled:hover:ring-offset-0"
           >
             <i class="fas fa-chevron-double-left text-sm"></i>
           </Pagination.First>
           <Pagination.Prev
-            class="bg-base-200 hover:bg-base-300 ring-primary ring-offset-bg1 text-secondary hover:text-secondary flex h-10 w-10 items-center justify-center rounded-md p-0 ring-offset-2 transition-colors hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:ring-0 disabled:hover:ring-offset-0"
+            class="bg-primary-lightest hover:bg-primary-lighter ring-primary ring-offset-bg1 text-neutral-black-font hover:text-neutral-black-font flex h-10 w-10 items-center justify-center rounded-sm p-0 ring-offset-2 transition-colors hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:ring-0 disabled:hover:ring-offset-0"
           >
             <i class="fas fa-chevron-left text-sm"></i>
           </Pagination.Prev>
@@ -46,17 +46,17 @@
           <template v-for="(item, index) in items" :key="index">
             <Pagination.Ellipsis
               v-if="item.type === 'ellipsis'"
-              class="text-secondary hover:ring-primary hover:ring-offset-bg1 flex h-10 w-10 items-center justify-center hover:ring-2 hover:ring-offset-2"
+              class="text-neutral-black-font hover:ring-primary hover:ring-offset-bg1 flex h-10 w-10 items-center justify-center hover:ring-2 hover:ring-offset-2"
             >
               <i class="fas fa-ellipsis-h text-sm"></i>
             </Pagination.Ellipsis>
 
             <Pagination.ListItem
               v-else
-              class="hover:bg-base-300 hover:ring-primary hover:ring-offset-bg1 flex h-10 w-10 cursor-pointer items-center justify-center rounded-md p-0 transition-colors hover:ring-2 hover:ring-offset-2"
+              class="hover:bg-primary-lighter hover:ring-primary hover:ring-offset-bg1 flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm p-0 transition-colors hover:ring-2 hover:ring-offset-2"
               :class="{
                 'bg-primary/10 border-primary text-sage-content': item.value === meta.current_page,
-                'bg-base-200 text-secondary hover:text-sage-content':
+                'bg-primary-lightest text-neutral-black-font hover:text-sage-content':
                   item.value !== meta.current_page,
               }"
               :value="item.value"
@@ -66,12 +66,12 @@
           </template>
 
           <Pagination.Next
-            class="bg-base-200 hover:bg-base-300 ring-primary ring-offset-bg1 text-secondary hover:text-secondary flex h-10 w-10 items-center justify-center rounded-md p-0 ring-offset-2 transition-colors hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:ring-0 disabled:hover:ring-offset-0"
+            class="bg-primary-lightest hover:bg-primary-lighter ring-primary ring-offset-bg1 text-neutral-black-font hover:text-neutral-black-font flex h-10 w-10 items-center justify-center rounded-sm p-0 ring-offset-2 transition-colors hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:ring-0 disabled:hover:ring-offset-0"
           >
             <i class="fas fa-chevron-right text-sm"></i>
           </Pagination.Next>
           <Pagination.Last
-            class="bg-base-200 hover:bg-base-300 ring-primary ring-offset-bg1 text-secondary hover:text-secondary flex h-10 w-10 items-center justify-center rounded-md p-0 ring-offset-2 transition-colors hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:ring-0 disabled:hover:ring-offset-0"
+            class="bg-primary-lightest hover:bg-primary-lighter ring-primary ring-offset-bg1 text-neutral-black-font hover:text-neutral-black-font flex h-10 w-10 items-center justify-center rounded-sm p-0 ring-offset-2 transition-colors hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:ring-0 disabled:hover:ring-offset-0"
           >
             <i class="fas fa-chevron-double-right text-sm"></i>
           </Pagination.Last>
@@ -81,7 +81,7 @@
 
     <!-- Right: Direct page input -->
     <div class="flex items-center justify-end gap-2">
-      <label class="text-secondary text-sm whitespace-nowrap">{{
+      <label class="text-neutral-black-font text-sm whitespace-nowrap">{{
         $t('common.pagination.page')
       }}</label>
       <input
@@ -91,10 +91,10 @@
         type="number"
         :min="1"
         :max="meta.last_page"
-        class="bg-base-200 border-primary-stroke focus:ring-primary/20 focus:border-primary w-16 rounded-md border px-2 py-1.5 text-center text-sm focus:ring-2 focus:outline-none"
+        class="bg-primary-lightest border-primary-lighter-stroke focus:ring-primary/20 focus:border-primary w-16 rounded-sm border px-2 py-1.5 text-center text-sm focus:ring-2 focus:outline-none"
         :placeholder="String(meta.current_page)"
       />
-      <span class="text-secondary text-sm whitespace-nowrap"
+      <span class="text-neutral-black-font text-sm whitespace-nowrap"
         >{{ $t('common.pagination.of') }} {{ meta.last_page }}</span
       >
     </div>
@@ -102,9 +102,9 @@
 </template>
 
 <script setup lang="ts">
-import { Pagination } from 'reka-ui/namespaced'
 import type { PaginationMeta } from '@/types/pagination'
-import { ref, computed, watch } from 'vue'
+import { Pagination } from 'reka-ui/namespaced'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {

@@ -22,7 +22,7 @@
         <div
           v-if="isOpen"
           ref="dropdownRef"
-          class="border-primary-stroke bg-base-100 shadow-shadow-3 fixed z-50 overflow-hidden rounded-lg border"
+          class="border-primary-lighter-stroke shadow-3 fixed z-50 overflow-hidden rounded-sm border bg-white"
           :class="widthClass"
           :style="dropdownStyle"
         >
@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 
 interface Props {
   align?: 'left' | 'right'

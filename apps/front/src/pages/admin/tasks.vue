@@ -6,14 +6,14 @@
         <h1 class="text-2xl font-bold">
           {{ $t('admin.tasks.title') }}
         </h1>
-        <p class="text-secondary mt-1">
+        <p class="text-neutral-black-font mt-1">
           {{ $t('admin.tasks.description') }}
         </p>
       </div>
 
       <!-- Auto-refresh toggle -->
       <div class="flex items-center gap-4">
-        <span class="text-secondary text-sm">
+        <span class="text-neutral-black-font text-sm">
           {{ lastRefreshText }}
         </span>
         <button
@@ -22,7 +22,7 @@
             'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
             autoRefreshEnabled
               ? 'bg-success-light text-success-light-content'
-              : 'bg-base-200 text-secondary hover:bg-base-300',
+              : 'bg-primary-lightest text-neutral-black-font hover:bg-primary-lighter',
           ]"
         >
           <i
@@ -47,7 +47,7 @@
     <!-- Loading State -->
     <div v-if="isLoading" class="flex flex-col items-center justify-center gap-4 py-16">
       <i class="fa fa-spinner text-primary animate-spin text-4xl"></i>
-      <p class="text-secondary">{{ $t('admin.tasks.loading') }}</p>
+      <p class="text-neutral-black-font">{{ $t('admin.tasks.loading') }}</p>
     </div>
 
     <!-- Error State -->
@@ -123,9 +123,9 @@
           <Dropdown align="left" width="sm">
             <template #trigger="{ isOpen }">
               <button
-                class="border-primary-stroke bg-base-100 hover:bg-base-200 flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors"
+                class="border-primary-lighter-stroke hover:bg-primary-lightest flex items-center gap-2 rounded-lg border bg-white px-3 py-2 text-sm transition-colors"
               >
-                <i class="fa fa-filter text-secondary"></i>
+                <i class="fa fa-filter text-neutral-black-font"></i>
                 <span>{{ selectedStatusLabel }}</span>
                 <i
                   :class="[
@@ -162,9 +162,9 @@
           <Dropdown align="left" width="sm">
             <template #trigger="{ isOpen }">
               <button
-                class="border-primary-stroke bg-base-100 hover:bg-base-200 flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors"
+                class="border-primary-lighter-stroke hover:bg-primary-lightest flex items-center gap-2 rounded-lg border bg-white px-3 py-2 text-sm transition-colors"
               >
-                <i class="fa fa-tag text-secondary"></i>
+                <i class="fa fa-tag text-neutral-black-font"></i>
                 <span>{{ selectedTypeLabel }}</span>
                 <i
                   :class="[
@@ -193,9 +193,9 @@
           <Dropdown align="left" width="md">
             <template #trigger="{ isOpen }">
               <button
-                class="border-primary-stroke bg-base-100 hover:bg-base-200 flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors"
+                class="border-primary-lighter-stroke hover:bg-primary-lightest flex items-center gap-2 rounded-lg border bg-white px-3 py-2 text-sm transition-colors"
               >
-                <i class="fa fa-building text-secondary"></i>
+                <i class="fa fa-building text-neutral-black-font"></i>
                 <span>{{ selectedOrgLabel }}</span>
                 <i
                   :class="[
@@ -215,7 +215,7 @@
                 :key="org.id"
                 @click="filters.organization_id = org.id"
               >
-                <span :class="{ 'text-secondary': org.is_internal }">
+                <span :class="{ 'text-neutral-black-font': org.is_internal }">
                   {{ org.name }}
                   <Tag
                     v-if="org.is_internal"
@@ -244,7 +244,7 @@
 
           <!-- Bulk Actions -->
           <div v-if="selectedTaskIds.length > 0" class="flex items-center gap-3">
-            <span class="text-secondary text-sm">
+            <span class="text-neutral-black-font text-sm">
               {{ $t('admin.tasks.selection.selected', { count: selectedTaskIds.length }) }}
             </span>
             <Button
@@ -275,7 +275,7 @@
       <Card class="overflow-hidden !p-0">
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-base-200 border-primary-stroke border-b">
+            <thead class="bg-primary-lightest border-primary-lighter-stroke border-b">
               <tr>
                 <th class="w-10 px-4 py-3 text-left">
                   <input
@@ -283,49 +283,49 @@
                     :checked="allRunningSelected"
                     :indeterminate="someRunningSelected && !allRunningSelected"
                     @change="toggleAllRunning"
-                    class="border-primary-stroke rounded"
+                    class="border-primary-lighter-stroke rounded"
                   />
                 </th>
                 <th
-                  class="text-secondary px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
+                  class="text-neutral-black-font px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
                 >
                   {{ $t('admin.tasks.table.id') }}
                 </th>
                 <th
-                  class="text-secondary px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
+                  class="text-neutral-black-font px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
                 >
                   {{ $t('admin.tasks.table.company') }}
                 </th>
                 <th
-                  class="text-secondary px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
+                  class="text-neutral-black-font px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
                 >
                   {{ $t('admin.tasks.table.organization') }}
                 </th>
                 <th
-                  class="text-secondary px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
+                  class="text-neutral-black-font px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
                 >
                   {{ $t('admin.tasks.table.type') }}
                 </th>
                 <th
-                  class="text-secondary px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
+                  class="text-neutral-black-font px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
                 >
                   {{ $t('admin.tasks.table.status') }}
                 </th>
                 <th
-                  class="text-secondary px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
+                  class="text-neutral-black-font px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
                 >
                   {{ $t('admin.tasks.table.elapsed') }}
                 </th>
                 <th
-                  class="text-secondary px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
+                  class="text-neutral-black-font px-4 py-3 text-left text-xs font-semibold tracking-wide uppercase"
                 >
                   {{ $t('admin.tasks.table.actions') }}
                 </th>
               </tr>
             </thead>
             <tbody class="divide-primary-stroke divide-y">
-              <tr v-if="!tasks?.items?.length" class="bg-base-100">
-                <td colspan="8" class="text-secondary px-4 py-12 text-center">
+              <tr v-if="!tasks?.items?.length" class="bg-white">
+                <td colspan="8" class="text-neutral-black-font px-4 py-12 text-center">
                   <i class="fa fa-inbox mb-3 block text-3xl"></i>
                   {{ $t('admin.tasks.table.noTasks') }}
                 </td>
@@ -333,7 +333,7 @@
               <tr
                 v-for="task in tasks?.items ?? []"
                 :key="task.id"
-                class="bg-base-100 hover:bg-base-200/50 transition-colors"
+                class="hover:bg-primary-lightest/50 bg-white transition-colors"
               >
                 <td class="px-4 py-3">
                   <input
@@ -341,12 +341,12 @@
                     type="checkbox"
                     :checked="isSelected(task.id)"
                     @change="toggleTaskSelection(task.id)"
-                    class="border-primary-stroke rounded"
+                    class="border-primary-lighter-stroke rounded"
                   />
                 </td>
                 <td class="px-4 py-3 font-mono text-sm">{{ task.id }}</td>
                 <td class="px-4 py-3 text-sm font-medium">{{ task.company_name }}</td>
-                <td class="text-secondary px-4 py-3 text-sm">
+                <td class="text-neutral-black-font px-4 py-3 text-sm">
                   {{ getOrgName(task.organization_id) }}
                 </td>
                 <td class="px-4 py-3">
@@ -395,10 +395,10 @@
         <!-- Pagination -->
         <div
           v-if="tasks && tasks.pages > 1"
-          class="border-primary-stroke bg-base-200/50 border-t px-4 py-3"
+          class="border-primary-lighter-stroke bg-primary-lightest/50 border-t px-4 py-3"
         >
           <div class="flex items-center justify-between">
-            <span class="text-secondary text-sm">
+            <span class="text-neutral-black-font text-sm">
               {{
                 $t('admin.tasks.pagination.showing', {
                   from: (filters.page! - 1) * filters.size! + 1,
@@ -442,7 +442,7 @@
     >
       <template #description>
         <div class="space-y-4">
-          <p class="text-secondary">
+          <p class="text-neutral-black-font">
             {{
               $t(
                 'admin.tasks.modal.description',
@@ -451,15 +451,15 @@
               )
             }}
           </p>
-          <ul class="text-secondary list-inside list-disc space-y-1 text-sm">
+          <ul class="text-neutral-black-font list-inside list-disc space-y-1 text-sm">
             <li>{{ $t('admin.tasks.modal.actions.cancel') }}</li>
             <li>{{ $t('admin.tasks.modal.actions.queue') }}</li>
             <li>{{ $t('admin.tasks.modal.actions.reset') }}</li>
           </ul>
 
           <!-- Selected tasks summary -->
-          <div class="bg-base-200 max-h-40 overflow-y-auto rounded-lg p-3">
-            <p class="text-secondary mb-2 text-xs font-semibold">
+          <div class="bg-primary-lightest max-h-40 overflow-y-auto rounded-lg p-3">
+            <p class="text-neutral-black-font mb-2 text-xs font-semibold">
               {{ $t('admin.tasks.modal.selectedTasks') }}
             </p>
             <div class="space-y-1">
@@ -520,7 +520,7 @@
               </p>
               <div
                 v-if="Object.keys(lastRestartResult.skipped_reasons).length > 0"
-                class="text-secondary mt-2 text-xs"
+                class="text-neutral-black-font mt-2 text-xs"
               >
                 <p class="font-semibold">{{ $t('admin.tasks.modal.result.skippedReasons') }}</p>
                 <ul class="list-inside list-disc">
@@ -857,7 +857,7 @@ function formatElapsedTime(createdAt: string): string {
 }
 
 function getElapsedTimeClass(task: AdminTaskResponse): string {
-  if (task.status !== 'running') return 'text-secondary'
+  if (task.status !== 'running') return 'text-neutral-black-font'
 
   const created = new Date(task.created_at)
   const diffMin = Math.floor((Date.now() - created.getTime()) / 60000)

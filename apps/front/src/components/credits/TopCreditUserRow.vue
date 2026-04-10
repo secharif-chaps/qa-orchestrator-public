@@ -1,5 +1,7 @@
 <template>
-  <tr class="border-primary-stroke hover:bg-base-200/50 border-b transition-colors last:border-b-0">
+  <tr
+    class="border-primary-lighter-stroke hover:bg-primary-lightest/50 border-b transition-colors last:border-b-0"
+  >
     <!-- Rank -->
     <td class="px-4 py-3 text-center">
       <!-- Medal style for top 3 -->
@@ -21,7 +23,7 @@
       <!-- Regular rank for others -->
       <span
         v-else
-        class="bg-base-200 text-secondary inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium"
+        class="bg-primary-lightest text-neutral-black-font inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium"
       >
         {{ user.rank }}
       </span>
@@ -40,7 +42,7 @@
         <!-- Name and email -->
         <div>
           <div class="font-medium">{{ user.fullName }}</div>
-          <div class="text-secondary text-sm">{{ user.email }}</div>
+          <div class="text-neutral-black-font text-sm">{{ user.email }}</div>
         </div>
       </div>
     </td>
@@ -61,8 +63,8 @@
  * Single user row in the top credit users table.
  * Displays rank, avatar, name, email, and credits consumed.
  */
-import { computed } from 'vue'
 import type { TopCreditUser } from '@/types/credits'
+import { computed } from 'vue'
 
 interface Props {
   user: TopCreditUser

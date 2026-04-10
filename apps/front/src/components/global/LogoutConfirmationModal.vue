@@ -11,7 +11,7 @@
     </template>
 
     <div class="flex flex-col gap-4">
-      <p class="text-secondary text-sm">
+      <p class="text-neutral-black-font text-sm">
         {{ t('common.logout.message') }}
       </p>
     </div>

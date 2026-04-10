@@ -122,7 +122,7 @@
         class="group bg-primary-lighter border-primary-lighter-stroke p-xl rounded-xl border text-left transition-all duration-200"
         :class="{
           'cursor-not-allowed opacity-50': !areTasksSuccessful,
-          'hover:bg-accent-100 dark:hover:bg-accent-400/20 hover:border-accent-500 hover:shadow-shadow-2':
+          'hover:bg-accent-100 dark:hover:bg-accent-400/20 hover:border-accent-500 hover:shadow-2':
             areTasksSuccessful,
         }"
       >
@@ -174,7 +174,7 @@
     <!-- Empty State (No Actions) - Only show after we've attempted to load -->
     <div
       v-else-if="hasLoadedOnce"
-      class="bg-base-200 rounded-card border-primary-stroke border p-6 text-center"
+      class="bg-primary-lightest rounded-card border-primary-lighter-stroke border p-6 text-center"
     >
       <Icon icon="fa-magic" class="text-neutral-black-font mb-3 text-3xl" />
       <h4 class="mb-2 font-semibold">

@@ -1,13 +1,15 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-lg border">
-    <div class="border-primary-stroke border-b px-6 py-4">
+  <div class="border-primary-lighter-stroke rounded-sm border bg-white">
+    <div class="border-primary-lighter-stroke border-b px-6 py-4">
       <h3 class="text-lg font-semibold">{{ t('admin.organizationBreakdown.title') }}</h3>
     </div>
 
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
-        <p class="text-secondary text-sm">{{ t('admin.organizationBreakdown.loading') }}</p>
+        <i class="fa fa-spinner text-neutral-black-font mb-2 animate-spin text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">
+          {{ t('admin.organizationBreakdown.loading') }}
+        </p>
       </div>
     </div>
 
@@ -19,18 +21,18 @@
     </div>
 
     <div v-else-if="!data?.organizations.length" class="py-12 text-center">
-      <i class="fa fa-database text-secondary mb-4 text-4xl"></i>
-      <p class="text-secondary text-lg font-medium">
+      <i class="fa fa-database text-neutral-black-font mb-4 text-4xl"></i>
+      <p class="text-neutral-black-font text-lg font-medium">
         {{ t('admin.organizationBreakdown.noData') }}
       </p>
     </div>
 
     <div v-else class="overflow-x-auto">
       <table class="w-full">
-        <thead class="bg-base-200">
+        <thead class="bg-primary-lightest">
           <tr>
             <th
-              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
+              class="text-neutral-black-font hover:bg-primary-lighter cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
               @click="sort('organization_name')"
             >
               <div class="flex items-center gap-1">
@@ -39,7 +41,7 @@
               </div>
             </th>
             <th
-              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
+              class="text-neutral-black-font hover:bg-primary-lighter cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
               @click="sort('total_cost')"
             >
               <div class="flex items-center gap-1">
@@ -48,7 +50,7 @@
               </div>
             </th>
             <th
-              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
+              class="text-neutral-black-font hover:bg-primary-lighter cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
               @click="sort('task_count')"
             >
               <div class="flex items-center gap-1">
@@ -57,7 +59,7 @@
               </div>
             </th>
             <th
-              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
+              class="text-neutral-black-font hover:bg-primary-lighter cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
               @click="sort('company_count')"
             >
               <div class="flex items-center gap-1">
@@ -66,7 +68,7 @@
               </div>
             </th>
             <th
-              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
+              class="text-neutral-black-font hover:bg-primary-lighter cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
               @click="sort('avg_cost_per_task')"
             >
               <div class="flex items-center gap-1">
@@ -75,7 +77,7 @@
               </div>
             </th>
             <th
-              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
+              class="text-neutral-black-font hover:bg-primary-lighter cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
               @click="sort('avg_cost_per_company')"
             >
               <div class="flex items-center gap-1">
@@ -89,24 +91,24 @@
           <tr
             v-for="organization in sortedorganizations"
             :key="organization.organization_id"
-            class="hover:bg-base-200 transition-colors"
+            class="hover:bg-primary-lightest transition-colors"
           >
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
                 <div class="bg-primary mr-3 h-2 w-2 flex-shrink-0 rounded-full"></div>
                 <div>
                   <div class="text-sm font-medium">{{ organization.organization_name }}</div>
-                  <div class="text-secondary text-xs">
+                  <div class="text-neutral-black-font text-xs">
                     {{ t('admin.organizationBreakdown.id') }} {{ organization.organization_id }}
                   </div>
                 </div>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-secondary text-sm font-semibold">
+              <div class="text-neutral-black-font text-sm font-semibold">
                 {{ formatCurrency(organization.total_cost) }}
               </div>
-              <div class="text-secondary text-xs">
+              <div class="text-neutral-black-font text-xs">
                 {{
                   t('admin.organizationBreakdown.percentOfTotal', {
                     percent: getPercentage(organization.total_cost),
@@ -116,7 +118,7 @@
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm font-medium">{{ formatNumber(organization.task_count) }}</div>
-              <div class="text-secondary text-xs">
+              <div class="text-neutral-black-font text-xs">
                 {{
                   organization.total_input_tokens + organization.total_output_tokens > 0
                     ? t('admin.organizationBreakdown.tokens', {
@@ -149,9 +151,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import type { organizationCostData, organizationCostResponse } from '@/api/cost-analysis'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { organizationCostResponse, organizationCostData } from '@/api/cost-analysis'
 
 const { t } = useI18n()
 

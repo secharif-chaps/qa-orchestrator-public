@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50"
+    class="flex cursor-pointer items-center gap-3 rounded-sm p-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50"
     @click="handleClick"
   >
     <Badge variant="secondary" color="pink" icon="fa fa-building" />

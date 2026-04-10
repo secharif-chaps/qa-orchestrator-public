@@ -1,6 +1,6 @@
 <template>
   <section
-    class="bg-sage-50 border-primary-stroke flex flex-wrap content-center items-center justify-center gap-6 rounded-[20px] border p-6"
+    class="bg-sage-50 border-primary-lighter-stroke flex flex-wrap content-center items-center justify-center gap-6 rounded-[20px] border p-6"
     :aria-label="$t('dashboard.home.chapse.actionPrompt')"
   >
     <!-- Chaps-e Mascot (left) -->
