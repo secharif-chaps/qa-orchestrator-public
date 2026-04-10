@@ -144,6 +144,8 @@ services:
       # Mercure (FrankenPHP/Caddy embedded hub)
       MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_SECRET}
       MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_JWT_SECRET}
+      INTERNAL_JWT_SECRET: ${INTERNAL_JWT_SECRET:-!ChangeThisInternalJWTSecretKey!!}
+      INTERNAL_ALLOWED_IPS: ${INTERNAL_ALLOWED_IPS:-}
 
   # Target runner — Symfony Messenger consumers
   target-runner:
