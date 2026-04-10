@@ -33,6 +33,7 @@
         "company.create",
         "organization.read",
         "organization.write",
+        "organization.manage",
         "admin.organizations",
         "admin.tasks"
       ]
@@ -54,7 +55,8 @@
       "realmRoles": [
         "company.create",
         "organization.read",
-        "organization.write"
+        "organization.write",
+        "organization.manage"
       ]
     },
     {
@@ -305,6 +307,12 @@
         "clientRole": false
       },
       {
+        "name": "organization.manage",
+        "description": "Manage organization members and their permissions",
+        "composite": false,
+        "clientRole": false
+      },
+      {
         "name": "admin.organizations",
         "description": "Global admin access to all organizations",
         "composite": false,
@@ -331,6 +339,7 @@
             "company.create",
             "organization.read",
             "organization.write",
+            "organization.manage",
             "admin.organizations",
             "admin.tasks",
             "admin.workflows"
