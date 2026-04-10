@@ -12,6 +12,9 @@ apps/front/              @asaber @aaittaleb @lgault @alauf @yelouatri @faourik @
 # Screen Backend
 apps/screen/             @asaber @aaittaleb @yelouatri @ffayard @iyolande.ext
 
+# Stream Backend
+apps/stream/             @ffayard
+
 # Target Backend (PHP/Symfony + N8N)
 apps/target/             @alauf @ffayard @hbriere.ext @jjoyeux @lgault @mpazat
 
