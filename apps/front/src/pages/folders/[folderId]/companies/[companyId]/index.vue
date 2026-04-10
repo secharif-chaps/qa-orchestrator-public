@@ -386,6 +386,18 @@ const analysisCards = computed(() => {
       disabled: false,
     },
     {
+      section: 'financial' as TaskType,
+      title: t('screen.company.analysisCards.financial.title'),
+      description: t('screen.company.analysisCards.financial.description'),
+      icon: 'fas fa-chart-line',
+      insights: company.value?.financial?.insights?.value,
+      taskStatus: getTaskStatus('financial'),
+      errorDetails: getTaskErrorDetails('financial'),
+      taskId: getTaskId('financial'),
+      taskUpdatedAt: getTaskUpdatedAt('financial'),
+      disabled: false,
+    },
+    {
       section: 'timeline' as TaskType,
       title: t('screen.company.analysisCards.timeline.title'),
       description: t('screen.company.analysisCards.timeline.description'),
