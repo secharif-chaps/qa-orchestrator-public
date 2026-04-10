@@ -1,18 +1,20 @@
 <template>
   <div
-    class="rounded-lg border p-4"
+    class="rounded-sm border p-4"
     :class="
-      isCurrent ? 'border-sage-300 dark:border-base-300 bg-base-200' : 'border-primary-stroke'
+      isCurrent
+        ? 'border-sage-300 dark:border-primary-lighter-stroke bg-primary-lightest'
+        : 'border-primary-lighter-stroke'
     "
   >
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div
-          class="flex h-10 w-10 items-center justify-center rounded-lg"
+          class="flex h-10 w-10 items-center justify-center rounded-sm"
           :class="
             isCurrent
               ? 'border border-rose-200 bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
-              : 'bg-base-200 text-secondary'
+              : 'bg-primary-lightest text-neutral-black-font'
           "
         >
           <i class="fas fa-desktop"></i>
@@ -21,10 +23,10 @@
           <h3 class="text-sm font-medium">
             {{ $t('settings.security.sessions.webSession') }}
           </h3>
-          <p class="text-secondary text-xs">
+          <p class="text-neutral-black-font text-xs">
             <i class="fas fa-globe mr-1"></i>{{ session.ipAddress }}
           </p>
-          <p class="text-secondary text-xs">
+          <p class="text-neutral-black-font text-xs">
             <i class="fas fa-clock mr-1"></i>{{ formatRelativeTime(session.lastAccess) }}
           </p>
         </div>
@@ -48,8 +50,8 @@
 
 <script setup lang="ts">
 import Tag from '@/components/ui/Tag.vue'
-import { Button } from '@owlint/feathers-vue'
 import type { Session } from '@/types/account'
+import { Button } from '@owlint/feathers-vue'
 
 const props = defineProps<{
   session: Session

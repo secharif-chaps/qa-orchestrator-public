@@ -29,7 +29,7 @@ const cardClasses = computed(() => {
     classes.push('cursor-pointer transition-colors')
   }
   if (hoverable || clickable) {
-    classes.push('hover:shadow-shadow-1 transition-shadow duration-150')
+    classes.push('hover:shadow-1 transition-shadow duration-150')
   }
 
   if (padding) {

@@ -2,13 +2,13 @@
   <!-- Card View -->
   <div
     v-if="mode === 'grid'"
-    class="bg-base-100 border-primary-stroke hover:ring-primary/70 ring-offset-bg3 group cursor-pointer rounded-lg border p-4 ring-offset-2 transition-all duration-200 hover:ring-4"
+    class="border-primary-lighter-stroke hover:ring-primary/70 ring-offset-bg3 group cursor-pointer rounded-sm border bg-white p-4 ring-offset-2 transition-all duration-200 hover:ring-4"
     @click="$emit('viewCompany', company.id)"
   >
     <div class="mb-4 flex items-start justify-between">
       <div class="flex items-center gap-3">
         <div
-          class="ring-primary-stroke flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-white ring-1"
+          class="ring-primary-stroke flex h-12 w-12 items-center justify-center overflow-hidden rounded-sm bg-white ring-1"
         >
           <img
             v-if="getCompanyDomain(company.website)"
@@ -22,14 +22,16 @@
             v-show="showFallbackIcon || !getCompanyDomain(company.website)"
             class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
           >
-            <i class="fas fa-building text-secondary text-xl"></i>
+            <i class="fas fa-building text-neutral-black-font text-xl"></i>
           </div>
         </div>
         <div class="min-w-0 flex-1">
-          <h3 class="group-hover:text-secondary truncate text-lg font-semibold transition-colors">
+          <h3
+            class="group-hover:text-neutral-black-font truncate text-lg font-semibold transition-colors"
+          >
             {{ company.name }}
           </h3>
-          <p v-if="company.website" class="text-secondary truncate text-sm">
+          <p v-if="company.website" class="text-neutral-black-font truncate text-sm">
             {{ formatWebsiteDisplay(company.website) }}
           </p>
         </div>
@@ -40,12 +42,12 @@
     <div class="space-y-3">
       <!-- Website Link -->
       <div v-if="company.website" class="flex items-center gap-2">
-        <i class="fas fa-globe text-secondary w-4 text-sm"></i>
+        <i class="fas fa-globe text-neutral-black-font w-4 text-sm"></i>
         <a
           :href="formatWebsiteUrl(company.website)"
           target="_blank"
           rel="noopener noreferrer"
-          class="text-secondary hover:text-sage-content/80 truncate text-sm transition-colors"
+          class="text-neutral-black-font hover:text-sage-content/80 truncate text-sm transition-colors"
           @click.stop
         >
           {{ company.website }}
@@ -55,9 +57,9 @@
 
       <!-- Tasks Info -->
       <div v-if="company.tasks && company.tasks.length > 0" class="flex items-center gap-2">
-        <i class="fas fa-tasks text-secondary w-4 text-sm"></i>
+        <i class="fas fa-tasks text-neutral-black-font w-4 text-sm"></i>
         <div class="flex items-center gap-2">
-          <span class="text-secondary text-sm"> {{ company.tasks.length }} tasks </span>
+          <span class="text-neutral-black-font text-sm"> {{ company.tasks.length }} tasks </span>
           <Tag :variant="getTaskStatusVariant(company.tasks)" size="xs">
             {{ getTaskStatusText(company.tasks) }}
           </Tag>
@@ -66,8 +68,8 @@
     </div>
 
     <!-- Footer with creation date and owner -->
-    <div class="border-primary-stroke mt-4 border-t pt-3">
-      <div class="text-secondary flex items-center justify-between text-xs">
+    <div class="border-primary-lighter-stroke mt-4 border-t pt-3">
+      <div class="text-neutral-black-font flex items-center justify-between text-xs">
         <span>{{ t('screen.company.item.created') }} {{ formatFullDate(company.created_at) }}</span>
         <span v-if="company.owner_username"
           >{{ t('screen.company.item.by') }} {{ company.owner_username }}</span
@@ -79,14 +81,14 @@
   <!-- List/Table View -->
   <div
     v-else
-    class="hover:bg-base-200 cursor-pointer px-6 py-4 transition-colors"
+    class="hover:bg-primary-lightest cursor-pointer px-6 py-4 transition-colors"
     @click="$emit('viewCompany', company.id)"
   >
     <div class="grid grid-cols-12 items-center gap-4">
       <!-- Column 1: Company Name and Website (4 cols) -->
       <div class="col-span-4 flex min-w-0 items-center gap-3">
         <div
-          class="ring-primary-stroke flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1"
+          class="ring-primary-stroke flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white ring-1"
         >
           <img
             v-if="getCompanyDomain(company.website)"
@@ -100,15 +102,15 @@
             v-show="showFallbackIcon || !getCompanyDomain(company.website)"
             class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
           >
-            <i class="fas fa-building text-secondary"></i>
+            <i class="fas fa-building text-neutral-black-font"></i>
           </div>
         </div>
 
         <div class="min-w-0 flex-1">
-          <h3 class="hover:text-secondary truncate font-medium transition-colors">
+          <h3 class="hover:text-neutral-black-font truncate font-medium transition-colors">
             {{ company.name }}
           </h3>
-          <p v-if="company.website" class="text-secondary truncate text-sm">
+          <p v-if="company.website" class="text-neutral-black-font truncate text-sm">
             {{ formatWebsiteDisplay(company.website) }}
           </p>
         </div>
@@ -116,14 +118,14 @@
 
       <!-- Column 2: Created Date (2 cols) -->
       <div class="col-span-2">
-        <div class="text-secondary text-sm">
+        <div class="text-neutral-black-font text-sm">
           {{ formatFullDate(company.created_at) }}
         </div>
       </div>
 
       <!-- Column 3: Owner (2 cols) -->
       <div class="col-span-2">
-        <div class="text-secondary text-sm">
+        <div class="text-neutral-black-font text-sm">
           {{ company.owner_username || '—' }}
         </div>
       </div>
@@ -163,12 +165,12 @@
 
 <script setup lang="ts">
 import Tag, { type BadgeVariant } from '@/components/ui/Tag.vue'
-import { Button } from '@owlint/feathers-vue'
-import type { Company } from '@/types/company'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import type { Company } from '@/types/company'
+import { formatFullDate } from '@/utils/time'
+import { Button } from '@owlint/feathers-vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { formatFullDate } from '@/utils/time'
 
 const { t } = useI18n()
 

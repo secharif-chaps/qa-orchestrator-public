@@ -10,7 +10,7 @@
 
     <!-- No Data State -->
     <NoData v-else-if="!hasProductsData">
-      <p class="text-secondary text-lg font-medium">
+      <p class="text-neutral-black-font text-lg font-medium">
         {{ $t('screen.profile.sections.products.noData') }}
       </p>
     </NoData>
@@ -51,7 +51,7 @@
       </div>
 
       <!-- Products List View -->
-      <div v-else-if="viewMode === 'list'" class="bg-base-100 rounded-lg p-4">
+      <div v-else-if="viewMode === 'list'" class="rounded-sm bg-white p-4">
         <div class="space-y-4">
           <ProductListItem
             v-for="(productList, category) in filteredProducts"
@@ -64,7 +64,7 @@
 
       <!-- No Results State -->
       <NoData v-if="Object.keys(filteredProducts).length === 0 && searchQuery">
-        <p class="text-secondary text-lg font-medium">
+        <p class="text-neutral-black-font text-lg font-medium">
           {{ $t('screen.products.noResults') }}
         </p>
       </NoData>
@@ -73,18 +73,18 @@
 </template>
 
 <script lang="ts" setup>
-import ProductsHeader from '@/components/company/products/ProductsHeader.vue'
 import ProductGridItem from '@/components/company/products/ProductGridItem.vue'
 import ProductListItem from '@/components/company/products/ProductListItem.vue'
-import ChapseAlert from '@/components/ui/ChapseAlert.vue'
-import NoData from '@/components/ui/NoData.vue'
-import { useRoute } from 'vue-router'
-import { computed, ref, inject, type Ref } from 'vue'
-import { useQuery } from '@pinia/colada'
-import { companyByIdQuery } from '@/queries/companies'
-import { companyTasksQuery } from '@/queries/tasks'
+import ProductsHeader from '@/components/company/products/ProductsHeader.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
+import ChapseAlert from '@/components/ui/ChapseAlert.vue'
+import NoData from '@/components/ui/NoData.vue'
+import { companyByIdQuery } from '@/queries/companies'
+import { companyTasksQuery } from '@/queries/tasks'
+import { useQuery } from '@pinia/colada'
+import { computed, inject, ref, type Ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const route = useRoute('/folders/[folderId]/companies/[companyId]/products')
 

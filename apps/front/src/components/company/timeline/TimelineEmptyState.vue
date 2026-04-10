@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 rounded-lg p-8">
+  <div class="rounded-sm bg-white p-8">
     <div class="text-center">
       <div class="mb-6">
         <div
@@ -10,12 +10,12 @@
         </div>
       </div>
 
-      <h3 class="text-secondary mb-3 text-xl font-semibold">{{ title }}</h3>
-      <p class="text-secondary mx-auto mb-6 max-w-md">{{ description }}</p>
+      <h3 class="text-neutral-black-font mb-3 text-xl font-semibold">{{ title }}</h3>
+      <p class="text-neutral-black-font mx-auto mb-6 max-w-112">{{ description }}</p>
 
       <!-- Loading State -->
       <div v-if="type === 'loading'" class="flex justify-center">
-        <div class="text-secondary flex items-center gap-3">
+        <div class="text-neutral-black-font flex items-center gap-3">
           <i class="fa fa-spinner animate-spin"></i>
           <span>{{ $t('screen.timeline.loading') }}</span>
         </div>
@@ -25,7 +25,7 @@
       <div v-else>
         <slot name="actions">
           <!-- Default action could be to suggest running timeline analysis -->
-          <div v-if="type === 'no-data'" class="text-secondary text-sm">
+          <div v-if="type === 'no-data'" class="text-neutral-black-font text-sm">
             {{ $t('screen.timeline.emptyState.hint') }}
           </div>
         </slot>

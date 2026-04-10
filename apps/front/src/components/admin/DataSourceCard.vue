@@ -1,20 +1,20 @@
 <template>
-  <div class="border-base-300 rounded-lg border p-4">
+  <div class="border-primary-lighter-stroke rounded-sm border p-4">
     <div class="flex items-start justify-between gap-4">
       <!-- Source Info -->
       <div class="flex items-center gap-4">
-        <div class="bg-base-200 flex h-12 w-12 items-center justify-center rounded-lg">
+        <div class="bg-primary-lightest flex h-12 w-12 items-center justify-center rounded-sm">
           <img
             v-if="source.logo"
             :src="source.logo"
             :alt="source.name"
             class="h-8 w-8 object-contain"
           />
-          <Icon v-else icon="fa-database" class="text-secondary text-xl" />
+          <Icon v-else icon="fa-database" class="text-neutral-black-font text-xl" />
         </div>
         <div>
           <h3 class="font-semibold">{{ source.name }}</h3>
-          <p class="text-secondary text-sm">{{ source.description }}</p>
+          <p class="text-neutral-black-font text-sm">{{ source.description }}</p>
         </div>
       </div>
 
@@ -22,7 +22,9 @@
       <span
         :class="[
           'rounded-full px-2 py-1 text-xs font-medium',
-          config?.enabled ? 'bg-success/10 text-success' : 'bg-base-200 text-secondary',
+          config?.enabled
+            ? 'bg-success/10 text-success'
+            : 'bg-primary-lightest text-neutral-black-font',
         ]"
       >
         {{ config?.enabled ? $t('screen.dataSources.enabled') : $t('screen.dataSources.disabled') }}
@@ -30,26 +32,26 @@
     </div>
 
     <!-- Credentials Section -->
-    <div class="border-base-300 mt-4 border-t pt-4">
+    <div class="border-primary-lighter-stroke mt-4 border-t pt-4">
       <div class="flex flex-col gap-3">
         <!-- Display Mode -->
         <div v-if="!isEditing" class="flex flex-col gap-3">
           <!-- API Key row -->
           <div class="flex flex-col gap-1">
-            <label class="text-secondary text-sm font-medium">
+            <label class="text-neutral-black-font text-sm font-medium">
               {{ $t('screen.dataSources.apiKey.label') }}
             </label>
-            <code class="bg-base-200 rounded px-3 py-2 text-sm">
+            <code class="bg-primary-lightest rounded px-3 py-2 text-sm">
               {{ config?.api_key_masked || $t('screen.dataSources.apiKey.notConfigured') }}
             </code>
           </div>
 
           <!-- API Secret row (dual credential only) -->
           <div v-if="source.isDualCredential" class="flex flex-col gap-1">
-            <label class="text-secondary text-sm font-medium">
+            <label class="text-neutral-black-font text-sm font-medium">
               {{ $t('screen.dataSources.apiSecret.label') }}
             </label>
-            <code class="bg-base-200 rounded px-3 py-2 text-sm">
+            <code class="bg-primary-lightest rounded px-3 py-2 text-sm">
               {{ config?.api_secret_masked || $t('screen.dataSources.apiSecret.notConfigured') }}
             </code>
           </div>
@@ -68,7 +70,7 @@
         <!-- Edit Mode -->
         <div v-else class="flex flex-col gap-3">
           <div class="flex flex-col gap-1">
-            <label class="text-secondary text-sm font-medium">
+            <label class="text-neutral-black-font text-sm font-medium">
               {{ $t('screen.dataSources.apiKey.label') }}
             </label>
             <Input
@@ -80,7 +82,7 @@
           </div>
 
           <div v-if="source.isDualCredential" class="flex flex-col gap-1">
-            <label class="text-secondary text-sm font-medium">
+            <label class="text-neutral-black-font text-sm font-medium">
               {{ $t('screen.dataSources.apiSecret.label') }}
             </label>
             <Input
@@ -111,7 +113,10 @@
         </div>
 
         <!-- Timestamps -->
-        <div v-if="config?.enabled_at || config?.updated_at" class="text-secondary text-xs">
+        <div
+          v-if="config?.enabled_at || config?.updated_at"
+          class="text-neutral-black-font text-xs"
+        >
           <span v-if="config?.enabled_at">
             {{ $t('screen.dataSources.enabledAt') }}:
             {{ formatDateTime(config.enabled_at) }}
@@ -127,13 +132,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useQuery } from '@pinia/colada'
-import { Button, Input, Icon } from '@owlint/feathers-vue'
-import { dataSourceConfigQuery } from '@/queries/data-sources'
 import { useUpdateDataSourceConfig } from '@/mutations/data-sources'
-import { formatDateTime } from '@/utils/time'
+import { dataSourceConfigQuery } from '@/queries/data-sources'
 import type { DataSourceInfo } from '@/types/data-source'
+import { formatDateTime } from '@/utils/time'
+import { Button, Icon, Input } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, ref } from 'vue'
 
 const props = defineProps<{
   source: DataSourceInfo

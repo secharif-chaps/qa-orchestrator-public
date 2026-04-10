@@ -3,7 +3,7 @@
   <button
     v-if="description"
     type="button"
-    class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left transition-colors"
+    class="flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left transition-colors"
     :class="richVariantClasses"
     :disabled="disabled"
     @click="handleClick"
@@ -11,7 +11,7 @@
     <!-- Icon box -->
     <div
       v-if="icon"
-      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm"
       :class="iconColors.bg"
     >
       <i :class="[icon, iconColors.text, 'text-sm']"></i>
@@ -20,7 +20,7 @@
     <!-- Content -->
     <div class="min-w-0 flex-1">
       <div class="text-sm font-medium">{{ label }}</div>
-      <div class="text-secondary text-xs">{{ description }}</div>
+      <div class="text-neutral-black-font text-xs">{{ description }}</div>
     </div>
 
     <!-- Suffix slot for extra content (e.g., "Soon" tag) -->
@@ -89,11 +89,11 @@ const emit = defineEmits<{
 // Simple layout variant classes (backward compatible)
 const simpleVariantClasses = computed(() => {
   if (props.disabled) {
-    return 'text-secondary/50 cursor-not-allowed opacity-50'
+    return 'text-neutral-black-font/50 cursor-not-allowed opacity-50'
   }
 
   const variants = {
-    default: 'text-base hover:bg-base-200 cursor-pointer',
+    default: 'text-base hover:bg-primary-lightest cursor-pointer',
     danger: 'text-error hover:bg-error-light cursor-pointer',
     warning: 'text-warning hover:bg-warning-light cursor-pointer',
     info: 'text-info hover:bg-info-light cursor-pointer',
@@ -106,7 +106,7 @@ const richVariantClasses = computed(() => {
   if (props.disabled) {
     return 'opacity-50 cursor-not-allowed'
   }
-  return 'hover:bg-base-300 cursor-pointer'
+  return 'hover:bg-primary-lighter cursor-pointer'
 })
 
 const handleClick = () => {

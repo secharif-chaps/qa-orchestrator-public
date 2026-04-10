@@ -14,7 +14,7 @@
 
     <!-- No Data State -->
     <NoData v-else-if="!hasCorporateStructureData">
-      <p class="text-secondary text-lg font-medium">
+      <p class="text-neutral-black-font text-lg font-medium">
         {{ $t('screen.profile.sections.corporateStructure.noData') }}
       </p>
     </NoData>
@@ -22,7 +22,7 @@
     <!-- Main Content -->
     <div v-else class="flex flex-col gap-6">
       <!-- Section Header -->
-      <h3 class="text-secondary flex items-center gap-2 font-bold">
+      <h3 class="text-neutral-black-font flex items-center gap-2 font-bold">
         <Icon icon="fa-sitemap" />
         <span>{{ $t('screen.profile.sections.corporateStructure.title') }}</span>
       </h3>
@@ -70,12 +70,12 @@ import CorporateEntityGroup from '@/components/company/CorporateEntityGroup.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import NoData from '@/components/ui/NoData.vue'
-import { Icon } from '@owlint/feathers-vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
+import { Icon } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
-import { computed, inject, ref } from 'vue'
 import type { Ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute('/folders/[folderId]/companies/[companyId]/corporate-structure')

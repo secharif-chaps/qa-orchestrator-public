@@ -9,7 +9,7 @@
 
     <!-- Token counter and actions -->
     <div
-      class="bg-warning-light border-warning-stroke flex items-center justify-between rounded-lg border px-4 py-3"
+      class="bg-warning-light border-warning-stroke flex items-center justify-between rounded-sm border px-4 py-3"
     >
       <div class="flex items-center gap-3">
         <i class="fa fa-coins text-warning"></i>

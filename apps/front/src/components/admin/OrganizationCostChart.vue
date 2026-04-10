@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-lg border p-6">
+  <div class="border-primary-lighter-stroke rounded-sm border bg-white p-6">
     <h3 class="mb-4 text-lg font-semibold">{{ t('admin.costChart.title') }}</h3>
 
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
-        <p class="text-secondary text-sm">{{ t('admin.costChart.loading') }}</p>
+        <i class="fa fa-spinner text-neutral-black-font mb-2 animate-spin text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">{{ t('admin.costChart.loading') }}</p>
       </div>
     </div>
 
@@ -18,8 +18,8 @@
 
     <div v-else-if="!data?.workspaces.length" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-chart-pie text-secondary mb-2 text-2xl"></i>
-        <p class="text-secondary text-sm">{{ t('admin.costChart.noData') }}</p>
+        <i class="fa fa-chart-pie text-neutral-black-font mb-2 text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">{{ t('admin.costChart.noData') }}</p>
       </div>
     </div>
 
@@ -39,7 +39,9 @@
             class="h-3 w-3 flex-shrink-0 rounded-full"
             :style="{ backgroundColor: colors[index % colors.length] }"
           ></div>
-          <span class="text-secondary truncate text-sm">{{ workspace.workspace_name }}</span>
+          <span class="text-neutral-black-font truncate text-sm">{{
+            workspace.workspace_name
+          }}</span>
           <span class="ml-auto text-sm font-medium">${{ workspace.total_cost.toFixed(2) }}</span>
         </div>
       </div>
@@ -48,11 +50,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, type TooltipItem } from 'chart.js'
-import { Doughnut } from 'vue-chartjs'
 import type { WorkspaceCostResponse } from '@/api/cost-analysis'
+import { ArcElement, Chart as ChartJS, Legend, Tooltip, type TooltipItem } from 'chart.js'
+import { computed } from 'vue'
+import { Doughnut } from 'vue-chartjs'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 

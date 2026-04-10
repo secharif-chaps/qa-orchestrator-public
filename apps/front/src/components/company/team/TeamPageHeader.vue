@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-base-100 rounded-lg p-6">
+  <div class="rounded-sm bg-white p-6">
     <div class="mb-6 flex items-center justify-between">
       <div>
-        <h2 class="text-secondary flex items-center gap-3 text-2xl font-bold">
+        <h2 class="text-neutral-black-font flex items-center gap-3 text-2xl font-bold">
           <i class="fa fa-users"></i>
           <span>{{ $t('screen.team.title') }}</span>
         </h2>
-        <p class="text-secondary mt-1">
+        <p class="text-neutral-black-font mt-1">
           {{ $t('screen.team.subtitle') }}
         </p>
       </div>
@@ -23,25 +23,25 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <!-- Total Members -->
-      <div class="bg-base-200 rounded-lg p-4">
+      <div class="bg-primary-lightest rounded-sm p-4">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-secondary text-sm">
+            <p class="text-neutral-black-font text-sm">
               {{ $t('screen.team.totalMembers') }}
             </p>
-            <p class="text-secondary mt-1 text-2xl font-bold">{{ totalMembers }}</p>
+            <p class="text-neutral-black-font mt-1 text-2xl font-bold">{{ totalMembers }}</p>
           </div>
           <div class="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full">
-            <i class="fa fa-users text-secondary"></i>
+            <i class="fa fa-users text-neutral-black-font"></i>
           </div>
         </div>
       </div>
 
       <!-- Executives -->
-      <div class="bg-base-200 rounded-lg p-4">
+      <div class="bg-primary-lightest rounded-sm p-4">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-secondary text-sm">
+            <p class="text-neutral-black-font text-sm">
               {{ $t('screen.team.executives') }}
             </p>
             <p class="mt-1 text-2xl font-bold text-purple-600 dark:text-purple-400">
@@ -57,10 +57,10 @@
       </div>
 
       <!-- Managers -->
-      <div class="bg-base-200 rounded-lg p-4">
+      <div class="bg-primary-lightest rounded-sm p-4">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-secondary text-sm">
+            <p class="text-neutral-black-font text-sm">
               {{ $t('screen.team.managers') }}
             </p>
             <p class="mt-1 text-2xl font-bold text-orange-600 dark:text-orange-400">
@@ -76,13 +76,13 @@
       </div>
 
       <!-- Departments -->
-      <div class="bg-base-200 rounded-lg p-4">
+      <div class="bg-primary-lightest rounded-sm p-4">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-secondary text-sm">
+            <p class="text-neutral-black-font text-sm">
               {{ $t('screen.team.departments') }}
             </p>
-            <p class="text-secondary mt-1 text-2xl font-bold">{{ departmentsCount }}</p>
+            <p class="text-neutral-black-font mt-1 text-2xl font-bold">{{ departmentsCount }}</p>
           </div>
           <div
             class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30"
@@ -106,9 +106,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
 import type { TeamMember } from '@/types/company'
 import { Alert, Button } from '@owlint/feathers-vue'
+import { computed } from 'vue'
 
 const props = defineProps<{
   team: TeamMember[]

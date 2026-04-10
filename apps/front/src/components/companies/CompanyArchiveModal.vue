@@ -11,22 +11,22 @@
     </template>
 
     <div v-if="companyToArchive" class="flex flex-col gap-4">
-      <p class="text-secondary text-sm">
+      <p class="text-neutral-black-font text-sm">
         {{ t('screen.company.archive.warning.message') }}
       </p>
 
       <!-- Company Details -->
-      <div class="bg-base-200 rounded-lg p-4">
+      <div class="bg-primary-lightest rounded-sm p-4">
         <h4 class="mb-3 text-base font-medium">
           {{ t('screen.company.archive.details') }}
         </h4>
         <div class="flex flex-col gap-2 text-sm">
           <div class="flex justify-between">
-            <span class="text-secondary">{{ t('screen.company.name') }}:</span>
+            <span class="text-neutral-black-font">{{ t('screen.company.name') }}:</span>
             <span class="font-medium">{{ companyToArchive.name }}</span>
           </div>
           <div v-if="companyToArchive.website" class="flex justify-between">
-            <span class="text-secondary">{{ t('screen.company.website') }}:</span>
+            <span class="text-neutral-black-font">{{ t('screen.company.website') }}:</span>
             <span class="text-xs">{{ companyToArchive.website }}</span>
           </div>
         </div>
@@ -49,10 +49,10 @@
 </template>
 
 <script setup lang="ts">
+import { useArchiveCompany } from '@/mutations/companies'
+import type { Company } from '@/types/company'
 import { Button, Modal } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
-import type { Company } from '@/types/company'
-import { useArchiveCompany } from '@/mutations/companies'
 
 const { t } = useI18n()
 

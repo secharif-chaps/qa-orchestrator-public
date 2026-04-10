@@ -3,7 +3,7 @@
     <img src="@/assets/chapse/error_light.svg" alt="No data" class="mb-6 h-24 w-24 opacity-80" />
     <div class="text-center">
       <slot>
-        <p class="text-secondary text-lg">{{ t('common.noData') }}</p>
+        <p class="text-neutral-black-font text-lg">{{ t('common.noData') }}</p>
       </slot>
     </div>
   </div>

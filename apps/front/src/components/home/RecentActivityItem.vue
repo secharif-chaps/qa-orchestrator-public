@@ -1,7 +1,7 @@
 <template>
   <RouterLink
     :to="activityRoute"
-    class="hover:bg-base-200 -m-2 flex cursor-pointer items-start gap-3 rounded-lg p-2 transition-colors"
+    class="hover:bg-primary-lightest -m-2 flex cursor-pointer items-start gap-3 rounded-sm p-2 transition-colors"
   >
     <!-- Icon with badge -->
     <div class="relative flex-shrink-0">
@@ -29,10 +29,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { Badge } from '@owlint/feathers-vue'
 import type { Activity } from '@/types/organization'
 import { formatRelativeTime } from '@/utils/time'
+import { Badge } from '@owlint/feathers-vue'
+import { computed } from 'vue'
 
 interface Props {
   activity: Activity

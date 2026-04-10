@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-lg border">
+  <div class="border-primary-lighter-stroke rounded-sm border bg-white">
     <!-- Header -->
-    <div class="border-primary-stroke border-b px-6 py-4">
+    <div class="border-primary-lighter-stroke border-b px-6 py-4">
       <h3 class="text-lg font-semibold">{{ t('admin.usage.table.title') }}</h3>
     </div>
 
@@ -9,9 +9,9 @@
     <div v-if="loading" class="p-6">
       <div class="space-y-3">
         <div v-for="i in 5" :key="i" class="flex items-center gap-4">
-          <div class="bg-base-200 h-4 flex-1 animate-pulse rounded"></div>
-          <div class="bg-base-200 h-4 w-20 animate-pulse rounded"></div>
-          <div class="bg-base-200 h-4 w-16 animate-pulse rounded"></div>
+          <div class="bg-primary-lightest h-4 flex-1 animate-pulse rounded"></div>
+          <div class="bg-primary-lightest h-4 w-20 animate-pulse rounded"></div>
+          <div class="bg-primary-lightest h-4 w-16 animate-pulse rounded"></div>
         </div>
       </div>
     </div>
@@ -23,8 +23,8 @@
       class="flex justify-center py-12"
     >
       <div class="text-center">
-        <i class="fa fa-database text-secondary mb-2 text-2xl"></i>
-        <p class="text-secondary text-sm">
+        <i class="fa fa-database text-neutral-black-font mb-2 text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">
           {{ t('admin.usage.table.noData') }}
         </p>
       </div>
@@ -33,20 +33,20 @@
     <!-- Table -->
     <div v-else class="overflow-x-auto">
       <table class="w-full">
-        <thead class="bg-base-200">
+        <thead class="bg-primary-lightest">
           <tr>
-            <th class="text-secondary px-6 py-3 text-left text-xs font-medium uppercase">
+            <th class="text-neutral-black-font px-6 py-3 text-left text-xs font-medium uppercase">
               {{ t('admin.usage.table.organization') }}
             </th>
             <th
-              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-right text-xs font-medium uppercase transition-colors"
+              class="text-neutral-black-font hover:bg-primary-lighter cursor-pointer px-6 py-3 text-right text-xs font-medium uppercase transition-colors"
               @click="toggleSort('companies_count')"
             >
               {{ t('admin.usage.table.companiesCreated') }}
               <i class="fa ml-1 text-xs" :class="getSortIcon('companies_count')"></i>
             </th>
             <th
-              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-right text-xs font-medium uppercase transition-colors"
+              class="text-neutral-black-font hover:bg-primary-lighter cursor-pointer px-6 py-3 text-right text-xs font-medium uppercase transition-colors"
               @click="toggleSort('percentage')"
             >
               {{ t('admin.usage.table.percentOfTotal') }}
@@ -59,7 +59,7 @@
             v-for="(org, index) in sortedData"
             :key="org.organization_id"
             :organization="org"
-            :class="index % 2 === 0 ? 'bg-base-100' : 'bg-base-200'"
+            :class="index % 2 === 0 ? 'bg-white' : 'bg-primary-lightest'"
           />
         </tbody>
       </table>
@@ -75,9 +75,9 @@
  * and percentage of total. Uses the OrganizationUsageRow component
  * for rendering individual rows.
  */
-import { ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import type { OrganizationBreakdown } from '@/types/usage'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import OrganizationUsageRow from './OrganizationUsageRow.vue'
 
 const { t } = useI18n()

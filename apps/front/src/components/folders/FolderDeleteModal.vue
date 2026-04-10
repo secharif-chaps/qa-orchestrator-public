@@ -4,11 +4,11 @@
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
     @click.self="$emit('update:modelValue', false)"
   >
-    <div class="bg-base-100 mx-4 w-full max-w-md rounded-lg p-6 shadow-xl">
+    <div class="mx-4 w-full max-w-112 rounded-sm bg-white p-6 shadow-xl">
       <!-- Header -->
       <div class="mb-4 flex items-center gap-3">
         <div
-          class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/20"
+          class="flex h-12 w-12 items-center justify-center rounded-sm bg-red-100 dark:bg-red-900/20"
         >
           <i class="fas fa-trash text-xl text-red-600 dark:text-red-400"></i>
         </div>
@@ -16,7 +16,7 @@
           <h3 class="text-lg font-semibold">
             {{ $t('common.folder.delete.title') }}
           </h3>
-          <p class="text-secondary text-sm">
+          <p class="text-neutral-black-font text-sm">
             {{ $t('common.folder.delete.subtitle') }}
           </p>
         </div>
@@ -24,21 +24,21 @@
 
       <!-- Warning Message -->
       <div class="mb-6">
-        <p class="text-secondary mb-3">
+        <p class="text-neutral-black-font mb-3">
           {{ $t('common.folder.delete.message') }}
         </p>
 
-        <div class="bg-base-200 border-primary-stroke rounded-lg border p-4">
+        <div class="bg-primary-lightest border-primary-lighter-stroke rounded-sm border p-4">
           <div class="flex items-center gap-3">
             <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg"
+              class="flex h-8 w-8 items-center justify-center rounded-sm"
               :class="folderColorClasses"
             >
               <i :class="folderIcon" class="text-sm"></i>
             </div>
             <div>
               <div class="font-medium">{{ folderToDelete?.name }}</div>
-              <div class="text-secondary text-sm">
+              <div class="text-neutral-black-font text-sm">
                 {{
                   $t('common.folder.itemCount', {
                     count: folderToDelete?.items?.length || folderToDelete?.items_count || 0,
@@ -79,10 +79,10 @@
 </template>
 
 <script setup lang="ts">
-import { Alert, Button } from '@owlint/feathers-vue'
-import type { Folder } from '@/types/folder'
-import { computed } from 'vue'
 import { useDeleteFolder } from '@/mutations/folders'
+import type { Folder } from '@/types/folder'
+import { Alert, Button } from '@owlint/feathers-vue'
+import { computed } from 'vue'
 
 interface Props {
   folderToDelete: Folder | null

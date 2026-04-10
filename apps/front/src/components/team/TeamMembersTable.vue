@@ -23,7 +23,7 @@
                 rounded
               />
             </div>
-            <div class="text-secondary text-sm">@{{ item.username }}</div>
+            <div class="text-neutral-black-font text-sm">@{{ item.username }}</div>
           </div>
         </div>
       </td>
@@ -32,7 +32,7 @@
     <!-- Email column -->
     <template #cell(email)="{ item }">
       <td class="px-4 py-3">
-        <div class="text-secondary truncate text-sm">{{ item.email }}</div>
+        <div class="text-neutral-black-font truncate text-sm">{{ item.email }}</div>
       </td>
     </template>
 
@@ -69,12 +69,12 @@
  * Team members table using Vuellar Table component.
  * Displays team members with lazy-loaded permissions and actions.
  */
+import Tag from '@/components/ui/Tag.vue'
+import type { PermissionTier, TeamMemberListItem } from '@/types/team'
+import { Button, Table } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Table, Button } from '@owlint/feathers-vue'
-import Tag from '@/components/ui/Tag.vue'
 import TeamPermissionDropdown from './TeamPermissionDropdown.vue'
-import type { TeamMemberListItem, PermissionTier } from '@/types/team'
 
 interface Props {
   members: TeamMemberListItem[]

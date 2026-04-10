@@ -12,22 +12,22 @@
       class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
     >
       <img v-if="chapseAvatar" :src="chapseAvatar" class="h-6 w-6" alt="Chaps-e" />
-      <Icon icon="fa-robot" v-else class="text-secondary text-sm" />
+      <Icon icon="fa-robot" v-else class="text-neutral-black-font text-sm" />
     </div>
 
     <!-- Smart Action Message (special styling) -->
     <div
       v-if="message.isSmartAction"
-      class="bg-accent-200 text-accent-800 flex max-w-full items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium"
+      class="bg-accent-200 text-accent-800 flex max-w-full items-center gap-2 rounded-md px-4 py-3 text-sm font-medium"
     >
       <Icon :icon="message.smartActionIcon || 'fa-wand-magic-sparkles'" class="text-base" />
       <span>{{ message.smartActionLabel }}</span>
     </div>
 
     <!-- Regular Message Content -->
-    <div v-else class="max-w-full rounded-xl text-sm" :class="messageClasses">
+    <div v-else class="max-w-full rounded-md text-sm" :class="messageClasses">
       <div v-if="message.role === 'assistant' && formattedContent.length === 0">
-        <Icon icon="fa-circle-notch" class="fa-spin text-secondary text-sm" />
+        <Icon icon="fa-circle-notch" class="fa-spin text-neutral-black-font text-sm" />
       </div>
       <div v-sanitize-html="formattedContent"></div>
 

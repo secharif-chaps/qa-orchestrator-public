@@ -1,11 +1,11 @@
 <template>
-  <div class="mx-auto flex max-w-4xl flex-col gap-6" data-cy="company-search-page">
+  <div class="mx-auto flex max-w-224 flex-col gap-6" data-cy="company-search-page">
     <!-- Page Header -->
     <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-semibold">{{ $t('screen.search.title') }}</h1>
-          <p class="text-secondary">{{ $t('screen.search.companyIdentity') }}</p>
+          <p class="text-neutral-black-font">{{ $t('screen.search.companyIdentity') }}</p>
         </div>
 
         <!-- Token Counter -->
@@ -45,11 +45,11 @@
     <!-- Loading State (while fetching folders) -->
     <div
       v-if="needsFolderSelection && foldersLoading"
-      class="bg-base-100 border-primary-stroke rounded-lg border p-6"
+      class="border-primary-lighter-stroke rounded-lg border bg-white p-6"
     >
       <div class="flex items-center justify-center py-8">
         <div class="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
-        <p class="text-secondary ml-4">{{ $t('common.folder.loading') }}</p>
+        <p class="text-neutral-black-font ml-4">{{ $t('common.folder.loading') }}</p>
       </div>
     </div>
 
@@ -73,7 +73,7 @@
     <!-- Search Form Card -->
     <div
       v-if="!needsFolderSelection || hasFoldersAvailable"
-      class="bg-base-100 border-primary-stroke rounded-lg border p-6"
+      class="border-primary-lighter-stroke rounded-lg border bg-white p-6"
       :title="$t('screen.search.companyIdentity')"
     >
       <form @submit.prevent="submit" class="flex flex-col gap-6">
@@ -171,29 +171,29 @@ meta:
 </route>
 
 <script lang="ts" setup>
+import { InsufficientTokensError } from '@/api/client'
+import FormInput from '@/components/forms/FormInput.vue'
+import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
+import TokenCounter from '@/components/tokens/TokenCounter.vue'
+import { useTokenConfig } from '@/composables/useGlobalTokens'
+import { useCreateCompany } from '@/mutations/companies'
+import { useAddItemToFolder } from '@/mutations/folders'
+import { folderByIdQuery, foldersQuery } from '@/queries/folders'
+import { currentOrganizationQuery } from '@/queries/organization'
+import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'
 import {
   Alert,
   Button,
+  Icon,
   Select,
   SelectGroup,
   SelectItem,
   SelectLabel,
-  Icon,
 } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter, useRoute } from 'vue-router'
-import { useQuery } from '@pinia/colada'
-import { useCreateCompany } from '@/mutations/companies'
-import { useAddItemToFolder } from '@/mutations/folders'
-import { currentOrganizationQuery } from '@/queries/organization'
-import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'
-import { foldersQuery, folderByIdQuery } from '@/queries/folders'
-import { InsufficientTokensError } from '@/api/client'
-import TokenCounter from '@/components/tokens/TokenCounter.vue'
-import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
-import FormInput from '@/components/forms/FormInput.vue'
-import { useTokenConfig } from '@/composables/useGlobalTokens'
+import { useRoute, useRouter } from 'vue-router'
 
 const { tokensPerCompany } = useTokenConfig()
 

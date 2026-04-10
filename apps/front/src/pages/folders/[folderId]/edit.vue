@@ -1,18 +1,18 @@
 <template>
   <div class="min-h-screen">
-    <div class="mx-auto flex max-w-2xl flex-col gap-6 px-4 py-8">
+    <div class="mx-auto flex max-w-168 flex-col gap-6 px-4 py-8">
       <!-- Header -->
       <div>
         <div class="mb-2 flex items-center gap-4">
           <div
-            class="flex h-12 w-12 items-center justify-center rounded-lg"
+            class="flex h-12 w-12 items-center justify-center rounded-sm"
             :class="getSelectedIconColorClasses()"
           >
             <i :class="form.icon || 'fas fa-edit'" class="text-xl"></i>
           </div>
           <div>
             <h1 class="text-2xl font-bold">{{ $t('common.folder.edit.title') }}</h1>
-            <p class="text-secondary">
+            <p class="text-neutral-black-font">
               {{ $t('common.folder.edit.subtitle') }}
             </p>
           </div>
@@ -20,11 +20,11 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="bg-base-100 rounded-lg p-8 text-center shadow-sm">
+      <div v-if="isLoading" class="rounded-sm bg-white p-8 text-center shadow-sm">
         <div
           class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
         ></div>
-        <p class="text-secondary">
+        <p class="text-neutral-black-font">
           {{ $t('common.folder.loading') }}
         </p>
       </div>
@@ -41,7 +41,7 @@
       <!-- Form -->
       <div
         v-else-if="folder && status === 'success'"
-        class="bg-base-100 border-primary-stroke rounded-lg border p-6"
+        class="border-primary-lighter-stroke rounded-sm border bg-white p-6"
       >
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Folder Name -->
@@ -69,7 +69,7 @@
           <div>
             <label class="mb-2 block text-sm font-medium">
               {{ $t('common.folder.form.tags') }}
-              <span class="text-secondary ml-1 text-xs"
+              <span class="text-neutral-black-font ml-1 text-xs"
                 >({{ $t('common.folder.form.tagsOptional') }})</span
               >
             </label>
@@ -97,7 +97,7 @@
               id="is_favorite"
               v-model="form.is_favorite"
               type="checkbox"
-              class="border-primary-stroke text-secondary focus:ring-primary/20 h-5 w-5 rounded"
+              class="border-primary-lighter-stroke text-neutral-black-font focus:ring-primary/20 h-5 w-5 rounded"
             />
             <label for="is_favorite" class="cursor-pointer text-sm font-medium">
               {{ $t('common.folder.form.favorite') }}
@@ -105,7 +105,7 @@
           </div>
 
           <!-- Actions -->
-          <div class="border-primary-stroke flex justify-end gap-3 border-t pt-6">
+          <div class="border-primary-lighter-stroke flex justify-end gap-3 border-t pt-6">
             <Button
               type="button"
               variant="secondary"
@@ -133,17 +133,17 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { Alert, Button, Input } from '@owlint/feathers-vue'
-import Tag from '@/components/ui/Tag.vue'
-import IconSelector from '@/components/folders/IconSelector.vue'
 import ColorSelector from '@/components/folders/ColorSelector.vue'
-import type { FolderUpdate } from '@/types/folder'
-import { ref, watch } from 'vue'
-import { useUpdateFolder, useToggleFolderFavorite } from '@/mutations/folders'
+import IconSelector from '@/components/folders/IconSelector.vue'
+import Tag from '@/components/ui/Tag.vue'
+import { useToggleFolderFavorite, useUpdateFolder } from '@/mutations/folders'
 import { folderByIdQuery } from '@/queries/folders'
+import type { FolderUpdate } from '@/types/folder'
+import { Alert, Button, Input } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
-import { useRouter, useRoute } from 'vue-router'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute('/folders/[folderId]/edit')

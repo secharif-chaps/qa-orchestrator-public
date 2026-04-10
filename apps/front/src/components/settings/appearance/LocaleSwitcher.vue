@@ -3,9 +3,9 @@
     <div
       v-for="localeOption in localeOptions"
       :key="localeOption.value"
-      class="border-primary-stroke hover:border-primary/70 flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-colors"
+      class="border-primary-lighter-stroke hover:border-primary/70 flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-colors"
       :class="{
-        'border-primary bg-base-200': currentLocale === localeOption.value,
+        'border-primary bg-primary-lightest': currentLocale === localeOption.value,
         'pointer-events-none opacity-50': isLoading,
       }"
       @click="changeLocale(localeOption.value)"
@@ -16,7 +16,7 @@
           :class="
             currentLocale === localeOption.value
               ? 'border border-rose-200 bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
-              : 'bg-base-200 text-secondary'
+              : 'bg-primary-lightest text-neutral-black-font'
           "
         >
           <i
@@ -30,7 +30,7 @@
         </div>
         <div>
           <h3 class="text-sm font-medium">{{ localeOption.label }}</h3>
-          <p class="text-secondary text-sm">{{ localeOption.description }}</p>
+          <p class="text-neutral-black-font text-sm">{{ localeOption.description }}</p>
         </div>
       </div>
       <div>
@@ -46,11 +46,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { Switch } from '@owlint/feathers-vue'
 import { loadLocaleMessages } from '@/i18n'
 import { toast } from '@/utils/toast'
+import { Switch } from '@owlint/feathers-vue'
+import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { locale, t } = useI18n()
 const currentLocale = ref(locale.value)

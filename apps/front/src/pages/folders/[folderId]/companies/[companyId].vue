@@ -49,7 +49,11 @@
                 </span>
               </Transition>
             </div>
-            <span v-else-if="company?.created_at" key="date" class="text-secondary text-sm">
+            <span
+              v-else-if="company?.created_at"
+              key="date"
+              class="text-neutral-black-font text-sm"
+            >
               {{ t('screen.company.createdAt') }} {{ formatFullDate(company.created_at) }}
             </span>
           </Transition>

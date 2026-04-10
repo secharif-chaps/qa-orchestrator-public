@@ -8,17 +8,17 @@
   >
     <template #description>
       <div class="flex flex-col gap-4">
-        <p class="text-secondary">
+        <p class="text-neutral-black-font">
           {{ t('screen.company.refresh.subtitle', { name: company?.name ?? '' }) }}
         </p>
 
-        <p class="text-secondary text-sm">
+        <p class="text-neutral-black-font text-sm">
           {{ t('screen.company.refresh.warning.message') }}
         </p>
 
         <!-- Token Consumption Notice with remaining tokens badge -->
         <div
-          class="bg-warning-light text-warning-light-content border-warning-stroke rounded-lg border p-4"
+          class="bg-warning-light text-warning-light-content border-warning-stroke rounded-sm border p-4"
         >
           <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
@@ -52,14 +52,14 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Modal } from '@owlint/feathers-vue'
-import { useI18n } from 'vue-i18n'
-import { computed } from 'vue'
-import type { Company } from '@/types/company'
 import { useRefreshCompany } from '@/mutations/companies'
-import { useQuery } from '@pinia/colada'
-import { organizationBalanceQuery } from '@/queries/tokens'
 import { currentOrganizationQuery } from '@/queries/organization'
+import { organizationBalanceQuery } from '@/queries/tokens'
+import type { Company } from '@/types/company'
+import { Button, Modal } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 

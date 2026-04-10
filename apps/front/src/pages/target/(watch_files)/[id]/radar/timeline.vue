@@ -16,7 +16,7 @@
           class="relative flex items-start gap-6 pb-6"
         >
           <div class="w-36 pt-3 text-right">
-            <div class="text-secondary-font pt-2.5 text-sm font-medium">
+            <div class="text-neutral-black-font-font pt-2.5 text-sm font-medium">
               {{ eventsDatesTitle(dayGroup.date, dayGroup.events.length) }}
             </div>
           </div>

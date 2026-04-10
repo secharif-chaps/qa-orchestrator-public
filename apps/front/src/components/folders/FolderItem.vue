@@ -12,14 +12,14 @@
         <div class="flex w-full items-center gap-3">
           <div
             :class="folderColorClasses"
-            class="flex h-12 w-12 items-center justify-center rounded-lg"
+            class="flex h-12 w-12 items-center justify-center rounded-sm"
           >
             <i :class="[folderIcon]" class="text-xl"></i>
           </div>
           <div class="min-w-0 flex-1">
             <div class="mb-1 flex items-center gap-2">
               <h3
-                class="group-hover:text-secondary truncate text-lg font-semibold transition-colors"
+                class="group-hover:text-neutral-black-font truncate text-lg font-semibold transition-colors"
               >
                 {{ folder.name }}
               </h3>
@@ -36,7 +36,9 @@
                 @click.stop="toggleFavorite"
                 class="z-10 flex size-8 items-center justify-center rounded-full transition-all duration-200"
                 :class="[
-                  folder.is_favorite ? 'bg-yellow-100 dark:bg-yellow-900/30' : 'hover:bg-base-200',
+                  folder.is_favorite
+                    ? 'bg-yellow-100 dark:bg-yellow-900/30'
+                    : 'hover:bg-primary-lightest',
                   isSharedWithMe ? 'ml-0' : 'ml-auto',
                 ]"
                 :title="
@@ -51,15 +53,15 @@
                   :class="[
                     folder.is_favorite
                       ? 'fas fa-star text-yellow-500'
-                      : 'far fa-star text-secondary hover:text-yellow-500',
+                      : 'far fa-star text-neutral-black-font hover:text-yellow-500',
                   ]"
                   class="text-sm"
                 ></i>
-                <i v-else class="fas fa-spinner fa-spin text-secondary text-sm"></i>
+                <i v-else class="fas fa-spinner fa-spin text-neutral-black-font text-sm"></i>
               </button>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <span class="text-secondary text-sm">
+              <span class="text-neutral-black-font text-sm">
                 {{ $t('common.folder.itemCount', itemCount) }}
               </span>
               <!-- Share role indicator -->
@@ -77,7 +79,7 @@
                   variant="secondary"
                   size="xs"
                 />
-                <span v-if="folder.tags.length > 2" class="text-secondary text-xs">
+                <span v-if="folder.tags.length > 2" class="text-neutral-black-font text-xs">
                   +{{ folder.tags.length - 2 }}
                 </span>
               </div>
@@ -89,10 +91,10 @@
       <!-- Folder Item Previews -->
       <div
         v-if="folder.items && folder.items.length > 0"
-        class="relative mb-4 overflow-hidden rounded-xl"
+        class="relative mb-4 overflow-hidden rounded-md"
       >
         <div
-          class="bg-base-200 flex h-64 flex-col justify-start gap-2 overflow-y-auto rounded-xl p-4"
+          class="bg-primary-lightest flex h-64 flex-col justify-start gap-2 overflow-y-auto rounded-md p-4"
           @mouseenter="isChildHovered = true"
           @mouseleave="isChildHovered = false"
         >
@@ -114,22 +116,22 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="bg-base-200 mb-4 h-64 rounded-xl p-4">
+      <div v-else class="bg-primary-lightest mb-4 h-64 rounded-md p-4">
         <div class="flex flex-col justify-start gap-2">
           <!-- Only show add button if user can create items -->
           <div
             v-if="canCreateItems"
             @click.prevent="$router.push(`/folders/${folder.id}/create/company`)"
-            class="group border-primary-stroke bg-base-200 dark:bg-base-100 hover:bg-base-300 h-16 rounded-md border-2 border-dashed"
+            class="group border-primary-lighter-stroke bg-primary-lightest hover:bg-primary-lighter h-16 rounded-sm border-2 border-dashed dark:bg-white"
           >
             <div class="flex h-full items-center justify-center">
               <div class="flex h-full items-center justify-center gap-2">
                 <span
-                  class="bg-sage-100 group-hover:bg-sage-200 dark:bg-sage-800 group-hover:dark:bg-sage-700 flex h-8 w-8 items-center justify-center rounded-lg"
+                  class="bg-sage-100 group-hover:bg-sage-200 dark:bg-sage-800 group-hover:dark:bg-sage-700 flex h-8 w-8 items-center justify-center rounded-sm"
                 >
-                  <i class="fas fa-plus text-secondary text-sm"></i>
+                  <i class="fas fa-plus text-neutral-black-font text-sm"></i>
                 </span>
-                <span class="text-secondary text-sm">{{
+                <span class="text-neutral-black-font text-sm">{{
                   $t('common.folder.addItems.company')
                 }}</span>
               </div>
@@ -138,10 +140,12 @@
           <!-- Read-only empty state for readers -->
           <div
             v-else
-            class="border-primary-stroke bg-base-200 dark:bg-base-100 h-16 rounded-md border-2 border-dashed"
+            class="border-primary-lighter-stroke bg-primary-lightest h-16 rounded-sm border-2 border-dashed dark:bg-white"
           >
             <div class="flex h-full items-center justify-center">
-              <span class="text-secondary text-sm">{{ $t('common.folder.empty.readOnly') }}</span>
+              <span class="text-neutral-black-font text-sm">{{
+                $t('common.folder.empty.readOnly')
+              }}</span>
             </div>
           </div>
         </div>
@@ -150,7 +154,7 @@
 
     <!-- Footer with creation date and owner -->
     <div>
-      <div class="text-secondary flex items-center justify-between text-xs">
+      <div class="text-neutral-black-font flex items-center justify-between text-xs">
         <span>{{ $t('common.folder.grid.created') }} {{ formatDate(folder.created_at) }}</span>
         <span>
           <!-- Show "by @owner" for shared folders, or just owner for owned folders -->
@@ -165,14 +169,14 @@
 </template>
 
 <script setup lang="ts">
-import { Tag } from '@owlint/feathers-vue'
-import type { Folder } from '@/types/folder'
-import { useToggleFolderFavorite } from '@/mutations/folders'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
+import { useToggleFolderFavorite } from '@/mutations/folders'
+import type { Folder } from '@/types/folder'
+import { formatDate } from '@/utils/time'
+import { Tag } from '@owlint/feathers-vue'
 import { computed, ref, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { formatDate } from '@/utils/time'
 import Card from '../ui/Card.vue'
 import CompanyCardItem from './CompanyCardItem.vue'
 

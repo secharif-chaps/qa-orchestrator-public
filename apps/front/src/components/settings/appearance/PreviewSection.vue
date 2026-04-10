@@ -1,32 +1,34 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-lg border">
-    <div class="border-primary-stroke border-b px-6 py-4">
+  <div class="border-primary-lighter-stroke rounded-sm border bg-white">
+    <div class="border-primary-lighter-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.preview.title') }}</h2>
-      <p class="text-secondary mt-1 text-sm">
+      <p class="text-neutral-black-font mt-1 text-sm">
         {{ $t('settings.appearance.preview.description') }}
       </p>
     </div>
     <div class="px-6 py-6">
       <!-- Preview Container -->
-      <div class="border-primary-stroke bg-base-100 dark:bg-base-300 rounded-lg border p-6">
+      <div
+        class="border-primary-lighter-stroke dark:bg-primary-lighter rounded-sm border bg-white p-6"
+      >
         <!-- Preview Header -->
         <div class="mb-6">
           <h3 class="mb-2 text-lg font-semibold">
             {{ $t('settings.appearance.preview.sample') }}
           </h3>
-          <p class="text-secondary text-sm">
+          <p class="text-neutral-black-font text-sm">
             {{ $t('settings.appearance.preview.interfaceDescription') }}
           </p>
         </div>
 
         <!-- Sample Card -->
-        <div class="bg-base-100 border-primary-stroke mb-6 rounded-lg border p-4">
+        <div class="border-primary-lighter-stroke mb-6 rounded-sm border bg-white p-4">
           <div class="mb-4 flex items-start justify-between">
             <div>
               <h4 class="font-medium">
                 {{ $t('settings.appearance.preview.card.title') }}
               </h4>
-              <p class="text-secondary mt-1 text-sm">
+              <p class="text-neutral-black-font mt-1 text-sm">
                 {{ $t('settings.appearance.preview.card.description') }}
               </p>
             </div>
@@ -47,7 +49,7 @@
                 v-model="previewInputValue"
                 type="text"
                 :placeholder="$t('settings.appearance.preview.input.placeholder')"
-                class="bg-base-100 text-secondary focus:ring-primary w-full rounded-md border border-slate-300 px-3 py-2 placeholder-slate-400 focus:border-transparent focus:ring-2 focus:outline-none dark:border-slate-600 dark:placeholder-slate-500"
+                class="text-neutral-black-font focus:ring-primary w-full rounded-sm border border-slate-300 bg-white px-3 py-2 placeholder-slate-400 focus:border-transparent focus:ring-2 focus:outline-none dark:border-slate-600 dark:placeholder-slate-500"
               />
             </div>
 
@@ -57,7 +59,7 @@
                 <label class="text-sm font-medium">{{
                   $t('settings.appearance.preview.toggle.label')
                 }}</label>
-                <p class="text-secondary text-sm">
+                <p class="text-neutral-black-font text-sm">
                   {{ $t('settings.appearance.preview.toggle.description') }}
                 </p>
               </div>
@@ -93,19 +95,19 @@
             <div class="flex flex-wrap gap-2">
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 rounded-full bg-green-500"></div>
-                <span class="text-secondary text-sm">{{
+                <span class="text-neutral-black-font text-sm">{{
                   $t('settings.appearance.preview.status.active')
                 }}</span>
               </div>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 rounded-full bg-yellow-500"></div>
-                <span class="text-secondary text-sm">{{
+                <span class="text-neutral-black-font text-sm">{{
                   $t('settings.appearance.preview.status.pending')
                 }}</span>
               </div>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 rounded-full bg-red-500"></div>
-                <span class="text-secondary text-sm">{{
+                <span class="text-neutral-black-font text-sm">{{
                   $t('settings.appearance.preview.status.error')
                 }}</span>
               </div>
@@ -114,8 +116,8 @@
         </div>
 
         <!-- Sample List -->
-        <div class="bg-base-100 border-primary-stroke overflow-hidden rounded-lg border">
-          <div class="border-primary-stroke border-b px-4 py-3">
+        <div class="border-primary-lighter-stroke overflow-hidden rounded-sm border bg-white">
+          <div class="border-primary-lighter-stroke border-b px-4 py-3">
             <h4 class="text-sm font-medium">
               {{ $t('settings.appearance.preview.list.title') }}
             </h4>
@@ -129,14 +131,14 @@
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                   <div class="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
-                    <i :class="item.icon" class="text-secondary text-sm"></i>
+                    <i :class="item.icon" class="text-neutral-black-font text-sm"></i>
                   </div>
                   <div>
                     <p class="text-sm font-medium">{{ item.title }}</p>
-                    <p class="text-secondary text-xs">{{ item.description }}</p>
+                    <p class="text-neutral-black-font text-xs">{{ item.description }}</p>
                   </div>
                 </div>
-                <div class="text-secondary text-xs">{{ item.time }}</div>
+                <div class="text-neutral-black-font text-xs">{{ item.time }}</div>
               </div>
             </div>
           </div>
@@ -147,9 +149,9 @@
 </template>
 
 <script setup lang="ts">
-import { Switch } from 'reka-ui/namespaced'
 import Tag from '@/components/ui/Tag.vue'
 import { Button } from '@owlint/feathers-vue'
+import { Switch } from 'reka-ui/namespaced'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

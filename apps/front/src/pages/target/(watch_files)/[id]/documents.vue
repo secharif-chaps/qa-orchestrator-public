@@ -2,7 +2,7 @@
   <div id="drawerContainer" class="flex h-full flex-col gap-4 pt-4">
     <div
       v-if="mayHaveDocuments"
-      class="shadow-2 border-sage-100 mx-3 flex items-center justify-between gap-8 rounded-xl border p-3"
+      class="shadow-2 border-sage-100 mx-3 flex items-center justify-between gap-8 rounded-md border p-3"
     >
       <div class="min-h-[32px]">
         <div v-if="documents.length > 0 || searchInput" class="relative flex items-center gap-3">

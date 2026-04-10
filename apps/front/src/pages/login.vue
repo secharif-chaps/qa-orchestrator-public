@@ -1,9 +1,11 @@
 <template>
-  <div class="bg-base-300 flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8">
-    <div class="w-full max-w-md space-y-8">
+  <div
+    class="bg-primary-lighter flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8"
+  >
+    <div class="w-full max-w-112 space-y-8">
       <div>
         <div class="flex justify-center">
-          <i class="fa-solid fa-leaf text-secondary text-7xl"></i>
+          <i class="fa-solid fa-leaf text-neutral-black-font text-7xl"></i>
         </div>
         <h2 class="mt-6 text-center text-3xl font-extrabold">
           {{ $t('common.login.heading') }}

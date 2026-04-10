@@ -10,7 +10,7 @@
 
     <!-- No Data State -->
     <NoData v-else-if="!hasAnyPressData">
-      <p class="text-secondary text-lg font-medium">
+      <p class="text-neutral-black-font text-lg font-medium">
         {{ $t('screen.profile.sections.press.noData') }}
       </p>
     </NoData>
@@ -28,8 +28,8 @@
           <!-- Press Insights -->
 
           <!-- Financial News -->
-          <div v-if="company?.press?.financial_news?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
+          <div v-if="company?.press?.financial_news?.length" class="rounded-sm bg-white p-6">
+            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-chart-line"></i>
               {{ $t('screen.profile.sections.press.categories.financialNews') }}
             </h2>
@@ -37,17 +37,17 @@
               <div
                 v-for="(item, index) in company.press.financial_news"
                 :key="index"
-                class="bg-base-200 hover:bg-base-200/80 rounded-lg p-4 transition-colors"
+                class="bg-primary-lightest hover:bg-primary-lightest/80 rounded-sm p-4 transition-colors"
               >
-                <span class="text-secondary mr-2">{{ item.value }}</span>
+                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
               </div>
             </div>
           </div>
 
           <!-- Product Launches -->
-          <div v-if="company?.press?.product_launches?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
+          <div v-if="company?.press?.product_launches?.length" class="rounded-sm bg-white p-6">
+            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-rocket"></i>
               {{ $t('screen.profile.sections.press.categories.productLaunches') }}
             </h2>
@@ -55,20 +55,17 @@
               <div
                 v-for="(item, index) in company.press.product_launches"
                 :key="index"
-                class="bg-base-200 hover:bg-base-200/80 rounded-lg p-4 transition-colors"
+                class="bg-primary-lightest hover:bg-primary-lightest/80 rounded-sm p-4 transition-colors"
               >
-                <span class="text-secondary mr-2">{{ item.value }}</span>
+                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
               </div>
             </div>
           </div>
 
           <!-- Executive Interviews -->
-          <div
-            v-if="company?.press?.executive_interviews?.length"
-            class="bg-base-100 rounded-lg p-6"
-          >
-            <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
+          <div v-if="company?.press?.executive_interviews?.length" class="rounded-sm bg-white p-6">
+            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-microphone"></i>
               {{ $t('screen.profile.sections.press.categories.executiveInterviews') }}
             </h2>
@@ -76,17 +73,17 @@
               <div
                 v-for="(item, index) in company.press.executive_interviews"
                 :key="index"
-                class="bg-base-200 hover:bg-base-200/80 rounded-lg p-4 transition-colors"
+                class="bg-primary-lightest hover:bg-primary-lightest/80 rounded-sm p-4 transition-colors"
               >
-                <span class="text-secondary mr-2">{{ item.value }}</span>
+                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
               </div>
             </div>
           </div>
 
           <!-- Media Mentions -->
-          <div v-if="company?.press?.media_mentions?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
+          <div v-if="company?.press?.media_mentions?.length" class="rounded-sm bg-white p-6">
+            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-newspaper"></i>
               {{ $t('screen.profile.sections.press.categories.mediaMentions') }}
             </h2>
@@ -94,17 +91,17 @@
               <div
                 v-for="(item, index) in company.press.media_mentions"
                 :key="index"
-                class="bg-base-200 hover:bg-base-200/80 rounded-lg p-4 transition-colors"
+                class="bg-primary-lightest hover:bg-primary-lightest/80 rounded-sm p-4 transition-colors"
               >
-                <span class="text-secondary mr-2">{{ item.value }}</span>
+                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
               </div>
             </div>
           </div>
 
           <!-- Press Releases -->
-          <div v-if="company?.press?.press_releases?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
+          <div v-if="company?.press?.press_releases?.length" class="rounded-sm bg-white p-6">
+            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-file-alt"></i>
               {{ $t('screen.profile.sections.press.categories.pressReleases') }}
             </h2>
@@ -112,17 +109,17 @@
               <div
                 v-for="(item, index) in company.press.press_releases"
                 :key="index"
-                class="bg-base-200 hover:bg-base-200/80 rounded-lg p-4 transition-colors"
+                class="bg-primary-lightest hover:bg-primary-lightest/80 rounded-sm p-4 transition-colors"
               >
-                <span class="text-secondary mr-2">{{ item.value }}</span>
+                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
               </div>
             </div>
           </div>
 
           <!-- Articles (backward compatibility) -->
-          <div v-if="company?.press?.articles?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
+          <div v-if="company?.press?.articles?.length" class="rounded-sm bg-white p-6">
+            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-newspaper"></i>
               {{ $t('screen.profile.sections.press.categories.articles') }}
             </h2>
@@ -130,9 +127,9 @@
               <div
                 v-for="(item, index) in company.press.articles"
                 :key="index"
-                class="bg-base-200 hover:bg-base-200/80 rounded-lg p-4 transition-colors"
+                class="bg-primary-lightest hover:bg-primary-lightest/80 rounded-sm p-4 transition-colors"
               >
-                <span class="text-secondary mr-2">{{ item.value }}</span>
+                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
               </div>
             </div>
@@ -144,9 +141,9 @@
           <!-- Partnership Announcements -->
           <div
             v-if="company?.press?.partnership_announcements?.length"
-            class="bg-base-100 rounded-lg p-6"
+            class="rounded-sm bg-white p-6"
           >
-            <h2 class="text-secondary mb-4 flex items-center gap-2 text-lg font-semibold">
+            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-lg font-semibold">
               <i class="fa fa-handshake"></i>
               {{ $t('screen.profile.sections.press.categories.partnershipAnnouncements') }}
             </h2>
@@ -154,17 +151,17 @@
               <div
                 v-for="(item, index) in company.press.partnership_announcements"
                 :key="index"
-                class="bg-base-200 rounded-lg p-3"
+                class="bg-primary-lightest rounded-sm p-3"
               >
-                <span class="text-secondary mr-2">{{ item.value }}</span>
+                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
               </div>
             </div>
           </div>
 
           <!-- Awards & Recognition -->
-          <div v-if="company?.press?.awards_recognition?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-secondary mb-4 flex items-center gap-2 text-lg font-semibold">
+          <div v-if="company?.press?.awards_recognition?.length" class="rounded-sm bg-white p-6">
+            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-lg font-semibold">
               <i class="fa fa-trophy"></i>
               {{ $t('screen.profile.sections.press.categories.awardsRecognition') }}
             </h2>
@@ -172,57 +169,57 @@
               <div
                 v-for="(item, index) in company.press.awards_recognition"
                 :key="index"
-                class="bg-base-200 rounded-lg p-3"
+                class="bg-primary-lightest rounded-sm p-3"
               >
-                <span class="text-secondary mr-2">{{ item.value }}</span>
+                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
               </div>
             </div>
           </div>
 
           <!-- Quick Stats -->
-          <div class="bg-base-100 rounded-lg p-6">
-            <h3 class="text-secondary mb-4 text-lg font-semibold">
+          <div class="rounded-sm bg-white p-6">
+            <h3 class="text-neutral-black-font mb-4 text-lg font-semibold">
               {{ $t('screen.profile.sections.press.stats.title') }}
             </h3>
             <div class="space-y-3">
               <div class="flex items-center justify-between">
-                <span class="text-secondary text-sm">{{
+                <span class="text-neutral-black-font text-sm">{{
                   $t('screen.profile.sections.press.categories.financialNews')
                 }}</span>
-                <span class="text-secondary font-medium">{{
+                <span class="text-neutral-black-font font-medium">{{
                   company?.press?.financial_news?.length || 0
                 }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-secondary text-sm">{{
+                <span class="text-neutral-black-font text-sm">{{
                   $t('screen.profile.sections.press.categories.productLaunches')
                 }}</span>
-                <span class="text-secondary font-medium">{{
+                <span class="text-neutral-black-font font-medium">{{
                   company?.press?.product_launches?.length || 0
                 }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-secondary text-sm">{{
+                <span class="text-neutral-black-font text-sm">{{
                   $t('screen.profile.sections.press.categories.mediaMentions')
                 }}</span>
-                <span class="text-secondary font-medium">{{
+                <span class="text-neutral-black-font font-medium">{{
                   company?.press?.media_mentions?.length || 0
                 }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-secondary text-sm">{{
+                <span class="text-neutral-black-font text-sm">{{
                   $t('screen.profile.sections.press.categories.pressReleases')
                 }}</span>
-                <span class="text-secondary font-medium">{{
+                <span class="text-neutral-black-font font-medium">{{
                   company?.press?.press_releases?.length || 0
                 }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-secondary text-sm">{{
+                <span class="text-neutral-black-font text-sm">{{
                   $t('screen.profile.sections.press.categories.executiveInterviews')
                 }}</span>
-                <span class="text-secondary font-medium">{{
+                <span class="text-neutral-black-font font-medium">{{
                   company?.press?.executive_interviews?.length || 0
                 }}</span>
               </div>
@@ -249,8 +246,8 @@ import NoData from '@/components/ui/NoData.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import { useQuery } from '@pinia/colada'
-import { computed, inject, ref } from 'vue'
 import type { Ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute('/folders/[folderId]/companies/[companyId]/press')

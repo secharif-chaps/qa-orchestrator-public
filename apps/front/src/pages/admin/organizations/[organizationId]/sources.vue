@@ -6,7 +6,7 @@
           <h2 class="text-xl font-semibold">
             {{ $t('screen.dataSources.title') }}
           </h2>
-          <p class="text-secondary mt-1">
+          <p class="text-neutral-black-font mt-1">
             {{ $t('screen.dataSources.description') }}
           </p>
         </div>
@@ -26,11 +26,11 @@
 </template>
 
 <script setup lang="ts">
+import DataSourceCard from '@/components/admin/DataSourceCard.vue'
+import Card from '@/components/ui/Card.vue'
+import type { DataSourceInfo } from '@/types/data-source'
 import { computed, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Card from '@/components/ui/Card.vue'
-import DataSourceCard from '@/components/admin/DataSourceCard.vue'
-import type { DataSourceInfo } from '@/types/data-source'
 
 const { t } = useI18n()
 

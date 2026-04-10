@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-base-100 rounded-lg p-4">
+  <div class="rounded-sm bg-white p-4">
     <div class="mb-6 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div>
           <h2 class="text-xl font-semibold">{{ t('screen.products.header.title') }}</h2>
-          <p class="text-secondary text-sm">
+          <p class="text-neutral-black-font text-sm">
             {{
               t('screen.products.header.summary', {
                 total: totalProductCount,
@@ -28,7 +28,9 @@
         />
 
         <div class="relative w-64">
-          <i class="fas fa-search text-secondary absolute top-1/2 left-2 -translate-y-1/2"></i>
+          <i
+            class="fas fa-search text-neutral-black-font absolute top-1/2 left-2 -translate-y-1/2"
+          ></i>
           <Searchbar
             id="product-search"
             :value="searchQuery"
@@ -66,8 +68,8 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Searchbar } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
+import { Button, Searchbar } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

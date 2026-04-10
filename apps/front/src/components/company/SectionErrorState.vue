@@ -7,10 +7,10 @@
 
     <!-- Rate limit: countdown + retry -->
     <template v-if="isRateLimit && countdown !== null">
-      <h3 class="text-secondary mb-2 text-xl font-semibold">
+      <h3 class="text-neutral-black-font mb-2 text-xl font-semibold">
         {{ t('screen.company.analysisCard.error.rateLimit.title') }}
       </h3>
-      <p class="text-secondary mx-auto mb-6 max-w-md text-center">
+      <p class="text-neutral-black-font mx-auto mb-6 max-w-112 text-center">
         {{
           countdown > 0
             ? t('screen.company.analysisCard.error.rateLimit.description', { seconds: countdown })
@@ -34,10 +34,10 @@
 
     <!-- Recoverable error -->
     <template v-else-if="isRecoverable">
-      <h3 class="text-secondary mb-2 text-xl font-semibold">
+      <h3 class="text-neutral-black-font mb-2 text-xl font-semibold">
         {{ t('screen.company.analysisCard.error.recoverable.title') }}
       </h3>
-      <p class="text-secondary mx-auto mb-6 max-w-md text-center">
+      <p class="text-neutral-black-font mx-auto mb-6 max-w-112 text-center">
         {{ t('screen.company.analysisCard.error.recoverable.description') }}
       </p>
       <Button
@@ -52,10 +52,10 @@
 
     <!-- Generic / permanent error -->
     <template v-else>
-      <h3 class="text-secondary mb-2 text-xl font-semibold">
+      <h3 class="text-neutral-black-font mb-2 text-xl font-semibold">
         {{ t('screen.company.analysisCard.error.generic.title') }}
       </h3>
-      <p class="text-secondary mx-auto mb-6 max-w-md text-center">
+      <p class="text-neutral-black-font mx-auto mb-6 max-w-112 text-center">
         {{ t('screen.company.analysisCard.error.generic.description') }}
       </p>
       <Button
@@ -71,11 +71,11 @@
 </template>
 
 <script lang="ts" setup>
-import { Button } from '@owlint/feathers-vue'
 import chapseErrorImage from '@/assets/chapse/error_light.svg'
-import type { TaskResponse, TaskType } from '@/types/task'
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRestartTask } from '@/mutations/tasks'
+import type { TaskResponse, TaskType } from '@/types/task'
+import { Button } from '@owlint/feathers-vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

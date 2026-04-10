@@ -6,13 +6,13 @@
     </div>
 
     <!-- Error Title -->
-    <h3 class="text-secondary mb-2 flex items-center gap-2 text-xl font-semibold">
+    <h3 class="text-neutral-black-font mb-2 flex items-center gap-2 text-xl font-semibold">
       <i :class="icon" class="animate-spin"></i>
       <span>{{ title }}</span>
     </h3>
 
     <!-- Error Description -->
-    <p class="text-secondary mx-auto mb-4 max-w-md text-center">
+    <p class="text-neutral-black-font mx-auto mb-4 max-w-112 text-center">
       {{ description }}
     </p>
   </div>

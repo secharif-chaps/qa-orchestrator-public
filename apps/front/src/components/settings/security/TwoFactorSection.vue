@@ -1,20 +1,24 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-card border">
-    <div class="border-primary-stroke border-b px-6 py-4">
+  <div class="border-primary-lighter-stroke rounded-card border bg-white">
+    <div class="border-primary-lighter-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.security.twoFactor.title') }}</h2>
-      <p class="text-secondary mt-1 text-sm">
+      <p class="text-neutral-black-font mt-1 text-sm">
         {{ $t('settings.security.twoFactor.description') }}
       </p>
     </div>
     <div class="px-6 py-6">
       <div class="flex flex-col gap-4">
         <!-- Authenticator App -->
-        <div class="border-primary-stroke flex items-center justify-between rounded-lg border p-4">
+        <div
+          class="border-primary-lighter-stroke flex items-center justify-between rounded-sm border p-4"
+        >
           <div class="flex items-center gap-3">
             <div
-              class="flex h-10 w-10 items-center justify-center rounded-lg"
+              class="flex h-10 w-10 items-center justify-center rounded-sm"
               :class="
-                twoFactorEnabled ? 'bg-success text-success-content' : 'bg-base-200 text-secondary'
+                twoFactorEnabled
+                  ? 'bg-success text-success-content'
+                  : 'bg-primary-lightest text-neutral-black-font'
               "
             >
               <i class="fas fa-mobile-alt"></i>
@@ -23,7 +27,7 @@
               <h3 class="text-sm font-medium">
                 {{ $t('settings.security.twoFactor.authenticator.title') }}
               </h3>
-              <p class="text-secondary text-sm">
+              <p class="text-neutral-black-font text-sm">
                 {{ $t('settings.security.twoFactor.authenticator.description') }}
               </p>
             </div>
@@ -52,14 +56,16 @@
         </div>
 
         <!-- Security Keys -->
-        <div class="border-primary-stroke flex items-center justify-between rounded-lg border p-4">
+        <div
+          class="border-primary-lighter-stroke flex items-center justify-between rounded-sm border p-4"
+        >
           <div class="flex items-center gap-3">
             <div
-              class="flex h-10 w-10 items-center justify-center rounded-lg"
+              class="flex h-10 w-10 items-center justify-center rounded-sm"
               :class="
                 securityKeysCount > 0
                   ? 'bg-success text-success-content'
-                  : 'bg-base-200 text-secondary'
+                  : 'bg-primary-lightest text-neutral-black-font'
               "
             >
               <i class="fas fa-key"></i>
@@ -68,7 +74,7 @@
               <h3 class="text-sm font-medium">
                 {{ $t('settings.security.twoFactor.securityKeys.title') }}
               </h3>
-              <p class="text-secondary text-sm">
+              <p class="text-neutral-black-font text-sm">
                 {{ $t('settings.security.twoFactor.securityKeys.description') }}
               </p>
             </div>

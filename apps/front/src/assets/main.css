@@ -764,11 +764,7 @@
 }
 
 @layer components {
-  .text-secondary {
-    color: var(--color-sage-700);
-  }
-
-  .dark .text-secondary {
+  .dark .text-neutral-black-font {
     color: var(--color-sage-300);
   }
 

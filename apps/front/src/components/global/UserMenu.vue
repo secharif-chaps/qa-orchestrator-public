@@ -2,7 +2,7 @@
   <Dropdown align="right" width="sm" :close-on-select="false">
     <template #trigger="{ isOpen }">
       <button
-        class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 transition-colors"
+        class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1 transition-colors"
         :class="
           isOpen ? 'bg-sage-100 dark:bg-sage-800' : 'hover:bg-sage-100 dark:hover:bg-sage-900'
         "
@@ -11,7 +11,7 @@
         <span class="text-sage-800 dark:text-sage-200 text-sm">{{ authStore.username }}</span>
         <Icon
           icon="fa-chevron-down"
-          class="text-secondary text-xs transition-transform"
+          class="text-neutral-black-font text-xs transition-transform"
           :class="{ 'rotate-180': isOpen }"
         />
       </button>
@@ -22,7 +22,7 @@
         <!-- Debug: Theme toggle -->
         <button
           v-if="isDebugUser"
-          class="text-sage-800 dark:text-sage-200 hover:bg-sage-100 dark:hover:bg-sage-700 flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors"
+          class="text-sage-800 dark:text-sage-200 hover:bg-sage-100 dark:hover:bg-sage-700 flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm transition-colors"
           @click="toggleTheme"
         >
           <Icon :icon="isDark ? 'fa-sun' : 'fa-moon'" class="w-4 text-center" />
@@ -32,7 +32,7 @@
         <!-- Debug: Language toggle -->
         <button
           v-if="isDebugUser"
-          class="text-sage-800 dark:text-sage-200 hover:bg-sage-100 dark:hover:bg-sage-700 flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors"
+          class="text-sage-800 dark:text-sage-200 hover:bg-sage-100 dark:hover:bg-sage-700 flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm transition-colors"
           @click="toggleLocale"
         >
           <Icon icon="fa-language" class="w-4 text-center" />
@@ -45,7 +45,7 @@
         <!-- Admin -->
         <button
           v-if="hasAdminPermission"
-          class="text-sage-800 dark:text-sage-200 hover:bg-sage-100 dark:hover:bg-sage-700 flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors"
+          class="text-sage-800 dark:text-sage-200 hover:bg-sage-100 dark:hover:bg-sage-700 flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm transition-colors"
           @click="goToAdmin(close)"
         >
           <Icon icon="fa-shield" class="w-4 text-center" />
@@ -57,7 +57,7 @@
 
         <!-- Logout -->
         <button
-          class="text-error hover:bg-error-light flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors"
+          class="text-error hover:bg-error-light flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm transition-colors"
           @click="handleLogout(close)"
         >
           <Icon icon="fa-arrow-right-from-bracket" class="w-4 text-center" />
@@ -76,14 +76,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { Avatar, Icon } from '@owlint/feathers-vue'
-import Dropdown from '@/components/ui/Dropdown.vue'
 import LogoutConfirmationModal from '@/components/global/LogoutConfirmationModal.vue'
-import { useAuthStore } from '@/stores/auth'
+import Dropdown from '@/components/ui/Dropdown.vue'
 import { useTheme } from '@/composables/useTheme'
+import { useAuthStore } from '@/stores/auth'
+import { Avatar, Icon } from '@owlint/feathers-vue'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 const { t, locale } = useI18n()
 const router = useRouter()

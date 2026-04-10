@@ -7,7 +7,7 @@
           <h2 class="text-xl font-semibold">
             {{ $t('admin.organization.detail.members') }}
           </h2>
-          <p class="text-secondary mt-1">
+          <p class="text-neutral-black-font mt-1">
             {{ $t('admin.organization.membersDescription') }}
           </p>
         </div>
@@ -30,7 +30,7 @@
       <!-- Users Loading State -->
       <div v-if="usersLoading" class="p-8 text-center">
         <div class="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
-        <p class="text-secondary">
+        <p class="text-neutral-black-font">
           {{ $t('settings.user.loading') }}
         </p>
       </div>
@@ -58,11 +58,11 @@
 
         <!-- Empty Users State -->
         <div v-else class="p-8 text-center">
-          <i class="fa fa-users text-secondary/50 mb-4 text-4xl"></i>
+          <i class="fa fa-users text-neutral-black-font/50 mb-4 text-4xl"></i>
           <h3 class="mb-2 text-base text-lg font-medium">
             {{ $t('settings.user.empty.title') }}
           </h3>
-          <p class="text-secondary mb-6">
+          <p class="text-neutral-black-font mb-6">
             {{ $t('settings.user.empty.description') }}
           </p>
           <Button
@@ -134,35 +134,35 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, inject } from 'vue'
-import { useRouter } from 'vue-router'
-import { useQuery } from '@pinia/colada'
 import { Alert, Button } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, inject, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 // Components
-import Card from '@/components/ui/Card.vue'
-import Pagination from '@/components/ui/Pagination.vue'
-import UsersTable from '@/components/admin/UsersTable.vue'
-import CreateUserModal from '@/components/user/CreateUserModal.vue'
-import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
-import RolePermissionsModal from '@/components/admin/RolePermissionsModal.vue'
 import DisableUserModal from '@/components/admin/DisableUserModal.vue'
 import ResetPasswordModal from '@/components/admin/ResetPasswordModal.vue'
+import RolePermissionsModal from '@/components/admin/RolePermissionsModal.vue'
+import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
+import UsersTable from '@/components/admin/UsersTable.vue'
+import Card from '@/components/ui/Card.vue'
+import Pagination from '@/components/ui/Pagination.vue'
+import CreateUserModal from '@/components/user/CreateUserModal.vue'
 
 // Queries & Mutations
-import { allOrganizationsQuery, organizationMembersQuery } from '@/queries/organization-admin'
-import { useCreateOrganizationUser } from '@/mutations/user'
 import {
   useAssignUserOrganization,
-  useUpdateUserPermissions,
   useDisableUser,
   useEnableUser,
+  useUpdateUserPermissions,
 } from '@/mutations/admin-users'
+import { useCreateOrganizationUser } from '@/mutations/user'
+import { allOrganizationsQuery, organizationMembersQuery } from '@/queries/organization-admin'
 
 // Types
 import type { AdminUserListItem } from '@/types/admin-user'
-import type { OrganizationUserCreate } from '@/types/user'
 import type { OrganizationAdminResponse } from '@/types/organization'
+import type { OrganizationUserCreate } from '@/types/user'
 
 // Utils
 import { transformToPaginationMeta } from '@/utils/pagination'

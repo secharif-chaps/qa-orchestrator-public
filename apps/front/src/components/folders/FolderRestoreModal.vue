@@ -4,9 +4,9 @@
     v-if="showRestoreModal && folderToRestore"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
   >
-    <div class="bg-base-100 mx-4 w-full max-w-md rounded-lg shadow-xl">
+    <div class="mx-4 w-full max-w-112 rounded-sm bg-white shadow-xl">
       <!-- Header -->
-      <div class="border-primary-stroke border-b p-6">
+      <div class="border-primary-lighter-stroke border-b p-6">
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
             <i class="fa fa-undo text-green-600"></i>
@@ -15,7 +15,7 @@
             <h3 class="text-base text-lg font-semibold">
               {{ $t('common.folder.restore.title') }}
             </h3>
-            <p class="text-secondary text-sm">
+            <p class="text-neutral-black-font text-sm">
               {{ $t('common.folder.restore.subtitle') }}
             </p>
           </div>
@@ -24,18 +24,18 @@
 
       <!-- Content -->
       <div class="p-6">
-        <p class="text-secondary mb-4 text-sm">
+        <p class="text-neutral-black-font mb-4 text-sm">
           {{ $t('common.folder.restore.warning.message') }}
         </p>
 
         <!-- Folder Details -->
-        <div class="bg-base-200 mb-6 rounded-lg p-4">
+        <div class="bg-primary-lightest mb-6 rounded-sm p-4">
           <h4 class="mb-3 text-base font-medium">
             {{ $t('common.folder.restore.details') }}
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('common.folder.name') }}:</span>
+              <span class="text-neutral-black-font">{{ $t('common.folder.name') }}:</span>
               <span class="font-medium">{{ folderToRestore.name }}</span>
             </div>
           </div>
@@ -43,7 +43,7 @@
       </div>
 
       <!-- Footer -->
-      <div class="border-primary-stroke flex items-center justify-end gap-3 border-t p-6">
+      <div class="border-primary-lighter-stroke flex items-center justify-end gap-3 border-t p-6">
         <Button
           variant="secondary"
           :label="$t('common.cancel')"
@@ -63,9 +63,9 @@
 </template>
 
 <script setup lang="ts">
+import { useRestoreFolder } from '@/mutations/folders'
 import type { Folder } from '@/types/folder'
 import { Button } from '@owlint/feathers-vue'
-import { useRestoreFolder } from '@/mutations/folders'
 
 interface Props {
   folderToRestore: Folder | null

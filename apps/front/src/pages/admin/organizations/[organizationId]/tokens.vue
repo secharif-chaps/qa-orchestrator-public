@@ -7,7 +7,7 @@
           <h2 class="text-xl font-semibold">
             {{ $t('settings.tokens.management') }}
           </h2>
-          <p class="text-secondary mt-1">
+          <p class="text-neutral-black-font mt-1">
             {{ $t('settings.tokens.managementDescription') }}
           </p>
         </div>
@@ -26,7 +26,7 @@
       <!-- Loading State -->
       <div v-if="isLoading" class="p-8 text-center">
         <div class="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
-        <p class="text-secondary">
+        <p class="text-neutral-black-font">
           {{ $t('settings.tokens.loading') }}
         </p>
       </div>
@@ -43,7 +43,7 @@
       <div v-else class="flex flex-col gap-6">
         <!-- Global Balance Card -->
         <div
-          class="from-primary/5 to-primary/10 border-primary-stroke rounded-xl border bg-gradient-to-br p-6"
+          class="from-primary/5 to-primary/10 border-primary-lighter-stroke rounded-xl border bg-gradient-to-br p-6"
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
@@ -51,14 +51,14 @@
                 <i class="fa fa-coins text-primary text-2xl"></i>
               </div>
               <div>
-                <p class="text-secondary mb-1 text-sm">
+                <p class="text-neutral-black-font mb-1 text-sm">
                   {{ $t('settings.tokens.globalBalance') }}
                 </p>
                 <div class="flex items-baseline gap-2">
                   <span class="text-primary text-4xl font-bold">
                     {{ balance.toLocaleString() }}
                   </span>
-                  <span class="text-secondary">
+                  <span class="text-neutral-black-font">
                     {{ $t('settings.tokens.credits') }}
                   </span>
                 </div>
@@ -66,14 +66,14 @@
             </div>
 
             <div class="text-right">
-              <p class="text-secondary mb-1 text-sm">
+              <p class="text-neutral-black-font mb-1 text-sm">
                 {{ $t('settings.tokens.companyEquivalent') }}
               </p>
               <div class="flex items-baseline justify-end gap-1">
                 <span class="text-2xl font-semibold" :class="companyEquivalentColor">
                   {{ companyEquivalent }}
                 </span>
-                <span class="text-secondary">
+                <span class="text-neutral-black-font">
                   {{
                     companyEquivalent === 1
                       ? $t('settings.tokens.company')
@@ -93,7 +93,7 @@
 
           <!-- Quick Add Buttons -->
           <div class="flex flex-col gap-3">
-            <label class="text-secondary text-sm font-medium">
+            <label class="text-neutral-black-font text-sm font-medium">
               {{ $t('settings.tokens.quickAdd') }}
             </label>
             <div class="flex flex-wrap items-center gap-2">
@@ -117,7 +117,7 @@
 
           <!-- Custom Amount Input -->
           <div class="flex flex-col gap-2">
-            <label class="text-secondary text-sm font-medium">
+            <label class="text-neutral-black-font text-sm font-medium">
               {{ $t('settings.tokens.customAmount') }}
             </label>
             <div class="flex items-center gap-3">
@@ -143,7 +143,7 @@
                 @click="handleCustomAdd"
               />
             </div>
-            <p class="text-secondary text-xs">
+            <p class="text-neutral-black-font text-xs">
               {{ $t('settings.tokens.addHelper') }}
             </p>
           </div>
@@ -154,14 +154,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, inject } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useQuery } from '@pinia/colada'
-import { Alert, Button, Input } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
-import { organizationBalanceQuery } from '@/queries/tokens'
-import { useAddGlobalTokens } from '@/mutations/tokens'
 import { useTokenConfig } from '@/composables/useGlobalTokens'
+import { useAddGlobalTokens } from '@/mutations/tokens'
+import { organizationBalanceQuery } from '@/queries/tokens'
+import { Alert, Button, Input } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, inject, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const { tokensPerCompany } = useTokenConfig()

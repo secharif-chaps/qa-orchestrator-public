@@ -13,7 +13,7 @@
     <div class="flex flex-col gap-4">
       <!-- Select All / None toggle -->
       <div class="flex items-center justify-between">
-        <span v-if="showSavedMessage" class="text-secondary animate-fade-out text-xs">
+        <span v-if="showSavedMessage" class="text-neutral-black-font animate-fade-out text-xs">
           <i class="fa fa-check-circle mr-1"></i
           >{{ t('screen.company.export.modal.preferencesSaved') }}
         </span>
@@ -37,7 +37,7 @@
         >
           <div class="mr-4 flex-1">
             <label class="text-sm font-medium">{{ option.label }}</label>
-            <p v-if="option.description" class="text-secondary mt-1 text-xs">
+            <p v-if="option.description" class="text-neutral-black-font mt-1 text-xs">
               {{ option.description }}
             </p>
           </div>
@@ -64,8 +64,8 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, Modal, Switch } from '@owlint/feathers-vue'
 import type { Company } from '@/types/company'
+import { Button, Modal, Switch } from '@owlint/feathers-vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

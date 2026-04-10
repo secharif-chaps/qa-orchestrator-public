@@ -5,7 +5,7 @@
       <h2 class="text-foreground mb-2 text-xl font-semibold">
         {{ t('common.auth.loader.title') }}
       </h2>
-      <p class="text-secondary">{{ t('common.auth.loader.message') }}</p>
+      <p class="text-neutral-black-font">{{ t('common.auth.loader.message') }}</p>
     </div>
   </div>
 </template>

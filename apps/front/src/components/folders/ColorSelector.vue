@@ -6,12 +6,12 @@
     <div class="relative">
       <button
         type="button"
-        class="bg-base-200 border-primary-stroke hover:border-primary/50 flex w-full items-center gap-3 rounded-lg border px-4 py-3 transition-colors"
+        class="bg-primary-lightest border-primary-lighter-stroke hover:border-primary/50 flex w-full items-center gap-3 rounded-sm border px-4 py-3 transition-colors"
         @click="showDropdown = !showDropdown"
       >
-        <div class="h-6 w-6 rounded-lg" :class="getColorPreviewClasses()"></div>
+        <div class="h-6 w-6 rounded-sm" :class="getColorPreviewClasses()"></div>
         <span class="flex-1 text-left">{{ t(`common.folder.form.colors.${selectedColor}`) }}</span>
-        <i class="fas fa-chevron-down text-secondary"></i>
+        <i class="fas fa-chevron-down text-neutral-black-font"></i>
       </button>
 
       <!-- Backdrop -->
@@ -20,14 +20,14 @@
       <!-- Color Grid Dropdown -->
       <div
         v-if="showDropdown"
-        class="bg-base-100 border-primary-stroke absolute top-full z-50 mt-2 rounded-lg border p-4 shadow-lg"
+        class="border-primary-lighter-stroke absolute top-full z-50 mt-2 rounded-sm border bg-white p-4 shadow-lg"
       >
         <div class="grid grid-cols-6 gap-2">
           <button
             v-for="color in availableColors"
             :key="color"
             type="button"
-            class="h-10 w-10 rounded-lg border-2 transition-all hover:scale-110"
+            class="h-10 w-10 rounded-sm border-2 transition-all hover:scale-110"
             :class="[
               getColorClasses(color),
               selectedColor === color ? 'border-primary' : 'border-transparent',
@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

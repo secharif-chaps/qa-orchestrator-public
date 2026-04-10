@@ -7,19 +7,19 @@
         @click.self="emit('update:modelValue', false)"
       >
         <div
-          class="bg-base-100 rounded-card border-primary-stroke shadow-shadow-3 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden border"
+          class="rounded-card border-primary-lighter-stroke shadow-3 flex max-h-[90vh] w-full max-w-224 flex-col overflow-hidden border bg-white"
         >
           <!-- Header -->
-          <div class="border-primary-stroke flex items-center justify-between border-b p-6">
+          <div class="border-primary-lighter-stroke flex items-center justify-between border-b p-6">
             <div class="flex items-center gap-3">
               <div class="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
-                <i class="fas fa-bug text-secondary"></i>
+                <i class="fas fa-bug text-neutral-black-font"></i>
               </div>
               <div>
                 <h2 class="text-lg font-semibold">
                   {{ t('screen.company.debug.workflowTitle') }}
                 </h2>
-                <p class="text-secondary text-sm">
+                <p class="text-neutral-black-font text-sm">
                   {{
                     t('screen.company.tasks.completedCount', {
                       completed: completedCount,
@@ -42,7 +42,7 @@
             <!-- Progress Overview -->
             <div class="mb-6">
               <!-- Segmented progress bar -->
-              <div class="bg-base-200 flex h-3 w-full overflow-hidden rounded-full">
+              <div class="bg-primary-lightest flex h-3 w-full overflow-hidden rounded-full">
                 <!-- Completed segment -->
                 <div
                   v-if="completedPercentage > 0"
@@ -85,7 +85,7 @@
                 <!-- Pending segment -->
                 <div
                   v-if="pendingPercentage > 0"
-                  class="bg-base-200 h-full transition-all duration-500 ease-out"
+                  class="bg-primary-lightest h-full transition-all duration-500 ease-out"
                   :style="{ width: `${pendingPercentage}%` }"
                   :title="
                     t('screen.company.tasks.pending', {
@@ -97,7 +97,7 @@
               </div>
 
               <!-- Status summary -->
-              <div class="text-secondary mt-3 flex items-center justify-between text-xs">
+              <div class="text-neutral-black-font mt-3 flex items-center justify-between text-xs">
                 <div class="flex items-center gap-4">
                   <span class="flex items-center gap-1.5">
                     <div class="bg-success-500 h-2 w-2 rounded-full"></div>
@@ -146,14 +146,14 @@
                         size="xs"
                       />
                     </div>
-                    <p class="text-secondary truncate text-xs">
+                    <p class="text-neutral-black-font truncate text-xs">
                       {{ task.description }}
                     </p>
 
                     <!-- Token information for admins -->
                     <div
                       v-if="hasAdminAccess && getTokenInfo(task.type)?.hasTokenData"
-                      class="text-secondary mt-2 flex items-center gap-3 text-xs"
+                      class="text-neutral-black-font mt-2 flex items-center gap-3 text-xs"
                     >
                       <span v-if="getTokenInfo(task.type)?.inputTokens">
                         <i class="fas fa-arrow-down text-info-500"></i>
@@ -193,9 +193,9 @@
             </div>
 
             <!-- Global Actions -->
-            <div v-if="hasErrorsOrPending" class="border-primary-stroke mt-6 pt-6">
+            <div v-if="hasErrorsOrPending" class="border-primary-lighter-stroke mt-6 pt-6">
               <div class="flex items-center justify-between">
-                <div class="text-secondary text-sm">
+                <div class="text-neutral-black-font text-sm">
                   {{ t('screen.company.tasks.canBeRestarted') }}
                 </div>
                 <Button
@@ -358,7 +358,7 @@ const getTaskIcon = (taskType: TaskType): string => {
 }
 
 const getTaskClass = (task: { status: TaskStatus | null }): string => {
-  const baseClasses = 'bg-base-100'
+  const baseClasses = 'bg-white'
 
   switch (task.status) {
     case 'succeeded':
@@ -370,7 +370,7 @@ const getTaskClass = (task: { status: TaskStatus | null }): string => {
     case 'pending':
       return `${baseClasses} border-info-500`
     default:
-      return `${baseClasses} border-primary-stroke opacity-60`
+      return `${baseClasses} border-primary-lighter-stroke opacity-60`
   }
 }
 
@@ -385,7 +385,7 @@ const getIconContainerClass = (status: TaskStatus | null): string => {
     case 'pending':
       return 'bg-info-500/10 text-info-500'
     default:
-      return 'bg-base-200 text-secondary'
+      return 'bg-primary-lightest text-neutral-black-font'
   }
 }
 
@@ -546,13 +546,13 @@ const startAllPendingTasks = async () => {
   opacity: 0;
 }
 
-.modal-enter-active .bg-base-100,
-.modal-leave-active .bg-base-100 {
+.modal-enter-active .bg-white,
+.modal-leave-active .bg-white {
   transition: transform 0.3s ease;
 }
 
-.modal-enter-from .bg-base-100,
-.modal-leave-to .bg-base-100 {
+.modal-enter-from .bg-white,
+.modal-leave-to .bg-white {
   transform: scale(0.95);
 }
 </style>

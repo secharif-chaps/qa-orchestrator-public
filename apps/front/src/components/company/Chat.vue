@@ -1,11 +1,11 @@
 <template>
   <div
     class="flex flex-col overflow-y-auto"
-    :class="isFloating ? 'h-full bg-transparent' : 'bg-base-100 h-[calc(80vh-5rem)] rounded-xl p-4'"
+    :class="isFloating ? 'h-full bg-transparent' : 'h-[calc(80vh-5rem)] rounded-md bg-white p-4'"
   >
     <div
       v-if="!isFloating"
-      class="border-primary text-secondary relative flex items-center justify-between gap-4 border-b pb-4"
+      class="border-primary text-neutral-black-font relative flex items-center justify-between gap-4 border-b pb-4"
     >
       <div class="flex items-center gap-4">
         <i class="fa fa-chevrons-right icon-secondary cursor-pointer" @click="$emit('hide')"></i>
@@ -29,27 +29,30 @@
         }"
       >
         <div
-          class="inline-block rounded-xl p-4 text-xs"
+          class="inline-block rounded-md p-4 text-xs"
           :class="{
-            'bg-base-300 dark:bg-slate-900': message.from === 'ai',
-            'bg-primary/10 text-secondary dark:bg-primary/10 dark:text-sage-content':
+            'bg-primary-lighter dark:bg-slate-900': message.from === 'ai',
+            'bg-primary/10 text-neutral-black-font dark:bg-primary/10 dark:text-sage-content':
               message.from === 'user',
           }"
           v-sanitize-html="formatMarkdown(message.text)"
         ></div>
       </div>
       <div v-if="isLoading">
-        <div class="bg-base-300 mr-auto inline-block rounded-xl p-4 text-xs">
+        <div class="bg-primary-lighter mr-auto inline-block rounded-md p-4 text-xs">
           <i class="fa fa-spinner fa-spin"></i> {{ t('screen.company.chat.thinking') }}
         </div>
       </div>
     </div>
-    <div class="relative" :class="isFloating ? 'border-primary-stroke border-t p-4' : 'pt-2'">
+    <div
+      class="relative"
+      :class="isFloating ? 'border-primary-lighter-stroke border-t p-4' : 'pt-2'"
+    >
       <textarea
         @keyup.enter="sendMessage"
         v-model="question"
         :placeholder="t('screen.company.chat.placeholder')"
-        class="bg-base-300 border-primary-stroke focus-within:outline-primary w-full rounded-lg border p-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+        class="bg-primary-lighter border-primary-lighter-stroke focus-within:outline-primary w-full rounded-sm border p-2 text-sm dark:border-slate-700 dark:bg-slate-900"
         :class="isFloating ? 'h-20' : 'h-32'"
         @keydown.enter.ctrl.prevent="sendMessage"
         :disabled="isLoading"
@@ -73,9 +76,9 @@ import { apiClient } from '@/api/client'
 import { companyByIdQuery } from '@/queries/companies'
 import { Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
-import { ref, nextTick, watch, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 const { t } = useI18n()
 

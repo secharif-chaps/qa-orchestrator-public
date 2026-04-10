@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto max-w-4xl px-4 py-8">
+  <div class="mx-auto max-w-224 px-4 py-8">
     <!-- Header -->
     <div class="mb-8 text-center">
       <div class="mb-6 flex justify-center">
@@ -13,13 +13,13 @@
       <h1 class="text-primary mb-3 text-3xl font-bold">
         {{ $t('settings.aiPreferences.setup.title') }}
       </h1>
-      <p class="text-secondary mx-auto max-w-2xl text-base">
+      <p class="text-neutral-black-font mx-auto max-w-168 text-base">
         {{ $t('settings.aiPreferences.setup.description') }}
       </p>
     </div>
 
     <!-- Setup Form -->
-    <div class="bg-base-200 rounded-card border-primary-stroke shadow-shadow-2 border p-8">
+    <div class="bg-primary-lightest rounded-card border-primary-lighter-stroke shadow-2 border p-8">
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <!-- Role Field -->
         <Input
@@ -43,10 +43,10 @@
             v-model="form.goals_text"
             :placeholder="$t('settings.aiPreferences.setup.fields.goals.placeholder')"
             :class="[
-              'w-full rounded-lg border px-4 py-3 transition-all duration-200',
+              'w-full rounded-sm border px-4 py-3 transition-all duration-200',
               'focus:ring-primary-200 focus:border-primary-200 focus:ring-2 focus:outline-none',
               'dark:focus:ring-primary-700 dark:focus:border-primary-700',
-              'bg-base-100 border-primary-stroke placeholder:text-secondary/60',
+              'border-primary-lighter-stroke placeholder:text-neutral-black-font/60 bg-white',
               'dark:placeholder:text-sage-300 resize-none',
               errors.goals_text ? 'border-warning focus:border-warning focus:ring-warning/20' : '',
             ]"
@@ -59,10 +59,10 @@
               <i class="fa fa-exclamation-circle text-xs"></i>
               <span>{{ errors.goals_text }}</span>
             </div>
-            <div v-else class="text-secondary text-xs">
+            <div v-else class="text-neutral-black-font text-xs">
               {{ $t('settings.aiPreferences.setup.fields.goals.helper') }}
             </div>
-            <div class="text-secondary text-xs">{{ form.goals_text.length }}/2000</div>
+            <div class="text-neutral-black-font text-xs">{{ form.goals_text.length }}/2000</div>
           </div>
         </div>
 
@@ -77,10 +77,10 @@
             v-model="form.desired_output_text"
             :placeholder="$t('settings.aiPreferences.setup.fields.desiredOutput.placeholder')"
             :class="[
-              'w-full rounded-lg border px-4 py-3 transition-all duration-200',
+              'w-full rounded-sm border px-4 py-3 transition-all duration-200',
               'focus:ring-primary-200 focus:border-primary-200 focus:ring-2 focus:outline-none',
               'dark:focus:ring-primary-700 dark:focus:border-primary-700',
-              'bg-base-100 border-primary-stroke placeholder:text-secondary/60',
+              'border-primary-lighter-stroke placeholder:text-neutral-black-font/60 bg-white',
               'dark:placeholder:text-sage-300 resize-none',
               errors.desired_output_text
                 ? 'border-warning focus:border-warning focus:ring-warning/20'
@@ -98,10 +98,12 @@
               <i class="fa fa-exclamation-circle text-xs"></i>
               <span>{{ errors.desired_output_text }}</span>
             </div>
-            <div v-else class="text-secondary text-xs">
+            <div v-else class="text-neutral-black-font text-xs">
               {{ $t('settings.aiPreferences.setup.fields.desiredOutput.helper') }}
             </div>
-            <div class="text-secondary text-xs">{{ form.desired_output_text.length }}/2000</div>
+            <div class="text-neutral-black-font text-xs">
+              {{ form.desired_output_text.length }}/2000
+            </div>
           </div>
         </div>
 
@@ -109,7 +111,7 @@
         <div class="space-y-2">
           <label for="documentation" class="block text-sm font-medium">
             {{ $t('settings.aiPreferences.setup.fields.documentation.label') }}
-            <span class="text-secondary ml-2 text-sm font-normal"
+            <span class="text-neutral-black-font ml-2 text-sm font-normal"
               >({{ $t('settings.aiPreferences.setup.optional') }})</span
             >
           </label>
@@ -117,15 +119,15 @@
             id="documentation"
             v-model="form.documentation_text"
             :placeholder="$t('settings.aiPreferences.setup.fields.documentation.placeholder')"
-            class="focus:ring-primary-200 focus:border-primary-200 dark:focus:ring-primary-700 dark:focus:border-primary-700 bg-base-100 border-primary-stroke placeholder:text-secondary/60 dark:placeholder:text-sage-300 w-full resize-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:outline-none"
+            class="focus:ring-primary-200 focus:border-primary-200 dark:focus:ring-primary-700 dark:focus:border-primary-700 border-primary-lighter-stroke placeholder:text-neutral-black-font/60 dark:placeholder:text-sage-300 w-full resize-none rounded-sm border bg-white px-4 py-3 transition-all duration-200 focus:ring-2 focus:outline-none"
             rows="4"
             maxlength="5000"
           ></textarea>
           <div class="flex items-center justify-between">
-            <div class="text-secondary text-xs">
+            <div class="text-neutral-black-font text-xs">
               {{ $t('settings.aiPreferences.setup.fields.documentation.helper') }}
             </div>
-            <div class="text-secondary text-xs">
+            <div class="text-neutral-black-font text-xs">
               {{ form.documentation_text?.length || 0 }}/5000
             </div>
           </div>
@@ -169,7 +171,7 @@
     </div>
 
     <!-- Help Section -->
-    <div class="bg-info-light border-info-stroke mt-8 rounded-lg border p-6">
+    <div class="bg-info-light border-info-stroke mt-8 rounded-sm border p-6">
       <div class="flex gap-4">
         <div class="flex-shrink-0">
           <i class="fa fa-lightbulb text-info-light-content text-2xl"></i>
@@ -199,12 +201,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { saveAiPreferences } from '@/api/ai-preferences'
+import type { AiPreferencesCreate } from '@/types/ai-preferences'
+import { Alert, Button, Input } from '@owlint/feathers-vue'
+import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { saveAiPreferences } from '@/api/ai-preferences'
-import { Alert, Button, Input } from '@owlint/feathers-vue'
-import type { AiPreferencesCreate } from '@/types/ai-preferences'
 
 const router = useRouter()
 const { t } = useI18n()

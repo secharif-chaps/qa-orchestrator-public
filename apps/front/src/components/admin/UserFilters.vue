@@ -28,7 +28,7 @@
 
         <template #content="{ close }">
           <!-- Sort by Username -->
-          <div class="text-secondary px-4 py-2 text-xs font-semibold uppercase">
+          <div class="text-neutral-black-font px-4 py-2 text-xs font-semibold uppercase">
             {{ $t('admin.users.sort.sortBy') }}
           </div>
 
@@ -45,7 +45,7 @@
           <DropdownDivider />
 
           <!-- Sort order -->
-          <div class="text-secondary px-4 py-2 text-xs font-semibold uppercase">
+          <div class="text-neutral-black-font px-4 py-2 text-xs font-semibold uppercase">
             {{ $t('admin.users.sort.order') }}
           </div>
 
@@ -65,12 +65,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from 'vue'
-import { Button, Searchbar } from '@owlint/feathers-vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
-import DropdownItem from '@/components/ui/DropdownItem.vue'
 import DropdownDivider from '@/components/ui/DropdownDivider.vue'
+import DropdownItem from '@/components/ui/DropdownItem.vue'
 import type { AdminUserQueryParams } from '@/types/admin-user'
+import { Button, Searchbar } from '@owlint/feathers-vue'
+import { computed, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

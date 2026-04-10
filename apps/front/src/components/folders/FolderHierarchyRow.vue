@@ -2,7 +2,7 @@
   <div>
     <!-- Folder Row -->
     <div
-      class="hover:bg-base-200 cursor-pointer px-6 py-4 transition-colors"
+      class="hover:bg-primary-lightest cursor-pointer px-6 py-4 transition-colors"
       @click="toggleExpanded"
     >
       <div
@@ -15,7 +15,7 @@
         <!-- Name with expand/collapse icon -->
         <div class="col-span-5 flex items-center gap-3">
           <button
-            class="text-secondary hover:text-secondary flex h-6 w-6 items-center justify-center transition-colors"
+            class="text-neutral-black-font hover:text-neutral-black-font flex h-6 w-6 items-center justify-center transition-colors"
             @click.stop="toggleExpanded"
           >
             <i
@@ -25,7 +25,7 @@
           </button>
 
           <div
-            class="border-primary-stroke flex h-10 w-10 items-center justify-center rounded-lg border"
+            class="border-primary-lighter-stroke flex h-10 w-10 items-center justify-center rounded-sm border"
             :class="folderColorClasses"
           >
             <i :class="folderIcon" class="text-lg"></i>
@@ -76,7 +76,7 @@
           >
             {{ ownerInitials }}
           </div>
-          <span class="text-secondary text-sm">
+          <span class="text-neutral-black-font text-sm">
             {{ folder.is_owner ? $t('common.folder.owner.you') : folder.owner_username }}
           </span>
         </div>
@@ -92,7 +92,7 @@
 
         <!-- Created date -->
         <div class="col-span-1">
-          <span class="text-secondary text-sm">{{ formatDate(folder.created_at) }}</span>
+          <span class="text-neutral-black-font text-sm">{{ formatDate(folder.created_at) }}</span>
         </div>
 
         <!-- Actions -->
@@ -121,18 +121,21 @@
     </div>
 
     <!-- Expanded Items -->
-    <div v-if="isExpanded && folder.items && folder.items.length > 0" class="bg-base-200/30">
+    <div
+      v-if="isExpanded && folder.items && folder.items.length > 0"
+      class="bg-primary-lightest/30"
+    >
       <div
         v-for="item in folder.items"
         :key="item.id"
-        class="hover:bg-base-200/50 border-primary/20 ml-12 cursor-pointer border-l-4 px-6 py-3 transition-colors"
+        class="hover:bg-primary-lightest/50 border-primary/20 ml-12 cursor-pointer border-l-4 px-6 py-3 transition-colors"
         @click="$emit('view-item', { itemId: item.id, folderId: folder.id })"
       >
         <div class="grid grid-cols-12 items-center gap-4">
           <!-- Item name with indentation -->
           <div class="col-span-5 flex items-center gap-3 pl-8">
             <div
-              class="ring-primary-stroke flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1"
+              class="ring-primary-stroke flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white ring-1"
             >
               <img
                 v-if="item.type === 'company' && getCompanyDomain(item.website)"
@@ -150,7 +153,7 @@
                 "
                 class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
               >
-                <i class="fas fa-building text-secondary text-sm"></i>
+                <i class="fas fa-building text-neutral-black-font text-sm"></i>
               </div>
             </div>
             <div class="flex-1">
@@ -165,12 +168,12 @@
 
           <!-- Item owner -->
           <div class="col-span-2">
-            <span class="text-secondary text-xs">{{ item.owner || '' }}</span>
+            <span class="text-neutral-black-font text-xs">{{ item.owner || '' }}</span>
           </div>
 
           <!-- Item created date -->
           <div class="col-span-1">
-            <span class="text-secondary text-xs">{{ formatDate(item.created_at) }}</span>
+            <span class="text-neutral-black-font text-xs">{{ formatDate(item.created_at) }}</span>
           </div>
 
           <!-- Item actions -->
@@ -190,10 +193,10 @@
     <!-- Empty state for expanded folder -->
     <div
       v-else-if="isExpanded"
-      class="bg-base-200/30 border-primary/20 ml-12 border-l-4 px-6 py-8 text-center"
+      class="bg-primary-lightest/30 border-primary/20 ml-12 border-l-4 px-6 py-8 text-center"
     >
-      <i class="fas fa-folder-open text-secondary/50 mb-2 text-2xl"></i>
-      <p class="text-secondary text-sm">
+      <i class="fas fa-folder-open text-neutral-black-font/50 mb-2 text-2xl"></i>
+      <p class="text-neutral-black-font text-sm">
         {{ $t('common.folder.items.empty') }}
       </p>
     </div>
@@ -201,13 +204,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, toRef } from 'vue'
-import { useI18n } from 'vue-i18n'
 import UiTag from '@/components/ui/Tag.vue'
-import { Button } from '@owlint/feathers-vue'
-import type { Folder } from '@/types/folder'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
+import type { Folder } from '@/types/folder'
 import { formatDate } from '@/utils/time'
+import { Button } from '@owlint/feathers-vue'
+import { computed, ref, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 

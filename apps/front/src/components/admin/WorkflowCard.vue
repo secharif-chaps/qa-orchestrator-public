@@ -18,7 +18,7 @@
     <div
       v-if="isAnimating || isZoomed"
       ref="floatingCardRef"
-      class="bg-base-100 border-primary-stroke fixed z-50 rounded-lg border shadow-2xl"
+      class="border-primary-lighter-stroke fixed z-50 rounded-sm border bg-white shadow-2xl"
     >
       <div class="p-6">
         <!-- Header -->
@@ -27,7 +27,7 @@
             <!-- Icon -->
             <div
               :class="[
-                'flex h-12 w-12 items-center justify-center rounded-lg transition-colors',
+                'flex h-12 w-12 items-center justify-center rounded-sm transition-colors',
                 statusConfig.iconBg,
               ]"
             >
@@ -68,7 +68,10 @@
               :placeholder="$t('admin.workflows.apiKeyPlaceholder')"
               icon="fa-key"
             />
-            <div v-else class="text-secondary bg-base-200 rounded-md px-3 py-2 font-mono text-sm">
+            <div
+              v-else
+              class="text-neutral-black-font bg-primary-lightest rounded-sm px-3 py-2 font-mono text-sm"
+            >
               {{ workflow.api_key_obfuscated || $t('admin.workflows.notConfigured') }}
             </div>
           </div>
@@ -101,9 +104,9 @@
   <!-- Placeholder Card (maintains grid layout) -->
   <div
     v-if="isAnimating || isZoomed"
-    class="bg-base-200/50 border-primary-stroke flex min-h-[200px] items-center justify-center rounded-lg border-2 border-dashed transition-all duration-300"
+    class="bg-primary-lightest/50 border-primary-lighter-stroke flex min-h-[200px] items-center justify-center rounded-sm border-2 border-dashed transition-all duration-300"
   >
-    <div class="text-secondary/60 text-center">
+    <div class="text-neutral-black-font/60 text-center">
       <i class="fa fa-edit mb-2 text-2xl"></i>
       <p class="text-sm">{{ $t('admin.workflowCard.editing') }}</p>
     </div>
@@ -113,7 +116,7 @@
   <div
     v-else
     ref="cardRef"
-    class="bg-base-100 border-primary-stroke rounded-lg border shadow-sm transition-shadow duration-200 hover:shadow-md"
+    class="border-primary-lighter-stroke rounded-sm border bg-white shadow-sm transition-shadow duration-200 hover:shadow-md"
   >
     <div class="p-6">
       <!-- Header -->
@@ -122,7 +125,7 @@
           <!-- Icon -->
           <div
             :class="[
-              'flex h-12 w-12 items-center justify-center rounded-lg transition-colors',
+              'flex h-12 w-12 items-center justify-center rounded-sm transition-colors',
               statusConfig.iconBg,
             ]"
           >
@@ -155,7 +158,9 @@
           <label class="mb-2 block text-base text-sm font-medium">
             {{ $t('admin.workflows.apiKey') }}
           </label>
-          <div class="text-secondary bg-base-200 rounded-md px-3 py-2 font-mono text-sm">
+          <div
+            class="text-neutral-black-font bg-primary-lightest rounded-sm px-3 py-2 font-mono text-sm"
+          >
             {{ workflow.api_key_obfuscated || $t('admin.workflows.notConfigured') }}
           </div>
         </div>
@@ -165,11 +170,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
-import { useI18n } from 'vue-i18n'
 import type { WorkflowConfig } from '@/api/workflows'
 import Tag from '@/components/ui/Tag.vue'
 import { Button, Input } from '@owlint/feathers-vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
@@ -246,7 +251,7 @@ const statusConfig = computed(() => {
     label: t('admin.workflows.status.notConfigured'),
     badgeIcon: 'fa fa-times',
     iconBg: 'bg-slate/10 group-hover:bg-slate/20',
-    iconColor: 'text-secondary',
+    iconColor: 'text-neutral-black-font',
   }
 })
 

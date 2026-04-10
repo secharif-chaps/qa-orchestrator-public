@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col gap-3 rounded-lg border p-4 transition-all"
+    class="flex flex-col gap-3 rounded-sm border p-4 transition-all"
     :class="blockClasses"
     :title="disabled ? disabledReason : undefined"
     @click="disabled ? null : $emit('select', role.id)"
@@ -8,7 +8,7 @@
     <!-- Header -->
     <div class="flex items-center gap-3">
       <div
-        class="flex size-10 items-center justify-center rounded-lg"
+        class="flex size-10 items-center justify-center rounded-sm"
         :class="isAdmin ? 'bg-error-light' : 'bg-primary/10'"
       >
         <Icon
@@ -21,7 +21,7 @@
         <h3 :class="['text-base font-semibold', isAdmin ? 'text-error' : '']">
           {{ $t(`admin.permissions.roles.${role.id}.name`) }}
         </h3>
-        <p class="text-secondary text-sm">
+        <p class="text-neutral-black-font text-sm">
           {{ $t(`admin.permissions.roles.${role.id}.description`) }}
         </p>
       </div>
@@ -49,10 +49,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import Tag from '@/components/ui/Tag.vue'
 import type { Role } from '@/types/role'
 import { Icon } from '@owlint/feathers-vue'
-import Tag from '@/components/ui/Tag.vue'
+import { computed } from 'vue'
 
 interface Props {
   role: Role
@@ -79,10 +79,10 @@ const blockClasses = computed(() => {
   if (isAdmin.value) {
     return selected
       ? 'border-error bg-error/5 cursor-pointer'
-      : 'border-error-stroke hover:border-error/30 hover:bg-base-200 cursor-pointer'
+      : 'border-error-stroke hover:border-error/30 hover:bg-primary-lightest cursor-pointer'
   }
   return selected
     ? 'border-primary bg-primary/5 cursor-pointer'
-    : 'border-primary-stroke hover:border-primary/30 hover:bg-base-200 cursor-pointer'
+    : 'border-primary-lighter-stroke hover:border-primary/30 hover:bg-primary-lightest cursor-pointer'
 })
 </script>

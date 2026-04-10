@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-lg border p-6">
+  <div class="border-primary-lighter-stroke rounded-sm border bg-white p-6">
     <h3 class="mb-4 text-lg font-semibold">{{ t('admin.usage.stackedChart.title') }}</h3>
 
     <!-- Loading state -->
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
-        <p class="text-secondary text-sm">
+        <i class="fa fa-spinner text-neutral-black-font mb-2 animate-spin text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">
           {{ t('admin.usage.stackedChart.loading') }}
         </p>
       </div>
@@ -19,8 +19,8 @@
       class="flex justify-center py-12"
     >
       <div class="text-center">
-        <i class="fa fa-chart-bar text-secondary mb-2 text-2xl"></i>
-        <p class="text-secondary text-sm">
+        <i class="fa fa-chart-bar text-neutral-black-font mb-2 text-2xl"></i>
+        <p class="text-neutral-black-font text-sm">
           {{ t('admin.usage.stackedChart.noData') }}
         </p>
       </div>
@@ -43,7 +43,7 @@
             class="h-3 w-3 flex-shrink-0 rounded-full"
             :style="{ backgroundColor: colors[index % colors.length] }"
           ></div>
-          <span class="text-secondary truncate text-sm">{{ org.organization_name }}</span>
+          <span class="text-neutral-black-font truncate text-sm">{{ org.organization_name }}</span>
         </div>
       </div>
     </template>
@@ -63,20 +63,20 @@
  * - Limits to top 10 organizations with "Other" category
  * - Loading and empty states
  */
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
+import type { OrganizationBreakdown, TimeSeriesDataPoint } from '@/types/usage'
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
   BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
   Title,
   Tooltip,
-  Legend,
   type TooltipItem,
 } from 'chart.js'
+import { computed } from 'vue'
 import { Bar } from 'vue-chartjs'
-import type { TimeSeriesDataPoint, OrganizationBreakdown } from '@/types/usage'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 

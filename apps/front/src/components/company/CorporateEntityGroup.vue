@@ -1,6 +1,6 @@
 <template>
-  <div v-if="entities?.length" class="bg-base-100 rounded-lg p-6">
-    <h4 class="text-secondary mb-4 flex items-center gap-2 font-semibold">
+  <div v-if="entities?.length" class="rounded-sm bg-white p-6">
+    <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
       <Icon :icon />
       {{ title }}
     </h4>
@@ -8,12 +8,12 @@
       <li
         v-for="entity in entities"
         :key="entity.name"
-        class="text-secondary flex items-start gap-2"
+        class="text-neutral-black-font flex items-start gap-2"
       >
-        <Icon icon="fa-circle" class="text-secondary mt-1.5 text-[6px]" />
+        <Icon icon="fa-circle" class="text-neutral-black-font mt-1.5 text-[6px]" />
         <div class="min-w-0 flex-1">
           <span class="text-sm font-medium">{{ entity.name }}</span>
-          <span v-if="entity.country" class="text-secondary ml-1 text-xs">
+          <span v-if="entity.country" class="text-neutral-black-font ml-1 text-xs">
             ({{ entity.country }})
           </span>
           <Source v-if="entity.source" :source="entity.source" />

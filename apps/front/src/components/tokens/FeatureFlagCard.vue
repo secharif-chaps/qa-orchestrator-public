@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-lg border p-4">
+  <div class="border-primary-lighter-stroke rounded-sm border bg-white p-4">
     <div class="flex flex-col gap-4">
       <!-- Main row: Badge, Info, Toggle -->
       <div class="flex items-center justify-between">
@@ -21,7 +21,7 @@
             <h3 class="font-medium capitalize">
               {{ $t(flagConfig.labelKey, flagName) }}
             </h3>
-            <p class="text-secondary text-sm">
+            <p class="text-neutral-black-font text-sm">
               {{ $t(flagConfig.descriptionKey, defaultDescription) }}
             </p>
           </div>
@@ -48,7 +48,7 @@
           icon="fa fa-external-link"
           @blur="handleUrlBlur"
         />
-        <p class="text-secondary text-xs">
+        <p class="text-neutral-black-font text-xs">
           {{ $t('settings.featureFlags.discover.urlHint') }}
         </p>
       </div>
@@ -57,11 +57,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useToggleFeatureFlag } from '@/mutations/feature-flags'
 import { FEATURE_FLAG_CONFIG, type FeatureFlagName } from '@/types/feature-flags'
-import { Badge, Switch, Input } from '@owlint/feathers-vue'
+import { Badge, Input, Switch } from '@owlint/feathers-vue'
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   flag: FeatureFlagName

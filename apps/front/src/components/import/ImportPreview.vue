@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Summary -->
-    <div class="bg-base-200 flex items-center gap-4 rounded-xl p-4">
+    <div class="bg-primary-lightest flex items-center gap-4 rounded-md p-4">
       <Badge icon="fa-solid fa-users" />
       <div>
         <p class="text-sage-700 dark:text-sage-200 font-medium">
@@ -50,9 +50,9 @@
     </Alert>
 
     <!-- Preview Table -->
-    <div class="border-primary-stroke overflow-x-auto rounded-xl border">
+    <div class="border-primary-lighter-stroke overflow-x-auto rounded-md border">
       <table class="w-full min-w-max">
-        <thead class="bg-base-200">
+        <thead class="bg-primary-lightest">
           <tr>
             <th class="text-sage-700 dark:text-sage-200 px-4 py-3 text-left text-sm font-semibold">
               #
@@ -82,7 +82,7 @@
             v-for="(user, idx) in displayUsers"
             :key="idx"
             :class="[
-              'bg-base-100',
+              'bg-white',
               getRowStatus(idx) === 'error' && 'bg-error-light/30',
               getRowStatus(idx) === 'warning' && 'bg-warning-light/30',
             ]"
@@ -130,11 +130,11 @@
 </template>
 
 <script setup lang="ts">
+import Tag from '@/components/ui/Tag.vue'
+import type { DuplicateInfo, UserImportRow, ValidationError } from '@/types/user-import'
+import { Alert, Badge } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Alert, Badge } from '@owlint/feathers-vue'
-import Tag from '@/components/ui/Tag.vue'
-import type { UserImportRow, ValidationError, DuplicateInfo } from '@/types/user-import'
 
 const MAX_PREVIEW_ROWS = 20
 

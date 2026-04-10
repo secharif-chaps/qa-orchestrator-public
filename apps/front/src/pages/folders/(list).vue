@@ -6,7 +6,7 @@
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 class="text-2xl font-bold">{{ $t('common.folder.title') }}</h1>
-            <p class="text-secondary mt-1">
+            <p class="text-neutral-black-font mt-1">
               {{
                 isGlobalView
                   ? $t('common.folder.descriptionGlobal')
@@ -44,11 +44,11 @@
       />
 
       <!-- Loading State -->
-      <div v-if="currentIsLoading" class="bg-base-100 rounded-lg p-8 text-center shadow-sm">
+      <div v-if="currentIsLoading" class="rounded-sm bg-white p-8 text-center shadow-sm">
         <div
           class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
         ></div>
-        <p class="text-secondary">
+        <p class="text-neutral-black-font">
           {{ $t('common.folder.loading') }}
         </p>
       </div>
@@ -63,20 +63,20 @@
           <!-- Create New Folder Card (only shown if user can create folders) -->
           <div
             v-if="canCreateFolder"
-            class="rounded-card border-primary-stroke hover:border-primary/50 hover:bg-base-200/50 group flex min-h-[280px] cursor-pointer flex-col items-center justify-center border-2 border-dashed p-6 transition-all duration-200"
+            class="rounded-card border-primary-lighter-stroke hover:border-primary/50 hover:bg-primary-lightest/50 group flex min-h-[280px] cursor-pointer flex-col items-center justify-center border-2 border-dashed p-6 transition-all duration-200"
             @click="$router.push('/folders/create')"
           >
             <div
-              class="bg-primary/10 dark:bg-primary/20 group-hover:bg-primary/20 mb-4 flex h-16 w-16 items-center justify-center rounded-lg transition-colors"
+              class="bg-primary/10 dark:bg-primary/20 group-hover:bg-primary/20 mb-4 flex h-16 w-16 items-center justify-center rounded-sm transition-colors"
             >
-              <i class="fas fa-plus text-secondary text-2xl"></i>
+              <i class="fas fa-plus text-neutral-black-font text-2xl"></i>
             </div>
             <h3
-              class="group-hover:text-secondary mb-2 text-center text-lg font-semibold transition-colors"
+              class="group-hover:text-neutral-black-font mb-2 text-center text-lg font-semibold transition-colors"
             >
               {{ $t('common.folder.create.title') }}
             </h3>
-            <p class="text-secondary text-center text-sm">
+            <p class="text-neutral-black-font text-center text-sm">
               {{ $t('common.folder.create.description') }}
             </p>
           </div>
@@ -93,38 +93,41 @@
         </div>
 
         <!-- Hierarchical Table View -->
-        <div v-else class="bg-base-100 border-primary-stroke overflow-hidden rounded-lg border">
+        <div
+          v-else
+          class="border-primary-lighter-stroke overflow-hidden rounded-sm border bg-white"
+        >
           <!-- Create New Folder Row (only shown if user can create folders) -->
           <div
             v-if="canCreateFolder"
-            class="border-primary-stroke bg-base-200/50 hover:bg-base-200 cursor-pointer border-b px-6 py-4 transition-colors"
+            class="border-primary-lighter-stroke bg-primary-lightest/50 hover:bg-primary-lightest cursor-pointer border-b px-6 py-4 transition-colors"
             @click="$router.push('/folders/create')"
           >
             <div class="flex items-center gap-3">
               <div
-                class="bg-primary/10 dark:bg-primary/20 flex h-8 w-8 items-center justify-center rounded-lg"
+                class="bg-primary/10 dark:bg-primary/20 flex h-8 w-8 items-center justify-center rounded-sm"
               >
-                <i class="fas fa-plus text-secondary text-sm"></i>
+                <i class="fas fa-plus text-neutral-black-font text-sm"></i>
               </div>
               <div class="flex-1">
-                <h3 class="text-secondary font-medium">
+                <h3 class="text-neutral-black-font font-medium">
                   {{ $t('common.folder.create.title') }}
                 </h3>
-                <p class="text-secondary mt-1 text-xs">
+                <p class="text-neutral-black-font mt-1 text-xs">
                   {{ $t('common.folder.create.description') }}
                 </p>
               </div>
-              <i class="fas fa-chevron-right text-secondary"></i>
+              <i class="fas fa-chevron-right text-neutral-black-font"></i>
             </div>
           </div>
 
           <!-- Table Header -->
-          <div class="border-primary-stroke bg-base-200 border-b px-6 py-4">
+          <div class="border-primary-lighter-stroke bg-primary-lightest border-b px-6 py-4">
             <div
               :class="
                 isGlobalView
-                  ? 'text-secondary grid grid-cols-14 gap-4 text-sm font-medium'
-                  : 'text-secondary grid grid-cols-12 gap-4 text-sm font-medium'
+                  ? 'text-neutral-black-font grid grid-cols-14 gap-4 text-sm font-medium'
+                  : 'text-neutral-black-font grid grid-cols-12 gap-4 text-sm font-medium'
               "
             >
               <div class="col-span-5">{{ $t('common.folder.table.name') }}</div>
@@ -169,8 +172,8 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="bg-base-100 rounded-lg p-12 text-center shadow-sm">
-        <i class="fa fa-folder-open text-secondary/50 mb-4 text-4xl"></i>
+      <div v-else class="rounded-sm bg-white p-12 text-center shadow-sm">
+        <i class="fa fa-folder-open text-neutral-black-font/50 mb-4 text-4xl"></i>
         <h3 class="mb-2 text-lg font-medium">
           {{
             foldersStore.filterName
@@ -178,7 +181,7 @@
               : $t('common.folder.emptyList.title')
           }}
         </h3>
-        <p class="text-secondary mb-6">
+        <p class="text-neutral-black-font mb-6">
           {{
             foldersStore.filterName
               ? $t('common.folder.empty.tryDifferentSearch')
@@ -230,15 +233,15 @@ import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
 import FolderHierarchyRow from '@/components/folders/FolderHierarchyRow.vue'
 import FolderItem from '@/components/folders/FolderItem.vue'
 import FolderRestoreModal from '@/components/folders/FolderRestoreModal.vue'
-import { Alert, Button, Toggle } from '@owlint/feathers-vue'
 import Pagination from '@/components/ui/Pagination.vue'
-import { foldersWithItemsQuery } from '@/queries/folders'
-import { useFoldersStore } from '@/stores/folders'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import { useTeamPermissions } from '@/composables/useTeamPermissions'
+import { foldersWithItemsQuery } from '@/queries/folders'
+import { useFoldersStore } from '@/stores/folders'
 import type { Folder } from '@/types/folder'
-import { useQuery } from '@pinia/colada'
 import { transformToPaginationMeta } from '@/utils/pagination'
+import { Alert, Button, Toggle } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

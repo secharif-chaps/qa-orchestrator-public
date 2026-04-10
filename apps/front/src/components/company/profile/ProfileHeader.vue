@@ -5,7 +5,7 @@
       <div class="flex items-start gap-6">
         <!-- Logo Section -->
         <div
-          class="ring-primary-stroke relative size-14 overflow-hidden rounded-xl bg-white ring-2"
+          class="ring-primary-stroke relative size-14 overflow-hidden rounded-md bg-white ring-2"
         >
           <img
             v-if="getCompanyDomain(company?.website)"
@@ -19,7 +19,7 @@
             v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
             class="from-primary/10 to-primary/20 flex h-full w-full items-center justify-center bg-gradient-to-br"
           >
-            <i class="fa fa-building text-secondary text-3xl"></i>
+            <i class="fa fa-building text-neutral-black-font text-3xl"></i>
           </div>
         </div>
 
@@ -27,10 +27,10 @@
         <div class="flex-1">
           <!-- Company Name & Catchphrase -->
           <div class="mb-4">
-            <h1 class="text-secondary mb-1 text-2xl font-bold">
+            <h1 class="text-neutral-black-font mb-1 text-2xl font-bold">
               {{ company.name }}
             </h1>
-            <p v-if="company.profile?.catchphrase" class="text-secondary text-sm italic">
+            <p v-if="company.profile?.catchphrase" class="text-neutral-black-font text-sm italic">
               "{{ getSourcedValue(company.profile?.catchphrase) }}"
               <Source :sourced-value="company?.profile?.catchphrase" />
             </p>
@@ -70,15 +70,15 @@
 </template>
 
 <script setup lang="ts">
-import { useQuery } from '@pinia/colada'
-import { companyByIdQuery } from '@/queries/companies'
-import { useRoute } from 'vue-router'
-import { computed, ref } from 'vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
-import Source from '../Source.vue'
 import Card from '@/components/ui/Card.vue'
-import ProfileInfoItem from './ProfileInfoItem.vue'
+import { companyByIdQuery } from '@/queries/companies'
 import { Button } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import Source from '../Source.vue'
+import ProfileInfoItem from './ProfileInfoItem.vue'
 
 const route = useRoute()
 

@@ -9,7 +9,7 @@
 
     <!-- No Data State -->
     <NoData v-else-if="!hasTimelineData">
-      <p class="text-secondary text-lg font-medium">
+      <p class="text-neutral-black-font text-lg font-medium">
         {{ $t('screen.profile.sections.timeline.noData') }}
       </p>
     </NoData>
@@ -17,7 +17,7 @@
     <!-- Timeline visualization -->
     <div v-else class="relative">
       <!-- Timeline events -->
-      <div class="bg-base-100 rounded-lg p-4">
+      <div class="rounded-sm bg-white p-4">
         <div class="mb-6 flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-lg font-semibold">{{ $t('screen.timeline.title') }}</span>
@@ -56,7 +56,7 @@
         <!-- No results message -->
         <div v-if="filteredEvents.length === 0 && searchQuery">
           <NoData>
-            <p class="text-secondary text-lg font-medium">
+            <p class="text-neutral-black-font text-lg font-medium">
               {{ $t('screen.timeline.search.noResults', { query: searchQuery }) }}
             </p>
           </NoData>
@@ -67,18 +67,18 @@
 </template>
 
 <script lang="ts" setup>
-import { useQuery } from '@pinia/colada'
-import { companyByIdQuery } from '@/queries/companies'
-import { useRoute } from 'vue-router'
-import { computed, ref, inject } from 'vue'
-import type { Ref } from 'vue'
-import Event from '@/components/company/timeline/Event.vue'
-import { companyTasksQuery } from '@/queries/tasks'
-import { Button, Searchbar } from '@owlint/feathers-vue'
-import NoData from '@/components/ui/NoData.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
+import Event from '@/components/company/timeline/Event.vue'
+import NoData from '@/components/ui/NoData.vue'
+import { companyByIdQuery } from '@/queries/companies'
+import { companyTasksQuery } from '@/queries/tasks'
 import type { SourcedValue } from '@/types/company'
+import { Button, Searchbar } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import type { Ref } from 'vue'
+import { computed, inject, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const route = useRoute('/folders/[folderId]/companies/[companyId]/timeline')
 

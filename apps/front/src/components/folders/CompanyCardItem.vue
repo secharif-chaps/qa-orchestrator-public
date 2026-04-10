@@ -1,7 +1,7 @@
 <template>
   <div
     @click="$emit('click')"
-    class="bg-base-100 border-primary-stroke ring-primary/50 ring-offset-bg2 flex h-16 cursor-pointer items-center rounded-md border p-2 hover:ring-2"
+    class="border-primary-lighter-stroke ring-primary/50 ring-offset-bg2 flex h-16 cursor-pointer items-center rounded-sm border bg-white p-2 hover:ring-2"
   >
     <div class="flex min-w-0 items-center gap-2">
       <!-- Company Logo -->
@@ -12,7 +12,7 @@
           v-if="showFallbackIcon"
           class="bg-sage-100 dark:bg-sage-800 flex h-full w-full items-center justify-center"
         >
-          <i class="fas fa-building text-secondary text-xl"></i>
+          <i class="fas fa-building text-neutral-black-font text-xl"></i>
         </div>
         <img
           v-if="companyDomain && !showFallbackIcon"

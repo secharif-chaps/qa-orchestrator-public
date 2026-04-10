@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-[300px] rounded-lg bg-white p-4 shadow-lg hover:ring-4 dark:bg-slate-900"
+    class="w-[300px] rounded-sm bg-white p-4 shadow-lg hover:ring-4 dark:bg-slate-900"
     :class="{
       'ring-purple-600': data.level <= 1,
       'ring-orange-400': data.level > 1,
@@ -15,7 +15,7 @@
       </div>
       <div class="flex flex-col">
         <div class="font-semibold">{{ data.firstName }} {{ data.lastName }}</div>
-        <div class="text-secondary text-sm">{{ data.position }}</div>
+        <div class="text-neutral-black-font text-sm">{{ data.position }}</div>
       </div>
     </div>
 

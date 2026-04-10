@@ -6,7 +6,7 @@
         <h1 class="text-3xl font-bold">
           {{ $t('admin.dashboard.title') }}
         </h1>
-        <p class="text-secondary mt-2">
+        <p class="text-neutral-black-font mt-2">
           {{ $t('admin.dashboard.description') }}
         </p>
       </div>
@@ -17,7 +17,7 @@
           v-for="feature in visibleFeatures"
           :key="feature.id"
           ring="accent"
-          class="group ring-offset-base-100 ring-accent-400 cursor-pointer ring-0 hover:shadow-none hover:ring-4 hover:ring-offset-2"
+          class="group ring-accent-400 cursor-pointer ring-0 ring-offset-white hover:shadow-none hover:ring-4 hover:ring-offset-2"
           @click="feature.navigate()"
         >
           <div class="p-6">
@@ -43,7 +43,7 @@
               </div>
             </div>
 
-            <p class="text-secondary mb-4 text-sm">
+            <p class="text-neutral-black-font mb-4 text-sm">
               {{ $t(feature.descriptionKey, feature.descriptionDefault) }}
             </p>
             <div class="transition-transform group-hover:translate-x-2">
@@ -79,12 +79,12 @@ meta:
 </route>
 
 <script setup lang="ts">
+import Card from '@/components/ui/Card.vue'
+import Tag from '@/components/ui/Tag.vue'
+import { useAuthStore } from '@/stores/auth'
+import { Alert, Badge } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import Tag from '@/components/ui/Tag.vue'
-import { Alert, Badge } from '@owlint/feathers-vue'
-import Card from '@/components/ui/Card.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

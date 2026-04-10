@@ -2,7 +2,7 @@
   <div class="relative">
     <!-- Main Counter Card -->
     <div
-      class="from-bg1 to-bg2 border-primary-stroke rounded-xl border bg-gradient-to-br p-4 shadow-sm transition-all duration-200 hover:shadow-md"
+      class="from-bg1 to-bg2 border-primary-lighter-stroke rounded-xl border bg-gradient-to-br p-4 shadow-sm transition-all duration-200 hover:shadow-md"
     >
       <div class="flex items-center gap-3">
         <!-- Animated Token Icon -->
@@ -25,7 +25,7 @@
         <div class="min-w-0 flex-1">
           <!-- Label -->
           <div class="mb-1 flex items-center gap-2">
-            <span class="text-secondary text-xs font-medium tracking-wide uppercase">
+            <span class="text-neutral-black-font text-xs font-medium tracking-wide uppercase">
               {{ label }}
             </span>
             <Button
@@ -45,20 +45,23 @@
             <span :class="tokenCountClasses" class="text-2xl font-bold tabular-nums">
               {{ displayCount }}
             </span>
-            <span v-if="showLabel && !isLoading" class="text-secondary text-sm">
+            <span v-if="showLabel && !isLoading" class="text-neutral-black-font text-sm">
               {{ tokenLabel }}
             </span>
           </div>
 
           <!-- Company Creation Equivalence -->
           <div v-if="showCompanyEquivalence && !isLoading" class="mt-1.5">
-            <span class="text-secondary text-xs">
+            <span class="text-neutral-black-font text-xs">
               {{ companyEquivalenceText }}
             </span>
           </div>
 
           <!-- Loading State -->
-          <div v-if="isLoading" class="text-secondary mt-2 flex items-center gap-2 text-xs">
+          <div
+            v-if="isLoading"
+            class="text-neutral-black-font mt-2 flex items-center gap-2 text-xs"
+          >
             <div class="bg-primary/60 h-2 w-2 animate-pulse rounded-full"></div>
             {{ $t('settings.tokens.loading') }}
           </div>
@@ -69,10 +72,10 @@
 </template>
 
 <script setup lang="ts">
+import { useTokenConfig } from '@/composables/useGlobalTokens'
+import { Button } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Button } from '@owlint/feathers-vue'
-import { useTokenConfig } from '@/composables/useGlobalTokens'
 
 const { t } = useI18n()
 const { tokensPerCompany } = useTokenConfig()

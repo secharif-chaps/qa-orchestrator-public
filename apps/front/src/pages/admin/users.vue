@@ -7,7 +7,7 @@
         <h1 class="mb-2 text-2xl font-bold">
           {{ $t('admin.users.title') }}
         </h1>
-        <p class="text-secondary">
+        <p class="text-neutral-black-font">
           {{ $t('admin.users.description') }}
         </p>
       </div>
@@ -41,10 +41,10 @@
     <!-- Loading State -->
     <div
       v-if="isLoading"
-      class="bg-base-100 border-primary-stroke rounded-lg border p-8 text-center shadow-sm"
+      class="border-primary-lighter-stroke rounded-sm border bg-white p-8 text-center shadow-sm"
     >
       <div class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
-      <p class="text-secondary">
+      <p class="text-neutral-black-font">
         {{ $t('admin.users.loading') }}
       </p>
     </div>
@@ -120,28 +120,28 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useQuery } from '@pinia/colada'
-import { Alert, Button } from '@owlint/feathers-vue'
-import Pagination from '@/components/ui/Pagination.vue'
 import UserFilters from '@/components/admin/UserFilters.vue'
 import UsersTable from '@/components/admin/UsersTable.vue'
+import Pagination from '@/components/ui/Pagination.vue'
+import { Alert, Button } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+import DisableUserModal from '@/components/admin/DisableUserModal.vue'
+import ResetPasswordModal from '@/components/admin/ResetPasswordModal.vue'
+import RolePermissionsModal from '@/components/admin/RolePermissionsModal.vue'
+import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
 import {
   useAssignUserOrganization,
-  useUpdateUserPermissions,
   useDisableUser,
   useEnableUser,
+  useUpdateUserPermissions,
 } from '@/mutations/admin-users'
 import { adminUsersQuery } from '@/queries/admin-users'
 import { allOrganizationsQuery } from '@/queries/organization-admin'
-import { transformToPaginationMeta } from '@/utils/pagination'
 import type { AdminUserListItem, AdminUserQueryParams } from '@/types/admin-user'
-import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
-import RolePermissionsModal from '@/components/admin/RolePermissionsModal.vue'
-import DisableUserModal from '@/components/admin/DisableUserModal.vue'
-import ResetPasswordModal from '@/components/admin/ResetPasswordModal.vue'
+import { transformToPaginationMeta } from '@/utils/pagination'
 
 const router = useRouter()
 

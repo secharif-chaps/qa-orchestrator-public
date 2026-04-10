@@ -161,14 +161,14 @@ const variantClasses = computed(() => {
 
     case 'slate':
       return isOutline
-        ? `${isRounded} bg-transparent text-gray-500 border border-base-200 dark:text-sage-50`
-        : `${isRounded} bg-base-200 text-sage-950 dark:bg-base-400/30 dark:text-sage-50 dark:border-base-400/30`
+        ? `${isRounded} bg-transparent text-gray-500 border border-primary-lightest dark:text-sage-50`
+        : `${isRounded} bg-primary-lightest text-sage-950 dark:bg-base-400/30 dark:text-sage-50 dark:border-base-400/30`
 
     case 'primary':
     case 'sage':
     default:
       return isOutline
-        ? `${isRounded} bg-transparent text-sage-700 border border-primary-stroke dark:text-sage-50`
+        ? `${isRounded} bg-transparent text-sage-700 border border-primary-lighter-stroke dark:text-sage-50`
         : `${isRounded} bg-sage-200 text-sage-950 border border-sage-200 dark:bg-sage-400/30 dark:text-sage-50 dark:border-sage-400/30`
   }
 })
@@ -187,7 +187,7 @@ const dotClasses = computed(() => {
     case 'accent':
       return 'bg-accent'
     case 'slate':
-      return 'bg-base-300'
+      return 'bg-primary-lighter'
     case 'primary':
     case 'sage':
     default:

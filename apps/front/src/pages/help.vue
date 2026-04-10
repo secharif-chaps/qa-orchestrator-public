@@ -2,7 +2,7 @@
   <div class="">
     <div class="mb-8">
       <h1 class="text-3xl font-bold">{{ $t('settings.help.title') }}</h1>
-      <p class="text-secondary mt-2">{{ $t('settings.help.description') }}</p>
+      <p class="text-neutral-black-font mt-2">{{ $t('settings.help.description') }}</p>
     </div>
 
     <!-- No help content available -->
@@ -28,7 +28,9 @@
       <div class="hidden lg:col-span-1 lg:block">
         <nav class="sticky top-8 space-y-1">
           <div v-for="category in helpCategories" :key="category" class="mb-4">
-            <div class="text-secondary mb-2 text-xs font-semibold tracking-wider uppercase">
+            <div
+              class="text-neutral-black-font mb-2 text-xs font-semibold tracking-wider uppercase"
+            >
               {{ getCategoryTitle(category) }}
             </div>
             <div class="space-y-1">
@@ -36,11 +38,11 @@
                 v-for="section in helpSectionsByCategory[category]"
                 :key="section.permission"
                 @click="selectedSection = section"
-                class="group flex w-full items-center rounded-md px-3 py-2 text-left text-sm font-medium transition-colors"
+                class="group flex w-full items-center rounded-sm px-3 py-2 text-left text-sm font-medium transition-colors"
                 :class="
                   selectedSection?.permission === section.permission
-                    ? 'bg-base-100 text-secondary border-primary'
-                    : 'text-secondary hover:text-secondary hover:bg-base-200'
+                    ? 'text-neutral-black-font border-primary bg-white'
+                    : 'text-neutral-black-font hover:text-neutral-black-font hover:bg-primary-lightest'
                 "
               >
                 <span class="truncate">{{ section.title }}</span>
@@ -55,7 +57,7 @@
         <select
           v-model="selectedSectionPermission"
           @change="onMobileSelectChange"
-          class="border-primary-stroke bg-base-100 text-secondary focus:ring-primary w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
+          class="border-primary-lighter-stroke text-neutral-black-font focus:ring-primary w-full rounded-sm border bg-white px-3 py-2 focus:ring-2 focus:outline-none"
         >
           <option value="">
             {{ $t('settings.help.selectTopic.placeholder') }}
@@ -90,15 +92,15 @@
           </div>
         </div>
 
-        <div v-else class="bg-base-100 rounded-lg p-6">
+        <div v-else class="rounded-sm bg-white p-6">
           <div class="mb-6">
             <h2 class="mb-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
               {{ selectedSection.title }}
             </h2>
-            <p class="text-secondary">{{ selectedSection.description }}</p>
+            <p class="text-neutral-black-font">{{ selectedSection.description }}</p>
           </div>
 
-          <div class="border-primary-stroke border-t pt-6">
+          <div class="border-primary-lighter-stroke border-t pt-6">
             <div
               v-if="selectedSectionContent"
               class="prose prose-gray dark:prose-invert max-w-none space-y-4"
@@ -109,7 +111,7 @@
                 <div
                   class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
                 ></div>
-                <p class="text-secondary">
+                <p class="text-neutral-black-font">
                   {{ $t('settings.help.loading.content') }}
                 </p>
               </div>
@@ -122,9 +124,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
-import { marked } from 'marked'
 import { usePermissionBasedHelp } from '@/composables/usePermissionBasedHelp'
+import { marked } from 'marked'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-lg border">
-    <div class="border-primary-stroke border-b px-6 py-4">
+  <div class="border-primary-lighter-stroke rounded-sm border bg-white">
+    <div class="border-primary-lighter-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.accent.title') }}</h2>
-      <p class="text-secondary mt-1 text-sm">
+      <p class="text-neutral-black-font mt-1 text-sm">
         {{ $t('settings.appearance.accent.description') }}
       </p>
     </div>
@@ -13,7 +13,7 @@
           <div
             v-for="colorOption in accentColors"
             :key="colorOption.name"
-            class="group border-primary-stroke relative flex flex-col items-center justify-center rounded-lg border p-4"
+            class="group border-primary-lighter-stroke relative flex flex-col items-center justify-center rounded-sm border p-4"
           >
             <!-- Color Circle Button -->
             <button
@@ -45,7 +45,7 @@
             <!-- Color Name Label -->
             <div class="mt-2 text-center">
               <span
-                class="text-secondary group-hover:text-secondary text-xs font-medium transition-colors"
+                class="text-neutral-black-font group-hover:text-neutral-black-font text-xs font-medium transition-colors"
               >
                 {{ colorOption.label }}
               </span>
@@ -55,7 +55,7 @@
 
         <!-- Current Selection Preview -->
         <div
-          class="border-primary-stroke rounded-lg border bg-gradient-to-br from-slate-50 to-slate-100 p-4 dark:from-slate-800 dark:to-slate-900"
+          class="border-primary-lighter-stroke rounded-sm border bg-gradient-to-br from-slate-50 to-slate-100 p-4 dark:from-slate-800 dark:to-slate-900"
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
@@ -64,7 +64,7 @@
                 <h4 class="text-sm font-medium">
                   {{ $t('settings.appearance.accent.currentColor') }}
                 </h4>
-                <p class="text-secondary text-xs">
+                <p class="text-neutral-black-font text-xs">
                   {{ getCurrentAccentLabel() }}
                 </p>
               </div>
@@ -80,16 +80,16 @@
         </div>
 
         <!-- Color Customization Info -->
-        <div class="bg-primary/5 border-primary/20 rounded-lg border p-4">
+        <div class="bg-primary/5 border-primary/20 rounded-sm border p-4">
           <div class="flex items-start gap-3">
             <div class="flex-shrink-0">
-              <i class="fas fa-palette text-secondary"></i>
+              <i class="fas fa-palette text-neutral-black-font"></i>
             </div>
             <div>
-              <h4 class="text-secondary text-sm font-medium">
+              <h4 class="text-neutral-black-font text-sm font-medium">
                 {{ $t('settings.appearance.accent.personalizeTitle') }}
               </h4>
-              <p class="text-secondary mt-1 text-xs">
+              <p class="text-neutral-black-font mt-1 text-xs">
                 {{ $t('settings.appearance.accent.personalizeDescription') }}
               </p>
             </div>
@@ -101,8 +101,8 @@
 </template>
 
 <script setup lang="ts">
-import { useAuth } from '@/composables/useAuth'
 import Tag from '@/components/ui/Tag.vue'
+import { useAuth } from '@/composables/useAuth'
 import { computed } from 'vue'
 
 interface Props {

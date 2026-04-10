@@ -1,14 +1,16 @@
 <template>
   <div
-    class="flex items-center justify-between rounded-lg p-3 transition-colors"
+    class="flex items-center justify-between rounded-sm p-3 transition-colors"
     :class="[
-      disabled ? 'bg-base-200/50 opacity-60' : 'bg-base-200 hover:bg-base-300/50',
+      disabled
+        ? 'bg-primary-lightest/50 opacity-60'
+        : 'bg-primary-lightest hover:bg-primary-lighter/50',
       variant === 'danger' ? 'border-error-stroke/30 border' : '',
     ]"
   >
     <div class="flex items-center gap-3">
       <div
-        class="flex h-8 w-8 items-center justify-center rounded-lg"
+        class="flex h-8 w-8 items-center justify-center rounded-sm"
         :class="[variant === 'danger' ? 'bg-error-light' : 'bg-primary/10']"
       >
         <i
@@ -22,7 +24,7 @@
       </div>
       <div class="flex-1">
         <p class="text-sm font-medium">{{ label }}</p>
-        <p class="text-secondary text-xs">{{ description }}</p>
+        <p class="text-neutral-black-font text-xs">{{ description }}</p>
         <p v-if="disabled && disabledReason" class="text-warning-light-content mt-1 text-xs">
           <i class="fa fa-info-circle mr-1"></i>
           {{ disabledReason }}
@@ -40,7 +42,7 @@
       <div
         class="peer peer-focus:ring-primary/20 h-6 w-11 rounded-full transition-colors peer-focus:ring-2"
         :class="[
-          isChecked ? (variant === 'danger' ? 'bg-error' : 'bg-primary') : 'bg-base-300',
+          isChecked ? (variant === 'danger' ? 'bg-error' : 'bg-primary') : 'bg-primary-lighter',
           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
         ]"
       >

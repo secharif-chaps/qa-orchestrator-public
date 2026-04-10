@@ -1,19 +1,19 @@
 <template>
   <div class="min-h-screen">
-    <div class="mx-auto flex max-w-2xl flex-col gap-6 px-4 py-8">
+    <div class="mx-auto flex max-w-168 flex-col gap-6 px-4 py-8">
       <!-- Header -->
       <div>
         <div class="mb-2 flex items-center gap-4">
           <div
-            class="bg-primary/10 dark:bg-primary/20 flex h-12 w-12 items-center justify-center rounded-lg"
+            class="bg-primary/10 dark:bg-primary/20 flex h-12 w-12 items-center justify-center rounded-sm"
           >
-            <i class="fas fa-plus text-secondary text-xl"></i>
+            <i class="fas fa-plus text-neutral-black-font text-xl"></i>
           </div>
           <div>
             <h1 class="text-2xl font-bold">
               {{ $t('common.folder.create.title') }}
             </h1>
-            <p class="text-secondary">
+            <p class="text-neutral-black-font">
               {{ $t('common.folder.create.subtitle') }}
             </p>
           </div>
@@ -21,7 +21,7 @@
       </div>
 
       <!-- Form -->
-      <div class="bg-base-100 border-primary-stroke rounded-lg border p-6">
+      <div class="border-primary-lighter-stroke rounded-sm border bg-white p-6">
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Folder Name -->
           <div>
@@ -48,7 +48,7 @@
           <div>
             <label class="mb-2 block text-sm font-medium">
               {{ $t('common.folder.form.tags') }}
-              <span class="text-secondary ml-1 text-xs"
+              <span class="text-neutral-black-font ml-1 text-xs"
                 >({{ $t('common.folder.form.tagsOptional') }})</span
               >
             </label>
@@ -76,7 +76,7 @@
               id="is_favorite"
               v-model="form.is_favorite"
               type="checkbox"
-              class="border-primary-stroke text-secondary focus:ring-primary/20 h-5 w-5 rounded"
+              class="border-primary-lighter-stroke text-neutral-black-font focus:ring-primary/20 h-5 w-5 rounded"
             />
             <label for="is_favorite" class="cursor-pointer text-sm font-medium">
               {{ $t('common.folder.form.favorite') }}
@@ -84,7 +84,7 @@
           </div>
 
           <!-- Actions -->
-          <div class="border-primary-stroke flex justify-end gap-3 border-t pt-6">
+          <div class="border-primary-lighter-stroke flex justify-end gap-3 border-t pt-6">
             <Button
               type="button"
               variant="secondary"
@@ -112,15 +112,15 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { Button, Input } from '@owlint/feathers-vue'
-import Tag from '@/components/ui/Tag.vue'
-import IconSelector from '@/components/folders/IconSelector.vue'
 import ColorSelector from '@/components/folders/ColorSelector.vue'
-import type { FolderCreate } from '@/types/folder'
-import { ref, watch } from 'vue'
+import IconSelector from '@/components/folders/IconSelector.vue'
+import Tag from '@/components/ui/Tag.vue'
 import { useCreateFolder, useToggleFolderFavorite } from '@/mutations/folders'
-import { useRouter } from 'vue-router'
+import type { FolderCreate } from '@/types/folder'
+import { Button, Input } from '@owlint/feathers-vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const { t: $t } = useI18n()

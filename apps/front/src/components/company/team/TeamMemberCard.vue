@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-base-100 border-primary-stroke hover:border-primary/30 rounded-lg border p-4 transition-all duration-200 hover:shadow-lg"
+    class="border-primary-lighter-stroke hover:border-primary/30 rounded-sm border bg-white p-4 transition-all duration-200 hover:shadow-lg"
   >
     <div class="flex items-start justify-between gap-4">
       <!-- Avatar & Basic Info -->
@@ -17,10 +17,10 @@
         </div>
 
         <div class="flex-1">
-          <h3 class="text-secondary text-lg font-semibold">
+          <h3 class="text-neutral-black-font text-lg font-semibold">
             {{ member.firstName }} {{ member.lastName }}
           </h3>
-          <p class="text-secondary mt-0.5 text-sm">
+          <p class="text-neutral-black-font mt-0.5 text-sm">
             {{ member.position }}
           </p>
         </div>
@@ -53,8 +53,8 @@
     </div>
 
     <!-- Subordinates Count -->
-    <div v-if="subordinatesCount > 0" class="border-primary-stroke mt-3 border-t pt-3">
-      <div class="text-secondary flex items-center gap-2 text-sm">
+    <div v-if="subordinatesCount > 0" class="border-primary-lighter-stroke mt-3 border-t pt-3">
+      <div class="text-neutral-black-font flex items-center gap-2 text-sm">
         <i class="fa fa-users"></i>
         <span>{{
           $t(
@@ -68,9 +68,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
 import type { TeamMember } from '@/types/company'
 import { Button } from '@owlint/feathers-vue'
+import { computed } from 'vue'
 
 const props = defineProps<{
   member: TeamMember

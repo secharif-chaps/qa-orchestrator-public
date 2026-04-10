@@ -33,10 +33,10 @@
             class="relative"
           >
             <div
-              class="bg-base-100 border-primary-stroke absolute top-0 right-0 left-0 z-10 max-h-60 overflow-y-auto rounded-lg border shadow-lg"
+              class="border-primary-lighter-stroke absolute top-0 right-0 left-0 z-10 max-h-60 overflow-y-auto rounded-sm border bg-white shadow-lg"
             >
               <!-- Loading state -->
-              <div v-if="isSearching" class="text-secondary p-4 text-center">
+              <div v-if="isSearching" class="text-neutral-black-font p-4 text-center">
                 <i class="fa fa-spinner fa-spin mr-2"></i>
                 {{ $t('common.folder.share.searching') }}
               </div>
@@ -47,7 +47,7 @@
                   v-for="user in searchResults"
                   :key="user.user_id"
                   type="button"
-                  class="hover:bg-base-200 flex w-full items-center justify-between px-4 py-2 text-left transition-colors"
+                  class="hover:bg-primary-lightest flex w-full items-center justify-between px-4 py-2 text-left transition-colors"
                   :class="{ 'opacity-50': isUserAlreadyShared(user.user_id) }"
                   :disabled="isUserAlreadyShared(user.user_id)"
                   @click="selectUser(user)"
@@ -56,7 +56,9 @@
                     <Avatar :label="user.username" color="sage" size="sm" />
                     <div>
                       <div class="font-medium">{{ user.username }}</div>
-                      <div v-if="user.email" class="text-secondary text-xs">{{ user.email }}</div>
+                      <div v-if="user.email" class="text-neutral-black-font text-xs">
+                        {{ user.email }}
+                      </div>
                     </div>
                   </div>
                   <div class="flex items-center gap-2">
@@ -77,7 +79,7 @@
               </div>
 
               <!-- No results -->
-              <div v-else-if="!searchError" class="text-secondary p-4 text-center">
+              <div v-else-if="!searchError" class="text-neutral-black-font p-4 text-center">
                 {{ $t('common.folder.share.noResults') }}
               </div>
             </div>
@@ -86,20 +88,23 @@
           <!-- Search Error Display -->
           <div
             v-if="searchError"
-            class="bg-error-light text-error-light-content border-error-stroke rounded-lg border p-3 text-sm"
+            class="bg-error-light text-error-light-content border-error-stroke rounded-sm border p-3 text-sm"
           >
             <i class="fa fa-exclamation-triangle mr-2"></i>
             {{ $t('common.folder.share.searchError') }}
           </div>
 
           <!-- Selected User (pending add) -->
-          <div v-if="selectedUser" class="bg-base-100 border-primary-stroke rounded-lg border p-4">
+          <div
+            v-if="selectedUser"
+            class="border-primary-lighter-stroke rounded-sm border bg-white p-4"
+          >
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <Avatar :label="selectedUser.username" color="sage" size="sm" />
                 <div>
                   <div class="font-medium">{{ selectedUser.username }}</div>
-                  <div v-if="selectedUser.email" class="text-secondary text-xs">
+                  <div v-if="selectedUser.email" class="text-neutral-black-font text-xs">
                     {{ selectedUser.email }}
                   </div>
                 </div>
@@ -136,7 +141,7 @@
             <!-- Writer disabled explanation -->
             <div
               v-if="!selectedUser.has_write_permission"
-              class="text-secondary mt-2 flex items-center gap-1 text-xs"
+              class="text-neutral-black-font mt-2 flex items-center gap-1 text-xs"
             >
               <i class="fa fa-info-circle"></i>
               {{ $t('common.folder.share.writerDisabledNote') }}
@@ -151,7 +156,7 @@
           </Label>
 
           <!-- Loading shares -->
-          <div v-if="isLoadingShares" class="text-secondary py-4 text-center">
+          <div v-if="isLoadingShares" class="text-neutral-black-font py-4 text-center">
             <i class="fa fa-spinner fa-spin mr-2"></i>
             {{ $t('common.folder.share.loadingShares') }}
           </div>
@@ -159,7 +164,7 @@
           <!-- Shares list -->
           <div
             v-else-if="shares && shares.length > 0"
-            class="border-primary-stroke divide-primary-stroke divide-y rounded-lg border"
+            class="border-primary-lighter-stroke divide-primary-stroke divide-y rounded-sm border"
           >
             <div
               v-for="share in shares"
@@ -170,7 +175,7 @@
                 <Avatar :label="share.user_username" color="sage" size="sm" />
                 <div>
                   <div class="font-medium">{{ share.user_username }}</div>
-                  <div class="text-secondary text-xs">
+                  <div class="text-neutral-black-font text-xs">
                     {{ $t('common.folder.share.addedOn') }}
                     {{ formatDate(share.created_at) }}
                   </div>
@@ -202,7 +207,10 @@
           </div>
 
           <!-- No shares yet -->
-          <div v-else class="text-secondary bg-base-200 rounded-lg py-6 text-center">
+          <div
+            v-else
+            class="text-neutral-black-font bg-primary-lightest rounded-sm py-6 text-center"
+          >
             <i class="fa fa-user-friends mb-2 text-2xl opacity-50"></i>
             <p>
               {{ $t('common.folder.share.noShares') }}
@@ -219,18 +227,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { Avatar, Button, Label, Modal, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
-import { useQuery } from '@pinia/colada'
-import { useI18n } from 'vue-i18n'
-import { folderSharesQuery, userSearchQuery } from '@/queries/folderShares'
 import {
   useCreateFolderShare,
   useDeleteFolderShare,
   useUpdateFolderShare,
 } from '@/mutations/folderShares'
-import { formatDate } from '@/utils/time'
+import { folderSharesQuery, userSearchQuery } from '@/queries/folderShares'
 import type { FolderShare, ShareableUser, ShareRole } from '@/types/folder'
+import { formatDate } from '@/utils/time'
+import { Avatar, Button, Label, Modal, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   folderId: string

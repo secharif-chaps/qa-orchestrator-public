@@ -1,10 +1,12 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-lg border p-4">
+  <div class="border-primary-lighter-stroke rounded-sm border bg-white p-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div
           class="flex h-10 w-10 items-center justify-center rounded-full"
-          :class="isEnabled ? 'bg-primary/10 text-primary' : 'bg-base-300 text-secondary'"
+          :class="
+            isEnabled ? 'bg-primary/10 text-primary' : 'bg-primary-lighter text-neutral-black-font'
+          "
         >
           <i :class="moduleIcon" class="text-lg"></i>
         </div>
@@ -12,7 +14,7 @@
           <h3 class="font-medium capitalize">
             {{ $t(`settings.tokens.modules.${module}.name`, module) }}
           </h3>
-          <p class="text-secondary text-sm">
+          <p class="text-neutral-black-font text-sm">
             {{ moduleDescription }}
           </p>
         </div>
@@ -36,7 +38,7 @@
             @change="handleToggle"
           />
           <div
-            class="bg-base-300 peer-focus:ring-primary/20 peer after:border-primary-stroke peer-checked:bg-primary relative h-6 w-11 rounded-full peer-focus:ring-4 peer-focus:outline-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"
+            class="bg-primary-lighter peer-focus:ring-primary/20 peer after:border-primary-lighter-stroke peer-checked:bg-primary relative h-6 w-11 rounded-full peer-focus:ring-4 peer-focus:outline-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"
           ></div>
         </label>
       </div>
@@ -45,11 +47,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import Tag from '@/components/ui/Tag.vue'
 import { useToggleModule } from '@/mutations/tokens'
 import type { ModuleName } from '@/types/tokens'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 

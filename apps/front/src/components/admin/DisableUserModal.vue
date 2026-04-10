@@ -1,10 +1,10 @@
 <template>
   <div
-    class="bg-base-100/20 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-white/20 backdrop-blur-sm"
     @click.self="$emit('close')"
   >
     <div
-      class="bg-base-100 border-primary-stroke mx-4 w-full max-w-md rounded-xl border p-6 shadow-2xl"
+      class="border-primary-lighter-stroke mx-4 w-full max-w-112 rounded-xl border bg-white p-6 shadow-2xl"
     >
       <!-- Header -->
       <div class="mb-6 flex items-center justify-between">
@@ -16,7 +16,7 @@
 
       <!-- User Info -->
       <div class="mb-6">
-        <p class="text-secondary text-sm">
+        <p class="text-neutral-black-font text-sm">
           {{ t('admin.disableUser.confirmText') }}
           <span class="font-semibold">{{ username }}</span
           >?

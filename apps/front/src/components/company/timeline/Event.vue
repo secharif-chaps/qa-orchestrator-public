@@ -2,23 +2,23 @@
   <div class="relative flex items-start gap-6 pb-6">
     <!-- Date indicator -->
     <div class="w-20 pt-4 text-right">
-      <div class="text-secondary text-sm font-medium">
+      <div class="text-neutral-black-font text-sm font-medium">
         {{ formattedDate }}
       </div>
     </div>
 
     <!-- Timeline line -->
-    <div class="bg-base-300 absolute top-6 left-[101px] h-full w-0.5"></div>
+    <div class="bg-primary-lighter absolute top-6 left-[101px] h-full w-0.5"></div>
 
     <!-- Timeline dot -->
     <div class="relative">
       <div
-        class="bg-sage-50 dark:bg-base-100 dark:ring-base-100 border-base-300 dark:border-base-300 absolute top-4 -left-2.5 h-4 w-4 rounded-full border-2 ring-4 ring-white"
+        class="bg-sage-50 border-primary-lighter-stroke dark:border-primary-lighter-stroke absolute top-4 -left-2.5 h-4 w-4 rounded-full border-2 ring-4 ring-white dark:bg-white dark:ring-white"
       ></div>
     </div>
 
     <!-- Event content -->
-    <div class="bg-base-100 border-primary-stroke flex-1 rounded-lg border p-5">
+    <div class="border-primary-lighter-stroke flex-1 rounded-sm border bg-white p-5">
       <!-- Event Header -->
       <div class="mb-3 flex items-start justify-between">
         <h3 class="text-lg leading-tight font-semibold">
@@ -45,7 +45,7 @@
       </div>
 
       <!-- Description -->
-      <p class="text-secondary mb-4 leading-relaxed">
+      <p class="text-neutral-black-font mb-4 leading-relaxed">
         {{ displayedEvent.description }}
       </p>
 
@@ -66,13 +66,13 @@
 </template>
 
 <script lang="ts" setup>
+import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Tag from '@/components/ui/Tag.vue'
+import type { SourcedValue } from '@/types/company'
+import { Alert } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Source from '../Source.vue'
-import type { SourcedValue } from '@/types/company'
-import { Alert } from '@owlint/feathers-vue'
-import { getSourcedValue } from '@/components/helpers/sourcedValues'
 
 const { t } = useI18n()
 

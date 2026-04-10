@@ -1,9 +1,9 @@
 <template>
   <Card>
     <div class="py-8 text-center">
-      <i :class="iconClass" class="text-secondary mb-3 text-3xl"></i>
+      <i :class="iconClass" class="text-neutral-black-font mb-3 text-3xl"></i>
       <h3 class="mb-2 text-lg font-semibold">{{ title }}</h3>
-      <p class="text-secondary">{{ description }}</p>
+      <p class="text-neutral-black-font">{{ description }}</p>
       <slot name="actions"></slot>
     </div>
   </Card>

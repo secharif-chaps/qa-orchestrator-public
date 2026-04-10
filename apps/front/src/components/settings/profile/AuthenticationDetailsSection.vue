@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-base-100 border-primary-stroke rounded-lg border">
-    <div class="border-primary-stroke border-b px-6 py-4">
+  <div class="border-primary-lighter-stroke rounded-sm border bg-white">
+    <div class="border-primary-lighter-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.profile.auth.title') }}</h2>
-      <p class="text-secondary mt-1 text-sm">
+      <p class="text-neutral-black-font mt-1 text-sm">
         {{ $t('settings.profile.auth.description') }}
       </p>
     </div>
@@ -10,13 +10,13 @@
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div class="space-y-4">
           <div>
-            <label class="text-secondary block text-sm font-medium">{{
+            <label class="text-neutral-black-font block text-sm font-medium">{{
               $t('settings.profile.fields.userId')
             }}</label>
             <p class="mt-1 font-mono text-sm break-all">{{ user?.profile?.sub || 'N/A' }}</p>
           </div>
           <div>
-            <label class="text-secondary block text-sm font-medium">{{
+            <label class="text-neutral-black-font block text-sm font-medium">{{
               $t('settings.profile.fields.expiresAt')
             }}</label>
             <p class="mt-1 text-sm">{{ formatDate(user?.expires_at) }}</p>
@@ -24,13 +24,13 @@
         </div>
         <div class="space-y-4">
           <div>
-            <label class="text-secondary block text-sm font-medium">{{
+            <label class="text-neutral-black-font block text-sm font-medium">{{
               $t('settings.profile.fields.issuedAt')
             }}</label>
             <p class="mt-1 text-sm">{{ formatDate(user?.profile?.iat) }}</p>
           </div>
           <div>
-            <label class="text-secondary block text-sm font-medium">{{
+            <label class="text-neutral-black-font block text-sm font-medium">{{
               $t('settings.profile.fields.sessionState')
             }}</label>
             <Tag
