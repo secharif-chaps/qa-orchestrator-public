@@ -228,8 +228,6 @@ main:jira-transition:
   image: ${CI_REGISTRY}/chapsmind/ci-images/jira:latest
   allow_failure: true
   variables:
-    JIRA_CLOUD_ID: $JIRA_CLOUD_ID
-    JIRA_API_TOKEN: $JIRA_API_TOKEN
     JIRA_PROJECT_KEY: TAR
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -247,8 +245,6 @@ main:jira-merged:
   image: ${CI_REGISTRY}/chapsmind/ci-images/jira:latest
   allow_failure: true
   variables:
-    JIRA_CLOUD_ID: $JIRA_CLOUD_ID
-    JIRA_API_TOKEN: $JIRA_API_TOKEN
     JIRA_PROJECT_KEY: TAR
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule" || $AGENT_ISSUE
