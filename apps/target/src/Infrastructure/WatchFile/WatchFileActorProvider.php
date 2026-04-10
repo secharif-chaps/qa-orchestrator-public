@@ -38,8 +38,8 @@ readonly class WatchFileActorProvider implements ProviderInterface
     {
         $watchFileId = null;
 
-        if (isset($uriVariables['id']) && \is_string($uriVariables['id'])) {
-            $watchFileId = $uriVariables['id'];
+        if (isset($uriVariables['watchFileId']) && \is_string($uriVariables['watchFileId'])) {
+            $watchFileId = $uriVariables['watchFileId'];
             // Check if the watch file exists, throws an exception otherwise
             $watchFile = $this->watchFileGateway->get($watchFileId);
             if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {

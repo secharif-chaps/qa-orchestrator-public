@@ -34,9 +34,9 @@ readonly class WatchFileGroupedSourceProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): iterable|object|null
     {
-        if (isset($uriVariables['id']) && \is_string($uriVariables['id'])) {
+        if (isset($uriVariables['watchFileId']) && \is_string($uriVariables['watchFileId'])) {
             // Check if the watch file exists, throws an exception otherwise
-            $watchFile = $this->watchFileGateway->get($uriVariables['id']);
+            $watchFile = $this->watchFileGateway->get($uriVariables['watchFileId']);
             if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
                 throw new AccessDeniedException('You do not have access to this watch file.');
             }

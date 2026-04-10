@@ -20,7 +20,7 @@ class WatchFileActivityLoggerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->logger = new WatchFileActivityLogger($this->createMock(TenantContext::class));
+        $this->logger = new WatchFileActivityLogger($this->createStub(TenantContext::class));
     }
 
     public function testLogUpdate(): void

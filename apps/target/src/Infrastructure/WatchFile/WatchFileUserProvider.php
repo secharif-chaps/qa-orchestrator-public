@@ -33,9 +33,9 @@ class WatchFileUserProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
-        Assert::keyExists($uriVariables, 'id', 'WatchFile ID is required.');
-        Assert::string($uriVariables['id'], 'WatchFile ID must be a string.');
-        $watchFileId = $uriVariables['id'];
+        Assert::keyExists($uriVariables, 'watchFileId', 'WatchFile ID is required.');
+        Assert::string($uriVariables['watchFileId'], 'WatchFile ID must be a string.');
+        $watchFileId = $uriVariables['watchFileId'];
 
         Assert::true(
             Uuid::isValid($watchFileId),

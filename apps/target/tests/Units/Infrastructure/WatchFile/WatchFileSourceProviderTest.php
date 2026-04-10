@@ -41,7 +41,7 @@ class WatchFileSourceProviderTest extends TestCase
 
         $operation = $this->createStub(Operation::class);
         $uriVariables = [
-            'id' => 'watch_file_id',
+            'watchFileId' => 'watch_file_id',
         ];
         $context = [];
         $actor = new Actor('Test Actor', new Organisation('Test Org', 'test-org-id'));
@@ -84,7 +84,7 @@ class WatchFileSourceProviderTest extends TestCase
     {
         $operation = $this->createStub(Operation::class);
         $uriVariables = [
-            'id' => 'non-existent-watchfile-id',
+            'watchFileId' => 'non-existent-watchfile-id',
         ];
         $context = [];
         $apiPlatformProvider = $this->createStub(ProviderInterface::class);
@@ -104,7 +104,7 @@ class WatchFileSourceProviderTest extends TestCase
 
         $operation = $this->createStub(Operation::class);
         $uriVariables = [
-            'id' => 'watch_file_id',
+            'watchFileId' => 'watch_file_id',
         ];
         $context = [];
 
@@ -130,7 +130,7 @@ class WatchFileSourceProviderTest extends TestCase
 
         $operation = $this->createStub(Operation::class);
         $uriVariables = [
-            'id' => 'watch_file_id',
+            'watchFileId' => 'watch_file_id',
         ];
         $context = [
             'filters' => [
@@ -183,7 +183,7 @@ class WatchFileSourceProviderTest extends TestCase
 
         $operation = $this->createStub(Operation::class);
         $uriVariables = [
-            'id' => 'watch_file_id',
+            'watchFileId' => 'watch_file_id',
         ];
         $context = [
             'filters' => [
@@ -251,7 +251,7 @@ class WatchFileSourceProviderTest extends TestCase
 
         $operation = $this->createStub(Operation::class);
         $uriVariables = [
-            'id' => 'watch_file_id',
+            'watchFileId' => 'watch_file_id',
         ];
         $context = [
             'filters' => [
@@ -319,7 +319,7 @@ class WatchFileSourceProviderTest extends TestCase
 
         $operation = $this->createStub(Operation::class);
         $uriVariables = [
-            'id' => 'watch_file_id',
+            'watchFileId' => 'watch_file_id',
         ];
         $context = [
             'filters' => [
@@ -372,7 +372,7 @@ class WatchFileSourceProviderTest extends TestCase
 
         $operation = $this->createStub(Operation::class);
         $uriVariables = [
-            'id' => 'watch_file_id',
+            'watchFileId' => 'watch_file_id',
         ];
         $context = [
             'filters' => [

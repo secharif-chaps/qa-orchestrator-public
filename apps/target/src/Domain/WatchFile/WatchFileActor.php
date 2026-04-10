@@ -33,7 +33,11 @@ use Webmozart\Assert\Assert as WebmozartAssert;
     uriTemplate: '/watch_files/{watchFileId}/actors',
     operations: [new GetCollection()],
     uriVariables: [
-        'watchFileId' => new Link(fromProperty: 'watchFileActors', fromClass: WatchFile::class, description: 'WatchFile id'),
+        'watchFileId' => new Link(
+            fromProperty: 'watchFileActors',
+            fromClass: WatchFile::class,
+            description: 'WatchFile id'
+        ),
     ],
     normalizationContext: [
         'groups' => ['actor:read'],

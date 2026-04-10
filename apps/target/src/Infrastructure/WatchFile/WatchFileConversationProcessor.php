@@ -31,7 +31,7 @@ class WatchFileConversationProcessor implements ProcessorInterface
             throw new \RuntimeException('The WatchFileConversationProcessor does not support delete operations.');
         }
 
-        $watchFileId = $uriVariables['id'] ?? null;
+        $watchFileId = $uriVariables['watchFileId'] ?? null;
         if (null === $watchFileId) {
             throw new \RuntimeException('WatchFile ID is required.');
         }

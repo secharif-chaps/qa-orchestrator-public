@@ -35,7 +35,7 @@ class WatchFileActivityEventListenerTest extends TestCase
     {
         $this->watchFileActivityGateway = $this->createMock(WatchFileActivityGatewayInterface::class);
         $this->listener = new WatchFileActivityEventListener(
-            new WatchFileActivityLogger($this->createMock(TenantContext::class)),
+            new WatchFileActivityLogger($this->createStub(TenantContext::class)),
             $this->watchFileActivityGateway,
         );
     }

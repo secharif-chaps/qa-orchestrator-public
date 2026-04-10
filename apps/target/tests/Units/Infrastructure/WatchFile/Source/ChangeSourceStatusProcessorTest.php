@@ -102,7 +102,7 @@ class ChangeSourceStatusProcessorTest extends TestCase
             $this->createStub(\ApiPlatform\Metadata\Operation::class),
             [
                 'watchFileId' => 'watch_file_id',
-                'id' => 'source_id',
+                'sourceId' => 'source_id',
             ]
         );
 
@@ -151,7 +151,7 @@ class ChangeSourceStatusProcessorTest extends TestCase
             $this->createStub(\ApiPlatform\Metadata\Operation::class),
             [
                 'watchFileId' => 'watch_file_id',
-                'id' => 'source_id',
+                'sourceId' => 'source_id',
             ]
         );
 
@@ -170,7 +170,7 @@ class ChangeSourceStatusProcessorTest extends TestCase
             $dto,
             $this->createStub(\ApiPlatform\Metadata\Operation::class),
             [
-                'id' => 'source_id',
+                'sourceId' => 'source_id',
             ]
         );
     }
@@ -203,7 +203,7 @@ class ChangeSourceStatusProcessorTest extends TestCase
             $this->createStub(\ApiPlatform\Metadata\Operation::class),
             [
                 'watchFileId' => 123,
-                'id' => 'source_id',
+                'sourceId' => 'source_id',
             ]
         );
     }
@@ -220,7 +220,7 @@ class ChangeSourceStatusProcessorTest extends TestCase
             $this->createStub(\ApiPlatform\Metadata\Operation::class),
             [
                 'watchFileId' => 'watch_file_id',
-                'id' => 456,
+                'sourceId' => 456,
             ]
         );
     }
@@ -244,7 +244,7 @@ class ChangeSourceStatusProcessorTest extends TestCase
             $this->createStub(\ApiPlatform\Metadata\Operation::class),
             [
                 'watchFileId' => 'watch_file_id',
-                'id' => 'source_id',
+                'sourceId' => 'source_id',
             ]
         );
     }
@@ -278,7 +278,7 @@ class ChangeSourceStatusProcessorTest extends TestCase
             $this->createStub(\ApiPlatform\Metadata\Operation::class),
             [
                 'watchFileId' => 'watch_file_id',
-                'id' => 'source_id',
+                'sourceId' => 'source_id',
             ]
         );
     }

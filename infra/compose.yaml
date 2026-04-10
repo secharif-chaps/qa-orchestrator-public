@@ -19,6 +19,14 @@ x-internal-auth: &internal-auth
 x-encryption: &encryption
   ENCRYPTION_KEY: ${ENCRYPTION_KEY}
 
+x-n8n-db: &n8n-db
+  DB_TYPE: postgresdb
+  DB_POSTGRESDB_HOST: db
+  DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME:-n8n_db}
+  DB_POSTGRESDB_USER: ${N8N_DB_USER:-n8n_user}
+  DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD:-n8n_pass}
+  N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-!ChangeThisN8nEncryptionKey!}
+
 # ─── Services ──────────────────────────────────────────
 services:
   # Vue Frontend
@@ -133,6 +141,9 @@ services:
       KEYCLOAK_REALM: ${KEYCLOAK_REALM:-chapsmind}
       APP_ENV: ${APP_ENV:-prod}
       APP_SECRET: ${TARGET_APP_SECRET:-!ChangeThisTargetAppSecret!}
+      # Mercure (FrankenPHP/Caddy embedded hub)
+      MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_SECRET}
+      MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_JWT_SECRET}
 
   # Target runner — Symfony Messenger consumers
   target-runner:
@@ -205,9 +216,9 @@ services:
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }
-      target: { condition: service_started }
       n8n-import: { condition: service_completed_successfully }
     environment:
+      <<: *n8n-db
       N8N_HOST: "0.0.0.0"
       N8N_PORT: 5678
       N8N_PROTOCOL: http
@@ -223,12 +234,6 @@ services:
       N8N_DIAGNOSTICS_ENABLED: "false"
       N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
       N8N_TEMPLATES_ENABLED: "false"
-      DB_TYPE: postgresdb
-      DB_POSTGRESDB_HOST: db
-      DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME:-n8n_db}
-      DB_POSTGRESDB_USER: ${N8N_DB_USER:-n8n_user}
-      DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD:-n8n_pass}
-      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-!ChangeThisN8nEncryptionKey!}
       N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_JWT_SECRET:-!ChangeThisN8nJWTSecret!}
       N8N_DEFAULT_EMAIL: ${N8N_DEFAULT_EMAIL:-admin@chapsmind.local}
       N8N_DEFAULT_PASSWORD: ${N8N_DEFAULT_PASSWORD:-Chapsmind2025!}
@@ -263,12 +268,7 @@ services:
     depends_on:
       db: { condition: service_healthy }
     environment:
-      DB_TYPE: postgresdb
-      DB_POSTGRESDB_HOST: db
-      DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME:-n8n_db}
-      DB_POSTGRESDB_USER: ${N8N_DB_USER:-n8n_user}
-      DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD:-n8n_pass}
-      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-!ChangeThisN8nEncryptionKey!}
+      <<: *n8n-db
     volumes:
       - n8n_data:/home/node/.n8n
       - ../apps/target/n8n/credentials:/data/credentials:ro

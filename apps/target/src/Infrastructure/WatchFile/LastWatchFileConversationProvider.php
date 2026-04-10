@@ -30,7 +30,7 @@ final readonly class LastWatchFileConversationProvider implements ProviderInterf
             );
         }
 
-        $watchFileId = $uriVariables['id'] ?? null;
+        $watchFileId = $uriVariables['watchFileId'] ?? null;
         if (null === $watchFileId) {
             return null;
         }

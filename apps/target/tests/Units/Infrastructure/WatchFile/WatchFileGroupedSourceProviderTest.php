@@ -157,7 +157,7 @@ class WatchFileGroupedSourceProviderTest extends TestCase
 
         $operation = new Get();
         $uriVariables = [
-            'id' => 'watchfile1',
+            'watchFileId' => 'watchfile1',
         ];
         $context = [];
 
@@ -207,7 +207,7 @@ class WatchFileGroupedSourceProviderTest extends TestCase
 
         $operation = new Get();
         $uriVariables = [
-            'id' => 'watchfile1',
+            'watchFileId' => 'watchfile1',
         ];
         $context = [];
 
@@ -255,7 +255,7 @@ class WatchFileGroupedSourceProviderTest extends TestCase
 
         $operation = new Get();
         $uriVariables = [
-            'id' => 'watchfile1',
+            'watchFileId' => 'watchfile1',
         ];
         $context = [];
 
@@ -364,7 +364,7 @@ class WatchFileGroupedSourceProviderTest extends TestCase
 
         $operation = new Get();
         $uriVariables = [
-            'id' => 'watchfile1',
+            'watchFileId' => 'watchfile1',
         ];
         $context = [];
 
@@ -474,7 +474,7 @@ class WatchFileGroupedSourceProviderTest extends TestCase
 
         $operation = new Get();
         $uriVariables = [
-            'id' => $watchFileId,
+            'watchFileId' => $watchFileId,
         ];
         $context = [
             'request' => $request,
@@ -565,7 +565,7 @@ class WatchFileGroupedSourceProviderTest extends TestCase
 
         $operation = new Get();
         $uriVariables = [
-            'id' => $watchFileId,
+            'watchFileId' => $watchFileId,
         ];
         $context = [
             'request' => $request,
@@ -634,7 +634,7 @@ class WatchFileGroupedSourceProviderTest extends TestCase
 
         $operation = new Get();
         $uriVariables = [
-            'id' => $watchFileId,
+            'watchFileId' => $watchFileId,
         ];
         $context = [
             'request' => $request,
@@ -694,7 +694,7 @@ class WatchFileGroupedSourceProviderTest extends TestCase
 
         $operation = new Get();
         $uriVariables = [
-            'id' => $watchFileId,
+            'watchFileId' => $watchFileId,
         ];
         $context = [
             'request' => $request,
@@ -757,7 +757,7 @@ class WatchFileGroupedSourceProviderTest extends TestCase
 
         $operation = new Get();
         $uriVariables = [
-            'id' => $watchFileId,
+            'watchFileId' => $watchFileId,
         ];
         $context = [
             'request' => $request,
