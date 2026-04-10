@@ -255,7 +255,8 @@ main:jira-merged:
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
-    - jira-tools transition "Functional To Review" || echo "Warning: could not transition to 'Functional To Review'"
+    - |
+      jira-tools transition "Functional To Review" || echo "Warning: could not transition to 'Functional To Review'"
 
 # ─── Scheduled maintenance jobs ──────────────────────
 main:update-codeowners:
