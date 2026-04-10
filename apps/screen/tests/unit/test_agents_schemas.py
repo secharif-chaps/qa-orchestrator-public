@@ -211,17 +211,17 @@ class TestCsrSchema:
     def test_initiatives_with_db_enum_types(self):
         data = {
             "insights": "CSR analysis...",
-            "initiatives": [
+            "items": [
                 {"type": "sustainability", "value": "Carbon neutral by 2030", "source": "https://acme.com/csr"},
                 {"type": "diversity", "value": "50% women in leadership", "source": "https://acme.com/dei"},
             ],
         }
         result = CsrAgentOutput.model_validate(data)
-        assert len(result.initiatives) == 2
-        assert result.initiatives[0].type == CsrInitiativeTypeEnum.sustainability
+        assert len(result.items) == 2
+        assert result.items[0].type == CsrInitiativeTypeEnum.sustainability
 
     def test_invalid_type_rejected(self):
-        data = {"initiatives": [{"type": "environmental", "value": "test"}]}
+        data = {"items": [{"type": "environmental", "value": "test"}]}
         with pytest.raises(ValueError):
             CsrAgentOutput.model_validate(data)
 
@@ -407,15 +407,15 @@ class TestOptionalTypeFields:
 
     def test_csr_agent_output_with_none_type_initiatives(self):
         data = {
-            "initiatives": [
+            "items": [
                 {"type": "diversity", "value": "Known type"},
                 {"value": "Unknown type initiative", "source": "https://example.com"},
             ]
         }
         result = CsrAgentOutput.model_validate(data)
-        assert len(result.initiatives) == 2
-        assert result.initiatives[0].type == CsrInitiativeTypeEnum.diversity
-        assert result.initiatives[1].type is None
+        assert len(result.items) == 2
+        assert result.items[0].type == CsrInitiativeTypeEnum.diversity
+        assert result.items[1].type is None
 
 
 # ---------------------------------------------------------------------------
