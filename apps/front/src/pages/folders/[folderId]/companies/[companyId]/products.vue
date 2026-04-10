@@ -16,7 +16,7 @@
     </NoData>
 
     <!-- Main content -->
-    <div v-else class="space-y-6">
+    <template v-else>
       <!-- AI Insights Section -->
       <ChapseAlert
         v-if="productsInsights"
@@ -26,64 +26,54 @@
         {{ productsInsights }}
       </ChapseAlert>
 
-      <!-- Products Overview Header -->
-      <ProductsHeader
-        :total-product-count="totalProductCount"
-        :category-count="Object.keys(products).length"
-        :categories="Object.keys(products)"
-        :view-mode="viewMode"
-        :search-query="searchQuery"
-        :selected-category="selectedCategory"
-        @toggle-view-mode="toggleViewMode"
-        @update-search="searchQuery = $event"
-        @select-category="selectedCategory = $event"
-      />
-
-      <!-- Products Grid View -->
-      <div v-if="viewMode === 'grid'" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <ProductGridItem
-          v-for="(productList, category) in filteredProducts"
-          :key="category"
-          :category="category"
-          :product-list="productList"
-          @toggle-show-all="toggleShowAllProducts"
+      <!-- Products Card -->
+      <div class="shadow-2 p-xl border-grey-200 space-y-md rounded-xl border">
+        <ProductsHeader
+          v-model:search-query="searchQuery"
+          :total-product-count="totalProductCount"
+          :category-count="categoryCount"
         />
-      </div>
 
-      <!-- Products List View -->
-      <div v-else-if="viewMode === 'list'" class="rounded-sm bg-white p-4">
-        <div class="space-y-4">
-          <ProductListItem
-            v-for="(productList, category) in filteredProducts"
-            :key="category"
-            :category="category"
-            :product-list="productList"
+        <!-- Accordion or No Results -->
+        <template v-if="paginatedCategories.length > 0">
+          <ProductCategoryAccordion
+            :categories="paginatedCategories"
+            :partner-brands="company?.products?.partnerBrands"
+            :private-labels="company?.products?.privateLabels"
           />
-        </div>
-      </div>
 
-      <!-- No Results State -->
-      <NoData v-if="Object.keys(filteredProducts).length === 0 && searchQuery">
-        <p class="text-neutral-black-font text-lg font-medium">
-          {{ $t('screen.products.noResults') }}
-        </p>
-      </NoData>
-    </div>
+          <PaginationComponent
+            v-if="paginationMeta && paginationMeta.last_page > 1"
+            v-model:current-page="currentPage"
+            :meta="paginationMeta"
+            item-name="categories"
+            @update-per-page="perPage = $event"
+          />
+        </template>
+
+        <NoData v-else-if="searchQuery">
+          <p class="text-neutral-black-font text-lg font-medium">
+            {{ $t('screen.products.noResults') }}
+          </p>
+        </NoData>
+      </div>
+    </template>
   </div>
 </template>
 
 <script lang="ts" setup>
-import ProductGridItem from '@/components/company/products/ProductGridItem.vue'
-import ProductListItem from '@/components/company/products/ProductListItem.vue'
+import ProductCategoryAccordion from '@/components/company/products/ProductCategoryAccordion.vue'
 import ProductsHeader from '@/components/company/products/ProductsHeader.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
 import NoData from '@/components/ui/NoData.vue'
+import PaginationComponent from '@/components/ui/Pagination.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
+import type { PaginationMeta } from '@/types/pagination'
 import { useQuery } from '@pinia/colada'
-import { computed, inject, ref, type Ref } from 'vue'
+import { computed, inject, ref, watch, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute('/folders/[folderId]/companies/[companyId]/products')
@@ -99,22 +89,17 @@ const { data: tasks } = useQuery(() =>
 const task = computed(() => tasks.value?.find((t) => t.type === 'products'))
 
 const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
-// Use the company data composable
-const { data: company } = useQuery(
-  // Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
-  // No polling needed - cache is invalidated automatically when tasks update.
-  () =>
-    companyByIdQuery({
-      id: companyId.value,
-      language: selectedLanguage.value,
-    }),
+const { data: company } = useQuery(() =>
+  companyByIdQuery({
+    id: companyId.value,
+    language: selectedLanguage.value,
+  }),
 )
 
 // Reactive state
-const viewMode = ref<'grid' | 'list'>('grid')
 const searchQuery = ref('')
-const selectedCategory = ref<string | null>(null)
-const showAllProducts = ref<Record<string, boolean>>({})
+const currentPage = ref(1)
+const perPage = ref(10)
 
 // Computed properties
 const products = computed(() => {
@@ -128,88 +113,62 @@ const totalProductCount = computed(() => {
   )
 })
 
+const categoryCount = computed(() => Object.keys(products.value).length)
+
 const productsInsights = computed(() => {
   return company.value?.products?.insights
 })
 
-const filteredProducts = computed(() => {
-  let filtered = { ...products.value }
+const filteredCategories = computed((): [string, string[]][] => {
+  const entries = Object.entries(products.value)
 
-  // Filter by selected category
-  if (selectedCategory.value) {
-    filtered = { [selectedCategory.value]: filtered[selectedCategory.value] }
+  if (!searchQuery.value.trim()) return entries
+
+  const query = searchQuery.value.toLowerCase().trim()
+  const result: [string, string[]][] = []
+
+  for (const [category, productList] of entries) {
+    const matchingProducts = (productList as string[]).filter(
+      (product: string) =>
+        product.toLowerCase().includes(query) || category.toLowerCase().includes(query),
+    )
+    if (matchingProducts.length > 0) {
+      result.push([category, matchingProducts])
+    }
   }
 
-  // Filter by search query
-  if (searchQuery.value.trim()) {
-    const query = searchQuery.value.toLowerCase().trim()
-    const result: Record<string, string[]> = {}
-
-    Object.entries(filtered).forEach(([category, productList]: [string, string[]]) => {
-      const matchingProducts = productList.filter(
-        (product: string) =>
-          product.toLowerCase().includes(query) || category.toLowerCase().includes(query),
-      )
-      if (matchingProducts.length > 0) {
-        result[category] = matchingProducts
-      }
-    })
-
-    return result
-  }
-
-  return filtered
+  return result
 })
 
-// Methods
-const toggleViewMode = () => {
-  viewMode.value = viewMode.value === 'grid' ? 'list' : 'grid'
-}
+// Reset page when search or page size changes
+watch([searchQuery, perPage], () => {
+  currentPage.value = 1
+})
 
-const toggleShowAllProducts = (category: string) => {
-  showAllProducts.value[category] = !showAllProducts.value[category]
-}
+const paginatedCategories = computed((): [string, string[]][] => {
+  const start = (currentPage.value - 1) * perPage.value
+  const end = start + perPage.value
+  return filteredCategories.value.slice(start, end)
+})
+
+const paginationMeta = computed((): PaginationMeta | null => {
+  const total = filteredCategories.value.length
+  if (total === 0) return null
+  return {
+    total,
+    per_page: perPage.value,
+    current_page: currentPage.value,
+    last_page: Math.ceil(total / perPage.value),
+  }
+})
 
 const hasProductsData = computed(() => {
   const productsData = company.value?.products
   if (!productsData) return false
 
-  // Check if there's any meaningful content
   return !!(
     productsData.insights ||
     (productsData.categories && Object.keys(productsData.categories).length > 0)
   )
 })
 </script>
-
-<style scoped>
-/* Product card animations */
-.product-card {
-  transition: all 0.3s ease;
-}
-
-.product-card:hover {
-  transform: translateY(-2px);
-}
-
-/* Search and filter animations */
-.filter-enter-active,
-.filter-leave-active {
-  transition: all 0.3s ease;
-}
-
-.filter-enter-from,
-.filter-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-/* Category pill animations */
-.category-pill {
-  transition: all 0.2s ease;
-}
-
-.category-pill:hover {
-  transform: translateY(-1px);
-}
-</style>
