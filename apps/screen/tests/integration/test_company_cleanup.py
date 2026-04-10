@@ -24,6 +24,9 @@ from app.services.company_section_service import (
 )
 
 
+pytestmark = pytest.mark.integration
+
+
 class TestCompanyCRUDWithoutJsonColumns:
     """Test that company CRUD operations work without JSON columns."""
 

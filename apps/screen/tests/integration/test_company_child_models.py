@@ -26,6 +26,9 @@ from app.models.company_children import (
 )
 
 
+pytestmark = pytest.mark.integration
+
+
 @pytest.fixture
 def sample_company(db_session):
     """Create a sample company for testing."""

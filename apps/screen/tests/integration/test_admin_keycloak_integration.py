@@ -20,6 +20,9 @@ from app.core.keycloak import idp
 from app.main import app
 
 
+pytestmark = pytest.mark.integration
+
+
 @pytest.fixture
 def client():
     """Create FastAPI test client."""

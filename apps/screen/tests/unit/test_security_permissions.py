@@ -86,7 +86,7 @@ class TestCompanyModifyPermission:
 class TestSecurityVulnerabilities:
     """Test suite specifically for known security vulnerabilities."""
 
-    def test_jwt_or_db_vulnerability_fixed(self, db_session):
+    def test_jwt_or_db_vulnerability_fixed(self):
         """Test that JWT OR DB vulnerability is fixed."""
         pytest.skip("verify_organization_permission not implemented")
 
