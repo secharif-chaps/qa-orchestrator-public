@@ -19,7 +19,17 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
 app.use(pinia)
-app.use(PiniaColada, {})
+// staleTime = duration (ms) during which cached data is considered fresh.
+// While fresh: no refetch on mount, navigation, or window focus.
+// After expiry: data is served from cache immediately, then refetched in background.
+// Mutations bypass staleTime entirely and invalidate the cache immediately.
+// Pinia Colada defaults to 5s which causes excessive refetching. Override to 5 min.
+// Individual queries can override this value when they need fresher data.
+app.use(PiniaColada, {
+  queryOptions: {
+    staleTime: 60 * 1000, // 1 minute
+  },
+})
 
 app.use(router)
 app.use(i18n)

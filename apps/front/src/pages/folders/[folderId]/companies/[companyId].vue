@@ -171,10 +171,9 @@ const showRefreshModal = ref(false)
 const { data: currentOrganization } = useQuery(() => currentOrganizationQuery())
 
 // Get token balance for refresh button
-const { data: tokenBalanceData } = useQuery({
-  ...organizationBalanceQuery({ organizationId: currentOrganization.value?.id ?? '' }),
-  enabled: () => !!currentOrganization.value?.id,
-})
+const { data: tokenBalanceData } = useQuery(() =>
+  organizationBalanceQuery({ organizationId: currentOrganization.value?.id ?? '' }),
+)
 
 // Use refresh mutation
 const { isLoading: isRefreshing } = useRefreshCompany()

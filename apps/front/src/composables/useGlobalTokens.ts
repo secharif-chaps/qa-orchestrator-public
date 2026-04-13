@@ -54,11 +54,10 @@ export function useGlobalTokens(organizationId: string) {
   const queryCache = useQueryCache()
   const { tokensPerCompany } = useTokenConfig()
 
-  // Query the global token balance using the spread pattern
-  const { data, isLoading, error, refetch } = useQuery({
-    ...organizationBalanceQuery({ organizationId }),
-    enabled: () => !!organizationId && organizationId.trim() !== '',
-  })
+  // Query the global token balance
+  const { data, isLoading, error, refetch } = useQuery(() =>
+    organizationBalanceQuery({ organizationId }),
+  )
 
   // Computed balance value with fallback
   const balance = computed(() => data.value?.balance ?? 0)

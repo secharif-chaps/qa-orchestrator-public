@@ -382,20 +382,18 @@ const {
   data: balanceData,
   isLoading: tokenDataLoading,
   refetch: refetchBalance,
-} = useQuery({
-  ...organizationBalanceQuery({
+} = useQuery(() =>
+  organizationBalanceQuery({
     organizationId: currentOrganization.value?.id ?? '',
   }),
-  enabled: computed(() => !!currentOrganization.value?.id),
-})
+)
 
 // Module enablement query (to check if screen module is enabled)
-const { data: modulesData } = useQuery({
-  ...organizationModulesQuery({
+const { data: modulesData } = useQuery(() =>
+  organizationModulesQuery({
     organizationId: currentOrganization.value?.id ?? '',
   }),
-  enabled: computed(() => !!currentOrganization.value?.id),
-})
+)
 
 const tokenBalance = computed(() => balanceData.value?.balance ?? 0)
 const screenModuleEnabled = computed(() => {

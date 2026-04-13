@@ -203,10 +203,7 @@ const {
   isLoading: isLoadingBalance,
   error: balanceError,
   refetch: refetchBalance,
-} = useQuery({
-  ...organizationBalanceQuery({ organizationId: props.organizationId }),
-  enabled: () => !!props.organizationId,
-})
+} = useQuery(() => organizationBalanceQuery({ organizationId: props.organizationId }))
 
 // Query for module configurations
 const {
@@ -214,10 +211,7 @@ const {
   isLoading: isLoadingModules,
   error: modulesError,
   refetch: refetchModules,
-} = useQuery({
-  ...organizationModulesQuery({ organizationId: props.organizationId }),
-  enabled: () => !!props.organizationId,
-})
+} = useQuery(() => organizationModulesQuery({ organizationId: props.organizationId }))
 
 // Mutation for adding tokens
 const addTokensMutation = useAddGlobalTokens()
