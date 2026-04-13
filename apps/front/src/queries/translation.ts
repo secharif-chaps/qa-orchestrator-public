@@ -29,6 +29,7 @@ export const TRANSLATION_QUERY_KEYS = {
 export const translationLanguagesQuery = defineQueryOptions(() => ({
   key: TRANSLATION_QUERY_KEYS.languages(),
   query: () => getTranslationLanguages(),
+  staleTime: 1000 * 60 * 30, // 30 minutes - language list rarely changes
 }))
 
 /**
@@ -41,6 +42,7 @@ export const companyTranslationStatusQuery = defineQueryOptions(
   ({ companyId }: { companyId: string | number }) => ({
     key: TRANSLATION_QUERY_KEYS.status(companyId),
     query: () => getCompanyTranslationStatus(companyId),
+    staleTime: 1000 * 30, // 30 seconds - changes during active translation jobs
   }),
 )
 

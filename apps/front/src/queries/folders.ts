@@ -20,6 +20,7 @@ export const folderByIdQuery = defineQueryOptions(
     key: FOLDER_QUERY_KEYS.byId(id || 'invalid', filters),
     enabled: !!id && id !== 'null' && id !== 'undefined',
     query: () => getFolderById(id, filters),
+    staleTime: 1000 * 60 * 2, // 2 minutes
   }),
 )
 
@@ -31,6 +32,7 @@ export const foldersQuery = defineQueryOptions(
   }) => ({
     key: FOLDER_QUERY_KEYS.withFilters(filters),
     query: () => getFolders(filters),
+    staleTime: 1000 * 60 * 2, // 2 minutes
   }),
 )
 
@@ -49,6 +51,7 @@ export const foldersWithItemsQuery = defineQueryOptions(
   }) => ({
     key: FOLDER_QUERY_KEYS.withItems(filters),
     query: () => getFoldersWithItems(filters),
+    staleTime: 1000 * 60 * 2, // 2 minutes
   }),
 )
 
@@ -65,4 +68,5 @@ export const favoriteFoldersQuery = defineQueryOptions(() => ({
 
     return response
   },
+  staleTime: 1000 * 60 * 2, // 2 minutes
 }))

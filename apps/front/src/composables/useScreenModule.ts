@@ -10,10 +10,9 @@ import { currentOrganizationQuery } from '@/queries/organization'
 export function useScreenModule() {
   const { data: organization, isLoading: isOrgLoading } = useQuery(() => currentOrganizationQuery())
 
-  const { data: modulesData, isLoading: isModulesLoading } = useQuery(() => ({
-    ...organizationModulesQuery({ organizationId: organization.value?.id ?? '' }),
-    enabled: !!organization.value?.id,
-  }))
+  const { data: modulesData, isLoading: isModulesLoading } = useQuery(() =>
+    organizationModulesQuery({ organizationId: organization.value?.id ?? '' }),
+  )
 
   const isLoading = computed(() => isOrgLoading.value || isModulesLoading.value)
 

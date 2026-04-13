@@ -29,10 +29,9 @@ export function useChapseContext() {
   })
 
   // Fetch company data if on company page
-  const { data: company, isLoading: isLoadingCompany } = useQuery({
-    ...companyByIdQuery({ id: companyId.value as string }),
-    enabled: () => !!companyId.value,
-  })
+  const { data: company, isLoading: isLoadingCompany } = useQuery(() =>
+    companyByIdQuery({ id: companyId.value as string }),
+  )
 
   // =========================================================================
   // Available Context from Current Page

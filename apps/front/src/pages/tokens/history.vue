@@ -288,11 +288,10 @@ const { data: currentOrganization, isLoading: isLoadingOrg } = useQuery(() =>
   currentOrganizationQuery(),
 )
 
-// Fetch global token balance using the spread pattern
-const { data: balanceData, isLoading: isLoadingBalance } = useQuery({
-  ...organizationBalanceQuery({ organizationId: currentOrganization.value?.id ?? '' }),
-  enabled: () => !!currentOrganization.value?.id,
-})
+// Fetch global token balance
+const { data: balanceData, isLoading: isLoadingBalance } = useQuery(() =>
+  organizationBalanceQuery({ organizationId: currentOrganization.value?.id ?? '' }),
+)
 
 // Fetch token history with filters using the spread pattern
 const {

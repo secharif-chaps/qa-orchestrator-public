@@ -41,11 +41,10 @@ export function useTokenValidation(organizationId: string) {
     return tokensPerCompany.value
   }
 
-  // Query modules to check enablement status using the spread pattern
-  const { data: modulesData, isLoading: isLoadingModules } = useQuery({
-    ...organizationModulesQuery({ organizationId }),
-    enabled: () => !!organizationId && organizationId.trim() !== '',
-  })
+  // Query modules to check enablement status
+  const { data: modulesData, isLoading: isLoadingModules } = useQuery(() =>
+    organizationModulesQuery({ organizationId }),
+  )
 
   // Check if a module is enabled
   function isModuleEnabled(module: ModuleName): boolean {

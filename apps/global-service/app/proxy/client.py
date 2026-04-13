@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 
 # Default timeout and pool settings
 _DEFAULT_TIMEOUT = httpx.Timeout(connect=10.0, read=60.0, write=10.0, pool=10.0)
-_DEFAULT_LIMITS = httpx.Limits(max_keepalive_connections=20, max_connections=100, keepalive_expiry=30.0)
+_DEFAULT_LIMITS = httpx.Limits(max_keepalive_connections=20, max_connections=100, keepalive_expiry=300.0)
 _STREAMING_TIMEOUT = httpx.Timeout(connect=10.0, read=None, write=10.0, pool=10.0)
 _POOL_EXHAUSTION_THRESHOLD = 0.8  # Warn when pool usage exceeds 80%
 

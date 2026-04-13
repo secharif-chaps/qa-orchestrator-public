@@ -17,7 +17,6 @@ export const ORGANIZATION_QUERY_KEYS = {
 export const currentOrganizationQuery = defineQueryOptions(() => ({
   key: ORGANIZATION_QUERY_KEYS.current(),
   query: () => getCurrentOrganization(),
-  staleTime: 1000 * 60 * 5, // 5 minutes - organization rarely changes
 }))
 
 /**

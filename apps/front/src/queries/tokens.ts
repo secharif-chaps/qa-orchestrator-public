@@ -75,12 +75,9 @@ export const tokenConfigQuery = defineQueryOptions(() => ({
 export const organizationBalanceQuery = defineQueryOptions(
   ({ organizationId }: { organizationId: string }) => ({
     key: ORGANIZATION_TOKEN_KEYS.balance(organizationId),
-    query: () => {
-      if (!organizationId || organizationId.trim() === '') {
-        throw new Error('Invalid organization ID')
-      }
-      return getOrganizationBalance(organizationId)
-    },
+    enabled: !!organizationId && organizationId.trim() !== '',
+    query: () => getOrganizationBalance(organizationId),
+    staleTime: 1000 * 60, // 1 minute - balance changes on company creation
   }),
 )
 

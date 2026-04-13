@@ -118,10 +118,7 @@ const {
   data: modulesData,
   isLoading: isLoadingModules,
   refetch: refetchModules,
-} = useQuery({
-  ...organizationModulesQuery({ organizationId: organizationId?.value || '' }),
-  enabled: () => !!organizationId?.value,
-})
+} = useQuery(() => organizationModulesQuery({ organizationId: organizationId?.value || '' }))
 
 const modules = computed(() => modulesData.value?.modules ?? [])
 

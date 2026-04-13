@@ -180,10 +180,7 @@ const {
   isLoading,
   error,
   refetch: refetchBalance,
-} = useQuery({
-  ...organizationBalanceQuery({ organizationId: organizationId?.value || '' }),
-  enabled: () => !!organizationId?.value,
-})
+} = useQuery(() => organizationBalanceQuery({ organizationId: organizationId?.value || '' }))
 
 // Mutation for adding tokens
 const addTokensMutation = useAddGlobalTokens()

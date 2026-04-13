@@ -85,10 +85,9 @@ const { refreshCompany, isLoading } = useRefreshCompany()
 const { data: currentOrganization } = useQuery(() => currentOrganizationQuery())
 
 // Get token balance
-const { data: tokenBalanceData } = useQuery({
-  ...organizationBalanceQuery({ organizationId: currentOrganization.value?.id ?? '' }),
-  enabled: () => !!currentOrganization.value?.id,
-})
+const { data: tokenBalanceData } = useQuery(() =>
+  organizationBalanceQuery({ organizationId: currentOrganization.value?.id ?? '' }),
+)
 
 // Computed properties
 const tokenBalance = computed(() => tokenBalanceData.value?.balance ?? 0)

@@ -18,11 +18,7 @@ export const FEATURE_FLAGS_QUERY_KEYS = {
 export const organizationFeatureFlagsQuery = defineQueryOptions(
   ({ organizationId }: { organizationId: string }) => ({
     key: FEATURE_FLAGS_QUERY_KEYS.byOrganization(organizationId),
-    query: () => {
-      if (!organizationId || organizationId.trim() === '') {
-        throw new Error('Invalid organization ID')
-      }
-      return getOrganizationFeatureFlags(organizationId)
-    },
+    enabled: !!organizationId && organizationId.trim() !== '',
+    query: () => getOrganizationFeatureFlags(organizationId),
   }),
 )
