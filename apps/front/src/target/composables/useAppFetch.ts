@@ -1,4 +1,4 @@
-import { config } from '@target/config'
+import { useEndpointResolver } from '@/composables/useEndpointResolver'
 import { ofetch } from 'ofetch'
 import { useI18n } from 'vue-i18n'
 import { useAuth } from './useAuth'
@@ -14,7 +14,8 @@ import {
 import { parseRetryAfter } from '@target/utils/parseRetryAfter'
 
 export function useAppFetch() {
-  const baseURL = config.apiBaseUrl
+  const { endpoints } = useEndpointResolver()
+  const baseURL = endpoints.value.apiUrl
   const auth = useAuth()
   const { t, locale } = useI18n()
   const { isRateLimited, getRemainingSeconds, setRateLimit } = useRateLimit()

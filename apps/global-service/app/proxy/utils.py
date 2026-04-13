@@ -1,8 +1,7 @@
 """
 Shared proxy utilities — header filtering, body detection, streaming detection.
 
-Used by both the generic proxy (proxy/routes.py) and module-specific proxies
-(e.g. api/routes/target_proxy.py) to avoid duplication and coupling.
+Used by the generic proxy (proxy/routes.py) to avoid duplication and coupling.
 """
 
 from __future__ import annotations

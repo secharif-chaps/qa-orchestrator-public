@@ -98,6 +98,12 @@ if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 		fi
 	fi
 
+	# Announce to global-service gateway registry (non-blocking, best-effort)
+	if [ -n "${GLOBAL_SERVICE_URL:-}" ]; then
+		echo "Announcing to gateway registry..."
+		php bin/console app:gateway:announce || echo "WARNING: Gateway announce failed (will be detected via healthcheck)"
+	fi
+
 	if [ "${PLATFORM:-linux}" = "linux" ]; then
 		setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var
 		setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX var

@@ -321,3 +321,35 @@ class TestCheckModuleEnabled:
 
         # Fail-open: allow request
         assert result is None
+
+    @pytest.mark.asyncio
+    async def test_always_active_module_skips_gate(self):
+        """Stream is always active — should skip DB check entirely."""
+        from app.proxy.routes import _check_module_enabled, _module_enabled_cache
+
+        _module_enabled_cache.clear()
+
+        mock_user = MagicMock()
+        mock_user.organization = ["Org", {"Org": {"id": "org-1"}}]
+
+        # No cache entry, no DB mock — if it tried to query DB it would fail
+        result = await _check_module_enabled(ModuleName.STREAM, mock_user)
+        assert result is None
+        # Cache should NOT be populated (gate was skipped, not queried)
+        assert ("org-1", "stream") not in _module_enabled_cache
+
+    @pytest.mark.asyncio
+    async def test_non_always_active_module_still_checked(self):
+        """Screen and target are NOT always-active — should still be gated."""
+        from app.proxy.routes import _check_module_enabled, _module_enabled_cache
+
+        _module_enabled_cache[("org-1", "screen")] = (False, time.time())
+        _module_enabled_cache[("org-1", "target")] = (False, time.time())
+
+        mock_user = MagicMock()
+        mock_user.organization = ["Org", {"Org": {"id": "org-1"}}]
+
+        screen_result = await _check_module_enabled(ModuleName.SCREEN, mock_user)
+        target_result = await _check_module_enabled(ModuleName.TARGET, mock_user)
+        assert screen_result is not None and screen_result.status_code == 403
+        assert target_result is not None and target_result.status_code == 403

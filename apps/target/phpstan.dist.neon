@@ -13,6 +13,8 @@ includes:
 parameters:
 	# See https://phpstan.org/user-guide/rule-levels
 	level: 9
+	parallel:
+		maximumNumberOfProcesses: 2
 	paths:
 		- src
 		- tests

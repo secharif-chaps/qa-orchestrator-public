@@ -160,6 +160,7 @@ async def init_module_registry() -> ModuleRegistry:
     global _registry
     backends = {
         "screen": settings.SCREEN_BASE_URL,
+        "target": settings.TARGET_BASE_URL,
         "stream": settings.STREAM_BASE_URL,
     }
     _registry = ModuleRegistry(backends=backends)
@@ -198,6 +199,9 @@ def _resolve_backend(registry: ModuleRegistry | None, path: str, method: str) ->
 
 # ── Module gate: check if module is enabled for user's organization ──
 
+# Modules that are always active and skip the per-org enablement check
+_ALWAYS_ACTIVE_MODULES: frozenset[ModuleName] = frozenset({ModuleName.STREAM})
+
 # Cache: (org_id, module_name) -> (enabled: bool, timestamp: float)
 _module_enabled_cache: dict[tuple[str, str], tuple[bool, float]] = {}
 _MODULE_GATE_CACHE_TTL = 30  # seconds
@@ -207,11 +211,15 @@ async def _check_module_enabled(module_name: ModuleName, user: object) -> Respon
     """Check if the resolved module is enabled for the user's organization.
 
     Returns a 403 Response if the module is disabled, None if enabled (allow).
-    Skips the check if user has no organization context (e.g., service accounts).
+    Skips the check for always-active modules (e.g. stream) and when
+    user has no organization context (e.g., service accounts).
 
     Uses a TTL cache to avoid querying the DB on every request.
     Fails open on DB errors (logs warning, allows request).
     """
+    if module_name in _ALWAYS_ACTIVE_MODULES:
+        return None
+
     org_id, _ = extract_organization_info(user)
     if not org_id:
         return None

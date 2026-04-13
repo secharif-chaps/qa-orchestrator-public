@@ -362,10 +362,106 @@ class TestRediscovery:
         assert result[0].name == ModuleName.SCREEN
 
     @pytest.mark.asyncio
-    async def test_rediscover_unknown_module_is_noop(self):
+    async def test_rediscover_unknown_module_not_in_backends_is_noop(self):
+        """Module not in _modules AND not in _backends → silent noop."""
         registry = ModuleRegistry(backends={})
         await registry.rediscover_module(ModuleName.TARGET)
         assert ModuleName.TARGET not in registry.modules
+
+    @pytest.mark.asyncio
+    async def test_late_discovery_for_module_unavailable_at_startup(self):
+        """Module in _backends but not _modules (was offline at startup) → discover on announce."""
+        target_schema = {
+            "openapi": "3.0.0",
+            "paths": {
+                "/api/watch_files": {"get": {"x-permissions": ["organization.read"]}},
+            },
+        }
+
+        registry = ModuleRegistry(backends={"target": "http://target:8000"})
+        # Simulate startup failure: target is in _backends but not _modules
+        assert ModuleName.TARGET not in registry.modules
+
+        with patch("app.proxy.registry.httpx.AsyncClient") as mock_client_cls:
+            mock_client = AsyncMock()
+            mock_client.get = AsyncMock(return_value=_mock_response(target_schema))
+            mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
+
+            await registry.rediscover_module(ModuleName.TARGET)
+
+        # Module should now be discovered
+        assert ModuleName.TARGET in registry.modules
+        result = registry.resolve("watch_files", "GET")
+        assert result is not None
+        assert result[0].name == ModuleName.TARGET
+
+    @pytest.mark.asyncio
+    async def test_late_discovery_fetch_failure_does_not_crash(self):
+        """Module in _backends but HTTP fetch fails → module stays undiscovered."""
+        registry = ModuleRegistry(backends={"target": "http://target:8000"})
+
+        with patch("app.proxy.registry.httpx.AsyncClient") as mock_client_cls:
+            mock_client = AsyncMock()
+            mock_client.get = AsyncMock(side_effect=Exception("Connection refused"))
+            mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
+
+            await registry.rediscover_module(ModuleName.TARGET)
+
+        assert ModuleName.TARGET not in registry.modules
+
+
+class TestOpenApiConfig:
+    """Test per-module OpenAPI discovery configuration."""
+
+    @pytest.mark.asyncio
+    async def test_target_uses_api_platform_openapi_path(self):
+        """Target module should fetch /api/docs with Accept header instead of /openapi.json."""
+        target_schema = {
+            "openapi": "3.0.0",
+            "paths": {"/api/watch_files": {"get": {}}},
+        }
+
+        registry = ModuleRegistry(backends={"target": "http://target:8000"})
+
+        with patch("app.proxy.registry.httpx.AsyncClient") as mock_client_cls:
+            mock_client = AsyncMock()
+            mock_client.get = AsyncMock(return_value=_mock_response(target_schema))
+            mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
+
+            await registry.discover_all()
+
+            call_args = mock_client.get.call_args
+            url = call_args.args[0] if call_args.args else call_args.kwargs.get("url", "")
+            headers = call_args.kwargs.get("headers", {})
+            assert url == "http://target:8000/api/docs"
+            assert headers.get("Accept") == "application/vnd.openapi+json"
+
+    @pytest.mark.asyncio
+    async def test_screen_uses_default_openapi_path(self):
+        """Screen module should use default /openapi.json path."""
+        screen_schema = {
+            "openapi": "3.0.0",
+            "paths": {"/api/companies": {"get": {}}},
+        }
+
+        registry = ModuleRegistry(backends={"screen": "http://screen:8000"})
+
+        with patch("app.proxy.registry.httpx.AsyncClient") as mock_client_cls:
+            mock_client = AsyncMock()
+            mock_client.get = AsyncMock(return_value=_mock_response(screen_schema))
+            mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
+
+            await registry.discover_all()
+
+            call_args = mock_client.get.call_args
+            url = call_args.args[0] if call_args.args else call_args.kwargs.get("url", "")
+            headers = call_args.kwargs.get("headers", {})
+            assert url == "http://screen:8000/openapi.json"
+            assert headers == {}
 
 
 class TestNormalizePath:
