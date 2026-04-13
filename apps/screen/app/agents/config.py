@@ -46,7 +46,9 @@ def _build_agent_prompt(agent_name: str) -> str:
     targets = AGENT_SEARCH_TARGETS.get(agent_name, "")
     output_format = AGENT_OUTPUT_FORMATS.get(agent_name, "")
 
-    return f"""{RESEARCH_METHODOLOGY}
+    return f"""You MUST respond with ONLY a valid JSON object. No prose, no markdown, no explanations before or after the JSON.
+
+{RESEARCH_METHODOLOGY}
 
 ## Your Role
 {role}
@@ -55,9 +57,10 @@ def _build_agent_prompt(agent_name: str) -> str:
 {targets}
 
 ## Output Format
+Return a JSON object matching this exact structure:
 {output_format}
 
-IMPORTANT: Return ONLY valid JSON. No markdown, no explanations, just the JSON object."""
+CRITICAL: Your entire response must be a single valid JSON object. Do not wrap it in markdown code blocks. Do not include any text outside the JSON."""
 
 
 # Pre-compiled prompts dict (built at import time)

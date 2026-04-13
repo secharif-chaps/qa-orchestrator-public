@@ -8,7 +8,7 @@ import time
 from collections.abc import Callable
 from typing import Any
 
-from openai import RateLimitError
+from openai import APIError, RateLimitError
 from pydantic import BaseModel
 
 from app.core.config import settings
@@ -59,7 +59,7 @@ def _parse_json_response(text: str) -> dict:
         except json.JSONDecodeError:
             pass
 
-    logger.warning("Failed to parse JSON from response", extra={"text_preview": text[:200]})
+    logger.warning(f"Failed to parse JSON from response: {text[:500]!r}")
     return {}
 
 
@@ -244,7 +244,7 @@ async def web_search_query(
                         create_kwargs["text"] = text_format
 
                     response = await client.responses.create(**create_kwargs)
-                except Exception as e:
+                except APIError as e:
                     # Fall back to web_search_preview if web_search unavailable
                     if "web_search" in str(e).lower() and attempt == 0:
                         web_search_config["type"] = "web_search_preview"
@@ -304,7 +304,7 @@ async def web_search_query(
                 try:
                     result_str = function_handler(fc["arguments"])
                 except Exception as e:
-                    logger.error(f"Function handler error for {fc['name']}: {e}")
+                    logger.error(f"Function handler error for {fc['name']}: {e}", exc_info=True)
                     result_str = json.dumps({"error": str(e)})
 
                 function_outputs.append(
@@ -346,20 +346,27 @@ async def web_search_query(
             f"Running reformatting pass for {agent_name} to enforce structured output",
             extra={"agent_name": agent_name},
         )
-        async with semaphore:
-            response = await client.responses.create(
-                model=settings.LLM_MODEL,
-                previous_response_id=response.id,
-                input=(
-                    "Based on all the research you have gathered, produce your final answer "
-                    "as a JSON object strictly matching the required schema. "
-                    "Include only the JSON, no other text."
-                ),
-                text=reformat_text,
+        try:
+            async with semaphore:
+                response = await client.responses.create(
+                    model=settings.LLM_MODEL,
+                    previous_response_id=response.id,
+                    input=(
+                        "Based on all the research you have gathered, produce your final answer "
+                        "as a JSON object strictly matching the required schema. "
+                        "Include only the JSON, no other text."
+                    ),
+                    text=reformat_text,
+                )
+            if response.usage:
+                total_input_tokens += getattr(response.usage, "input_tokens", 0)
+                total_output_tokens += getattr(response.usage, "output_tokens", 0)
+        except APIError as e:
+            logger.warning(
+                f"Reformatting pass failed for {agent_name}: {e}",
+                exc_info=True,
+                extra={"agent_name": agent_name},
             )
-        if response.usage:
-            total_input_tokens += getattr(response.usage, "input_tokens", 0)
-            total_output_tokens += getattr(response.usage, "output_tokens", 0)
 
     duration_ms = int((time.monotonic() - start_time) * 1000)
 
@@ -383,6 +390,52 @@ async def web_search_query(
 
     # Validate against schema if provided (belt and suspenders)
     data = _validate_with_schema(data, output_schema, agent_name)
+
+    # JSON parse retry: if parsing failed and we have a schema, ask the model to
+    # reformat its response. Handles cases where structured output enforcement was
+    # skipped (function tools present) or silently ignored by the API.
+    if not data and output_schema:
+        logger.warning(
+            f"JSON parse failed for {agent_name}, attempting reformatting retry. "
+            f"Response preview: {full_text[:200]!r}"
+        )
+        try:
+            retry_text_format = _build_text_format(output_schema)
+            async with semaphore:
+                retry_response = await client.responses.create(
+                    model=settings.LLM_MODEL,
+                    previous_response_id=response.id,
+                    input=(
+                        "Your previous response could not be parsed as valid JSON. "
+                        "Produce ONLY a valid JSON object matching the required schema. "
+                        "No markdown, no explanations, no code blocks — just the raw JSON."
+                    ),
+                    text=retry_text_format,
+                )
+            if retry_response.usage:
+                total_input_tokens += getattr(retry_response.usage, "input_tokens", 0)
+                total_output_tokens += getattr(retry_response.usage, "output_tokens", 0)
+
+            retry_text_parts = []
+            for item in retry_response.output:
+                if item.type == "message":
+                    for content in item.content:
+                        if content.type == "output_text":
+                            retry_text_parts.append(content.text)
+                            if hasattr(content, "annotations") and content.annotations:
+                                for annotation in content.annotations:
+                                    if hasattr(annotation, "url") and annotation.url:
+                                        sources.add(annotation.url)
+
+            retry_full_text = "\n".join(retry_text_parts)
+            data = _parse_json_response(retry_full_text)
+            data = _validate_with_schema(data, output_schema, agent_name)
+        except APIError as e:
+            logger.warning(
+                f"JSON parse retry failed for {agent_name}: {e}",
+                exc_info=True,
+                extra={"agent_name": agent_name},
+            )
 
     # Extract additional URLs from the data itself
     data_urls = _extract_urls_from_data(data)
