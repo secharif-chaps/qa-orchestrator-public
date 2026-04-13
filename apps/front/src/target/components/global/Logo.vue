@@ -24,8 +24,10 @@
 </template>
 
 <script setup lang="ts">
-import { config } from '@target/config'
+import { useEndpointResolver } from '@/composables/useEndpointResolver'
 import { computed, ref, watchEffect } from 'vue'
+
+const { endpoints } = useEndpointResolver()
 
 interface Props {
   domain?: string
@@ -40,7 +42,7 @@ const { domain = '', alt = '', name = undefined, width = 32, height = 32 } = def
 const shouldShowFallback = ref(false)
 
 const logo = computed(() => {
-  return `${config.apiBaseUrl}/logo/${domain}`
+  return `${endpoints.value.apiUrl}/logo/${domain}`
 })
 
 const fallbackInitials = computed(() => {

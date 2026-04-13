@@ -124,6 +124,12 @@ class ModuleRegistry:
         """Compute a deterministic SHA-256 hash of an OpenAPI schema."""
         return hashlib.sha256(json.dumps(schema, sort_keys=True).encode()).hexdigest()
 
+    # OpenAPI discovery config per module (path, extra headers).
+    # Modules not listed here use GET /openapi.json with no extra headers.
+    _OPENAPI_CONFIG: dict[str, tuple[str, dict[str, str]]] = {
+        "target": ("/api/docs", {"Accept": "application/vnd.openapi+json"}),
+    }
+
     def __init__(self, backends: dict[str, str]) -> None:
         """Initialize with a mapping of module_name -> backend_url."""
         self._backends = backends
@@ -175,10 +181,11 @@ class ModuleRegistry:
         if prefetched_schema is not None:
             schema = prefetched_schema
         else:
-            url = f"{backend_url.rstrip('/')}/openapi.json"
+            openapi_path, extra_headers = self._OPENAPI_CONFIG.get(name.value, ("/openapi.json", {}))
+            url = f"{backend_url.rstrip('/')}{openapi_path}"
             try:
                 async with httpx.AsyncClient(timeout=10) as client:
-                    resp = await client.get(url)
+                    resp = await client.get(url, headers=extra_headers)
                     resp.raise_for_status()
                     schema = resp.json()
             except Exception as e:
@@ -209,16 +216,27 @@ class ModuleRegistry:
     async def rediscover_module(self, name: ModuleName, prefetched_schema: dict | None = None) -> None:
         """Re-fetch a module's schema (after announce or hash change).
 
+        Also handles first-time discovery for modules that were unreachable
+        at startup but have since come online and announced themselves.
+
         Args:
             prefetched_schema: If provided, skip the HTTP fetch and use this schema directly.
         """
         async with self._lock:
             module = self._modules.get(name)
-            if not module:
+            if module:
+                backend_url = module.backend_url
+            elif name.value in self._backends:
+                backend_url = self._backends[name.value]
+                logger.info(
+                    "Late discovery for module that was unavailable at startup",
+                    extra={"module_name": name},
+                )
+            else:
                 logger.warning("Cannot rediscover unknown module", extra={"module_name": name})
                 return
 
-            await self._fetch_and_register(name, module.backend_url, prefetched_schema=prefetched_schema)
+            await self._fetch_and_register(name, backend_url, prefetched_schema=prefetched_schema)
             self._build_route_index()
 
     def get_module_hash(self, name: ModuleName) -> str | None:
@@ -245,9 +263,10 @@ class ModuleRegistry:
         results: dict[str, str] = {}
         async with httpx.AsyncClient(timeout=5) as client:
             for name, module in list(self._modules.items()):
-                url = f"{module.backend_url}/openapi.json"
+                openapi_path, extra_headers = self._OPENAPI_CONFIG.get(name.value, ("/openapi.json", {}))
+                url = f"{module.backend_url}{openapi_path}"
                 try:
-                    resp = await client.get(url)
+                    resp = await client.get(url, headers=extra_headers)
                     resp.raise_for_status()
                     schema = resp.json()
 

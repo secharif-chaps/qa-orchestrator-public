@@ -23,8 +23,8 @@ x-n8n-db: &n8n-db
   DB_TYPE: postgresdb
   DB_POSTGRESDB_HOST: db
   DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME:-n8n_db}
-  DB_POSTGRESDB_USER: ${N8N_DB_USER:-n8n_user}
-  DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD:-n8n_pass}
+  DB_POSTGRESDB_USER: ${N8N_DB_USER:-postgres}
+  DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD:-postgres}
   N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-!ChangeThisN8nEncryptionKey!}
 
 x-target-env: &target-env
@@ -36,6 +36,7 @@ x-target-env: &target-env
   APP_SECRET: ${TARGET_APP_SECRET:-!ChangeThisTargetAppSecret!}
   INTERNAL_JWT_SECRET: ${INTERNAL_JWT_SECRET:-!ChangeThisInternalJWTSecretKey!!}
   INTERNAL_ALLOWED_IPS: ${INTERNAL_ALLOWED_IPS:-}
+  GLOBAL_SERVICE_URL: http://global-service:8000/api
 
 # ─── Services ──────────────────────────────────────────
 services:

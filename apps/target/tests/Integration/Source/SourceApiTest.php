@@ -239,11 +239,14 @@ class SourceApiTest extends AbstractApiTestCase
             ->create();
         $actor = ActorFactory::new()->create();
 
-        // Create 50 sources
+        // Create 50 sources with unique URLs to avoid unique constraint collision
         for ($i = 0; $i < 50; ++$i) {
             SourceFactory::new()
                 ->withWatchFile($watchFile)
                 ->withActor($actor)
+                ->with([
+                    'url' => "https://source-{$i}.example.com",
+                ])
                 ->create();
         }
 

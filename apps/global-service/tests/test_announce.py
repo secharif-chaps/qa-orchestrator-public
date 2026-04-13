@@ -479,14 +479,14 @@ class TestCheckAndRediscoverStaleMultiModule:
         )
         registry._build_route_index()
 
-        def _mock_get(url):
+        def _mock_get(url, **kwargs):
             if "screen" in url:
                 return _mock_response(SCHEMA_A)  # unchanged
             return _mock_response(SCHEMA_B)  # target changed
 
         with patch("app.proxy.registry.httpx.AsyncClient") as mock_client_cls:
             mock_client = AsyncMock()
-            mock_client.get = AsyncMock(side_effect=lambda url: _mock_get(url))
+            mock_client.get = AsyncMock(side_effect=lambda url, **kwargs: _mock_get(url))
             mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
             mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
 

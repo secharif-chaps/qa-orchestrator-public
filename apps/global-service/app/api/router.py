@@ -14,7 +14,6 @@ from app.api.endpoints import (
     tokens,
     users,
 )
-from app.api.routes import target_proxy
 
 api_router = APIRouter()
 
@@ -29,5 +28,3 @@ api_router.include_router(ai_preferences.router)  # AI preferences (Chapse Assis
 api_router.include_router(folder.router)  # Folder management
 api_router.include_router(team.router)  # Team management
 api_router.include_router(organizations.router)  # Admin organization management
-# Target proxy — must be registered before the generic catch-all proxy router
-api_router.include_router(target_proxy.router, prefix="/target", tags=["target"])
