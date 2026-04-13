@@ -5,6 +5,11 @@
     "EditorConfig.EditorConfig",
     "esbenp.prettier-vscode",
     "stylelint.vscode-stylelint",
-    "Lokalise.i18n-ally"
+    "Lokalise.i18n-ally",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "charliermarsh.ruff",
+    "ms-python.mypy-type-checker",
+    "DEVSENSE.phptools-vscode"
   ]
 }
