@@ -7,7 +7,7 @@ import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from openai import RateLimitError
+from openai import APIError, RateLimitError
 
 from app.agents.tools.web_search import (
     _extract_urls_from_data,
@@ -415,7 +415,7 @@ class TestWebSearchQuery:
             nonlocal call_count
             call_count += 1
             if call_count == 1:
-                raise Exception("web_search tool is not available")
+                raise APIError("web_search tool is not available", MagicMock(), body=None)
             return success_resp
 
         mock_client.responses.create = AsyncMock(side_effect=side_effect)
@@ -434,6 +434,118 @@ class TestWebSearchQuery:
 
         with pytest.raises(Exception, match="Connection timeout"):
             await web_search_query(system_prompt="test", user_query="query", agent_name="profile")
+
+    @pytest.mark.asyncio
+    @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
+    @patch("app.agents.tools.web_search.get_responses_client")
+    async def test_json_parse_retry_triggered_on_prose_response(self, mock_get_client, mock_sem, mock_response):
+        """JSON parse retry is triggered when initial response is unparseable prose."""
+        from app.agents.schemas import ProfileAgentOutput
+
+        client = AsyncMock()
+        mock_get_client.return_value = client
+
+        # First call: returns prose (not JSON)
+        prose_resp = mock_response(text="Here is what I found about the company: it was founded in 1990.")
+        prose_resp.id = "resp_prose"
+        # Second call: reformatting retry returns valid JSON
+        json_resp = mock_response(text='{"insights": "founded in 1990", "groupName": null}')
+        json_resp.id = "resp_json"
+
+        client.responses.create = AsyncMock(side_effect=[prose_resp, json_resp])
+
+        result = await web_search_query(
+            system_prompt="test",
+            user_query="query",
+            agent_name="profile",
+            output_schema=ProfileAgentOutput,
+        )
+
+        assert client.responses.create.call_count == 2
+        assert result["data"]["insights"] == "founded in 1990"
+
+        # Second call should be the retry with text format and no tools
+        retry_kwargs = client.responses.create.call_args_list[1][1]
+        assert "text" in retry_kwargs
+        assert "tools" not in retry_kwargs
+        assert "previous_response_id" in retry_kwargs
+
+    @pytest.mark.asyncio
+    @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
+    @patch("app.agents.tools.web_search.get_responses_client")
+    async def test_json_parse_retry_failure_returns_empty_dict(self, mock_get_client, mock_sem, mock_response):
+        """When JSON parse retry also fails, empty dict is returned gracefully."""
+        from app.agents.schemas import ProfileAgentOutput
+
+        client = AsyncMock()
+        mock_get_client.return_value = client
+
+        # First call: prose
+        prose_resp = mock_response(text="Still just prose from the model.")
+        prose_resp.id = "resp_prose"
+        # Retry call: still prose — parse will fail again
+        still_prose_resp = mock_response(text="Still not JSON.")
+        still_prose_resp.id = "resp_prose2"
+
+        client.responses.create = AsyncMock(side_effect=[prose_resp, still_prose_resp])
+
+        result = await web_search_query(
+            system_prompt="test",
+            user_query="query",
+            agent_name="profile",
+            output_schema=ProfileAgentOutput,
+        )
+
+        assert result["data"] == {}
+        assert client.responses.create.call_count == 2
+
+    @pytest.mark.asyncio
+    @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
+    @patch("app.agents.tools.web_search.get_responses_client")
+    async def test_json_parse_retry_exception_returns_empty_dict(self, mock_get_client, mock_sem, mock_response):
+        """When retry API call throws, exception is caught and empty dict returned."""
+        from app.agents.schemas import ProfileAgentOutput
+
+        client = AsyncMock()
+        mock_get_client.return_value = client
+
+        prose_resp = mock_response(text="Some prose that is not JSON.")
+        prose_resp.id = "resp_prose"
+
+        client.responses.create = AsyncMock(side_effect=[prose_resp, APIError("API error during retry", MagicMock(), body=None)])
+
+        result = await web_search_query(
+            system_prompt="test",
+            user_query="query",
+            agent_name="profile",
+            output_schema=ProfileAgentOutput,
+        )
+
+        assert result["data"] == {}
+
+    @pytest.mark.asyncio
+    @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
+    @patch("app.agents.tools.web_search.get_responses_client")
+    async def test_json_parse_retry_not_triggered_when_no_schema(self, mock_get_client, mock_sem, mock_response):
+        """JSON parse retry is NOT triggered when output_schema is None."""
+        client = AsyncMock()
+        mock_get_client.return_value = client
+
+        prose_resp = mock_response(text="Some prose that is not JSON.")
+        prose_resp.id = "resp_prose"
+
+        client.responses.create = AsyncMock(return_value=prose_resp)
+
+        result = await web_search_query(
+            system_prompt="test",
+            user_query="query",
+            agent_name="profile",
+            output_schema=None,
+        )
+
+        # Only 1 call — no retry without a schema
+        assert client.responses.create.call_count == 1
+        assert result["data"] == {}
 
     @pytest.mark.asyncio
     @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
@@ -457,7 +569,7 @@ class TestWebSearchQuery:
             call_count += 1
             if call_count == 1:
                 assert "text" in kwargs, "First call should include text format"
-                raise Exception("text format is not supported for this model")
+                raise APIError("text format is not supported for this model", MagicMock(), body=None)
             # Second call should NOT have text key
             assert "text" not in kwargs, "Second call should not include text format"
             return success_resp
@@ -662,6 +774,54 @@ class TestWebSearchQueryWithFunctionTools:
 
         # Only 2 calls: initial + tool loop response, no reformatting
         assert client.responses.create.call_count == 2
+
+    @pytest.mark.asyncio
+    @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
+    @patch("app.agents.tools.web_search.get_responses_client")
+    async def test_reformatting_pass_exception_does_not_crash(self, mock_get_client, mock_sem):
+        """Reformatting pass exception is caught; JSON parse retry then recovers."""
+        from app.agents.schemas import ProfileAgentOutput
+
+        client = AsyncMock()
+        mock_get_client.return_value = client
+
+        fc_resp = self._make_function_call_response()
+        msg_resp = self._make_message_response(text="Prose about the company")
+        # Reformatting pass throws — should be swallowed
+        # Then JSON parse retry recovers with valid JSON
+        recovery_resp = self._make_message_response(
+            text='{"insights": "recovered", "groupName": null}',
+            resp_id="resp_recovery",
+        )
+
+        call_count = 0
+
+        async def side_effect(**kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                return fc_resp  # initial call
+            elif call_count == 2:
+                return msg_resp  # tool loop
+            elif call_count == 3:
+                raise APIError("Reformatting pass API error", MagicMock(), body=None)  # reformatting fails
+            else:
+                return recovery_resp  # JSON parse retry
+
+        client.responses.create = AsyncMock(side_effect=side_effect)
+
+        result = await web_search_query(
+            system_prompt="test",
+            user_query="query",
+            agent_name="team",
+            function_tools=self.SAMPLE_FUNCTION_TOOLS,
+            function_handler=lambda args: '{"result": "ok"}',
+            output_schema=ProfileAgentOutput,
+        )
+
+        # Should have recovered via JSON parse retry
+        assert result["data"]["insights"] == "recovered"
+        assert client.responses.create.call_count == 4
 
     @pytest.mark.asyncio
     @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
