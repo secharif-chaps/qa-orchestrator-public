@@ -708,7 +708,7 @@ All test users are defined in `infra/files/realm-chapsmind.json` and added to th
 | Username          | Password      | Roles                                                 | Description               |
 |-------------------|---------------|-------------------------------------------------------|---------------------------|
 | `admin`           | `admin123`    | admin (composite: all roles)                          | Full access               |
-| `company_manager` | `manager123`  | company.create, organization.read, organization.write | Company + team management |
+| `company_manager` | `manager123`  | company.create, organization.read, organization.write, organization.manage | Company + team management |
 | `company_viewer`  | `viewer123`   | organization.read                                     | Read-only access          |
 | `no_access`       | `noaccess123` | (none)                                                | For testing 403 errors    |
 
