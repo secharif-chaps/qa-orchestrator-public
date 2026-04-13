@@ -22,6 +22,7 @@ EXCLUDED_REQUEST_HEADERS: frozenset[str] = frozenset({
     "transfer-encoding",
     "upgrade",
     "content-length",  # httpx will recalculate this
+    "accept-encoding",  # Strip: Caddy/FrankenPHP compresses but gateway streams body as-is
     # Security: prevent client from spoofing forwarding headers
     "x-forwarded-for",
     "x-forwarded-host",
