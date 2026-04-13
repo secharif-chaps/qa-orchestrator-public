@@ -40,6 +40,7 @@
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ai:review-mr:
   stage: lint
+  interruptible: false
   image: ${CI_REGISTRY}/chapsmind/ci-images/agent:latest
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -70,6 +71,7 @@ ai:review-mr:
 # Pass AGENT_ISSUE as a variable (e.g. TAR-1234).
 ai:dev-agent:
   stage: publish
+  interruptible: false
   needs: []
   image: ${CI_REGISTRY}/chapsmind/ci-images/agent:latest
   # One resource group per ticket: prevents duplicate runs for the same issue
@@ -127,6 +129,7 @@ ai:dev-agent:
 # a dev-agent pipeline for each one.
 ai:ticket-scanner:
   stage: maintenance
+  interruptible: false
   needs: []
   image: ${CI_REGISTRY}/chapsmind/ci-images/agent:latest
   rules:

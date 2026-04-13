@@ -127,6 +127,7 @@ front:test:
 # Front needs Owlint registry secrets for private npm packages.
 # Secrets are written to temp files before build (docker --secret requires files).
 front:publish:
+  interruptible: false
   extends: .docker-publish
   needs:
     [

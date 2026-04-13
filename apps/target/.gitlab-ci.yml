@@ -165,6 +165,7 @@ target:n8n-validate-datasets:
 
 # ─── Publish (build + tag + push) ─────────────────────
 target:publish:
+  interruptible: false
   extends: .docker-publish
   needs:
     [

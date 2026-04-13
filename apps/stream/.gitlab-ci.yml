@@ -90,6 +90,7 @@ stream:bandit:
 
 # ─── Publish (build + tag + push) ─────────────────────
 stream:publish:
+  interruptible: false
   extends: .docker-publish
   needs: [stream:lint, stream:mypy, stream:poetry-check, stream:poetry-audit, stream:test]
   variables:

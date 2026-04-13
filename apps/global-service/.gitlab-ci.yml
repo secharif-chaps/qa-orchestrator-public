@@ -93,6 +93,7 @@ global-service:bandit:
 
 # ─── Publish (build + tag + push) ─────────────────────
 global-service:publish:
+  interruptible: false
   extends: .docker-publish
   needs: [global-service:lint, global-service:poetry-check, global-service:poetry-audit, global-service:test]
   variables:

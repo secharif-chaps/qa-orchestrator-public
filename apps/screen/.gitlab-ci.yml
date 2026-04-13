@@ -140,6 +140,7 @@ screen:bandit:
 
 # ─── Publish (build + tag + push) ─────────────────────
 screen:publish:
+  interruptible: false
   extends: .docker-publish
   needs: [screen:lint, screen:poetry-check, screen:poetry-audit, screen:test:unit, screen:test:integration]
   variables:
