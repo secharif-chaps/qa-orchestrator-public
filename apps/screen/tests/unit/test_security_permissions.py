@@ -14,9 +14,6 @@ These tests verify that:
 
 import pytest
 
-from app.core.security import AuthorizationError, verify_company_modify_permission  # noqa: F401
-from app.schemas.user import TokenData  # noqa: F401
-
 # Skip entire module - verify_organization_permission was never implemented
 pytestmark = pytest.mark.skip(
     reason="verify_organization_permission function not implemented - tests document expected behavior"
@@ -52,35 +49,6 @@ class TestOrganizationPermission:
     def test_organization_permission_with_wrong_organization(self):
         """Test that user cannot access resources from different organization."""
         pytest.skip("verify_organization_permission not implemented")
-
-
-class TestCompanyModifyPermission:
-    """Test suite for company modification permission checks."""
-
-    def test_company_modify_with_correct_permission(self):
-        """Test that user with correct permission can modify companies."""
-        from app.core.organization_context import OrganizationContext
-
-        user = TokenData(username="user", sub="user-uuid", roles=["company.update"])
-        org_context = OrganizationContext(
-            organization_id="org-uuid-1", organization_name="Test Org", user_id=user.sub, username=user.username
-        )
-
-        result = verify_company_modify_permission(org_context, "company.update")
-        assert result == org_context
-
-    def test_company_modify_without_permission(self):
-        """Test that user without required permission cannot modify companies."""
-        from app.core.organization_context import OrganizationContext
-
-        user = TokenData(username="user", sub="user-uuid", roles=["company.view"])
-        org_context = OrganizationContext(
-            organization_id="org-uuid-1", organization_name="Test Org", user_id=user.sub, username=user.username
-        )
-
-        with pytest.raises(AuthorizationError) as exc_info:
-            verify_company_modify_permission(org_context, "company.update")
-        assert "company.update" in str(exc_info.value.detail)
 
 
 class TestSecurityVulnerabilities:

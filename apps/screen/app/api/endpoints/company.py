@@ -17,10 +17,7 @@ from app.core.dependencies import get_company_service, get_global_service_client
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.organization_context import OrganizationContext, get_user_organization
-from app.core.security import (
-    verify_company_modify_permission,
-    verify_company_organization_access,
-)
+from app.core.security import verify_company_organization_access
 from app.database import get_db
 from app.models.company import Company
 from app.models.task import TaskStatus
@@ -256,10 +253,13 @@ async def update_company(
     company_data: CompanyUpdate,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     db: Session = Depends(get_db),
 ):
-    """Update a company (requires organization.write permission)."""
-    verify_company_modify_permission(org_context, "organization.write")
+    """Update a company.
+
+    Requires organization.write role for access.
+    """
 
     company = service.get_company(company_id)
     verify_company_organization_access(company, org_context)
@@ -278,10 +278,13 @@ async def soft_delete_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.delete"])),
     db: Session = Depends(get_db),
 ):
-    """Soft delete a company (archive) - requires organization.write permission."""
-    verify_company_modify_permission(org_context, "organization.write")
+    """Soft delete a company (archive).
+
+    Requires company.delete role for access.
+    """
 
     company = service.get_company(company_id)
     if not company:
@@ -304,12 +307,23 @@ async def restore_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.delete"])),
     db: Session = Depends(get_db),
 ):
-    """Restore a soft-deleted company - requires organization.write permission."""
+    """Restore a soft-deleted company.
+
+    Requires company.delete role for access.
+    """
     logger.info(f"POST /api/companies/{company_id}/restore - User: {org_context.username}")
 
-    verify_company_modify_permission(org_context, "organization.write")
+    # Verify org access BEFORE restoring to prevent cross-org IDOR
+    company = service.get_company(company_id, include_archived=True)
+    if not company:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Company not found or not deleted",
+        )
+    verify_company_organization_access(company, org_context)
 
     restored_company = service.restore_company(company_id)
     if not restored_company:
@@ -317,8 +331,6 @@ async def restore_company(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Company not found or not deleted",
         )
-
-    verify_company_organization_access(restored_company, org_context)
     return _build_company_response(db, restored_company)
 
 
@@ -431,11 +443,13 @@ async def validate_csv_companies(
     service: CompanyService = Depends(get_company_service),
     global_service: GlobalServiceClient = Depends(get_global_service_client),
     org_context: OrganizationContext = Depends(get_user_organization),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
 ):
-    """Validate CSV company data without creating companies."""
-    logger.info(f"CSV validation request - User: {org_context.username}, Rows: {len(validation_request.companies)}")
+    """Validate CSV company data without creating companies.
 
-    verify_company_modify_permission(org_context, "company.create")
+    Requires company.create role for access.
+    """
+    logger.info(f"CSV validation request - User: {org_context.username}, Rows: {len(validation_request.companies)}")
 
     validation_result = service.validate_csv_companies(
         companies=validation_request.companies,
@@ -484,11 +498,13 @@ async def import_csv_companies(
     service: CompanyService = Depends(get_company_service),
     global_service: GlobalServiceClient = Depends(get_global_service_client),
     org_context: OrganizationContext = Depends(get_user_organization),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
 ):
-    """Import companies from CSV data."""
-    logger.info(f"CSV import request - User: {org_context.username}, Rows: {len(import_request.companies)}")
+    """Import companies from CSV data.
 
-    verify_company_modify_permission(org_context, "company.create")
+    Requires company.create role for access.
+    """
+    logger.info(f"CSV import request - User: {org_context.username}, Rows: {len(import_request.companies)}")
 
     validation = service.validate_csv_companies(
         companies=import_request.companies,
