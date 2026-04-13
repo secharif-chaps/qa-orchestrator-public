@@ -38,25 +38,3 @@ def verify_company_organization_access(company: Company | None, org_context: Org
     return company
 
 
-def verify_company_modify_permission(org_context: OrganizationContext, permission: str) -> OrganizationContext:
-    """
-    Verify that the user has permission to modify companies in their organization
-
-    NOTE: This function is deprecated. New code should use fastapi-keycloak's
-    idp.get_current_user(required_roles=[...]) dependency instead.
-
-    Args:
-        org_context: Current user's organization context
-        permission: Required permission (e.g., 'company.update', 'company.delete')
-
-    Returns:
-        OrganizationContext if user has permission
-
-    Raises:
-        AuthorizationError: If user doesn't have permission
-    """
-    # Since OrganizationContext doesn't have roles, we can't check them here
-    # The permission check should be done at the API endpoint level using
-    # idp.get_current_user(required_roles=["company.update"]) dependency
-    # For now, we'll just return the context (permission already checked at endpoint)
-    return org_context

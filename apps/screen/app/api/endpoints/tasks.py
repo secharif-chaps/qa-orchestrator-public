@@ -12,7 +12,7 @@ from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.organization_context import OrganizationContext, get_user_organization
 from app.core.security import verify_company_organization_access
-from app.schemas.task import TaskResponse, TaskTokenUpdate
+from app.schemas.task import TaskResponse
 from app.services.company import CompanyService
 from app.services.task_events import task_event_manager
 from app.services.task_service import TaskService
@@ -133,41 +133,6 @@ async def restart_task(
     # Restart the task (fire-and-forget via LangGraph)
     restarted_task = service.restart_task(task_id)
     return restarted_task
-
-
-@router.patch("/{task_id}/tokens", response_model=TaskResponse)
-async def update_task_tokens(
-    task_id: int,
-    token_data: TaskTokenUpdate,
-    service: CompanyService = Depends(get_company_service),
-    user: OIDCUser = Depends(idp.get_current_user()),
-    org_context: OrganizationContext = Depends(get_user_organization),
-):
-    """Update token usage information for a task.
-
-    Requires authentication.
-    """
-    # First, find the task and verify ownership
-    user_companies = service.get_all_companies(organization_id=org_context.organization_id)
-
-    task = None
-    for company in user_companies:
-        for company_task in company.tasks:
-            if company_task.id == task_id:
-                task = company_task
-                break
-        if task:
-            break
-
-    if not task:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Task with ID {task_id} not found or you don't have permission to access it",
-        )
-
-    # Update token information
-    updated_task = service.update_task_tokens(task_id, token_data)
-    return updated_task
 
 
 @router.get("/events/stream")

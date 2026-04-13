@@ -381,10 +381,7 @@ def get_items(
 For business logic validation (ownership, organization membership), use functions from `app/core/security.py`:
 
 ```python
-from app.core.security import (
-    verify_company_organization_access,
-    verify_company_modify_permission
-)
+from app.core.security import verify_company_organization_access
 
 @router.get("/companies/{company_id}")
 def get_company(

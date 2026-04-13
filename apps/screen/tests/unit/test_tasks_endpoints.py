@@ -1,6 +1,6 @@
 """Tests for task REST API endpoint functions.
 
-Covers: get_company_tasks, restart_task, update_task_tokens, task_events_stream.
+Covers: get_company_tasks, restart_task, task_events_stream.
 
 Tests the endpoint functions directly (not via TestClient) to avoid importing
 the full app which triggers Keycloak initialization.
@@ -15,7 +15,6 @@ from fastapi_keycloak import OIDCUser
 
 from app.core.organization_context import OrganizationContext
 from app.models.task import Task, TaskStatus, TaskType
-from app.schemas.task import TaskTokenUpdate
 from app.services.company import CompanyService
 
 # ---------------------------------------------------------------------------
@@ -243,75 +242,6 @@ class TestRestartTask:
         )
 
         mock_service.get_all_companies.assert_called_once_with(organization_id="org-uuid-1")
-
-
-# ---------------------------------------------------------------------------
-# PATCH /tasks/{task_id}/tokens — update_task_tokens
-# ---------------------------------------------------------------------------
-
-
-class TestUpdateTaskTokens:
-    @pytest.mark.asyncio
-    async def test_update_tokens_success(self, mock_service, mock_user, mock_org):
-        task = _make_task_mock(task_id=7)
-        company = MagicMock()
-        company.tasks = [task]
-        mock_service.get_all_companies.return_value = [company]
-        mock_service.update_task_tokens.return_value = task
-
-        token_data = TaskTokenUpdate(input_tokens=500, output_tokens=200)
-
-        from app.api.endpoints.tasks import update_task_tokens
-
-        result = await update_task_tokens(
-            task_id=7,
-            token_data=token_data,
-            service=mock_service,
-            user=mock_user,
-            org_context=mock_org,
-        )
-
-        assert result == task
-        mock_service.update_task_tokens.assert_called_once_with(7, token_data)
-
-    @pytest.mark.asyncio
-    async def test_update_tokens_not_found(self, mock_service, mock_user, mock_org):
-        mock_service.get_all_companies.return_value = []
-        token_data = TaskTokenUpdate(input_tokens=100)
-
-        from app.api.endpoints.tasks import update_task_tokens
-
-        with pytest.raises(HTTPException) as exc_info:
-            await update_task_tokens(
-                task_id=999,
-                token_data=token_data,
-                service=mock_service,
-                user=mock_user,
-                org_context=mock_org,
-            )
-        assert exc_info.value.status_code == 404
-
-    @pytest.mark.asyncio
-    async def test_update_tokens_partial(self, mock_service, mock_user, mock_org):
-        task = _make_task_mock(task_id=3)
-        company = MagicMock()
-        company.tasks = [task]
-        mock_service.get_all_companies.return_value = [company]
-        mock_service.update_task_tokens.return_value = task
-
-        token_data = TaskTokenUpdate(input_tokens=100)
-
-        from app.api.endpoints.tasks import update_task_tokens
-
-        await update_task_tokens(
-            task_id=3,
-            token_data=token_data,
-            service=mock_service,
-            user=mock_user,
-            org_context=mock_org,
-        )
-
-        mock_service.update_task_tokens.assert_called_once()
 
 
 # ---------------------------------------------------------------------------
