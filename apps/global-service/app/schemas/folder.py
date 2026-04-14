@@ -271,6 +271,8 @@ class CompanyFolderInfoResponse(BaseModel):
     """Response containing folder info for a company (internal API)."""
     folder_id: str = Field(..., description="Folder UUID")
     folder_name: str = Field(..., description="Folder name")
+    is_owner: bool = Field(..., description="Whether the requesting user owns the folder")
+    share_role: str | None = Field(None, description="Share role if folder is shared with user (reader/writer)")
 
 
 class UserSearchResult(BaseModel):

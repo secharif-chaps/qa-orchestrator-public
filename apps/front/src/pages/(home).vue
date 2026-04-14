@@ -69,6 +69,8 @@ const { t } = useI18n()
 const router = useRouter()
 const { canCreateCompany, canViewCompany } = useCompanyPermissions()
 
+const RECENT_PROJECTS_LIMIT = 6
+
 // Reactive data
 const currentTime = ref('')
 const currentDate = ref('')
@@ -86,7 +88,7 @@ const {
   error: recentCompaniesError,
 } = useQuery(() =>
   recentCompaniesQuery({
-    limit: 5,
+    limit: RECENT_PROJECTS_LIMIT,
   }),
 )
 
@@ -245,10 +247,12 @@ const recentProjects = computed(() => {
         folderName: company.folder_name || t('dashboard.home.recentProjects.noFolder'),
         folderId: company.folder_id,
         timeAgo,
-        badge: {
-          intent: 'info' as const,
-          label: t('dashboard.home.recentProjects.badge.collaborative'),
-        },
+        // A project is "shared" if the current user is not the folder owner
+        // and has an explicit share role (reader/writer)
+        isShared:
+          company.folder_is_owner != null
+            ? company.folder_is_owner === false && company.folder_share_role != null
+            : false,
       }
     })
 })

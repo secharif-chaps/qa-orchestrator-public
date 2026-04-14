@@ -1,20 +1,25 @@
 <template>
-  <Card>
-    <div class="mb-4 flex items-center justify-between">
-      <h3 class="font-semibold text-gray-900 dark:text-white">
+  <div
+    class="border-neutral bg-neutral-white shadow-shadow-2 flex flex-col gap-4 rounded-xl border p-6"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <p class="leading-lg text-neutral-black-font text-lg font-bold dark:text-white">
         {{ $t('dashboard.home.recentProjects.title') }}
-      </h3>
+      </p>
       <Button
         variant="tertiary"
         size="sm"
         :label="$t('dashboard.home.recentProjects.viewAll')"
+        icon-right="fa-arrow-right"
+        lib-right="far"
         @click="router.push('/folders')"
       />
     </div>
 
     <!-- Loading State -->
     <div v-if="isLoading" class="flex items-center justify-center py-8">
-      <i class="fa fa-spinner fa-spin text-sage-500 text-2xl"></i>
+      <Icon icon="fa-spinner" class="fa-spin text-primary text-2xl" />
     </div>
 
     <!-- Error State -->
@@ -28,19 +33,22 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="projects.length === 0" class="py-8 text-center">
+    <div
+      v-else-if="projects.length === 0"
+      class="flex flex-col items-center gap-4 py-8 text-center"
+    >
       <div
-        class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800"
+        class="bg-base-200 dark:bg-base-300 flex h-16 w-16 items-center justify-center rounded-full"
       >
-        <i class="fa fa-folder-open text-2xl text-gray-400"></i>
+        <Icon icon="fa-folder-open" class="text-primary-font text-2xl" />
       </div>
-      <p class="text-sm text-gray-500 dark:text-gray-400">
+      <p class="text-primary-font text-sm">
         {{ $t('dashboard.home.recentProjects.noRecentProjects') }}
       </p>
     </div>
 
     <!-- Projects List -->
-    <div v-else class="space-y-3">
+    <div v-else class="flex flex-col gap-2">
       <RecentProjectItem
         v-for="project in projects"
         :key="project.id"
@@ -49,18 +57,19 @@
         :folder-name="project.folderName"
         :folder-id="project.folderId"
         :time-ago="project.timeAgo"
-        :badge="project.badge"
+        :is-shared="project.isShared"
+        :type="project.type"
         @click="handleProjectClick"
       />
     </div>
-  </Card>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { Alert, Button } from '@owlint/feathers-vue'
-import Card from '@/components/ui/Card.vue'
+import { Alert, Button, Icon } from '@owlint/feathers-vue'
 import RecentProjectItem from './RecentProjectItem.vue'
+import type { ProjectType } from '@/types/module'
 
 interface Project {
   id: number
@@ -68,10 +77,8 @@ interface Project {
   folderName: string
   folderId?: string | null
   timeAgo: string
-  badge?: {
-    intent: 'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'info'
-    label: string
-  }
+  isShared?: boolean
+  type?: ProjectType
 }
 
 interface Props {
@@ -84,7 +91,13 @@ defineProps<Props>()
 
 const router = useRouter()
 
-function handleProjectClick({ id, folderId }: { id: number; folderId: string | null | undefined }) {
+const handleProjectClick = ({
+  id,
+  folderId,
+}: {
+  id: number
+  folderId: string | null | undefined
+}) => {
   if (folderId) {
     router.push(`/folders/${folderId}/companies/${id}`)
   }

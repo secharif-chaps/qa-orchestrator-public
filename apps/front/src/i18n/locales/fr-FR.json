@@ -1170,7 +1170,8 @@
       },
       "recentProjects": {
         "badge": {
-          "collaborative": "Collaboratif"
+          "collaborative": "Collaboratif",
+          "private": "Privé"
         },
         "error": {
           "description": "Un problème est survenu lors du chargement de vos projets récents. Veuillez réessayer plus tard.",
@@ -1179,7 +1180,7 @@
         "noFolder": "Sans dossier",
         "noRecentProjects": "Aucun projet récent",
         "title": "Projets récents",
-        "viewAll": "Voir tout"
+        "viewAll": "Voir tous les projets"
       },
       "welcome": {
         "title": "Bonjour {name} !"
