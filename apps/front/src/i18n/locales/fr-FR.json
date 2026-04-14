@@ -2474,6 +2474,8 @@
         "adminDesc": "L'accès administrateur donne un contrôle total. À utiliser avec précaution.",
         "manager": "Gestionnaire",
         "managerDesc": "Gestion complète de l'équipe",
+        "noAccess": "Aucun accès",
+        "noAccessDesc": "Aucune permission, ne peut pas accéder à l'organisation",
         "reader": "Lecteur",
         "readerDesc": "Lecture seule",
         "writer": "Éditeur",

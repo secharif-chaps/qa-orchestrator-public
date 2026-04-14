@@ -78,6 +78,7 @@
 
 <script setup lang="ts">
 import { organizationActivitiesQuery } from '@/queries/organization'
+import { useAuthStore } from '@/stores/auth'
 import { formatRelativeTime } from '@/utils/time'
 import { Badge, Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
@@ -106,12 +107,22 @@ interface Notification {
 
 const router = useRouter()
 const { t } = useI18n()
+const authStore = useAuthStore()
+
+const canViewActivities = computed(() => authStore.hasPermission('organization.read'))
 
 // Track read notifications (in real app, this would be persisted)
 const readNotifications = ref<Set<string>>(new Set())
 
-// Fetch organization activities
-const { data: activitiesData, isLoading, error } = useQuery(() => organizationActivitiesQuery())
+// Only fetch activities if user has permission
+const {
+  data: activitiesData,
+  isLoading,
+  error,
+} = useQuery({
+  ...organizationActivitiesQuery(),
+  enabled: () => canViewActivities.value,
+})
 
 // Transform activities into notifications (limit to 20 most recent)
 const notifications = computed<Notification[]>(() => {

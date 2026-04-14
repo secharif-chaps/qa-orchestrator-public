@@ -23,7 +23,7 @@ from app.core.authorization import verify_any_role_access
 from app.core.keycloak import OIDCUser, idp
 from app.core.logging_config import get_logger
 from app.core.organization import OrganizationContext, get_user_organization
-from app.core.permissions import get_roles_for_tier, get_tier_from_roles
+from app.core.permissions import PermissionTier, get_roles_for_tier, get_tier_from_roles
 from app.schemas.team import (
     InviteTeamMemberRequest,
     InviteTeamMemberResponse,
@@ -323,6 +323,10 @@ async def update_member_permissions(
             user, ["organization.manage", "admin.organizations"]
         )
 
+        # Only admins can assign the admin tier (prevent privilege escalation)
+        if update_data.permission_tier == PermissionTier.ADMIN:
+            verify_any_role_access(user, ["admin.organizations"])
+
         if uid == user.sub:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -343,6 +347,14 @@ async def update_member_permissions(
                     "user_id": uid,
                 },
             )
+
+        # Only admins can modify users who currently have admin tier
+        current_roles = await keycloak_admin_service.get_user_realm_roles(uid)
+        current_tier = get_tier_from_roles(
+            [r["name"] for r in current_roles] if current_roles else []
+        )
+        if current_tier == PermissionTier.ADMIN:
+            verify_any_role_access(user, ["admin.organizations"])
 
         target_roles = get_roles_for_tier(update_data.permission_tier)
 
@@ -438,6 +450,10 @@ async def update_team_member(
             user, ["organization.manage", "admin.organizations"]
         )
 
+        # Only admins can assign the admin tier (prevent privilege escalation)
+        if update_data.permission_tier == PermissionTier.ADMIN:
+            verify_any_role_access(user, ["admin.organizations"])
+
         if uid == user.sub:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -459,14 +475,21 @@ async def update_team_member(
                 },
             )
 
+        # Only admins can modify users who currently have admin tier
+        current_roles = await keycloak_admin_service.get_user_realm_roles(uid)
+        current_tier = get_tier_from_roles(
+            [r["name"] for r in current_roles] if current_roles else []
+        )
+        if current_tier == PermissionTier.ADMIN:
+            verify_any_role_access(user, ["admin.organizations"])
+
         # Build profile update payload with only provided fields
-        profile_updates: dict[str, str] = {}
-        if update_data.first_name is not None:
-            profile_updates["firstName"] = update_data.first_name
-        if update_data.last_name is not None:
-            profile_updates["lastName"] = update_data.last_name
-        if update_data.email is not None:
-            profile_updates["email"] = update_data.email
+        field_mapping = {
+            "firstName": update_data.first_name,
+            "lastName": update_data.last_name,
+            "email": update_data.email,
+        }
+        profile_updates = {k: v for k, v in field_mapping.items() if v is not None}
 
         if profile_updates:
             success = await keycloak_admin_service.update_user(

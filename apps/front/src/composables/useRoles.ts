@@ -69,7 +69,6 @@ const ROLES: Record<RoleId, Role> = {
       'organization.write',
       'organization.manage',
       'company.create',
-      'target.create',
     ],
     color: 'error',
     icon: 'fa-shield-check',

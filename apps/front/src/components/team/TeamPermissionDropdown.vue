@@ -1,14 +1,14 @@
 <template>
-  <Dropdown align="left" width="full" :close-on-select="true" @open="fetchPermissions">
+  <Dropdown align="left" width="lg" :close-on-select="true" @open="fetchPermissions">
     <template #trigger="{ isOpen }">
       <button
         type="button"
         class="border-primary-lighter-stroke hover:bg-primary-lightest flex w-full min-w-48 items-center justify-between rounded-sm border bg-white px-3 py-2 text-sm transition-colors"
         :class="{
           'ring-primary ring-2': isOpen,
-          'cursor-not-allowed opacity-50': !canManage,
+          'cursor-not-allowed opacity-50': !canManage || isAdminProtected,
         }"
-        :disabled="!canManage"
+        :disabled="!canManage || isAdminProtected"
       >
         <!-- Loading state -->
         <span v-if="isLoadingPermissions" class="text-neutral-black-font flex items-center gap-2">
@@ -18,7 +18,7 @@
         <!-- Permission loaded -->
         <span v-else-if="selectedTier" class="flex items-center gap-2">
           <Icon :icon="getPermissionIcon(selectedTier)" class="text-sm" />
-          {{ permissionOptions.find((p) => p.value === selectedTier)?.label }}
+          {{ tierLabel(selectedTier) }}
         </span>
         <!-- Not loaded yet -->
         <span v-else class="text-neutral-black-font">
@@ -70,10 +70,11 @@
  */
 import Dropdown from '@/components/ui/Dropdown.vue'
 import { memberPermissionsQuery } from '@/queries/team'
+import { useAuthStore } from '@/stores/auth'
 import type { PermissionTier } from '@/types/team'
 import { Icon } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
-import { computed, ref, type ComputedRef } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -87,10 +88,13 @@ const emit = defineEmits<{
   'update-permissions': [tier: PermissionTier]
 }>()
 
-// Track if permissions have been fetched
-const permissionsFetched = ref(false)
+const authStore = useAuthStore()
+const canAssignAdmin = computed(() => authStore.hasPermission('admin.organizations'))
 
-// Query for permissions (lazy-loaded when dropdown opens)
+// Eagerly fetch for non-admins so we can disable the dropdown for admin members immediately
+const permissionsFetched = ref(!canAssignAdmin.value)
+
+// Query for permissions (eager for non-admins, lazy-loaded on open for admins)
 const {
   data: permissionsData,
   isLoading: isLoadingPermissions,
@@ -102,6 +106,14 @@ const {
 
 // Computed property that reflects the member's permission tier
 const selectedTier = computed(() => permissionsData.value?.permission_tier)
+
+// Non-admins cannot modify admin members (prevent demotion)
+// Also disabled while loading for non-admins to avoid brief enabled flash
+const isAdminProtected = computed(() => {
+  if (canAssignAdmin.value) return false
+  if (isLoadingPermissions.value && !selectedTier.value) return false
+  return selectedTier.value === 'admin'
+})
 
 // Fetch permissions when dropdown opens
 const fetchPermissions = () => {
@@ -121,6 +133,7 @@ const selectPermission = (tier: PermissionTier, closeDropdown: () => void) => {
 // Get icon for each permission tier
 const getPermissionIcon = (tier: PermissionTier): string => {
   const icons: Record<PermissionTier, string> = {
+    no_access: 'fa-ban',
     reader: 'fa-eye',
     writer: 'fa-pen',
     manager: 'fa-user-shield',
@@ -129,29 +142,51 @@ const getPermissionIcon = (tier: PermissionTier): string => {
   return icons[tier]
 }
 
-// Permission options
-const permissionOptions: ComputedRef<
-  { value: PermissionTier; label: string; description: string }[]
-> = computed(() => [
-  {
-    value: 'reader',
-    label: t('settings.team.permissions.reader'),
-    description: t('settings.team.permissions.readerDesc'),
-  },
-  {
-    value: 'writer',
-    label: t('settings.team.permissions.writer'),
-    description: t('settings.team.permissions.writerDesc'),
-  },
-  {
-    value: 'manager',
-    label: t('settings.team.permissions.manager'),
-    description: t('settings.team.permissions.managerDesc'),
-  },
-  {
-    value: 'admin',
-    label: t('settings.team.permissions.admin'),
-    description: t('settings.team.permissions.adminDesc'),
-  },
-])
+// Label lookup for trigger display (always includes all tiers)
+const tierLabel = (tier: PermissionTier): string => {
+  const labels: Record<PermissionTier, string> = {
+    no_access: t('settings.team.permissions.noAccess'),
+    reader: t('settings.team.permissions.reader'),
+    writer: t('settings.team.permissions.writer'),
+    manager: t('settings.team.permissions.manager'),
+    admin: t('settings.team.permissions.admin'),
+  }
+  return labels[tier]
+}
+
+// Permission options — only admins can assign/revoke the admin tier
+const permissionOptions = computed(() => {
+  const options: { value: PermissionTier; label: string; description: string }[] = [
+    {
+      value: 'no_access',
+      label: t('settings.team.permissions.noAccess'),
+      description: t('settings.team.permissions.noAccessDesc'),
+    },
+    {
+      value: 'reader',
+      label: t('settings.team.permissions.reader'),
+      description: t('settings.team.permissions.readerDesc'),
+    },
+    {
+      value: 'writer',
+      label: t('settings.team.permissions.writer'),
+      description: t('settings.team.permissions.writerDesc'),
+    },
+    {
+      value: 'manager',
+      label: t('settings.team.permissions.manager'),
+      description: t('settings.team.permissions.managerDesc'),
+    },
+  ]
+
+  if (canAssignAdmin.value) {
+    options.push({
+      value: 'admin',
+      label: t('settings.team.permissions.admin'),
+      description: t('settings.team.permissions.adminDesc'),
+    })
+  }
+
+  return options
+})
 </script>
