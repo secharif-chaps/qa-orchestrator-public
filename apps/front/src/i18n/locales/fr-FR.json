@@ -2311,6 +2311,12 @@
         "description": "Enrichissez les profils d'entreprises avec les données officielles du registre français via Pappers.",
         "name": "Pappers"
       },
+      "toggle": {
+        "disabled": "désactivée",
+        "enabled": "activée",
+        "error": "Échec de la modification de la fonctionnalité",
+        "success": "Fonctionnalité {flag} {action} avec succès"
+      },
       "translation": {
         "description": "Traduit automatiquement les données des entreprises dans la langue de votre choix.",
         "name": "Traduction"

@@ -7,6 +7,8 @@ import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { toggleFeatureFlag } from '@/api/feature-flags'
 import { FEATURE_FLAGS_QUERY_KEYS } from '@/queries/feature-flags'
 import type { FeatureFlagName } from '@/types/feature-flags'
+import { toast } from '@/utils/toast'
+import { useI18n } from 'vue-i18n'
 
 /**
  * Mutation to toggle a feature flag for an organization.
@@ -14,6 +16,7 @@ import type { FeatureFlagName } from '@/types/feature-flags'
  */
 export const useToggleFeatureFlag = defineMutation(() => {
   const queryCache = useQueryCache()
+  const { t } = useI18n()
   const organizationId = ref<string>('')
   const flag = ref<FeatureFlagName>('translation')
   const enabled = ref<boolean>(false)
@@ -25,11 +28,20 @@ export const useToggleFeatureFlag = defineMutation(() => {
         enabled: enabled.value,
         config: config.value,
       }),
-    onSettled: () => {
-      // Invalidate the feature flags query to refetch
+    onSuccess: () => {
+      const action = enabled.value
+        ? t('settings.featureFlags.toggle.enabled')
+        : t('settings.featureFlags.toggle.disabled')
+      toast.success(t('settings.featureFlags.toggle.success', { flag: flag.value, action }))
+
       queryCache.invalidateQueries({
         key: FEATURE_FLAGS_QUERY_KEYS.byOrganization(organizationId.value),
       })
+    },
+    onError: (error: unknown) => {
+      const errorMessage =
+        error instanceof Error ? error.message : t('settings.featureFlags.toggle.error')
+      toast.error(errorMessage)
     },
   })
 

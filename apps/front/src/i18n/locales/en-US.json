@@ -2311,6 +2311,12 @@
         "description": "Enrich company profiles with official French registry data from Pappers.",
         "name": "Pappers"
       },
+      "toggle": {
+        "disabled": "disabled",
+        "enabled": "enabled",
+        "error": "Failed to toggle feature flag",
+        "success": "{flag} feature {action} successfully"
+      },
       "translation": {
         "description": "Automatically translate company data into your preferred language.",
         "name": "Translation"
