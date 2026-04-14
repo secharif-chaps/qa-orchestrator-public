@@ -42,10 +42,14 @@ infra:validate-staging:
   tags:
     - staging
   needs:
-    - front:publish
-    - screen:publish
-    - stream:publish
-    - global-service:publish
+    - job: front:publish
+      optional: true
+    - job: screen:publish
+      optional: true
+    - job: stream:publish
+      optional: true
+    - job: global-service:publish
+      optional: true
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
   after_script:
@@ -173,7 +177,13 @@ staging-deploy:
     url: $DYNAMIC_ENVIRONMENT_URL
     on_stop: staging-stop
   rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule" || $AGENT_ISSUE
+    - if: $AGENT_ISSUE
+      when: never
+    # Scheduled deploy: main staging every 4h during business hours
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $JOB_TYPE == "staging-deploy"
+      when: on_success
+    # Block all other scheduled pipelines
+    - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
     - if: >-
         $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -185,8 +195,6 @@ staging-deploy:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: manual
       allow_failure: true
-    # Main branch: permanent environment
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 # ─── Stop environment (triggered on MR close) ─────
 staging-stop:
@@ -222,6 +230,9 @@ staging-stop:
       allow_failure: true
     # Main env is permanent but stop must be available for GitLab to link on_stop
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: true
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $JOB_TYPE == "staging-deploy"
       when: manual
       allow_failure: true
 
