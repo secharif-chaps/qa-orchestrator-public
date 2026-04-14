@@ -122,13 +122,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/admin/users': RouteRecordInfo<
-      '/admin/users',
-      '/admin/users',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/admin/users.import': RouteRecordInfo<
       '/admin/users.import',
       '/admin/users/import',
@@ -567,12 +560,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/admin/usage.vue': {
       routes:
         | '/admin/usage'
-      views:
-        | never
-    }
-    'src/pages/admin/users.vue': {
-      routes:
-        | '/admin/users'
       views:
         | never
     }

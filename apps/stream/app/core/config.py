@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     # Database settings
     DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/stream_db"
 
+    # Frontend base URL for building links in notifications
+    APP_BASE_URL: str = "http://localhost"
+
     # Internal JWT for gateway communication
     INTERNAL_JWT_SECRET: str = ""
     INTERNAL_JWT_EXPIRY_SECONDS: int = 60

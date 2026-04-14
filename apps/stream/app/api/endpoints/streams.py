@@ -1,4 +1,4 @@
-"""Stream CRUD endpoints — all require Internal JWT auth."""
+"""Stream CRUD + dispatch endpoints — all require Internal JWT auth."""
 
 from typing import NoReturn
 
@@ -10,15 +10,19 @@ from app.core.auth import (
     get_current_user,
     get_user_organization,
 )
-from app.core.dependencies import get_stream_service
+from app.core.dependencies import get_dispatch_service, get_stream_service
 from app.schemas.delivery import DeliveryRead
 from app.schemas.pagination import PaginatedResponse, create_pagination_meta
 from app.schemas.stream import (
+    DispatchResponse,
     StreamCreate,
     StreamRead,
     StreamStatusUpdate,
     StreamUpdate,
+    TestConnectionRequest,
+    TestConnectionResponse,
 )
+from app.services.dispatch_service import DispatchService
 from app.services.stream_service import StreamService, StreamServiceError
 
 router = APIRouter(tags=["Streams"])
@@ -200,3 +204,53 @@ def list_deliveries(
         )
     except StreamServiceError as e:
         _handle_service_error(e)
+
+
+# --- Dispatch endpoints ---
+
+
+@router.post(
+    "/streams/{stream_id}/dispatch",
+    response_model=DispatchResponse,
+)
+async def dispatch_stream(
+    stream_id: int,
+    org: OrganizationContext = Depends(get_user_organization),
+    user: InternalTokenPayload = Depends(get_current_user(required_roles=["stream.write"])),
+    dispatch_svc: DispatchService = Depends(get_dispatch_service),
+    stream_svc: StreamService = Depends(get_stream_service),
+):
+    """Manually dispatch all pending deliveries for a stream.
+
+    Requires stream.write role for access.
+    """
+    try:
+        stream_svc.get_stream(stream_id, org.org_id)
+    except StreamServiceError as e:
+        _handle_service_error(e)
+
+    dispatched, failed = await dispatch_svc.dispatch_pending_for_stream(
+        stream_id=stream_id,
+        org_id=org.org_id,
+    )
+    return DispatchResponse(dispatched_count=dispatched, failed_count=failed)
+
+
+@router.post(
+    "/test-connection",
+    response_model=TestConnectionResponse,
+)
+async def test_connection(
+    data: TestConnectionRequest,
+    _user: InternalTokenPayload = Depends(get_current_user(required_roles=["stream.write"])),
+    dispatch_svc: DispatchService = Depends(get_dispatch_service),
+):
+    """Test a channel connection by sending a test message.
+
+    Requires stream.write role for access.
+    """
+    result = await dispatch_svc.test_connection(
+        channel_type=data.channel_type,
+        channel_config=data.channel_config,
+    )
+    return TestConnectionResponse(success=result.success, error=result.error)

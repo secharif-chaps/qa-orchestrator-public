@@ -15,7 +15,7 @@ class TestStreamCreate:
         schema = StreamCreate(
             name="My Stream",
             channel_type=ChannelType.TEAMS,
-            channel_config={"webhook_url": "https://example.com/webhook"},
+            channel_config={"workflow_url": "https://example.com/webhook"},
             mode=StreamMode.LIVE,
         )
         assert schema.name == "My Stream"
@@ -255,6 +255,12 @@ class TestStreamStatusUpdate:
         assert schema.status == StreamStatus.PAUSED
 
 
+class TestStreamStatusUpdate:
+    def test_status_update(self):
+        schema = StreamStatusUpdate(status=StreamStatus.PAUSED)
+        assert schema.status == StreamStatus.PAUSED
+
+
 class TestStreamRead:
     def test_from_attributes(self):
         """Test StreamRead can be constructed from ORM-like attributes."""
@@ -265,7 +271,7 @@ class TestStreamRead:
             description = None
             folder_id = "folder-abc"
             channel_type = ChannelType.TEAMS
-            channel_config = {"webhook_url": "https://example.com"}
+            channel_config = {"workflow_url": "https://example.com"}
             mode = StreamMode.LIVE
             cron_expression = None
             status = StreamStatus.ACTIVE

@@ -80,6 +80,7 @@ class ReferenceType(StrEnum):
     company = "company"
     csv_import = "csv_import"
     refresh = "refresh"
+    dispatch = "dispatch"
     manual = "manual"
     system = "system"
 
