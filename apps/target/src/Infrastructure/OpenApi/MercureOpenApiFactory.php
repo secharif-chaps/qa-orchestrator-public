@@ -32,7 +32,6 @@ final readonly class MercureOpenApiFactory implements OpenApiFactoryInterface
      */
     private const array PATHS_WITH_LINK_HEADER = [
         '/api/watch_files/{watchFileId}' => '/users/{userId}/watch-files/{watchFileId}',
-        '/api/conversations/{id}' => '/users/{userId}/conversations/{conversationId}',
         '/api/watch_files/{watchFileId}/conversations/last' => '/users/{userId}/conversations/{conversationId}',
         '/api/conversations/{id}/messages' => '/users/{userId}/conversations/{conversationId}/messages',
     ];

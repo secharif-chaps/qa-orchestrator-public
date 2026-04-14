@@ -78,40 +78,6 @@ class MercureDiscoverySubscriberTest extends TestCase
         ], $linksHeader);
     }
 
-    public function testAddsLinkHeadersForGetConversationRequest(): void
-    {
-        $topicGeneratorMock = $this->createMock(RealTimeTopicGeneratorInterface::class);
-        $this->topicGenerator = $topicGeneratorMock;
-        $this->buildSubscriber();
-        $userId = '550e8400-e29b-41d4-a716-446655440000';
-        $conversationId = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
-        $expectedTopic = "/users/{$userId}/conversations/{$conversationId}";
-
-        $user = $this->createStub(User::class);
-        $this->security
-            ->method('getUser')
-            ->willReturn($user);
-
-        $topicGeneratorMock
-            ->expects($this->once())
-            ->method('forConversationById')
-            ->with($user, $conversationId)
-            ->willReturn($expectedTopic);
-
-        $request = Request::create("/api/conversations/{$conversationId}", 'GET');
-        $response = new Response();
-        $event = $this->createResponseEvent($request, $response);
-
-        $this->subscriber->onKernelResponse($event);
-
-        $linksHeader = $response->headers->all('Link');
-        $this->assertCount(2, $linksHeader);
-        $this->assertSame([
-            '<https://basil.local/.well-known/mercure>; rel="mercure"',
-            "<{$expectedTopic}>; rel=\"topic\"",
-        ], $linksHeader);
-    }
-
     public function testAddsLinkHeadersForGetConversationMessagesRequest(): void
     {
         $topicGeneratorMock = $this->createMock(RealTimeTopicGeneratorInterface::class);
@@ -219,6 +185,7 @@ class MercureDiscoverySubscriberTest extends TestCase
             'watch_file sub-resource actors' => ['/api/watch_files/7c9e6679-7425-40de-944b-e07fc1f90ae7/actors'],
             'watch_file sub-resource sources' => ['/api/watch_files/7c9e6679-7425-40de-944b-e07fc1f90ae7/sources'],
             'conversations collection' => ['/api/conversations'],
+            'single conversation' => ['/api/conversations/a1b2c3d4-e5f6-7890-abcd-ef1234567890'],
             'conversation sub-resource other' => ['/api/conversations/a1b2c3d4-e5f6-7890-abcd-ef1234567890/other'],
             'users endpoint' => ['/api/users'],
             'random endpoint' => ['/api/something/else'],

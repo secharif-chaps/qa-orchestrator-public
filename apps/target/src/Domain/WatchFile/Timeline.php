@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\WatchFile;
 
-use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Timeline resource representing the chronological events of a WatchFile.
  * This is a virtual resource that doesn't correspond to a database entity.
  */
-#[ApiResource(mercure: false)]
 class Timeline
 {
     /**

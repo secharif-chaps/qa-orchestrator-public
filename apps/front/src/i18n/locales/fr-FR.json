@@ -991,7 +991,8 @@
     "modules": {
       "explore": "Cartographie",
       "screen": "Fiche entreprise",
-      "target": "Veille"
+      "target": "Veille",
+      "unknown": "Module inconnu"
     },
     "na": "N/D",
     "new": "Nouveau",
@@ -2245,7 +2246,22 @@
       "module": {
         "canCreate": "Vous pouvez encore créer",
         "costPerItem": "1 {item} = {cost} crédits",
-        "disabled": "Module désactivé"
+        "disabled": "Module désactivé",
+        "explore": {
+          "item": "graphe",
+          "itemPlural": "graphes",
+          "label": "Explore"
+        },
+        "screen": {
+          "item": "entreprise",
+          "itemPlural": "entreprises",
+          "label": "Screen"
+        },
+        "target": {
+          "item": "dossier de veille",
+          "itemPlural": "dossiers de veille",
+          "label": "Target"
+        }
       },
       "modules": {
         "all": "Tous",
@@ -2281,6 +2297,8 @@
       "description": "Capacités additionnelles qui enrichissent les modules principaux. Ces fonctionnalités sont désactivées par défaut.",
       "disabled": "Désactivé",
       "discover": {
+        "description": "Activez le tableau de bord Discover pour explorer des sources d'intelligence externe sélectionnées.",
+        "name": "Discover",
         "saveError": "Échec de l'enregistrement de l'URL",
         "urlError": "Veuillez entrer une URL HTTPS valide",
         "urlHint": "Entrez l'URL HTTPS du tableau de bord Discover.",
@@ -2288,7 +2306,19 @@
         "urlPlaceholder": "https://discover.example.com"
       },
       "enabled": "Activé",
-      "globalFeatures": "Fonctionnalités globales"
+      "globalFeatures": "Fonctionnalités globales",
+      "pappers": {
+        "description": "Enrichissez les profils d'entreprises avec les données officielles du registre français via Pappers.",
+        "name": "Pappers"
+      },
+      "translation": {
+        "description": "Traduit automatiquement les données des entreprises dans la langue de votre choix.",
+        "name": "Traduction"
+      },
+      "worldcheck": {
+        "description": "Cribler les entreprises et les personnes dans les bases de données de risques World-Check.",
+        "name": "World-Check"
+      }
     },
     "help": {
       "categories": {
