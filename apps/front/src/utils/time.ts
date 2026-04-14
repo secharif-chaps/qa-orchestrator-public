@@ -1,55 +1,39 @@
-import i18n from '@/i18n'
+import i18n, { getLocale } from '@/i18n'
 
 /**
- * Format a timestamp as a relative time string
+ * Format a timestamp as a locale-aware relative time string using Intl.RelativeTimeFormat.
+ * Reads the current locale from the i18n singleton.
+ *
+ * Prefer the `useRelativeTime` composable inside Vue components for reactive locale support.
+ *
  * @param timestamp - ISO 8601 timestamp string or Date object
- * @param locale - Language locale ('en' or 'fr')
- * @returns Human-readable relative time string (e.g., "3 days ago", "just now")
+ * @returns Human-readable relative time string (e.g., "3 hours ago", "il y a 3 heures")
  */
-export function formatRelativeTime(timestamp: string | Date, locale: 'en' | 'fr' = 'fr'): string {
+export function formatRelativeTime(timestamp: string | Date): string {
+  const localeCode = getLocale()
+  const rtf = new Intl.RelativeTimeFormat(localeCode, { numeric: 'auto' })
+
   const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp
   const now = new Date()
   const diffMs = now.getTime() - date.getTime()
-
-  // Convert to different time units
   const diffSeconds = Math.floor(diffMs / 1000)
+
+  if (diffSeconds < 60) return rtf.format(0, 'second')
+
   const diffMinutes = Math.floor(diffSeconds / 60)
+  if (diffMinutes < 60) return rtf.format(-diffMinutes, 'minute')
+
   const diffHours = Math.floor(diffMinutes / 60)
+  if (diffHours < 24) return rtf.format(-diffHours, 'hour')
+
   const diffDays = Math.floor(diffHours / 24)
+  if (diffDays < 7) return rtf.format(-diffDays, 'day')
+
   const diffWeeks = Math.floor(diffDays / 7)
+  if (diffWeeks < 4) return rtf.format(-diffWeeks, 'week')
+
   const diffMonths = Math.floor(diffDays / 30)
-
-  // French translations
-  if (locale === 'fr') {
-    if (diffSeconds < 60) {
-      return "à l'instant"
-    } else if (diffMinutes < 60) {
-      return `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''}`
-    } else if (diffHours < 24) {
-      return `${diffHours} heure${diffHours > 1 ? 's' : ''}`
-    } else if (diffDays < 7) {
-      return `${diffDays} jour${diffDays > 1 ? 's' : ''}`
-    } else if (diffWeeks < 4) {
-      return `${diffWeeks} semaine${diffWeeks > 1 ? 's' : ''}`
-    } else {
-      return `${diffMonths} mois`
-    }
-  }
-
-  // English (default)
-  if (diffSeconds < 60) {
-    return 'just now'
-  } else if (diffMinutes < 60) {
-    return `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`
-  } else if (diffHours < 24) {
-    return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
-  } else if (diffDays < 7) {
-    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`
-  } else if (diffWeeks < 4) {
-    return `${diffWeeks} week${diffWeeks > 1 ? 's' : ''} ago`
-  } else {
-    return `${diffMonths} month${diffMonths > 1 ? 's' : ''} ago`
-  }
+  return rtf.format(-diffMonths, 'month')
 }
 
 /**
@@ -59,7 +43,7 @@ export function formatRelativeTime(timestamp: string | Date, locale: 'en' | 'fr'
  */
 export function formatDateTime(dateString: string): string {
   if (!dateString) return i18n.global.t('common.na')
-  const localeCode = i18n.global.locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+  const localeCode = getLocale()
 
   return new Date(dateString).toLocaleDateString(localeCode, {
     year: 'numeric',
@@ -77,7 +61,7 @@ export function formatDateTime(dateString: string): string {
  */
 export function formatDate(dateString: string): string {
   if (!dateString) return i18n.global.t('common.na')
-  const localeCode = i18n.global.locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+  const localeCode = getLocale()
 
   return new Date(dateString).toLocaleDateString(localeCode)
 }
@@ -89,7 +73,7 @@ export function formatDate(dateString: string): string {
  */
 export function formatFullDate(dateString: string): string {
   if (!dateString) return i18n.global.t('common.na')
-  const localeCode = i18n.global.locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+  const localeCode = getLocale()
 
   return new Date(dateString).toLocaleDateString(localeCode, {
     year: 'numeric',

@@ -1102,9 +1102,7 @@
     },
     "soon": "Bientôt",
     "time": {
-      "daysAgo": "il y a {count}j",
       "hoursAgo": "il y a {count}h",
-      "justNow": "à l'instant",
       "minutesAgo": "il y a {count} min"
     },
     "validation": {
@@ -1159,14 +1157,14 @@
         }
       },
       "recentActivities": {
-        "by": "par {username}",
+        "created": "a créé",
         "error": {
           "description": "Un problème est survenu lors du chargement des activités de l'organisation. Veuillez réessayer plus tard.",
           "title": "Impossible de charger les activités récentes"
         },
         "noTeamActivities": "Aucune activité de vos collègues pour le moment",
         "startCreating": "Commencez par créer votre première entreprise",
-        "title": "Activités de l'équipe"
+        "title": "Activité collaborative"
       },
       "recentProjects": {
         "badge": {

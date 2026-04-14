@@ -12,7 +12,7 @@
       >
         <Icon
           :icon="isWatchfile ? 'fa-file-lines' : 'fa-buildings'"
-          :lib="'far'"
+          lib="far"
           class="text-xs"
           :class="isWatchfile ? 'text-cherry-font' : 'text-indigo-font'"
         />
@@ -20,10 +20,10 @@
 
       <!-- Text content -->
       <div class="flex min-w-0 flex-1 flex-col items-start justify-center whitespace-nowrap">
-        <p class="text-primary-dark-font w-full truncate text-base leading-5 font-normal">
+        <p class="font-regular text-primary-dark-font w-full truncate text-base leading-5">
           {{ name }}
         </p>
-        <p class="text-primary-font truncate text-sm leading-4 font-normal">
+        <p class="font-regular text-primary-font truncate text-sm leading-4">
           {{ folderName }} • {{ timeAgo }}
         </p>
       </div>

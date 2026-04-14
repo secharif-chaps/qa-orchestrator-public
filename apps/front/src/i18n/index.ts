@@ -15,22 +15,24 @@ const messageCompiler: MessageCompiler = (message, { locale }: MessageCompilerCo
   return () => String(message)
 }
 
+const DEFAULT_LOCALE = 'en-US'
+
 const i18n = createI18n({
   legacy: false,
   globalInjection: true,
-  locale: 'en-US',
+  locale: DEFAULT_LOCALE,
   fallbackLocale: {
-    'fr-CA': ['fr-FR', 'en-US'],
-    default: ['en-US'],
+    'fr-CA': ['fr-FR', DEFAULT_LOCALE],
+    default: [DEFAULT_LOCALE],
   },
   missingWarn: import.meta.env.DEV,
   fallbackWarn: import.meta.env.DEV,
-  messages: { 'en-US': enUS },
+  messages: { [DEFAULT_LOCALE]: enUS },
   datetimeFormats,
   messageCompiler,
 })
 
-const loadedLanguages = new Set<string>(['en-US'])
+const loadedLanguages = new Set<string>([DEFAULT_LOCALE])
 const pendingLoads = new Map<string, Promise<void>>()
 
 /**
@@ -60,5 +62,11 @@ export const loadLocaleMessages = async (locale: string): Promise<void> => {
   pendingLoads.set(locale, promise)
   return promise
 }
+
+/**
+ * Get the current locale code suitable for Intl APIs.
+ * Centralizes locale resolution so callers don't duplicate the ternary.
+ */
+export const getLocale = (): string => i18n.global.locale.value || DEFAULT_LOCALE
 
 export default i18n

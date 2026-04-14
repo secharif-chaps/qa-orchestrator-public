@@ -451,6 +451,9 @@
   --color-accent-stroke: var(--color-pink-900);
   --color-accent-muted-stroke: var(--color-pink-800);
 
+  /* Contextual */
+  --color-contextual-edge: var(--color-grey-100);
+
   /* Neutral */
   --color-neutral: var(--color-grey-100);
   --color-neutral-disabled: var(--color-grey-200);

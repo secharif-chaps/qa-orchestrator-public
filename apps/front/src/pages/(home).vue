@@ -51,6 +51,7 @@ import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
 import RecentActivitiesList from '@/components/home/RecentActivitiesList.vue'
 import RecentProjectsList from '@/components/home/RecentProjectsList.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { useRelativeTime } from '@/composables/useRelativeTime'
 import { recentCompaniesQuery } from '@/queries/companies'
 import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
 import { currentOrganizationQuery, organizationActivitiesQuery } from '@/queries/organization'
@@ -68,6 +69,7 @@ const user = authStore.user
 const { t } = useI18n()
 const router = useRouter()
 const { canCreateCompany, canViewCompany } = useCompanyPermissions()
+const { formatRelativeTime } = useRelativeTime()
 
 const RECENT_PROJECTS_LIMIT = 6
 
@@ -222,33 +224,12 @@ const recentProjects = computed(() => {
   return recentCompaniesData.value
     .filter((company) => company.id !== undefined)
     .map((company) => {
-      // Calculate time ago
-      const createdDate = new Date(company.created_at)
-      const now = new Date()
-      const diffMs = now.getTime() - createdDate.getTime()
-      const diffMinutes = Math.floor(diffMs / (1000 * 60))
-      const diffHours = Math.floor(diffMinutes / 60)
-      const diffDays = Math.floor(diffHours / 24)
-
-      let timeAgo = ''
-      if (diffDays > 0) {
-        timeAgo = t('common.time.daysAgo', { count: diffDays })
-      } else if (diffHours > 0) {
-        timeAgo = t('common.time.hoursAgo', { count: diffHours })
-      } else if (diffMinutes > 0) {
-        timeAgo = t('common.time.minutesAgo', { count: diffMinutes })
-      } else {
-        timeAgo = t('common.time.justNow')
-      }
-
       return {
         id: company.id as number,
         name: company.name,
         folderName: company.folder_name || t('dashboard.home.recentProjects.noFolder'),
         folderId: company.folder_id,
-        timeAgo,
-        // A project is "shared" if the current user is not the folder owner
-        // and has an explicit share role (reader/writer)
+        timeAgo: formatRelativeTime(company.created_at),
         isShared:
           company.folder_is_owner != null
             ? company.folder_is_owner === false && company.folder_share_role != null

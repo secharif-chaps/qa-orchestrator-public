@@ -34,11 +34,7 @@
       <td class="px-4 py-3">
         <div class="flex items-center gap-3">
           <!-- Avatar -->
-          <div
-            class="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium"
-          >
-            {{ item.initials }}
-          </div>
+          <AvatarInitials :initials="item.initials" size="sm" variant="primary-light" />
 
           <!-- Name and email -->
           <div>
@@ -76,6 +72,7 @@
 /**
  * Table displaying top credit-consuming users using Vuellar Table component.
  */
+import AvatarInitials from '@/components/ui/AvatarInitials.vue'
 import type { TopCreditUser } from '@/types/credits'
 import { Table } from '@owlint/feathers-vue'
 import { computed } from 'vue'

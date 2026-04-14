@@ -1,12 +1,14 @@
 <template>
-  <Card>
-    <h3 class="mb-4 font-semibold text-gray-900 dark:text-white">
+  <div
+    class="shadow-shadow-2 border-contextual-edge bg-neutral-white flex flex-1 flex-col gap-4 self-stretch rounded-[20px] border p-6"
+  >
+    <h3 class="leading-lg text-neutral-black-font text-lg font-bold dark:text-white">
       {{ $t('dashboard.home.recentActivities.title') }}
     </h3>
 
     <!-- Loading State -->
     <div v-if="isLoading" class="flex items-center justify-center py-8">
-      <i class="fa fa-spinner fa-spin text-sage-500 text-2xl"></i>
+      <Icon icon="fa-spinner" class="fa-spin text-primary text-2xl" />
     </div>
 
     <!-- Error State -->
@@ -20,13 +22,16 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="activities.length === 0" class="py-8 text-center">
+    <div
+      v-else-if="activities.length === 0"
+      class="flex flex-col items-center gap-4 py-8 text-center"
+    >
       <div
-        class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800"
+        class="bg-base-200 dark:bg-base-300 flex h-16 w-16 items-center justify-center rounded-full"
       >
-        <Icon icon="fa-clock-rotate-left" class="text-2xl text-gray-400" />
+        <Icon icon="fa-clock-rotate-left" class="text-primary-font text-2xl" />
       </div>
-      <p class="text-sm text-gray-500 dark:text-gray-400">
+      <p class="text-primary-font text-sm">
         {{
           hasUserProjects
             ? $t('dashboard.home.recentActivities.noTeamActivities')
@@ -36,15 +41,14 @@
     </div>
 
     <!-- Recent Activities -->
-    <div v-else class="space-y-3">
+    <div v-else class="flex flex-col gap-2">
       <RecentActivityItem v-for="activity in activities" :key="activity.id" :activity="activity" />
     </div>
-  </Card>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { Alert, Icon } from '@owlint/feathers-vue'
-import Card from '@/components/ui/Card.vue'
 import RecentActivityItem from './RecentActivityItem.vue'
 import type { Activity } from '@/types/organization'
 

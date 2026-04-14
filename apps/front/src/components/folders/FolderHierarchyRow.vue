@@ -70,12 +70,11 @@
 
         <!-- Owner Column (Global View Only) -->
         <div v-if="globalView" class="col-span-2 flex items-center gap-2">
-          <div
-            class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium"
-            :class="folder.is_owner ? 'bg-primary text-white' : 'bg-secondary text-white'"
-          >
-            {{ ownerInitials }}
-          </div>
+          <AvatarInitials
+            :name="folder.owner_username || folder.owner"
+            size="xs"
+            :variant="folder.is_owner ? 'primary' : 'secondary'"
+          />
           <span class="text-neutral-black-font text-sm">
             {{ folder.is_owner ? $t('common.folder.owner.you') : folder.owner_username }}
           </span>
@@ -204,6 +203,7 @@
 </template>
 
 <script setup lang="ts">
+import AvatarInitials from '@/components/ui/AvatarInitials.vue'
 import UiTag from '@/components/ui/Tag.vue'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import type { Folder } from '@/types/folder'
@@ -303,13 +303,6 @@ const folderColorClasses = computed(() => {
 // Compute folder icon
 const folderIcon = computed(() => {
   return props.folder?.icon || 'fas fa-folder'
-})
-
-// Compute owner initials for global view
-const ownerInitials = computed(() => {
-  if (!props.globalView) return ''
-  const username = props.folder.owner_username || props.folder.owner || ''
-  return username.substring(0, 2).toUpperCase()
 })
 
 // Check if folder has shares (for privacy tags in global view)

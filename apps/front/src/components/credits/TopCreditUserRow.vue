@@ -33,11 +33,7 @@
     <td class="px-4 py-3">
       <div class="flex items-center gap-3">
         <!-- Avatar -->
-        <div
-          class="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium"
-        >
-          {{ user.initials }}
-        </div>
+        <AvatarInitials :initials="user.initials" size="sm" variant="primary-light" />
 
         <!-- Name and email -->
         <div>
@@ -63,6 +59,7 @@
  * Single user row in the top credit users table.
  * Displays rank, avatar, name, email, and credits consumed.
  */
+import AvatarInitials from '@/components/ui/AvatarInitials.vue'
 import type { TopCreditUser } from '@/types/credits'
 import { computed } from 'vue'
 

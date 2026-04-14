@@ -266,6 +266,7 @@ import type { FolderItem } from '@/types/folder'
 import { Alert, Button, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, onMounted, ref, watch } from 'vue'
+import { getLocale } from '@/i18n'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -274,7 +275,7 @@ const VIEW_MODE_STORAGE_KEY = 'folder-view-mode'
 
 const route = useRoute('/folders/[folderId]')
 const router = useRouter()
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const { canDeleteCompany } = useCompanyPermissions()
 
 const showDeleteModal = ref(false)
@@ -342,7 +343,7 @@ const getLogoUrl = (website?: string) => {
 // Methods
 const formatDate = (dateString: string) => {
   if (!dateString) return t('common.na')
-  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+  const localeCode = getLocale()
   return new Date(dateString).toLocaleDateString(localeCode)
 }
 
