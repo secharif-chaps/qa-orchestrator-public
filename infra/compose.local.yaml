@@ -6,12 +6,30 @@ x-target-app-volume: &target-app-volume
 
 x-target-env: &target-env
   DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${TARGET_DB:-target_db}?serverVersion=17&charset=utf8
-  MESSENGER_TRANSPORT_DSN: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/%2f/messages
+  MESSENGER_TRANSPORT_DSN: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@target-rabbitmq:5672/%2f/messages
   VALKEY_DSN: redis://target-valkey:6379
   OPENSEARCH_URL: http://target-opensearch:9200
   APP_ENV: dev
   APP_SECRET: ${TARGET_APP_SECRET:-local-dev-target-app-secret-32chars}
   XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+  # ─── Bakus Collection Configuration ────────────
+  COLLECT_DEFAULT_PROVIDER: bakus
+  COLLECT_TASK_JWT_SECRET: ${COLLECT_TASK_JWT_SECRET:-local-dev-collect-task-jwt-secret-32chars}
+  BAKUS_CLIENT_ID: ${BAKUS_CLIENT_ID:-}
+  BAKUS_CLIENT_SECRET: ${BAKUS_CLIENT_SECRET:-}
+  BAKUS_USERNAME: ${BAKUS_USERNAME:-}
+  BAKUS_PASSWORD: ${BAKUS_PASSWORD:-}
+  BAKUS_AUTH_URL: ${BAKUS_AUTH_URL:-}
+  BAKUS_API_URL: ${BAKUS_API_URL:-}
+  BAKUS_WEBSOCKET_URL: ${BAKUS_WEBSOCKET_URL:-}
+  BAKUS_CALLBACK_TYPE: ${BAKUS_CALLBACK_TYPE:-websocket_pull}
+  BAKUS_CALLBACK_URL: ${BAKUS_CALLBACK_URL:-http://localhost:5000/callback}
+  BAKUS_CALLBACK_VERIFY_SSL: ${BAKUS_CALLBACK_VERIFY_SSL:-false}
+  BAKUS_CALLBACK_PROXY_TAGS: ${BAKUS_CALLBACK_PROXY_TAGS:-target-ws}
+  BAKUS_WEBSOCKET_SERVER_PORT: ${BAKUS_WEBSOCKET_SERVER_PORT:-5000}
+  BAKUS_WEBSOCKET_SERVER_SSL_ENABLED: ${BAKUS_WEBSOCKET_SERVER_SSL_ENABLED:-false}
+  BAKUS_WEBSOCKET_MAX_CONNECTIONS: ${BAKUS_WEBSOCKET_MAX_CONNECTIONS:-100}
+  BAKUS_WEBSOCKET_TIMEOUT: ${BAKUS_WEBSOCKET_TIMEOUT:-25}
 
 x-local-keycloak: &local-keycloak
   KEYCLOAK_SERVER_URL: http://keycloak:8080
@@ -148,8 +166,8 @@ services:
       retries: 10
       start_period: 180s
 
-  # RabbitMQ management UI exposed locally
-  rabbitmq:
+  # RabbitMQ — Target message broker (management UI exposed locally)
+  target-rabbitmq:
     profiles: [target]
     ports:
       - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
@@ -166,7 +184,7 @@ services:
     profiles: [target]
     depends_on:
       db: { condition: service_healthy }
-      rabbitmq: { condition: service_started }
+      target-rabbitmq: { condition: service_started }
       target-valkey: { condition: service_healthy }
       target-opensearch: { condition: service_healthy }
       keycloak: { condition: service_healthy }

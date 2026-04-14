@@ -213,13 +213,9 @@
       <div class="shadow-2 border-sage-100 rounded-2xl border bg-white p-6 sm:px-6">
         <Pagination
           v-model:current-page="currentPage"
-          v-model:items-per-pages="itemsPerPage"
-          :total="watchFilesTotalItems"
-        >
-          <template #result>
-            {{ $t('target.watchFiles.pagination.items_per_page') }}
-          </template>
-        </Pagination>
+          :meta="paginationMeta"
+          @updatePerPage="itemsPerPage = $event"
+        />
       </div>
     </div>
 
@@ -234,16 +230,9 @@
 <script setup lang="ts">
 import { useToast } from '@/target/composables/useToast'
 import { RouteNames } from '@/target/types/route-names'
-import {
-  Button,
-  Checkbox,
-  HeaderCell,
-  Icon,
-  ORadio,
-  Pagination,
-  Searchbar,
-  Table,
-} from '@owlint/feathers-vue'
+import { Button, Checkbox, HeaderCell, Icon, ORadio, Searchbar, Table } from '@owlint/feathers-vue'
+import Pagination from '@/components/ui/Pagination.vue'
+import type { PaginationMeta } from '@/types/pagination'
 import { useQuery } from '@pinia/colada'
 import { getCollectionWatchFileQuery } from '@target/api/queries/watchFile'
 import WatchFileArchiveButton from '@target/components/watchFiles/WatchFileArchiveButton.vue'
@@ -373,7 +362,17 @@ watch([storeSearchQuery, showFavorites, hideArchived, itemsPerPage], () => {
 })
 
 const watchFiles = computed(() => watchFilesCollection.value?.items ?? [])
-const watchFilesTotalItems = computed(() => watchFilesCollection.value?.totalItems ?? 0)
+
+const paginationMeta = computed<PaginationMeta | null>(() => {
+  if (!watchFilesCollection.value) return null
+  const total = watchFilesCollection.value.totalItems ?? 0
+  return {
+    total,
+    per_page: itemsPerPage.value,
+    current_page: currentPage.value,
+    last_page: Math.ceil(total / itemsPerPage.value) || 1,
+  }
+})
 
 function changeSort(fieldKey: string) {
   if (sortBy.value === fieldKey) {

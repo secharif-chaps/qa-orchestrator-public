@@ -29,7 +29,7 @@ x-n8n-db: &n8n-db
 
 x-target-env: &target-env
   DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${TARGET_DB:-target_db}
-  MESSENGER_TRANSPORT_DSN: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/%2f/messages
+  MESSENGER_TRANSPORT_DSN: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@target-rabbitmq:5672/%2f/messages
   VALKEY_DSN: redis://target-valkey:6379
   OPENSEARCH_URL: http://target-opensearch:9200
   APP_ENV: ${APP_ENV:-prod}
@@ -115,17 +115,17 @@ services:
       timeout: 5s
       retries: 5
 
-  # RabbitMQ — shared message broker
-  # Target queues: target_async_priority_high, target_async_priority_low,
-  #                target_agent_commands, target_agent_responses
-  rabbitmq:
+  # RabbitMQ — Target message broker
+  # Queues: target_async_priority_high, target_async_priority_low,
+  #         target_agent_commands, target_agent_responses
+  target-rabbitmq:
     image: rabbitmq:4-management-alpine
     restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - target_rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
       interval: 30s
@@ -141,7 +141,7 @@ services:
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }
-      rabbitmq: { condition: service_healthy }
+      target-rabbitmq: { condition: service_healthy }
       target-valkey: { condition: service_healthy }
       target-opensearch: { condition: service_healthy }
     environment:
@@ -159,7 +159,7 @@ services:
       replicas: ${TARGET_RUNNER_REPLICAS:-2}
     depends_on:
       db: { condition: service_healthy }
-      rabbitmq: { condition: service_healthy }
+      target-rabbitmq: { condition: service_healthy }
       target-valkey: { condition: service_healthy }
     environment:
       <<: *target-env
@@ -277,7 +277,7 @@ services:
       - ../apps/target/n8n/workflows:/data/workflows:ro
 volumes:
   postgres_data:
-  rabbitmq_data:
+  target_rabbitmq_data:
   target_opensearch_data:
   target_valkey_data:
   n8n_data:
