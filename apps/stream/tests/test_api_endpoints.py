@@ -1,8 +1,12 @@
 """API integration tests using FastAPI TestClient."""
 
+from unittest.mock import AsyncMock, patch
+
 from fastapi.testclient import TestClient
 
 from app.models.delivery import StreamDelivery
+
+from app.adapters.base import DispatchResult
 
 
 def _stream_payload(**overrides) -> dict:
@@ -402,4 +406,116 @@ class TestAuthPermissions:
 
         # Try delete with read-only
         response = test_client.delete(f"/api/streams/{stream_id}", headers=read_only_auth_header)
+        assert response.status_code == 403
+
+
+class TestTestConnectionEndpoint:
+    @patch("app.services.dispatch_service.get_adapter")
+    def test_test_connection_success(self, mock_get_adapter, test_client: TestClient, internal_auth_header: dict):
+        mock_adapter = AsyncMock()
+        mock_adapter.send = AsyncMock(return_value=DispatchResult(success=True, status_code=200))
+        mock_get_adapter.return_value = mock_adapter
+
+        response = test_client.post(
+            "/api/test-connection",
+            json={
+                "channel_type": "webhook",
+                "channel_config": {"url": "https://example.com/hook", "headers": {}, "secret": None},
+            },
+            headers=internal_auth_header,
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] is True
+        assert data["error"] is None
+
+    @patch("app.services.dispatch_service.get_adapter")
+    def test_test_connection_failure(self, mock_get_adapter, test_client: TestClient, internal_auth_header: dict):
+        mock_adapter = AsyncMock()
+        mock_adapter.send = AsyncMock(return_value=DispatchResult(success=False, error="Connection refused"))
+        mock_get_adapter.return_value = mock_adapter
+
+        response = test_client.post(
+            "/api/test-connection",
+            json={
+                "channel_type": "teams",
+                "channel_config": {"workflow_url": "https://teams.example.com/hook"},
+            },
+            headers=internal_auth_header,
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] is False
+        assert data["error"] == "Connection refused"
+
+    def test_test_connection_invalid_channel_type(self, test_client: TestClient, internal_auth_header: dict):
+        response = test_client.post(
+            "/api/test-connection",
+            json={
+                "channel_type": "invalid",
+                "channel_config": {},
+            },
+            headers=internal_auth_header,
+        )
+        assert response.status_code == 422
+
+    def test_test_connection_no_auth(self, test_client: TestClient):
+        response = test_client.post(
+            "/api/test-connection",
+            json={"channel_type": "webhook", "channel_config": {"url": "https://example.com"}},
+        )
+        assert response.status_code == 401
+
+    def test_test_connection_read_only_role(self, test_client: TestClient, read_only_auth_header: dict):
+        response = test_client.post(
+            "/api/test-connection",
+            json={"channel_type": "webhook", "channel_config": {"url": "https://example.com"}},
+            headers=read_only_auth_header,
+        )
+        assert response.status_code == 403
+
+
+class TestDispatchEndpoint:
+    @patch("app.services.dispatch_service.get_adapter")
+    def test_dispatch_stream_success(
+        self, mock_get_adapter, test_client: TestClient, internal_auth_header: dict
+    ):
+        # Create a stream first
+        create_resp = test_client.post(
+            "/api/folders/folder-abc/streams",
+            json=_stream_payload(),
+            headers=internal_auth_header,
+        )
+        stream_id = create_resp.json()["id"]
+
+        # Mock the adapter
+        mock_adapter = AsyncMock()
+        mock_adapter.send = AsyncMock(return_value=DispatchResult(success=True, status_code=200))
+        mock_get_adapter.return_value = mock_adapter
+
+        response = test_client.post(
+            f"/api/streams/{stream_id}/dispatch",
+            headers=internal_auth_header,
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "dispatched_count" in data
+        assert "failed_count" in data
+
+    def test_dispatch_stream_not_found(self, test_client: TestClient, internal_auth_header: dict):
+        response = test_client.post(
+            "/api/streams/999/dispatch",
+            headers=internal_auth_header,
+        )
+        assert response.status_code == 404
+
+    def test_dispatch_stream_no_auth(self, test_client: TestClient):
+        response = test_client.post("/api/streams/1/dispatch")
+        assert response.status_code == 401
+
+    def test_dispatch_stream_read_only_role(self, test_client: TestClient, read_only_auth_header: dict):
+        response = test_client.post(
+            "/api/streams/1/dispatch",
+            headers=read_only_auth_header,
+        )
         assert response.status_code == 403

@@ -5,11 +5,13 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, mod
 
 from app.models.stream import ChannelType, StreamMode, StreamStatus
 
+# --- Dispatch schemas ---
+
 # --- Channel config models (for API validation) ---
 
 
 class TeamsConfig(BaseModel):
-    webhook_url: HttpUrl = Field(..., description="Microsoft Teams incoming webhook URL")
+    workflow_url: HttpUrl = Field(..., description="Microsoft Teams Power Automate workflow URL")
 
 
 class SlackWebhookConfig(BaseModel):
@@ -18,6 +20,7 @@ class SlackWebhookConfig(BaseModel):
 
 class WebhookConfig(BaseModel):
     url: HttpUrl = Field(..., description="Target webhook URL")
+    method: str = Field("POST", description="HTTP method (POST or PUT)")
     headers: dict[str, str] = Field(default_factory=dict, description="Custom headers to include")
     secret: str | None = Field(None, description="Shared secret for HMAC signature verification")
 
@@ -100,3 +103,21 @@ class StreamRead(BaseModel):
     subscribed_events: list[str]
     created_at: datetime
     updated_at: datetime
+
+
+# --- Test connection / dispatch schemas ---
+
+
+class TestConnectionRequest(BaseModel):
+    channel_type: ChannelType
+    channel_config: dict[str, Any] = Field(..., description="Channel-specific configuration to test")
+
+
+class TestConnectionResponse(BaseModel):
+    success: bool
+    error: str | None = None
+
+
+class DispatchResponse(BaseModel):
+    dispatched_count: int
+    failed_count: int

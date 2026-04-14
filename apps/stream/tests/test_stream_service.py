@@ -44,7 +44,7 @@ class TestStreamServiceCreate:
     def test_create_teams_stream(self, stream_service: StreamService):
         data = _make_stream_create(
             channel_type=ChannelType.TEAMS,
-            channel_config={"webhook_url": "https://teams.example.com/hook"},
+            channel_config={"workflow_url": "https://teams.example.com/hook"},
         )
         stream = stream_service.create_stream(data, FOLDER_ID, ORG_ID, "user-1", "testuser")
         assert stream.channel_type == ChannelType.TEAMS
