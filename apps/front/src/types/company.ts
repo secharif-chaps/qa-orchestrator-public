@@ -146,6 +146,8 @@ export interface Company {
   // Optional folder information (populated for recent companies)
   folder_id?: string
   folder_name?: string
+  folder_is_owner?: boolean | null
+  folder_share_role?: string | null
 
   profile: {
     // Added insights field with SourcedValue pattern

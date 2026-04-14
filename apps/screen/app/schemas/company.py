@@ -288,6 +288,8 @@ class CompanyResponse(CompanyBase):
     tasks: list[TaskResponse] = Field(default_factory=list)
     folder_id: str | None = Field(None, description="Primary folder ID (if company is in folders)")
     folder_name: str | None = Field(None, description="Primary folder name (if company is in folders)")
+    folder_is_owner: bool | None = Field(None, description="Whether the requesting user owns the folder")
+    folder_share_role: str | None = Field(None, description="Share role if folder is shared with user (reader/writer)")
 
     model_config = ConfigDict(from_attributes=True)
 

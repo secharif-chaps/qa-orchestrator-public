@@ -9,12 +9,14 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from pydantic import BaseModel, Field
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import get_token_manager
 from app.core.internal_jwt import InternalTokenPayload, get_internal_token
 from app.core.logging_config import get_logger
 from app.database import get_global_db
+from app.models.folder import FolderShare
 from app.models.organization import ModuleName, ReferenceType
 from app.proxy.registry import ModuleName as ProxyModuleName
 from app.proxy.routes import get_module_registry
@@ -429,7 +431,23 @@ async def get_company_folder_info(
     if not folders:
         return None
 
+    folder = folders[0]
+    is_owner = str(folder.owner_id) == str(token_payload.sub)
+
+    share_role: str | None = None
+    if not is_owner:
+        result = await db.execute(
+            select(FolderShare).where(
+                FolderShare.folder_id == folder.id,
+                FolderShare.user_id == token_payload.sub,
+            )
+        )
+        folder_share = result.scalar_one_or_none()
+        share_role = folder_share.role.value if folder_share else None
+
     return CompanyFolderInfoResponse(
-        folder_id=str(folders[0].id),
-        folder_name=folders[0].name,
+        folder_id=str(folder.id),
+        folder_name=folder.name,
+        is_owner=is_owner,
+        share_role=share_role,
     )

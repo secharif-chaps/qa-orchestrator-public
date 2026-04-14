@@ -1170,7 +1170,8 @@
       },
       "recentProjects": {
         "badge": {
-          "collaborative": "Collaborative"
+          "collaborative": "Collaborative",
+          "private": "Private"
         },
         "error": {
           "description": "There was a problem loading your recent projects. Please try again later.",
@@ -1179,7 +1180,7 @@
         "noFolder": "No folder",
         "noRecentProjects": "No recent projects yet",
         "title": "Recent Projects",
-        "viewAll": "View all"
+        "viewAll": "View all projects"
       },
       "welcome": {
         "title": "Hello, {name}!"

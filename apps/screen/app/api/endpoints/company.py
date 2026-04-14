@@ -92,6 +92,8 @@ async def get_recent_companies(
             info = folder_map[company.id]
             company.folder_id = info.get("folder_id", None)
             company.folder_name = info.get("folder_name", None)
+            company.folder_is_owner = info.get("is_owner", None)
+            company.folder_share_role = info.get("share_role", None)
         else:
             logger.warning(
                 f"Company {company.id} ({company.name}) has no folder info - every company should belong to a folder",

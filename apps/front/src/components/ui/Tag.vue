@@ -44,6 +44,7 @@ export type BadgeVariant =
   | 'info'
   | 'accent'
   | 'slate'
+  | 'neutral'
 export type BadgeSize = 'xs' | 'sm' | 'md' | 'lg'
 export type BadgeAppearance = 'light' | 'outline'
 
@@ -125,7 +126,7 @@ const closeIconClasses = computed(() => {
 
 // Variant classes with appearance support (light/outline)
 const variantClasses = computed(() => {
-  const isRounded = 'rounded-full'
+  const isRounded = props.rounded ? 'rounded-full' : 'rounded-xs'
   const isOutline = props.appearance === 'outline'
 
   switch (props.variant) {
@@ -159,6 +160,11 @@ const variantClasses = computed(() => {
         ? `${isRounded} bg-transparent text-rose-700 border border-accent-stroke dark:text-rose-50`
         : `${isRounded} bg-rose-200 text-rose-950 border border-accent-200 dark:bg-rose-400/30 dark:text-rose-50 dark:border-accent-400/30`
 
+    case 'neutral':
+      return isOutline
+        ? `${isRounded} bg-transparent text-neutral-muted-font border border-neutral-disabled-stroke dark:text-grey-50`
+        : `${isRounded} bg-neutral-disabled text-neutral-muted-font dark:bg-grey-400/30 dark:text-grey-50`
+
     case 'slate':
       return isOutline
         ? `${isRounded} bg-transparent text-gray-500 border border-primary-lightest dark:text-sage-50`
@@ -186,6 +192,8 @@ const dotClasses = computed(() => {
       return 'bg-info'
     case 'accent':
       return 'bg-accent'
+    case 'neutral':
+      return 'bg-neutral-disabled'
     case 'slate':
       return 'bg-primary-lighter'
     case 'primary':
