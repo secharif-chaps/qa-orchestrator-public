@@ -2749,7 +2749,9 @@
       },
       "actions": {
         "add_favorite": "Add to favorites",
+        "archive_watch_file": "Archive",
         "remove_favorite": "Remove from favorites",
+        "restore_watch_file": "Restore",
         "share": "Share"
       },
       "activity": {
@@ -3224,9 +3226,6 @@
       "new_content": {
         "documents": "documents"
       },
-      "pagination": {
-        "items_per_page": "Watch files per page"
-      },
       "persons": "{count, plural, one {# person} other {# persons}}",
       "prefix": {
         "createdAt": "Created: ",
@@ -3289,10 +3288,7 @@
         },
         "sub_title": "{count, plural, one {1 source displayed out of {total}} other {# sources displayed out of {total}}}",
         "title": "Sources",
-        "type": {
-          "media": "Media",
-          "social_media": "Social Media"
-        }
+        "type": "Type"
       },
       "status": {
         "archived": "Archived",
