@@ -991,7 +991,8 @@
     "modules": {
       "explore": "Knowledge Graph",
       "screen": "Company Card",
-      "target": "Watchfile"
+      "target": "Watchfile",
+      "unknown": "Unknown module"
     },
     "na": "N/A",
     "new": "New",
@@ -2245,7 +2246,22 @@
       "module": {
         "canCreate": "You can still create",
         "costPerItem": "1 {item} = {cost} credits",
-        "disabled": "Module disabled"
+        "disabled": "Module disabled",
+        "explore": {
+          "item": "graph",
+          "itemPlural": "graphs",
+          "label": "Explore"
+        },
+        "screen": {
+          "item": "company",
+          "itemPlural": "companies",
+          "label": "Screen"
+        },
+        "target": {
+          "item": "watch file",
+          "itemPlural": "watch files",
+          "label": "Target"
+        }
       },
       "modules": {
         "all": "All",
@@ -2281,6 +2297,8 @@
       "description": "Add-on capabilities that enhance core modules. These features are disabled by default.",
       "disabled": "Disabled",
       "discover": {
+        "description": "Enable the Discover dashboard to explore curated external intelligence sources.",
+        "name": "Discover",
         "saveError": "Failed to save URL",
         "urlError": "Please enter a valid HTTPS URL",
         "urlHint": "Enter the HTTPS URL for the Discover dashboard.",
@@ -2288,7 +2306,19 @@
         "urlPlaceholder": "https://discover.example.com"
       },
       "enabled": "Enabled",
-      "globalFeatures": "Global Features"
+      "globalFeatures": "Global Features",
+      "pappers": {
+        "description": "Enrich company profiles with official French registry data from Pappers.",
+        "name": "Pappers"
+      },
+      "translation": {
+        "description": "Automatically translate company data into your preferred language.",
+        "name": "Translation"
+      },
+      "worldcheck": {
+        "description": "Screen companies and individuals against World-Check risk intelligence databases.",
+        "name": "World-Check"
+      }
     },
     "help": {
       "categories": {

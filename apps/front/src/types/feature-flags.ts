@@ -64,23 +64,23 @@ export const FEATURE_FLAG_CONFIG: Record<
   Omit<FeatureFlagDisplayConfig, 'enabled' | 'flag'>
 > = {
   translation: {
-    labelKey: 'featureFlags.translation.name',
-    descriptionKey: 'featureFlags.translation.description',
+    labelKey: 'settings.featureFlags.translation.name',
+    descriptionKey: 'settings.featureFlags.translation.description',
     icon: 'fa fa-language',
   },
   discover: {
-    labelKey: 'featureFlags.discover.name',
-    descriptionKey: 'featureFlags.discover.description',
+    labelKey: 'settings.featureFlags.discover.name',
+    descriptionKey: 'settings.featureFlags.discover.description',
     icon: 'fa fa-compass',
   },
   pappers: {
-    labelKey: 'featureFlags.pappers.name',
-    descriptionKey: 'featureFlags.pappers.description',
+    labelKey: 'settings.featureFlags.pappers.name',
+    descriptionKey: 'settings.featureFlags.pappers.description',
     icon: 'fa fa-plug',
   },
   worldcheck: {
-    labelKey: 'featureFlags.worldcheck.name',
-    descriptionKey: 'featureFlags.worldcheck.description',
+    labelKey: 'settings.featureFlags.worldcheck.name',
+    descriptionKey: 'settings.featureFlags.worldcheck.description',
     icon: 'fa fa-shield',
   },
 }

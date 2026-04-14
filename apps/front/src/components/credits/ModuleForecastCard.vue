@@ -110,9 +110,9 @@ const MODULE_CONFIG: Record<
     iconBg: 'bg-indigo-100',
     iconText: 'text-indigo-600',
     icon: 'fa-solid fa-building',
-    labelKey: 'credits.module.screen.label',
-    itemKey: 'credits.module.screen.item',
-    itemPluralKey: 'credits.module.screen.itemPlural',
+    labelKey: 'settings.credits.module.screen.label',
+    itemKey: 'settings.credits.module.screen.item',
+    itemPluralKey: 'settings.credits.module.screen.itemPlural',
   },
   target: {
     cardBg: 'bg-rose-50/50',
@@ -120,9 +120,9 @@ const MODULE_CONFIG: Record<
     iconBg: 'bg-rose-100',
     iconText: 'text-rose-600',
     icon: 'fa-solid fa-bullseye',
-    labelKey: 'credits.module.target.label',
-    itemKey: 'credits.module.target.item',
-    itemPluralKey: 'credits.module.target.itemPlural',
+    labelKey: 'settings.credits.module.target.label',
+    itemKey: 'settings.credits.module.target.item',
+    itemPluralKey: 'settings.credits.module.target.itemPlural',
   },
   explore: {
     cardBg: 'bg-almond-50/50',
@@ -130,9 +130,9 @@ const MODULE_CONFIG: Record<
     iconBg: 'bg-almond-100',
     iconText: 'text-almond-600',
     icon: 'fa-solid fa-project-diagram',
-    labelKey: 'credits.module.explore.label',
-    itemKey: 'credits.module.explore.item',
-    itemPluralKey: 'credits.module.explore.itemPlural',
+    labelKey: 'settings.credits.module.explore.label',
+    itemKey: 'settings.credits.module.explore.item',
+    itemPluralKey: 'settings.credits.module.explore.itemPlural',
   },
 }
 

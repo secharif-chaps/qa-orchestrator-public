@@ -23,7 +23,6 @@ use Symfony\Component\Mercure\HubInterface;
  * Supported routes (GET only):
  * - GET /api/watch_files/{id} → watch-files topic
  * - GET /api/watch_files/{id}/conversations/last → conversations topic
- * - GET /api/conversations/{id} → conversations topic
  * - GET /api/conversations/{id}/messages → conversation-messages topic
  *
  * Topics are user-scoped: /users/{userId}/{resourceType}/{resourceId}
@@ -87,7 +86,6 @@ readonly class MercureDiscoverySubscriber
      *
      * Only matches exact supported routes:
      * - /api/watch_files/{uuid}
-     * - /api/conversations/{uuid}
      * - /api/watch_files/{uuid}/conversations/last
      * - /api/conversations/{uuid}/messages
      *
@@ -104,8 +102,6 @@ readonly class MercureDiscoverySubscriber
             'conversation_messages' => "#^/api/conversations/({$uuid})/messages$#",
             // GET /api/watch_files/{id} - single watch file
             'watch_file' => "#^/api/watch_files/({$uuid})$#",
-            // GET /api/conversations/{id} - single conversation
-            'conversation' => "#^/api/conversations/({$uuid})$#",
             // GET /api/watch_files/{uuid}/conversations/last - last conversation (ID extracted from response body)
             'conversation_last' => "#^/api/watch_files/{$uuid}/conversations/last$#",
         ];

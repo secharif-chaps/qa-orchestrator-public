@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "mint-back"
+name = "chapsmind-screen"
 version = "0.1.0"
-description = "Mint Backend Service"
+description = "ChapsMind Screen Service"
 authors = ["Your Name <your.email@example.com>"]
 package-mode = false
 

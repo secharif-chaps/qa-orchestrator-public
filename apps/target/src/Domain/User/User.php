@@ -83,7 +83,7 @@ use Symfony\Component\String\UnicodeString;
         ),
     ],
     normalizationContext: [
-        'groups' => ['watch_file:read'],
+        'groups' => ['user:read'],
     ]
 )]
 #[ApiFilter(UserMultiFieldSearchFilter::class)]
@@ -100,7 +100,7 @@ class User implements UserInterface
         identifier: true,
         example: '123e4567-e89b-12d3-a456-426614174000'
     )]
-    #[Groups(['watch_file:read', 'watch_file_user:read', 'watch_file_activity:read', 'document:save'])]
+    #[Groups(['user:read', 'watch_file:read', 'watch_file_user:read', 'watch_file_activity:read', 'document:save'])]
     /**
      * @var non-empty-string|null
      *                            The unique identifier for the user, typically a UUID.
@@ -120,7 +120,7 @@ class User implements UserInterface
             'format' => 'email',
         ],
     )]
-    #[Groups(['watch_file:read', 'watch_file_user:read', 'watch_file_activity:read'])]
+    #[Groups(['user:read', 'watch_file:read', 'watch_file_user:read', 'watch_file_activity:read'])]
     private ?string $email = null;
 
     /**
@@ -133,11 +133,11 @@ class User implements UserInterface
     private string $userName;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Groups(['watch_file:read', 'watch_file_user:read'])]
+    #[Groups(['user:read', 'watch_file:read', 'watch_file_user:read'])]
     private ?string $firstName = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Groups(['watch_file:read', 'watch_file_user:read'])]
+    #[Groups(['user:read', 'watch_file:read', 'watch_file_user:read'])]
     private ?string $lastName = null;
 
     /**
@@ -334,6 +334,7 @@ class User implements UserInterface
     }
 
     #[Groups([
+        'user:read',
         'watch_file:read',
         'watch_file_user:read',
         'document:read',
@@ -360,7 +361,7 @@ class User implements UserInterface
         return $this->getUserName();
     }
 
-    #[Groups(['watch_file:read', 'watch_file_user:read', 'message:read', 'document:read'])]
+    #[Groups(['user:read', 'watch_file:read', 'watch_file_user:read', 'message:read', 'document:read'])]
     public function getDefaultThumbnail(): string
     {
         $splitName = new ArrayCollection(

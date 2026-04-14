@@ -92,7 +92,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Mint Backend API",
+    title="ChapsMind Screen API",
     description="API for company data and workflow integration",
     version="0.1.0",
     lifespan=lifespan,

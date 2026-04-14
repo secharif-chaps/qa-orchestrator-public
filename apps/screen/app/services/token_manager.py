@@ -7,13 +7,11 @@ records for complete audit trail.
 Key operations:
 - get_balance(): Get current token balance for organization
 - add_tokens(): Add tokens to organization balance (admin operation)
-- consume_tokens(): Consume tokens for operations (with module enablement check)
 - get_transaction_history(): Query transaction history with filters
 """
 
 from datetime import datetime
 
-from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -26,45 +24,11 @@ from app.models.organization import (
     TokenTransaction,
     TransactionType,
 )
-from app.schemas.token import TokenError
 
 logger = get_logger(__name__)
 
 # Token cost for company creation - each company consumes 35 tokens
 TOKENS_PER_COMPANY = 35
-
-
-class InsufficientTokensException(HTTPException):
-    """Exception raised when organization has insufficient token balance.
-
-    Returns HTTP 402 Payment Required with details about current balance
-    and required tokens.
-    """
-
-    def __init__(self, current_balance: int, required_tokens: int):
-        error_detail = TokenError(
-            message=f"Insufficient tokens. Current balance: {current_balance}, required: {required_tokens}",
-            current_balance=current_balance,
-            required_tokens=required_tokens,
-        )
-        super().__init__(
-            status_code=status.HTTP_402_PAYMENT_REQUIRED,
-            detail=error_detail.model_dump(),
-        )
-
-
-class ModuleNotEnabledException(HTTPException):
-    """Exception raised when module is not enabled for organization.
-
-    Returns HTTP 403 Forbidden indicating the module must be enabled
-    before token consumption is allowed.
-    """
-
-    def __init__(self, module_name: ModuleName):
-        super().__init__(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=f"Module {module_name.value} is not enabled for this organization",
-        )
 
 
 class TokenManager:
@@ -115,28 +79,6 @@ class TokenManager:
             self.db.refresh(org)
 
         return org
-
-    def _check_module_enabled(self, org_id: str, module_name: ModuleName) -> None:
-        """Check if module is enabled for organization.
-
-        Args:
-            org_id: Keycloak organization UUID
-            module_name: Module to check
-
-        Raises:
-            ModuleNotEnabledException: If module is not enabled
-        """
-        module = (
-            self.db.query(OrganizationModule)
-            .filter(
-                OrganizationModule.organization_id == org_id,
-                OrganizationModule.module_name == module_name,
-            )
-            .first()
-        )
-
-        if not module or not module.enabled:
-            raise ModuleNotEnabledException(module_name)
 
     def get_balance(self, org_id: str) -> int:
         """Get current token balance for organization.
@@ -204,90 +146,6 @@ class TokenManager:
         logger.info(
             f"Added {amount} tokens to organization {org_id}. New balance: {new_balance}",
             extra={"organization_id": org_id, "amount": amount, "user_id": user_id},
-        )
-
-        return org
-
-    def consume_tokens(
-        self,
-        org_id: str,
-        amount: int,
-        module_name: ModuleName,
-        reference_type: ReferenceType,
-        reference_id: str | None,
-        user_id: str,
-    ) -> Organization:
-        """Consume tokens from organization balance.
-
-        Checks module enablement before consumption. Creates transaction
-        record for audit trail. Uses row-level locking to prevent race
-        conditions.
-
-        Args:
-            org_id: Keycloak organization UUID
-            amount: Number of tokens to consume (must be positive)
-            module_name: Module consuming the tokens (must be enabled)
-            reference_type: Type of operation consuming tokens
-            reference_id: Optional ID of the referenced entity (e.g., company_id)
-            user_id: Keycloak user ID performing the operation
-
-        Returns:
-            Updated Organization with new balance
-
-        Raises:
-            ValueError: If amount is not positive
-            ModuleNotEnabledException: If module is not enabled
-            InsufficientTokensException: If balance is insufficient
-        """
-        if amount <= 0:
-            raise ValueError("Token consumption amount must be positive")
-
-        # Check module is enabled first
-        self._check_module_enabled(org_id, module_name)
-
-        # Ensure organization exists first
-        self._ensure_organization_exists(org_id)
-
-        # Lock organization row for update to prevent race conditions
-        org = self.db.query(Organization).filter(Organization.organization_id == org_id).with_for_update().first()
-
-        # Check sufficient balance
-        if org.token_balance < amount:
-            raise InsufficientTokensException(
-                current_balance=org.token_balance,
-                required_tokens=amount,
-            )
-
-        # Deduct tokens
-        org.token_balance -= amount
-        new_balance = org.token_balance
-
-        # Create transaction record (amount is negative for consumption)
-        transaction = TokenTransaction(
-            organization_id=org_id,
-            amount=-amount,  # Negative for consumption
-            balance_after=new_balance,
-            transaction_type=TransactionType.consume,
-            reference_type=reference_type,
-            reference_id=reference_id,
-            created_by=user_id,
-        )
-        self.db.add(transaction)
-
-        self.db.commit()
-        self.db.refresh(org)
-
-        logger.info(
-            f"Consumed {amount} tokens from organization {org_id}. "
-            f"New balance: {new_balance}. Reference: {reference_type.value}/{reference_id}",
-            extra={
-                "organization_id": org_id,
-                "amount": amount,
-                "token_module": module_name.value,
-                "reference_type": reference_type.value,
-                "reference_id": reference_id,
-                "user_id": user_id,
-            },
         )
 
         return org

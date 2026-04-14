@@ -301,6 +301,10 @@ class OrganizationFeatureFlag(GlobalBase):
     Tracks which add-on features are enabled for each organization.
     Features are OFF by default - only enabled flags are stored.
 
+    TODO(TAR-1253): No REST API endpoints exist for this model yet.
+    Only used by scripts/migrate_organization_data.py for initial seeding.
+    Implement CRUD endpoints when feature flag management is needed.
+
     Attributes:
         id: Auto-incrementing primary key
         organization_id: Keycloak organization UUID
