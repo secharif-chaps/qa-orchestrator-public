@@ -31,7 +31,6 @@
         <Switch
           :id="`feature-flag-toggle-${flag}`"
           :model-value="isEnabled"
-          :disabled="isToggling"
           @update:model-value="handleToggle"
         />
       </div>
@@ -78,7 +77,7 @@ const props = withDefaults(defineProps<Props>(), {
 const { t } = useI18n()
 
 // Mutation for toggling feature flag
-const { toggleFeatureFlag, isPending: isToggling } = useToggleFeatureFlag()
+const { toggleFeatureFlag } = useToggleFeatureFlag()
 
 // Get flag config
 const flagConfig = computed(() => FEATURE_FLAG_CONFIG[props.flag])
