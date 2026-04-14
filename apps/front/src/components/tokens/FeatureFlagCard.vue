@@ -31,6 +31,7 @@
         <Switch
           :id="`feature-flag-toggle-${flag}`"
           :model-value="isEnabled"
+          :disabled="isToggling"
           @update:model-value="handleToggle"
         />
       </div>
@@ -74,14 +75,10 @@ const props = withDefaults(defineProps<Props>(), {
   config: null,
 })
 
-const emit = defineEmits<{
-  refresh: []
-}>()
-
 const { t } = useI18n()
 
 // Mutation for toggling feature flag
-const { toggleFeatureFlag } = useToggleFeatureFlag()
+const { toggleFeatureFlag, isPending: isToggling } = useToggleFeatureFlag()
 
 // Get flag config
 const flagConfig = computed(() => FEATURE_FLAG_CONFIG[props.flag])
@@ -160,6 +157,7 @@ const handleUrlBlur = async () => {
   }
 
   // Save the URL via mutation
+  // Query invalidation and toast feedback are handled by the mutation's onSuccess/onError
   try {
     isSavingUrl.value = true
     await toggleFeatureFlag({
@@ -169,9 +167,7 @@ const handleUrlBlur = async () => {
       config: trimmedUrl ? { url: trimmedUrl } : null,
     })
     originalUrl.value = trimmedUrl
-    emit('refresh')
-  } catch (error) {
-    console.error('Failed to save URL config:', error)
+  } catch {
     urlError.value = t('settings.featureFlags.discover.saveError')
   } finally {
     isSavingUrl.value = false
@@ -180,19 +176,19 @@ const handleUrlBlur = async () => {
 
 // Toggle feature flag enabled state
 const handleToggle = async () => {
-  try {
-    const newEnabled = !props.isEnabled
+  const newEnabled = !props.isEnabled
 
-    // Toggle only changes enabled state, never touches config
-    // (config with API keys is managed via data-sources endpoint)
+  // Toggle only changes enabled state, never touches config
+  // (config with API keys is managed via data-sources endpoint)
+  // Query invalidation and toast feedback are handled by the mutation's onSuccess/onError
+  try {
     await toggleFeatureFlag({
       organizationId: props.organizationId,
       flag: props.flag,
       enabled: newEnabled,
     })
-    emit('refresh')
-  } catch (error) {
-    console.error('Failed to toggle feature flag:', error)
+  } catch {
+    // Error UX (toast) is handled by the mutation's onError callback
   }
 }
 </script>

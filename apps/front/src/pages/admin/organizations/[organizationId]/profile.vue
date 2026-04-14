@@ -86,7 +86,6 @@
           :is-enabled="featureFlag.enabled"
           :organization-id="organizationIdValue"
           :config="featureFlag.config"
-          @refresh="refetchFeatureFlags"
         />
       </div>
     </Card>
@@ -123,11 +122,7 @@ const {
 const modules = computed(() => modulesData.value?.modules ?? [])
 
 // Query for feature flags
-const {
-  data: featureFlagsData,
-  isLoading: isLoadingFeatureFlags,
-  refetch: refetchFeatureFlags,
-} = useQuery({
+const { data: featureFlagsData, isLoading: isLoadingFeatureFlags } = useQuery({
   ...organizationFeatureFlagsQuery({ organizationId: organizationId?.value || '' }),
   enabled: () => !!organizationId?.value,
 })
