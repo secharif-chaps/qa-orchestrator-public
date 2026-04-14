@@ -5,11 +5,7 @@
       <td class="px-4 py-3">
         <div class="flex items-center gap-3">
           <!-- Circular Avatar -->
-          <div
-            class="bg-primary flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white"
-          >
-            {{ getMemberInitials(item) }}
-          </div>
+          <AvatarInitials :name="getMemberDisplayName(item)" size="lg" variant="primary" />
 
           <!-- Name + Username -->
           <div class="min-w-0">
@@ -69,6 +65,7 @@
  * Team members table using Vuellar Table component.
  * Displays team members with lazy-loaded permissions and actions.
  */
+import AvatarInitials from '@/components/ui/AvatarInitials.vue'
 import Tag from '@/components/ui/Tag.vue'
 import type { PermissionTier, TeamMemberListItem } from '@/types/team'
 import { Button, Table } from '@owlint/feathers-vue'
@@ -99,14 +96,6 @@ const fields = computed(() => [
 
 // Helper to get row key for table
 const getRowKey = (item: TeamMemberListItem): string => item.id
-
-// Helper to get member initials
-const getMemberInitials = (member: TeamMemberListItem): string => {
-  if (member.first_name && member.last_name) {
-    return `${member.first_name[0]}${member.last_name[0]}`.toUpperCase()
-  }
-  return member.username.substring(0, 2).toUpperCase()
-}
 
 // Helper to get member display name
 const getMemberDisplayName = (member: TeamMemberListItem): string => {

@@ -1,38 +1,40 @@
 <template>
   <RouterLink
     :to="activityRoute"
-    class="hover:bg-primary-lightest -m-2 flex cursor-pointer items-start gap-3 rounded-sm p-2 transition-colors"
+    class="hover:bg-base-200 flex cursor-pointer items-center gap-2 self-stretch transition-colors"
   >
-    <!-- Icon with badge -->
-    <div class="relative flex-shrink-0">
-      <Badge variant="secondary" color="sage" :icon="icon" />
-      <div class="absolute -right-0.5 -bottom-0.5">
-        <Badge variant="secondary" color="sage" icon="fa fa-plus" size="xs" />
-      </div>
-    </div>
+    <AvatarInitials :name="activity.owner" />
 
-    <div class="min-w-0 flex-1">
-      <!-- Company/Folder Name -->
-      <p class="text-sm font-semibold text-gray-900 dark:text-white">
+    <div class="flex min-w-0 flex-1 flex-col items-start justify-center">
+      <!-- User name + action + action icon -->
+      <div class="flex items-center gap-0.5">
+        <p
+          class="font-regular text-neutral-black-font truncate text-base leading-5 dark:text-white"
+        >
+          {{ username }} {{ actionLabel }}
+        </p>
+        <Icon :icon="actionIcon" lib="far" class="text-primary-font text-xs" />
+      </div>
+      <!-- Resource name -->
+      <p class="font-regular text-primary-font truncate text-sm leading-4">
         {{ activity.name }}
       </p>
-      <!-- Meta info: user and timestamp -->
-      <div class="mt-0.5 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-        <span class="flex items-center gap-1">
-          <i class="fa fa-clock"></i>
-          <span>{{ time }}</span>
-        </span>
-        <span>{{ $t('dashboard.home.recentActivities.by', { username: '@' + username }) }}</span>
+      <!-- Timestamp -->
+      <div class="text-neutral-font flex items-center gap-0.5 text-sm leading-4">
+        <Icon icon="fa-clock" lib="far" class="text-xs" />
+        <span>{{ time }}</span>
       </div>
     </div>
   </RouterLink>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { Icon } from '@owlint/feathers-vue'
+import AvatarInitials from '@/components/ui/AvatarInitials.vue'
 import type { Activity } from '@/types/organization'
 import { formatRelativeTime } from '@/utils/time'
-import { Badge } from '@owlint/feathers-vue'
-import { computed } from 'vue'
 
 interface Props {
   activity: Activity
@@ -40,9 +42,13 @@ interface Props {
 
 const { activity } = defineProps<Props>()
 
-const icon = computed(() => (activity.type === 'company' ? 'fa fa-building' : 'fa fa-folder'))
+const { t } = useI18n()
 
 const username = computed(() => activity.owner || 'Unknown')
+
+// Icon represents the action performed (created = plus, modified = pen)
+const actionLabel = computed(() => t('dashboard.home.recentActivities.created'))
+const actionIcon = computed(() => (activity.type === 'folder' ? 'fa-folder' : 'fa-building'))
 
 const time = computed(() => formatRelativeTime(activity.created_at))
 
