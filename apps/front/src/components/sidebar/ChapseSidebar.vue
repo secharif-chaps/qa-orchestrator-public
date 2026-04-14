@@ -127,7 +127,7 @@
         v-model="userMessage"
         :placeholder="$t('common.sidebar.chapse.placeholder')"
         :loading="isLoading"
-        :disabled="isStreaming"
+        :disabled="isStreaming || !canUseChapse"
         :company-context="companyContext"
         :can-add-more-companies="canAddMoreCompanies"
         @send="handleSendMessage"
@@ -146,6 +146,7 @@ import ChatMessage from '@/components/chapse/ChatMessage.vue'
 import ConversationList from '@/components/chapse/ConversationList.vue'
 import { useChapseChat, type CompanyContext } from '@/composables/useChapseChat'
 import { useChapseContext } from '@/composables/useChapseContext'
+import { useAuthStore } from '@/stores/auth'
 import { buildSmartActionMarker, useChapseStore } from '@/stores/chapse'
 import { useSidebarStore } from '@/stores/sidebar'
 import { toast } from '@/utils/toast'
@@ -373,7 +374,7 @@ const suggestions = computed<Suggestion[]>(() => {
 
 // Handlers
 async function handleSendMessage(message: string) {
-  if (!message.trim()) return
+  if (!message.trim() || !canUseChapse.value) return
   userMessage.value = ''
   await sendMessage(message)
 }
@@ -504,8 +505,13 @@ watch(
   { immediate: true },
 )
 
-// Load conversations on mount
+// Permission check — users without organization.read can't use Chapse
+const canUseChapse = computed(() => useAuthStore().hasPermission('organization.read'))
+
+// Load conversations on mount (only if user has access)
 onMounted(async () => {
-  await loadConversations(true)
+  if (canUseChapse.value) {
+    await loadConversations(true)
+  }
 })
 </script>

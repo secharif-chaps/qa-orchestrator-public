@@ -37,6 +37,13 @@
   </div>
 </template>
 
+<route lang="yaml">
+meta:
+  permissions:
+    - organization.read
+  requiresAuth: true
+</route>
+
 <script setup lang="ts">
 import ChapseInsightCard from '@/components/home/ChapseInsightCard.vue'
 import type { ModuleAction } from '@/types/module'

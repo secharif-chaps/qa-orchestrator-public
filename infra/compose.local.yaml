@@ -173,7 +173,7 @@ services:
     environment:
       <<: [*target-env, *local-internal-auth]
       SERVER_NAME: ":8000"
-      TRUSTED_HOSTS: "^(localhost|target)$"
+      TRUSTED_HOSTS: "^(localhost|target)$$"
       MERCURE_URL: http://target:8000/.well-known/mercure
       MERCURE_PUBLIC_URL: http://localhost/.well-known/mercure
       MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET:-local-dev-mercure-jwt-secret-for-chapsmind-min256bits!}

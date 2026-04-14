@@ -107,6 +107,7 @@ import { recentCompaniesQuery } from '@/queries/companies'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { organizationBalanceQuery } from '@/queries/tokens'
 import type { Company } from '@/types/company'
+import { useAuthStore } from '@/stores/auth'
 import { Button, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed } from 'vue'
@@ -115,6 +116,8 @@ import SidebarHeader from './SidebarHeader.vue'
 import TokenHistoryItem from './TokenHistoryItem.vue'
 
 const route = useRoute()
+const authStore = useAuthStore()
+const canViewCredits = computed(() => authStore.hasPermission('organization.manage'))
 
 // Check if we're on the token history page
 const isOnHistoryPage = computed(() => route.path === '/tokens/history')
@@ -125,14 +128,16 @@ const { data: currentOrganization, isLoading: isLoadingOrg } = useQuery(() =>
 )
 
 // Fetch global token balance (new global system)
-const { data: balanceData, isLoading: isLoadingBalance } = useQuery(() =>
-  organizationBalanceQuery({ organizationId: currentOrganization.value?.id ?? '' }),
-)
+const { data: balanceData, isLoading: isLoadingBalance } = useQuery(() => ({
+  ...organizationBalanceQuery({ organizationId: currentOrganization.value?.id ?? '' }),
+  enabled: canViewCredits.value && !!currentOrganization.value?.id,
+}))
 
 // Fetch recent companies for token history (10 most recent)
-const { data: recentCompanies, isLoading: isLoadingCompanies } = useQuery(
-  recentCompaniesQuery({ limit: 10 }),
-)
+const { data: recentCompanies, isLoading: isLoadingCompanies } = useQuery(() => ({
+  ...recentCompaniesQuery({ limit: 10 }),
+  enabled: canViewCredits.value,
+}))
 
 // Get total tokens from global balance (no longer summing modules)
 const totalTokens = computed(() => balanceData.value?.balance ?? 0)

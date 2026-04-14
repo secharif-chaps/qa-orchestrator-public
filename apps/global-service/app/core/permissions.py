@@ -10,6 +10,7 @@ from enum import StrEnum
 class PermissionTier(StrEnum):
     """Permission tiers for team members."""
 
+    NO_ACCESS = "no_access"
     READER = "reader"
     WRITER = "writer"
     MANAGER = "manager"
@@ -18,31 +19,26 @@ class PermissionTier(StrEnum):
 
 # Role mappings for each tier (cumulative)
 TIER_ROLE_MAPPING: dict[PermissionTier, list[str]] = {
+    PermissionTier.NO_ACCESS: [],
     PermissionTier.READER: [
         "organization.read",
     ],
     PermissionTier.WRITER: [
         "organization.read",
         "organization.write",
-        "company.view",
         "company.create",
-        "company.delete",
     ],
     PermissionTier.MANAGER: [
         "organization.read",
         "organization.write",
         "organization.manage",
-        "company.view",
         "company.create",
-        "company.delete",
     ],
     PermissionTier.ADMIN: [
         "organization.read",
         "organization.write",
         "organization.manage",
-        "company.view",
         "company.create",
-        "company.delete",
         "admin.organizations",
     ],
 }
@@ -53,11 +49,16 @@ def get_roles_for_tier(tier: PermissionTier) -> list[str]:
     return TIER_ROLE_MAPPING[tier].copy()
 
 
+LEGACY_ROLES = {"company.view", "company.delete", "screen.create", "target.create"}
+
+
 def get_tier_from_roles(roles: list[str]) -> PermissionTier:
     """Determine permission tier from user's roles.
 
     Returns highest matching tier based on role presence.
     Special case: Users with 'admin.organizations' role get ADMIN tier.
+    Legacy safety: Users with old roles (company.view, company.delete, etc.)
+    but missing organization.read are treated as READER, not NO_ACCESS.
     """
     role_set = set(roles)
 
@@ -68,5 +69,10 @@ def get_tier_from_roles(roles: list[str]) -> PermissionTier:
         return PermissionTier.MANAGER
     elif "organization.write" in role_set:
         return PermissionTier.WRITER
-    else:
+    elif "organization.read" in role_set:
         return PermissionTier.READER
+    elif role_set & LEGACY_ROLES:
+        # Users with legacy roles should be at least READER
+        return PermissionTier.READER
+    else:
+        return PermissionTier.NO_ACCESS
