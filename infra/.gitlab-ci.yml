@@ -35,6 +35,65 @@ infra:validate-staging:
       -f infra/compose.staging.yaml
       config --quiet
 
+# ─── Hadolint — Dockerfile linting ───────────────────
+infra:hadolint:
+  stage: lint
+  needs: []
+  <<: *infra-changes
+  image: hadolint/hadolint:v2.14.0-debian
+  allow_failure: true
+  script:
+    - hadolint --format json
+      apps/front/Dockerfile
+      apps/screen/Dockerfile
+      apps/global-service/Dockerfile
+      apps/stream/Dockerfile
+      apps/target/Dockerfile
+      > hadolint-report.json || true
+    - hadolint
+      apps/front/Dockerfile
+      apps/screen/Dockerfile
+      apps/global-service/Dockerfile
+      apps/stream/Dockerfile
+      apps/target/Dockerfile
+  artifacts:
+    paths:
+      - hadolint-report.json
+    when: always
+    expire_in: 7 days
+
+# ─── Trivy config — Dockerfile & Compose misconfigs ──
+infra:trivy-config:
+  stage: lint
+  needs: []
+  <<: *infra-changes
+  image:
+    name: aquasec/trivy:0.69.3
+    entrypoint: [""]
+  allow_failure: true
+  script:
+    - trivy config
+      --severity CRITICAL,HIGH,MEDIUM
+      --exit-code 1
+      --format json
+      --output trivy-config-report.json
+      --skip-files infra/compose.local.yaml
+      --file-patterns "dockerfile:Dockerfile"
+      .
+      || TRIVY_RC=$?
+    # Print human-readable summary (exit code from first pass is propagated below)
+    - trivy config
+      --severity CRITICAL,HIGH,MEDIUM
+      --skip-files infra/compose.local.yaml
+      --file-patterns "dockerfile:Dockerfile"
+      .
+    - exit ${TRIVY_RC:-0}
+  artifacts:
+    paths:
+      - trivy-config-report.json
+    when: always
+    expire_in: 7 days
+
 # ─── Deploy templates ──────────────────────────────
 .deploy-base:
   stage: deploy
