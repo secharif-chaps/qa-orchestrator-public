@@ -20,8 +20,13 @@ class Settings(BaseSettings):
     INTERNAL_JWT_EXPIRY_SECONDS: int = 60
     INTERNAL_ALLOWED_IPS: str = ""
 
-    # Global-service URL for internal API calls (token consumption)
+    # Global Service URL for service-to-service calls (token consumption, etc.)
     GLOBAL_SERVICE_URL: str = "http://global-service:8000/api"
+
+    # Credit costs per channel type (ADR-0016)
+    STREAM_COST_TEAMS: int = 5
+    STREAM_COST_SLACK: int = 5
+    STREAM_COST_WEBHOOK: int = 2
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

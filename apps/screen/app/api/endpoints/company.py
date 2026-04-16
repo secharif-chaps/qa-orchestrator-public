@@ -372,8 +372,20 @@ async def refresh_company(
             description="Company refresh",
         )
 
+        # Look up folder_id for stream event routing
         try:
-            refreshed_company = service.refresh_company(company_id)
+            folder_id = await global_service.get_company_folder_id(
+                org_id=org_context.organization_id,
+                company_id=company_id,
+                user_id=org_context.user_id,
+                username=org_context.username,
+            )
+        except Exception as e:
+            logger.warning("Failed to get folder_id for outbox event", extra={"error": str(e)})
+            folder_id = None
+
+        try:
+            refreshed_company = service.refresh_company(company_id, folder_id=folder_id)
         except Exception as e:
             logger.error(
                 "Refresh failed after token consumption - tokens not refunded",

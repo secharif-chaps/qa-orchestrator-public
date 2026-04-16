@@ -57,9 +57,7 @@ EVENT_CATALOG: tuple[EventCatalogEntry, ...] = (
 
 
 # Pre-computed frozenset of available event types for fast lookup
-AVAILABLE_EVENT_TYPES: frozenset[str] = frozenset(
-    entry.event_type for entry in EVENT_CATALOG if entry.available
-)
+AVAILABLE_EVENT_TYPES: frozenset[str] = frozenset(entry.event_type for entry in EVENT_CATALOG if entry.available)
 
 
 def get_available_events() -> list[EventCatalogEntry]:

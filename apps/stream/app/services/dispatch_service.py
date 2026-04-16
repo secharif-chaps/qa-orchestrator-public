@@ -1,4 +1,18 @@
-"""Dispatch service — processes pending deliveries through channel adapters."""
+"""Dispatch service — processes pending deliveries through channel adapters.
+
+After a successful send, consumes credits from the organization's token
+balance via the Global Service (ADR-0016 credit system).  Credits are
+**only** debited on success so that failed deliveries never cost tokens.
+
+If the organisation has insufficient credits the delivery is marked SKIPPED
+on the *next* dispatch attempt (post-success consumption returning 402).
+
+A proper pre-flight balance gate requires a read-only check or lock/release
+endpoint on the Global Service that does not yet exist — tracked as a
+follow-up improvement.
+"""
+
+from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
@@ -11,6 +25,12 @@ from app.core.logging_config import get_logger
 from app.models.delivery import DeliveryStatus, StreamDelivery
 from app.models.event import StreamEvent
 from app.models.stream import ChannelType, Stream, StreamMode, StreamStatus
+from app.services.token_client import (
+    TokenClient,
+    TokenConsumeResult,
+    TokenErrorCode,
+    get_credit_cost,
+)
 
 logger = get_logger(__name__)
 
@@ -28,11 +48,43 @@ def _next_retry_at(attempt_count: int) -> datetime:
 class DispatchService:
     """Processes pending deliveries by resolving adapters and sending payloads.
 
-    Handles retry scheduling and status transitions.
+    Handles token consumption, retry scheduling, and status transitions.
     """
 
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, token_client: TokenClient | None = None) -> None:
         self.db = db
+        self._token_client = token_client
+
+    # ------------------------------------------------------------------
+    # Token consumption (post-success)
+    # ------------------------------------------------------------------
+
+    async def _consume_tokens_after_success(
+        self,
+        stream: Stream,
+        delivery: StreamDelivery,
+    ) -> TokenConsumeResult | None:
+        """Consume credits for a delivery that was already sent successfully.
+
+        Returns ``None`` when no token client is configured (dev / test).
+        """
+        if self._token_client is None:
+            return None
+
+        channel_type = ChannelType(str(stream.channel_type))
+        cost = get_credit_cost(channel_type)
+
+        return await self._token_client.consume(
+            org_id=str(stream.organization_id),
+            amount=cost,
+            reference_id=str(delivery.id),
+            user_id=str(stream.owner_id),
+            username=str(stream.owner_username or "unknown"),
+        )
+
+    # ------------------------------------------------------------------
+    # Dispatch
+    # ------------------------------------------------------------------
 
     async def dispatch_delivery(
         self,
@@ -44,14 +96,13 @@ class DispatchService:
         1. Load stream + event
         2. Resolve adapter from stream.channel_type
         3. adapter.send(event, stream)
-        4. On success: update status=DELIVERED, set delivered_at
-        5. On failure: status=FAILED, increment attempt_count, set next_retry_at
+        4. On success  → consume tokens, mark DELIVERED
+        5. On failure  → mark FAILED with retry (no tokens consumed)
 
-        Args:
-            delivery: The pending StreamDelivery record
-
-        Returns:
-            Updated StreamDelivery record
+        Token consumption happens **after** a successful send so that
+        failed deliveries are never charged.  If the organisation runs
+        out of credits between deliveries the consumption call returns
+        402 and we log a warning (the message was already sent).
         """
         stream: Stream | None = self.db.query(Stream).filter(Stream.id == delivery.stream_id).first()
         event: StreamEvent | None = self.db.query(StreamEvent).filter(StreamEvent.id == delivery.event_id).first()
@@ -62,7 +113,7 @@ class DispatchService:
             self.db.commit()
             return delivery
 
-        # Resolve adapter and send
+        # ── Adapter resolution & send ────────────────────────────────
         try:
             adapter = get_adapter(ChannelType(str(stream.channel_type)))
         except ValueError as e:
@@ -80,6 +131,19 @@ class DispatchService:
                 "status_code": result.status_code,
                 "response_body": result.response_body,
             }
+
+            # ── Post-success token consumption ───────────────────────
+            token_result = await self._consume_tokens_after_success(stream, delivery)
+            if token_result is not None:
+                cost = get_credit_cost(ChannelType(str(stream.channel_type)))
+                delivery.response_metadata = {  # type: ignore[assignment]
+                    **dict(delivery.response_metadata or {}),
+                    "credits_consumed": cost if token_result.success else 0,
+                    "credits_balance": token_result.balance,
+                }
+                if not token_result.success:
+                    self._log_token_failure(delivery, stream, token_result)
+
             logger.info(
                 "Delivery dispatched successfully",
                 extra={"delivery_id": delivery.id, "stream_id": stream.id, "event_id": event.id},
@@ -94,7 +158,7 @@ class DispatchService:
                 "response_body": result.response_body,
             }
             logger.warning(
-                "Delivery dispatch failed",
+                "Delivery dispatch failed — no tokens consumed",
                 extra={
                     "delivery_id": delivery.id,
                     "stream_id": stream.id,
@@ -105,6 +169,47 @@ class DispatchService:
 
         self.db.commit()
         return delivery
+
+    # ------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _log_token_failure(
+        delivery: StreamDelivery,
+        stream: Stream,
+        token_result: TokenConsumeResult,
+    ) -> None:
+        """Log a structured warning when post-success token consumption fails."""
+        if token_result.error_code in (
+            TokenErrorCode.INSUFFICIENT_TOKENS,
+            TokenErrorCode.MODULE_NOT_ENABLED,
+        ):
+            logger.warning(
+                "Delivery sent but token consumption refused — organisation may have exhausted credits",
+                extra={
+                    "delivery_id": delivery.id,
+                    "stream_id": stream.id,
+                    "org_id": stream.organization_id,
+                    "error_code": token_result.error_code,
+                    "error": token_result.error,
+                },
+            )
+        else:
+            logger.warning(
+                "Delivery sent but token consumption failed (transient) — credits were NOT debited",
+                extra={
+                    "delivery_id": delivery.id,
+                    "stream_id": stream.id,
+                    "org_id": stream.organization_id,
+                    "error_code": token_result.error_code,
+                    "error": token_result.error,
+                },
+            )
+
+    # ------------------------------------------------------------------
+    # Batch dispatchers
+    # ------------------------------------------------------------------
 
     async def dispatch_pending_for_event(
         self,
@@ -161,11 +266,7 @@ class DispatchService:
             Tuple of (dispatched_count, failed_count)
         """
         # Verify stream exists and belongs to org
-        stream = (
-            self.db.query(Stream)
-            .filter(Stream.id == stream_id, Stream.organization_id == org_id)
-            .first()
-        )
+        stream = self.db.query(Stream).filter(Stream.id == stream_id, Stream.organization_id == org_id).first()
         if not stream:
             return 0, 0
 
@@ -206,11 +307,11 @@ class DispatchService:
     async def test_connection(
         self,
         channel_type: ChannelType,
-        channel_config: dict,
+        channel_config: dict,  # type: ignore[type-arg]
     ) -> DispatchResult:
         """Send a test message to validate channel configuration.
 
-        Creates a mock event and stream to test the adapter.
+        Test connections never consume tokens (ADR-0016: 0 credits).
 
         Args:
             channel_type: The channel type to test

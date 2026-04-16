@@ -20,7 +20,7 @@ from sqlalchemy.pool import StaticPool
 from app.database import Base, get_db
 
 # Auth constants matching app/core/auth.py
-_JWT_SECRET = "test-jwt-secret"
+_JWT_SECRET = "test-jwt-secret-that-is-long-enough-for-hs256"
 _JWT_ALGORITHM = "HS256"
 _JWT_ISSUER = "global-gateway"
 
@@ -103,9 +103,7 @@ def pytest_collection_modifyitems(config, items):
     if config.getoption("--run-integration"):
         return
 
-    skip_integration = pytest.mark.skip(
-        reason="need --run-integration option to run integration tests"
-    )
+    skip_integration = pytest.mark.skip(reason="need --run-integration option to run integration tests")
     for item in items:
         if "integration" in item.keywords:
             item.add_marker(skip_integration)

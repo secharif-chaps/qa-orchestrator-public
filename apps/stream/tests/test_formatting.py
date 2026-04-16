@@ -58,7 +58,7 @@ class TestFormatTimestamp:
 
     def test_default_now(self):
         result = format_timestamp()
-        assert re.fullmatch(r'\d{2} \w+\.? \d{4} à \d{2}:\d{2}', result)
+        assert re.fullmatch(r"\d{2} \w+\.? \d{4} à \d{2}:\d{2}", result)
 
 
 class TestBuildEntityUrl:
@@ -144,8 +144,6 @@ class TestExtractPayloadDetails:
         assert details == []
 
     def test_ignores_internal_fields(self):
-        event = _make_event(
-            payload={"company_id": 42, "action": "update", "website": "https://example.com"}
-        )
+        event = _make_event(payload={"company_id": 42, "action": "update", "website": "https://example.com"})
         details = extract_payload_details(event)
         assert details == []

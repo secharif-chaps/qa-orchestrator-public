@@ -17,6 +17,7 @@ from app.core.logging_config import get_logger
 from app.models.company import Company
 from app.models.task import Task, TaskStatus
 from app.services.company_section_service import write_section_data
+from app.services.outbox_service import OutboxService
 from app.services.task_events import task_event_manager
 
 logger = get_logger(__name__)
@@ -33,6 +34,7 @@ class CompanyAnalysisRunner:
         website: str,
         organization_id: str,
         owner_id: str,
+        action: str = "create",
     ) -> None:
         """Run full company analysis via the LangGraph graph.
 
@@ -131,7 +133,7 @@ class CompanyAnalysisRunner:
             )
 
             # Broadcast completion
-            await self._broadcast_completion(db, owner_id, company_id, company_name, organization_id, task_map)
+            await self._broadcast_completion(db, owner_id, company_id, company_name, organization_id, task_map, action)
 
         except TimeoutError:
             timeout_msg = f"Analysis timed out after {GLOBAL_ANALYSIS_TIMEOUT_SECONDS}s"
@@ -150,7 +152,7 @@ class CompanyAnalysisRunner:
                         task_type=agent_name,
                         error=timeout_msg,
                     )
-            await self._broadcast_completion(db, owner_id, company_id, company_name, organization_id, task_map)
+            await self._broadcast_completion(db, owner_id, company_id, company_name, organization_id, task_map, action)
 
         except Exception as e:
             logger.error(
@@ -170,7 +172,7 @@ class CompanyAnalysisRunner:
                         task_type=agent_name,
                         error=str(e),
                     )
-            await self._broadcast_completion(db, owner_id, company_id, company_name, organization_id, task_map)
+            await self._broadcast_completion(db, owner_id, company_id, company_name, organization_id, task_map, action)
 
     async def run_single_agent(
         self,
@@ -392,8 +394,9 @@ class CompanyAnalysisRunner:
         company_name: str,
         organization_id: str,
         task_map: dict[str, Task],
+        action: str = "create",
     ) -> None:
-        """Broadcast all_tasks_completed event."""
+        """Broadcast all_tasks_completed event and emit outbox notification."""
         success_count = sum(1 for t in task_map.values() if t.status == TaskStatus.SUCCEEDED)
         error_count = sum(1 for t in task_map.values() if t.status == TaskStatus.ERROR)
 
@@ -418,6 +421,40 @@ class CompanyAnalysisRunner:
             success_count=success_count,
             error_count=error_count,
         )
+
+        # Emit outbox event after analysis completes (notifications arrive with data ready)
+        event_type = "screen.company.created" if action == "create" else "screen.company.updated"
+        summary = (
+            f"Fiche entreprise {company_name} créée"
+            if action == "create"
+            else f"Fiche entreprise {company_name} actualisée"
+        )
+
+        def _emit_outbox() -> None:
+            outbox = OutboxService(db)
+            outbox.emit(
+                event_type=event_type,
+                aggregate_type="company",
+                aggregate_id=str(company_id),
+                organization_id=organization_id,
+                folder_id=folder_id,
+                payload={
+                    "company_id": company_id,
+                    "company_name": company_name,
+                    "success_count": success_count,
+                    "error_count": error_count,
+                },
+                summary=summary,
+            )
+            db.commit()
+
+        try:
+            await asyncio.to_thread(_emit_outbox)
+        except Exception as e:
+            logger.warning(
+                "Failed to emit outbox event for analysis completion",
+                extra={"error": str(e), "company_id": company_id},
+            )
 
     async def _mark_tasks_errored(self, db: Session, task_map: dict[str, Task], error_msg: str) -> None:
         """Mark all still-running tasks as error."""

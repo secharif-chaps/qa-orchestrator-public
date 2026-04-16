@@ -9,6 +9,7 @@ Covers:
 import os
 from unittest.mock import patch
 
+
 def _make_settings(**overrides):
     """Create a Settings instance with env_file disabled to test pure defaults."""
     from app.core.config import Settings
@@ -45,6 +46,18 @@ class TestDefaultSettings:
         s = _make_settings()
         assert s.GLOBAL_SERVICE_URL == "http://global-service:8000/api"
 
+    def test_stream_cost_teams_default(self):
+        s = _make_settings()
+        assert s.STREAM_COST_TEAMS == 5
+
+    def test_stream_cost_slack_default(self):
+        s = _make_settings()
+        assert s.STREAM_COST_SLACK == 5
+
+    def test_stream_cost_webhook_default(self):
+        s = _make_settings()
+        assert s.STREAM_COST_WEBHOOK == 2
+
 
 class TestSettingsOverride:
     """Tests for environment variable overrides."""
@@ -62,3 +75,11 @@ class TestSettingsOverride:
         with patch.dict(os.environ, {"LOG_LEVEL": "DEBUG"}):
             s = Settings(_env_file=None)
             assert s.LOG_LEVEL == "DEBUG"
+
+    def test_stream_cost_override(self):
+        from app.core.config import Settings
+
+        with patch.dict(os.environ, {"STREAM_COST_TEAMS": "10", "STREAM_COST_WEBHOOK": "1"}):
+            s = Settings(_env_file=None)
+            assert s.STREAM_COST_TEAMS == 10
+            assert s.STREAM_COST_WEBHOOK == 1
