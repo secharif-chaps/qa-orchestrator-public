@@ -989,6 +989,7 @@
       "title": "Confirmer la déconnexion"
     },
     "modules": {
+      "discover": "Discover",
       "explore": "Cartographie",
       "screen": "Fiche entreprise",
       "target": "Veille",
