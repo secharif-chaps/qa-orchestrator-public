@@ -74,7 +74,8 @@ fi
 # ─── 2. Auto-generate secrets ────────────────────────
 
 if grep -q '^ENCRYPTION_KEY=changeme$' .env; then
-  KEY=$(openssl rand -base64 32 | tr '+/' '-_')
+  KEY=$(docker compose run --rm --no-deps -T --entrypoint python3 global-service -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())" 2>/dev/null) \
+    || KEY=$(python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
   sed -i.bak "s/^ENCRYPTION_KEY=changeme$/ENCRYPTION_KEY=${KEY}/" .env
   echo "✅ Auto-generated ENCRYPTION_KEY"
 fi
