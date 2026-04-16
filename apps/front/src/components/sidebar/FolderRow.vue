@@ -2,14 +2,14 @@
   <div class="dark:bg-sage-800 border-sage-300 rounded-card ml-1 border bg-white">
     <!-- Folder Header -->
     <div
-      @click.stop="$emit('toggle')"
-      class="group text-sage-900 dark:bg-sage-800 rounded-card relative z-10 flex cursor-pointer items-center justify-between gap-2 bg-white px-2 py-3 transition-colors"
+      class="group text-sage-900 dark:bg-sage-800 rounded-card relative z-10 flex items-center justify-between gap-2 bg-white px-2 py-3 transition-colors"
     >
       <div class="flex min-w-0 flex-1 items-center gap-2">
         <!-- Expand/Collapse Arrow -->
         <button
           v-if="folder.items && folder.items.length > 0"
-          class="flex w-3 shrink-0 items-center justify-center"
+          class="flex w-3 shrink-0 cursor-pointer items-center justify-center"
+          @click.stop="$emit('toggle')"
         >
           <Icon
             :icon="isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'"
@@ -18,18 +18,14 @@
         </button>
         <div v-else class="w-3 shrink-0"></div>
 
-        <!-- Folder Icon -->
-        <Icon
-          class="dark:text-sage-300 shrink-0 text-sm"
-          :icon="isExpanded ? 'fa-folder' : 'fa-folder-open'"
-        />
-
         <!-- Folder Name -->
-        <span
-          class="truncate text-sm hover:underline"
-          @click.prevent="$emit('navigateFolder', folder.id)"
-          >{{ folder.name }}</span
-        >
+        <Button
+          variant="neutral"
+          size="sm"
+          :icon="isExpanded ? 'fa-folder' : 'fa-folder-open'"
+          :label="folder.name"
+          @click.stop="$emit('navigateFolder', folder.id)"
+        />
       </div>
 
       <!-- Add Company Button (visible only for owners or writers when Screen module is enabled) -->
