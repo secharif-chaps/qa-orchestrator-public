@@ -918,3 +918,13 @@
 div[data-reka-popper-content-wrapper] {
   z-index: 20 !important;
 }
+
+/* Fix: Vuellar Modal backdrop too light — semi-transparent gray hurts readability (TAR-1530) */
+.of\:bg-sage-950\/40.of\:backdrop-blur-xs {
+  background-color: rgb(0 0 0 / 0.55) !important;
+  backdrop-filter: blur(8px) !important;
+}
+.dark .of\:dark\:bg-sage-800\/60.of\:backdrop-blur-xs {
+  background-color: rgb(0 0 0 / 0.7) !important;
+  backdrop-filter: blur(8px) !important;
+}
