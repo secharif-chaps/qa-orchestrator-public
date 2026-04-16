@@ -43,7 +43,7 @@ from celery import Celery
 
 celery_app = Celery("screen")
 celery_app.conf.update(
-    broker_url=settings.RABBITMQ_URL,  # amqp://guest:guest@rabbitmq:5672//
+    broker_url=settings.RABBITMQ_URL,  # amqp://guest:guest@target-rabbitmq:5672//
     result_backend="rpc://",
     task_serializer="json",
     accept_content=["json"],

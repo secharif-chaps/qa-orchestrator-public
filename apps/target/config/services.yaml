@@ -83,6 +83,7 @@ services:
   App\Infrastructure\Organisation\Security\InternalJwtAuthenticator:
     factory: ['App\Infrastructure\Organisation\Security\InternalJwtAuthenticator', 'create']
     arguments:
+      $userProvider: '@App\Infrastructure\User\Security\UserProvider'
       $internalJwtSecret: '%env(string:INTERNAL_JWT_SECRET)%'
       $internalAllowedIps: '%env(string:INTERNAL_ALLOWED_IPS)%'
 

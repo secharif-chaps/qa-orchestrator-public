@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Units\Infrastructure\Organisation\Security;
 
 use App\Domain\User\User;
-use App\Domain\User\UserGatewayInterface;
-use App\Domain\User\UserNotFoundException;
 use App\Infrastructure\Organisation\Security\InternalJwtAuthenticator;
 use App\Infrastructure\Organisation\Security\InternalJwtToken;
 use Firebase\JWT\JWT;
@@ -16,21 +14,22 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Core\User\AttributesBasedUserProviderInterface;
 
 #[CoversClass(InternalJwtAuthenticator::class)]
 class InternalJwtAuthenticatorTest extends TestCase
 {
     private const string JWT_SECRET = 'test-secret-key-for-jwt-minimum-32bytes!';
 
-    /** @var UserGatewayInterface&Stub */
-    private UserGatewayInterface $userGateway;
+    /** @var AttributesBasedUserProviderInterface<User>&Stub */
+    private AttributesBasedUserProviderInterface $userProvider;
     private InternalJwtAuthenticator $authenticator;
 
     protected function setUp(): void
     {
-        $this->userGateway = $this->createStub(UserGatewayInterface::class);
+        $this->userProvider = $this->createStub(AttributesBasedUserProviderInterface::class);
         $this->authenticator = new InternalJwtAuthenticator(
-            $this->userGateway,
+            $this->userProvider,
             self::JWT_SECRET,
             new NullLogger(),
         );
@@ -62,8 +61,8 @@ class InternalJwtAuthenticatorTest extends TestCase
     public function testAuthenticateWithValidToken(): void
     {
         $user = new User('user-123', 'test@example.com', [], 'testuser');
-        $this->userGateway->method('get')
-->willReturn($user);
+        $this->userProvider->method('loadUserByIdentifier')
+            ->willReturn($user);
 
         $jwt = $this->createValidJwt([
             'sub' => 'user-123',
@@ -81,8 +80,8 @@ class InternalJwtAuthenticatorTest extends TestCase
     public function testAuthenticateCreatesInternalJwtToken(): void
     {
         $user = new User('user-123', 'test@example.com', [], 'testuser');
-        $this->userGateway->method('get')
-->willReturn($user);
+        $this->userProvider->method('loadUserByIdentifier')
+            ->willReturn($user);
 
         $jwt = $this->createValidJwt([
             'sub' => 'user-123',
@@ -164,21 +163,23 @@ class InternalJwtAuthenticatorTest extends TestCase
         $this->authenticator->authenticate($request);
     }
 
-    public function testAuthenticateRejectsUnknownUser(): void
+    public function testAuthenticateCallsUserProviderWithClaims(): void
     {
-        $this->userGateway->method('get')
-            ->willThrowException(new UserNotFoundException('user-unknown'));
+        $user = new User('user-unknown', 'unknown@example.com', [], 'unknown');
+        $this->userProvider->method('loadUserByIdentifier')
+            ->willReturn($user);
 
         $jwt = $this->createValidJwt([
             'sub' => 'user-unknown',
+            'username' => 'unknown',
         ]);
         $request = Request::create('/api/test');
         $request->headers->set('Authorization', 'Internal ' . $jwt);
 
         $passport = $this->authenticator->authenticate($request);
 
-        $this->expectException(CustomUserMessageAuthenticationException::class);
-        $passport->getUser();
+        // Verify userProvider was called with correct parameters
+        self::assertSame($user, $passport->getUser());
     }
 
     /**

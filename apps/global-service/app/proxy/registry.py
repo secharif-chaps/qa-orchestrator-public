@@ -245,15 +245,19 @@ class ModuleRegistry:
         return module.openapi_hash if module else None
 
     async def check_and_rediscover_stale(self) -> dict[str, str]:
-        """Check all backends for schema changes and rediscover if needed.
+        """Check all backends for schema changes and discover missing modules.
 
-        Fetches each module's /openapi.json, computes its hash, and triggers
-        rediscovery if the hash differs from the stored value.
+        For already-discovered modules: fetches the OpenAPI schema, computes
+        its hash, and triggers rediscovery if the hash changed.
 
-        Uses a per-instance TTL to avoid fetching schemas on every healthcheck probe.
+        For modules that failed at startup: attempts first-time discovery so
+        backends that were slow to start get registered without a gateway restart.
+
+        Both checks are gated by _STALE_CHECK_TTL_SECONDS (5 min) to avoid
+        hammering backends on every Kubernetes readiness probe.
 
         Returns:
-            dict of module_name -> action ("unchanged" | "rediscovered" | "error" | "skipped")
+            dict of module_name -> action ("unchanged" | "rediscovered" | "discovered" | "error" | "skipped")
         """
         now = time.monotonic()
         if (now - self._last_stale_check) < self._STALE_CHECK_TTL_SECONDS:
@@ -261,8 +265,31 @@ class ModuleRegistry:
         self._last_stale_check = now
 
         results: dict[str, str] = {}
+
+        # ── Attempt discovery for modules unreachable at startup ──
+        for module_name in self._backends:
+            try:
+                name = ModuleName(module_name)
+            except ValueError:
+                continue
+            if name in self._modules:
+                continue
+
+            await self.rediscover_module(name)
+            if name in self._modules:
+                results[module_name] = "discovered"
+                logger.info(
+                    "Late-discovered module via stale check",
+                    extra={"module_name": module_name},
+                )
+            else:
+                results[module_name] = "error"
+
+        # ── Check already-discovered modules for schema changes ──
         async with httpx.AsyncClient(timeout=5) as client:
             for name, module in list(self._modules.items()):
+                if name.value in results:
+                    continue  # just discovered above, skip
                 openapi_path, extra_headers = self._OPENAPI_CONFIG.get(name.value, ("/openapi.json", {}))
                 url = f"{module.backend_url}{openapi_path}"
                 try:

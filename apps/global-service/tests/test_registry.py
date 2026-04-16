@@ -8,10 +8,13 @@ Covers:
 - Overlap resolution by module priority
 - Rediscovery of a single module
 - ModuleName enum sync between proxy and DB layers
+- Stale check with missing module discovery (TTL-gated)
 """
 
-import pytest
+import time
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from app.proxy.registry import (
     ModuleDefinition,
@@ -652,6 +655,195 @@ class TestEdgeCases:
         module = registry.modules[ModuleName.SCREEN]
         # Only GET should be registered, not 'parameters' or 'summary'
         assert list(module.routes["/api/items"].keys()) == ["GET"]
+
+
+class TestCheckAndRediscoverStale:
+    """Test the healthcheck-driven stale check and missing module discovery."""
+
+    @pytest.mark.asyncio
+    async def test_ttl_skips_when_called_too_soon(self):
+        """Within TTL window, all modules return 'skipped'."""
+        registry = ModuleRegistry(backends={"screen": "http://screen:8000"})
+        registry._modules[ModuleName.SCREEN] = ModuleDefinition(
+            name=ModuleName.SCREEN, backend_url="http://screen:8000",
+            openapi_hash="abc123",
+        )
+        # Simulate a recent check
+        registry._last_stale_check = time.monotonic()
+
+        results = await registry.check_and_rediscover_stale()
+
+        assert results == {"screen": "skipped"}
+
+    @pytest.mark.asyncio
+    async def test_missing_module_discovered_after_ttl(self):
+        """Module that failed at startup is discovered on the next TTL-gated check."""
+        target_schema = {
+            "openapi": "3.0.0",
+            "paths": {"/api/watch_files": {"get": {}}},
+        }
+        registry = ModuleRegistry(backends={
+            "screen": "http://screen:8000",
+            "target": "http://target:8000",
+        })
+        # Screen is discovered, target is not
+        registry._modules[ModuleName.SCREEN] = ModuleDefinition(
+            name=ModuleName.SCREEN, backend_url="http://screen:8000",
+            openapi_hash="abc123",
+        )
+        # Expire TTL
+        registry._last_stale_check = 0
+
+        with patch("app.proxy.registry.httpx.AsyncClient") as mock_client_cls:
+            mock_client = AsyncMock()
+
+            # rediscover_module for target → success
+            # check_and_rediscover_stale for screen → unchanged
+            async def mock_get(url, **kwargs):
+                resp = _mock_response(target_schema)
+                if "screen" in url:
+                    resp.json.return_value = {"openapi": "3.0.0", "paths": {}}
+                return resp
+
+            mock_client.get = AsyncMock(side_effect=mock_get)
+            mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
+
+            results = await registry.check_and_rediscover_stale()
+
+        assert results["target"] == "discovered"
+        assert ModuleName.TARGET in registry.modules
+        result = registry.resolve("watch_files", "GET")
+        assert result is not None
+        assert result[0].name == ModuleName.TARGET
+
+    @pytest.mark.asyncio
+    async def test_missing_module_still_unreachable(self):
+        """Module that failed at startup stays missing if backend is still down."""
+        registry = ModuleRegistry(backends={"target": "http://target:8000"})
+        registry._last_stale_check = 0
+
+        with patch("app.proxy.registry.httpx.AsyncClient") as mock_client_cls:
+            mock_client = AsyncMock()
+            mock_client.get = AsyncMock(side_effect=Exception("Connection refused"))
+            mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
+
+            results = await registry.check_and_rediscover_stale()
+
+        assert results["target"] == "error"
+        assert ModuleName.TARGET not in registry.modules
+
+    @pytest.mark.asyncio
+    async def test_ttl_prevents_retry_spam(self):
+        """Missing module is NOT retried within the TTL window."""
+        registry = ModuleRegistry(backends={"target": "http://target:8000"})
+        # Simulate a check that just happened
+        registry._last_stale_check = time.monotonic()
+
+        # No HTTP mock needed — should return before any network call
+        results = await registry.check_and_rediscover_stale()
+
+        # Target is not in _modules, so it doesn't appear in "skipped" either
+        assert results == {}
+
+    @pytest.mark.asyncio
+    async def test_already_discovered_not_refetched_in_missing_loop(self):
+        """Modules already in _modules are skipped by the missing-module loop."""
+        schema = {"openapi": "3.0.0", "paths": {"/api/companies": {"get": {}}}}
+        registry = ModuleRegistry(backends={"screen": "http://screen:8000"})
+        registry._modules[ModuleName.SCREEN] = ModuleDefinition(
+            name=ModuleName.SCREEN, backend_url="http://screen:8000",
+            openapi_hash=ModuleRegistry._compute_schema_hash(schema),
+        )
+        registry._last_stale_check = 0
+
+        with patch("app.proxy.registry.httpx.AsyncClient") as mock_client_cls:
+            mock_client = AsyncMock()
+            mock_client.get = AsyncMock(return_value=_mock_response(schema))
+            mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
+
+            results = await registry.check_and_rediscover_stale()
+
+        # Screen should be "unchanged" (stale check), not "discovered"
+        assert results["screen"] == "unchanged"
+
+    @pytest.mark.asyncio
+    async def test_schema_change_triggers_rediscovery(self):
+        """When a discovered module's schema hash changes, it is rediscovered."""
+        old_schema = {"openapi": "3.0.0", "paths": {"/api/companies": {"get": {}}}}
+        new_schema = {"openapi": "3.0.0", "paths": {
+            "/api/companies": {"get": {}},
+            "/api/tasks": {"get": {}},
+        }}
+        registry = ModuleRegistry(backends={"screen": "http://screen:8000"})
+        registry._modules[ModuleName.SCREEN] = ModuleDefinition(
+            name=ModuleName.SCREEN, backend_url="http://screen:8000",
+            openapi_hash=ModuleRegistry._compute_schema_hash(old_schema),
+            routes={"/api/companies": {"GET": RouteOperation(method="GET", path="/api/companies")}},
+        )
+        registry._build_route_index()
+        registry._last_stale_check = 0
+
+        with patch("app.proxy.registry.httpx.AsyncClient") as mock_client_cls:
+            mock_client = AsyncMock()
+            mock_client.get = AsyncMock(return_value=_mock_response(new_schema))
+            mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
+
+            results = await registry.check_and_rediscover_stale()
+
+        assert results["screen"] == "rediscovered"
+        assert registry.resolve("tasks", "GET") is not None
+
+    @pytest.mark.asyncio
+    async def test_mixed_discovered_and_missing(self):
+        """One module discovered + one missing: both handled correctly."""
+        screen_schema = {"openapi": "3.0.0", "paths": {"/api/companies": {"get": {}}}}
+        target_schema = {"openapi": "3.0.0", "paths": {"/api/watch_files": {"get": {}}}}
+
+        registry = ModuleRegistry(backends={
+            "screen": "http://screen:8000",
+            "target": "http://target:8000",
+        })
+        screen_module = ModuleDefinition(
+            name=ModuleName.SCREEN, backend_url="http://screen:8000",
+            openapi_hash=ModuleRegistry._compute_schema_hash(screen_schema),
+            routes={"/api/companies": {"GET": RouteOperation(method="GET", path="/api/companies")}},
+        )
+        registry._modules[ModuleName.SCREEN] = screen_module
+        registry._build_route_index()
+        registry._last_stale_check = 0
+
+        with patch("app.proxy.registry.httpx.AsyncClient") as mock_client_cls:
+            mock_client = AsyncMock()
+
+            async def mock_get(url, **kwargs):
+                if "target" in url:
+                    return _mock_response(target_schema)
+                return _mock_response(screen_schema)
+
+            mock_client.get = AsyncMock(side_effect=mock_get)
+            mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
+
+            results = await registry.check_and_rediscover_stale()
+
+        assert results["screen"] == "unchanged"
+        assert results["target"] == "discovered"
+        assert registry.resolve("watch_files", "GET") is not None
+        assert registry.resolve("companies", "GET") is not None
+
+    @pytest.mark.asyncio
+    async def test_unknown_module_name_in_backends_skipped(self):
+        """Invalid module name in _backends doesn't crash the stale check."""
+        registry = ModuleRegistry(backends={"invalid_module": "http://invalid:8000"})
+        registry._last_stale_check = 0
+
+        results = await registry.check_and_rediscover_stale()
+
+        assert "invalid_module" not in results
 
 
 class TestModuleNameSync:

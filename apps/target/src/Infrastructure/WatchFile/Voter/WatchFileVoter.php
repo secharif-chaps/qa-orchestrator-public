@@ -64,6 +64,12 @@ class WatchFileVoter extends Voter
             return false;
         }
 
+        // Admin users have full access to all watch files
+        $roles = $user->getRoles();
+        if (\in_array('ROLE_ADMIN', $roles, true) || \in_array('admin', $roles, true)) {
+            return true;
+        }
+
         try {
             $watchFileUser = $this->watchFileUserGateway->getByWatchFileAndUser($watchFile, $user);
 

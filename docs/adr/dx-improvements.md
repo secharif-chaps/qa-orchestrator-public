@@ -212,7 +212,7 @@ KEYCLOAK_ADMIN_CLIENT_ID=admin-cli
 KEYCLOAK_ADMIN_CLIENT_SECRET=changeme       # Ask a team member
 
 # ─── RabbitMQ ─────────────────────────────────────
-RABBITMQ_HOST=rabbitmq
+RABBITMQ_HOST=target-rabbitmq
 RABBITMQ_PORT=5672
 RABBITMQ_USER=guest
 RABBITMQ_PASSWORD=guest

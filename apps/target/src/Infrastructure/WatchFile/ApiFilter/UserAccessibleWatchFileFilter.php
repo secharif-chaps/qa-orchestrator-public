@@ -40,11 +40,17 @@ class UserAccessibleWatchFileFilter extends AbstractFilter
     ): void {
         $loggedUser = $this->security->getUser();
         if (!$loggedUser instanceof User) {
-            return; // No logged user, no filtering
+            return;
         }
 
         if (WatchFile::class !== $resourceClass) {
-            return; // Only apply this filter to WatchFile resources
+            return;
+        }
+
+        // Admin users have unrestricted access to all watch files
+        $roles = $loggedUser->getRoles();
+        if (\in_array('ROLE_ADMIN', $roles, true) || \in_array('admin', $roles, true)) {
+            return;
         }
 
         $alias = $queryBuilder->getRootAliases()[0];

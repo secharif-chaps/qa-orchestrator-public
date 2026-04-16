@@ -27,6 +27,14 @@ x-n8n-db: &n8n-db
   DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD:-postgres}
   N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-!ChangeThisN8nEncryptionKey!}
 
+# Default owner credentials — consumed by the n8n entrypoint on first boot
+# to auto-create the admin user.
+x-n8n-default-user: &n8n-default-user
+  N8N_DEFAULT_EMAIL: ${N8N_DEFAULT_EMAIL:-admin@chapsmind.local}
+  N8N_DEFAULT_PASSWORD: ${N8N_DEFAULT_PASSWORD:-Chapsmind2025!}
+  N8N_DEFAULT_FIRSTNAME: ${N8N_DEFAULT_FIRSTNAME:-ChapsMind}
+  N8N_DEFAULT_LASTNAME: ${N8N_DEFAULT_LASTNAME:-Admin}
+
 x-target-env: &target-env
   DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${TARGET_DB:-target_db}
   MESSENGER_TRANSPORT_DSN: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@target-rabbitmq:5672/%2f/messages
@@ -96,6 +104,12 @@ services:
       TARGET_MERCURE_URL: ${TARGET_MERCURE_URL:-http://target:8000}
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${GLOBAL_DB:-global_db}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
+    healthcheck:
+      test: ['CMD', 'python', '-c', 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8000/health/ready")']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   # PostgreSQL Database — shared instance, multiple databases (no profile — always up)
   # Databases: screen_db, global_db, stream_db, keycloak, target_db, n8n_db, agent_memory_db
@@ -220,7 +234,7 @@ services:
       db: { condition: service_healthy }
       n8n-import: { condition: service_completed_successfully }
     environment:
-      <<: *n8n-db
+      <<: [*n8n-db, *n8n-default-user]
       N8N_HOST: "0.0.0.0"
       N8N_PORT: 5678
       N8N_PROTOCOL: http
@@ -237,10 +251,6 @@ services:
       N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
       N8N_TEMPLATES_ENABLED: "false"
       N8N_USER_MANAGEMENT_JWT_SECRET: ${N8N_JWT_SECRET:-!ChangeThisN8nJWTSecret!}
-      N8N_DEFAULT_EMAIL: ${N8N_DEFAULT_EMAIL:-admin@chapsmind.local}
-      N8N_DEFAULT_PASSWORD: ${N8N_DEFAULT_PASSWORD:-Chapsmind2025!}
-      N8N_DEFAULT_FIRSTNAME: ${N8N_DEFAULT_FIRSTNAME:-ChapsMind}
-      N8N_DEFAULT_LASTNAME: ${N8N_DEFAULT_LASTNAME:-Admin}
     volumes:
       - n8n_data:/home/node/.n8n
       - ./docker/n8n/entrypoint.sh:/chapsmind-entrypoint.sh:ro
@@ -263,7 +273,20 @@ services:
         n8n import:credentials --separate --input=/data/credentials || echo "Warning: Some credential imports had issues"
 
         echo "Importing workflows..."
+        # Use || true because n8n may fail trying to remove webhooks for workflows that don't exist yet
+        # This is expected on first run or after database reset
         n8n import:workflow --separate --input=/data/workflows 2>&1 || echo "Warning: Some workflow imports had issues (this is normal on first run)"
+
+        if [ -n "$$N8N_WORKFLOWS_TO_ACTIVATE" ]; then
+          echo "$$N8N_WORKFLOWS_TO_ACTIVATE" | tr ',' '\n' | while read workflow; do
+            if [ -n "$$workflow" ]; then
+              echo "Activating workflow: $$workflow"
+              n8n update:workflow --id="$$workflow" --active=true || echo "Warning: Could not activate workflow $$workflow"
+            fi
+          done
+        else
+          echo "No specific workflows to activate. Use N8N_WORKFLOWS_TO_ACTIVATE environment variable to specify workflows (comma-separated IDs)"
+        fi
 
         echo "Import completed successfully"
     restart: "no"
@@ -271,6 +294,7 @@ services:
       db: { condition: service_healthy }
     environment:
       <<: *n8n-db
+      N8N_WORKFLOWS_TO_ACTIVATE: ${N8N_WORKFLOWS_TO_ACTIVATE:-m3ykymXVS32Bdbph}
     volumes:
       - n8n_data:/home/node/.n8n
       - ../apps/target/n8n/credentials:/data/credentials:ro
