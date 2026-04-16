@@ -8,8 +8,18 @@ from app.schemas.event_catalog import SOURCE_LABELS, get_event_by_type
 
 # French month abbreviations
 _FRENCH_MONTHS = [
-    "janv.", "févr.", "mars", "avr.", "mai", "juin",
-    "juil.", "août", "sept.", "oct.", "nov.", "déc.",
+    "janv.",
+    "févr.",
+    "mars",
+    "avr.",
+    "mai",
+    "juin",
+    "juil.",
+    "août",
+    "sept.",
+    "oct.",
+    "nov.",
+    "déc.",
 ]
 
 

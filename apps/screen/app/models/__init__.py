@@ -41,6 +41,7 @@ from .organization import (
     TokenTransaction,
     TransactionType,
 )
+from .outbox import OutboxEvent
 from .task import Task, TaskStatus, TaskType
 from .translation import Translation
 from .translation_job import TranslationJob, TranslationJobStatus
@@ -86,6 +87,8 @@ __all__ = [
     "TransactionType",
     "ReferenceType",
     "FeatureFlag",
+    # Outbox models
+    "OutboxEvent",
     # Enrichment models
     "CompanyEnrichment",
     # Task models

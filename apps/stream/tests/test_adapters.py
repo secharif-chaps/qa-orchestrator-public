@@ -279,7 +279,8 @@ class TestSlackWebhookAdapter:
         payload = adapter.format_payload(event, stream)
         blocks = payload["blocks"]
         link_blocks = [
-            b for b in blocks
+            b
+            for b in blocks
             if b["type"] == "section" and "text" in b and "Voir la fiche" in b.get("text", {}).get("text", "")
         ]
         assert len(link_blocks) == 1
@@ -293,8 +294,7 @@ class TestSlackWebhookAdapter:
         payload = adapter.format_payload(event, stream)
         blocks = payload["blocks"]
         link_blocks = [
-            b for b in blocks
-            if b["type"] == "section" and "Voir la fiche" in b.get("text", {}).get("text", "")
+            b for b in blocks if b["type"] == "section" and "Voir la fiche" in b.get("text", {}).get("text", "")
         ]
         assert len(link_blocks) == 0
 

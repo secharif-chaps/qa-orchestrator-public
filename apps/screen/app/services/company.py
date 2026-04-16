@@ -35,6 +35,7 @@ from app.services.company_section_service import (
     apply_translations_to_section_data,
     read_all_section_data,
 )
+from app.services.outbox_service import OutboxService
 from app.services.token_manager import TOKENS_PER_COMPANY
 from app.services.translation import (
     SUPPORTED_LANGUAGE_CODES,
@@ -210,12 +211,13 @@ class CompanyService:
         self.db.refresh(company)
 
         # Launch LangGraph analysis in background (non-blocking)
-        self._launch_analysis(company, owner_id)
+        # Outbox event emitted after analysis completes (in runner._broadcast_completion)
+        self._launch_analysis(company, owner_id, action="create")
 
         logger.info(f"Created company '{name}' with {len(list(TaskType))} tasks")
         return company
 
-    def _launch_analysis(self, company: Company, owner_id: str) -> None:
+    def _launch_analysis(self, company: Company, owner_id: str, action: str = "create") -> None:
         """Launch WorldCheck screening first, then LangGraph analysis.
 
         WorldCheck runs first so that raw_worldcheck_knowledge is available
@@ -252,6 +254,7 @@ class CompanyService:
                     website=company.website,
                     organization_id=company.organization_id,
                     owner_id=owner_id,
+                    action=action,
                 )
             except Exception as e:
                 logger.error(f"Analysis failed for company {company.id}: {e}", exc_info=True)
@@ -431,6 +434,14 @@ class CompanyService:
         company = self.get_company(company_id)
         if company:
             company.is_deleted = True
+            OutboxService(self.db).emit(
+                event_type="screen.company.deleted",
+                aggregate_type="company",
+                aggregate_id=str(company_id),
+                organization_id=company.organization_id,
+                payload={"company_id": company_id, "company_name": company.name},
+                summary=f"Fiche entreprise {company.name} supprimée",
+            )
             self.db.commit()
             self.db.refresh(company)
         return company
@@ -680,11 +691,12 @@ class CompanyService:
             total_rows=len(companies), successful=successful, failed=len(companies) - successful, results=results
         )
 
-    def refresh_company(self, company_id: int) -> Company:
+    def refresh_company(self, company_id: int, folder_id: str | None = None) -> Company:
         """Reset all tasks and restart analysis.
 
         Args:
             company_id: ID of the company to refresh
+            folder_id: Folder containing this company (for stream event routing)
 
         Returns:
             Company instance with refreshed task states
@@ -716,7 +728,8 @@ class CompanyService:
         self.db.commit()
 
         # Launch full analysis in background
-        self._launch_analysis(company, company.owner_id)
+        # Outbox event emitted after analysis completes (in runner._broadcast_completion)
+        self._launch_analysis(company, company.owner_id, action="refresh")
 
         return company
 

@@ -33,17 +33,12 @@ class SlackWebhookAdapter(ChannelAdapter):
 
         # Summary
         if event.summary:
-            blocks.append(
-                {"type": "section", "text": {"type": "mrkdwn", "text": event.summary}}
-            )
+            blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": event.summary}})
 
         # Payload details (company name, result stats)
         details = extract_payload_details(event)
         if details:
-            fields = [
-                {"type": "mrkdwn", "text": f"*{label}* : {value}"}
-                for label, value in details
-            ]
+            fields = [{"type": "mrkdwn", "text": f"*{label}* : {value}"} for label, value in details]
             blocks.append({"type": "section", "fields": fields})
 
         # Link to entity

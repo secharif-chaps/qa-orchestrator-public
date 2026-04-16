@@ -70,9 +70,10 @@ async def _announce_to_gateway(app: FastAPI) -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Manage async resource lifecycle (checkpoint pool, graph compilation)."""
+    """Manage async resource lifecycle (checkpoint pool, graph compilation, outbox relay)."""
     # Startup: pre-compile graph and open checkpoint pool
     from app.agents.graph import get_analysis_graph
+    from app.services.outbox_relay import OutboxRelay
 
     await get_analysis_graph()
     logger.info("Analysis graph compiled and checkpoint pool opened")
@@ -82,8 +83,16 @@ async def lifespan(app: FastAPI):
     _announce_task = asyncio.create_task(_announce_to_gateway(app))
     _announce_task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
 
+    relay = OutboxRelay()
+    await relay.start()
+    logger.info("Outbox relay started")
+
     yield
-    # Shutdown: close checkpoint pool
+
+    # Shutdown: stop relay, close checkpoint pool
+    await relay.stop()
+    logger.info("Outbox relay stopped")
+
     from app.agents.checkpoint import _pool
 
     if _pool:

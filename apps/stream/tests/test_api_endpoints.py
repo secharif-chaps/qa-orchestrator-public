@@ -79,7 +79,9 @@ class TestStreamCRUDEndpoints:
     def test_list_streams(self, test_client: TestClient, internal_auth_header: dict):
         # Create 2 streams
         test_client.post("/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header)
-        test_client.post("/api/folders/folder-abc/streams", json=_stream_payload(name="Stream 2"), headers=internal_auth_header)
+        test_client.post(
+            "/api/folders/folder-abc/streams", json=_stream_payload(name="Stream 2"), headers=internal_auth_header
+        )
 
         response = test_client.get("/api/folders/folder-abc/streams", headers=internal_auth_header)
         assert response.status_code == 200
@@ -89,7 +91,9 @@ class TestStreamCRUDEndpoints:
 
     def test_list_streams_pagination(self, test_client: TestClient, internal_auth_header: dict):
         for i in range(5):
-            test_client.post("/api/folders/folder-abc/streams", json=_stream_payload(name=f"S{i}"), headers=internal_auth_header)
+            test_client.post(
+                "/api/folders/folder-abc/streams", json=_stream_payload(name=f"S{i}"), headers=internal_auth_header
+            )
 
         response = test_client.get("/api/folders/folder-abc/streams?page=1&per_page=2", headers=internal_auth_header)
         data = response.json()
@@ -99,7 +103,9 @@ class TestStreamCRUDEndpoints:
         assert data["meta"]["last_page"] == 3
 
     def test_get_stream(self, test_client: TestClient, internal_auth_header: dict):
-        create_resp = test_client.post("/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header)
+        create_resp = test_client.post(
+            "/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header
+        )
         stream_id = create_resp.json()["id"]
 
         response = test_client.get(f"/api/streams/{stream_id}", headers=internal_auth_header)
@@ -111,7 +117,9 @@ class TestStreamCRUDEndpoints:
         assert response.status_code == 404
 
     def test_update_stream(self, test_client: TestClient, internal_auth_header: dict):
-        create_resp = test_client.post("/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header)
+        create_resp = test_client.post(
+            "/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header
+        )
         stream_id = create_resp.json()["id"]
 
         response = test_client.put(
@@ -123,7 +131,9 @@ class TestStreamCRUDEndpoints:
         assert response.json()["name"] == "Updated Name"
 
     def test_delete_stream(self, test_client: TestClient, internal_auth_header: dict):
-        create_resp = test_client.post("/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header)
+        create_resp = test_client.post(
+            "/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header
+        )
         stream_id = create_resp.json()["id"]
 
         response = test_client.delete(f"/api/streams/{stream_id}", headers=internal_auth_header)
@@ -134,7 +144,9 @@ class TestStreamCRUDEndpoints:
         assert response.status_code == 404
 
     def test_update_status(self, test_client: TestClient, internal_auth_header: dict):
-        create_resp = test_client.post("/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header)
+        create_resp = test_client.post(
+            "/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header
+        )
         stream_id = create_resp.json()["id"]
 
         response = test_client.patch(
@@ -146,7 +158,9 @@ class TestStreamCRUDEndpoints:
         assert response.json()["status"] == "paused"
 
     def test_update_status_invalid_transition(self, test_client: TestClient, internal_auth_header: dict):
-        create_resp = test_client.post("/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header)
+        create_resp = test_client.post(
+            "/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header
+        )
         stream_id = create_resp.json()["id"]
 
         # Archive it
@@ -161,7 +175,9 @@ class TestStreamCRUDEndpoints:
         assert response.status_code == 400
 
     def test_list_deliveries(self, test_client: TestClient, internal_auth_header: dict):
-        create_resp = test_client.post("/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header)
+        create_resp = test_client.post(
+            "/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header
+        )
         stream_id = create_resp.json()["id"]
 
         response = test_client.get(f"/api/streams/{stream_id}/deliveries", headers=internal_auth_header)
@@ -360,18 +376,24 @@ class TestStatusTransitionEdgeCases:
     """Test all status self-transitions and edge cases."""
 
     def test_paused_to_paused_fails(self, test_client: TestClient, internal_auth_header: dict):
-        create_resp = test_client.post("/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header)
+        create_resp = test_client.post(
+            "/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header
+        )
         stream_id = create_resp.json()["id"]
 
         # Active → Paused
         test_client.patch(f"/api/streams/{stream_id}/status", json={"status": "paused"}, headers=internal_auth_header)
 
         # Paused → Paused should fail
-        response = test_client.patch(f"/api/streams/{stream_id}/status", json={"status": "paused"}, headers=internal_auth_header)
+        response = test_client.patch(
+            f"/api/streams/{stream_id}/status", json={"status": "paused"}, headers=internal_auth_header
+        )
         assert response.status_code == 400
 
     def test_update_archived_stream_fails(self, test_client: TestClient, internal_auth_header: dict):
-        create_resp = test_client.post("/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header)
+        create_resp = test_client.post(
+            "/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header
+        )
         stream_id = create_resp.json()["id"]
 
         # Archive it
@@ -399,9 +421,13 @@ class TestAuthPermissions:
         )
         assert response.status_code == 403
 
-    def test_read_role_cannot_delete(self, test_client: TestClient, read_only_auth_header: dict, internal_auth_header: dict):
+    def test_read_role_cannot_delete(
+        self, test_client: TestClient, read_only_auth_header: dict, internal_auth_header: dict
+    ):
         # Create with write perms
-        create_resp = test_client.post("/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header)
+        create_resp = test_client.post(
+            "/api/folders/folder-abc/streams", json=_stream_payload(), headers=internal_auth_header
+        )
         stream_id = create_resp.json()["id"]
 
         # Try delete with read-only
@@ -477,9 +503,7 @@ class TestTestConnectionEndpoint:
 
 class TestDispatchEndpoint:
     @patch("app.services.dispatch_service.get_adapter")
-    def test_dispatch_stream_success(
-        self, mock_get_adapter, test_client: TestClient, internal_auth_header: dict
-    ):
+    def test_dispatch_stream_success(self, mock_get_adapter, test_client: TestClient, internal_auth_header: dict):
         # Create a stream first
         create_resp = test_client.post(
             "/api/folders/folder-abc/streams",

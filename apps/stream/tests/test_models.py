@@ -88,34 +88,36 @@ class TestStreamModel:
     def test_query_streams_by_organization(self, db_session, mock_user):
         """Test querying streams filtered by organization."""
         for i in range(3):
-            db_session.add(Stream(
-                name=f"Stream {i}",
+            db_session.add(
+                Stream(
+                    name=f"Stream {i}",
+                    channel_type=ChannelType.TEAMS,
+                    channel_config={},
+                    mode=StreamMode.LIVE,
+                    status=StreamStatus.ACTIVE,
+                    folder_id="folder-abc",
+                    organization_id=mock_user["organization_id"],
+                    owner_id=mock_user["sub"],
+                    subscribed_events=[],
+                )
+            )
+        # Another org's stream
+        db_session.add(
+            Stream(
+                name="Other Org Stream",
                 channel_type=ChannelType.TEAMS,
                 channel_config={},
                 mode=StreamMode.LIVE,
                 status=StreamStatus.ACTIVE,
                 folder_id="folder-abc",
-                organization_id=mock_user["organization_id"],
-                owner_id=mock_user["sub"],
+                organization_id="other-org-456",
+                owner_id="other-user",
                 subscribed_events=[],
-            ))
-        # Another org's stream
-        db_session.add(Stream(
-            name="Other Org Stream",
-            channel_type=ChannelType.TEAMS,
-            channel_config={},
-            mode=StreamMode.LIVE,
-            status=StreamStatus.ACTIVE,
-            folder_id="folder-abc",
-            organization_id="other-org-456",
-            owner_id="other-user",
-            subscribed_events=[],
-        ))
+            )
+        )
         db_session.commit()
 
-        results = db_session.query(Stream).filter(
-            Stream.organization_id == mock_user["organization_id"]
-        ).all()
+        results = db_session.query(Stream).filter(Stream.organization_id == mock_user["organization_id"]).all()
         assert len(results) == 3
 
 
@@ -167,9 +169,13 @@ class TestStreamEventModel:
         assert len(all_events) == 1
 
         # But can be filtered out
-        active_events = db_session.query(StreamEvent).filter(
-            StreamEvent.is_deleted == False  # noqa: E712
-        ).all()
+        active_events = (
+            db_session.query(StreamEvent)
+            .filter(
+                StreamEvent.is_deleted == False  # noqa: E712
+            )
+            .all()
+        )
         assert len(active_events) == 0
 
     def test_event_without_optional_fields(self, db_session):
@@ -319,10 +325,17 @@ class TestEnumValues:
         assert set(StreamMode) == {StreamMode.LIVE, StreamMode.RECURRENCE}
 
     def test_stream_status_values(self):
-        assert set(StreamStatus) == {StreamStatus.DRAFT, StreamStatus.ACTIVE, StreamStatus.PAUSED, StreamStatus.ARCHIVED}
+        assert set(StreamStatus) == {
+            StreamStatus.DRAFT,
+            StreamStatus.ACTIVE,
+            StreamStatus.PAUSED,
+            StreamStatus.ARCHIVED,
+        }
 
     def test_delivery_status_values(self):
         assert set(DeliveryStatus) == {
-            DeliveryStatus.PENDING, DeliveryStatus.DELIVERED,
-            DeliveryStatus.FAILED, DeliveryStatus.SKIPPED,
+            DeliveryStatus.PENDING,
+            DeliveryStatus.DELIVERED,
+            DeliveryStatus.FAILED,
+            DeliveryStatus.SKIPPED,
         }

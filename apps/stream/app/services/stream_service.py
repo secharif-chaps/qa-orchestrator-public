@@ -186,9 +186,7 @@ class StreamService:
 
         allowed = ALLOWED_TRANSITIONS.get(stream.status, set())  # type: ignore[call-overload]
         if new_status not in allowed:
-            raise StreamServiceError(
-                f"Cannot transition from {stream.status} to {new_status}"
-            )
+            raise StreamServiceError(f"Cannot transition from {stream.status} to {new_status}")
 
         stream.status = new_status  # type: ignore[assignment]
         self.db.commit()

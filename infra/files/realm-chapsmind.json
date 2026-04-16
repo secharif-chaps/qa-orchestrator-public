@@ -35,7 +35,9 @@
         "organization.write",
         "organization.manage",
         "admin.organizations",
-        "admin.tasks"
+        "admin.tasks",
+        "stream.read",
+        "stream.write"
       ]
     },
     {
@@ -56,7 +58,9 @@
         "company.create",
         "organization.read",
         "organization.write",
-        "organization.manage"
+        "organization.manage",
+        "stream.read",
+        "stream.write"
       ]
     },
     {
@@ -331,6 +335,18 @@
         "clientRole": false
       },
       {
+        "name": "stream.read",
+        "description": "Can view streams and deliveries",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "stream.write",
+        "description": "Can create, edit, delete, and manage streams",
+        "composite": false,
+        "clientRole": false
+      },
+      {
         "name": "admin",
         "description": "Full administrative access",
         "composite": true,
@@ -342,7 +358,9 @@
             "organization.manage",
             "admin.organizations",
             "admin.tasks",
-            "admin.workflows"
+            "admin.workflows",
+            "stream.read",
+            "stream.write"
           ]
         },
         "clientRole": false

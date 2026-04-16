@@ -38,7 +38,9 @@ def upgrade() -> None:
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column(
             "channel_type",
-            postgresql.ENUM("teams", "slack_webhook", "webhook", name="channel_type_enum", schema=SCHEMA, create_type=False),
+            postgresql.ENUM(
+                "teams", "slack_webhook", "webhook", name="channel_type_enum", schema=SCHEMA, create_type=False
+            ),
             nullable=False,
         ),
         sa.Column("channel_config", postgresql.JSONB(), nullable=False, server_default="{}"),
@@ -50,7 +52,9 @@ def upgrade() -> None:
         sa.Column("cron_expression", sa.String(100), nullable=True),
         sa.Column(
             "status",
-            postgresql.ENUM("draft", "active", "paused", "archived", name="stream_status_enum", schema=SCHEMA, create_type=False),
+            postgresql.ENUM(
+                "draft", "active", "paused", "archived", name="stream_status_enum", schema=SCHEMA, create_type=False
+            ),
             nullable=False,
             server_default="active",
         ),
@@ -109,7 +113,15 @@ def upgrade() -> None:
         ),
         sa.Column(
             "status",
-            postgresql.ENUM("pending", "delivered", "failed", "skipped", name="delivery_status_enum", schema=SCHEMA, create_type=False),
+            postgresql.ENUM(
+                "pending",
+                "delivered",
+                "failed",
+                "skipped",
+                name="delivery_status_enum",
+                schema=SCHEMA,
+                create_type=False,
+            ),
             nullable=False,
             server_default="pending",
         ),

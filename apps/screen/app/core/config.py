@@ -53,6 +53,9 @@ class Settings(BaseSettings):
     # In Docker/K8s, this is the internal service name
     GLOBAL_SERVICE_URL: str = "http://global-service:8000/api"
 
+    # Stream service URL for outbox event relay
+    STREAM_INGEST_URL: str = "http://stream:8000/internal/events/ingest"
+
     # LLM settings (OpenAI-compatible: Azure AI Foundry, LiteLLM, etc.)
     LLM_PROVIDER: LLMProvider = LLMProvider.OPENAI
     LLM_API_KEY: str = ""

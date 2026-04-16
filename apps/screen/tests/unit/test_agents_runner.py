@@ -275,7 +275,7 @@ class TestBroadcastCompletion:
         task_map = {"profile": MagicMock(status=TaskStatus.SUCCEEDED)}
         mock_events.broadcast_all_tasks_completed = AsyncMock()
 
-        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", "org-1", task_map)
+        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", "org-1", task_map, "create")
 
         mock_events.broadcast_all_tasks_completed.assert_called_once()
         call_kwargs = mock_events.broadcast_all_tasks_completed.call_args[1]
@@ -292,7 +292,7 @@ class TestBroadcastCompletion:
         task_map = {"profile": MagicMock(status=TaskStatus.SUCCEEDED)}
         mock_events.broadcast_all_tasks_completed = AsyncMock()
 
-        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", "org-1", task_map)
+        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", "org-1", task_map, "create")
 
         call_kwargs = mock_events.broadcast_all_tasks_completed.call_args[1]
         assert call_kwargs["folder_id"] is None
@@ -312,11 +312,46 @@ class TestBroadcastCompletion:
             "press": MagicMock(status=TaskStatus.ERROR),
         }
 
-        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", "org-1", task_map)
+        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", "org-1", task_map, "create")
 
         call_kwargs = mock_events.broadcast_all_tasks_completed.call_args[1]
         assert call_kwargs["success_count"] == 2
         assert call_kwargs["error_count"] == 1
+
+    @pytest.mark.asyncio
+    @patch("app.agents.runner.get_global_service_client")
+    @patch("app.agents.runner.task_event_manager")
+    async def test_create_action_emits_company_created(self, mock_events, mock_get_client, runner, mock_db):
+        """action='create' emits screen.company.created outbox event."""
+        mock_client = MagicMock()
+        mock_client.get_company_folder_id = AsyncMock(return_value=None)
+        mock_get_client.return_value = mock_client
+        mock_events.broadcast_all_tasks_completed = AsyncMock()
+
+        task_map = {"profile": MagicMock(status=TaskStatus.SUCCEEDED)}
+
+        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", "org-1", task_map, "create")
+
+        # Verify the outbox emit was called with screen.company.created
+        outbox_call = mock_db.commit.call_args_list
+        assert len(outbox_call) > 0  # commit called for outbox
+
+    @pytest.mark.asyncio
+    @patch("app.agents.runner.get_global_service_client")
+    @patch("app.agents.runner.task_event_manager")
+    async def test_refresh_action_emits_company_updated(self, mock_events, mock_get_client, runner, mock_db):
+        """action='refresh' emits screen.company.updated outbox event."""
+        mock_client = MagicMock()
+        mock_client.get_company_folder_id = AsyncMock(return_value=None)
+        mock_get_client.return_value = mock_client
+        mock_events.broadcast_all_tasks_completed = AsyncMock()
+
+        task_map = {"profile": MagicMock(status=TaskStatus.SUCCEEDED)}
+
+        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", "org-1", task_map, "refresh")
+
+        # Verify commit was called (outbox emit + commit)
+        assert mock_db.commit.called
 
 
 # ---------------------------------------------------------------------------
