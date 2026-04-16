@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Organisation\Security;
 
-use App\Domain\User\UserGatewayInterface;
-use App\Domain\User\UserNotFoundException;
+use App\Domain\User\User;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Psr\Log\LoggerInterface;
@@ -16,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Core\User\AttributesBasedUserProviderInterface;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
@@ -27,25 +27,29 @@ class InternalJwtAuthenticator extends AbstractAuthenticator
     private const string EXPECTED_ISSUER = 'global-gateway';
 
     /**
-     * @param list<string> $allowedNetworks parsed CIDR networks; empty disables IP validation
+     * @param AttributesBasedUserProviderInterface<User> $userProvider
+     * @param list<string>                               $allowedNetworks parsed CIDR networks; empty disables IP validation
      */
     public function __construct(
-        private readonly UserGatewayInterface $userGateway,
+        private readonly AttributesBasedUserProviderInterface $userProvider,
         private readonly string $internalJwtSecret,
         private readonly LoggerInterface $logger,
         private readonly array $allowedNetworks = [],
     ) {
     }
 
+    /**
+     * @param AttributesBasedUserProviderInterface<User> $userProvider
+     */
     public static function create(
-        UserGatewayInterface $userGateway,
+        AttributesBasedUserProviderInterface $userProvider,
         string $internalJwtSecret,
         LoggerInterface $logger,
         ?string $internalAllowedIps = null,
     ): self {
         $networks = array_values(array_filter(array_map('trim', explode(',', $internalAllowedIps ?? ''))));
 
-        return new self($userGateway, $internalJwtSecret, $logger, $networks);
+        return new self($userProvider, $internalJwtSecret, $logger, $networks);
     }
 
     public function supports(Request $request): ?bool
@@ -85,15 +89,8 @@ class InternalJwtAuthenticator extends AbstractAuthenticator
         }
 
         return new SelfValidatingPassport(
-            new UserBadge($sub, function (string $userId) {
-                try {
-                    return $this->userGateway->get($userId);
-                } catch (UserNotFoundException) {
-                    $this->logger->info('Internal JWT user not found, will be provisioned.', [
-                        'sub' => $userId,
-                    ]);
-                    throw new CustomUserMessageAuthenticationException('User not found.');
-                }
+            new UserBadge($sub, function (string $userId) use ($claims) {
+                return $this->userProvider->loadUserByIdentifier($userId, $claims);
             }),
             [new InternalJwtClaimsBadge($claims)],
         );

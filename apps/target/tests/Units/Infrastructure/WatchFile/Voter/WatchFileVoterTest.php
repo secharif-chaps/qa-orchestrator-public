@@ -375,4 +375,69 @@ class WatchFileVoterTest extends TestCase
 
         $this->assertFalse($result);
     }
+
+    public function testAdminUserCanViewAnyWatchFileWithoutWatchFileUser(): void
+    {
+        $user = new User(id: 'admin-id', email: 'admin@test.com', roles: ['ROLE_ADMIN']);
+        $this->token->method('getUser')
+            ->willReturn($user);
+
+        $watchFile = $this->createStub(WatchFile::class);
+
+        // Gateway throws = no WatchFileUser record, but admin should still pass
+        $this->watchFileUserGateway->method('getByWatchFileAndUser')
+            ->willThrowException(new WatchFileUserNotFoundException('Not found'));
+
+        $result = $this->voter->vote($this->token, $watchFile, [WatchFileVoter::VIEW]);
+
+        $this->assertEquals(VoterInterface::ACCESS_GRANTED, $result);
+    }
+
+    public function testAdminUserCanEditAnyWatchFileWithoutWatchFileUser(): void
+    {
+        $user = new User(id: 'admin-id', email: 'admin@test.com', roles: ['ROLE_ADMIN']);
+        $this->token->method('getUser')
+            ->willReturn($user);
+
+        $watchFile = $this->createStub(WatchFile::class);
+
+        $this->watchFileUserGateway->method('getByWatchFileAndUser')
+            ->willThrowException(new WatchFileUserNotFoundException('Not found'));
+
+        $result = $this->voter->vote($this->token, $watchFile, [WatchFileVoter::EDIT]);
+
+        $this->assertEquals(VoterInterface::ACCESS_GRANTED, $result);
+    }
+
+    public function testAdminWithKeycloakRoleCanViewAnyWatchFile(): void
+    {
+        $user = new User(id: 'admin-id', email: 'admin@test.com', roles: ['admin']);
+        $this->token->method('getUser')
+            ->willReturn($user);
+
+        $watchFile = $this->createStub(WatchFile::class);
+
+        $this->watchFileUserGateway->method('getByWatchFileAndUser')
+            ->willThrowException(new WatchFileUserNotFoundException('Not found'));
+
+        $result = $this->voter->vote($this->token, $watchFile, [WatchFileVoter::VIEW]);
+
+        $this->assertEquals(VoterInterface::ACCESS_GRANTED, $result);
+    }
+
+    public function testNonAdminUserDeniedWithoutWatchFileUser(): void
+    {
+        $user = new User(id: 'user-id', email: 'user@test.com', roles: ['ROLE_USER']);
+        $this->token->method('getUser')
+            ->willReturn($user);
+
+        $watchFile = $this->createStub(WatchFile::class);
+
+        $this->watchFileUserGateway->method('getByWatchFileAndUser')
+            ->willThrowException(new WatchFileUserNotFoundException('Not found'));
+
+        $result = $this->voter->vote($this->token, $watchFile, [WatchFileVoter::VIEW]);
+
+        $this->assertEquals(VoterInterface::ACCESS_DENIED, $result);
+    }
 }

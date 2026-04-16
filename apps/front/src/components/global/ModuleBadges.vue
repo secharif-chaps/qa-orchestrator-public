@@ -40,9 +40,11 @@ const modules = computed(() => {
 })
 
 function getModuleRoute(module: ModuleDisplayConfig) {
-  if (module.name === 'screen' && module.status === 'enabled') {
-    return '/companies/create'
-  }
+  if (module.status !== 'enabled') return '/'
+
+  if (module.name === 'screen') return '/companies/create'
+  if (module.name === 'target') return '/target'
+
   return '/'
 }
 </script>
