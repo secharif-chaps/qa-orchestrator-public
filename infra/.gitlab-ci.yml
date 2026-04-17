@@ -129,6 +129,7 @@ infra:trivy-config:
         # main branch — .docker-publish pushes tag "main"
         IMAGE_TAG="main"
         SUB_DOMAIN="${DEPLOY_SUB_DOMAIN:-chapsmind}"
+        ENV_NAME_SLUG="chapsmind-main"
       fi
     - DYNAMIC_ENVIRONMENT_URL="https://${SUB_DOMAIN}.${BASE_DOMAIN}"
     - echo "DYNAMIC_ENVIRONMENT_URL=${DYNAMIC_ENVIRONMENT_URL}" >> deploy.env
@@ -154,10 +155,10 @@ infra:trivy-config:
       cat > deploy-artifact/.env << ENVEOF
       # ─── Docker Compose ───────────────────────────────────
       COMPOSE_FILE=compose.yaml:compose.staging.yaml
-      COMPOSE_PROJECT_NAME=chapsmind-${SUB_DOMAIN}
+      COMPOSE_PROJECT_NAME=${ENV_NAME_SLUG:-chapsmind-${SUB_DOMAIN}}
       COMPOSE_PROFILES=screen,stream
       # ─── Deploy ───────────────────────────────────────────
-      ENV_NAME_SLUG=chapsmind-${SUB_DOMAIN}
+      ENV_NAME_SLUG=${ENV_NAME_SLUG:-chapsmind-${SUB_DOMAIN}}
       SERVER_NAME=${SUB_DOMAIN}.${BASE_DOMAIN}
       DOCKER_REGISTRY=${CI_REGISTRY_IMAGE}
       DOCKER_CHAPSMIND_VERSION=${IMAGE_TAG}
