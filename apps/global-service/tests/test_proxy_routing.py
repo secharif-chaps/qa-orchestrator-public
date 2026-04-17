@@ -137,7 +137,7 @@ class TestFallbackBehavior:
 
         result = _resolve_backend(registry, "some/unknown/path", "GET")
         assert result is not None
-        module, backend_path = result
+        module, backend_path, _ = result
         assert module.backend_url == "http://screen:8000"
 
     def test_resolved_route_takes_priority_over_fallback(self):
@@ -169,7 +169,7 @@ class TestFallbackBehavior:
 
         result = _resolve_backend(registry, "watchfiles", "GET")
         assert result is not None
-        module, _ = result
+        module, _, _ = result
         assert module.backend_url == "http://target:8000"
 
     def test_fallback_when_registry_is_none(self):
@@ -178,7 +178,7 @@ class TestFallbackBehavior:
 
         result = _resolve_backend(None, "any/path", "GET")
         assert result is not None
-        module, backend_path = result
+        module, backend_path, _ = result
         assert module.name == ModuleName.SCREEN
         assert backend_path == "/api/any/path"
 
@@ -187,7 +187,7 @@ class TestFallbackBehavior:
         from app.proxy.routes import _resolve_backend
 
         result = _resolve_backend(None, "companies/42/tasks", "POST")
-        module, backend_path = result
+        module, backend_path, _ = result
         assert backend_path == "/api/companies/42/tasks"
 
 
@@ -302,7 +302,7 @@ class TestAbusiveInputs:
 
         long_path = "x" * 10000
         result = _resolve_backend(None, long_path, "GET")
-        module, backend_path = result
+        module, backend_path, _ = result
         assert module.name == ModuleName.SCREEN
         assert backend_path == f"/api/{long_path}"
 
@@ -431,7 +431,7 @@ class TestBackendUrlSecurity:
 
         # Even with a malicious backend URL, resolve just does string matching
         result = _resolve_backend(None, "javascript:alert(1)", "GET")
-        module, backend_path = result
+        module, backend_path, _ = result
         # Falls back to screen — the malicious path becomes part of the backend path
         assert module.name == ModuleName.SCREEN
         assert backend_path == "/api/javascript:alert(1)"
@@ -441,7 +441,7 @@ class TestBackendUrlSecurity:
         from app.proxy.routes import _resolve_backend
 
         result = _resolve_backend(None, "file:///etc/passwd", "GET")
-        module, backend_path = result
+        module, backend_path, _ = result
         assert module.name == ModuleName.SCREEN
         # The path is just forwarded as a string — httpx handles URL validation
         assert "/etc/passwd" in backend_path
@@ -451,7 +451,7 @@ class TestBackendUrlSecurity:
         from app.proxy.routes import _resolve_backend
 
         result = _resolve_backend(None, "../../../etc/passwd", "GET")
-        module, backend_path = result
+        module, backend_path, _ = result
         # Fallback always prepends /api/ so traversal is contained
         assert backend_path == "/api/../../../etc/passwd"
         assert module.name == ModuleName.SCREEN
@@ -461,7 +461,7 @@ class TestBackendUrlSecurity:
         from app.proxy.routes import _resolve_backend
 
         result = _resolve_backend(None, "169.254.169.254/latest/meta-data", "GET")
-        module, backend_path = result
+        module, backend_path, _ = result
         # Path is forwarded to screen backend with /api/ prefix
         assert backend_path == "/api/169.254.169.254/latest/meta-data"
         assert module.name == ModuleName.SCREEN
@@ -614,7 +614,7 @@ class TestFallbackSecurity:
 
         # The fallback just builds /api/{path}, query params are appended separately
         result = _resolve_backend(None, "search", "GET")
-        module, backend_path = result
+        module, backend_path, _ = result
         assert backend_path == "/api/search"
 
     def test_fallback_with_malicious_path(self):
@@ -622,7 +622,7 @@ class TestFallbackSecurity:
         from app.proxy.routes import _resolve_backend
 
         result = _resolve_backend(None, "../../admin/secret", "GET")
-        module, backend_path = result
+        module, backend_path, _ = result
         # The /api/ prefix is always prepended
         assert backend_path == "/api/../../admin/secret"
         assert backend_path.startswith("/api/")
@@ -632,7 +632,7 @@ class TestFallbackSecurity:
         from app.proxy.routes import _resolve_backend
 
         result = _resolve_backend(None, "%252e%252e/%252e%252e/etc/passwd", "GET")
-        module, backend_path = result
+        module, backend_path, _ = result
         # Falls back to screen with /api/ prefix — no decoding happens here
         assert backend_path == "/api/%252e%252e/%252e%252e/etc/passwd"
         assert module.name == ModuleName.SCREEN

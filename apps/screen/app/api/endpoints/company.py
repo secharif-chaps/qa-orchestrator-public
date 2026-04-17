@@ -9,6 +9,7 @@ This module provides endpoints for:
 import asyncio
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import Response as FastAPIResponse
 from fastapi_keycloak import OIDCUser
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
@@ -185,37 +186,24 @@ async def get_company_by_name(
     return _build_company_response(db, company)
 
 
-@router.post("/", response_model=CompanyResponse)
+@router.post(
+    "/",
+    response_model=CompanyResponse,
+    openapi_extra={"x-token-cost": TOKENS_PER_COMPANY},
+)
 async def create_company(
     company_data: CompanyCreate,
+    response: FastAPIResponse,
     service: CompanyService = Depends(get_company_service),
-    global_service: GlobalServiceClient = Depends(get_global_service_client),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db),
 ):
     """Create a new company.
 
-    Consumes tokens from the organization's global token balance via global-service.
-    Each company creation costs 35 tokens.
+    Token consumption is handled by the global-service proxy via the token lock pattern.
+    The x-token-cost OpenAPI annotation triggers automatic lock/confirm/release.
     """
     logger.info(f"POST /api/companies/ - START - User: {org_context.username}, Data: {company_data.name[:50]}...")
-
-    logger.info(
-        f"Checking and consuming {TOKENS_PER_COMPANY} tokens for screen module "
-        f"in organization: {org_context.organization_id}"
-    )
-
-    await global_service.consume_tokens(
-        org_id=org_context.organization_id,
-        amount=TOKENS_PER_COMPANY,
-        module_name=ModuleName.SCREEN,
-        reference_type=ReferenceType.company,
-        reference_id=None,
-        user_id=org_context.user_id,
-        username=org_context.username,
-        description="Company creation",
-    )
-    logger.info("Token consumed successfully via global-service")
 
     try:
         company = service.create_company(
@@ -227,6 +215,7 @@ async def create_company(
         )
         logger.info(f"Company created successfully - ID: {company.id}, Name: {company.name}")
 
+        response.headers["x-token-reference-id"] = str(company.id)
         return _build_company_response(db, company)
 
     except ValidationError as e:
@@ -336,16 +325,24 @@ async def restore_company(
     return _build_company_response(db, restored_company)
 
 
-@router.post("/{company_id}/refresh", response_model=CompanyResponse)
+@router.post(
+    "/{company_id}/refresh",
+    response_model=CompanyResponse,
+    openapi_extra={"x-token-cost": TOKENS_PER_COMPANY},
+)
 async def refresh_company(
     company_id: int,
+    response: FastAPIResponse,
     service: CompanyService = Depends(get_company_service),
-    global_service: GlobalServiceClient = Depends(get_global_service_client),
     org_context: OrganizationContext = Depends(get_user_organization),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
     db: Session = Depends(get_db),
 ):
-    """Refresh company data by re-running all tasks."""
+    """Refresh company data by re-running all tasks.
+
+    Token consumption is handled by the global-service proxy via the token lock pattern.
+    The x-token-cost OpenAPI annotation triggers automatic lock/confirm/release.
+    """
     logger.info(
         "Refreshing company data",
         extra={
@@ -361,38 +358,9 @@ async def refresh_company(
         _verify_ownership(company, org_context)
         _verify_all_tasks_succeeded(company_id, service)
 
-        await global_service.consume_tokens(
-            org_id=org_context.organization_id,
-            amount=TOKENS_PER_COMPANY,
-            module_name=ModuleName.SCREEN,
-            reference_type=ReferenceType.refresh,
-            reference_id=str(company_id),
-            user_id=org_context.user_id,
-            username=org_context.username,
-            description="Company refresh",
-        )
+        refreshed_company = service.refresh_company(company_id)
 
-        # Look up folder_id for stream event routing
-        try:
-            folder_id = await global_service.get_company_folder_id(
-                org_id=org_context.organization_id,
-                company_id=company_id,
-                user_id=org_context.user_id,
-                username=org_context.username,
-            )
-        except Exception as e:
-            logger.warning("Failed to get folder_id for outbox event", extra={"error": str(e)})
-            folder_id = None
-
-        try:
-            refreshed_company = service.refresh_company(company_id, folder_id=folder_id)
-        except Exception as e:
-            logger.error(
-                "Refresh failed after token consumption - tokens not refunded",
-                extra={"company_id": company_id, "error": str(e)},
-            )
-            raise
-
+        response.headers["x-token-reference-id"] = str(company_id)
         return _build_company_response(db, refreshed_company)
 
     except HTTPException:

@@ -21,10 +21,12 @@ Security:
 from __future__ import annotations
 
 import ipaddress
+import json
 import re
 import time
 from collections.abc import AsyncGenerator
 from urllib.parse import urlparse, urlunparse
+from uuid import UUID
 
 import httpx
 from fastapi import APIRouter, Request, Response
@@ -34,8 +36,12 @@ from app.core.auth_middleware import GatewayUser, auth_middleware, extract_organ
 from app.core.config import settings
 from app.core.correlation import CORRELATION_HEADER
 from app.core.logging_config import get_logger
+from app.database import get_global_db_context
+from app.models.organization import ModuleName as DBModuleName
+from app.models.organization import TokenLock
 from app.proxy.client import get_proxy_client, get_streaming_client
-from app.proxy.registry import ModuleDefinition, ModuleName, ModuleRegistry
+from app.proxy.registry import ModuleDefinition, ModuleName, ModuleRegistry, RouteOperation
+from app.proxy.token_lock import InsufficientTokensError, TokenLockManager, strip_internal_headers
 from app.proxy.utils import (
     EXCLUDED_REQUEST_HEADERS,
     EXCLUDED_RESPONSE_HEADERS,
@@ -141,6 +147,7 @@ def rewrite_location_header(
     # External URL or non-matching backend — leave unchanged
     return location
 
+
 logger = get_logger(__name__)
 
 # Module registry — initialized at startup via init_module_registry()
@@ -183,18 +190,25 @@ def _get_screen_fallback() -> ModuleDefinition:
     return _screen_fallback
 
 
-def _resolve_backend(registry: ModuleRegistry | None, path: str, method: str) -> tuple[ModuleDefinition, str]:
+def _resolve_backend(
+    registry: ModuleRegistry | None, path: str, method: str
+) -> tuple[ModuleDefinition, str, RouteOperation | None]:
     """Resolve which backend should handle this request.
 
     Tries the registry first. If no match, falls back to screen
     (catch-all during transition period).
+
+    Returns:
+        (module_def, backend_path, route_operation)
     """
     if registry:
         result = registry.resolve(path, method)
         if result:
-            return result
+            module_def, backend_path = result
+            route_op = registry.resolve_operation(module_def.name, method, backend_path)
+            return module_def, backend_path, route_op
 
-    return _get_screen_fallback(), f"/api/{path}"
+    return _get_screen_fallback(), f"/api/{path}", None
 
 
 # ── Module gate: check if module is enabled for user's organization ──
@@ -400,7 +414,7 @@ async def proxy_request(request: Request, path: str) -> Response:
     start_time = time.time()
 
     # Phase 0: Resolve which backend handles this path
-    module, backend_path = _resolve_backend(_registry, path, request.method)
+    module, backend_path, route_op = _resolve_backend(_registry, path, request.method)
     backend_url = module.backend_url
 
     # Phase 0b: Check if the operation is marked as public (x-public: true in OpenAPI).
@@ -501,6 +515,36 @@ async def proxy_request(request: Request, path: str) -> Response:
     if correlation_id:
         headers[CORRELATION_HEADER] = correlation_id
 
+    # Phase 2: Token lock — reserve tokens before proxying
+    token_lock_id: str | None = None
+    token_cost = route_op.token_cost if route_op else 0
+
+    if token_cost > 0 and user:
+        org_id, _ = extract_organization_info(user)
+        if org_id:
+            try:
+                async with get_global_db_context() as db:
+                    manager = TokenLockManager(db)
+                    lock = await manager.lock(
+                        organization_id=org_id,
+                        amount=token_cost,
+                        module=DBModuleName(module.name.value),
+                        user_id=user.sub,
+                        correlation_id=correlation_id or "",
+                        lock_ttl=route_op.token_lock_timeout if route_op else None,
+                    )
+                    token_lock_id = str(lock.id)
+            except InsufficientTokensError as e:
+                return Response(
+                    content=json.dumps({
+                        "detail": "Insufficient tokens",
+                        "required": e.required,
+                        "current_balance": e.current_balance,
+                    }).encode(),
+                    status_code=402,
+                    media_type="application/json",
+                )
+
     # Check if request has body (without reading it into memory)
     request_has_body = has_request_body(request)
 
@@ -517,12 +561,21 @@ async def proxy_request(request: Request, path: str) -> Response:
             "backend_url": backend_url,
             "has_body": request_has_body,
             "is_streaming": is_streaming,
+            "token_lock_id": token_lock_id,
         },
     )
 
     try:
         if is_streaming:
-            return await _handle_streaming_request(
+            response = await _handle_streaming_request(
+                request=request,
+                target_path=target_path,
+                headers=headers,
+                start_time=start_time,
+                backend_url=backend_url,
+            )
+        else:
+            response = await _handle_regular_request(
                 request=request,
                 target_path=target_path,
                 headers=headers,
@@ -530,40 +583,45 @@ async def proxy_request(request: Request, path: str) -> Response:
                 backend_url=backend_url,
             )
 
-        return await _handle_regular_request(
-            request=request,
-            target_path=target_path,
-            headers=headers,
-            start_time=start_time,
-            backend_url=backend_url,
-        )
+        # Phase 3: Confirm or release token lock based on response
+        if token_lock_id:
+            await _settle_token_lock(
+                token_lock_id=token_lock_id,
+                status_code=response.status_code,
+                response_headers=dict(response.headers) if hasattr(response, "headers") else {},
+            )
 
-    except httpx.TimeoutException as e:
-        elapsed = (time.time() - start_time) * 1000
-        logger.error(
-            f"⏱️ PROXY TIMEOUT after {elapsed:.0f}ms: {target_path}",
-            extra={"path": target_path, "elapsed_ms": elapsed, "error": str(e)},
-        )
-        return Response(
-            content=b'{"detail": "Backend service timeout"}',
-            status_code=504,
-            media_type="application/json",
-        )
-
-    except httpx.ConnectError as e:
-        elapsed = (time.time() - start_time) * 1000
-        logger.error(
-            f"🔌 PROXY CONNECTION ERROR: {target_path}",
-            extra={"path": target_path, "elapsed_ms": elapsed, "error": str(e)},
-        )
-        return Response(
-            content=b'{"detail": "Backend service unavailable"}',
-            status_code=503,
-            media_type="application/json",
-        )
+        return response
 
     except Exception as e:
+        # Release token lock on any proxy error
+        if token_lock_id:
+            await _release_token_lock(token_lock_id)
+
         elapsed = (time.time() - start_time) * 1000
+
+        if isinstance(e, httpx.TimeoutException):
+            logger.error(
+                f"⏱️ PROXY TIMEOUT after {elapsed:.0f}ms: {target_path}",
+                extra={"path": target_path, "elapsed_ms": elapsed, "error": str(e)},
+            )
+            return Response(
+                content=b'{"detail": "Backend service timeout"}',
+                status_code=504,
+                media_type="application/json",
+            )
+
+        if isinstance(e, httpx.ConnectError):
+            logger.error(
+                f"🔌 PROXY CONNECTION ERROR: {target_path}",
+                extra={"path": target_path, "elapsed_ms": elapsed, "error": str(e)},
+            )
+            return Response(
+                content=b'{"detail": "Backend service unavailable"}',
+                status_code=503,
+                media_type="application/json",
+            )
+
         logger.exception(
             f"❌ PROXY ERROR: {target_path}",
             extra={"path": target_path, "elapsed_ms": elapsed, "error": str(e)},
@@ -573,6 +631,46 @@ async def proxy_request(request: Request, path: str) -> Response:
             status_code=502,
             media_type="application/json",
         )
+
+
+async def _settle_token_lock(
+    token_lock_id: str,
+    status_code: int,
+    response_headers: dict,
+) -> None:
+    """Confirm or release a token lock based on backend response."""
+    try:
+        async with get_global_db_context() as db:
+            lock = await db.get(TokenLock, UUID(token_lock_id))
+            if not lock:
+                logger.error(f"Token lock {token_lock_id} not found for settlement")
+                return
+
+            manager = TokenLockManager(db)
+
+            if status_code < 400:
+                # Success — confirm the lock
+                cost_override_str = response_headers.get("x-token-cost-override")
+                reference_id = response_headers.get("x-token-reference-id")
+                cost_override = int(cost_override_str) if cost_override_str is not None else None
+                await manager.confirm(lock, cost_override=cost_override, reference_id=reference_id)
+            else:
+                # Error — release the lock
+                await manager.release(lock)
+    except Exception:
+        logger.exception(f"Failed to settle token lock {token_lock_id}")
+
+
+async def _release_token_lock(token_lock_id: str) -> None:
+    """Release a token lock (on proxy error/timeout)."""
+    try:
+        async with get_global_db_context() as db:
+            lock = await db.get(TokenLock, UUID(token_lock_id))
+            if lock:
+                manager = TokenLockManager(db)
+                await manager.release(lock)
+    except Exception:
+        logger.exception(f"Failed to release token lock {token_lock_id}")
 
 
 async def _handle_regular_request(
@@ -623,6 +721,8 @@ async def _handle_regular_request(
             logger.debug(f"🔄 PROXY response stream closed: {target_path}")
 
     response_headers = filter_response_headers(response.headers)
+    # Strip internal token-lock headers so they don't leak to the client (case-insensitive)
+    response_headers = strip_internal_headers(response_headers)
 
     # Rewrite Location header: replace internal backend URL with public URL
     # e.g. http://screen:8000/api/companies/ → https://exemple.chapsmind.com/api/companies/
@@ -696,12 +796,17 @@ async def _handle_streaming_request(
 
         logger.info(f"📡 STREAM CLOSED: {target_path}")
 
+    # Strip internal token-lock headers defensively.
+    # Currently streaming responses don't forward backend headers, but this
+    # protects against future changes that might start forwarding them.
+    streaming_headers = strip_internal_headers({
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",  # Disable nginx buffering
+    })
+
     return StreamingResponse(
         stream_generator(),
         media_type=media_type,
-        headers={
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-            "X-Accel-Buffering": "no",  # Disable nginx buffering
-        },
+        headers=streaming_headers,
     )

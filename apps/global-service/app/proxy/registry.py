@@ -432,11 +432,24 @@ class ModuleRegistry:
                 if not isinstance(operation, dict):
                     continue
 
+                # Coerce token_cost to int at ingestion to catch mistyped OpenAPI specs early
+                raw_token_cost = operation.get("x-token-cost", 0)
+                try:
+                    token_cost = int(raw_token_cost)
+                except (TypeError, ValueError):
+                    logger.warning(
+                        "Invalid x-token-cost value %r for %s %s, defaulting to 0",
+                        raw_token_cost,
+                        method_upper,
+                        normalized_path,
+                    )
+                    token_cost = 0
+
                 route_methods[method_upper] = RouteOperation(
                     method=method_upper,
                     path=normalized_path,
                     permissions=operation.get("x-permissions", []),
-                    token_cost=operation.get("x-token-cost", 0),
+                    token_cost=token_cost,
                     is_public=operation.get("x-public", False),
                     token_lock_timeout=operation.get("x-token-lock-timeout"),
                 )
