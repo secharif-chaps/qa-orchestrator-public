@@ -100,11 +100,86 @@ async def lifespan(app: FastAPI):
         logger.info("Checkpoint pool closed")
 
 
+openapi_tags = [
+    {
+        "name": "companies",
+        "description": "Company CRUD operations, search, filtering, CSV import, and archiving.",
+    },
+    {
+        "name": "tasks",
+        "description": "Task monitoring per company with real-time SSE updates and restart capabilities.",
+    },
+    {
+        "name": "chapse",
+        "description": "Chapse AI chatbot — streaming chat with company context and conversation management.",
+    },
+    {
+        "name": "translation",
+        "description": "Company content translation to multiple languages with background job tracking.",
+    },
+    {
+        "name": "authentication",
+        "description": "Keycloak-based authentication — login, token refresh, logout, and introspection.",
+    },
+    {
+        "name": "webhooks",
+        "description": "Internal webhook endpoints for Dify workflow callbacks and token usage updates.",
+    },
+    {
+        "name": "admin",
+        "description": "Administrative operations — stuck task management and usage statistics.",
+    },
+    {
+        "name": "admin-tasks",
+        "description": "Admin task monitoring — list, filter, restart tasks across all organizations.",
+    },
+    {
+        "name": "cost-analysis",
+        "description": "AI usage cost analysis — global, per-organization, and per-task-type breakdowns.",
+    },
+    {
+        "name": "credits",
+        "description": "Organization credit balance, usage statistics, and top consumers.",
+    },
+    {
+        "name": "feature-flags",
+        "description": "Organization-level feature flag management (translation, Pappers, WorldCheck).",
+    },
+    {
+        "name": "ai-preferences",
+        "description": "AI-powered quick action generation for company analysis.",
+    },
+    {
+        "name": "security",
+        "description": "Security monitoring — rate-limit stats and middleware health.",
+    },
+    {
+        "name": "data-sources",
+        "description": "Organization data-source credential configuration (e.g. Pappers API keys).",
+    },
+    {
+        "name": "health",
+        "description": "Liveness and readiness probes for Kubernetes orchestration.",
+    },
+]
+
 app = FastAPI(
     title="ChapsMind Screen API",
-    description="API for company data and workflow integration",
-    version="0.1.0",
+    description=(
+        "Backend API for the ChapsMind Screen module.\n\n"
+        "Screen automates company intelligence gathering: create a company card, "
+        "and AI-powered workflows collect profile, digital presence, financials, "
+        "press coverage, team, and more.\n\n"
+        "**Key capabilities:**\n"
+        "- Company CRUD with CSV bulk import\n"
+        "- Real-time task monitoring via SSE\n"
+        "- Chapse AI chatbot with company-aware context\n"
+        "- Multi-language translation of company content\n"
+        "- Organization-based multi-tenancy via Keycloak\n"
+    ),
+    version="1.0.0",
     lifespan=lifespan,
+    openapi_tags=openapi_tags,
 )
 
 # Initialize database security monitoring

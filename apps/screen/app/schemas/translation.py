@@ -11,6 +11,14 @@ class LanguageResponse(BaseModel):
     code: str = Field(..., description="ISO language code (e.g., 'fr', 'es')")
     name: str = Field(..., description="Language name in English")
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {"code": "fr", "name": "French"},
+            ],
+        },
+    )
+
 
 class LanguageTranslationStatus(BaseModel):
     """Translation status for a single language."""
@@ -29,6 +37,34 @@ class CompanyTranslationStatusResponse(BaseModel):
     company_id: int = Field(..., description="Company ID")
     translations: dict[str, LanguageTranslationStatus] = Field(..., description="Translation status per language code")
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "company_id": 42,
+                    "translations": {
+                        "fr": {
+                            "language_name": "French",
+                            "status": "complete",
+                            "fields_translated": 15,
+                            "fields_total": 15,
+                            "percentage": 100.0,
+                            "active_job": None,
+                        },
+                        "es": {
+                            "language_name": "Spanish",
+                            "status": "none",
+                            "fields_translated": 0,
+                            "fields_total": 15,
+                            "percentage": 0.0,
+                            "active_job": None,
+                        },
+                    },
+                },
+            ],
+        },
+    )
+
 
 class TranslateRequest(BaseModel):
     """Request to translate company fields to a language."""
@@ -38,6 +74,14 @@ class TranslateRequest(BaseModel):
         description="Target language code (e.g., 'es', 'de', 'pt')",
         min_length=2,
         max_length=5,
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {"language_code": "fr"},
+            ],
+        },
     )
 
 
@@ -56,7 +100,26 @@ class TranslationJobResponse(BaseModel):
     started_at: datetime | None = Field(None, description="Job start time")
     completed_at: datetime | None = Field(None, description="Job completion time")
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": 7,
+                    "company_id": 42,
+                    "language_code": "fr",
+                    "status": "completed",
+                    "total_fields": 15,
+                    "translated_fields": 15,
+                    "progress_percentage": 100.0,
+                    "error_message": None,
+                    "created_at": "2025-06-15T10:30:00Z",
+                    "started_at": "2025-06-15T10:30:01Z",
+                    "completed_at": "2025-06-15T10:30:03Z",
+                },
+            ],
+        },
+    )
 
 
 class TranslateResponse(BaseModel):
@@ -67,6 +130,32 @@ class TranslateResponse(BaseModel):
     fields_queued: int = Field(..., description="Number of fields queued for translation")
     message: str = Field(..., description="Status message")
     job: TranslationJobResponse | None = Field(None, description="Translation job details")
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "company_id": 42,
+                    "language_code": "fr",
+                    "fields_queued": 15,
+                    "message": "Translation started for 15 fields.",
+                    "job": {
+                        "id": 7,
+                        "company_id": 42,
+                        "language_code": "fr",
+                        "status": "pending",
+                        "total_fields": 15,
+                        "translated_fields": 0,
+                        "progress_percentage": 0.0,
+                        "error_message": None,
+                        "created_at": "2025-06-15T10:30:00Z",
+                        "started_at": None,
+                        "completed_at": None,
+                    },
+                },
+            ],
+        },
+    )
 
 
 # Update forward reference

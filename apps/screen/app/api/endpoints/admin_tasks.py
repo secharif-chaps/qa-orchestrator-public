@@ -271,7 +271,7 @@ async def bulk_restart_tasks(
             continue
 
         try:
-            # Restart the task using the company service (fire-and-forget via LangGraph)
+            # Restart the task using the company service (fire-and-forget via background worker)
             company_service.restart_task(task_id)
             restarted.append(task_id)
             logger.info(f"Task {task_id} restarted successfully by admin")

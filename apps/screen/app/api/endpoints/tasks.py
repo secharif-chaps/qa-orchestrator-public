@@ -77,6 +77,17 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
     "/company/{company_id}",
     response_model=list[TaskResponse],
     openapi_extra={"x-permissions": []},
+    summary="List tasks for a company",
+    description=(
+        "Return every task associated with the given company. "
+        "Stale tasks (stuck in RUNNING state beyond the configured timeout) "
+        "are automatically cleaned up before the list is returned."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "Company does not belong to the user's organization"},
+        404: {"description": "Company not found"},
+    },
 )
 async def get_company_tasks(
     company_id: int,
@@ -109,6 +120,16 @@ async def get_company_tasks(
     "/{task_id}/restart",
     response_model=TaskResponse,
     openapi_extra={"x-permissions": []},
+    summary="Restart a task",
+    description=(
+        "Re-queue a failed or completed task for re-execution. "
+        "The user must have access to the company that owns the task through their organization."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "Company does not belong to the user's organization"},
+        404: {"description": "Task not found"},
+    },
 )
 async def restart_task(
     task_id: int,
@@ -138,7 +159,7 @@ async def restart_task(
             detail=f"Task with ID {task_id} not found or you don't have permission to access it",
         )
 
-    # Restart the task (fire-and-forget via LangGraph)
+    # Restart the task (fire-and-forget via background worker)
     restarted_task = service.restart_task(task_id)
     return restarted_task
 
@@ -146,6 +167,17 @@ async def restart_task(
 @router.get(
     "/events/stream",
     openapi_extra={"x-permissions": []},
+    summary="Stream task events (SSE)",
+    description=(
+        "Open a Server-Sent Events (SSE) connection that pushes real-time task "
+        "status updates for the authenticated user. Events include individual "
+        "`task_update` events when a task status changes and an "
+        "`all_tasks_completed` event when every task for a company finishes. "
+        "A keepalive ping is sent every 30 seconds."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+    },
 )
 async def task_events_stream(request: Request, user: OIDCUser = Depends(idp.get_current_user())):
     """SSE endpoint for real-time task status updates.

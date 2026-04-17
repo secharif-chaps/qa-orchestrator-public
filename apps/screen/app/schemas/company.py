@@ -114,7 +114,16 @@ class CompanyBase(BaseModel):
 
 
 class CompanyCreate(CompanyBase):
-    pass
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "name": "Acme Corporation",
+                    "website": "https://www.acme-corp.com",
+                },
+            ],
+        },
+    )
 
 
 class CompanyUpdate(BaseModel):
@@ -128,6 +137,17 @@ class CompanyUpdate(BaseModel):
     csr: dict[str, Any] | None = Field(None, description="CSR data")
     press: dict[str, Any] | None = Field(None, description="Press data")
     team: list[dict[str, Any]] | None = Field(None, description="Team data")
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "name": "Acme Corporation (updated)",
+                    "website": "https://www.acme-corp.com",
+                },
+            ],
+        },
+    )
 
     @field_validator("name")
     @classmethod
@@ -251,16 +271,18 @@ class CompanyUpdate(BaseModel):
 
 
 class TaskResponse(BaseModel):
-    id: int
-    company_id: int
-    type: TaskType
-    status: TaskStatus
-    error: str | None = None
-    input_tokens: int | None = None
-    output_tokens: int | None = None
-    total_cost: float | None = None
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
+    """Embedded task summary within a company response."""
+
+    id: int = Field(..., description="Task ID")
+    company_id: int = Field(..., description="Owning company ID")
+    type: TaskType = Field(..., description="Task type (profile, digital, press, ...)")
+    status: TaskStatus = Field(..., description="Current status (pending, running, succeeded, error)")
+    error: str | None = Field(None, description="Error message if the task failed")
+    input_tokens: int | None = Field(None, description="Input tokens consumed")
+    output_tokens: int | None = Field(None, description="Output tokens generated")
+    total_cost: float | None = Field(None, description="Total LLM cost in USD")
+    created_at: datetime | None = Field(None, description="Task creation timestamp")
+    updated_at: datetime | None = Field(None, description="Last update timestamp")
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -291,15 +313,69 @@ class CompanyResponse(CompanyBase):
     folder_is_owner: bool | None = Field(None, description="Whether the requesting user owns the folder")
     folder_share_role: str | None = Field(None, description="Share role if folder is shared with user (reader/writer)")
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": 42,
+                    "name": "Acme Corporation",
+                    "website": "https://www.acme-corp.com",
+                    "owner_id": "b3f1a2c4-5678-4d9e-a1b2-c3d4e5f67890",
+                    "owner_username": "jane.doe",
+                    "profile": {"description": "Global leader in innovative solutions"},
+                    "digital": {},
+                    "timeline": {},
+                    "products": {},
+                    "jobs": {},
+                    "csr": {},
+                    "press": {},
+                    "financial": {},
+                    "team": [],
+                    "corporate_structure": {},
+                    "sanctions": {},
+                    "error": None,
+                    "is_deleted": False,
+                    "created_at": "2025-06-15T10:30:00Z",
+                    "updated_at": "2025-06-15T11:00:00Z",
+                    "tasks": [
+                        {
+                            "id": 101,
+                            "company_id": 42,
+                            "type": "profile",
+                            "status": "succeeded",
+                            "error": None,
+                            "input_tokens": 1200,
+                            "output_tokens": 800,
+                            "total_cost": 0.012,
+                            "created_at": "2025-06-15T10:30:00Z",
+                            "updated_at": "2025-06-15T10:32:00Z",
+                        },
+                    ],
+                    "folder_id": "f1a2b3c4-5678-4d9e-a1b2-c3d4e5f67890",
+                    "folder_name": "Competitors",
+                    "folder_is_owner": True,
+                    "folder_share_role": None,
+                },
+            ],
+        },
+    )
 
 
 class CompanyCSVRow(BaseModel):
-    """Single row from CSV import"""
+    """Single row from CSV import."""
 
     row_number: int
     name: str
     website: str
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {"row_number": 1, "name": "Acme Corp", "website": "https://acme-corp.com"},
+            ],
+        },
+    )
 
 
 class CompanyCSVValidationError(BaseModel):
@@ -331,6 +407,23 @@ class CompanyCSVValidationResponse(BaseModel):
     tokens_required: int
     tokens_available: int | None = None
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "valid_count": 3,
+                    "error_count": 1,
+                    "errors": [
+                        {"row_number": 2, "field": "website", "error": "Invalid URL format"},
+                    ],
+                    "has_sufficient_tokens": True,
+                    "tokens_required": 105,
+                    "tokens_available": 500,
+                },
+            ],
+        },
+    )
+
 
 class CompanyCSVImportRequest(BaseModel):
     """Request to import validated CSV data"""
@@ -350,9 +443,25 @@ class CompanyCSVImportResult(BaseModel):
 
 
 class CompanyCSVImportResponse(BaseModel):
-    """Response from import endpoint"""
+    """Response from import endpoint."""
 
     total_rows: int
     successful: int
     failed: int
     results: list[CompanyCSVImportResult]
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "total_rows": 4,
+                    "successful": 3,
+                    "failed": 1,
+                    "results": [
+                        {"row_number": 1, "success": True, "company_id": 42, "name": "Acme Corp", "error": None},
+                        {"row_number": 2, "success": False, "company_id": None, "name": None, "error": "Invalid URL"},
+                    ],
+                },
+            ],
+        },
+    )

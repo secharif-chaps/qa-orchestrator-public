@@ -45,6 +45,18 @@ def get_chapse_service(db: Session = Depends(get_db)) -> ChatService:
 @router.post(
     "/chat",
     openapi_extra={"x-permissions": []},
+    summary="Send a chat message (streaming)",
+    description=(
+        "Send a message to the Chapse AI assistant and receive a streamed SSE response. "
+        "Optionally provide company IDs to give the assistant context about specific companies. "
+        "Rate-limited per user."
+    ),
+    responses={
+        400: {"description": "Invalid query or company IDs"},
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User does not belong to any organization"},
+        429: {"description": "Chat rate limit exceeded — retry after the `Retry-After` header value"},
+    },
 )
 async def chat(
     request: ChapseChatRequest,
@@ -116,6 +128,15 @@ async def chat(
     "/conversations",
     response_model=ConversationsResponse,
     openapi_extra={"x-permissions": []},
+    summary="List conversations",
+    description=(
+        "Return the authenticated user's conversations ordered by most recent, "
+        "with cursor-based pagination. Each conversation includes its company context."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User does not belong to any organization"},
+    },
 )
 async def list_conversations(
     limit: int = Query(default=20, ge=1, le=100),
@@ -150,6 +171,15 @@ async def list_conversations(
     "/conversations/{conversation_id}",
     response_model=ConversationDetailResponse,
     openapi_extra={"x-permissions": []},
+    summary="Get conversation detail",
+    description=(
+        "Retrieve a single conversation with its full message history and company context. "
+        "Messages are paginated via cursor-based pagination."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        404: {"description": "Conversation not found or belongs to another user"},
+    },
 )
 async def get_conversation(
     conversation_id: str,
@@ -190,6 +220,16 @@ async def get_conversation(
     "/conversations/{conversation_id}",
     status_code=204,
     openapi_extra={"x-permissions": []},
+    summary="Delete a conversation",
+    description=(
+        "Permanently delete a conversation along with its messages and company context. "
+        "Returns 204 No Content on success."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "Conversation belongs to another user"},
+        404: {"description": "Conversation not found"},
+    },
 )
 async def delete_conversation(
     conversation_id: str,
@@ -225,6 +265,15 @@ async def delete_conversation(
     "/conversations/{conversation_id}/rename",
     response_model=RenameResponse,
     openapi_extra={"x-permissions": []},
+    summary="Rename a conversation",
+    description=(
+        "Set a custom name for a conversation or auto-generate one from its content. "
+        "Provide `name` for a manual rename or set `auto_generate: true`."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        404: {"description": "Conversation not found"},
+    },
 )
 async def rename_conversation(
     conversation_id: str,
@@ -271,6 +320,16 @@ async def rename_conversation(
     "/conversations/{conversation_id}/context",
     response_model=ContextResponse,
     openapi_extra={"x-permissions": []},
+    summary="Get conversation company context",
+    description=(
+        "Return the list of companies attached as context to a conversation. "
+        "Each company is returned with its ID and name summary."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User does not belong to any organization"},
+        404: {"description": "Conversation not found"},
+    },
 )
 async def get_context(
     conversation_id: str,
@@ -299,6 +358,16 @@ async def get_context(
     "/conversations/{conversation_id}/context",
     response_model=ContextResponse,
     openapi_extra={"x-permissions": []},
+    summary="Update conversation company context",
+    description=(
+        "Replace the company context for a conversation (maximum 3 companies). "
+        "All provided company IDs are validated against the user's organization."
+    ),
+    responses={
+        400: {"description": "More than 3 companies or invalid company IDs"},
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "One or more companies do not belong to the user's organization"},
+    },
 )
 async def update_context(
     conversation_id: str,

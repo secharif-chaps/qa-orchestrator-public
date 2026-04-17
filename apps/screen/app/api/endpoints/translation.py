@@ -63,6 +63,11 @@ def _job_to_response(job: TranslationJob) -> TranslationJobResponse:
     "/list",
     response_model=list[LanguageResponse],
     openapi_extra={"x-public": True},
+    summary="List supported languages",
+    description="Return all languages available for company content translation.",
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+    },
 )
 async def list_languages() -> list[LanguageResponse]:
     """Get the list of supported languages for translation.
@@ -77,6 +82,17 @@ async def list_languages() -> list[LanguageResponse]:
     "/status/{company_id}",
     response_model=CompanyTranslationStatusResponse,
     openapi_extra={"x-permissions": []},
+    summary="Get company translation status",
+    description=(
+        "Return the translation status for a company across every supported language. "
+        "Each language entry includes the number of translated fields, completion percentage, "
+        "and any active translation job. Requires the `TRANSLATION` feature flag to be enabled."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "Company not in user's organization or TRANSLATION feature disabled"},
+        404: {"description": "Company not found"},
+    },
 )
 async def get_translation_status(
     company_id: int,
@@ -150,6 +166,17 @@ async def get_translation_status(
     "/job/{job_id}",
     response_model=TranslationJobResponse,
     openapi_extra={"x-permissions": []},
+    summary="Get translation job progress",
+    description=(
+        "Poll the progress of a translation job. Returns completion percentage, "
+        "translated field count, and timing information. "
+        "Requires the `TRANSLATION` feature flag to be enabled."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "TRANSLATION feature disabled or company not in user's organization"},
+        404: {"description": "Translation job not found"},
+    },
 )
 async def get_translation_job(
     job_id: int,
@@ -186,6 +213,20 @@ async def get_translation_job(
     "/translate/{company_id}",
     response_model=TranslateResponse,
     openapi_extra={"x-permissions": []},
+    summary="Request company translation",
+    description=(
+        "Start translating a company's content fields into the specified language. "
+        "A background job is created and typically completes in 2-3 seconds. "
+        "If a job is already running for the same company/language pair, "
+        "the existing job is returned instead of creating a duplicate. "
+        "Requires the `TRANSLATION` feature flag to be enabled."
+    ),
+    responses={
+        400: {"description": "Unsupported language code"},
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "Company not in user's organization or TRANSLATION feature disabled"},
+        404: {"description": "Company not found"},
+    },
 )
 async def request_translation(
     company_id: int,
