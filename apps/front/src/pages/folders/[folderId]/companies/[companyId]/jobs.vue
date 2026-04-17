@@ -16,92 +16,108 @@
     </NoData>
 
     <!-- Main content -->
-    <div v-if="hasJobsData" class="space-y-6">
+    <div v-if="hasJobsData" class="gap-xl flex flex-col">
+      <SectionTitle :title="$t('screen.jobs.title')" />
+
+      <!-- Total Openings -->
+      <Alert
+        v-if="jobOffersInsights"
+        icon="fa fa-regular fa-suitcase"
+        :title="$t('screen.jobs.insights.totalOpenings')"
+      >
+        <template #aside>
+          <span class="text-neutral-black-font text-sm">
+            {{ getSourcedValue(company?.jobs?.insights?.total_openings) ?? jobOffers.length }}
+          </span>
+        </template>
+      </Alert>
+
       <!-- Insights Section -->
-      <div class="rounded-sm p-4" v-if="jobOffersInsights">
-        <h2 class="mb-4 flex items-center gap-2 text-xl font-semibold">
-          <span>{{ $t('screen.jobs.insights.title') }}</span>
-        </h2>
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <div class="bg-sage-light border-primary-lighter-stroke rounded-sm border p-4">
-            <h4 class="text-sm font-semibold">{{ $t('screen.jobs.insights.totalOpenings') }}</h4>
-            <p class="text-neutral-black-font text-2xl font-bold">
-              {{ getSourcedValue(company?.jobs?.insights?.total_openings) }}
-            </p>
-          </div>
-          <div class="bg-sage-light border-primary-lighter-stroke rounded-sm border p-4">
-            <h4 class="text-sm font-semibold">{{ $t('screen.jobs.insights.topDepartments') }}</h4>
-            <div class="text-neutral-black-font text-sm">
-              <ul class="list-inside list-disc space-y-1">
-                <li v-for="department in topDepartmentsList" :key="department">
-                  {{ department }}
-                </li>
-              </ul>
-              <div class="mt-2"></div>
+      <SectionCard>
+        <div class="gap-xl flex flex-col">
+          <div class="flex flex-col gap-2">
+            <SectionTitle :title="$t('screen.jobs.insights.topDepartments')" />
+            <div class="flex flex-wrap gap-2">
+              <Tag
+                v-for="department in topDepartmentsList"
+                :key="department"
+                variant="primary"
+                intent="neutral"
+                :label="department"
+                size="sm"
+              />
             </div>
           </div>
-          <div class="bg-sage-light border-primary-lighter-stroke rounded-sm border p-4">
-            <h4 class="text-sm font-semibold">{{ $t('screen.jobs.insights.hiringFocus') }}</h4>
-            <p class="text-neutral-black-font text-sm">
+          <div>
+            <SectionTitle :title="$t('screen.jobs.insights.hiringFocus')" />
+            <p class="text-neutral-black-font text-justify text-base">
               {{ getSourcedValue(company?.jobs?.insights?.hiring_focus) }}
             </p>
           </div>
-          <div class="bg-sage-light border-primary-lighter-stroke rounded-sm border p-4">
-            <h4 class="text-sm font-semibold">{{ $t('screen.jobs.insights.growthIndicators') }}</h4>
-            <p class="text-neutral-black-font text-sm">
+          <div>
+            <SectionTitle :title="$t('screen.jobs.insights.growthIndicators')" />
+            <p class="text-neutral-black-font text-justify text-base">
               {{ getSourcedValue(company?.jobs?.insights?.growth_indicators) }}
             </p>
           </div>
         </div>
-      </div>
+      </SectionCard>
 
       <!-- Job Listings with Search -->
-      <div class="rounded-sm p-4">
-        <div class="mb-6 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="text-lg font-semibold">{{ $t('screen.jobs.listings.title') }}</span>
+      <SectionCard>
+        <template #header>
+          <div class="flex items-center justify-between">
+            <SectionTitle :title="$t('screen.jobs.listings.title')" />
+            <div class="flex items-center gap-3">
+              <Searchbar
+                id="jobs-search"
+                v-model="searchQuery"
+                :placeholder="$t('screen.jobs.listings.search.placeholder')"
+              />
+              <div class="text-neutral-black-font flex items-center gap-1 text-sm">
+                <Icon icon="fa-regular fa-building" />
+                {{ filteredJobs.length }}
+              </div>
+              <Toggle v-model="viewMode" :options="viewModeOptions" variant="pill" />
+            </div>
           </div>
-          <div class="w-64">
-            <Searchbar
-              id="jobs-search"
-              v-model="searchQuery"
-              :placeholder="$t('screen.jobs.listings.search.placeholder')"
-            />
-          </div>
-        </div>
+        </template>
 
-        <!-- Job listings with transition group -->
+        <!-- Grid View -->
         <TransitionGroup
+          v-if="viewMode === 'grid'"
           name="job-list"
           tag="div"
-          class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
+          class="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-2"
         >
           <JobCard v-for="job in filteredJobs" :key="extractStringValue(job.title)" :job="job" />
-
-          <!-- No results message -->
-          <div
-            v-if="filteredJobs.length === 0 && searchQuery"
-            key="no-results"
-            class="col-span-full"
-          >
-            <NoData>
-              <p class="text-neutral-black-font text-lg font-medium">
-                {{ $t('screen.jobs.listings.noResults', { query: searchQuery }) }}
-              </p>
-            </NoData>
-          </div>
         </TransitionGroup>
-      </div>
+
+        <!-- Table View -->
+        <JobsTableView v-else :jobs="filteredJobs" />
+
+        <!-- No results message -->
+        <NoData v-if="filteredJobs.length === 0 && searchQuery">
+          <p class="text-neutral-black-font text-lg font-medium">
+            {{ $t('screen.jobs.listings.noResults', { query: searchQuery }) }}
+          </p>
+        </NoData>
+      </SectionCard>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import JobCard from '@/components/company/jobs/JobCard.vue'
+import JobsTableView from '@/components/company/jobs/JobsTableView.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
+import Alert from '@/components/ui/Alert.vue'
 import NoData from '@/components/ui/NoData.vue'
+import SectionCard from '@/components/ui/SectionCard.vue'
+import SectionTitle from '@/components/ui/SectionTitle.vue'
+import { Icon, Tag, Toggle } from '@owlint/feathers-vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import type { SourcedValue } from '@/types/company'
@@ -109,8 +125,11 @@ import { Searchbar } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import type { Ref } from 'vue'
 import { computed, inject, ref } from 'vue'
+import { refDebounced } from '@vueuse/core'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
+const { t } = useI18n()
 const route = useRoute('/folders/[folderId]/companies/[companyId]/jobs')
 
 const companyId = computed(() => route.params.companyId)
@@ -136,6 +155,21 @@ const { data: company } = useQuery(() =>
 )
 
 const searchQuery = ref('')
+const debouncedSearchQuery = refDebounced(searchQuery, 300)
+const viewMode = ref<'grid' | 'table'>('grid')
+
+const viewModeOptions = computed(() => [
+  {
+    value: 'grid',
+    label: t('screen.jobs.listings.view.grid'),
+    icon: 'fa fa-th-large',
+  },
+  {
+    value: 'table',
+    label: t('screen.jobs.listings.view.table'),
+    icon: 'fa fa-table',
+  },
+])
 
 const jobOffers = computed(() => {
   return company.value?.jobs?.offers || []
@@ -171,11 +205,11 @@ const extractStringValue = (field: SourcedValue<string> | string | undefined): s
 
 // Filter jobs based on search query
 const filteredJobs = computed(() => {
-  if (!searchQuery.value.trim()) {
+  if (!debouncedSearchQuery.value.trim()) {
     return jobOffers.value
   }
 
-  const query = searchQuery.value.toLowerCase().trim()
+  const query = debouncedSearchQuery.value.toLowerCase().trim()
 
   return jobOffers.value.filter((job) => {
     const title = extractStringValue(job.title).toLowerCase()
@@ -213,12 +247,5 @@ const hasJobsData = computed(() => {
 .job-list-enter-from,
 .job-list-leave-to {
   opacity: 0;
-  transform: translateX(-30px);
-}
-
-/* ensure leaving items are taken out of layout flow so that moving
-   animations can be calculated correctly. */
-.job-list-leave-active {
-  position: absolute;
 }
 </style>

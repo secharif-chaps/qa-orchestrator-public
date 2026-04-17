@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="gap-xl flex flex-col">
     <!-- Company Header -->
     <div class="flex items-center gap-4">
       <div class="flex min-w-0 shrink items-center gap-4">
@@ -49,19 +49,17 @@
                 </span>
               </Transition>
             </div>
-            <span
-              v-else-if="company?.created_at"
-              key="date"
-              class="text-neutral-black-font text-sm"
-            >
-              {{ t('screen.company.createdAt') }} {{ formatFullDate(company.created_at) }}
-            </span>
           </Transition>
         </div>
       </div>
 
       <!-- Tabs — flex-1 gives the wrapper a stable width for overflow calc -->
-      <CompanyHeaderTabs class="min-w-0 flex-1" :folder-id="folderId" :company-id="companyId" />
+      <CompanyHeaderTabs
+        class="min-w-0 flex-1"
+        :folder-id="folderId"
+        :company-id="companyId"
+        :job-offers-count="company?.jobs?.offers?.length"
+      />
 
       <!-- Action Buttons -->
       <div class="flex shrink-0 items-center gap-2">
@@ -90,7 +88,22 @@
       </div>
     </div>
 
-    <RouterView />
+    <!-- Created by + Tab content -->
+    <div class="gap-xl bg-neutral p-xl flex flex-col rounded-xl">
+      <div v-if="company?.created_at" class="text-neutral-black-font flex items-center gap-2">
+        <Badge icon="fa-pen" variant="secondary" size="sm" />
+        <span class="text-base">
+          {{
+            t('screen.company.header.createdBy', {
+              username: company.owner_username,
+              date: formatFullDate(company.created_at),
+            })
+          }}
+        </span>
+      </div>
+
+      <RouterView />
+    </div>
     <!-- Refresh company Modal -->
     <CompanyRefreshModal
       v-if="company"

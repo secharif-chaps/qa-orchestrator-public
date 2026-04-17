@@ -1,16 +1,5 @@
 <template>
   <div class="space-y-6">
-    <div v-if="company" class="text-neutral-black-font flex items-center gap-2">
-      <Badge icon="fa-pen" variant="secondary" size="xs" />
-      <span class="text-sm">
-        {{
-          t('screen.company.footer.createdBy', {
-            username: company.owner_username,
-            date: formatFullDate(company.created_at),
-          })
-        }}
-      </span>
-    </div>
     <div class="gap-4 space-y-4">
       <ChapseAssistAlert @setup="handleAssistSetup" @dismiss="handleAssistDismiss" />
 
@@ -226,8 +215,7 @@ import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import type { QuickAction } from '@/types/ai-preferences'
 import type { TaskStatus, TaskType } from '@/types/task'
-import { formatFullDate } from '@/utils/time'
-import { Badge, Icon, Tag, Toggle } from '@owlint/feathers-vue'
+import { Icon, Tag, Toggle } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import type { Ref } from 'vue'
 import { computed, inject, ref } from 'vue'

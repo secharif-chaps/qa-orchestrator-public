@@ -70,9 +70,11 @@ interface Props {
   companyId: string
   /** Max width as a percentage of the wrapper (0–100). Defaults to 70. */
   maxWidthPercent?: number
+  /** Number of job offers to display as badge on the jobs tab */
+  jobOffersCount?: number
 }
 
-const { folderId, companyId, maxWidthPercent = 70 } = defineProps<Props>()
+const { folderId, companyId, maxWidthPercent = 70, jobOffersCount } = defineProps<Props>()
 
 const { t } = useI18n()
 const route = useRoute()
@@ -183,6 +185,7 @@ const toNavigationTab = (tab: TabDefinition): NavigationTab => ({
   id: tab.id,
   title: t(tab.label),
   isActive: tab.id === activeTabId.value,
+  badge: tab.id === 'jobs' && jobOffersCount ? jobOffersCount : undefined,
   click: () => {
     if (tab.id === activeTabId.value) return
     recordVisit(tab.id)
