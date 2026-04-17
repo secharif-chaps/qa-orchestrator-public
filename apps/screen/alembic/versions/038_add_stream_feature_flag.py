@@ -1,7 +1,7 @@
 """Add stream to featureflag enum
 
-Revision ID: 037
-Revises: 036
+Revision ID: 038
+Revises: 037
 Create Date: 2026-04-01
 
 This migration adds the 'stream' value to the featureflag PostgreSQL enum type.
@@ -12,8 +12,8 @@ for organizations.
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "037"
-down_revision = "036"
+revision = "038"
+down_revision = "037"
 branch_labels = None
 depends_on = None
 

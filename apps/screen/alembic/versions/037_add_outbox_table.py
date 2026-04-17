@@ -1,7 +1,7 @@
 """Add outbox table for transactional event production
 
-Revision ID: 036
-Revises: 035
+Revision ID: 037
+Revises: 036
 Create Date: 2026-03-31
 
 Stores domain events (company created, deleted, refreshed, analysis completed)
@@ -14,8 +14,8 @@ from sqlalchemy.dialects.postgresql import JSONB
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "036"
-down_revision = "035"
+revision = "037"
+down_revision = "036"
 branch_labels = None
 depends_on = None
 
