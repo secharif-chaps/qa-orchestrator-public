@@ -73,7 +73,11 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
 #         )
 
 
-@router.get("/company/{company_id}", response_model=list[TaskResponse])
+@router.get(
+    "/company/{company_id}",
+    response_model=list[TaskResponse],
+    openapi_extra={"x-permissions": []},
+)
 async def get_company_tasks(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
@@ -101,7 +105,11 @@ async def get_company_tasks(
     return company.tasks
 
 
-@router.post("/{task_id}/restart", response_model=TaskResponse)
+@router.post(
+    "/{task_id}/restart",
+    response_model=TaskResponse,
+    openapi_extra={"x-permissions": []},
+)
 async def restart_task(
     task_id: int,
     service: CompanyService = Depends(get_company_service),
@@ -135,7 +143,10 @@ async def restart_task(
     return restarted_task
 
 
-@router.get("/events/stream")
+@router.get(
+    "/events/stream",
+    openapi_extra={"x-permissions": []},
+)
 async def task_events_stream(request: Request, user: OIDCUser = Depends(idp.get_current_user())):
     """SSE endpoint for real-time task status updates.
 

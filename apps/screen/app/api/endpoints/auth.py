@@ -14,7 +14,11 @@ router = APIRouter(prefix="/auth", tags=["authentication"])
 security = HTTPBearer()
 
 
-@router.post("/login", response_model=Token)
+@router.post(
+    "/login",
+    response_model=Token,
+    openapi_extra={"x-public": True},
+)
 async def login(login_request: LoginRequest) -> Token:
     """
     Authenticate user with Keycloak and return tokens
@@ -56,7 +60,11 @@ async def login(login_request: LoginRequest) -> Token:
     )
 
 
-@router.post("/refresh", response_model=Token)
+@router.post(
+    "/refresh",
+    response_model=Token,
+    openapi_extra={"x-public": True},
+)
 async def refresh_token(refresh_request: RefreshTokenRequest) -> Token:
     """
     Refresh access token using refresh token
@@ -78,7 +86,11 @@ async def refresh_token(refresh_request: RefreshTokenRequest) -> Token:
     )
 
 
-@router.post("/logout", response_model=LogoutResponse)
+@router.post(
+    "/logout",
+    response_model=LogoutResponse,
+    openapi_extra={"x-public": True},
+)
 async def logout(refresh_request: RefreshTokenRequest) -> LogoutResponse:
     """
     Logout user by invalidating refresh token
@@ -91,7 +103,11 @@ async def logout(refresh_request: RefreshTokenRequest) -> LogoutResponse:
     return {"message": "Successfully logged out"}
 
 
-@router.get("/me", response_model=UserInfoResponse)
+@router.get(
+    "/me",
+    response_model=UserInfoResponse,
+    openapi_extra={"x-permissions": []},
+)
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> UserInfoResponse:
     """
     Get current user information from access token
@@ -109,7 +125,11 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     return UserInfoResponse(**user_info)
 
 
-@router.post("/verify", response_model=VerifyResponse)
+@router.post(
+    "/verify",
+    response_model=VerifyResponse,
+    openapi_extra={"x-permissions": []},
+)
 async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> VerifyResponse:
     """
     Verify if the provided token is valid
@@ -132,7 +152,11 @@ async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(secur
     )
 
 
-@router.post("/introspect", response_model=IntrospectResponse)
+@router.post(
+    "/introspect",
+    response_model=IntrospectResponse,
+    openapi_extra={"x-permissions": []},
+)
 async def introspect_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> IntrospectResponse:
     """
     Introspect token (server-side validation with detailed info)

@@ -20,7 +20,11 @@ from app.schemas.security import (
 router = APIRouter(prefix="/security", tags=["security"])
 
 
-@router.get("/stats", response_model=SecurityStatsResponse)
+@router.get(
+    "/stats",
+    response_model=SecurityStatsResponse,
+    openapi_extra={"x-permissions": ["admin"]},
+)
 async def get_security_stats(user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))):
     """Get security statistics (admin only).
 
@@ -37,7 +41,11 @@ async def get_security_stats(user: OIDCUser = Depends(idp.get_current_user(requi
     )
 
 
-@router.get("/health", response_model=HealthCheckResponse)
+@router.get(
+    "/health",
+    response_model=HealthCheckResponse,
+    openapi_extra={"x-public": True},
+)
 async def security_health_check():
     """Public security health check endpoint"""
     return HealthCheckResponse(

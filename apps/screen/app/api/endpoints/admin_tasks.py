@@ -37,7 +37,11 @@ router = APIRouter(prefix="/admin/tasks", tags=["admin-tasks"])
 INTERNAL_ORG_IDENTIFIER = "chapsvision"
 
 
-@router.get("", response_model=AdminTasksListResponse)
+@router.get(
+    "",
+    response_model=AdminTasksListResponse,
+    openapi_extra={"x-permissions": ["admin.tasks"]},
+)
 async def get_admin_tasks(
     status_filter: list[str] | None = Query(None, alias="status"),
     type_filter: list[str] | None = Query(None, alias="type"),
@@ -151,7 +155,11 @@ async def get_admin_tasks(
     return AdminTasksListResponse(items=items, total=total, page=page, size=size, pages=pages)
 
 
-@router.get("/stats", response_model=AdminTaskStatsResponse)
+@router.get(
+    "/stats",
+    response_model=AdminTaskStatsResponse,
+    openapi_extra={"x-permissions": ["admin.tasks"]},
+)
 async def get_admin_task_stats(
     hours: int = Query(24, ge=1, le=168),
     db: Session = Depends(get_db),
@@ -217,7 +225,11 @@ async def get_admin_task_stats(
     )
 
 
-@router.post("/restart", response_model=BulkRestartResponse)
+@router.post(
+    "/restart",
+    response_model=BulkRestartResponse,
+    openapi_extra={"x-permissions": ["admin.tasks"]},
+)
 async def bulk_restart_tasks(
     request: BulkRestartRequest,
     db: Session = Depends(get_db),
@@ -287,7 +299,11 @@ async def bulk_restart_tasks(
 org_router = APIRouter(prefix="/admin/organizations", tags=["admin-tasks"])
 
 
-@org_router.get("", response_model=OrganizationsListResponse)
+@org_router.get(
+    "",
+    response_model=OrganizationsListResponse,
+    openapi_extra={"x-permissions": ["admin.tasks"]},
+)
 async def get_admin_organizations(user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"]))):
     """Fetch all organizations for the organization filter dropdown and name mapping.
 

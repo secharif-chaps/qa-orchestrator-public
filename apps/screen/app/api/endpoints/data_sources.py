@@ -33,7 +33,11 @@ VALID_DATA_SOURCES = {
 DUAL_CREDENTIAL_SOURCES = {"worldcheck"}
 
 
-@router.put("/{organization_id}/data-sources/{source}/config", response_model=DataSourceConfigResponse)
+@router.put(
+    "/{organization_id}/data-sources/{source}/config",
+    response_model=DataSourceConfigResponse,
+    openapi_extra={"x-permissions": ["admin.organizations"]},
+)
 async def update_data_source_config(
     organization_id: str,
     source: str,
@@ -99,7 +103,11 @@ async def update_data_source_config(
     return _build_response(source, result, decrypted_config)
 
 
-@router.get("/{organization_id}/data-sources/{source}/config", response_model=DataSourceConfigResponse)
+@router.get(
+    "/{organization_id}/data-sources/{source}/config",
+    response_model=DataSourceConfigResponse,
+    openapi_extra={"x-permissions": ["admin.organizations"]},
+)
 async def get_data_source_config(
     organization_id: str,
     source: str,
