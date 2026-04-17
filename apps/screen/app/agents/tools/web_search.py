@@ -205,8 +205,11 @@ async def web_search_query(
         "type": "web_search",
         "search_context_size": search_context_size,
     }
-    if country_code:
-        web_search_config["user_location"] = {"type": "approximate", "country": country_code}
+    # Only pass country if it's a valid ISO 3166-1 alpha-2 code (e.g. "FR", "US").
+    # The planner LLM can return arbitrary strings ("Unknown", full country names, etc.)
+    # which the Azure API rejects with a 400. Skip user_location when invalid.
+    if country_code and len(country_code) == 2 and country_code.isalpha():
+        web_search_config["user_location"] = {"type": "approximate", "country": country_code.upper()}
     if allowed_domains:
         web_search_config["filters"] = {"allowed_domains": allowed_domains}
 
@@ -396,8 +399,7 @@ async def web_search_query(
     # skipped (function tools present) or silently ignored by the API.
     if not data and output_schema:
         logger.warning(
-            f"JSON parse failed for {agent_name}, attempting reformatting retry. "
-            f"Response preview: {full_text[:200]!r}"
+            f"JSON parse failed for {agent_name}, attempting reformatting retry. Response preview: {full_text[:200]!r}"
         )
         try:
             retry_text_format = _build_text_format(output_schema)

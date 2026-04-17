@@ -1593,6 +1593,32 @@ def get_corporate_structure_data(db: Session, company_id: int) -> dict[str, Any]
 # FINANCIAL DATA - WRITER AND READER
 # =============================================================================
 
+# Keyword mapping for normalising LLM-generated metric names to canonical keys
+# used by the frontend METRIC_MAP in FinancialHistory.vue.
+# Each entry: (list of substrings to match, canonical key)
+_METRIC_NAME_KEYWORDS: list[tuple[list[str], str]] = [
+    (["revenue", "turnover", "chiffre d'affaires", "cifra de negocio", "umsatz"], "revenue"),
+    (["ebitda"], "ebitda"),
+    (["net income", "net profit", "résultat net", "bénéfice net", "net earnings", "résultat après"], "netIncome"),
+    (["free cash flow", "fcf", "cash flow libre", "free cashflow"], "freeCashFlow"),
+]
+
+
+def _normalize_metric_name(raw: str) -> tuple[str, str | None]:
+    """Normalise a LLM-generated metric name to a canonical frontend key.
+
+    Returns (normalized_name, description) where description is the original
+    raw name when normalisation actually renamed it (so the original label is
+    not lost), or None when no renaming occurred.
+    """
+    lower = raw.lower()
+    for keywords, canonical in _METRIC_NAME_KEYWORDS:
+        if any(kw in lower for kw in keywords):
+            desc = raw if raw != canonical else None
+            return canonical, desc
+    return raw, None
+
+
 # Map: camelCase key in agent data -> (snake_case value column, snake_case source column)
 _FINANCIAL_SOURCED_FIELDS: dict[str, tuple[str, str]] = {
     "companyType": ("company_type", "company_type_source"),
@@ -1633,10 +1659,14 @@ def save_financial_data(db: Session, company_id: int, data: dict) -> None:
     financial.insights_source = "Chaps-e"
 
     # Extract 20 SourcedValue pairs (using _get_sourced_value helper)
+    # Also encode optional `context` into the source column via || delimiter
     for camel_key, (value_col, source_col) in _FINANCIAL_SOURCED_FIELDS.items():
         value, source = _get_sourced_value(data, camel_key)
+        field_data = data.get(camel_key)
+        context = field_data.get("context") if isinstance(field_data, dict) else None
+        encoded_source = f"{source}||{context}" if source and context else source
         setattr(financial, value_col, value)
-        setattr(financial, source_col, source)
+        setattr(financial, source_col, encoded_source)
 
     db.flush()
 
@@ -1650,15 +1680,21 @@ def save_financial_data(db: Session, company_id: int, data: dict) -> None:
 
 def _save_financial_metrics(db: Session, company_id: int, metrics: list[dict]) -> None:
     """Save financial metrics to normalized table (full replace)."""
-    db.query(CompanyFinancialMetric).filter(
-        CompanyFinancialMetric.company_id == company_id
-    ).delete()
+    db.query(CompanyFinancialMetric).filter(CompanyFinancialMetric.company_id == company_id).delete()
 
     for metric_data in metrics:
-        metric_name = metric_data.get("metricName") or metric_data.get("metric_name")
-        if not metric_name:
+        raw_name = metric_data.get("metricName") or metric_data.get("metric_name")
+        if not raw_name:
             logger.warning("Metric without name skipped for company %s", company_id)
             continue
+
+        # Normalise the metric name to a canonical key where possible so the
+        # frontend METRIC_MAP in FinancialHistory.vue can route it correctly.
+        # Preserve the original name as description when renaming occurs.
+        metric_name, normalized_desc = _normalize_metric_name(raw_name)
+        # Prefer explicit LLM context; fall back to the normalisation note
+        context = metric_data.get("context") or normalized_desc
+
         metric = CompanyFinancialMetric(
             company_id=company_id,
             metric_name=metric_name,
@@ -1666,6 +1702,7 @@ def _save_financial_metrics(db: Session, company_id: int, metrics: list[dict]) -
             value=metric_data.get("value"),
             unit=metric_data.get("unit"),
             source=metric_data.get("source"),
+            context=context,
         )
         db.add(metric)
 
@@ -1674,9 +1711,7 @@ def _save_financial_metrics(db: Session, company_id: int, metrics: list[dict]) -
 
 def _save_funding_rounds(db: Session, company_id: int, rounds: list[dict]) -> None:
     """Save funding rounds to normalized table (full replace)."""
-    db.query(CompanyFundingRound).filter(
-        CompanyFundingRound.company_id == company_id
-    ).delete()
+    db.query(CompanyFundingRound).filter(CompanyFundingRound.company_id == company_id).delete()
 
     for round_data in rounds:
         funding_round = CompanyFundingRound(
@@ -1695,9 +1730,7 @@ def _save_funding_rounds(db: Session, company_id: int, rounds: list[dict]) -> No
 
 def get_financial_data(db: Session, company_id: int) -> dict[str, Any]:
     """Read financial data from normalized tables for API response."""
-    financial = db.query(CompanyFinancial).filter(
-        CompanyFinancial.company_id == company_id
-    ).first()
+    financial = db.query(CompanyFinancial).filter(CompanyFinancial.company_id == company_id).first()
 
     if not financial:
         return {}
@@ -1711,42 +1744,44 @@ def get_financial_data(db: Session, company_id: int) -> dict[str, Any]:
             "source": financial.insights_source or "Chaps-e",
         }
 
-    # Add SourcedValue fields
+    # Add SourcedValue fields — decode context encoded via || delimiter in source column
     for camel_key, (value_attr, source_attr) in _FINANCIAL_SOURCED_FIELDS.items():
         value = getattr(financial, value_attr)
         if value is not None:
-            result[camel_key] = {
-                "value": value,
-                "source": getattr(financial, source_attr),
-            }
+            raw_source = getattr(financial, source_attr)
+            if raw_source and "||" in raw_source:
+                source_url, context = raw_source.split("||", 1)
+            else:
+                source_url, context = raw_source, None
+            entry: dict[str, Any] = {"value": value, "source": source_url}
+            if context:
+                entry["context"] = context
+            result[camel_key] = entry
 
     # Add 1:N: financial metrics
-    metrics = db.query(CompanyFinancialMetric).filter(
-        CompanyFinancialMetric.company_id == company_id
-    ).all()
+    metrics = db.query(CompanyFinancialMetric).filter(CompanyFinancialMetric.company_id == company_id).all()
     if metrics:
         result["metrics"] = [
             {
-                "metric_name": m.metric_name,
+                "metricName": m.metric_name,
                 "period": m.period,
                 "value": m.value,
                 "unit": m.unit,
                 "source": m.source,
+                "context": m.context,
             }
             for m in metrics
         ]
 
     # Add 1:N: funding rounds
-    rounds = db.query(CompanyFundingRound).filter(
-        CompanyFundingRound.company_id == company_id
-    ).all()
+    rounds = db.query(CompanyFundingRound).filter(CompanyFundingRound.company_id == company_id).all()
     if rounds:
         result["fundingRounds"] = [
             {
-                "round_type": r.round_type,
+                "roundType": r.round_type,
                 "amount": r.amount,
                 "date": r.date,
-                "lead_investor": r.lead_investor,
+                "leadInvestor": r.lead_investor,
                 "valuation": r.valuation,
                 "source": r.source,
             }

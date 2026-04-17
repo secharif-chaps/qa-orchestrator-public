@@ -42,6 +42,8 @@ export type SourcedValue<T> = {
   source: string
   favicon?: string
   value_fr?: string
+  /** Fiscal period, entity scope, or data quality note — e.g. "FY2024", "FY2023 — consolidated group" */
+  context?: string
 }
 
 /**
@@ -90,6 +92,8 @@ export interface FinancialMetric {
   value: string | null
   unit: string | null
   source: string | null
+  /** Extra context from the LLM, or original name when metricName was normalised */
+  context?: string | null
 }
 
 export interface FundingRound {

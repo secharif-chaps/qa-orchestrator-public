@@ -199,7 +199,7 @@ class CompanyFinancialMetric(Base):
         Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
-    # Metric name (e.g., "Revenue", "EBITDA", "Net Income")
+    # Canonical metric name after backend normalisation (revenue, ebitda, netIncome, freeCashFlow, or raw LLM name)
     metric_name = Column(Text, nullable=False)
 
     # Reporting period (e.g., "FY2023", "Q3 2024", "TTM")
@@ -213,6 +213,9 @@ class CompanyFinancialMetric(Base):
 
     # Source URL
     source = Column(Text, nullable=True)
+
+    # Optional extra context: LLM description or original name before normalisation
+    context = Column(Text, nullable=True)
 
     # Timestamp
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)

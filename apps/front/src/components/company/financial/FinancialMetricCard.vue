@@ -18,6 +18,9 @@
             :icon="growthPositive ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"
           />
         </div>
+        <p v-if="sourcedValue.context" class="text-secondary/40 text-xs">
+          {{ sourcedValue.context }}
+        </p>
         <p class="text-secondary/70 text-sm">{{ label }}</p>
       </div>
 

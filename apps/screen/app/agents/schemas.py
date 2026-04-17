@@ -28,6 +28,7 @@ class SourcedValue(BaseModel):
 
     value: str | None = None
     source: str | None = None
+    context: str | None = None
 
 
 # =============================================================================
@@ -368,6 +369,11 @@ class FinancialMetric(BaseModel):
 
     Field names use camelCase to match what _save_financial_metrics() reads
     via metric_data.get("metricName", metric_data.get("metric_name", "")).
+
+    metricName: LLM may use any descriptive name; backend normalises it to a
+    canonical key (revenue, ebitda, netIncome, freeCashFlow) when applicable.
+    context: optional extra context from the LLM about this metric, or
+    the original name if normalisation renamed it.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -377,6 +383,7 @@ class FinancialMetric(BaseModel):
     value: str | None = None
     unit: str | None = None
     source: str | None = None
+    context: str | None = None
 
 
 class FundingRound(BaseModel):
