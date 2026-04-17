@@ -23,6 +23,13 @@ parameters:
   env(COLLECT_TASK_JWT_SECRET): ''
   env(COLLECT_DEFAULT_PROVIDER): 'bakus'
 
+  env(APIFY_MAX_TOTAL_CHARGE_USD): '0.10'
+  env(APIFY_WEBHOOK_URL): ''
+
+  app.apify.webhook_url: '%env(string:APIFY_WEBHOOK_URL)%'
+  app.apify.max_total_charge_usd: '%env(string:APIFY_MAX_TOTAL_CHARGE_USD)%'
+  app.apify.actor_mapping: {}
+
   app.collect_task.jwt_secret: '%env(string:COLLECT_TASK_JWT_SECRET)%'
 
   app.collect.provider_routing.default: '%env(string:COLLECT_DEFAULT_PROVIDER)%'
@@ -196,6 +203,18 @@ services:
   App\Infrastructure\Collect\Bakus\BakusProviderGateway:
     tags:
       - { name: 'app.collect.provider', key: 'bakus' }
+
+  App\Infrastructure\Collect\Apify\ApifyProviderGateway:
+    tags:
+      - { name: 'app.collect.provider', key: 'apify' }
+
+  # Default autowire targets for the Collect interfaces. Services that need
+  # a specific provider must use ProviderGatewayLocator instead.
+  App\Domain\Collect\ProviderGatewayInterface:
+    alias: App\Infrastructure\Collect\Bakus\BakusProviderGateway
+
+  App\Domain\Collect\StatusMapperInterface:
+    alias: App\Infrastructure\Collect\Bakus\BakusStatusMapper
 
   App\Infrastructure\Collect\ProviderGatewayLocator:
     arguments:
