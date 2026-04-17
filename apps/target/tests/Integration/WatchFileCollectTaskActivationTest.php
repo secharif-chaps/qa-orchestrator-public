@@ -13,6 +13,7 @@ use App\Domain\Collect\CollectTaskGatewayInterface;
 use App\Domain\Collect\CollectTaskStatus;
 use App\Domain\Collect\Exception\CollectException;
 use App\Domain\Collect\ProviderGatewayInterface;
+use App\Domain\Collect\ProviderGatewayLocatorInterface;
 use App\Domain\Shared\TranslatedText;
 use App\Domain\Source\SourceStatus;
 use App\Domain\WatchFile\WatchFileGatewayInterface;
@@ -60,19 +61,22 @@ class WatchFileCollectTaskActivationTest extends AbstractApiTestCase
             'status' => SourceStatus::INACTIVE,
         ]);
 
-        // Mock the ProviderGateway to return task IDs
-        $providerGateway = $this->createMock(ProviderGatewayInterface::class);
+        // Stub the ProviderGateway to return task IDs
+        $providerGateway = $this->createStub(ProviderGatewayInterface::class);
         $providerGateway
-            ->expects($this->exactly(3))
             ->method('createTask')
             ->willReturnOnConsecutiveCalls('bakus-task-id-1', 'bakus-task-id-2', 'bakus-task-id-3');
 
         $providerGateway
-            ->expects($this->exactly(3))
             ->method('getTaskStatus')
             ->willReturn(CollectTaskStatus::QUEUED);
 
-        self::getContainer()->set(ProviderGatewayInterface::class, $providerGateway);
+        $providerLocator = $this->createStub(ProviderGatewayLocatorInterface::class);
+        $providerLocator
+            ->method('get')
+            ->willReturn($providerGateway);
+
+        self::getContainer()->set(ProviderGatewayLocatorInterface::class, $providerLocator);
 
         // Activate the WatchFile
         $client = $this->createAuthenticatedClient($user);
@@ -134,10 +138,9 @@ class WatchFileCollectTaskActivationTest extends AbstractApiTestCase
             'status' => SourceStatus::ACTIVE,
         ]);
 
-        // Mock the ProviderGateway to fail on the 2nd source
-        $providerGateway = $this->createMock(ProviderGatewayInterface::class);
+        // Stub the ProviderGateway to fail on the 2nd source
+        $providerGateway = $this->createStub(ProviderGatewayInterface::class);
         $providerGateway
-            ->expects($this->exactly(3))
             ->method('createTask')
             ->willReturnOnConsecutiveCalls(
                 'bakus-task-id-1',
@@ -145,13 +148,16 @@ class WatchFileCollectTaskActivationTest extends AbstractApiTestCase
                 'bakus-task-id-3'
             );
 
-        // getTaskStatus will only be called for successful tasks (2 times, not 3)
         $providerGateway
-            ->expects($this->exactly(2))
             ->method('getTaskStatus')
             ->willReturn(CollectTaskStatus::QUEUED);
 
-        self::getContainer()->set(ProviderGatewayInterface::class, $providerGateway);
+        $providerLocator = $this->createStub(ProviderGatewayLocatorInterface::class);
+        $providerLocator
+            ->method('get')
+            ->willReturn($providerGateway);
+
+        self::getContainer()->set(ProviderGatewayLocatorInterface::class, $providerLocator);
 
         // Activate the WatchFile
         $client = $this->createAuthenticatedClient($user);
@@ -238,19 +244,22 @@ class WatchFileCollectTaskActivationTest extends AbstractApiTestCase
             'status' => SourceStatus::INACTIVE,
         ]);
 
-        // Mock the ProviderGateway to expect only 1 call
-        $providerGateway = $this->createMock(ProviderGatewayInterface::class);
+        // Stub the ProviderGateway to expect only 1 call
+        $providerGateway = $this->createStub(ProviderGatewayInterface::class);
         $providerGateway
-            ->expects($this->once())
             ->method('createTask')
             ->willReturn('bakus-task-id-1');
 
         $providerGateway
-            ->expects($this->once())
             ->method('getTaskStatus')
             ->willReturn(CollectTaskStatus::QUEUED);
 
-        self::getContainer()->set(ProviderGatewayInterface::class, $providerGateway);
+        $providerLocator = $this->createStub(ProviderGatewayLocatorInterface::class);
+        $providerLocator
+            ->method('get')
+            ->willReturn($providerGateway);
+
+        self::getContainer()->set(ProviderGatewayLocatorInterface::class, $providerLocator);
 
         // Activate the WatchFile
         $client = $this->createAuthenticatedClient($user);
