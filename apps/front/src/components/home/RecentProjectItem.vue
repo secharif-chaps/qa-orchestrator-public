@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex cursor-pointer items-center gap-1.5 bg-white transition-colors duration-200"
+    class="hover:bg-sage-100 dark:hover:bg-sage-800 -mx-2 flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1.5 transition-colors duration-200"
     @click="handleClick"
   >
     <!-- Icon + Text -->
