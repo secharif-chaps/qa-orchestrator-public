@@ -60,17 +60,79 @@ into a single comprehensive financial profile.
 
 {source_data}
 
-## Rules
-- Use the SourcedValue pattern for every field: {{"value": "...", "source": "URL or source name"}}
-- For yfinance data: use source "https://finance.yahoo.com/quote/{ticker}"
-- For SEC EDGAR data: use the source URL provided in the data
-- For web search data: use the actual citation URLs from the data
-- If data conflicts between sources, prefer: SEC EDGAR > yfinance > web search
-- All monetary values must include currency symbol (e.g., "$1.2B", "€500M", "£300M")
-- For private companies, leave public-only fields (marketCap, peRatio, evEbitda, etc.) as null
-- The "insights" field should be a 2-3 sentence executive summary
-- Populate "metrics" array for historical financial metrics with period information
-- Populate "fundingRounds" for private companies' financing history
+## [1] ENTITY SCOPE
+- ALWAYS use CONSOLIDATED GROUP financials (the parent holding company, not a subsidiary or regional entity).
+- If only subsidiary or standalone-entity data is available: still populate the field with the best available data,
+  but set `context` to explicitly note it — e.g. `"context": "ChapsMind SAS standalone — group data unavailable"`.
+- For cross-border groups: prefer the parent holding company's consolidated annual report.
+
+## [2] SOURCE TIER PRIORITY
+Always pick the highest available tier. NEVER use a lower tier when higher-tier data exists.
+- **Tier 1** — Official regulatory filings: SEC EDGAR 10-K/10-Q, AMF, CONSOB, BaFin, official annual reports
+- **Tier 2** — Authoritative financial data providers: Yahoo Finance, Bloomberg, Reuters
+- **Tier 3** — Official company sources: the company's own domain (IR page, annual report, press release on its own site)
+- **Tier 4** — Reputable financial media: FT, WSJ, Les Echos, Le Monde Économie
+- **Tier 5** (private companies only) — General web: Crunchbase, industry databases, LinkedIn
+
+## [3] SOURCE FORMAT
+- Source MUST be a URL when one is available (so users can verify the data).
+- Use the specific filing or page URL, not the homepage.
+- For yfinance data: `"https://finance.yahoo.com/quote/{ticker}"`
+- For SEC EDGAR data: use the filing URL provided in the data.
+- If no URL is available, use the provider name (e.g. `"Crunchbase"`).
+
+## [4] VALUE FORMAT
+Every `value` field MUST be a single scalar — a number with unit. NO sentences, NO explanations, NO qualifiers.
+
+- `companyType.value`: EXACTLY `"public"` or `"private"`. Nothing else. No "venture-backed", no "not listed".
+- MONETARY fields (revenue, marketCap, enterpriseValue, totalFunding, lastValuation, freeCashFlow):
+  Currency symbol + T/B/M shorthand ONLY.
+  ✓ CORRECT: `"$1.6M"`, `"€500M"`, `"£2.7M"`
+  ✗ WRONG: `"US$1.6M for 2024 (company-reported/estimated SaaS revenue)"`, `"approximately €500M"`
+- PERCENTAGE fields (revenueGrowth, grossMargin, ebitdaMargin, netMargin, debtToEquity):
+  Sign + number + % ONLY.
+  ✓ CORRECT: `"+94%"`, `"-3%"`, `"45%"`
+  ✗ WRONG: `"Approximately 93–95% YoY growth from 2023 to 2024"`, `"≈93–95% percent"`
+- `insights`: 2-3 sentence executive summary. Plain string, NOT a SourcedValue object.
+- metrics[].value: Concise value matching its unit — e.g. `"$1.2B"` or `"15%"`. No ranges, no text.
+
+## [5] CONTEXT FIELD RULES
+`context` is an OPTIONAL string on every SourcedValue field. It communicates ONLY the fiscal period
+and a one-word qualifier when needed. Nothing else.
+
+Rules:
+- Every key scalar SourcedValue field SHOULD include a `context` string.
+- **MAX 50 CHARACTERS** — period + one short qualifier only.
+- NO source names, NO sentences, NO explanations, NO "Latka states...", NO "based on...".
+- Allowed formats ONLY:
+  - Period only: `"FY2024"`, `"FY2023"`, `"Q3 FY2024"`, `"TTM"`
+  - Period + qualifier: `"FY2024 — estimate"`, `"FY2024 — group"`, `"FY2023 — standalone"`, `"FY2024 — partial"`
+- Add the qualifier ONLY when necessary (standalone entity, estimated data, partial year).
+  ✓ CORRECT: `"FY2024 — estimate"`
+  ✗ WRONG: `"Latka states Cikisi hit $1.6M in revenue in October 2024."`, `"Latka profile states revenue reached $1.6M"`
+- For metrics[].context: same rule, max 60 chars.
+  ✓ CORRECT: `"FY2024 — Latka estimate"`
+  ✗ WRONG: `"Latka cites revenue of $522.4K in April 2021."`, `"Calculated from Latka's 2024 and 2023 revenue figures"`
+
+## [6] PERIOD COHERENCE
+- All key scalar fields (revenue, grossMargin, ebitdaMargin, netMargin, debtToEquity, freeCashFlow)
+  should share the SAME reference period when data allows.
+- Use the most recent COMPLETE fiscal year available.
+- If only partial or estimated data is available, still populate the field — explain in `context`
+  (e.g. `"FY2024 — partial year, latest available"`).
+- revenueGrowth must be the YoY growth rate FOR THAT SAME reference period.
+- Do NOT leave fields null just because the period differs from others — populate and explain in `context`.
+- For private companies without public reporting, use best-available estimates and note in `context`.
+
+## [7] ARRAYS
+- `metrics[]`: Include historical financial metrics with period tracking. Each entry should have:
+  - `metricName`: Any descriptive name (backend normalises known ones to canonical keys automatically)
+  - `period`: Reporting period — `"FY2023"`, `"Q3 2024"`, `"TTM"`
+  - `value`: Concise value with units — `"$1.2B"`, `"15%"`
+  - `context` (optional): Extra context about this specific metric row
+- `fundingRounds[]`: For private companies. Include each financing event with roundType, amount, date,
+  leadInvestor, valuation, source.
+- For public companies: leave `fundingRounds` null.
 
 ## Output Schema
 {output_schema}
@@ -239,8 +301,7 @@ async def _classify_company(
     """Step 1: Use web search to determine company type and find ticker."""
     prompt = _CLASSIFICATION_PROMPT.format(company_name=company_name)
     user_query = (
-        f"Is '{company_name}' ({website}) a publicly traded company? "
-        f"Find its stock ticker symbol and stock exchange."
+        f"Is '{company_name}' ({website}) a publicly traded company? Find its stock ticker symbol and stock exchange."
     )
 
     result = await web_search_query(
@@ -277,23 +338,17 @@ async def _gather_data(
 
         if is_us_listed:
             # SEC EDGAR for US-listed companies only
-            tasks["sec_edgar"] = asyncio.create_task(
-                fetch_sec_edgar_data(company_name, ticker)
-            )
+            tasks["sec_edgar"] = asyncio.create_task(fetch_sec_edgar_data(company_name, ticker))
 
         # Web search: recent earnings, analyst coverage, financial news
-        tasks["web_news"] = asyncio.create_task(
-            _search_financial_news(company_name, ticker, country_code, tracker)
-        )
+        tasks["web_news"] = asyncio.create_task(_search_financial_news(company_name, ticker, country_code, tracker))
     else:
         # Private company: web search for funding, revenue estimates, valuation
         tasks["web_private"] = asyncio.create_task(
             _search_private_financials(company_name, website, country_code, tracker)
         )
         # Financial news / press releases about milestones
-        tasks["web_news"] = asyncio.create_task(
-            _search_financial_news(company_name, None, country_code, tracker)
-        )
+        tasks["web_news"] = asyncio.create_task(_search_financial_news(company_name, None, country_code, tracker))
 
     results: dict[str, Any] = {}
     for key, task in tasks.items():
@@ -320,18 +375,24 @@ async def _search_financial_news(
 ) -> dict[str, Any]:
     """Web search for recent financial news, earnings, and analyst coverage."""
     ticker_part = f" ({ticker})" if ticker else ""
+    country_part = f" Country: {country_code}." if country_code else ""
     result = await web_search_query(
         system_prompt=(
             "You are a financial news researcher. Find factual recent financial data with sources. "
+            "Prioritise the company's own investor relations page and regulatory filings over media summaries. "
+            "If the company is from a non-English-speaking country, use local-language financial terms "
+            "in your search to improve recall from official filings. "
             "Return JSON with keys: recentEarnings (latest results), analystRatings, "
-            "revenueEstimates, significantEvents (list of recent financial events with dates)."
+            "revenueEstimates, significantEvents (list of recent financial events with dates). "
+            "If a field cannot be confirmed from an authoritative source, return null — do NOT estimate or fabricate."
         ),
         user_query=(
-            f"Recent financial results and analyst coverage for {company_name}{ticker_part}. "
+            f"Recent financial results and analyst coverage for {company_name}{ticker_part}.{country_part} "
             f"Include latest earnings, revenue, profit, and any major financial news from the past 12 months."
         ),
         agent_name=f"{AGENT_NAME}_news",
         country_code=country_code,
+        search_context_size="high",
     )
     tracker.absorb(result)
     return result.get("data") or {}
@@ -344,20 +405,29 @@ async def _search_private_financials(
     tracker: "_TokenTracker",
 ) -> dict[str, Any]:
     """Web search for private company funding rounds, valuation, and revenue."""
+    country_part = f" Country: {country_code}." if country_code else ""
     result = await web_search_query(
         system_prompt=(
             "You are a private company financial researcher. Find funding, valuation, and revenue data. "
+            "Search priority: (1) company's own investor relations page and annual report, "
+            "(2) official business registries (e.g. pappers.fr, Companies House, Bundesanzeiger, infogreffe.fr), "
+            "(3) funding databases (Crunchbase, PitchBook), (4) press releases and investor announcements. "
+            "If the company is from a non-English-speaking country, use local-language financial terms "
+            "in your search (e.g. 'chiffre d'affaires', 'Umsatz', 'ricavi') to find official filings. "
             "Return JSON with keys: totalFunding (string with currency), lastValuation, "
             "fundingRounds (list of {roundType, amount, date, leadInvestor, valuation, source}), "
-            "revenueEstimate, employeeCount."
+            "revenueEstimate, employeeCount. "
+            "If a field cannot be confirmed from a credible source, return null — do NOT estimate or fabricate."
         ),
         user_query=(
-            f"Financial data for {company_name} ({website}): "
-            f"funding rounds, total funding raised, valuation, revenue estimates. "
-            f"Check Crunchbase, TechCrunch, press releases, and investor announcements."
+            f"Financial data for {company_name} ({website}).{country_part} "
+            f"Find: funding rounds, total funding raised, valuation, revenue, employee count. "
+            f"Check the company's own site and investor relations page first, then official registries, "
+            f"then Crunchbase, PitchBook, and press releases."
         ),
         agent_name=f"{AGENT_NAME}_private",
         country_code=country_code,
+        search_context_size="high",
     )
     tracker.absorb(result)
     return result.get("data") or {}
@@ -373,11 +443,7 @@ async def _synthesize(
 ) -> dict[str, Any]:
     """Step 3: LLM synthesizes all tool outputs into FinancialAgentOutput JSON."""
     output_schema_class = AGENT_OUTPUT_SCHEMAS.get(AGENT_NAME)
-    output_schema_json = (
-        json.dumps(output_schema_class.model_json_schema(), indent=2)
-        if output_schema_class
-        else "{}"
-    )
+    output_schema_json = json.dumps(output_schema_class.model_json_schema(), indent=2) if output_schema_class else "{}"
 
     # Build structured source data block for the prompt
     sections: list[str] = []

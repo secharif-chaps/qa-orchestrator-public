@@ -13,6 +13,9 @@
         <td class="px-4 py-3">
           <span v-if="item.revenue">{{ item.revenue.value }}</span>
           <span v-else class="text-secondary/50">{{ t('common.na') }}</span>
+          <p v-if="item.revenue?.context" class="text-secondary/50 text-xs italic">
+            {{ item.revenue.context }}
+          </p>
           <Source v-if="item.revenue?.source" :source="item.revenue.source" />
         </td>
       </template>
@@ -21,6 +24,9 @@
         <td class="px-4 py-3">
           <span v-if="item.ebitda">{{ item.ebitda.value }}</span>
           <span v-else class="text-secondary/50">{{ t('common.na') }}</span>
+          <p v-if="item.ebitda?.context" class="text-secondary/50 text-xs italic">
+            {{ item.ebitda.context }}
+          </p>
           <Source v-if="item.ebitda?.source" :source="item.ebitda.source" />
         </td>
       </template>
@@ -29,6 +35,9 @@
         <td class="px-4 py-3">
           <span v-if="item.netIncome">{{ item.netIncome.value }}</span>
           <span v-else class="text-secondary/50">{{ t('common.na') }}</span>
+          <p v-if="item.netIncome?.context" class="text-secondary/50 text-xs italic">
+            {{ item.netIncome.context }}
+          </p>
           <Source v-if="item.netIncome?.source" :source="item.netIncome.source" />
         </td>
       </template>
@@ -37,6 +46,9 @@
         <td class="px-4 py-3">
           <span v-if="item.fcf">{{ item.fcf.value }}</span>
           <span v-else class="text-secondary/50">{{ t('common.na') }}</span>
+          <p v-if="item.fcf?.context" class="text-secondary/50 text-xs italic">
+            {{ item.fcf.context }}
+          </p>
           <Source v-if="item.fcf?.source" :source="item.fcf.source" />
         </td>
       </template>
@@ -62,6 +74,7 @@ const { metrics } = defineProps<Props>()
 interface MetricCell {
   value: string
   source: string | null
+  context?: string | null
 }
 
 interface HistoryRow {
@@ -108,6 +121,7 @@ const groupedRows = computed<HistoryRow[]>(() => {
     row[key] = {
       value: metric.unit ? `${metric.value} ${metric.unit}` : metric.value,
       source: metric.source,
+      context: metric.context,
     }
   }
 

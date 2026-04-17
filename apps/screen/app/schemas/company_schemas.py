@@ -17,6 +17,7 @@ from enum import StrEnum
 from typing import Any, Generic, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic.alias_generators import to_camel
 
 # Generic type for SourcedValue
 T = TypeVar("T")
@@ -86,6 +87,7 @@ class SourcedValue(BaseModel, Generic[T]):
     value: T
     source: str
     favicon: str | None = None
+    context: str | None = None
 
     model_config = ConfigDict(
         # Allow extra fields for forward compatibility
@@ -613,8 +615,14 @@ class FinancialMetricResponse(BaseModel):
     value: str | None = None
     unit: str | None = None
     source: str | None = None
+    context: str | None = None
 
-    model_config = ConfigDict(from_attributes=True, extra="ignore")
+    model_config = ConfigDict(
+        from_attributes=True,
+        extra="ignore",
+        populate_by_name=True,
+        alias_generator=to_camel,  # serialises as metricName, etc.
+    )
 
 
 class FundingRoundResponse(BaseModel):
@@ -627,7 +635,12 @@ class FundingRoundResponse(BaseModel):
     valuation: str | None = None
     source: str | None = None
 
-    model_config = ConfigDict(from_attributes=True, extra="ignore")
+    model_config = ConfigDict(
+        from_attributes=True,
+        extra="ignore",
+        populate_by_name=True,
+        alias_generator=to_camel,  # serialises as roundType, leadInvestor, etc.
+    )
 
 
 class FinancialResponse(BaseModel):
