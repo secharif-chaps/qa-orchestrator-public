@@ -180,6 +180,13 @@ target:publish:
     IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-target
     DOCKER_CONTEXT: apps/target
 
+# ─── Trivy container scan ─────────────────────────────
+target:trivy:
+  extends: .trivy-scan
+  needs: [target:publish]
+  variables:
+    SCAN_IMAGE: ${CI_REGISTRY_IMAGE}/chapsmind-target
+
 # ─── OpenAPI Export ───────────────────────────────────
 target:openapi-export:
   <<: *target-php-job
