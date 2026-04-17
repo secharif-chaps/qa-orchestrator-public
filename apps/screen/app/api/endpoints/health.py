@@ -47,13 +47,19 @@ def _get_openapi_hash(app) -> str:
     return _cached_hash
 
 
-@router.get("/health/live")
+@router.get(
+    "/health/live",
+    openapi_extra={"x-public": True},
+)
 def health_live():
     """Liveness probe — confirms the process is running."""
     return {"status": "alive"}
 
 
-@router.get("/health/ready")
+@router.get(
+    "/health/ready",
+    openapi_extra={"x-public": True},
+)
 def health_ready(request: Request):
     """Readiness probe — returns status and OpenAPI schema hash.
 

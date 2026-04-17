@@ -59,7 +59,11 @@ def _job_to_response(job: TranslationJob) -> TranslationJobResponse:
     )
 
 
-@router.get("/list", response_model=list[LanguageResponse])
+@router.get(
+    "/list",
+    response_model=list[LanguageResponse],
+    openapi_extra={"x-public": True},
+)
 async def list_languages() -> list[LanguageResponse]:
     """Get the list of supported languages for translation.
 
@@ -72,6 +76,7 @@ async def list_languages() -> list[LanguageResponse]:
 @router.get(
     "/status/{company_id}",
     response_model=CompanyTranslationStatusResponse,
+    openapi_extra={"x-permissions": []},
 )
 async def get_translation_status(
     company_id: int,
@@ -144,6 +149,7 @@ async def get_translation_status(
 @router.get(
     "/job/{job_id}",
     response_model=TranslationJobResponse,
+    openapi_extra={"x-permissions": []},
 )
 async def get_translation_job(
     job_id: int,
@@ -179,6 +185,7 @@ async def get_translation_job(
 @router.post(
     "/translate/{company_id}",
     response_model=TranslateResponse,
+    openapi_extra={"x-permissions": []},
 )
 async def request_translation(
     company_id: int,

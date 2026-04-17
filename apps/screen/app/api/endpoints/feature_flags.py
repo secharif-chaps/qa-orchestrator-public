@@ -105,7 +105,15 @@ class FeatureFlagToggleResponse(BaseModel):
     enabled_at: str | None
 
 
-@router.get("/{organization_id}/feature-flags", response_model=FeatureFlagsResponse)
+@router.get(
+    "/{organization_id}/feature-flags",
+    response_model=FeatureFlagsResponse,
+    # x-permissions stays [] because access is contextual: any authenticated org
+    # member can read their own org's flags, and admin.organizations can read any.
+    # Expressing "admin OR same-org membership" at gateway level is not possible,
+    # so the cross-org check is enforced in the handler body.
+    openapi_extra={"x-permissions": []},
+)
 async def get_organization_feature_flags(
     organization_id: str,
     db: Session = Depends(get_db),
@@ -174,6 +182,7 @@ async def get_organization_feature_flags(
 @router.patch(
     "/{organization_id}/feature-flags/{flag}",
     response_model=FeatureFlagToggleResponse,
+    openapi_extra={"x-permissions": ["admin.organizations"]},
 )
 async def toggle_feature_flag(
     organization_id: str,

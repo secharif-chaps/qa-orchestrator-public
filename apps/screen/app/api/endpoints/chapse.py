@@ -42,7 +42,10 @@ def get_chapse_service(db: Session = Depends(get_db)) -> ChatService:
 # =============================================================================
 
 
-@router.post("/chat")
+@router.post(
+    "/chat",
+    openapi_extra={"x-permissions": []},
+)
 async def chat(
     request: ChapseChatRequest,
     user: OIDCUser = Depends(check_chapse_chat_rate_limit),
@@ -109,7 +112,11 @@ async def chat(
 # =============================================================================
 
 
-@router.get("/conversations", response_model=ConversationsResponse)
+@router.get(
+    "/conversations",
+    response_model=ConversationsResponse,
+    openapi_extra={"x-permissions": []},
+)
 async def list_conversations(
     limit: int = Query(default=20, ge=1, le=100),
     last_id: str | None = Query(default=None),
@@ -139,7 +146,11 @@ async def list_conversations(
         raise HTTPException(status_code=500, detail="Failed to list conversations")
 
 
-@router.get("/conversations/{conversation_id}", response_model=ConversationDetailResponse)
+@router.get(
+    "/conversations/{conversation_id}",
+    response_model=ConversationDetailResponse,
+    openapi_extra={"x-permissions": []},
+)
 async def get_conversation(
     conversation_id: str,
     limit: int = Query(default=50, ge=1, le=100),
@@ -175,7 +186,11 @@ async def get_conversation(
         raise HTTPException(status_code=500, detail="Failed to get conversation")
 
 
-@router.delete("/conversations/{conversation_id}", status_code=204)
+@router.delete(
+    "/conversations/{conversation_id}",
+    status_code=204,
+    openapi_extra={"x-permissions": []},
+)
 async def delete_conversation(
     conversation_id: str,
     user: OIDCUser = Depends(idp.get_current_user()),
@@ -206,7 +221,11 @@ async def delete_conversation(
         raise HTTPException(status_code=500, detail="Failed to delete conversation")
 
 
-@router.post("/conversations/{conversation_id}/rename", response_model=RenameResponse)
+@router.post(
+    "/conversations/{conversation_id}/rename",
+    response_model=RenameResponse,
+    openapi_extra={"x-permissions": []},
+)
 async def rename_conversation(
     conversation_id: str,
     request: RenameRequest,
@@ -248,7 +267,11 @@ async def rename_conversation(
 # =============================================================================
 
 
-@router.get("/conversations/{conversation_id}/context", response_model=ContextResponse)
+@router.get(
+    "/conversations/{conversation_id}/context",
+    response_model=ContextResponse,
+    openapi_extra={"x-permissions": []},
+)
 async def get_context(
     conversation_id: str,
     user: OIDCUser = Depends(idp.get_current_user()),
@@ -272,7 +295,11 @@ async def get_context(
     return ContextResponse(**result)
 
 
-@router.put("/conversations/{conversation_id}/context", response_model=ContextResponse)
+@router.put(
+    "/conversations/{conversation_id}/context",
+    response_model=ContextResponse,
+    openapi_extra={"x-permissions": []},
+)
 async def update_context(
     conversation_id: str,
     request: UpdateContextRequest,

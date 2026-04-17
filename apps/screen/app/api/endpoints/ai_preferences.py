@@ -23,7 +23,11 @@ router = APIRouter(prefix="/ai-preferences", tags=["ai-preferences"])
 logger = logging.getLogger(__name__)
 
 
-@router.post("/quick-actions", response_model=QuickActionsResponse)
+@router.post(
+    "/quick-actions",
+    response_model=QuickActionsResponse,
+    openapi_extra={"x-permissions": []},
+)
 async def generate_quick_actions(
     request: QuickActionsRequest,
     org_context: OrganizationContext = Depends(get_user_organization),

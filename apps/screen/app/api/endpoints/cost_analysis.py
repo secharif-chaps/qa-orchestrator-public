@@ -33,7 +33,11 @@ from app.schemas.cost_analysis import (
 router = APIRouter(prefix="/cost-analysis", tags=["cost-analysis"])
 
 
-@router.get("/global", response_model=GlobalCostResponse)
+@router.get(
+    "/global",
+    response_model=GlobalCostResponse,
+    openapi_extra={"x-permissions": ["admin.costs"]},
+)
 async def get_global_cost_analysis(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
     end_date: date | None = Query(None, description="End date for analysis (inclusive)"),
@@ -103,7 +107,11 @@ async def get_global_cost_analysis(
     )
 
 
-@router.get("/by-organization", response_model=OrganizationCostResponse)
+@router.get(
+    "/by-organization",
+    response_model=OrganizationCostResponse,
+    openapi_extra={"x-permissions": ["admin.costs"]},
+)
 async def get_cost_by_organization(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
     end_date: date | None = Query(None, description="End date for analysis (inclusive)"),
@@ -188,7 +196,11 @@ async def get_cost_by_organization(
     )
 
 
-@router.get("/by-task-type", response_model=TaskTypeCostResponse)
+@router.get(
+    "/by-task-type",
+    response_model=TaskTypeCostResponse,
+    openapi_extra={"x-permissions": ["admin.costs"]},
+)
 async def get_cost_by_task_type(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
     end_date: date | None = Query(None, description="End date for analysis (inclusive)"),
@@ -274,7 +286,11 @@ async def get_cost_by_task_type(
     )
 
 
-@router.get("/trends", response_model=CostTrendsResponse)
+@router.get(
+    "/trends",
+    response_model=CostTrendsResponse,
+    openapi_extra={"x-permissions": ["admin.costs"]},
+)
 async def get_cost_trends(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
     end_date: date | None = Query(None, description="End date for analysis (inclusive)"),
@@ -366,7 +382,11 @@ async def get_cost_trends(
     )
 
 
-@router.post("/refresh-materialized-views", response_model=RefreshMaterializedViewsResponse)
+@router.post(
+    "/refresh-materialized-views",
+    response_model=RefreshMaterializedViewsResponse,
+    openapi_extra={"x-permissions": ["admin.costs"]},
+)
 async def refresh_materialized_views(
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])), db: Session = Depends(get_db)
 ):

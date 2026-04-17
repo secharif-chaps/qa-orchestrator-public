@@ -32,7 +32,11 @@ logger = get_logger(__name__)
 # Task Management Endpoints
 
 
-@router.post("/tasks/fail-stuck", response_model=FailStuckTasksResponse)
+@router.post(
+    "/tasks/fail-stuck",
+    response_model=FailStuckTasksResponse,
+    openapi_extra={"x-permissions": ["admin.organizations"]},
+)
 async def fail_stuck_tasks(
     db: Session = Depends(get_db),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
@@ -214,7 +218,11 @@ async def _get_companies_by_organization(db: Session, start_date: date, end_date
     return breakdown
 
 
-@router.get("/usage-stats", response_model=UsageStatsResponse)
+@router.get(
+    "/usage-stats",
+    response_model=UsageStatsResponse,
+    openapi_extra={"x-permissions": ["admin.organizations"]},
+)
 async def get_usage_stats(
     start_date: str = Query(..., description="Start date in ISO format (YYYY-MM-DD)", examples=["2025-01-01"]),
     end_date: str = Query(..., description="End date in ISO format (YYYY-MM-DD)", examples=["2025-01-07"]),

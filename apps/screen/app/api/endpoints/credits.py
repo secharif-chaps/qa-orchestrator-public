@@ -130,7 +130,11 @@ def _get_module_enabled_status(db: Session, organization_id: str) -> dict[str, b
     return module_status
 
 
-@router.get("/{organization_id}/credits/stats", response_model=CreditStatsResponse)
+@router.get(
+    "/{organization_id}/credits/stats",
+    response_model=CreditStatsResponse,
+    openapi_extra={"x-permissions": ["admin.organizations", "organization.manage"]},
+)
 async def get_credit_stats(
     organization_id: str,
     db: Session = Depends(get_db),
@@ -236,7 +240,11 @@ async def get_credit_stats(
     )
 
 
-@router.get("/{organization_id}/credits/top-users", response_model=TopCreditUsersResponse)
+@router.get(
+    "/{organization_id}/credits/top-users",
+    response_model=TopCreditUsersResponse,
+    openapi_extra={"x-permissions": ["admin.organizations", "organization.manage"]},
+)
 async def get_top_credit_users(
     organization_id: str,
     module: str | None = Query(None, description="Filter by module (screen, target, explore)"),
@@ -390,7 +398,11 @@ async def get_top_credit_users(
     )
 
 
-@router.get("/{organization_id}/credits/daily-usage", response_model=DailyCreditUsageResponse)
+@router.get(
+    "/{organization_id}/credits/daily-usage",
+    response_model=DailyCreditUsageResponse,
+    openapi_extra={"x-permissions": ["admin.organizations", "organization.manage"]},
+)
 async def get_daily_credit_usage(
     organization_id: str,
     module: str | None = Query(None, description="Filter by module (screen, target, explore)"),

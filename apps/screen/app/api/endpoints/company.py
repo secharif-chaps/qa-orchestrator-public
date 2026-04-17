@@ -46,7 +46,11 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/companies", tags=["companies"])
 
 
-@router.get("/recent", response_model=list[CompanyResponse])
+@router.get(
+    "/recent",
+    response_model=list[CompanyResponse],
+    openapi_extra={"x-permissions": []},
+)
 async def get_recent_companies(
     limit: int = Query(5, ge=1, le=100, description="Number of recent companies to return"),
     service: CompanyService = Depends(get_company_service),
@@ -104,7 +108,11 @@ async def get_recent_companies(
     return companies
 
 
-@router.get("/", response_model=PaginatedResponse[CompanyResponse])
+@router.get(
+    "/",
+    response_model=PaginatedResponse[CompanyResponse],
+    openapi_extra={"x-permissions": []},
+)
 async def get_companies(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
     per_page: int = Query(10, ge=1, le=100, description="Items per page (max 100)"),
@@ -133,7 +141,11 @@ async def get_companies(
     )
 
 
-@router.get("/{company_id}", response_model=CompanyResponse)
+@router.get(
+    "/{company_id}",
+    response_model=CompanyResponse,
+    openapi_extra={"x-permissions": []},
+)
 async def get_company(
     company_id: int,
     language: str = Query(None, description="Language code for translations (fr, es, de, pt)"),
@@ -173,7 +185,11 @@ async def get_company(
         )
 
 
-@router.get("/by-name/{name}", response_model=CompanyResponse)
+@router.get(
+    "/by-name/{name}",
+    response_model=CompanyResponse,
+    openapi_extra={"x-permissions": []},
+)
 async def get_company_by_name(
     name: str,
     service: CompanyService = Depends(get_company_service),
@@ -189,7 +205,7 @@ async def get_company_by_name(
 @router.post(
     "/",
     response_model=CompanyResponse,
-    openapi_extra={"x-token-cost": TOKENS_PER_COMPANY},
+    openapi_extra={"x-permissions": [], "x-token-cost": TOKENS_PER_COMPANY},
 )
 async def create_company(
     company_data: CompanyCreate,
@@ -238,7 +254,11 @@ async def create_company(
         )
 
 
-@router.put("/{company_id}", response_model=CompanyResponse)
+@router.put(
+    "/{company_id}",
+    response_model=CompanyResponse,
+    openapi_extra={"x-permissions": ["organization.write"]},
+)
 async def update_company(
     company_id: int,
     company_data: CompanyUpdate,
@@ -264,7 +284,11 @@ async def update_company(
     return _build_company_response(db, updated_company)
 
 
-@router.delete("/{company_id}", response_model=CompanyResponse)
+@router.delete(
+    "/{company_id}",
+    response_model=CompanyResponse,
+    openapi_extra={"x-permissions": ["company.delete"]},
+)
 async def soft_delete_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
@@ -293,7 +317,11 @@ async def soft_delete_company(
     return _build_company_response(db, deleted_company)
 
 
-@router.post("/{company_id}/restore", response_model=CompanyResponse)
+@router.post(
+    "/{company_id}/restore",
+    response_model=CompanyResponse,
+    openapi_extra={"x-permissions": ["company.delete"]},
+)
 async def restore_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
@@ -328,7 +356,7 @@ async def restore_company(
 @router.post(
     "/{company_id}/refresh",
     response_model=CompanyResponse,
-    openapi_extra={"x-token-cost": TOKENS_PER_COMPANY},
+    openapi_extra={"x-permissions": ["company.create"], "x-token-cost": TOKENS_PER_COMPANY},
 )
 async def refresh_company(
     company_id: int,
@@ -408,7 +436,11 @@ def _verify_all_tasks_succeeded(company_id: int, service: CompanyService) -> Non
         )
 
 
-@router.get("/archived/list", response_model=list[CompanyResponse])
+@router.get(
+    "/archived/list",
+    response_model=list[CompanyResponse],
+    openapi_extra={"x-permissions": []},
+)
 async def get_archived_companies(
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
@@ -419,7 +451,11 @@ async def get_archived_companies(
     return [_build_company_response(db, company) for company in companies]
 
 
-@router.post("/csv/validate", response_model=CompanyCSVValidationResponse)
+@router.post(
+    "/csv/validate",
+    response_model=CompanyCSVValidationResponse,
+    openapi_extra={"x-permissions": ["company.create"]},
+)
 async def validate_csv_companies(
     validation_request: CompanyCSVValidationRequest,
     service: CompanyService = Depends(get_company_service),
@@ -474,7 +510,14 @@ async def validate_csv_companies(
     )
 
 
-@router.post("/csv/import", response_model=CompanyCSVImportResponse)
+@router.post(
+    "/csv/import",
+    response_model=CompanyCSVImportResponse,
+    openapi_extra={
+        "x-permissions": ["company.create"],
+        "x-token-cost-per-item": TOKENS_PER_COMPANY,
+    },
+)
 async def import_csv_companies(
     import_request: CompanyCSVImportRequest,
     service: CompanyService = Depends(get_company_service),
