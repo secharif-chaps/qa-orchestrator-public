@@ -50,6 +50,16 @@ router = APIRouter(prefix="/companies", tags=["companies"])
     "/recent",
     response_model=list[CompanyResponse],
     openapi_extra={"x-permissions": []},
+    summary="Get recent companies",
+    description=(
+        "Return the most recently created companies the current user has access to, "
+        "enriched with folder information from global-service. "
+        "Access is scoped to the user's organization and folder sharing permissions."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User does not belong to any organization"},
+    },
 )
 async def get_recent_companies(
     limit: int = Query(5, ge=1, le=100, description="Number of recent companies to return"),
@@ -112,6 +122,17 @@ async def get_recent_companies(
     "/",
     response_model=PaginatedResponse[CompanyResponse],
     openapi_extra={"x-permissions": []},
+    summary="List companies (paginated)",
+    description=(
+        "Return a paginated list of companies belonging to the user's organization. "
+        "Supports sorting by `name` or `created_at`, partial name filtering, "
+        "and optional inclusion of archived (soft-deleted) companies."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User does not belong to any organization"},
+        422: {"description": "Invalid query parameters"},
+    },
 )
 async def get_companies(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
@@ -145,6 +166,18 @@ async def get_companies(
     "/{company_id}",
     response_model=CompanyResponse,
     openapi_extra={"x-permissions": []},
+    summary="Get a company by ID",
+    description=(
+        "Retrieve full details for a single company including profile, digital presence, "
+        "financials, press, team, tasks, and folder information. "
+        "Pass a `language` code to receive translated content where available. "
+        "Archived companies are only returned when `archived=true`."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "Company does not belong to the user's organization"},
+        404: {"description": "Company not found"},
+    },
 )
 async def get_company(
     company_id: int,
@@ -189,6 +222,15 @@ async def get_company(
     "/by-name/{name}",
     response_model=CompanyResponse,
     openapi_extra={"x-permissions": []},
+    summary="Get a company by name",
+    description=(
+        "Look up a company by its exact name. Only returns the company if it belongs to the user's organization."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "Company does not belong to the user's organization"},
+        404: {"description": "No company found with the given name"},
+    },
 )
 async def get_company_by_name(
     name: str,
@@ -206,6 +248,20 @@ async def get_company_by_name(
     "/",
     response_model=CompanyResponse,
     openapi_extra={"x-permissions": [], "x-token-cost": TOKENS_PER_COMPANY},
+    status_code=status.HTTP_200_OK,
+    summary="Create a company",
+    description=(
+        "Create a new company card and trigger AI-powered data-collection workflows. "
+        f"Consumes **{TOKENS_PER_COMPANY} tokens** from the organization's balance. "
+        "The company name and website are validated and sanitized."
+    ),
+    responses={
+        400: {"description": "Invalid company name or website"},
+        401: {"description": "Missing or invalid authentication token"},
+        402: {"description": "Insufficient token balance"},
+        403: {"description": "User does not belong to any organization"},
+        422: {"description": "Request body validation error"},
+    },
 )
 async def create_company(
     company_data: CompanyCreate,
@@ -216,8 +272,7 @@ async def create_company(
 ):
     """Create a new company.
 
-    Token consumption is handled by the global-service proxy via the token lock pattern.
-    The x-token-cost OpenAPI annotation triggers automatic lock/confirm/release.
+    Consumes tokens from the organization's global token balance via global-service.
     """
     logger.info(f"POST /api/companies/ - START - User: {org_context.username}, Data: {company_data.name[:50]}...")
 
@@ -258,6 +313,17 @@ async def create_company(
     "/{company_id}",
     response_model=CompanyResponse,
     openapi_extra={"x-permissions": ["organization.write"]},
+    summary="Update a company",
+    description=(
+        "Update the name, website, or collected data fields of an existing company. "
+        "Requires the `organization.write` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks `organization.write` role or company is in another organization"},
+        404: {"description": "Company not found"},
+        422: {"description": "Request body validation error"},
+    },
 )
 async def update_company(
     company_id: int,
@@ -288,6 +354,17 @@ async def update_company(
     "/{company_id}",
     response_model=CompanyResponse,
     openapi_extra={"x-permissions": ["company.delete"]},
+    summary="Archive a company (soft delete)",
+    description=(
+        "Soft-delete a company by marking it as archived. "
+        "The company data is preserved and can be restored later. "
+        "Requires the `company.delete` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks `company.delete` role or company is in another organization"},
+        404: {"description": "Company not found"},
+    },
 )
 async def soft_delete_company(
     company_id: int,
@@ -321,6 +398,16 @@ async def soft_delete_company(
     "/{company_id}/restore",
     response_model=CompanyResponse,
     openapi_extra={"x-permissions": ["company.delete"]},
+    summary="Restore an archived company",
+    description=(
+        "Restore a previously archived (soft-deleted) company back to active status. "
+        "Requires the `company.delete` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks `company.delete` role or company is in another organization"},
+        404: {"description": "Company not found or was not archived"},
+    },
 )
 async def restore_company(
     company_id: int,
@@ -357,6 +444,19 @@ async def restore_company(
     "/{company_id}/refresh",
     response_model=CompanyResponse,
     openapi_extra={"x-permissions": ["company.create"], "x-token-cost": TOKENS_PER_COMPANY},
+    summary="Refresh company data",
+    description=(
+        "Re-run all data-collection tasks for an existing company to obtain fresh information. "
+        "Only the company owner can refresh, and all previous tasks must have succeeded. "
+        f"Consumes **{TOKENS_PER_COMPANY} tokens**. Requires the `company.create` role."
+    ),
+    responses={
+        400: {"description": "Not all tasks have succeeded yet"},
+        401: {"description": "Missing or invalid authentication token"},
+        402: {"description": "Insufficient token balance"},
+        403: {"description": "User is not the company owner or lacks `company.create` role"},
+        404: {"description": "Company not found"},
+    },
 )
 async def refresh_company(
     company_id: int,
@@ -440,6 +540,12 @@ def _verify_all_tasks_succeeded(company_id: int, service: CompanyService) -> Non
     "/archived/list",
     response_model=list[CompanyResponse],
     openapi_extra={"x-permissions": []},
+    summary="List archived companies",
+    description="Return all soft-deleted (archived) companies in the user's organization.",
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User does not belong to any organization"},
+    },
 )
 async def get_archived_companies(
     service: CompanyService = Depends(get_company_service),
@@ -455,6 +561,17 @@ async def get_archived_companies(
     "/csv/validate",
     response_model=CompanyCSVValidationResponse,
     openapi_extra={"x-permissions": ["company.create"]},
+    summary="Validate CSV import data",
+    description=(
+        "Dry-run validation of CSV company rows. Returns per-row errors, "
+        "the token cost, and whether the organization has sufficient balance. "
+        "No companies are created. Requires the `company.create` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks `company.create` role"},
+        422: {"description": "Request body validation error"},
+    },
 )
 async def validate_csv_companies(
     validation_request: CompanyCSVValidationRequest,
@@ -516,6 +633,19 @@ async def validate_csv_companies(
     openapi_extra={
         "x-permissions": ["company.create"],
         "x-token-cost-per-item": TOKENS_PER_COMPANY,
+    },
+    summary="Import companies from CSV",
+    description=(
+        "Create multiple companies from validated CSV rows in a single request. "
+        f"Token cost is `{TOKENS_PER_COMPANY} × valid_rows`. Invalid rows can be skipped or cause "
+        "the entire import to fail depending on the `skip_invalid` flag. "
+        "Requires the `company.create` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        402: {"description": "Insufficient token balance for the import"},
+        403: {"description": "User lacks `company.create` role"},
+        422: {"description": "Request body validation error"},
     },
 )
 async def import_csv_companies(

@@ -6,7 +6,7 @@ conversations while storing company context locally.
 
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 # =============================================================================
 # Company Context Schemas
@@ -31,6 +31,14 @@ class UpdateContextRequest(BaseModel):
     """Request to update company context for a conversation."""
 
     company_ids: list[int] = Field(default_factory=list, description="List of company IDs to set as context (max 3)")
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {"company_ids": [42, 58]},
+            ],
+        },
+    )
 
     @field_validator("company_ids")
     @classmethod
@@ -61,6 +69,19 @@ class ChapseChatRequest(BaseModel):
     company_ids: list[int] | None = Field(default=None, description="Company IDs to add to context (max 3)")
     messages: list[ChatMessageInput] | None = Field(
         default=None, description="Prior conversation messages for context (max 20, newest kept)"
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "query": "What is Acme Corporation's revenue?",
+                    "conversation_id": None,
+                    "company_ids": [42],
+                    "messages": None,
+                },
+            ],
+        },
     )
 
     @field_validator("company_ids")
@@ -103,6 +124,27 @@ class ConversationsResponse(BaseModel):
     has_more: bool
     limit: int
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "data": [
+                        {
+                            "id": "conv-abc-123",
+                            "name": "Acme revenue analysis",
+                            "created_at": 1718444400,
+                            "updated_at": 1718448000,
+                            "company_ids": [42],
+                            "companies": [{"id": 42, "name": "Acme Corporation"}],
+                        },
+                    ],
+                    "has_more": False,
+                    "limit": 20,
+                },
+            ],
+        },
+    )
+
 
 class Message(BaseModel):
     """Single message in conversation history."""
@@ -126,6 +168,31 @@ class ConversationDetailResponse(BaseModel):
     messages: list[Message] = Field(default_factory=list)
     has_more_messages: bool = False
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": "conv-abc-123",
+                    "name": "Acme revenue analysis",
+                    "created_at": 1718444400,
+                    "updated_at": 1718448000,
+                    "company_ids": [42],
+                    "companies": [{"id": 42, "name": "Acme Corporation"}],
+                    "messages": [
+                        {
+                            "id": "msg-001",
+                            "query": "What is Acme's revenue?",
+                            "answer": "Acme Corporation reported a revenue of $1.2B in 2024.",
+                            "created_at": 1718444400,
+                            "feedback": None,
+                        },
+                    ],
+                    "has_more_messages": False,
+                },
+            ],
+        },
+    )
+
 
 # =============================================================================
 # Rename Schemas
@@ -137,6 +204,15 @@ class RenameRequest(BaseModel):
 
     name: str | None = Field(default=None, max_length=255, description="Manual name (optional)")
     auto_generate: bool = Field(default=False, description="If true, auto-generate name from content")
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {"name": "Q2 Revenue Discussion", "auto_generate": False},
+                {"name": None, "auto_generate": True},
+            ],
+        },
+    )
 
 
 class RenameResponse(BaseModel):
