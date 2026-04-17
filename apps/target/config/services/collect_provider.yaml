@@ -23,21 +23,41 @@ parameters:
   env(COLLECT_TASK_JWT_SECRET): ''
   env(COLLECT_DEFAULT_PROVIDER): 'bakus'
 
+  env(APIFY_API_URL): 'https://api.apify.com'
+  env(APIFY_API_TOKEN): ''
   env(APIFY_MAX_TOTAL_CHARGE_USD): '0.10'
   env(APIFY_WEBHOOK_URL): ''
 
   app.apify.webhook_url: '%env(string:APIFY_WEBHOOK_URL)%'
   app.apify.max_total_charge_usd: '%env(string:APIFY_MAX_TOTAL_CHARGE_USD)%'
-  app.apify.actor_mapping: {}
+
+  # Maps SourceType values to Apify actor IDs (lot initial — Phase 1).
+  app.apify.actor_mapping:
+    social_media:linkedin:user: 'curious_coder/linkedin-profile-scraper'
+    social_media:linkedin:company: 'bebity/linkedin-premium-actor'
+    social_media:instagram:user: 'apify/instagram-scraper'
+    social_media:instagram:hashtag: 'apify/instagram-scraper'
+    social_media:instagram:search: 'apify/instagram-scraper'
+    news:newsapi: 'lhotanova/google-news-scraper'
+    news:newsapi:headlines: 'lhotanova/google-news-scraper'
+    website: 'apify/website-content-crawler'
+    blog: 'apify/website-content-crawler'
 
   app.collect_task.jwt_secret: '%env(string:COLLECT_TASK_JWT_SECRET)%'
 
   app.collect.provider_routing.default: '%env(string:COLLECT_DEFAULT_PROVIDER)%'
-  # To route a specific SourceType to a different provider, add overrides here:
-  # app.collect.provider_routing.source_types:
-  #   rss_feed: 'apify'
-  #   blog: 'apify'
-  app.collect.provider_routing.source_types: {}
+
+  # Routes SourceTypes to a specific provider, overriding the default (bakus).
+  app.collect.provider_routing.source_types:
+    social_media:linkedin:user: 'apify'
+    social_media:linkedin:company: 'apify'
+    social_media:instagram:user: 'apify'
+    social_media:instagram:hashtag: 'apify'
+    social_media:instagram:search: 'apify'
+    news:newsapi: 'apify'
+    news:newsapi:headlines: 'apify'
+    website: 'apify'
+    blog: 'apify'
 
   app.bakus.callback_type: '%env(string:BAKUS_CALLBACK_TYPE)%'
   app.bakus.callback_url: '%env(string:BAKUS_CALLBACK_URL)%'
