@@ -154,7 +154,7 @@ infra:trivy-config:
       cat > deploy-artifact/.env << ENVEOF
       COMPOSE_FILE=compose.yaml:compose.staging.yaml
       COMPOSE_PROJECT_NAME=chapsmind-${SUB_DOMAIN}
-      ENV_NAME_SLUG=${SUB_DOMAIN}
+      ENV_NAME_SLUG=chapsmind-${SUB_DOMAIN}
       SERVER_NAME=${SUB_DOMAIN}.${BASE_DOMAIN}
       DOCKER_REGISTRY=${CI_REGISTRY_IMAGE}
       DOCKER_CHAPSMIND_VERSION=${IMAGE_TAG}
