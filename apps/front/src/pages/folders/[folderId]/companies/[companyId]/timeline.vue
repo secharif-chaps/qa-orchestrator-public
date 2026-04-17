@@ -16,18 +16,7 @@
 
     <!-- Timeline visualization -->
     <div v-else class="space-y-xl relative">
-      <div class="gap-xl flex items-center justify-between">
-        <div v-if="company" class="text-neutral-black-font flex items-center gap-2">
-          <Badge icon="fa-pen" variant="secondary" size="xs" />
-          <span class="text-sm">
-            {{
-              t('screen.company.footer.createdBy', {
-                username: company.owner_username,
-                date: formatFullDate(company.created_at),
-              })
-            }}
-          </span>
-        </div>
+      <div class="gap-xl flex items-center justify-end">
         <div class="flex items-center gap-2">
           <Searchbar
             v-model="searchQuery"
@@ -74,8 +63,7 @@ import NoData from '@/components/ui/NoData.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import type { SourcedValue } from '@/types/company'
-import { formatFullDate } from '@/utils/time'
-import { Badge, Button, Searchbar } from '@owlint/feathers-vue'
+import { Button, Searchbar } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import type { Ref } from 'vue'
 import { computed, inject, ref } from 'vue'

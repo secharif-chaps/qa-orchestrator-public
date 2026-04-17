@@ -1,48 +1,30 @@
 <template>
-  <div
-    class="bg-sage-light border-primary-lighter-stroke rounded-sm border p-4 transition-all duration-300"
-  >
-    <div class="flex items-start justify-between">
-      <div>
-        <h3 class="text-neutral-black-font text-lg font-semibold">
-          {{ jobTitle }}
-        </h3>
-        <div class="mt-2 space-y-2">
-          <Tag v-if="jobLocation" variant="primary" size="sm" :icon="'fa fa-map-marker'">
-            {{ jobLocation }}
-          </Tag>
-          <Tag
-            v-if="jobDepartment"
-            variant="primary"
-            size="sm"
-            :icon="'fa fa-building'"
-            class="block"
-          >
-            {{ jobDepartment }}
-          </Tag>
-          <div v-if="jobPostedDate" class="text-neutral-black-font flex items-center text-sm">
-            <i class="fa fa-calendar w-4"></i>
-            {{ t('screen.jobs.card.postedDate') }} {{ jobPostedDate }}
-          </div>
-        </div>
+  <div class="bg-neutral gap-md p-xl flex flex-col rounded-3xl transition-all duration-300">
+    <div class="flex flex-col gap-2">
+      <div class="text-neutral-black-font text-base font-bold">
+        {{ jobTitle }}
+      </div>
+      <div class="flex flex-wrap gap-1">
+        <JobTag :type="JOB_TAG_TYPES.LOCATION" :label="jobLocation" />
+        <JobTag :type="JOB_TAG_TYPES.DEPARTMENT" :label="jobDepartment" />
       </div>
     </div>
 
-    <div v-if="jobDescription" class="mt-4">
-      <h4 class="mb-2 font-medium">{{ t('screen.jobs.card.description') }}</h4>
-      <p class="text-neutral-black-font text-sm">
+    <div v-if="jobDescription" class="flex flex-col gap-1">
+      <div class="text-base font-semibold">{{ t('screen.jobs.card.description') }}</div>
+      <p class="text-neutral-black-font text-justify text-sm">
         {{ jobDescription }}
       </p>
     </div>
 
-    <div v-if="jobRequirements" class="mt-4">
-      <h4 class="mb-2 font-medium">{{ t('screen.jobs.card.requirements') }}</h4>
-      <p class="text-neutral-black-font text-sm">
+    <div v-if="jobRequirements" class="flex flex-col gap-1">
+      <div class="text-base font-semibold">{{ t('screen.jobs.card.requirements') }}</div>
+      <p class="text-neutral-black-font text-justify text-sm">
         {{ jobRequirements }}
       </p>
     </div>
 
-    <div v-if="job.source" class="mt-4 flex justify-end">
+    <div v-if="job.source" class="flex justify-end">
       <Source :source="job.source" />
     </div>
   </div>
@@ -50,9 +32,10 @@
 
 <script lang="ts" setup>
 import type { SourcedValue } from '@/types/company'
-import { Tag } from '@owlint/feathers-vue'
+import { JOB_TAG_TYPES } from '@/types/company'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import JobTag from './JobTag.vue'
 import Source from '../Source.vue'
 
 const { t } = useI18n()
@@ -80,7 +63,6 @@ const extractValue = (field: string | SourcedValue<string> | undefined): string 
 const jobTitle = computed(() => extractValue(props.job.title) || '')
 const jobLocation = computed(() => extractValue(props.job.location))
 const jobDepartment = computed(() => extractValue(props.job.department))
-const jobPostedDate = computed(() => extractValue(props.job.posted_date))
 const jobDescription = computed(() => extractValue(props.job.description))
 const jobRequirements = computed(() => extractValue(props.job.requirements))
 </script>

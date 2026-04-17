@@ -1,11 +1,6 @@
 <template>
-  <div
-    class="rounded-block bg-primary-lighter border-primary-lighter-stroke relative overflow-hidden border p-6"
-    role="alert"
-    :aria-labelledby="title ? 'chapse-alert-title' : undefined"
-  >
-    <div class="flex items-center gap-8">
-      <!-- Chapse Image (LEFT) -->
+  <Alert :title="title || $t('screen.profile.sections.insights.title')" :icon="icon">
+    <template #image>
       <div class="ml-6 flex shrink-0 flex-col items-center">
         <img
           :src="imageSource"
@@ -20,30 +15,19 @@
           loading="lazy"
         />
       </div>
-      <!-- Content Section (RIGHT) -->
-      <div class="min-w-0 flex-1">
-        <!-- Title -->
-        <h3
-          id="chapse-alert-title"
-          class="mb-3 flex items-center gap-2 text-lg font-semibold text-black dark:text-white"
-        >
-          <i class="fa-solid fa-wand-sparkles"></i>
-          <span>
-            {{ title || $t('screen.profile.sections.insights.title') }}
-          </span>
-        </h3>
-
-        <!-- Default slot for content -->
-        <div v-if="$slots.default" class="dark:text-sage-300 text-sm leading-relaxed">
-          <slot />
-        </div>
-      </div>
-    </div>
-  </div>
+    </template>
+    <template v-if="$slots.aside" #aside>
+      <slot name="aside" />
+    </template>
+    <template v-if="$slots.default" #default>
+      <slot />
+    </template>
+  </Alert>
 </template>
 
 <script setup lang="ts">
 import shadow from '@/assets/chapse/shadow.svg'
+import Alert from '@/components/ui/Alert.vue'
 import { computed } from 'vue'
 
 type ChapseVariant = 'default' | 'head' | 'mage'
@@ -53,13 +37,15 @@ interface Props {
   variant?: ChapseVariant
   /** Title text for the alert */
   title?: string
+  /** Icon class for the title */
+  icon?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: 'default',
+  icon: 'fa-solid fa-wand-sparkles',
 })
 
-// Map variant to image source
 const imageSource = computed(() => {
   const images = {
     default: new URL('@/assets/chapse/default.svg', import.meta.url).href,
@@ -69,7 +55,6 @@ const imageSource = computed(() => {
   return images[props.variant]
 })
 
-// Accessible alt text based on variant
 const imageAlt = computed(() => {
   const altTexts = {
     default: 'Chapse character',

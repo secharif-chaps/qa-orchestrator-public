@@ -1376,7 +1376,6 @@
         "selectFolder": "Select Folder"
       },
       "created": "Created",
-      "createdAt": "Created on",
       "debug": {
         "workflowTitle": "Debug: Search Workflow"
       },
@@ -1477,8 +1476,8 @@
         "notSpecified": "Not specified",
         "revenue": "Revenue"
       },
-      "footer": {
-        "createdBy": "Created by {username} on {date}"
+      "header": {
+        "createdBy": "Created on {date} by {username}"
       },
       "item": {
         "by": "by",
@@ -1790,7 +1789,6 @@
     "jobs": {
       "card": {
         "description": "Description",
-        "postedDate": "Posted:",
         "requirements": "Requirements"
       },
       "emptyState": {
@@ -1799,18 +1797,29 @@
       "insights": {
         "growthIndicators": "Growth Indicators",
         "hiringFocus": "Hiring Focus",
-        "title": "Hiring Insights",
         "topDepartments": "Top Departments",
         "totalOpenings": "Total Openings"
       },
       "listings": {
+        "columns": {
+          "description": "Description",
+          "location": "Location",
+          "offer": "Offer",
+          "requirements": "Requirements",
+          "type": "Type"
+        },
         "noResults": "No job offers found matching \"{query}\"",
         "search": {
-          "placeholder": "Search jobs..."
+          "placeholder": "Search an offer..."
         },
-        "title": "Current Openings"
+        "title": "Current Openings",
+        "view": {
+          "grid": "Grid",
+          "table": "Table"
+        }
       },
-      "loading": "Loading job offers..."
+      "loading": "Loading job offers...",
+      "title": "Hiring Information"
     },
     "products": {
       "associatedBrands": "Associated brands",

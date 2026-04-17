@@ -1,5 +1,12 @@
 import type { TaskResponse } from './task'
 
+export const JOB_TAG_TYPES = {
+  LOCATION: 'location',
+  DEPARTMENT: 'department',
+} as const
+
+export type JobTagType = (typeof JOB_TAG_TYPES)[keyof typeof JOB_TAG_TYPES]
+
 export interface CompanyCreate {
   name: string
   website: string

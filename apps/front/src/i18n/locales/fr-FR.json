@@ -1376,7 +1376,6 @@
         "selectFolder": "Sélectionner un dossier"
       },
       "created": "Créé",
-      "createdAt": "Créé le",
       "debug": {
         "workflowTitle": "Debug : Workflow de recherche"
       },
@@ -1477,8 +1476,8 @@
         "notSpecified": "Non spécifié",
         "revenue": "Revenus"
       },
-      "footer": {
-        "createdBy": "Créé par {username} le {date}"
+      "header": {
+        "createdBy": "Créé le {date} par {username}"
       },
       "item": {
         "by": "par",
@@ -1790,7 +1789,6 @@
     "jobs": {
       "card": {
         "description": "Description",
-        "postedDate": "Publié le :",
         "requirements": "Exigences"
       },
       "emptyState": {
@@ -1798,19 +1796,30 @@
       },
       "insights": {
         "growthIndicators": "Indicateurs de Croissance",
-        "hiringFocus": "Focus de Recrutement",
-        "title": "Aperçu des Recrutements",
+        "hiringFocus": "Objectif d'embauche",
         "topDepartments": "Départements Principaux",
-        "totalOpenings": "Total des Postes"
+        "totalOpenings": "Ouvertures totales"
       },
       "listings": {
+        "columns": {
+          "description": "Description",
+          "location": "Localisation",
+          "offer": "Offre",
+          "requirements": "Exigences",
+          "type": "Type"
+        },
         "noResults": "Aucune offre d'emploi trouvée correspondant à \"{query}\"",
         "search": {
-          "placeholder": "Rechercher des emplois..."
+          "placeholder": "Rechercher une offre..."
         },
-        "title": "Postes Actuels"
+        "title": "Ouvertures actuelles",
+        "view": {
+          "grid": "Grille",
+          "table": "Tableau"
+        }
       },
-      "loading": "Chargement des offres..."
+      "loading": "Chargement des offres...",
+      "title": "Informations sur l'embauche"
     },
     "products": {
       "associatedBrands": "Marques associées",
