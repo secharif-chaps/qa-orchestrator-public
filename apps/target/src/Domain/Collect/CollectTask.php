@@ -212,6 +212,17 @@ class CollectTask
         return $this->status->isCancelled();
     }
 
+    /**
+     * Store result data from a provider (e.g., Apify dataset).
+     *
+     * @param array<string, mixed> $result Serialized CollectTaskResult::toArray()
+     */
+    public function storeResult(array $result): void
+    {
+        $this->configuration['result'] = $result;
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\PrePersist]
     public function onPrePersist(): void
     {
