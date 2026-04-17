@@ -152,18 +152,23 @@ infra:trivy-config:
     # existing environments keep their .env (secrets are NOT overwritten).
     - |
       cat > deploy-artifact/.env << ENVEOF
+      # ─── Docker Compose ───────────────────────────────────
       COMPOSE_FILE=compose.yaml:compose.staging.yaml
       COMPOSE_PROJECT_NAME=chapsmind-${SUB_DOMAIN}
       COMPOSE_PROFILES=screen,stream,target
+      # ─── Deploy ───────────────────────────────────────────
       ENV_NAME_SLUG=chapsmind-${SUB_DOMAIN}
       SERVER_NAME=${SUB_DOMAIN}.${BASE_DOMAIN}
       DOCKER_REGISTRY=${CI_REGISTRY_IMAGE}
       DOCKER_CHAPSMIND_VERSION=${IMAGE_TAG}
+      # ─── Database──────────────────────────────────────────
       POSTGRES_USER=chapsmind
       POSTGRES_PASSWORD=$(openssl rand -hex 16)
       POSTGRES_DB=screen_db
       GLOBAL_DB=global_db
       STREAM_DB=stream_db
+      TARGET_DB=target_db
+      # ─── Security ─────────────────────────────────────────
       INTERNAL_JWT_SECRET=$(openssl rand -hex 32)
       ENCRYPTION_KEY=$(openssl rand -base64 32 | tr '+/' '-_')
       KEYCLOAK_SERVER_URL=${DEPLOY_KEYCLOAK_URL:-https://sso.deveryware.team/auth}
@@ -176,14 +181,16 @@ infra:trivy-config:
       VITE_KEYCLOAK_REALM=${DEPLOY_KEYCLOAK_REALM:-chapsmind-internal}
       VITE_KEYCLOAK_CLIENT_ID=${KEYCLOAK_FRONT_CLIENT_ID:-chapsmind-front}
       VITE_APP_CLARITY_PROJECT_ID=${CLARITY_PROJECT_ID:-}
+      CA_CERT_PATH=${CA_CERT_PATH:-${CA_CERT_AVAILABLE}}
+      # ─── Observability ────────────────────────────────────
+      LOKI_URL=${LOKI_URL:-https://loki-monitoring.dev.target.localnet}
+      LOKI_HOST=${LOKI_HOST:-loki-monitoring.dev.target.localnet}
+      # ─── External providers ───────────────────────────────
       LLM_PROVIDER=${STAGING_LLM_PROVIDER:-}
       LLM_API_KEY=${STAGING_LLM_API_KEY:-}
       LLM_BASE_URL=${STAGING_LLM_BASE_URL:-}
       LLM_API_VERSION=${STAGING_LLM_API_VERSION:-}
       SYSTRAN_API_KEY=${SYSTRAN_API_KEY:-}
-      LOKI_URL=${LOKI_URL:-https://loki-monitoring.dev.target.localnet}
-      LOKI_HOST=${LOKI_HOST:-loki-monitoring.dev.target.localnet}
-      CA_CERT_PATH=${CA_CERT_PATH:-${CA_CERT_AVAILABLE}}
       ENVEOF
 
     # Determine deploy args based on MR or branch mode
