@@ -81,6 +81,7 @@ services:
       CORS_ORIGIN: http://localhost
       BACKEND_BASE_URL: http://localhost/api
       LOG_LEVEL: INFO
+      DEV_MODE: "${DEV_MODE:-true}"
       SYSTRAN_API_KEY: ${SYSTRAN_API_KEY:-}
       LLM_PROVIDER: ${LLM_PROVIDER:-openai}
       LLM_API_KEY: ${LLM_API_KEY:-}
@@ -107,6 +108,7 @@ services:
     environment:
       <<: [*local-internal-auth]
       LOG_LEVEL: INFO
+      DEV_MODE: "${DEV_MODE:-true}"
     volumes:
       - ../apps/stream/app:/app/app
       - ../apps/stream/alembic:/app/alembic
@@ -127,6 +129,7 @@ services:
       CORS_ORIGIN: http://localhost
       TARGET_BASE_URL: http://target:8000
       TARGET_MERCURE_URL: http://target:8000
+      DEV_MODE: "${DEV_MODE:-true}"
     volumes:
       - ../apps/global-service/app:/app/app
       - ../apps/global-service/protos:/app/protos

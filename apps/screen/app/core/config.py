@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000
 
+    # Enable uvicorn hot-reload (file-watcher). Off by default; set DEV_MODE=true in local dev only.
+    DEV_MODE: bool = False
+
     # Logging settings
     LOG_LEVEL: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 

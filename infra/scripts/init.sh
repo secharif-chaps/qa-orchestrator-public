@@ -86,6 +86,11 @@ if grep -q '^INTERNAL_JWT_SECRET=changeme$' .env; then
   echo "✅ Auto-generated INTERNAL_JWT_SECRET"
 fi
 
+if ! grep -q '^DEV_MODE=' .env; then
+  sed -i 's|^# DEV_MODE=false|DEV_MODE=true|' .env
+  echo "✅ Set DEV_MODE=true for local development"
+fi
+
 rm -f .env.bak
 
 # ─── 2b. Configure LLM ─────────────────────────────

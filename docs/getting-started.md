@@ -1,6 +1,6 @@
 # Getting Started
 
-> **Last Updated:** 2026-03-19
+> **Last Updated:** 2026-04-17
 
 Guide to set up ChapsMind on your local machine. Supports **Ubuntu**, **Windows (WSL2)**, and **macOS**.
 
@@ -75,7 +75,7 @@ task init
 That's it. `task init` handles everything:
 
 1. Creates `.env` from template
-2. Auto-generates `ENCRYPTION_KEY`, `INTERNAL_JWT_SECRET`, `TUNNEL_SUBDOMAIN`
+2. Auto-generates `ENCRYPTION_KEY`, `INTERNAL_JWT_SECRET` and sets `DEV_MODE=true`
 3. Configures `apps/front/.yarnrc.yml` (prompts for Vuellar credentials if needed)
 4. Installs frontend dependencies (in Docker)
 5. Builds and starts all services
@@ -160,6 +160,25 @@ Run `task` with no arguments to see all commands.
 | `task screen:format` | Format backend code (ruff)   |
 | `task screen:test`   | Run backend tests            |
 | `task screen:shell`  | Open bash shell in container |
+
+---
+
+## Configuration
+
+### Hot-reload (DEV_MODE)
+
+Uvicorn's file-watcher is **enabled by default** in local dev (`DEV_MODE=true` is set by `task init`).
+To disable it and test a production-like startup locally, add this to your `.env`:
+
+```env
+DEV_MODE=false
+```
+
+Then restart the affected service:
+
+```bash
+docker compose restart screen      # or global-service / stream
+```
 
 ---
 

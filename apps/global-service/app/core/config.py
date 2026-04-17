@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     # Server
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000
+
+    # Enable uvicorn hot-reload (file-watcher). Off by default; set DEV_MODE=true in local dev only.
+    DEV_MODE: bool = False
     SCREEN_BASE_URL: str = "http://screen:8000"
     STREAM_BASE_URL: str = "http://stream:8000"
     TARGET_BASE_URL: str = "http://target:8000"
