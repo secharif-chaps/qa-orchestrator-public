@@ -134,7 +134,7 @@ services:
     profiles: [target]
   target-valkey:
     profiles: [target]
-  rabbitmq:
+  target-rabbitmq:
     profiles: [target]
 
   db:
