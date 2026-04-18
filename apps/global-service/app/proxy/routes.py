@@ -431,7 +431,7 @@ async def proxy_request(request: Request, path: str) -> Response:
     if route_is_public:
         logger.info(
             "Public route (x-public), skipping auth",
-            extra={"path": path, "method": request.method, "module": module.name},
+            extra={"path": path, "method": request.method, "target_module": module.name},
         )
         user = None
         internal_headers = {}
