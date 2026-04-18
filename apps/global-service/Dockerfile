@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.12-slim AS base
 
 ARG VERSION=dev
 LABEL org.opencontainers.image.title="chapsmind-global-service" \
@@ -33,10 +33,32 @@ COPY pyproject.toml poetry.lock ./
 # Disable venv inside container
 RUN poetry config virtualenvs.create false
 
-# Install dependencies
+# ── Dev stage: all deps (pytest, ruff, mypy, etc.) ───────────────────
+FROM base AS dev
+
 RUN poetry install --no-interaction --no-ansi --no-root
 
-# Copy app code
+COPY ./protos/ protos/
+COPY ./scripts/ scripts/
+COPY ./app/ app/
+COPY ./alembic/ alembic/
+COPY ./tests/ tests/
+COPY alembic.ini run.py ./
+COPY ./docker/entrypoint.sh ./
+
+# Generate gRPC protos at BUILD TIME (not runtime)
+RUN python scripts/generate_protos.py
+
+RUN chmod +x entrypoint.sh && sed -i 's/\r$//' entrypoint.sh
+
+EXPOSE 8000 50051
+ENTRYPOINT ["./entrypoint.sh"]
+
+# ── Prod stage (default): main deps only ─────────────────────────────
+FROM base AS prod
+
+RUN poetry install --only main --no-interaction --no-ansi --no-root
+
 COPY ./protos/ protos/
 COPY ./scripts/ scripts/
 COPY ./app/ app/
@@ -47,9 +69,7 @@ COPY ./docker/entrypoint.sh ./
 # Generate gRPC protos at BUILD TIME (not runtime)
 RUN python scripts/generate_protos.py
 
-# Make entrypoint executable
 RUN chmod +x entrypoint.sh && sed -i 's/\r$//' entrypoint.sh
 
 EXPOSE 8000 50051
-
 ENTRYPOINT ["./entrypoint.sh"]

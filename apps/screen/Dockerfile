@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.12-slim AS base
 
 ARG VERSION=dev
 LABEL org.opencontainers.image.title="chapsmind-screen" \
@@ -34,20 +34,33 @@ COPY pyproject.toml poetry.lock ./
 # Configure poetry to not use a virtual environment
 RUN poetry config virtualenvs.create false
 
-# Install dependencies
+# ── Dev stage: all deps (pytest, ruff, mypy, etc.) ───────────────────
+FROM base AS dev
+
 RUN poetry install --no-interaction --no-ansi --no-root
 
-# Copy the rest of the application
+COPY ./app/ app/
+COPY ./alembic/ alembic/
+COPY ./tests/ tests/
+COPY alembic.ini run.py ./
+COPY ./docker/entrypoint.sh ./
+
+RUN chmod +x entrypoint.sh && sed -i 's/\r$//' entrypoint.sh
+
+EXPOSE 8000
+ENTRYPOINT ["./entrypoint.sh"]
+
+# ── Prod stage (default): main deps only ─────────────────────────────
+FROM base AS prod
+
+RUN poetry install --only main --no-interaction --no-ansi --no-root
+
 COPY ./app/ app/
 COPY ./alembic/ alembic/
 COPY alembic.ini run.py ./
 COPY ./docker/entrypoint.sh ./
 
-# Make the entrypoint script executable and fix line endings
 RUN chmod +x entrypoint.sh && sed -i 's/\r$//' entrypoint.sh
 
-# Expose the port
 EXPOSE 8000
-
-# Set the entrypoint
-ENTRYPOINT ["./entrypoint.sh"] 
+ENTRYPOINT ["./entrypoint.sh"]
