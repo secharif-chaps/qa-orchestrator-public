@@ -30,6 +30,26 @@ global-service:lint:
     - cd apps/global-service && ruff check app/ --exclude "app/grpc_generated/*"
   <<: *gs-changes
 
+global-service:logger-extra-check:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $AGENT_ISSUE
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - apps/global-service/**/*.py
+        - .gitlab/scripts/check-logger-extra.py
+    - if: $CI_COMMIT_BRANCH
+      changes:
+        - apps/global-service/**/*.py
+        - .gitlab/scripts/check-logger-extra.py
+  script:
+    - python3 .gitlab/scripts/check-logger-extra.py apps/global-service
+
 global-service:alembic-check:
   stage: lint
   needs: []

@@ -30,6 +30,26 @@ stream:lint:
     - cd apps/stream && ruff check app/
   <<: *stream-changes
 
+stream:logger-extra-check:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $AGENT_ISSUE
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - apps/stream/**/*.py
+        - .gitlab/scripts/check-logger-extra.py
+    - if: $CI_COMMIT_BRANCH
+      changes:
+        - apps/stream/**/*.py
+        - .gitlab/scripts/check-logger-extra.py
+  script:
+    - python3 .gitlab/scripts/check-logger-extra.py apps/stream
+
 stream:alembic-check:
   stage: lint
   needs: []

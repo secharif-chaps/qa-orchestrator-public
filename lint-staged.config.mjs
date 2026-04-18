@@ -15,7 +15,7 @@ export default {
     'cd apps/front && npx stylelint --fix',
     'cd apps/front && npx prettier --write',
   ],
-  // Screen backend: Python (via Docker — ruff not installed on host)
+  // Python backends: ruff (via Docker — not installed on host).
   'apps/screen/**/*.py': (filenames) => {
     const relative = filenames.map((f) => f.replace(/.*apps\/screen\//, ''))
     return [
@@ -23,6 +23,27 @@ export default {
       `docker compose exec -T screen ruff format ${relative.join(' ')}`,
     ]
   },
+  'apps/stream/**/*.py': (filenames) => {
+    const relative = filenames.map((f) => f.replace(/.*apps\/stream\//, ''))
+    return [
+      `docker compose exec -T stream ruff check --fix ${relative.join(' ')}`,
+      `docker compose exec -T stream ruff format ${relative.join(' ')}`,
+      // Stream is mypy-clean; run on the whole project since mypy needs full context.
+      'docker compose exec -T stream mypy app/ --ignore-missing-imports',
+    ]
+  },
+  'apps/global-service/**/*.py': (filenames) => {
+    const relative = filenames.map((f) => f.replace(/.*apps\/global-service\//, ''))
+    return [
+      `docker compose exec -T global-service ruff check --fix ${relative.join(' ')}`,
+      `docker compose exec -T global-service ruff format ${relative.join(' ')}`,
+    ]
+  },
+  // LogRecord-collision guard — `extra={"module": ...}` etc. crash at runtime.
+  // Stdlib-only AST scan, runs on the host (no Docker round-trip).
+  'apps/{screen,stream,global-service}/**/*.py': (filenames) => [
+    `python3 .gitlab/scripts/check-logger-extra.py ${filenames.join(' ')}`,
+  ],
   // Alembic migration chain sanity checks — once per touched app.
   // Fails on duplicate revision IDs and multi-head chains before they reach CI.
   'apps/screen/alembic/versions/**/*.py': () => ['.husky/scripts/check-alembic.sh screen'],
