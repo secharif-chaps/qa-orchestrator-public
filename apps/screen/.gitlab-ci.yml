@@ -30,6 +30,29 @@ screen:lint:
     - cd apps/screen && ruff check app/
   <<: *screen-changes
 
+screen:alembic-check:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $AGENT_ISSUE
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - apps/screen/alembic/versions/**/*
+        - .gitlab/scripts/check-alembic.sh
+    - if: $CI_COMMIT_BRANCH
+      changes:
+        - apps/screen/alembic/versions/**/*
+        - .gitlab/scripts/check-alembic.sh
+  before_script:
+    - cd apps/screen
+    - poetry config virtualenvs.create false && poetry install --no-interaction --no-root
+  script:
+    - cd $CI_PROJECT_DIR && .gitlab/scripts/check-alembic.sh apps/screen
+
 screen:mypy:
   stage: lint
   needs: []

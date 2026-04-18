@@ -23,6 +23,11 @@ export default {
       `docker compose exec -T screen ruff format ${relative.join(' ')}`,
     ]
   },
+  // Alembic migration chain sanity checks — once per touched app.
+  // Fails on duplicate revision IDs and multi-head chains before they reach CI.
+  'apps/screen/alembic/versions/**/*.py': () => ['.husky/scripts/check-alembic.sh screen'],
+  'apps/stream/alembic/versions/**/*.py': () => ['.husky/scripts/check-alembic.sh stream'],
+  'apps/global-service/alembic/versions/**/*.py': () => ['.husky/scripts/check-alembic.sh global-service'],
   // Target backend: PHP (via Docker — ECS + PHPStan not installed on host)
   // ECS runs on staged files only, PHPStan must analyse the whole project
   'apps/target/**/*.php': (filenames) => {
