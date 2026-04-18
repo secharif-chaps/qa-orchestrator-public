@@ -72,6 +72,7 @@ services:
     build:
       context: ../apps/screen
       dockerfile: Dockerfile
+      target: dev
     depends_on:
       db: { condition: service_healthy }
       keycloak: { condition: service_healthy }
@@ -120,6 +121,7 @@ services:
     build:
       context: ../apps/global-service
       dockerfile: Dockerfile
+      target: dev
     image: chapsmind-global-service:local
     depends_on:
       db: { condition: service_healthy }
