@@ -20,9 +20,11 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import re
 import time
 from dataclasses import dataclass, field
 from enum import StrEnum
+from functools import lru_cache
 
 import httpx
 
@@ -37,6 +39,39 @@ _VALID_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"}
 def _normalize_path(path: str) -> str:
     """Normalize a path: strip trailing slash for consistent matching."""
     return path.rstrip("/") or "/"
+
+
+# Captures OpenAPI path parameters like "{company_id}". Parameter values cannot
+# contain a slash in practice, so "[^/]+" is the right template substitution.
+_PARAM_RE = re.compile(r"\{[^/}]+\}")
+
+
+@lru_cache(maxsize=1024)
+def _compile_template(template: str) -> tuple[re.Pattern[str], int]:
+    """Turn an OpenAPI path template into a `(regex, static_char_count)` pair.
+
+    `static_char_count` is the number of literal (non-parameter) characters in
+    the template. It is used as a specificity score when several templates
+    match the same request path: more literal characters wins.
+
+    This replaces the previous `route_path.split("{")[0]` prefix matching,
+    which could not distinguish between sibling parameterised sub-routes
+    (e.g. `.../{id}/restore` vs `.../{id}/refresh`) — both had the same
+    static prefix, so the first declared sibling swallowed its neighbours.
+    """
+    parts: list[str] = []
+    last_end = 0
+    static_chars = 0
+    for match in _PARAM_RE.finditer(template):
+        literal = template[last_end : match.start()]
+        parts.append(re.escape(literal))
+        parts.append(r"[^/]+")
+        static_chars += len(literal)
+        last_end = match.end()
+    tail = template[last_end:]
+    parts.append(re.escape(tail))
+    static_chars += len(tail)
+    return re.compile("^" + "".join(parts) + r"/?$"), static_chars
 
 
 def _matches_on_segment_boundary(request_path: str, static_prefix: str) -> bool:
@@ -197,9 +232,7 @@ class ModuleRegistry:
 
         schema_hash = self._compute_schema_hash(schema)
 
-        module_def = ModuleDefinition(
-            name=name, backend_url=backend_url.rstrip("/"), openapi_hash=schema_hash
-        )
+        module_def = ModuleDefinition(name=name, backend_url=backend_url.rstrip("/"), openapi_hash=schema_hash)
         self._extract_routes(module_def, schema)
         self._modules[name] = module_def
 
@@ -393,25 +426,27 @@ class ModuleRegistry:
         normalized = _normalize_path(path)
         method_upper = method.upper()
 
-        # Exact match
+        # Exact match (non-parameterised routes)
         methods = module.routes.get(normalized)
         if methods:
             return methods.get(method_upper)
 
-        # Prefix match for parameterized routes (segment-boundary safe)
+        # Template match: compile each route template to a regex and keep the
+        # most specific match. Specificity = number of literal characters in
+        # the template, so `/api/companies/{id}/refresh` beats `/api/companies/{id}`
+        # for the path `/api/companies/1/refresh`.
         best_op: RouteOperation | None = None
-        best_length = 0
+        best_score = -1
         for route_path, route_methods in module.routes.items():
-            if method_upper not in route_methods:
+            op = route_methods.get(method_upper)
+            if op is None:
                 continue
-            static_prefix = route_path.split("{")[0]
-            if not static_prefix:
+            pattern, static_chars = _compile_template(route_path)
+            if not pattern.match(normalized):
                 continue
-            if not _matches_on_segment_boundary(normalized, static_prefix):
-                continue
-            if len(static_prefix) > best_length:
-                best_op = route_methods[method_upper]
-                best_length = len(static_prefix)
+            if static_chars > best_score:
+                best_op = op
+                best_score = static_chars
 
         return best_op
 

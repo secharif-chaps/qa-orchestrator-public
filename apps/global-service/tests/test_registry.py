@@ -211,10 +211,14 @@ class TestRouteResolution:
             routes={
                 "/api/companies": {
                     "GET": RouteOperation(method="GET", path="/api/companies", permissions=["company.view"]),
-                    "POST": RouteOperation(method="POST", path="/api/companies", permissions=["company.create"], token_cost=1),
+                    "POST": RouteOperation(
+                        method="POST", path="/api/companies", permissions=["company.create"], token_cost=1
+                    ),
                 },
                 "/api/companies/{company_id}": {
-                    "GET": RouteOperation(method="GET", path="/api/companies/{company_id}", permissions=["company.view"]),
+                    "GET": RouteOperation(
+                        method="GET", path="/api/companies/{company_id}", permissions=["company.view"]
+                    ),
                 },
                 "/api/auth/login": {
                     "POST": RouteOperation(method="POST", path="/api/auth/login", is_public=True),
@@ -252,6 +256,74 @@ class TestRouteResolution:
         assert result is not None
         module, path = result
         assert module.name == ModuleName.SCREEN
+
+
+class TestResolveOperationSiblingRoutes:
+    """Regression: sibling parameterised sub-routes must not shadow each other.
+
+    Before the template-match rewrite, `resolve_operation` compared only the
+    static prefix before the first `{…}`. Sibling routes like
+    `/api/companies/{id}/restore` and `/api/companies/{id}/refresh` therefore
+    shared the same prefix (`/api/companies/`) and the first registered one
+    swallowed its neighbours — returning its x-permissions (e.g. `company.delete`)
+    for every sibling's method+path, causing unexpected 403s even for admins.
+    """
+
+    @pytest.fixture
+    def registry_with_siblings(self):
+        """Register two POST siblings whose static prefix is identical."""
+        registry = ModuleRegistry(backends={})
+        module = ModuleDefinition(
+            name=ModuleName.SCREEN,
+            backend_url="http://screen:8000",
+            # /restore is declared first so under the old prefix-matching logic
+            # it would swallow /refresh.
+            routes={
+                "/api/companies/{company_id}": {
+                    "DELETE": RouteOperation(
+                        method="DELETE",
+                        path="/api/companies/{company_id}",
+                        permissions=["company.delete"],
+                    ),
+                },
+                "/api/companies/{company_id}/restore": {
+                    "POST": RouteOperation(
+                        method="POST",
+                        path="/api/companies/{company_id}/restore",
+                        permissions=["company.delete"],
+                    ),
+                },
+                "/api/companies/{company_id}/refresh": {
+                    "POST": RouteOperation(
+                        method="POST",
+                        path="/api/companies/{company_id}/refresh",
+                        permissions=["company.create"],
+                    ),
+                },
+            },
+        )
+        registry._modules[ModuleName.SCREEN] = module
+        registry._build_route_index()
+        return registry
+
+    def test_refresh_resolves_to_own_permissions_not_restore(self, registry_with_siblings):
+        op = registry_with_siblings.resolve_operation(ModuleName.SCREEN, "POST", "/api/companies/1/refresh")
+        assert op is not None
+        assert op.permissions == ["company.create"]
+
+    def test_restore_resolves_to_own_permissions(self, registry_with_siblings):
+        op = registry_with_siblings.resolve_operation(ModuleName.SCREEN, "POST", "/api/companies/1/restore")
+        assert op is not None
+        assert op.permissions == ["company.delete"]
+
+    def test_delete_on_bare_resource_not_shadowed_by_siblings(self, registry_with_siblings):
+        op = registry_with_siblings.resolve_operation(ModuleName.SCREEN, "DELETE", "/api/companies/1")
+        assert op is not None
+        assert op.permissions == ["company.delete"]
+
+    def test_unknown_sibling_returns_none(self, registry_with_siblings):
+        op = registry_with_siblings.resolve_operation(ModuleName.SCREEN, "POST", "/api/companies/1/unknown")
+        assert op is None
 
 
 class TestOverlapResolution:
@@ -665,7 +737,8 @@ class TestCheckAndRediscoverStale:
         """Within TTL window, all modules return 'skipped'."""
         registry = ModuleRegistry(backends={"screen": "http://screen:8000"})
         registry._modules[ModuleName.SCREEN] = ModuleDefinition(
-            name=ModuleName.SCREEN, backend_url="http://screen:8000",
+            name=ModuleName.SCREEN,
+            backend_url="http://screen:8000",
             openapi_hash="abc123",
         )
         # Simulate a recent check
@@ -682,13 +755,16 @@ class TestCheckAndRediscoverStale:
             "openapi": "3.0.0",
             "paths": {"/api/watch_files": {"get": {}}},
         }
-        registry = ModuleRegistry(backends={
-            "screen": "http://screen:8000",
-            "target": "http://target:8000",
-        })
+        registry = ModuleRegistry(
+            backends={
+                "screen": "http://screen:8000",
+                "target": "http://target:8000",
+            }
+        )
         # Screen is discovered, target is not
         registry._modules[ModuleName.SCREEN] = ModuleDefinition(
-            name=ModuleName.SCREEN, backend_url="http://screen:8000",
+            name=ModuleName.SCREEN,
+            backend_url="http://screen:8000",
             openapi_hash="abc123",
         )
         # Expire TTL
@@ -753,7 +829,8 @@ class TestCheckAndRediscoverStale:
         schema = {"openapi": "3.0.0", "paths": {"/api/companies": {"get": {}}}}
         registry = ModuleRegistry(backends={"screen": "http://screen:8000"})
         registry._modules[ModuleName.SCREEN] = ModuleDefinition(
-            name=ModuleName.SCREEN, backend_url="http://screen:8000",
+            name=ModuleName.SCREEN,
+            backend_url="http://screen:8000",
             openapi_hash=ModuleRegistry._compute_schema_hash(schema),
         )
         registry._last_stale_check = 0
@@ -773,13 +850,17 @@ class TestCheckAndRediscoverStale:
     async def test_schema_change_triggers_rediscovery(self):
         """When a discovered module's schema hash changes, it is rediscovered."""
         old_schema = {"openapi": "3.0.0", "paths": {"/api/companies": {"get": {}}}}
-        new_schema = {"openapi": "3.0.0", "paths": {
-            "/api/companies": {"get": {}},
-            "/api/tasks": {"get": {}},
-        }}
+        new_schema = {
+            "openapi": "3.0.0",
+            "paths": {
+                "/api/companies": {"get": {}},
+                "/api/tasks": {"get": {}},
+            },
+        }
         registry = ModuleRegistry(backends={"screen": "http://screen:8000"})
         registry._modules[ModuleName.SCREEN] = ModuleDefinition(
-            name=ModuleName.SCREEN, backend_url="http://screen:8000",
+            name=ModuleName.SCREEN,
+            backend_url="http://screen:8000",
             openapi_hash=ModuleRegistry._compute_schema_hash(old_schema),
             routes={"/api/companies": {"GET": RouteOperation(method="GET", path="/api/companies")}},
         )
@@ -803,12 +884,15 @@ class TestCheckAndRediscoverStale:
         screen_schema = {"openapi": "3.0.0", "paths": {"/api/companies": {"get": {}}}}
         target_schema = {"openapi": "3.0.0", "paths": {"/api/watch_files": {"get": {}}}}
 
-        registry = ModuleRegistry(backends={
-            "screen": "http://screen:8000",
-            "target": "http://target:8000",
-        })
+        registry = ModuleRegistry(
+            backends={
+                "screen": "http://screen:8000",
+                "target": "http://target:8000",
+            }
+        )
         screen_module = ModuleDefinition(
-            name=ModuleName.SCREEN, backend_url="http://screen:8000",
+            name=ModuleName.SCREEN,
+            backend_url="http://screen:8000",
             openapi_hash=ModuleRegistry._compute_schema_hash(screen_schema),
             routes={"/api/companies": {"GET": RouteOperation(method="GET", path="/api/companies")}},
         )
