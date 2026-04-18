@@ -88,7 +88,6 @@ Permissions follow the `resource.action` format and are checked by the API Gatew
 | Permission | Description |
 |------------|-------------|
 | `admin.organizations` | Manage all client organizations |
-| `admin.workflows` | Configure AI workflows |
 | `admin.tasks` | Monitor background tasks |
 | `admin.costs` | View AI cost analytics |
 

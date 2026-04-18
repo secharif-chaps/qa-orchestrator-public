@@ -29,15 +29,7 @@
         }
       ],
       "realmRoles": [
-        "admin",
-        "company.create",
-        "organization.read",
-        "organization.write",
-        "organization.manage",
-        "admin.organizations",
-        "admin.tasks",
-        "stream.read",
-        "stream.write"
+        "admin"
       ]
     },
     {
@@ -56,6 +48,7 @@
       ],
       "realmRoles": [
         "company.create",
+        "company.delete",
         "organization.read",
         "organization.write",
         "organization.manage",
@@ -78,7 +71,9 @@
         }
       ],
       "realmRoles": [
-        "organization.read"
+        "organization.read",
+        "company.view",
+        "stream.read"
       ]
     },
     {
@@ -293,8 +288,20 @@
   "roles": {
     "realm": [
       {
+        "name": "company.view",
+        "description": "View companies in own organization",
+        "composite": false,
+        "clientRole": false
+      },
+      {
         "name": "company.create",
-        "description": "Can add items (company screens) to folders",
+        "description": "Add company screens (search and create)",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "company.delete",
+        "description": "Soft-delete (archive) and restore companies",
         "composite": false,
         "clientRole": false
       },
@@ -329,8 +336,8 @@
         "clientRole": false
       },
       {
-        "name": "admin.workflows",
-        "description": "Admin access to manage workflow configurations",
+        "name": "admin.costs",
+        "description": "Admin access to AI usage cost analysis",
         "composite": false,
         "clientRole": false
       },
@@ -348,17 +355,19 @@
       },
       {
         "name": "admin",
-        "description": "Full administrative access",
+        "description": "Full administrative access (composite of all functional roles)",
         "composite": true,
         "composites": {
           "realm": [
+            "company.view",
             "company.create",
+            "company.delete",
             "organization.read",
             "organization.write",
             "organization.manage",
             "admin.organizations",
             "admin.tasks",
-            "admin.workflows",
+            "admin.costs",
             "stream.read",
             "stream.write"
           ]

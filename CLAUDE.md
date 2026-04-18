@@ -380,7 +380,6 @@ Permissions are derived from Keycloak roles and stored in the database:
 
 - `admin.organizations` - Admin access to organization management (user creation, org assignment)
 - `admin.tasks` - Admin access to task monitoring and management across all organizations
-- `admin.workflows` - Admin access to Dify workflow configuration (API keys, endpoints)
 - `admin.costs` - Admin access to AI usage cost analysis
 
 ### Implementing Permissions

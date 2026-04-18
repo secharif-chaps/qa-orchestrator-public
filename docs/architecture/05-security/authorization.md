@@ -44,7 +44,6 @@ These permissions are for Chapsvision internal team members who manage the platf
 | Permission | Description | Use Case | Typical User |
 |------------|-------------|----------|--------------|
 | `admin.organizations` | Organization administration | Manage all client organizations, tokens, features | Customer Success Manager |
-| `admin.workflows` | Workflow configuration | Configure Dify workflow API keys and endpoints | Technical Developer |
 | `admin.tasks` | Task monitoring | Monitor and debug background tasks | Technical Developer |
 | `admin.costs` | Cost analysis access | View AI usage and cost reports (disabled, needs rework) | Product Leader |
 
@@ -56,7 +55,6 @@ These permissions are for Chapsvision internal team members who manage the platf
 graph TD
     subgraph "Global Admin (Internal Users)"
         A[admin.organizations<br/>CSM]
-        B[admin.workflows<br/>Developer]
         T[admin.tasks<br/>Developer]
         C[admin.costs<br/>Product Leader]
     end

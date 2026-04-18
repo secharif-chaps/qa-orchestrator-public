@@ -299,7 +299,6 @@ async def list_all_companies(
 **Global Admin Roles**:
 - `admin` - Full system access (admin endpoints)
 - `admin.organizations` - Organization administration
-- `admin.workflows` - Workflow configuration
 - `admin.costs` - Cost analysis access
 
 **User-Level Roles** (apply to user's own organization):

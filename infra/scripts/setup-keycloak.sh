@@ -19,6 +19,25 @@
 
 set -euo pipefail
 
+# Single source of truth: every role known to ChapsMind is declared in the
+# realm export JSON. The setup and doctor scripts derive the role set from it
+# so we never have three conflicting lists to keep in sync.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REALM_JSON="$SCRIPT_DIR/../files/realm-chapsmind.json"
+# Repo-relative path used in user-facing messages — the absolute path is too
+# noisy and shifts between environments.
+REALM_JSON_DISPLAY="infra/files/$(basename "$REALM_JSON")"
+
+if [ ! -f "$REALM_JSON" ]; then
+    echo "❌ Realm JSON not found at $REALM_JSON_DISPLAY" >&2
+    echo "   This file is the source of truth for roles. Aborting." >&2
+    exit 1
+fi
+if ! jq empty "$REALM_JSON" 2>/dev/null; then
+    echo "❌ Realm JSON at $REALM_JSON_DISPLAY is not valid JSON. Aborting." >&2
+    exit 1
+fi
+
 # ─── Defaults ─────────────────────────────────────────
 KEYCLOAK_URL="${KEYCLOAK_URL:-http://localhost:8080}"
 ADMIN_USER="${KEYCLOAK_ADMIN:-admin}"
@@ -77,9 +96,10 @@ kc() {
         "$@"
 }
 
-kc_get()  { kc GET  "$@"; }
-kc_post() { local path=$1; shift; kc POST "$path" -d "$@"; }
-kc_put()  { local path=$1; shift; kc PUT  "$path" -d "$@"; }
+kc_get()    { kc GET    "$@"; }
+kc_post()   { local path=$1; shift; kc POST  "$path" -d "$@"; }
+kc_put()    { local path=$1; shift; kc PUT   "$path" -d "$@"; }
+kc_delete() { kc DELETE "$@"; }
 
 # ─── Wait (optional) ─────────────────────────────────
 if [ "$OPT_WAIT" = true ]; then
@@ -189,52 +209,73 @@ DEFAULT_SCOPE_NAMES="web-origins acr profile roles email organization"
 # ─── Roles (optional) ────────────────────────────────
 if [ "$OPT_CREATE_ROLES" = true ]; then
     echo ""
-    echo "🔧 Creating realm roles..."
+    echo "🔧 Syncing realm roles from $REALM_JSON_DISPLAY..."
 
     ALL_ROLES=$(kc_get "/roles")
     EXISTING_ROLE_NAMES=$(echo "$ALL_ROLES" | jq -r '.[].name')
 
-    create_role() {
-        local name=$1 desc=$2
+    # 1. Create every role declared in the realm JSON (composite ones included,
+    #    they are upgraded to composite later). Update the description on roles
+    #    that already exist so the JSON stays the canonical reference.
+    while IFS=$'\t' read -r name description; do
+        [ -z "$name" ] && continue
         if echo "$EXISTING_ROLE_NAMES" | grep -qx "$name"; then
-            echo "   ✅ $name (exists)"
+            current_desc=$(echo "$ALL_ROLES" | jq -r --arg n "$name" '.[] | select(.name==$n) | .description // ""')
+            if [ "$current_desc" != "$description" ]; then
+                kc_put "/roles/$name" "$(jq -n \
+                    --arg name "$name" \
+                    --arg desc "$description" \
+                    '{name: $name, description: $desc}')"
+                echo "   ✏️  $name (description updated)"
+            else
+                echo "   ✅ $name (exists)"
+            fi
         else
-            kc_post "/roles" "{
-                \"name\": \"$name\",
-                \"description\": \"$desc\",
-                \"composite\": false,
-                \"clientRole\": false
-            }"
+            kc_post "/roles" "$(jq -n \
+                --arg name "$name" \
+                --arg desc "$description" \
+                '{name: $name, description: $desc, composite: false, clientRole: false}')"
             echo "   ✅ $name (created)"
         fi
-    }
+    done < <(jq -r '.roles.realm[] | [.name, (.description // "")] | @tsv' "$REALM_JSON")
 
-    create_role "company.create"       "Add company screens to folders"
-    create_role "organization.read"    "Read folders and companies shared with user"
-    create_role "organization.write"   "Create folders, edit/share/delete owned folders"
-    create_role "organization.manage"  "Manage organization members and settings"
-    create_role "admin.organizations"  "Global admin access to organizations"
-    create_role "admin.tasks"          "Admin access to manage and view tasks"
-    create_role "admin.workflows"      "Admin access to workflow configurations"
+    # 2. Drop legacy roles that the realm JSON no longer declares. Without this
+    #    step a role removed from the source of truth (e.g. admin.workflows)
+    #    survives forever on long-lived Keycloak instances.
+    DECLARED_ROLES=$(jq -r '.roles.realm[].name' "$REALM_JSON")
+    PROTECTED_ROLES="offline_access uma_authorization default-roles-$REALM"
+    while IFS= read -r role; do
+        [ -z "$role" ] && continue
+        # Skip Keycloak built-ins.
+        if echo "$PROTECTED_ROLES" | tr ' ' '\n' | grep -qx "$role"; then
+            continue
+        fi
+        # Keep only roles still in the source of truth.
+        if echo "$DECLARED_ROLES" | grep -qx "$role"; then
+            continue
+        fi
+        kc_delete "/roles/$role" >/dev/null 2>&1 || true
+        echo "   🗑  $role (removed — no longer declared in $REALM_JSON_DISPLAY)"
+    done <<<"$EXISTING_ROLE_NAMES"
 
-    if echo "$EXISTING_ROLE_NAMES" | grep -qx "admin"; then
-        echo "   ✅ admin (exists)"
-    else
-        kc_post "/roles" '{
-            "name": "admin",
-            "description": "Full administrative access",
-            "composite": false,
-            "clientRole": false
-        }'
-        echo "   ✅ admin (created)"
-    fi
-
-    # Re-fetch and set admin as composite
+    # 3. Configure composite roles from the JSON declaration. Re-fetch role IDs
+    #    after creations/deletions so we work on a fresh snapshot.
     ALL_ROLES=$(kc_get "/roles")
-    ADMIN_ROLE_ID=$(echo "$ALL_ROLES" | jq -r '.[] | select(.name=="admin") | .id')
-    COMPONENT_ROLES=$(echo "$ALL_ROLES" | jq '[.[] | select(.name | test("^(company|organization|admin)\\."))]')
-    kc_post "/roles-by-id/$ADMIN_ROLE_ID/composites" "$COMPONENT_ROLES"
-    echo "   ✅ admin composite role configured"
+    while IFS= read -r composite_name; do
+        [ -z "$composite_name" ] && continue
+        composite_id=$(echo "$ALL_ROLES" | jq -r --arg n "$composite_name" '.[] | select(.name==$n) | .id')
+        if [ -z "$composite_id" ]; then
+            echo "   ⚠️  $composite_name not found, skipping composite wiring" >&2
+            continue
+        fi
+        # Pull child names from the JSON, then map them to live role objects.
+        members_json=$(jq -c --arg n "$composite_name" \
+            '[.roles.realm[] | select(.name==$n) | .composites.realm[]?]' "$REALM_JSON")
+        members_payload=$(echo "$ALL_ROLES" | jq -c --argjson members "$members_json" \
+            '[.[] | select(.name as $n | $members | index($n))]')
+        kc_post "/roles-by-id/$composite_id/composites" "$members_payload"
+        echo "   ✅ $composite_name composite synced ($(echo "$members_json" | jq 'length') children)"
+    done < <(jq -r '.roles.realm[] | select(.composite==true) | .name' "$REALM_JSON")
 fi
 
 # ─── Cache: clients and scopes ────────────────────────

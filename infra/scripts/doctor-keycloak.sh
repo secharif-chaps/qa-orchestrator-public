@@ -18,6 +18,22 @@
 # No set -e: diagnostic script must continue on errors to report all issues
 set -uo pipefail
 
+# Source of truth for the expected role set. Same path convention as
+# setup-keycloak.sh — both scripts must agree on what "complete" looks like.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REALM_JSON="$SCRIPT_DIR/../files/realm-chapsmind.json"
+REALM_JSON_DISPLAY="infra/files/$(basename "$REALM_JSON")"
+
+if [ ! -f "$REALM_JSON" ]; then
+    echo "❌ Realm JSON not found at $REALM_JSON_DISPLAY" >&2
+    echo "   This file lists the expected roles. Aborting." >&2
+    exit 1
+fi
+if ! jq empty "$REALM_JSON" 2>/dev/null; then
+    echo "❌ Realm JSON at $REALM_JSON_DISPLAY is not valid JSON. Aborting." >&2
+    exit 1
+fi
+
 KEYCLOAK_URL=""
 REALM=""
 AUTH_REALM=""
@@ -196,23 +212,55 @@ done
 echo ""
 
 # ─── 3. Roles ─────────────────────────────────────────
-echo "3️⃣  Realm roles"
+echo "3️⃣  Realm roles (expected set derived from $REALM_JSON_DISPLAY)"
 ALL_ROLES=$(kc_get "/roles")
 
-EXPECTED_ROLES="company.create organization.read organization.write organization.manage admin.organizations admin.tasks admin.workflows admin"
-for role in $EXPECTED_ROLES; do
-    ROLE_JSON=$(echo "$ALL_ROLES" | jq ".[] | select(.name==\"$role\")")
-    if [ -n "$ROLE_JSON" ]; then
-        IS_COMPOSITE=$(echo "$ROLE_JSON" | jq -r '.composite')
-        if [ "$role" = "admin" ]; then
-            if [ "$IS_COMPOSITE" = "true" ]; then ok "$role (composite)"; else warn "$role exists but is NOT composite"; fi
+# 3a. Every role declared in the JSON must exist; composite roles must also
+#     carry the right child set.
+while IFS=$'\t' read -r role is_composite expected_children; do
+    [ -z "$role" ] && continue
+    ROLE_JSON=$(echo "$ALL_ROLES" | jq --arg n "$role" '.[] | select(.name==$n)')
+    if [ -z "$ROLE_JSON" ]; then
+        err "$role — NOT FOUND"
+        continue
+    fi
+    if [ "$is_composite" = "true" ]; then
+        actual_composite=$(echo "$ROLE_JSON" | jq -r '.composite')
+        if [ "$actual_composite" != "true" ]; then
+            warn "$role exists but is NOT marked composite"
+            continue
+        fi
+        role_id=$(echo "$ROLE_JSON" | jq -r '.id')
+        actual_children=$(kc_get "/roles-by-id/$role_id/composites" \
+            | jq -r '[.[].name] | sort | join(",")')
+        expected_sorted=$(echo "$expected_children" | tr ',' '\n' | sort | paste -sd,)
+        if [ "$actual_children" = "$expected_sorted" ]; then
+            ok "$role (composite, $(echo "$expected_sorted" | tr ',' ' ' | wc -w | xargs) children)"
         else
-            ok "$role"
+            warn "$role composite drift — expected [$expected_sorted], got [$actual_children]"
         fi
     else
-        err "$role — NOT FOUND"
+        ok "$role"
     fi
-done
+done < <(jq -r '.roles.realm[] |
+    [.name,
+     ((.composite // false) | tostring),
+     ((.composites.realm // []) | join(","))
+    ] | @tsv' "$REALM_JSON")
+
+# 3b. Surface stray roles still on Keycloak that the JSON no longer declares —
+#     they will be removed on the next setup-keycloak.sh --create-roles run.
+DECLARED_ROLES=$(jq -r '.roles.realm[].name' "$REALM_JSON" | sort)
+EXISTING_NON_BUILTIN=$(echo "$ALL_ROLES" \
+    | jq -r '.[].name' \
+    | grep -vxE "offline_access|uma_authorization|default-roles-${REALM}" \
+    | sort)
+STRAY=$(comm -23 <(echo "$EXISTING_NON_BUILTIN") <(echo "$DECLARED_ROLES"))
+if [ -n "$STRAY" ]; then
+    while IFS= read -r stray_role; do
+        warn "$stray_role — present on server but not declared in realm JSON"
+    done <<<"$STRAY"
+fi
 
 echo ""
 

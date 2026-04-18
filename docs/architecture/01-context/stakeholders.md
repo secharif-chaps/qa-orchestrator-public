@@ -171,16 +171,14 @@ ChapsMind provides role-specific admin views for internal team members, eliminat
 |-----------|-------------|
 | **Role** | Backend/Platform Developer |
 | **Context** | Maintains platform configuration and debugs production issues |
-| **Permissions** | `admin.workflows`, `admin.tasks` |
+| **Permissions** | `admin.tasks` |
 
 **Responsibilities:**
-- Configure Dify workflow API keys and endpoints
 - Monitor background task execution
 - Debug failed tasks and workflow errors
 - Update application configuration
 
 **Admin Panel Access:**
-- Workflow configuration page (`admin.workflows`)
 - Task monitoring dashboard (`admin.tasks`)
 - System health monitoring
 
@@ -353,7 +351,6 @@ graph TB
 | Permission | Description | Typical Users | Status |
 |------------|-------------|---------------|--------|
 | `admin.organizations` | Manage all organizations | CSM | Active |
-| `admin.workflows` | Configure Dify workflows | Developers | Active |
 | `admin.tasks` | Monitor and debug tasks | Developers | Active |
 | `admin.costs` | View AI cost analytics | Product Leaders | Disabled (rework needed) |
 
