@@ -1,3 +1,4 @@
+# Wildcard exclusions
 **/*.log
 **/*.md
 **/*.php~
@@ -11,6 +12,13 @@
 **/.gitattributes
 **/.gitignore
 **/.gitmodules
+**/Thumbs.db
+
+# Version control
+.gitlab/
+.gitlab-ci.yml
+
+# Docker / Compose
 **/compose.*.yaml
 **/compose.*.yml
 **/compose.yaml
@@ -20,15 +28,36 @@
 **/docker-compose.yaml
 **/docker-compose.yml
 **/Dockerfile
-**/Thumbs.db
-.gitlab/
+
+# Documentation
 docs/
+
+# Runtime / generated / caches
 public/bundles/
-tests/
 var/
 vendor/
+.cache/
+.phpunit.cache/
+junit.xml
+node_modules/
+
+# Dev tooling (lint, static analysis, tests)
+ecs.php
+rector.php
+phpstan-baseline.neon
+phpstan.dist.neon
+phpunit.dist.xml
+tests/
+
+# Editor / shell
 .editorconfig
+.bash_history
+
+# Env files (secrets)
 .env.*.local
 .env.local
 .env.local.php
 .env.test
+
+# Build tooling
+Taskfile.yaml
