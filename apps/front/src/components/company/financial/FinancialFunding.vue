@@ -1,5 +1,8 @@
 <template>
-  <div v-if="hasData" class="flex flex-col gap-4">
+  <div
+    v-if="hasData"
+    class="bg-primary-lightest rounded-card border-primary-lighter-stroke flex flex-col gap-4 border p-6"
+  >
     <h3 class="text-base font-semibold">
       {{ t('screen.profile.sections.financial.funding.title') }}
     </h3>
@@ -8,7 +11,7 @@
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <FinancialMetricCard
         v-if="totalFunding?.value"
-        icon="fa fa-hand-holding-usd"
+        icon="fa-hand-holding-usd"
         :label="t('screen.profile.sections.financial.funding.totalFunding')"
         :sourced-value="totalFunding"
       />
@@ -30,24 +33,26 @@
           v-for="(round, index) in fundingRounds"
           :key="index"
           :round="round"
-          :is-last="index === fundingRounds.length - 1"
         />
       </div>
     </div>
 
     <!-- Empty rounds state -->
-    <p v-else-if="totalFunding?.value || lastValuation?.value" class="text-secondary/70 text-sm">
+    <p
+      v-else-if="totalFunding?.value || lastValuation?.value"
+      class="text-neutral-black-font/70 text-sm"
+    >
       {{ t('screen.profile.sections.financial.funding.noRounds') }}
     </p>
   </div>
 </template>
 
 <script lang="ts" setup>
+import type { FundingRound, SourcedValue } from '@/types/company'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import FinancialMetricCard from './FinancialMetricCard.vue'
 import FinancialFundingRoundItem from './FinancialFundingRoundItem.vue'
-import type { FundingRound, SourcedValue } from '@/types/company'
+import FinancialMetricCard from './FinancialMetricCard.vue'
 
 const { t } = useI18n()
 

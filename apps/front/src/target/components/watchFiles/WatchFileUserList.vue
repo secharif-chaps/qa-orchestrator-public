@@ -2,7 +2,7 @@
   <div>
     <div
       v-if="watchFileUsers.length > 0 || isLoading"
-      class="text-secondary-font mb-1 pt-4 text-sm"
+      class="text-neutral-black-font-font mb-1 pt-4 text-sm"
     >
       {{ $t('target.watchFiles.shareDialog.accessListTitle') }}
     </div>
@@ -38,9 +38,11 @@
             class="mr-3"
           />
           <span class="flex-1">{{ watchFileUser.user.displayName }}</span>
-          <span v-if="watchFileUser.role === 'owner'" class="text-secondary-font ml-2 text-sm">{{
-            $t('target.watchFiles.shareDialog.owner')
-          }}</span>
+          <span
+            v-if="watchFileUser.role === 'owner'"
+            class="text-neutral-black-font-font ml-2 text-sm"
+            >{{ $t('target.watchFiles.shareDialog.owner') }}</span
+          >
           <div v-else class="flex items-center gap-2">
             <Select
               :id="'user-role-' + watchFileUser.id"

@@ -1,5 +1,8 @@
 <template>
-  <div v-if="hasData" class="bg-base-200 rounded-card border-primary-stroke space-y-4 border p-5">
+  <div
+    v-if="hasData"
+    class="bg-primary-lightest rounded-card border-primary-lighter-stroke space-y-4 border p-6"
+  >
     <h3 class="text-base font-semibold">
       {{ t('screen.profile.sections.financial.identity.title') }}
     </h3>
@@ -8,56 +11,64 @@
       <!-- Company Type Badge -->
       <div v-if="companyType?.value" class="flex items-center gap-2">
         <Tag
-          :variant="companyType.value.toLowerCase() === 'public' ? 'info' : 'slate'"
-          :label="companyType.value"
+          :color="companyType.value.toLowerCase() === 'public' ? 'indigo' : 'yellow'"
           size="sm"
-          :icon="companyType.value.toLowerCase() === 'public' ? 'fa fa-landmark' : 'fa fa-lock'"
-        />
-        <Source :sourced-value="companyType" />
+          :icon="companyType.value.toLowerCase() === 'public' ? 'fa-landmark' : 'fa-lock'"
+          class="capitalize"
+        >
+          {{ companyType.value }}
+          <Source :sourced-value="companyType" />
+        </Tag>
       </div>
 
       <!-- Ticker Symbol -->
       <div v-if="tickerSymbol?.value" class="flex items-center gap-3">
-        <div class="flex flex-col">
-          <span class="text-secondary/70 text-xs">
-            {{ t('screen.profile.sections.financial.identity.ticker') }}
-          </span>
-          <span class="text-sm font-semibold">{{ tickerSymbol.value }}</span>
-        </div>
-        <Source :sourced-value="tickerSymbol" />
+        <Tag size="sm">
+          <div class="gap-2xs flex items-center">
+            <span class="text-neutral-black-font text-xs">
+              {{ t('screen.profile.sections.financial.identity.ticker') }}
+            </span>
+            <span class="text-sm font-semibold">{{ tickerSymbol.value }}</span>
+            <Source :sourced-value="tickerSymbol" />
+          </div>
+        </Tag>
       </div>
 
       <!-- Stock Exchange -->
       <div v-if="stockExchange?.value" class="flex items-center gap-3">
-        <div class="flex flex-col">
-          <span class="text-secondary/70 text-xs">
-            {{ t('screen.profile.sections.financial.identity.exchange') }}
-          </span>
-          <span class="text-sm font-semibold">{{ stockExchange.value }}</span>
-        </div>
-        <Source :sourced-value="stockExchange" />
+        <Tag size="sm">
+          <div class="gap-2xs flex items-center">
+            <span class="text-neutral-black-font text-xs">
+              {{ t('screen.profile.sections.financial.identity.exchange') }}
+            </span>
+            <span class="text-sm font-semibold">{{ stockExchange.value }}</span>
+            <Source :sourced-value="stockExchange" />
+          </div>
+        </Tag>
       </div>
 
       <!-- Currency -->
       <div v-if="currency?.value" class="flex items-center gap-3">
-        <div class="flex flex-col">
-          <span class="text-secondary/70 text-xs">
-            {{ t('screen.profile.sections.financial.identity.currency') }}
-          </span>
-          <span class="text-sm font-semibold">{{ currency.value }}</span>
-        </div>
-        <Source :sourced-value="currency" />
+        <Tag size="sm">
+          <div class="gap-2xs flex items-center">
+            <span class="text-neutral-black-font text-xs">
+              {{ t('screen.profile.sections.financial.identity.currency') }}
+            </span>
+            <span class="text-sm font-semibold">{{ currency.value }}</span>
+            <Source :sourced-value="currency" />
+          </div>
+        </Tag>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import Source from '@/components/company/Source.vue'
+import type { SourcedValue } from '@/types/company'
+import { Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Source from '@/components/company/Source.vue'
-import Tag from '@/components/ui/Tag.vue'
-import type { SourcedValue } from '@/types/company'
 
 const { t } = useI18n()
 

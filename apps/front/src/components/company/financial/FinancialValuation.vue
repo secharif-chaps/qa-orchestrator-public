@@ -1,5 +1,8 @@
 <template>
-  <div v-if="hasData" class="flex flex-col gap-4">
+  <div
+    v-if="hasData"
+    class="bg-primary-lightest rounded-card border-primary-lighter-stroke flex flex-col gap-4 border p-6"
+  >
     <h3 class="text-base font-semibold">
       {{ t('screen.profile.sections.financial.valuation.title') }}
     </h3>

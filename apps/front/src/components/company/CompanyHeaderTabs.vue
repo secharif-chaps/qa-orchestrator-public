@@ -123,6 +123,11 @@ const DEFAULT_TABS: TabDefinition[] = [
     routeName: '/folders/[folderId]/companies/[companyId]/csr',
     label: 'screen.company.tabs.csr',
   },
+  {
+    id: 'financial',
+    routeName: '/folders/[folderId]/companies/[companyId]/financial',
+    label: 'screen.company.tabs.financial',
+  },
 ]
 
 // ── Visit tracking (localStorage) ──────────────────────────────────

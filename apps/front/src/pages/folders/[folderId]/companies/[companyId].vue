@@ -89,7 +89,7 @@
     </div>
 
     <!-- Created by + Tab content -->
-    <div class="gap-xl bg-neutral p-xl flex flex-col rounded-xl">
+    <div class="gap-xl bg-neutral p-xl -px-4 sm:-px-6 flex flex-col lg:-mx-8">
       <div v-if="company?.created_at" class="text-neutral-black-font flex items-center gap-2">
         <Badge icon="fa-pen" variant="secondary" size="sm" />
         <span class="text-base">
