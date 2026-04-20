@@ -55,17 +55,39 @@ tasks:
   # ─── Database ──────────────────────────────────────
   migrate:
     desc: Run Alembic migrations (screen + stream)
+    silent: true
     cmds:
-      - "{{.COMPOSE}} exec screen alembic upgrade head"
-      - "{{.COMPOSE}} exec stream alembic upgrade head"
+      - |
+        if {{.COMPOSE}} ps --services --filter "status=running" 2>/dev/null | grep -q "^screen$"; then
+          {{.COMPOSE}} exec screen alembic upgrade head
+        else
+          echo "⚠  screen is not running — migration skipped"
+        fi
+      - |
+        if {{.COMPOSE}} ps --services --filter "status=running" 2>/dev/null | grep -q "^stream$"; then
+          {{.COMPOSE}} exec stream alembic upgrade head
+        else
+          echo "⚠  stream is not running — migration skipped"
+        fi
 
   migrate:status:
     desc: Show current migration version (screen + stream)
+    silent: true
     cmds:
       - echo "── screen ──"
-      - "{{.COMPOSE}} exec screen alembic current"
+      - |
+        if {{.COMPOSE}} ps --services --filter "status=running" 2>/dev/null | grep -q "^screen$"; then
+          {{.COMPOSE}} exec screen alembic current
+        else
+          echo "⚠  screen is not running — skipped"
+        fi
       - echo "── stream ──"
-      - "{{.COMPOSE}} exec stream alembic current"
+      - |
+        if {{.COMPOSE}} ps --services --filter "status=running" 2>/dev/null | grep -q "^stream$"; then
+          {{.COMPOSE}} exec stream alembic current
+        else
+          echo "⚠  stream is not running — skipped"
+        fi
 
   seed:
     desc: Seed sample data
