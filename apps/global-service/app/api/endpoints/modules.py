@@ -23,6 +23,7 @@ from app.core.keycloak import OIDCUser, idp
 from app.core.logging_config import get_logger
 from app.core.organization import OrganizationContext, get_user_organization
 from app.models.organization import ModuleName
+from app.schemas.errors import COMMON_RESPONSES
 from app.schemas.module import (
     ModuleToggleResponse,
     ModuleUpdateRequest,
@@ -36,8 +37,12 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/organizations", tags=["modules"])
 
 
-@router.get("/{organization_id}/modules",
-            response_model=OrganizationModulesResponse)
+@router.get(
+    "/{organization_id}/modules",
+    response_model=OrganizationModulesResponse,
+    summary="Get organization modules",
+    responses={**COMMON_RESPONSES},
+)
 async def get_organization_modules(
     organization_id: UUID = Path(
         ...,
@@ -93,8 +98,12 @@ async def get_organization_modules(
     return OrganizationModulesResponse(modules=module_responses)
 
 
-@router.put("/{organization_id}/modules",
-            response_model=OrganizationModulesResponse)
+@router.put(
+    "/{organization_id}/modules",
+    response_model=OrganizationModulesResponse,
+    summary="Update organization modules",
+    responses={**COMMON_RESPONSES},
+)
 async def update_organization_modules(
     organization_id: UUID = Path(
         ...,
@@ -162,7 +171,9 @@ async def update_organization_modules(
 
 @router.put(
     "/{organization_id}/modules/{module}/toggle",
-    response_model=ModuleToggleResponse
+    response_model=ModuleToggleResponse,
+    summary="Toggle module state",
+    responses={**COMMON_RESPONSES},
 )
 async def toggle_module(
     organization_id: UUID = Path(

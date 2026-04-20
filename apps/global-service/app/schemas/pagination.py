@@ -1,7 +1,7 @@
 from enum import StrEnum
 from typing import TypeVar
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # Generic type for paginated data
 T = TypeVar('T')
@@ -18,6 +18,21 @@ class PaginationMeta(BaseModel):
     last_page: int = Field(..., description="Last page number")
     from_: int = Field(..., alias="from", description="First item number on current page")
     to: int = Field(..., description="Last item number on current page")
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "total": 42,
+                    "per_page": 10,
+                    "current_page": 1,
+                    "last_page": 5,
+                    "from": 1,
+                    "to": 10,
+                },
+            ],
+        },
+    )
 
 class PaginatedResponse[T](BaseModel):
     """Generic paginated response wrapper"""
@@ -48,7 +63,7 @@ def create_pagination_meta(
     last_page = (total + per_page - 1) // per_page if total > 0 else 1
     from_value = (page - 1) * per_page + 1 if total > 0 else 0
     to = min(page * per_page, total)
-    
+
     return PaginationMeta(
         total=total,
         per_page=per_page,

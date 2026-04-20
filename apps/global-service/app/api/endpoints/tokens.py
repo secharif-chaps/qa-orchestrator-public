@@ -18,6 +18,7 @@ from app.core.logging_config import get_logger
 from app.core.organization import OrganizationContext, get_user_organization
 from app.core.utils import calculate_pages
 from app.models.organization import ReferenceType, TransactionType
+from app.schemas.errors import COMMON_RESPONSES
 from app.schemas.token import (
     AddTokensRequest,
     PaginatedTokenTransactionResponse,
@@ -35,6 +36,8 @@ router = APIRouter(prefix="/organizations", tags=["tokens"])
 @router.get(
     "/tokens/config",
     response_model=TokenConfigResponse,
+    summary="Get token configuration",
+    responses={**COMMON_RESPONSES},
 )
 async def get_token_config(
     user: OIDCUser = Depends(idp.get_current_user()),
@@ -50,6 +53,8 @@ async def get_token_config(
 @router.get(
     "/{organization_id}/tokens",
     response_model=TokenBalanceResponse,
+    summary="Get organization token balance",
+    responses={**COMMON_RESPONSES},
 )
 async def get_organization_token_balance(
     organization_id: UUID = Path(
@@ -100,6 +105,8 @@ async def get_organization_token_balance(
     "/{organization_id}/tokens",
     response_model=TokenBalanceResponse,
     status_code=status.HTTP_201_CREATED,
+    summary="Add tokens to an organization",
+    responses={**COMMON_RESPONSES},
 )
 async def add_organization_tokens(
     organization_id: UUID = Path(
@@ -157,6 +164,8 @@ async def add_organization_tokens(
 @router.get(
     "/{organization_id}/tokens/history",
     response_model=PaginatedTokenTransactionResponse,
+    summary="Get token transaction history",
+    responses={**COMMON_RESPONSES},
 )
 async def get_transaction_history(
     organization_id: UUID = Path(

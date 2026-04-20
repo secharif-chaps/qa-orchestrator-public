@@ -14,6 +14,7 @@ from app.core.config import settings
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.permissions import get_tier_from_roles
+from app.schemas.errors import COMMON_RESPONSES, NOT_FOUND_RESPONSE
 from app.schemas.organization import (
     OrganizationResponse,
     OrganizationUserDetailResponse,
@@ -27,7 +28,12 @@ router = APIRouter(prefix="/organizations", tags=["organizations"])
 logger = get_logger(__name__)
 
 
-@router.get("", response_model=PaginatedResponse[OrganizationResponse])
+@router.get(
+    "",
+    response_model=PaginatedResponse[OrganizationResponse],
+    summary="List all organizations",
+    responses={**COMMON_RESPONSES},
+)
 async def list_organizations(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
     limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
@@ -112,7 +118,12 @@ async def list_organizations(
         )
 
 
-@router.get("/{organization_id}", response_model=OrganizationResponse)
+@router.get(
+    "/{organization_id}",
+    response_model=OrganizationResponse,
+    summary="Get organization by ID",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def get_organization(
     organization_id: str,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
@@ -191,7 +202,12 @@ async def get_organization(
 # Note: All organization data is managed in Keycloak via organization UUIDs (strings)
 
 
-@router.get("/{organization_id}/users", response_model=PaginatedResponse[OrganizationUserItem])
+@router.get(
+    "/{organization_id}/users",
+    response_model=PaginatedResponse[OrganizationUserItem],
+    summary="List organization members",
+    responses={**COMMON_RESPONSES},
+)
 async def get_organization_users_admin(
     organization_id: str,
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
@@ -295,7 +311,12 @@ async def get_organization_users_admin(
         )
 
 
-@router.get("/{organization_id}/users/{user_id}", response_model=OrganizationUserDetailResponse)
+@router.get(
+    "/{organization_id}/users/{user_id}",
+    response_model=OrganizationUserDetailResponse,
+    summary="Get organization member",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def get_organization_user_admin(
     organization_id: str,
     user_id: str,
@@ -347,7 +368,12 @@ async def get_organization_user_admin(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to fetch user: {str(e)}")
 
 
-@router.post("/{organization_id}/users", response_model=OrganizationUserDetailResponse)
+@router.post(
+    "/{organization_id}/users",
+    response_model=OrganizationUserDetailResponse,
+    summary="Create organization member",
+    responses={**COMMON_RESPONSES},
+)
 async def create_organization_user_admin(
     organization_id: str,
     user_data: dict[str, Any],
@@ -511,7 +537,12 @@ async def create_organization_user_admin(
         )
 
 
-@router.put("/{organization_id}/users/{user_id}", response_model=SuccessMessageResponse)
+@router.put(
+    "/{organization_id}/users/{user_id}",
+    response_model=SuccessMessageResponse,
+    summary="Update organization member",
+    responses={**COMMON_RESPONSES},
+)
 async def update_organization_user_admin(
     organization_id: str,
     user_id: str,
@@ -563,7 +594,12 @@ async def update_organization_user_admin(
         )
 
 
-@router.delete("/{organization_id}/users/{user_id}", response_model=SuccessMessageResponse)
+@router.delete(
+    "/{organization_id}/users/{user_id}",
+    response_model=SuccessMessageResponse,
+    summary="Remove organization member",
+    responses={**COMMON_RESPONSES},
+)
 async def delete_organization_user(
     organization_id: str,
     user_id: str,
@@ -620,7 +656,12 @@ async def delete_organization_user(
         )
 
 
-@router.post("/{organization_id}/users/{user_id}/reset-password", response_model=SuccessMessageResponse)
+@router.post(
+    "/{organization_id}/users/{user_id}/reset-password",
+    response_model=SuccessMessageResponse,
+    summary="Send password reset email",
+    responses={**COMMON_RESPONSES},
+)
 async def reset_user_password(
     organization_id: str,
     user_id: str,
@@ -672,7 +713,12 @@ async def reset_user_password(
         )
 
 
-@router.patch("/{organization_id}/users/{user_id}/status", response_model=SuccessMessageResponse)
+@router.patch(
+    "/{organization_id}/users/{user_id}/status",
+    response_model=SuccessMessageResponse,
+    summary="Update user status",
+    responses={**COMMON_RESPONSES},
+)
 async def update_user_status(
     organization_id: str,
     user_id: str,

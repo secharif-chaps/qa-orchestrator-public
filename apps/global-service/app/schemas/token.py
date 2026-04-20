@@ -19,7 +19,17 @@ class TokenBalanceResponse(BaseModel):
     organization_id: str = Field(..., description="Keycloak organization UUID")
     balance: int = Field(..., ge=0, description="Current token balance")
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "organization_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    "balance": 150,
+                },
+            ],
+        },
+    )
 
 
 class AddTokensRequest(BaseModel):
@@ -27,6 +37,16 @@ class AddTokensRequest(BaseModel):
 
     amount: int = Field(
         ..., gt=0, description="Number of tokens to add (must be positive)"
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "amount": 500,
+                },
+            ],
+        },
     )
 
 
@@ -45,7 +65,24 @@ class TokenTransactionRead(BaseModel):
         ..., description="Keycloak user ID who created the transaction"
     )
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": 42,
+                    "organization_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    "amount": -3,
+                    "balance_after": 147,
+                    "transaction_type": "consume",
+                    "reference_type": "company",
+                    "reference_id": "d4e5f6a7-b8c9-0123-def0-456789abcdef",
+                    "created_at": "2025-03-15T10:30:00Z",
+                    "created_by": "550e8400-e29b-41d4-a716-446655440000",
+                },
+            ],
+        },
+    )
 
 
 class PaginatedTokenTransactionResponse(BaseModel):
@@ -68,6 +105,21 @@ class ConsumeTokensRequest(BaseModel):
     created_by: str = Field(..., description="Keycloak user ID performing the operation")
     description: str | None = Field(None, description="Optional transaction description")
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "amount": 3,
+                    "module_name": "screen",
+                    "reference_type": "company",
+                    "reference_id": "d4e5f6a7-b8c9-0123-def0-456789abcdef",
+                    "created_by": "550e8400-e29b-41d4-a716-446655440000",
+                    "description": "Company creation: Acme Corp",
+                },
+            ],
+        },
+    )
+
 
 class ConsumeTokensResponse(BaseModel):
     """Response schema for token consumption (internal API)."""
@@ -75,3 +127,15 @@ class ConsumeTokensResponse(BaseModel):
     success: bool = Field(True, description="Always true for successful operations")
     balance: int = Field(..., ge=0, description="Remaining token balance after consumption")
     transaction: TokenTransactionRead | None = Field(None, description="Created transaction record")
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "success": True,
+                    "balance": 147,
+                    "transaction": None,
+                },
+            ],
+        },
+    )

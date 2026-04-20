@@ -22,6 +22,7 @@ from app.schemas.account import (
     SessionListResponse,
     SessionResponse,
 )
+from app.schemas.errors import COMMON_RESPONSES, NOT_FOUND_RESPONSE
 from app.services.keycloak_admin import KeycloakAdminService
 
 logger = get_logger(__name__)
@@ -52,7 +53,12 @@ def _get_current_session_id(request: Request) -> str | None:
     return None
 
 
-@router.get("/sessions", response_model=SessionListResponse)
+@router.get(
+    "/sessions",
+    response_model=SessionListResponse,
+    summary="List active sessions",
+    responses={**COMMON_RESPONSES},
+)
 async def get_sessions(
     request: Request,
     org_context: OrganizationContext = Depends(get_user_organization),
@@ -119,7 +125,12 @@ async def get_sessions(
         )
 
 
-@router.delete("/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/sessions/{session_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Revoke a specific session",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def revoke_session(
     session_id: UUID,
     request: Request,
@@ -190,7 +201,12 @@ async def revoke_session(
         )
 
 
-@router.delete("/sessions", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/sessions",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Revoke all sessions",
+    responses={**COMMON_RESPONSES},
+)
 async def revoke_all_sessions(
     request: Request,
     keep_current: bool = Query(True, description="Keep the current session active"),
@@ -363,7 +379,12 @@ def _get_event_display_info(event_type: str) -> dict[str, str]:
     })
 
 
-@router.get("/events", response_model=ActivityEventsResponse)
+@router.get(
+    "/events",
+    response_model=ActivityEventsResponse,
+    summary="Get activity events",
+    responses={**COMMON_RESPONSES},
+)
 async def get_activity_events(
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
     size: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),

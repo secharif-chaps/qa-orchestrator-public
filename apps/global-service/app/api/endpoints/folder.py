@@ -18,6 +18,7 @@ from app.core.logging_config import get_logger
 from app.core.organization import OrganizationContext, get_user_organization
 from app.database import get_global_db
 from app.models.folder import ShareRole
+from app.schemas.errors import COMMON_RESPONSES, NOT_FOUND_RESPONSE
 from app.schemas.folder import (
     FolderCreate,
     FolderItemAdd,
@@ -117,7 +118,12 @@ async def _build_folder_response(
 # ==============================================================================
 
 
-@router.get("/users/search", response_model=list[UserSearchResult])
+@router.get(
+    "/users/search",
+    response_model=list[UserSearchResult],
+    summary="Search users for sharing",
+    responses={**COMMON_RESPONSES},
+)
 async def search_users_for_sharing(
     q: str = Query(..., min_length=1, description="Search query for username/email"),
     limit: int = Query(10, ge=1, le=50, description="Maximum results to return"),
@@ -189,7 +195,12 @@ async def search_users_for_sharing(
 # ==============================================================================
 
 
-@router.post("/", response_model=FolderResponse)
+@router.post(
+    "/",
+    response_model=FolderResponse,
+    summary="Create a folder",
+    responses={**COMMON_RESPONSES},
+)
 async def create_folder(
     folder: FolderCreate,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
@@ -232,7 +243,12 @@ async def create_folder(
     )
 
 
-@router.get("/", response_model=FolderListResponse)
+@router.get(
+    "/",
+    response_model=FolderListResponse,
+    summary="List folders",
+    responses={**COMMON_RESPONSES},
+)
 async def list_folders(
     archived: bool = Query(False),
     favorites: bool = Query(False),
@@ -352,7 +368,12 @@ async def list_folders(
     )
 
 
-@router.get("/{folder_id}", response_model=FolderWithItemsResponse)
+@router.get(
+    "/{folder_id}",
+    response_model=FolderWithItemsResponse,
+    summary="Get folder details",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def get_folder(
     folder_id: UUID,
     archived: bool = Query(False),
@@ -429,7 +450,12 @@ async def get_folder(
     return folder_data
 
 
-@router.put("/{folder_id}", response_model=FolderResponse)
+@router.put(
+    "/{folder_id}",
+    response_model=FolderResponse,
+    summary="Update folder",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def update_folder(
     folder_id: UUID,
     folder_update: FolderUpdate,
@@ -492,7 +518,12 @@ async def update_folder(
     )
 
 
-@router.patch("/{folder_id}", response_model=FolderResponse)
+@router.patch(
+    "/{folder_id}",
+    response_model=FolderResponse,
+    summary="Partial update folder",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def patch_folder(
     folder_id: UUID,
     folder_update: FolderUpdate,
@@ -555,14 +586,19 @@ async def patch_folder(
     )
 
 
-@router.delete("/{folder_id}", response_model=FolderResponse)
+@router.delete(
+    "/{folder_id}",
+    response_model=FolderResponse,
+    summary="Delete folder",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def delete_folder(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: AsyncSession = Depends(get_global_db)
 ):
-    """Soft delete a folder (owner only).
+    """Delete a folder (owner only).
 
     Requires organization.write role AND folder ownership.
     Returns 403 if user is not the folder owner.
@@ -612,7 +648,12 @@ async def delete_folder(
     )
 
 
-@router.post("/{folder_id}/restore", response_model=FolderResponse)
+@router.post(
+    "/{folder_id}/restore",
+    response_model=FolderResponse,
+    summary="Restore deleted folder",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def restore_folder(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
@@ -681,7 +722,13 @@ async def restore_folder(
 # ==============================================================================
 
 
-@router.post("/{folder_id}/shares", response_model=FolderShareResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{folder_id}/shares",
+    response_model=FolderShareResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Share folder with user",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def create_folder_share(
     folder_id: UUID,
     share_data: FolderShareCreate,
@@ -767,7 +814,12 @@ async def create_folder_share(
     return share
 
 
-@router.get("/{folder_id}/shares", response_model=list[FolderShareResponse])
+@router.get(
+    "/{folder_id}/shares",
+    response_model=list[FolderShareResponse],
+    summary="List folder shares",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def get_folder_shares(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
@@ -848,7 +900,12 @@ async def get_folder_shares(
     return enriched_shares
 
 
-@router.delete("/{folder_id}/shares/{share_user_id}", status_code=status.HTTP_200_OK)
+@router.delete(
+    "/{folder_id}/shares/{share_user_id}",
+    status_code=status.HTTP_200_OK,
+    summary="Revoke folder share",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def delete_folder_share(
     folder_id: UUID,
     share_user_id: str,
@@ -916,7 +973,12 @@ async def delete_folder_share(
     return {"message": "Share removed successfully"}
 
 
-@router.patch("/{folder_id}/shares/{share_user_id}", response_model=FolderShareResponse)
+@router.patch(
+    "/{folder_id}/shares/{share_user_id}",
+    response_model=FolderShareResponse,
+    summary="Update share role",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def update_folder_share(
     folder_id: UUID,
     share_user_id: str,
@@ -995,7 +1057,12 @@ async def update_folder_share(
 # ==============================================================================
 
 
-@router.post("/{folder_id}/favorite", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{folder_id}/favorite",
+    status_code=status.HTTP_201_CREATED,
+    summary="Add folder to favorites",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def add_folder_favorite(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
@@ -1043,7 +1110,12 @@ async def add_folder_favorite(
     return {"message": "Folder added to favorites", "is_favorite": True}
 
 
-@router.delete("/{folder_id}/favorite", status_code=status.HTTP_200_OK)
+@router.delete(
+    "/{folder_id}/favorite",
+    status_code=status.HTTP_200_OK,
+    summary="Remove folder from favorites",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def remove_folder_favorite(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
@@ -1096,7 +1168,12 @@ async def remove_folder_favorite(
 # ==============================================================================
 
 
-@router.post("/{folder_id}/items", response_model=FolderItemResponse)
+@router.post(
+    "/{folder_id}/items",
+    response_model=FolderItemResponse,
+    summary="Add item to folder",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def add_item_to_folder(
     folder_id: UUID,
     item: FolderItemAdd,
@@ -1174,7 +1251,11 @@ async def add_item_to_folder(
     return folder_item
 
 
-@router.delete("/{folder_id}/items/{item_id}")
+@router.delete(
+    "/{folder_id}/items/{item_id}",
+    summary="Remove item from folder",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def remove_item_from_folder(
     folder_id: UUID,
     item_id: UUID,
@@ -1248,7 +1329,12 @@ async def remove_item_from_folder(
     return {"message": "Item removed from folder"}
 
 
-@router.patch("/{folder_id}/items/{item_id}", response_model=FolderItemMoveResponse)
+@router.patch(
+    "/{folder_id}/items/{item_id}",
+    response_model=FolderItemMoveResponse,
+    summary="Move item to another folder",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def update_folder_item(
     folder_id: UUID,
     item_id: str,

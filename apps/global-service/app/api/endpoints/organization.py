@@ -14,6 +14,7 @@ from app.core.logging_config import get_logger
 from app.core.organization import OrganizationContext, get_user_organization
 from app.database import get_global_db
 from app.models.folder import Folder, FolderItem, FolderShare
+from app.schemas.errors import COMMON_RESPONSES
 from app.schemas.organization import ActivityResponse, OrganizationResponse
 from app.services.backend_client import get_companies_by_ids
 from app.services.folder import FolderService
@@ -23,7 +24,12 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/organizations", tags=["organization"])
 
 
-@router.get("/current", response_model=OrganizationResponse)
+@router.get(
+    "/current",
+    response_model=OrganizationResponse,
+    summary="Get current organization",
+    responses={**COMMON_RESPONSES},
+)
 async def get_current_organization(
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
@@ -47,7 +53,12 @@ async def get_current_organization(
     )
 
 
-@router.get("/current/activities", response_model=list[ActivityResponse])
+@router.get(
+    "/current/activities",
+    response_model=list[ActivityResponse],
+    summary="Get recent organization activities",
+    responses={**COMMON_RESPONSES},
+)
 async def get_organization_activities(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: AsyncSession = Depends(get_global_db),

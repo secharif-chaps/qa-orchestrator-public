@@ -14,6 +14,7 @@ from app.core.config import settings
 from app.core.keycloak import OIDCUser, idp
 from app.core.logging_config import get_logger
 from app.core.permissions import get_tier_from_roles
+from app.schemas.errors import COMMON_RESPONSES, NOT_FOUND_RESPONSE
 from app.schemas.user import (
     AssignOrganizationRequest,
     BulkUserImportRequest,
@@ -252,7 +253,11 @@ async def update_user_enabled_status(
 # ── Endpoints ────────────────────────────────────────────────────
 
 
-@router.get("")
+@router.get(
+    "",
+    summary="List all users",
+    responses={**COMMON_RESPONSES},
+)
 async def get_all_users(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
     limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
@@ -383,7 +388,12 @@ async def get_all_users(
         )
 
 
-@router.get("/{user_id}/organization", response_model=UserOrganizationResponse)
+@router.get(
+    "/{user_id}/organization",
+    response_model=UserOrganizationResponse,
+    summary="Get user organization",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def get_user_organization(
     user_id: str, user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
 ):
@@ -436,7 +446,11 @@ async def get_user_organization(
         )
 
 
-@router.put("/{user_id}/organization")
+@router.put(
+    "/{user_id}/organization",
+    summary="Assign user to organization",
+    responses={**COMMON_RESPONSES},
+)
 async def assign_user_to_organization(
     user_id: str,
     request: AssignOrganizationRequest,
@@ -576,7 +590,12 @@ async def assign_user_to_organization(
         )
 
 
-@router.get("/{user_id}/permissions", response_model=UserPermissionsResponse)
+@router.get(
+    "/{user_id}/permissions",
+    response_model=UserPermissionsResponse,
+    summary="Get user permissions",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def get_user_permissions(
     user_id: str, user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
 ):
@@ -640,7 +659,11 @@ async def get_user_permissions(
         )
 
 
-@router.put("/{user_id}/permissions")
+@router.put(
+    "/{user_id}/permissions",
+    summary="Update user permissions",
+    responses={**COMMON_RESPONSES},
+)
 async def update_user_permissions(
     user_id: str,
     request: UpdatePermissionsRequest,
@@ -756,7 +779,11 @@ async def update_user_permissions(
         )
 
 
-@router.put("/{user_id}/disable")
+@router.put(
+    "/{user_id}/disable",
+    summary="Disable user account",
+    responses={**COMMON_RESPONSES},
+)
 async def disable_user(
     user_id: str,
     user: OIDCUser = Depends(
@@ -771,7 +798,11 @@ async def disable_user(
     )
 
 
-@router.put("/{user_id}/enable")
+@router.put(
+    "/{user_id}/enable",
+    summary="Enable user account",
+    responses={**COMMON_RESPONSES},
+)
 async def enable_user(
     user_id: str,
     user: OIDCUser = Depends(
@@ -786,7 +817,11 @@ async def enable_user(
     )
 
 
-@router.post("/{user_id}/reset-password")
+@router.post(
+    "/{user_id}/reset-password",
+    summary="Reset user password",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def reset_user_password(
     user_id: str,
     request: ResetPasswordRequest,
@@ -889,7 +924,12 @@ async def reset_user_password(
         )
 
 
-@router.post("/import", response_model=BulkUserImportResponse)
+@router.post(
+    "/import",
+    response_model=BulkUserImportResponse,
+    summary="Bulk import users",
+    responses={**COMMON_RESPONSES},
+)
 async def bulk_import_users(
     request: BulkUserImportRequest,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))

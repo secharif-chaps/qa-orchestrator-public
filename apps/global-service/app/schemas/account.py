@@ -5,7 +5,7 @@ Covers user session management and activity event responses.
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SessionResponse(BaseModel):
@@ -20,6 +20,23 @@ class SessionResponse(BaseModel):
         description="Map of client IDs to client names",
     )
     is_current: bool = Field(..., description="Whether this is the caller's session")
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                    "ip_address": "192.168.1.42",
+                    "started_at": "2025-03-15T08:30:00Z",
+                    "last_access": "2025-03-15T10:45:00Z",
+                    "clients": {
+                        "chapsmind-front": "ChapsMind Frontend",
+                    },
+                    "is_current": True,
+                },
+            ],
+        },
+    )
 
 
 class SessionListResponse(BaseModel):
@@ -43,6 +60,23 @@ class ActivityEventResponse(BaseModel):
     description: str = Field(..., description="Human-readable event description")
     ip_address: str | None = Field(None, description="IP address of the event")
     timestamp: datetime = Field(..., description="When the event occurred")
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": "1710496200000-LOGIN",
+                    "type": "LOGIN",
+                    "display_type": "login",
+                    "icon": "fa-right-to-bracket",
+                    "title": "Successful Login",
+                    "description": "Logged in from 192.168.1.42 using Chrome on Windows",
+                    "ip_address": "192.168.1.42",
+                    "timestamp": "2025-03-15T10:30:00Z",
+                },
+            ],
+        },
+    )
 
 
 class ActivityEventsResponse(BaseModel):
