@@ -29,7 +29,16 @@
         }
       ],
       "realmRoles": [
-        "admin"
+        "admin",
+        "company.create",
+        "company.delete",
+        "organization.read",
+        "organization.write",
+        "organization.manage",
+        "admin.organizations",
+        "admin.tasks",
+        "stream.read",
+        "stream.write"
       ]
     },
     {
@@ -302,6 +311,12 @@
       {
         "name": "company.delete",
         "description": "Soft-delete (archive) and restore companies",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "company.delete",
+        "description": "Can archive (soft-delete) companies from folders",
         "composite": false,
         "clientRole": false
       },
