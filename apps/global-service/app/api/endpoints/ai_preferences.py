@@ -16,6 +16,7 @@ from app.core.logging_config import get_logger
 from app.core.organization import OrganizationContext, get_user_organization
 from app.proxy.client import get_proxy_client
 from app.schemas.ai_preferences import AiPreferencesCreate, AiPreferencesResponse
+from app.schemas.errors import COMMON_RESPONSES, NOT_FOUND_RESPONSE
 from app.services.user_preferences import UserPreferencesService
 
 logger = get_logger(__name__)
@@ -23,7 +24,12 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/ai-preferences", tags=["ai-preferences"])
 
 
-@router.get("", response_model=AiPreferencesResponse)
+@router.get(
+    "",
+    response_model=AiPreferencesResponse,
+    summary="Get AI preferences",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def get_ai_preferences(
     org_context: OrganizationContext = Depends(get_user_organization),
     service: UserPreferencesService = Depends(get_user_preferences_service),
@@ -59,7 +65,12 @@ async def get_ai_preferences(
     return AiPreferencesResponse(**ai_preferences)
 
 
-@router.post("", response_model=AiPreferencesResponse)
+@router.post(
+    "",
+    response_model=AiPreferencesResponse,
+    summary="Create or update AI preferences",
+    responses={**COMMON_RESPONSES},
+)
 async def create_or_update_ai_preferences(
     preferences_data: AiPreferencesCreate,
     org_context: OrganizationContext = Depends(get_user_organization),
@@ -86,7 +97,11 @@ async def create_or_update_ai_preferences(
     return AiPreferencesResponse(**ai_preferences)
 
 
-@router.post("/quick-actions")
+@router.post(
+    "/quick-actions",
+    summary="Generate quick actions",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def generate_quick_actions(
     request: Request,
     org_context: OrganizationContext = Depends(get_user_organization),

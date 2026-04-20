@@ -11,8 +11,7 @@ from datetime import datetime
 from enum import StrEnum
 from uuid import UUID
 
-from pydantic import BaseModel, Field
-from pydantic.config import ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.models.folder import ItemType
 
@@ -46,7 +45,19 @@ class FolderBase(BaseModel):
 
 
 class FolderCreate(FolderBase):
-    pass
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "name": "Competitive Intelligence Q1",
+                    "color": "#4A90D9",
+                    "icon": "fa-briefcase",
+                    "tags": ["finance", "competitors"],
+                },
+            ],
+        },
+    )
 
 
 class FolderUpdate(BaseModel):
@@ -68,7 +79,18 @@ class FolderItemBase(BaseModel):
 
 
 class FolderItemAdd(FolderItemBase):
-    pass
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "item_id": "d4e5f6a7-b8c9-0123-def0-456789abcdef",
+                    "item_type": "company",
+                    "position": 0,
+                },
+            ],
+        },
+    )
 
 
 class FolderItemMove(BaseModel):
@@ -154,7 +176,31 @@ class FolderResponse(FolderBase):
     updated_at: datetime
     items: list[FolderItemSimple] | None = Field(default_factory=list)
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                    "name": "Competitive Intelligence Q1",
+                    "color": "#4A90D9",
+                    "icon": "fa-briefcase",
+                    "tags": ["finance", "competitors"],
+                    "organization_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    "owner": "jean.dupont",
+                    "owner_id": "550e8400-e29b-41d4-a716-446655440000",
+                    "owner_username": "jean.dupont",
+                    "is_owner": True,
+                    "share_role": "owner",
+                    "is_favorite": False,
+                    "is_deleted": False,
+                    "created_at": "2025-03-10T09:00:00Z",
+                    "updated_at": "2025-03-15T14:20:00Z",
+                    "items": [],
+                },
+            ],
+        },
+    )
 
 
 class FolderListResponse(BaseModel):
@@ -221,6 +267,18 @@ class FolderShareCreate(BaseModel):
     role: FolderShareRole = Field(
         default=FolderShareRole.reader,
         description="Share role - reader (view only) or writer (can add items)"
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "user_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                    "user_username": "marie.martin",
+                    "role": "reader",
+                },
+            ],
+        },
     )
 
 

@@ -23,7 +23,19 @@ class OrganizationModuleResponse(BaseModel):
     created_at: datetime
     updated_at: datetime | None = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "name": "screen",
+                    "enabled": True,
+                    "created_at": "2025-01-10T09:00:00Z",
+                    "updated_at": "2025-03-15T14:20:00Z",
+                },
+            ],
+        },
+    )
 
 
 class OrganizationModulesResponse(BaseModel):
@@ -50,4 +62,16 @@ class ModuleToggleResponse(BaseModel):
     created_at: datetime
     updated_at: datetime | None = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "module": "target",
+                    "enabled": False,
+                    "created_at": "2025-01-10T09:00:00Z",
+                    "updated_at": "2025-03-15T16:45:00Z",
+                },
+            ],
+        },
+    )

@@ -24,7 +24,22 @@ class OrganizationResponse(BaseModel):
     updated_at: datetime | None = Field(None, description="When organization was last updated")
     member_count: int | None = Field(None, description="Number of members in organization")
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    "name": "Acme Corp",
+                    "description": "Competitive intelligence team",
+                    "slug": "acme-corp",
+                    "created_at": "2025-01-10T09:00:00Z",
+                    "updated_at": "2025-03-15T14:20:00Z",
+                    "member_count": 12,
+                },
+            ],
+        },
+    )
 
 
 class OrganizationUserItem(BaseModel):
@@ -40,7 +55,24 @@ class OrganizationUserItem(BaseModel):
     createdTimestamp: int | None = None
     permission_tier: str | None = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": "550e8400-e29b-41d4-a716-446655440000",
+                    "username": "jean.dupont",
+                    "email": "jean.dupont@example.com",
+                    "firstName": "Jean",
+                    "lastName": "Dupont",
+                    "enabled": True,
+                    "emailVerified": True,
+                    "createdTimestamp": 1704880000000,
+                    "permission_tier": "writer",
+                },
+            ],
+        },
+    )
 
 
 class OrganizationUserDetailResponse(BaseModel):
@@ -79,4 +111,18 @@ class ActivityResponse(BaseModel):
     created_at: datetime = Field(..., description="When the item was created")
     folder_id: str | None = Field(None, description="Folder ID (for companies, the folder containing them)")
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": "d4e5f6a7-b8c9-0123-def0-456789abcdef",
+                    "type": "company",
+                    "name": "Acme Corp",
+                    "owner": "jean.dupont",
+                    "created_at": "2025-03-15T10:30:00Z",
+                    "folder_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                },
+            ],
+        },
+    )

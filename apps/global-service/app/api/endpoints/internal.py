@@ -20,6 +20,7 @@ from app.models.folder import FolderShare
 from app.models.organization import ModuleName, ReferenceType
 from app.proxy.registry import ModuleName as ProxyModuleName
 from app.proxy.routes import get_module_registry
+from app.schemas.errors import INSUFFICIENT_TOKENS_RESPONSE, INTERNAL_RESPONSES
 from app.schemas.folder import CompanyFolderInfoResponse
 from app.schemas.token import ConsumeTokensRequest, ConsumeTokensResponse, TokenTransactionRead
 from app.services.folder import FolderService
@@ -58,6 +59,8 @@ class AnnounceResponse(BaseModel):
 @router.post(
     "/registry/announce/{module_name}",
     response_model=AnnounceResponse,
+    summary="Announce module schema change",
+    responses={**INTERNAL_RESPONSES},
     tags=["internal"],
 )
 async def announce_module(
@@ -136,6 +139,8 @@ async def announce_module(
 @router.post(
     "/organizations/{organization_id}/tokens/consume",
     response_model=ConsumeTokensResponse,
+    summary="Consume organization tokens",
+    responses={**INTERNAL_RESPONSES, **INSUFFICIENT_TOKENS_RESPONSE},
     status_code=status.HTTP_200_OK,
 )
 async def consume_organization_tokens(
@@ -294,6 +299,8 @@ async def consume_organization_tokens(
 @router.get(
     "/organizations/{organization_id}/folders/accessible-company-ids",
     response_model=list[int],
+    summary="Get accessible company IDs",
+    responses={**INTERNAL_RESPONSES},
     status_code=status.HTTP_200_OK,
 )
 async def get_accessible_company_ids(
@@ -343,6 +350,8 @@ async def get_accessible_company_ids(
 @router.get(
     "/organizations/{organization_id}/folders/company-access/{company_id}",
     response_model=bool,
+    summary="Check company access",
+    responses={**INTERNAL_RESPONSES},
     status_code=status.HTTP_200_OK,
 )
 async def check_company_access(
@@ -396,6 +405,8 @@ async def check_company_access(
 @router.get(
     "/organizations/{organization_id}/folders/company/{company_id}/folder-info",
     response_model=CompanyFolderInfoResponse | None,
+    summary="Get company folder info",
+    responses={**INTERNAL_RESPONSES},
     status_code=status.HTTP_200_OK,
 )
 async def get_company_folder_info(

@@ -2,7 +2,7 @@
 
 import re
 
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
 
 class OrganizationInfo(BaseModel):
@@ -19,6 +19,21 @@ class UserOrganizationResponse(BaseModel):
     username: str | None = None
     organization: OrganizationInfo | None = None
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "user_id": "550e8400-e29b-41d4-a716-446655440000",
+                    "username": "jean.dupont",
+                    "organization": {
+                        "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                        "name": "Acme Corp",
+                    },
+                },
+            ],
+        },
+    )
+
 
 class UserPermissionsResponse(BaseModel):
     """Response for user's current permissions."""
@@ -27,11 +42,37 @@ class UserPermissionsResponse(BaseModel):
     username: str | None = None
     permissions: list[str]
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "user_id": "550e8400-e29b-41d4-a716-446655440000",
+                    "username": "jean.dupont",
+                    "permissions": [
+                        "organization.read",
+                        "organization.write",
+                        "company.create",
+                    ],
+                },
+            ],
+        },
+    )
+
 
 class AssignOrganizationRequest(BaseModel):
     """Request body for assigning user to organization."""
 
     organization_id: str
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "organization_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                },
+            ],
+        },
+    )
 
 
 class UpdatePermissionsRequest(BaseModel):
@@ -56,6 +97,20 @@ class UpdatePermissionsRequest(BaseModel):
             raise ValueError(f"Invalid permissions: {', '.join(invalid_perms)}")
 
         return v
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "permissions": [
+                        "organization.read",
+                        "organization.write",
+                        "company.create",
+                    ],
+                },
+            ],
+        },
+    )
 
 
 class ResetPasswordRequest(BaseModel):
@@ -87,6 +142,17 @@ class ResetPasswordRequest(BaseModel):
             raise ValueError("Password must contain at least one special character")
 
         return v
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "temporary_password": "TempPass1!",
+                    "send_email": False,
+                },
+            ],
+        },
+    )
 
 
 # ── Bulk User Import Schemas ─────────────────────────────────────
@@ -185,6 +251,33 @@ class BulkUserImportRequest(BaseModel):
             raise ValueError('Maximum 100 users per import')
         return v
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "organization_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                    "users": [
+                        {
+                            "username": "marie.martin",
+                            "email": "marie.martin@example.com",
+                            "firstname": "Marie",
+                            "lastname": "Martin",
+                            "password": None,
+                        },
+                        {
+                            "username": "pierre.bernard",
+                            "email": "pierre.bernard@example.com",
+                            "firstname": "Pierre",
+                            "lastname": "Bernard",
+                            "password": "SecureP@ss1",
+                        },
+                    ],
+                    "generate_passwords": True,
+                },
+            ],
+        },
+    )
+
 
 class UserImportResult(BaseModel):
     """Result for a single user import attempt.
@@ -211,3 +304,44 @@ class BulkUserImportResponse(BaseModel):
     error_count: int
     total_count: int
     results: list[UserImportResult]
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "success_count": 2,
+                    "error_count": 1,
+                    "total_count": 3,
+                    "results": [
+                        {
+                            "row_index": 0,
+                            "username": "marie.martin",
+                            "email": "marie.martin@example.com",
+                            "success": True,
+                            "error_message": None,
+                            "user_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                            "generated_password": "G3n$ratedPw!",
+                        },
+                        {
+                            "row_index": 1,
+                            "username": "pierre.bernard",
+                            "email": "pierre.bernard@example.com",
+                            "success": True,
+                            "error_message": None,
+                            "user_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                            "generated_password": None,
+                        },
+                        {
+                            "row_index": 2,
+                            "username": "duplicate.user",
+                            "email": "duplicate@example.com",
+                            "success": False,
+                            "error_message": "User with this username already exists",
+                            "user_id": None,
+                            "generated_password": None,
+                        },
+                    ],
+                },
+            ],
+        },
+    )

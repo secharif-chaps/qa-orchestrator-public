@@ -39,16 +39,31 @@ API_DESCRIPTION = """\
 Unified REST API for the ChapsMind platform — competitive intelligence
 and automated company monitoring.
 
-## Architecture
+## Authentication
 
-All requests go through the **Global-Service** gateway which handles
-authentication (Keycloak OIDC) and forwards to backend micro-services.
+All endpoints except health probes (`/health`, `/ready`) require a valid
+Keycloak JWT passed via `Authorization: Bearer <token>`. Both **OAuth2
+Password** (for service accounts and Swagger UI) and **Authorization
+Code** (for browser-based flows) grant types are supported.
 
-| Layer | Role |
-|-------|------|
-| **Global-Service** | Auth, tokens, folders, users, team, organizations |
-| **Screen** | Companies, tasks, AI workflows, translations, cost analysis |
+## Streaming
 
+Long-running AI operations may stream responses using one of the
+following content types:
+
+- **SSE** — `text/event-stream`
+- **NDJSON** — `application/x-ndjson`
+- **JSON streaming** — `application/stream+json`
+
+## Error codes
+
+| Code | Meaning |
+|------|---------|
+| 401  | Authentication failed or token expired |
+| 402  | Insufficient tokens to perform the operation |
+| 403  | Permission denied |
+| 404  | Resource not found or not accessible |
+| 5xx  | Service temporarily unavailable |
 """
 
 API_CONTACT = {

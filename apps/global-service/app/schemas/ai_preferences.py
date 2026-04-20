@@ -16,6 +16,19 @@ class AiPreferencesCreate(BaseModel):
     desired_output_text: str = Field(..., min_length=1, max_length=2000)
     documentation_text: str | None = Field(None, max_length=5000)
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "role": "Competitive Intelligence Analyst",
+                    "goals_text": "Identify market trends and competitor strategies in the SaaS industry",
+                    "desired_output_text": "Concise bullet-point summaries with actionable insights and source links",
+                    "documentation_text": "Focus on European B2B SaaS companies with ARR above 10M EUR",
+                },
+            ],
+        },
+    )
+
 
 class AiPreferencesResponse(BaseModel):
     """Schema for AI preferences response.
@@ -28,4 +41,16 @@ class AiPreferencesResponse(BaseModel):
     desired_output_text: str
     documentation_text: str | None = None
 
-    model_config = ConfigDict(from_attributes=False)
+    model_config = ConfigDict(
+        from_attributes=False,
+        json_schema_extra={
+            "examples": [
+                {
+                    "role": "Competitive Intelligence Analyst",
+                    "goals_text": "Identify market trends and competitor strategies in the SaaS industry",
+                    "desired_output_text": "Concise bullet-point summaries with actionable insights and source links",
+                    "documentation_text": "Focus on European B2B SaaS companies with ARR above 10M EUR",
+                },
+            ],
+        },
+    )

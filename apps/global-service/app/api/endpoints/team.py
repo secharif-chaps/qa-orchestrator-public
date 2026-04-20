@@ -24,6 +24,7 @@ from app.core.keycloak import OIDCUser, idp
 from app.core.logging_config import get_logger
 from app.core.organization import OrganizationContext, get_user_organization
 from app.core.permissions import PermissionTier, get_roles_for_tier, get_tier_from_roles
+from app.schemas.errors import COMMON_RESPONSES, NOT_FOUND_RESPONSE
 from app.schemas.team import (
     InviteTeamMemberRequest,
     InviteTeamMemberResponse,
@@ -42,7 +43,12 @@ router = APIRouter(prefix="/team", tags=["team"])
 logger = get_logger(__name__)
 
 
-@router.get("/members", response_model=TeamMemberListResponse)
+@router.get(
+    "/members",
+    response_model=TeamMemberListResponse,
+    summary="List team members",
+    responses={**COMMON_RESPONSES},
+)
 async def list_team_members(
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
     limit: int = Query(10, ge=1, le=100, description="Items per page"),
@@ -140,7 +146,12 @@ async def list_team_members(
         )
 
 
-@router.get("/members/{user_id}/permissions", response_model=TeamMemberPermissions)
+@router.get(
+    "/members/{user_id}/permissions",
+    response_model=TeamMemberPermissions,
+    summary="Get member permissions",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def get_member_permissions(
     user_id: UUID = Path(..., description="Keycloak user UUID"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
@@ -203,7 +214,13 @@ async def get_member_permissions(
 
 
 # TODO: Frontend not implemented — invite member UI not yet built
-@router.post("/members", response_model=InviteTeamMemberResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/members",
+    response_model=InviteTeamMemberResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Invite a new team member",
+    responses={**COMMON_RESPONSES},
+)
 async def invite_team_member(
     invite_data: InviteTeamMemberRequest,
     user: OIDCUser = Depends(idp.get_current_user()),
@@ -304,7 +321,12 @@ async def invite_team_member(
         )
 
 
-@router.patch("/members/{user_id}", response_model=TeamMember)
+@router.patch(
+    "/members/{user_id}",
+    response_model=TeamMember,
+    summary="Update member permissions",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def update_member_permissions(
     user_id: UUID = Path(..., description="Keycloak user UUID"),
     update_data: UpdateTeamMemberPermissions = ...,
@@ -430,7 +452,12 @@ async def update_member_permissions(
 
 
 # TODO: Frontend not implemented — update member profile UI not yet built
-@router.put("/members/{user_id}", response_model=TeamMember)
+@router.put(
+    "/members/{user_id}",
+    response_model=TeamMember,
+    summary="Update team member",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def update_team_member(
     user_id: UUID = Path(..., description="Keycloak user UUID"),
     update_data: UpdateTeamMember = ...,
@@ -578,7 +605,12 @@ async def update_team_member(
         )
 
 
-@router.post("/members/{user_id}/reset-password", response_model=TeamMemberPasswordReset,)
+@router.post(
+    "/members/{user_id}/reset-password",
+    response_model=TeamMemberPasswordReset,
+    summary="Reset member password",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def reset_member_password(
     user_id: UUID = Path(..., description="Keycloak user UUID"),
     request: ResetPasswordRequest = ...,
@@ -656,7 +688,12 @@ async def reset_member_password(
 
 
 # TODO: Frontend not implemented — remove member UI not yet built
-@router.delete("/members/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/members/{user_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Remove team member",
+    responses={**COMMON_RESPONSES, **NOT_FOUND_RESPONSE},
+)
 async def remove_team_member(
     user_id: UUID = Path(..., description="Keycloak user UUID"),
     user: OIDCUser = Depends(idp.get_current_user()),

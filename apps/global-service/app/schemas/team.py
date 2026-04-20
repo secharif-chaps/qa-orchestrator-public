@@ -26,7 +26,22 @@ class TeamMemberListItem(BaseModel):
     is_current_user: bool = False
     created_at: int | None = Field(None, description="Unix timestamp from Keycloak")
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": "550e8400-e29b-41d4-a716-446655440000",
+                    "username": "jean.dupont",
+                    "email": "jean.dupont@example.com",
+                    "first_name": "Jean",
+                    "last_name": "Dupont",
+                    "is_current_user": False,
+                    "created_at": 1704880000,
+                },
+            ],
+        },
+    )
 
 
 class TeamMemberListResponse(BaseModel):
@@ -59,7 +74,24 @@ class TeamMember(BaseModel):
     is_current_user: bool = False
     created_at: int | None = Field(None, description="Unix timestamp from Keycloak")
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": "550e8400-e29b-41d4-a716-446655440000",
+                    "username": "jean.dupont",
+                    "email": "jean.dupont@example.com",
+                    "first_name": "Jean",
+                    "last_name": "Dupont",
+                    "avatar_url": None,
+                    "permission_tier": "writer",
+                    "is_current_user": False,
+                    "created_at": 1704880000,
+                },
+            ],
+        },
+    )
 
 
 class UpdateTeamMemberPermissions(BaseModel):
@@ -140,6 +172,21 @@ class InviteTeamMemberRequest(BaseModel):
         if not any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in v):
             raise ValueError("Password must contain at least one special character")
         return v
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "username": "marie.martin",
+                    "email": "marie.martin@example.com",
+                    "first_name": "Marie",
+                    "last_name": "Martin",
+                    "temporary_password": "Welcome1!",
+                    "permission_tier": "reader",
+                },
+            ],
+        },
+    )
 
 
 class InviteTeamMemberResponse(BaseModel):
