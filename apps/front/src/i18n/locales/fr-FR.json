@@ -1339,14 +1339,6 @@
         }
       },
       "archive": {
-        "confirm": {
-          "button": "Archiver l'entreprise"
-        },
-        "details": "Détails de l'entreprise",
-        "error": "Échec de l'archivage de l'entreprise \"{name}\". Veuillez réessayer.",
-        "subtitle": "L'entreprise sera déplacée vers les archives.",
-        "success": "L'entreprise \"{name}\" a été archivée avec succès",
-        "title": "Archiver l'entreprise",
         "warning": {
           "message": "L'archivage d'une entreprise la masquera de la liste principale. Vous pourrez la restaurer ultérieurement depuis la vue des archives."
         }

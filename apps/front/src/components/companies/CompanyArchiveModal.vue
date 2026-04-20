@@ -1,13 +1,13 @@
 <template>
   <Modal
     v-model:display-modal="showArchiveModal"
-    :title="t('screen.company.archive.title')"
-    icon="fa fa-box-archive"
+    :title="t('screen.company.delete.title')"
+    icon="fa fa-trash"
     size="lg"
     color=""
   >
     <template #description>
-      {{ t('screen.company.archive.subtitle') }}
+      {{ t('screen.company.delete.subtitle') }}
     </template>
 
     <div v-if="companyToArchive" class="flex flex-col gap-4">
@@ -18,7 +18,7 @@
       <!-- Company Details -->
       <div class="bg-primary-lightest rounded-sm p-4">
         <h4 class="mb-3 text-base font-medium">
-          {{ t('screen.company.archive.details') }}
+          {{ t('screen.company.delete.details') }}
         </h4>
         <div class="flex flex-col gap-2 text-sm">
           <div class="flex justify-between">
@@ -37,8 +37,8 @@
       <Button
         variant="primary"
         intent="danger"
-        icon="fa fa-box-archive"
-        :label="t('screen.company.archive.confirm.button')"
+        icon="fa fa-trash"
+        :label="t('screen.company.delete.confirm.button')"
         :loading="isLoading"
         :disabled="isLoading"
         @click="handleArchive"

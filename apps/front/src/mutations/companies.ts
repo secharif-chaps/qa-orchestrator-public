@@ -85,14 +85,14 @@ export const useArchiveCompany = defineMutation(() => {
       deleteCompany(companyId),
 
     onError: (_error: Error, { companyName }: { companyId: string; companyName: string }) => {
-      toast.error(t('screen.company.archive.error', { name: companyName }))
+      toast.error(t('screen.company.delete.error', { name: companyName }))
     },
 
     onSuccess: (_data: void, { companyName }: { companyId: string; companyName: string }) => {
       // Invalidate folder caches to refetch fresh data
       queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
-      toast.success(t('screen.company.archive.success', { name: companyName }))
+      toast.success(t('screen.company.delete.success', { name: companyName }))
     },
   })
 

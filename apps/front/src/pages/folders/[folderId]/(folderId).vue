@@ -157,7 +157,7 @@
                         variant="tertiary"
                         color="danger"
                         size="sm"
-                        :icon="companyFilter === 'archived' ? 'fa fa-undo' : 'fa fa-archive'"
+                        :icon="companyFilter === 'archived' ? 'fa fa-undo' : 'fa fa-trash'"
                         icon-only
                         :title="
                           companyFilter === 'archived'
