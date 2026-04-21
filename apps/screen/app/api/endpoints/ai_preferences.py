@@ -27,6 +27,18 @@ logger = logging.getLogger(__name__)
     "/quick-actions",
     response_model=QuickActionsResponse,
     openapi_extra={"x-permissions": []},
+    summary="Generate AI-powered quick actions for a company",
+    description=(
+        "Use the user's AI preferences (role, goals, desired output, documentation) to generate "
+        "a list of context-aware quick actions tailored to the target company. "
+        "These actions are rendered as one-click shortcuts in the Chapse assistant sidebar."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "Company does not belong to the user's organization"},
+        404: {"description": "Company not found"},
+        422: {"description": "Invalid request payload"},
+    },
 )
 async def generate_quick_actions(
     request: QuickActionsRequest,

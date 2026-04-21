@@ -36,6 +36,16 @@ router = APIRouter(prefix="/cost-analysis", tags=["cost-analysis"])
     "/global",
     response_model=GlobalCostResponse,
     openapi_extra={"x-permissions": ["admin.costs"]},
+    summary="Get global AI usage cost",
+    description=(
+        "Return total AI usage cost across every organization and task type for the given date range. "
+        "Dates are inclusive. Requires `admin.costs` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.costs role"},
+        422: {"description": "Invalid date range"},
+    },
 )
 async def get_global_cost_analysis(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
@@ -110,6 +120,16 @@ async def get_global_cost_analysis(
     "/by-organization",
     response_model=OrganizationCostResponse,
     openapi_extra={"x-permissions": ["admin.costs"]},
+    summary="Get AI usage cost broken down by organization",
+    description=(
+        "Return the per-organization cost breakdown for the given date range, sorted by total cost. "
+        "Used to identify top-spending organizations. Requires `admin.costs` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.costs role"},
+        422: {"description": "Invalid date range"},
+    },
 )
 async def get_cost_by_organization(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
@@ -199,6 +219,16 @@ async def get_cost_by_organization(
     "/by-task-type",
     response_model=TaskTypeCostResponse,
     openapi_extra={"x-permissions": ["admin.costs"]},
+    summary="Get AI usage cost broken down by task type",
+    description=(
+        "Return the per-task-type cost breakdown for the given date range (profile, digital, press, …). "
+        "Used to identify which workflows consume the most tokens. Requires `admin.costs` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.costs role"},
+        422: {"description": "Invalid date range"},
+    },
 )
 async def get_cost_by_task_type(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
@@ -289,6 +319,16 @@ async def get_cost_by_task_type(
     "/trends",
     response_model=CostTrendsResponse,
     openapi_extra={"x-permissions": ["admin.costs"]},
+    summary="Get AI usage cost time series",
+    description=(
+        "Return the day-by-day cost evolution over the given date range, suitable for rendering "
+        "trend charts. Requires `admin.costs` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.costs role"},
+        422: {"description": "Invalid date range"},
+    },
 )
 async def get_cost_trends(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
@@ -385,6 +425,16 @@ async def get_cost_trends(
     "/refresh-materialized-views",
     response_model=RefreshMaterializedViewsResponse,
     openapi_extra={"x-permissions": ["admin.costs"]},
+    summary="Refresh cost-analysis materialized views",
+    description=(
+        "Trigger a synchronous refresh of the PostgreSQL materialized views backing the cost-analysis "
+        "endpoints. Useful after a bulk data correction or to force up-to-the-minute figures. "
+        "Requires `admin.costs` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.costs role"},
+    },
 )
 async def refresh_materialized_views(
     user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.costs"])), db: Session = Depends(get_db)
