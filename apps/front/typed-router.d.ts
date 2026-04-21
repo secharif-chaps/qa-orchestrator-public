@@ -136,13 +136,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/admin.workflows': RouteRecordInfo<
-      '/admin.workflows',
-      '/admin/workflows',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/auth/callback': RouteRecordInfo<
       '/auth/callback',
       '/auth/callback',
@@ -579,12 +572,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/admin/users.import.vue': {
       routes:
         | '/admin/users.import'
-      views:
-        | never
-    }
-    'src/pages/admin.workflows.vue': {
-      routes:
-        | '/admin.workflows'
       views:
         | never
     }

@@ -36,12 +36,6 @@ export function usePermissionBasedHelp() {
       content: '',
     },
     {
-      permission: 'admin.workflows',
-      title: 'Workflow Management',
-      description: 'Configure Dify workflows, API keys, and LLM model assignments.',
-      content: '',
-    },
-    {
       // Updated: screen.create is the new permission for creating companies
       permission: 'screen.create',
       title: 'Creating Company Screenings',

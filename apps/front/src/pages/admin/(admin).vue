@@ -73,7 +73,6 @@
 meta:
   permissions:
     - admin.organizations
-    - admin.workflows
     - admin.costs
     - admin.tasks
 </route>
@@ -166,25 +165,6 @@ const features: AdminFeature[] = [
     actionTextColor: 'text-info',
     permission: 'admin.organizations',
     navigate: () => router.push('/admin/usage'),
-  },
-  {
-    id: 'workflows',
-    titleKey: 'admin.features.workflows.title',
-    titleDefault: 'Workflow Management',
-    descriptionKey: 'admin.features.workflows.description',
-    descriptionDefault: 'Configure and manage automated workflows and processes',
-    icon: 'fa fa-project-diagram',
-    iconBgColor: 'bg-success/10',
-    iconTextColor: 'text-success',
-    iconHoverBgColor: 'group-hover:bg-success/20',
-    ringColor: 'ring-success/50',
-    badgeVariant: 'success',
-    badgeLabel: 'Active',
-    actionKey: 'admin.features.configure',
-    actionDefault: 'Configure',
-    actionTextColor: 'text-success',
-    permission: 'admin.workflows',
-    navigate: () => router.push('/admin/workflows'),
   },
   {
     id: 'tasks',

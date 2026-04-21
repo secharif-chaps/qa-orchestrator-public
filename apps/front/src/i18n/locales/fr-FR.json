@@ -14,7 +14,6 @@
       }
     },
     "dashboard": {
-      "back": "Retour à Admin",
       "description": "Gérez les fonctionnalités système et les paramètres",
       "limitedAccess": {
         "message": "Vous avez accès aux fonctionnalités admin de base. Contactez votre administrateur pour des permissions supplémentaires.",
@@ -31,7 +30,6 @@
       "title": "Désactiver l'Utilisateur"
     },
     "features": {
-      "configure": "Configurer",
       "manage": "Gérer",
       "monitor": "Surveiller",
       "organizations": {
@@ -50,11 +48,7 @@
         "description": "Gérer les assignations d'organisation des utilisateurs et les accès",
         "title": "Gestion des Utilisateurs"
       },
-      "view": "Voir",
-      "workflows": {
-        "description": "Configurez et gérez les workflows automatisés et processus",
-        "title": "Gestion des Workflows"
-      }
+      "view": "Voir"
     },
     "import": {
       "autoDownloaded": "Fichier de mots de passe téléchargé automatiquement",
@@ -542,27 +536,6 @@
         "error": "Échec de la mise à jour des permissions",
         "success": "Permissions mises à jour avec succès !"
       }
-    },
-    "workflowCard": {
-      "cancel": "Annuler",
-      "editing": "Modification...",
-      "save": "Enregistrer"
-    },
-    "workflows": {
-      "apiKey": "Clé API",
-      "apiKeyPlaceholder": "Saisissez la clé API Dify",
-      "description": "Configurez les intégrations Dify pour les tâches d'analyse automatisées",
-      "error": {
-        "title": "Échec du chargement des workflows"
-      },
-      "loading": "Chargement des workflows...",
-      "notConfigured": "Non configuré",
-      "status": {
-        "active": "Actif",
-        "notConfigured": "Non Configuré"
-      },
-      "title": "Gestion des Workflows",
-      "updateSuccess": "Workflow mis à jour avec succès !"
     }
   },
   "common": {
@@ -617,8 +590,7 @@
       "timeline": "Historique",
       "tokens": "Jetons",
       "usage": "Utilisation",
-      "users": "Utilisateurs",
-      "workflows": "Workflows"
+      "users": "Utilisateurs"
     },
     "button": {
       "cancel": "Annuler",

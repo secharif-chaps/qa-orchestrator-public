@@ -14,7 +14,6 @@
       }
     },
     "dashboard": {
-      "back": "Back to Admin",
       "description": "Manage system features and settings",
       "limitedAccess": {
         "message": "You have access to basic admin features. Contact your administrator for additional permissions.",
@@ -31,7 +30,6 @@
       "title": "Disable User"
     },
     "features": {
-      "configure": "Configure",
       "manage": "Manage",
       "monitor": "Monitor",
       "organizations": {
@@ -50,11 +48,7 @@
         "description": "Manage user organization assignments and user access",
         "title": "User Management"
       },
-      "view": "View",
-      "workflows": {
-        "description": "Configure and manage automated workflows and processes",
-        "title": "Workflow Management"
-      }
+      "view": "View"
     },
     "import": {
       "autoDownloaded": "Password file automatically downloaded",
@@ -542,27 +536,6 @@
         "error": "Failed to update permissions",
         "success": "Permissions updated successfully!"
       }
-    },
-    "workflowCard": {
-      "cancel": "Cancel",
-      "editing": "Editing...",
-      "save": "Save"
-    },
-    "workflows": {
-      "apiKey": "API Key",
-      "apiKeyPlaceholder": "Enter Dify API key",
-      "description": "Configure Dify workflow integrations for automated analysis tasks",
-      "error": {
-        "title": "Failed to Load Workflows"
-      },
-      "loading": "Loading workflows...",
-      "notConfigured": "Not configured",
-      "status": {
-        "active": "Active",
-        "notConfigured": "Not Configured"
-      },
-      "title": "Workflow Management",
-      "updateSuccess": "Workflow updated successfully!"
     }
   },
   "common": {
@@ -617,8 +590,7 @@
       "timeline": "Timeline",
       "tokens": "Tokens",
       "usage": "Usage",
-      "users": "Users",
-      "workflows": "Workflows"
+      "users": "Users"
     },
     "button": {
       "cancel": "Cancel",
