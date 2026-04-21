@@ -108,24 +108,45 @@ def pytest_collection_modifyitems(config, items):
 # Test database fixtures
 
 # Create testing session factory at module level for use in concurrency tests
+import os
+
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
-from app.database import GlobalBase
+from app.database import GLOBAL_SCHEMA, GlobalBase
 
-# Create a shared test engine
-_test_engine = create_async_engine(
-    "sqlite+aiosqlite:///:memory:",
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
+# Only switch to Postgres when TEST_DATABASE_URL is explicitly set (CI
+# integration job). Regular DATABASE_URL is ignored — unit tests must always
+# use SQLite in-memory so they stay fast and isolated from the dev database.
+_RAW_TEST_DB_URL = os.environ.get("TEST_DATABASE_URL")
+
+if _RAW_TEST_DB_URL and "postgres" in _RAW_TEST_DB_URL:
+    _TEST_DB_URL = _RAW_TEST_DB_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+    _USE_POSTGRES = True
+    # NullPool gives each operation a fresh asyncpg connection — avoids
+    # "another operation is in progress" when sequential fixtures reuse a
+    # pooled connection that still has pending protocol state.
+    from sqlalchemy.pool import NullPool
+
+    _test_engine = create_async_engine(_TEST_DB_URL, future=True, poolclass=NullPool)
+else:
+    _TEST_DB_URL = "sqlite+aiosqlite:///:memory:"
+    _USE_POSTGRES = False
+    _test_engine = create_async_engine(
+        _TEST_DB_URL,
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
 
 
 # Register gen_random_uuid() as a custom SQLite function (still useful for raw SQL)
-# and provide Python-side UUID generation for ORM operations
-@_sa_event.listens_for(_test_engine.sync_engine, "connect")
-def _register_sqlite_functions(dbapi_connection, connection_record):
-    dbapi_connection.create_function("gen_random_uuid", 0, lambda: str(_uuid.uuid4()))
+# and provide Python-side UUID generation for ORM operations. No-op on Postgres
+# which already has gen_random_uuid() built in.
+if not _USE_POSTGRES:
+
+    @_sa_event.listens_for(_test_engine.sync_engine, "connect")
+    def _register_sqlite_functions(dbapi_connection, connection_record):
+        dbapi_connection.create_function("gen_random_uuid", 0, lambda: str(_uuid.uuid4()))
 
 
 # Export this for use in concurrency tests
@@ -188,18 +209,28 @@ async def setup_test_db():
     This fixture only sets up/tears down tables, doesn't provide a session.
     Use this for tests that need to create their own sessions.
     """
-    # Strip schema before creating tables (SQLite doesn't support schemas)
-    _strip_schema_from_metadata(GlobalBase)
+    if _USE_POSTGRES:
+        # The "global_schema" schema is expected to already exist (created by
+        # CI's before_script via psycopg2, or by the developer running tests
+        # locally). We just manage tables inside it for isolation between tests.
+        async with _test_engine.begin() as conn:
+            await conn.run_sync(GlobalBase.metadata.create_all)
 
-    # Create all tables before test
-    async with _test_engine.begin() as conn:
-        await conn.run_sync(GlobalBase.metadata.create_all)
+        yield
 
-    yield
+        async with _test_engine.begin() as conn:
+            await conn.run_sync(GlobalBase.metadata.drop_all)
+    else:
+        # SQLite: strip schema from metadata and adapt types
+        _strip_schema_from_metadata(GlobalBase)
 
-    # Drop all tables after test
-    async with _test_engine.begin() as conn:
-        await conn.run_sync(GlobalBase.metadata.drop_all)
+        async with _test_engine.begin() as conn:
+            await conn.run_sync(GlobalBase.metadata.create_all)
+
+        yield
+
+        async with _test_engine.begin() as conn:
+            await conn.run_sync(GlobalBase.metadata.drop_all)
 
 
 @pytest.fixture(scope="function")

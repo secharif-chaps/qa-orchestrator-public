@@ -94,16 +94,23 @@ global-service:poetry-audit:
   <<: *gs-changes
 
 # ─── Test Stage ────────────────────────────────────────
-global-service:test:
+
+# Shared test setup
+.gs-test-base: &gs-test-base
   stage: test
-  needs: []
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   before_script:
     - cd apps/global-service
     - poetry config virtualenvs.create false && poetry install --no-interaction
     - python scripts/generate_protos.py
+  <<: *gs-changes
+
+# Unit tests — fast, no external dependencies, must pass
+global-service:test:unit:
+  <<: *gs-test-base
+  needs: []
   script:
-    - pytest tests/ -v --cov=app --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=report.xml
+    - pytest tests/unit/ tests/grpc/ -v --cov=app --cov-report=term-missing --cov-report=xml:coverage.xml --cov-fail-under=40 --junitxml=report.xml
   artifacts:
     when: always
     reports:
@@ -112,7 +119,32 @@ global-service:test:
         coverage_format: cobertura
         path: apps/global-service/coverage.xml
   coverage: '/TOTAL.*\s+(\d+%)/'
-  <<: *gs-changes
+
+# Integration tests — require Postgres (row-level locking, real schema behavior)
+global-service:test:integration:
+  <<: *gs-test-base
+  needs: []
+  services:
+    - name: postgres:17-alpine
+      alias: postgres
+  variables:
+    POSTGRES_DB: chapsmind_db_test
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    TEST_DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/chapsmind_db_test"
+  before_script:
+    - cd apps/global-service
+    - poetry config virtualenvs.create false && poetry install --no-interaction
+    - python scripts/generate_protos.py
+    - apt-get update && apt-get install -y --no-install-recommends postgresql-client
+    - until pg_isready -h postgres -U postgres -p 5432; do sleep 1; done
+    - psql "$TEST_DATABASE_URL" -c 'CREATE SCHEMA IF NOT EXISTS global_schema'
+  script:
+    - pytest tests/integration/ -v --run-integration --no-cov --junitxml=report-integration.xml -m integration
+  artifacts:
+    when: always
+    reports:
+      junit: apps/global-service/report-integration.xml
 
 # ─── Bandit — Python security analysis ───────────────
 global-service:bandit:
@@ -138,7 +170,7 @@ global-service:bandit:
 global-service:publish:
   interruptible: false
   extends: .docker-publish
-  needs: [global-service:lint, global-service:poetry-check, global-service:poetry-audit, global-service:test]
+  needs: [global-service:lint, global-service:poetry-check, global-service:poetry-audit, global-service:test:unit, global-service:test:integration]
   variables:
     IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-global-service
     DOCKER_CONTEXT: apps/global-service

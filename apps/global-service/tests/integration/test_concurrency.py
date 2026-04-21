@@ -14,9 +14,9 @@ Run with: pytest -m integration
 """
 
 import asyncio
-import pytest
 
-pytestmark = pytest.mark.integration
+import pytest
+from sqlalchemy import func, select
 
 from app.models.organization import (
     ModuleName,
@@ -24,8 +24,10 @@ from app.models.organization import (
     OrganizationModule,
     ReferenceType,
 )
-from app.services.token_manager import TokenManager
 from app.services.exceptions import InsufficientTokensException
+from app.services.token_manager import TokenManager
+
+pytestmark = pytest.mark.integration
 
 
 @pytest.fixture
@@ -277,7 +279,12 @@ class TestConcurrentModuleOperations:
         """Test concurrent updates to the same module.
 
         Scenario: Multiple concurrent toggle operations
-        Expected: All operations succeed, final state is deterministic
+        Expected:
+            - No unique-constraint violation (atomic upsert handles the INSERT race)
+            - Exactly one module row exists after the storm
+            - Final state is one of the submitted values
+        Commit order under asyncio.gather is non-deterministic, so we can't
+        assert which specific value wins.
         """
         from tests.conftest import TestingSessionLocal
 
@@ -297,24 +304,33 @@ class TestConcurrentModuleOperations:
                     enabled=enabled,
                 )
 
-        # Run concurrent updates
+        submitted_values = [True, False, True, True]
         results = await asyncio.gather(
-            toggle_module(True),
-            toggle_module(False),
-            toggle_module(True),
-            toggle_module(True),
+            *(toggle_module(v) for v in submitted_values)
         )
 
-        # All should succeed
-        assert len(results) == 4
+        # All upserts returned without raising
+        assert len(results) == len(submitted_values)
 
-        # Final state should match last operation (True)
+        # Exactly one row exists — no duplicates from a lost race on INSERT
         async with TestingSessionLocal() as session:
+            row_count = await session.scalar(
+                select(func.count())
+                .select_from(OrganizationModule)
+                .where(
+                    OrganizationModule.organization_id == test_org_id,
+                    OrganizationModule.module_name == ModuleName.SCREEN,
+                )
+            )
+            assert row_count == 1
+
             manager = TokenManager(db=session)
             final_module = await manager.get_or_create_module(
                 test_org_id, ModuleName.SCREEN
             )
-            assert final_module.enabled is True
+            # Final enabled must be one of the submitted values; we can't
+            # assert which one wins because commit order is non-deterministic.
+            assert final_module.enabled in submitted_values
 
     async def test_concurrent_get_all_modules(
         self, test_org_id, setup_test_db
@@ -347,10 +363,11 @@ class TestConcurrentModuleOperations:
         # All should succeed
         assert len(results) == 3
 
-        # All should return same number of modules
-        assert len(results[0]) == 3  # SCREEN, TARGET, EXPLORE
-        assert len(results[1]) == 3
-        assert len(results[2]) == 3
+        # All should return one entry per ModuleName (SCREEN, TARGET, EXPLORE, STREAM)
+        expected_count = len(ModuleName)
+        assert len(results[0]) == expected_count
+        assert len(results[1]) == expected_count
+        assert len(results[2]) == expected_count
 
 
 @pytest.mark.asyncio
@@ -364,7 +381,6 @@ class TestConcurrentOrganizationCreation:
         Expected: Only one creates, others get existing (atomic upsert works)
         """
         from tests.conftest import TestingSessionLocal
-        from sqlalchemy import select, func
 
         test_org_id = "concurrent-org-create"
 

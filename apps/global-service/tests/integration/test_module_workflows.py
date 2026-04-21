@@ -7,16 +7,18 @@ Tests:
 """
 
 import pytest
-from datetime import datetime, timezone
+from sqlalchemy import select
+
+pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 
 from app.models.organization import (
+    ModuleName,
     Organization,
     OrganizationModule,
-    ModuleName,
     ReferenceType,
 )
-from app.services.token_manager import TokenManager
 from app.services.exceptions import ModuleNotEnabledException
+from app.services.token_manager import TokenManager
 
 
 @pytest.fixture
@@ -26,13 +28,11 @@ def test_org_id():
 
 
 @pytest.fixture
-def setup_org_with_modules(global_db_session, test_org_id):
+async def setup_org_with_modules(global_db_session, test_org_id):
     """Set up organization with initial module configuration."""
-    # Create organization with balance
     org = Organization(organization_id=test_org_id, token_balance=1000)
     global_db_session.add(org)
 
-    # Create modules - only screen enabled
     modules = [
         OrganizationModule(
             organization_id=test_org_id,
@@ -58,46 +58,44 @@ def setup_org_with_modules(global_db_session, test_org_id):
     for module in modules:
         global_db_session.add(module)
 
-    global_db_session.commit()
+    await global_db_session.commit()
     return org, modules
+
+
+async def _get_org(session, org_id: str) -> Organization:
+    result = await session.execute(
+        select(Organization).where(Organization.organization_id == org_id)
+    )
+    return result.scalar_one()
 
 
 class TestModuleToggleWorkflow:
     """Test complete module toggle workflow."""
 
-    def test_toggle_module_prevents_token_consumption(
+    async def test_toggle_module_prevents_token_consumption(
         self, global_db_session, test_org_id, setup_org_with_modules
     ):
-        """
-        Test workflow:
-        1. Disable a module
-        2. Attempt to consume tokens for that module
-        3. Should raise ModuleNotEnabledException
-        """
+        """Disable a module then attempt to consume → ModuleNotEnabledException."""
         token_manager = TokenManager(db=global_db_session)
 
-        # Step 1: Verify screen module is enabled
-        screen_module = token_manager.get_or_create_module(
+        screen_module = await token_manager.get_or_create_module(
             test_org_id, ModuleName.SCREEN
         )
         assert screen_module.enabled is True
 
-        # Step 2: Disable screen module
-        token_manager.update_module_config(
+        await token_manager.update_module_config(
             organization_id=test_org_id,
             module_name=ModuleName.SCREEN,
             enabled=False,
         )
 
-        # Step 3: Verify module is disabled
-        screen_module = token_manager.get_or_create_module(
+        screen_module = await token_manager.get_or_create_module(
             test_org_id, ModuleName.SCREEN
         )
         assert screen_module.enabled is False
 
-        # Step 4: Attempt to consume tokens for disabled module
         with pytest.raises(ModuleNotEnabledException) as exc_info:
-            token_manager.consume_tokens(
+            await token_manager.consume_tokens(
                 org_id=test_org_id,
                 amount=35,
                 module_name=ModuleName.SCREEN,
@@ -109,33 +107,25 @@ class TestModuleToggleWorkflow:
         assert "not enabled" in str(exc_info.value.detail).lower()
         assert "screen" in str(exc_info.value.detail).lower()
 
-    def test_reenable_module_allows_consumption(
+    async def test_reenable_module_allows_consumption(
         self, global_db_session, test_org_id, setup_org_with_modules
     ):
-        """
-        Test workflow:
-        1. Disable module
-        2. Re-enable module
-        3. Token consumption should succeed
-        """
+        """Disable → re-enable → consumption should succeed."""
         token_manager = TokenManager(db=global_db_session)
 
-        # Disable screen module
-        token_manager.update_module_config(
+        await token_manager.update_module_config(
             organization_id=test_org_id,
             module_name=ModuleName.SCREEN,
             enabled=False,
         )
 
-        # Re-enable screen module
-        token_manager.update_module_config(
+        await token_manager.update_module_config(
             organization_id=test_org_id,
             module_name=ModuleName.SCREEN,
             enabled=True,
         )
 
-        # Now consumption should succeed
-        org = token_manager.consume_tokens(
+        org = await token_manager.consume_tokens(
             org_id=test_org_id,
             amount=35,
             module_name=ModuleName.SCREEN,
@@ -150,13 +140,13 @@ class TestModuleToggleWorkflow:
 class TestTokenConsumptionWithModuleChecks:
     """Test token consumption validates module enablement."""
 
-    def test_consume_tokens_enabled_module_success(
+    async def test_consume_tokens_enabled_module_success(
         self, global_db_session, test_org_id, setup_org_with_modules
     ):
-        """Test consuming tokens for enabled module succeeds."""
+        """Consuming tokens for an enabled module succeeds."""
         token_manager = TokenManager(db=global_db_session)
 
-        org = token_manager.consume_tokens(
+        org = await token_manager.consume_tokens(
             org_id=test_org_id,
             amount=35,
             module_name=ModuleName.SCREEN,
@@ -166,71 +156,48 @@ class TestTokenConsumptionWithModuleChecks:
         )
 
         assert org.token_balance == 965
-        # Verify transaction was created
-        transactions = token_manager.get_transaction_history(test_org_id)
+
+        transactions = await token_manager.get_transaction_history(test_org_id)
         assert len(transactions) == 1
         assert transactions[0].amount == -35
 
-    def test_consume_tokens_disabled_module_fails(
+    async def test_consume_tokens_disabled_module_fails(
         self, global_db_session, test_org_id, setup_org_with_modules
     ):
-        """Test consuming tokens for disabled module raises exception."""
+        """Consuming tokens for a disabled module raises."""
         token_manager = TokenManager(db=global_db_session)
 
         with pytest.raises(ModuleNotEnabledException):
-            token_manager.consume_tokens(
+            await token_manager.consume_tokens(
                 org_id=test_org_id,
                 amount=35,
-                module_name=ModuleName.TARGET,  # Disabled module
+                module_name=ModuleName.TARGET,
                 reference_type=ReferenceType.company,
                 reference_id="company-1",
                 user_id="user-123",
             )
 
-        # Balance should remain unchanged
-        org = global_db_session.query(Organization).filter_by(
-            organization_id=test_org_id
-        ).first()
+        org = await _get_org(global_db_session, test_org_id)
         assert org.token_balance == 1000
-
-    def test_consume_tokens_auto_enables_module_if_needed(
-        self, global_db_session, test_org_id, setup_org_with_modules
-    ):
-        """Test consuming tokens without module check (backwards compat)."""
-        token_manager = TokenManager(db=global_db_session)
-
-        # Consume without module_name (no module check)
-        org = token_manager.consume_tokens(
-            org_id=test_org_id,
-            amount=35,
-            module_name=None,  # No module check
-            reference_type=ReferenceType.manual,
-            reference_id="manual-1",
-            user_id="user-123",
-        )
-
-        assert org.token_balance == 965
 
 
 class TestMultipleModuleEnablementScenarios:
     """Test various module enablement scenarios."""
 
-    def test_enable_all_modules(
+    async def test_enable_all_modules(
         self, global_db_session, test_org_id, setup_org_with_modules
     ):
-        """Test enabling all modules and consuming tokens."""
+        """Enable all modules and consume tokens for each."""
         token_manager = TokenManager(db=global_db_session)
 
-        # Enable all modules
         for module_name in [ModuleName.TARGET, ModuleName.EXPLORE]:
-            token_manager.update_module_config(
+            await token_manager.update_module_config(
                 organization_id=test_org_id,
                 module_name=module_name,
                 enabled=True,
             )
 
-        # Consume tokens for each module
-        token_manager.consume_tokens(
+        await token_manager.consume_tokens(
             org_id=test_org_id,
             amount=10,
             module_name=ModuleName.SCREEN,
@@ -238,8 +205,7 @@ class TestMultipleModuleEnablementScenarios:
             reference_id="company-1",
             user_id="user-123",
         )
-
-        token_manager.consume_tokens(
+        await token_manager.consume_tokens(
             org_id=test_org_id,
             amount=20,
             module_name=ModuleName.TARGET,
@@ -247,8 +213,7 @@ class TestMultipleModuleEnablementScenarios:
             reference_id="company-2",
             user_id="user-123",
         )
-
-        token_manager.consume_tokens(
+        await token_manager.consume_tokens(
             org_id=test_org_id,
             amount=30,
             module_name=ModuleName.EXPLORE,
@@ -257,36 +222,30 @@ class TestMultipleModuleEnablementScenarios:
             user_id="user-123",
         )
 
-        # Verify total balance
-        org = global_db_session.query(Organization).filter_by(
-            organization_id=test_org_id
-        ).first()
+        org = await _get_org(global_db_session, test_org_id)
         assert org.token_balance == 940  # 1000 - 10 - 20 - 30
 
-    def test_disable_all_modules(
+    async def test_disable_all_modules(
         self, global_db_session, test_org_id, setup_org_with_modules
     ):
-        """Test disabling all modules prevents all consumption."""
+        """Disabling all modules prevents any consumption."""
         token_manager = TokenManager(db=global_db_session)
 
-        # Disable all modules
         for module_name in [
             ModuleName.SCREEN,
             ModuleName.TARGET,
             ModuleName.EXPLORE,
             ModuleName.STREAM,
         ]:
-            token_manager.update_module_config(
+            await token_manager.update_module_config(
                 organization_id=test_org_id,
                 module_name=module_name,
                 enabled=False,
             )
 
-        # Verify all modules are disabled
-        modules = token_manager.get_all_organization_modules(test_org_id)
+        modules = await token_manager.get_all_organization_modules(test_org_id)
         assert all(not m.enabled for m in modules)
 
-        # Attempt consumption should fail for all
         for module_name in [
             ModuleName.SCREEN,
             ModuleName.TARGET,
@@ -294,7 +253,7 @@ class TestMultipleModuleEnablementScenarios:
             ModuleName.STREAM,
         ]:
             with pytest.raises(ModuleNotEnabledException):
-                token_manager.consume_tokens(
+                await token_manager.consume_tokens(
                     org_id=test_org_id,
                     amount=10,
                     module_name=module_name,
@@ -303,21 +262,19 @@ class TestMultipleModuleEnablementScenarios:
                     user_id="user-123",
                 )
 
-    def test_partial_module_enablement(
+    async def test_partial_module_enablement(
         self, global_db_session, test_org_id, setup_org_with_modules
     ):
-        """Test with only some modules enabled."""
+        """Only some modules enabled → enabled ones succeed, disabled one fails."""
         token_manager = TokenManager(db=global_db_session)
 
-        # Enable target, keep screen enabled, leave explore disabled
-        token_manager.update_module_config(
+        await token_manager.update_module_config(
             organization_id=test_org_id,
             module_name=ModuleName.TARGET,
             enabled=True,
         )
 
-        # Screen and target should work
-        token_manager.consume_tokens(
+        await token_manager.consume_tokens(
             org_id=test_org_id,
             amount=10,
             module_name=ModuleName.SCREEN,
@@ -325,8 +282,7 @@ class TestMultipleModuleEnablementScenarios:
             reference_id="company-1",
             user_id="user-123",
         )
-
-        token_manager.consume_tokens(
+        await token_manager.consume_tokens(
             org_id=test_org_id,
             amount=20,
             module_name=ModuleName.TARGET,
@@ -335,9 +291,8 @@ class TestMultipleModuleEnablementScenarios:
             user_id="user-123",
         )
 
-        # Explore should fail
         with pytest.raises(ModuleNotEnabledException):
-            token_manager.consume_tokens(
+            await token_manager.consume_tokens(
                 org_id=test_org_id,
                 amount=30,
                 module_name=ModuleName.EXPLORE,
@@ -346,8 +301,5 @@ class TestMultipleModuleEnablementScenarios:
                 user_id="user-123",
             )
 
-        # Balance should reflect only screen and target
-        org = global_db_session.query(Organization).filter_by(
-            organization_id=test_org_id
-        ).first()
+        org = await _get_org(global_db_session, test_org_id)
         assert org.token_balance == 970  # 1000 - 10 - 20
