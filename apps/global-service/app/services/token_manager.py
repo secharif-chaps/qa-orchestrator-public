@@ -590,8 +590,9 @@ class TokenManager:
     ) -> OrganizationModule:
         """Update module configuration (enabled/disabled).
 
-        Uses row-level locking within a single transaction to prevent
-        race conditions during concurrent updates.
+        Uses an atomic INSERT ... ON CONFLICT DO UPDATE so concurrent callers
+        can't race into a unique-constraint violation (previously two tasks
+        could both observe "no row" and both try to INSERT).
 
         Args:
             organization_id: Keycloak organization UUID
@@ -601,42 +602,44 @@ class TokenManager:
         Returns:
             Updated OrganizationModule record
         """
-        # Lock module row for update to prevent race conditions
+        insert_stmt = insert(OrganizationModule).values(
+            organization_id=organization_id,
+            module_name=module_name,
+            enabled=enabled if enabled is not None else False,
+        )
+
+        if enabled is None:
+            # No change requested → just ensure the row exists
+            stmt = insert_stmt.on_conflict_do_nothing(
+                index_elements=["organization_id", "module_name"]
+            )
+        else:
+            stmt = insert_stmt.on_conflict_do_update(
+                index_elements=["organization_id", "module_name"],
+                set_={"enabled": enabled},
+            )
+
+        await self._execute_upsert(
+            stmt,
+            "update module config",
+            {
+                "organization_id": organization_id,
+                "module_name": module_name.value,
+                "enabled": enabled,
+            },
+        )
+
+        # The upsert was issued via raw SQL, so any previously-loaded
+        # OrganizationModule instance in the session is stale. populate_existing
+        # refreshes only the rows returned by this query, avoiding the session-wide
+        # side effects of expire_all().
         result = await self.db.execute(
             select(OrganizationModule)
             .filter(
                 OrganizationModule.organization_id == organization_id,
                 OrganizationModule.module_name == module_name,
             )
-            .with_for_update()
+            .execution_options(populate_existing=True)
         )
-        module = result.scalar_one_or_none()
-
-        if not module:
-            # Create if doesn't exist (within same transaction)
-            module = OrganizationModule(
-                organization_id=organization_id,
-                module_name=module_name,
-                enabled=enabled if enabled is not None else False,
-            )
-            self.db.add(module)
-        elif enabled is not None:
-            module.enabled = enabled
-
-        try:
-            await self.db.commit()
-            await self.db.refresh(module)
-        except SQLAlchemyError as e:
-            await self.db.rollback()
-            logger.error(
-                f"Failed to update module config: {e}",
-                extra={
-                    "organization_id": organization_id,
-                    "module_name": module_name.value,
-                    "enabled": enabled,
-                    "error": str(e),
-                },
-            )
-            raise
-
+        module = result.scalar_one()
         return module

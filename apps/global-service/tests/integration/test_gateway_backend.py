@@ -17,9 +17,11 @@ Run with: pytest tests/integration/ -v --run-integration
 Skip with: pytest tests/ -v (default, skips integration tests)
 """
 
-import pytest
-import httpx
+import os
 from unittest.mock import patch
+
+import httpx
+import pytest
 
 # Mark all tests in this module as integration tests
 pytestmark = pytest.mark.integration
@@ -32,16 +34,36 @@ def pytest_configure(config):
     )
 
 
+def _probe(url: str) -> bool:
+    """Return True if a service answers on ``url`` within a short timeout.
+
+    Used to skip end-to-end auth tests cleanly in CI (no gateway/backend
+    running) while letting them run locally when `task up` is active.
+    """
+    try:
+        with httpx.Client(timeout=1.0) as client:
+            client.get(url)
+        return True
+    except httpx.HTTPError:
+        return False
+
+
 @pytest.fixture
 def gateway_url():
-    """Gateway service URL."""
-    return "http://localhost:8000"
+    """Gateway service URL — skip if not reachable."""
+    url = os.environ.get("TEST_GATEWAY_URL", "http://localhost:8000")
+    if not _probe(url):
+        pytest.skip(f"gateway unreachable at {url} — set TEST_GATEWAY_URL to run")
+    return url
 
 
 @pytest.fixture
 def backend_url():
-    """Backend service URL."""
-    return "http://localhost:8000"
+    """Backend service URL — skip if not reachable."""
+    url = os.environ.get("TEST_BACKEND_URL", "http://localhost:8000")
+    if not _probe(url):
+        pytest.skip(f"backend unreachable at {url} — set TEST_BACKEND_URL to run")
+    return url
 
 
 @pytest.fixture
