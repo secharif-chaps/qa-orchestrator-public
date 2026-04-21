@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Http;
 
+use App\Application\Collect\Apify\FetchApifyDatasetAction;
 use App\Application\Collect\Task\UpdateTaskStatusAction;
+use App\Domain\Collect\CollectTaskStatus;
 use App\Infrastructure\Collect\Apify\ApifyStatusMapper;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,15 +14,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[AsController]
 class ApifyWebhookController extends AbstractController
 {
-    use HandleTrait;
-
     public function __construct(
         private readonly ApifyStatusMapper $statusMapper,
         private MessageBusInterface $messageBus,
@@ -48,7 +48,31 @@ class ApifyWebhookController extends AbstractController
             'mapped_status' => $collectTaskStatus->value,
         ]);
 
-        $this->handle(new UpdateTaskStatusAction(collectTaskId: $collectTaskId, status: $collectTaskStatus));
+        // If run succeeded, dispatch dataset fetch action; otherwise dispatch status update
+        if (CollectTaskStatus::COMPLETED === $collectTaskStatus) {
+            $datasetId = $this->extractDatasetId($payload);
+            $this->messageBus->dispatch(
+                new FetchApifyDatasetAction($collectTaskId, $datasetId),
+                [new DispatchAfterCurrentBusStamp()]
+            );
+
+            $this->logger?->info('Dispatched FetchApifyDatasetAction', [
+                'collect_task_id' => $collectTaskId,
+                'dataset_id' => $datasetId,
+                'provider_name' => 'apify',
+            ]);
+        } else {
+            $this->messageBus->dispatch(
+                new UpdateTaskStatusAction(collectTaskId: $collectTaskId, status: $collectTaskStatus),
+                [new DispatchAfterCurrentBusStamp()]
+            );
+
+            $this->logger?->info('Dispatched UpdateTaskStatusAction', [
+                'collect_task_id' => $collectTaskId,
+                'status' => $collectTaskStatus->value,
+                'provider_name' => 'apify',
+            ]);
+        }
 
         return new JsonResponse([
             'status' => 'ok',
@@ -100,5 +124,28 @@ class ApifyWebhookController extends AbstractController
         }
 
         return $status;
+    }
+
+    /**
+     * Extract the dataset ID from the Apify webhook payload.
+     *
+     * Apify webhook payloads contain the dataset ID in resource.defaultDatasetId.
+     *
+     * @param array<string, mixed> $payload
+     */
+    private function extractDatasetId(array $payload): string
+    {
+        $resource = $payload['resource'] ?? null;
+        $datasetId = \is_array($resource) ? ($resource['defaultDatasetId'] ?? null) : null;
+
+        if (!\is_string($datasetId) || '' === $datasetId) {
+            $this->logger?->error('Missing or invalid dataset ID in Apify webhook payload', [
+                'payload' => $payload,
+            ]);
+
+            throw new BadRequestHttpException('Missing or invalid "resource.defaultDatasetId" in webhook payload');
+        }
+
+        return $datasetId;
     }
 }

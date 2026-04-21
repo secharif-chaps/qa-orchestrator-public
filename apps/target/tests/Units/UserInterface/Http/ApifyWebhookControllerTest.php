@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Units\UserInterface\Http;
 
+use App\Application\Collect\Apify\FetchApifyDatasetAction;
 use App\Application\Collect\Task\UpdateTaskStatusAction;
 use App\Domain\Collect\CollectTaskStatus;
 use App\Infrastructure\Collect\Apify\ApifyStatusMapper;
@@ -34,7 +35,7 @@ class ApifyWebhookControllerTest extends TestCase
         return new NullMessageBus(fakeHandler: fn () => null);
     }
 
-    public function testValidWebhookDispatchesUpdateAction(): void
+    public function testValidWebhookDispatchesFetchDatasetAction(): void
     {
         $messageBus = $this->createMessageBus();
         $controller = new ApifyWebhookController($this->statusMapper, $messageBus);
@@ -56,35 +57,12 @@ class ApifyWebhookControllerTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('{"status":"ok"}', $response->getContent());
 
-        $action = $messageBus->getFirstDispatched(UpdateTaskStatusAction::class);
-        $this->assertInstanceOf(UpdateTaskStatusAction::class, $action);
+        $action = $messageBus->getFirstDispatched(FetchApifyDatasetAction::class);
+        $this->assertInstanceOf(FetchApifyDatasetAction::class, $action);
         $this->assertSame('task-uuid-123', $action->collectTaskId);
-        $this->assertSame(CollectTaskStatus::COMPLETED, $action->status);
-        $this->assertSame(1, $messageBus->countDispatched(UpdateTaskStatusAction::class));
-    }
-
-    public function testWebhookWithFailedStatus(): void
-    {
-        $messageBus = $this->createMessageBus();
-        $controller = new ApifyWebhookController($this->statusMapper, $messageBus);
-
-        $request = $this->createWebhookRequest(
-            collectTaskId: 'task-uuid-456',
-            payload: [
-                'eventType' => 'ACTOR.RUN.FAILED',
-                'resource' => [
-                    'id' => 'run789',
-                    'status' => 'FAILED',
-                ],
-            ],
-        );
-
-        $response = ($controller)($request);
-
-        $this->assertSame(200, $response->getStatusCode());
-        $action = $messageBus->getFirstDispatched(UpdateTaskStatusAction::class);
-        $this->assertInstanceOf(UpdateTaskStatusAction::class, $action);
-        $this->assertSame(CollectTaskStatus::FAILED, $action->status);
+        $this->assertSame('dataset456', $action->datasetId);
+        $this->assertSame(1, $messageBus->countDispatched(FetchApifyDatasetAction::class));
+        $this->assertSame(0, $messageBus->countDispatched(UpdateTaskStatusAction::class));
     }
 
     public function testWebhookWithAbortedStatus(): void
@@ -173,6 +151,54 @@ class ApifyWebhookControllerTest extends TestCase
         );
 
         ($controller)($request);
+    }
+
+    public function testWebhookSucceededWithoutDatasetIdThrows(): void
+    {
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Missing or invalid "resource.defaultDatasetId" in webhook payload');
+
+        $controller = new ApifyWebhookController($this->statusMapper, new NullMessageBus());
+
+        $request = $this->createWebhookRequest(
+            collectTaskId: 'task-uuid-123',
+            payload: [
+                'eventType' => 'ACTOR.RUN.SUCCEEDED',
+                'resource' => [
+                    'id' => 'run123',
+                    'status' => 'SUCCEEDED',
+                ],
+            ],
+        );
+
+        ($controller)($request);
+    }
+
+    public function testFailedStatusDispatchesUpdateAction(): void
+    {
+        $messageBus = $this->createMessageBus();
+        $controller = new ApifyWebhookController($this->statusMapper, $messageBus);
+
+        $request = $this->createWebhookRequest(
+            collectTaskId: 'task-uuid-456',
+            payload: [
+                'eventType' => 'ACTOR.RUN.FAILED',
+                'resource' => [
+                    'id' => 'run789',
+                    'status' => 'FAILED',
+                ],
+            ],
+        );
+
+        $response = ($controller)($request);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $action = $messageBus->getFirstDispatched(UpdateTaskStatusAction::class);
+        $this->assertInstanceOf(UpdateTaskStatusAction::class, $action);
+        $this->assertSame('task-uuid-456', $action->collectTaskId);
+        $this->assertSame(CollectTaskStatus::FAILED, $action->status);
+        $this->assertSame(1, $messageBus->countDispatched(UpdateTaskStatusAction::class));
+        $this->assertSame(0, $messageBus->countDispatched(FetchApifyDatasetAction::class));
     }
 
     /**
