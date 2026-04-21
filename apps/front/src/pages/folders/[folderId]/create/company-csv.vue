@@ -51,7 +51,11 @@
         <div class="flex flex-col gap-4">
           <!-- File Input -->
           <div
-            class="border-primary-lighter-stroke rounded-sm border-2 border-dashed p-6 text-center"
+            class="border-primary-lighter-stroke rounded-sm border-2 border-dashed p-6 text-center transition-colors"
+            :class="{ 'border-primary bg-primary-light': isDragging }"
+            @dragover.prevent="handleDragOver"
+            @dragleave.prevent="handleDragLeave"
+            @drop.prevent="handleDrop"
           >
             <input
               ref="fileInput"
@@ -378,6 +382,7 @@ const route = useRoute('/folders/[folderId]/create/company-csv')
 // File handling
 const fileInput = ref<HTMLInputElement>()
 const selectedFile = ref<File | null>(null)
+const isDragging = ref(false)
 const parseResult = ref<CSVParseResult | null>(null)
 const validationResult = ref<CSVValidationResponse | null>(null)
 const importResult = ref<CSVImportResponse | null>(null)
@@ -442,6 +447,27 @@ const isRefreshingTokens = ref(false)
 
 // File handling methods
 const CSV_MIME_TYPES = ['text/csv', 'application/csv', 'text/plain', 'application/vnd.ms-excel']
+
+const handleDragOver = () => {
+  isDragging.value = true
+}
+
+const handleDragLeave = () => {
+  isDragging.value = false
+}
+
+const handleDrop = async (event: DragEvent) => {
+  isDragging.value = false
+  const file = event.dataTransfer?.files?.[0]
+  const isCsv = file && (CSV_MIME_TYPES.includes(file.type) || file.name.endsWith('.csv'))
+  if (isCsv) {
+    selectedFile.value = file
+    parseCSVFile(file)
+    validationResult.value = null
+    validationError.value = null
+    importResult.value = null
+  }
+}
 
 const handleFileSelect = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
