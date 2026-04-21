@@ -512,7 +512,9 @@ class TestWebSearchQuery:
         prose_resp = mock_response(text="Some prose that is not JSON.")
         prose_resp.id = "resp_prose"
 
-        client.responses.create = AsyncMock(side_effect=[prose_resp, APIError("API error during retry", MagicMock(), body=None)])
+        client.responses.create = AsyncMock(
+            side_effect=[prose_resp, APIError("API error during retry", MagicMock(), body=None)]
+        )
 
         result = await web_search_query(
             system_prompt="test",

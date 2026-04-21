@@ -9,12 +9,11 @@ This module provides API endpoints for:
 from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi_keycloak import OIDCUser
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.core.dependencies import get_token_manager
-from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.modules import MODULE_CONFIG, get_all_module_names
 from app.core.organization_context import OrganizationContext, get_user_organization
@@ -63,7 +62,7 @@ MODULE_TO_REFERENCE_TYPES = {
 }
 
 
-def _has_credits_access(user: OIDCUser, org_context: OrganizationContext, organization_id: str) -> bool:
+def _has_credits_access(user: AuthenticatedUser, org_context: OrganizationContext, organization_id: str) -> bool:
     """Check if user has access to credits data for the organization.
 
     Args:
@@ -75,10 +74,10 @@ def _has_credits_access(user: OIDCUser, org_context: OrganizationContext, organi
         True if user has access, False otherwise
     """
     # Check if user has admin.organizations role
-    is_org_admin = hasattr(user, "roles") and user.roles and "admin.organizations" in user.roles
+    is_org_admin = "admin.organizations" in user.roles
 
     # Check if user has organization.manage role and belongs to the organization
-    has_manage_role = hasattr(user, "roles") and user.roles and "organization.manage" in user.roles
+    has_manage_role = "organization.manage" in user.roles
     is_org_member = org_context.organization_id == organization_id
 
     return is_org_admin or (has_manage_role and is_org_member)
@@ -139,7 +138,7 @@ async def get_credit_stats(
     organization_id: str,
     db: Session = Depends(get_db),
     token_manager: TokenManager = Depends(get_token_manager),
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: AuthenticatedUser = Depends(get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
     """Get credit statistics for an organization.
@@ -255,7 +254,7 @@ async def get_top_credit_users(
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
     size: int = Query(10, ge=1, le=100, description="Items per page"),
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: AuthenticatedUser = Depends(get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
     """Get top credit-consuming users in the organization.
@@ -410,7 +409,7 @@ async def get_daily_credit_usage(
     end_date: datetime | None = Query(None, description="Filter until date"),
     period: str = Query("30d", description="Period preset (7d, 30d, 90d, custom)"),
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: AuthenticatedUser = Depends(get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
     """Get daily credit usage for an organization.

@@ -210,7 +210,9 @@ def downgrade() -> None:
 
     # Drop indexes first
     op.drop_index("idx_company_funding_round_company_id", table_name="company_funding_round", schema="screen_schema")
-    op.drop_index("idx_company_financial_metric_company_id", table_name="company_financial_metric", schema="screen_schema")
+    op.drop_index(
+        "idx_company_financial_metric_company_id", table_name="company_financial_metric", schema="screen_schema"
+    )
 
     # Drop tables in reverse order of creation
     op.drop_table("company_funding_round", schema="screen_schema")

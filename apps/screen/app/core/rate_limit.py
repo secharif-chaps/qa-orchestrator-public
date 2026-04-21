@@ -6,10 +6,9 @@ Uses in-memory sliding window counters keyed by Keycloak user ID (JWT sub).
 import time
 
 from fastapi import Depends, HTTPException, status
-from fastapi_keycloak import OIDCUser
 
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.core.config import settings
-from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -71,8 +70,8 @@ _chapse_chat_limiter = UserRateLimiter(
 
 
 async def check_chapse_chat_rate_limit(
-    user: OIDCUser = Depends(idp.get_current_user()),
-) -> OIDCUser:
+    user: AuthenticatedUser = Depends(get_current_user()),
+) -> AuthenticatedUser:
     """FastAPI dependency that enforces per-user rate limit on chapse chat.
 
     Returns the authenticated user so the endpoint doesn't need a separate Depends.

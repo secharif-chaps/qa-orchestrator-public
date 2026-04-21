@@ -8,7 +8,6 @@ from app.services.feature_flags import (
     update_feature_config,
 )
 
-
 pytestmark = pytest.mark.integration
 
 

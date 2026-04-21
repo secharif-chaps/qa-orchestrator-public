@@ -7,11 +7,10 @@ across all organizations. Requires admin.tasks role for access.
 from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi_keycloak import OIDCUser
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 
-from app.core.keycloak import idp
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.core.logging_config import get_logger
 from app.database import get_db
 from app.models.company import Company
@@ -51,7 +50,7 @@ async def get_admin_tasks(
     sort_by: str = Query("created_at"),
     sort_order: str = Query("desc"),
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.tasks"])),
 ):
     """Get all tasks across all organizations with filtering and pagination.
 
@@ -163,7 +162,7 @@ async def get_admin_tasks(
 async def get_admin_task_stats(
     hours: int = Query(24, ge=1, le=168),
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.tasks"])),
 ):
     """Get aggregated task statistics for the summary cards.
 
@@ -233,7 +232,7 @@ async def get_admin_task_stats(
 async def bulk_restart_tasks(
     request: BulkRestartRequest,
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.tasks"])),
 ):
     """Restart multiple tasks in bulk.
 
@@ -304,7 +303,7 @@ org_router = APIRouter(prefix="/admin/organizations", tags=["admin-tasks"])
     response_model=OrganizationsListResponse,
     openapi_extra={"x-permissions": ["admin.tasks"]},
 )
-async def get_admin_organizations(user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"]))):
+async def get_admin_organizations(user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.tasks"]))):
     """Fetch all organizations for the organization filter dropdown and name mapping.
 
     Requires admin.tasks role for access.

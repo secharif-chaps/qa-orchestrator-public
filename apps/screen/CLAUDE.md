@@ -208,7 +208,7 @@ class CompanyService:
 @router.post("/")
 def create_company_endpoint(
     data: CompanyCreate,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["company.create"])),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """API endpoint delegates to service layer."""
@@ -268,22 +268,23 @@ class CompanyCreate(BaseModel):
 
 ### Authentication & Authorization
 
-**All authentication is now handled via fastapi-keycloak** with JWT-only permission checking.
+**All authentication is handled via Internal JWT verification.** The global-service
+gateway validates Keycloak JWTs and forwards requests with `Authorization: Internal {token}`.
+Screen only verifies these Internal JWTs — no Keycloak SDK needed.
 
 #### Basic Route Protection
 
-Use `idp.get_current_user()` dependency with `required_roles` parameter:
+Use `get_current_user()` dependency with `required_roles` parameter:
 
 ```python
 from fastapi import Depends, APIRouter
-from fastapi_keycloak import OIDCUser
-from app.core.keycloak import idp
+from app.core.auth import AuthenticatedUser, get_current_user
 
 router = APIRouter()
 
 @router.get("/admin/companies")
 async def list_all_companies(
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin"]))
 ):
     """Admin endpoint - requires 'admin' role.
 
@@ -316,7 +317,7 @@ async def list_all_companies(
 @router.post("/companies")
 def create_company(
     data: CompanyCreate,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["company.create"])),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Requires company.create role for access."""
@@ -326,7 +327,7 @@ def create_company(
 **Multiple Roles (OR logic)**:
 ```python
 # User needs ANY ONE of these roles
-user: OIDCUser = Depends(idp.get_current_user(
+user: AuthenticatedUser = Depends(get_current_user(
     required_roles=["admin", "admin.organizations"]
 ))
 ```
@@ -335,11 +336,12 @@ user: OIDCUser = Depends(idp.get_current_user(
 For user organization operations, combine role check with organization context:
 
 ```python
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.core.organization_context import get_user_organization, OrganizationContext
 
 @router.get("/folders")
 def list_folders(
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
@@ -358,7 +360,7 @@ from app.core.auth import verify_role_access, verify_any_role_access
 @router.get("/items")
 def get_items(
     include_sensitive: bool = False,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"]))
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["organization.read"]))
 ):
     """Conditionally require higher permissions based on query params."""
     items = get_base_items()
@@ -380,12 +382,13 @@ def get_items(
 For business logic validation (ownership, organization membership), use functions from `app/core/security.py`:
 
 ```python
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.core.security import verify_company_organization_access
 
 @router.get("/companies/{company_id}")
 def get_company(
     company_id: int,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.view"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["company.view"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
@@ -398,35 +401,6 @@ def get_company(
     return company
 ```
 
-#### Migration Notes
-
-**OLD Pattern (deprecated)**:
-```python
-# ❌ Don't use these anymore
-from app.core.dependencies import get_current_user
-from app.core.security import verify_admin_access
-
-@router.get("/admin/users")
-def list_users(current_user: TokenData = Depends(get_current_user)):
-    verify_admin_access(current_user)  # Manual check
-    return {"users": [...]}
-```
-
-**NEW Pattern (current)**:
-```python
-# ✅ Use this pattern
-from fastapi_keycloak import OIDCUser
-from app.core.keycloak import idp
-
-@router.get("/admin/users")
-def list_users(
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))
-):
-    """Requires admin role for access."""
-    # Role checking automatic via dependency
-    return {"users": [...]}
-```
-
 #### Docstring Convention
 
 **ALWAYS document required roles in docstrings**:
@@ -435,7 +409,7 @@ def list_users(
 @router.post("/folders")
 def create_folder(
     folder: FolderCreate,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Create a new folder in the organization.
@@ -459,7 +433,7 @@ class Company(Base):
     owner_username = Column(String)            # Denormalized for display
 
 # When creating:
-def create_company(user: OIDCUser):
+def create_company(user: AuthenticatedUser):
     company = Company(
         owner_id=user.sub,              # UUID from JWT
         owner_username=user.preferred_username  # Username for display
@@ -585,7 +559,6 @@ KEYCLOAK_ADMIN_SECRET=admin-secret
 - **SQLAlchemy**: https://docs.sqlalchemy.org/
 - **Alembic**: https://alembic.sqlalchemy.org/
 - **Ruff**: https://docs.astral.sh/ruff/
-- **fastapi-keycloak**: https://fastapi-keycloak.code-specialist.com/
 - **dify-client**: https://github.com/langgenius/dify/tree/main/sdks/python-client
 
 ---

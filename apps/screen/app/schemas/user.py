@@ -18,8 +18,8 @@ class TokenData(BaseModel):
     """Legacy token data schema.
 
     NOTE: This schema is deprecated and kept only for backward compatibility
-    with old authentication code. New code should use fastapi-keycloak's OIDCUser
-    and OrganizationContext from app.core.organization instead.
+    with old authentication code. New code should use AuthenticatedUser from
+    app.core.auth and OrganizationContext from app.core.organization_context.
     """
 
     username: str | None = None

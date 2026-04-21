@@ -6,7 +6,6 @@ import pytest
 
 from app.agents.state import AgentResult
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -88,7 +87,10 @@ class TestRunFinancialAgent:
                 _make_web_search_result(_SYNTHESIS_OUTPUT),  # Step 3: synthesize
             ]
             mock_yf.return_value = {"currentPrice": "$182.52", "marketCap": "$2.8T"}
-            mock_edgar.return_value = {"revenue": "$394.3B", "source": "https://sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=320193"}
+            mock_edgar.return_value = {
+                "revenue": "$394.3B",
+                "source": "https://sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=320193",
+            }
 
             result = await run_financial_agent(_make_state())
 
@@ -235,7 +237,9 @@ class TestPipelineDispatch:
                 _make_web_search_result(_CLASSIFICATION_PRIVATE),
                 _make_web_search_result({"totalFunding": "$50M"}),  # private search
                 _make_web_search_result({}),  # news
-                _make_web_search_result({"companyType": {"value": "private", "source": "https://crunchbase.com"}}),  # synthesize
+                _make_web_search_result(
+                    {"companyType": {"value": "private", "source": "https://crunchbase.com"}}
+                ),  # synthesize
             ]
 
             await run_financial_agent(_make_state(country_code="FR"))

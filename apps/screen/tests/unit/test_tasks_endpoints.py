@@ -2,8 +2,7 @@
 
 Covers: get_company_tasks, restart_task, task_events_stream.
 
-Tests the endpoint functions directly (not via TestClient) to avoid importing
-the full app which triggers Keycloak initialization.
+Tests the endpoint functions directly (not via TestClient).
 """
 
 from datetime import UTC, datetime
@@ -11,8 +10,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi import HTTPException
-from fastapi_keycloak import OIDCUser
 
+from app.core.auth import AuthenticatedUser
 from app.core.organization_context import OrganizationContext
 from app.models.task import Task, TaskStatus, TaskType
 from app.services.company import CompanyService
@@ -24,11 +23,11 @@ from app.services.company import CompanyService
 
 @pytest.fixture
 def mock_user():
-    user = MagicMock(spec=OIDCUser)
-    user.sub = "user-uuid-123"
-    user.preferred_username = "testuser"
-    user.roles = ["company.view"]
-    return user
+    return AuthenticatedUser(
+        sub="user-uuid-123",
+        preferred_username="testuser",
+        roles=["company.view"],
+    )
 
 
 @pytest.fixture

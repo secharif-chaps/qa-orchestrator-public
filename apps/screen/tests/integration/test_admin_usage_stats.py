@@ -27,7 +27,6 @@ from app.schemas.admin_usage import (
     UsageStatsResponse,
 )
 
-
 pytestmark = pytest.mark.integration
 
 

@@ -43,5 +43,17 @@ class TestAgentConfig:
         assert 0 <= MAX_AGENT_RETRIES <= 5
 
     def test_agent_types_are_expected(self):
-        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team", "corporate_structure", "sanctions", "financial"}
+        expected = {
+            "profile",
+            "digital",
+            "press",
+            "jobs",
+            "products",
+            "timeline",
+            "csr",
+            "team",
+            "corporate_structure",
+            "sanctions",
+            "financial",
+        }
         assert set(ALL_AGENT_TYPES) == expected

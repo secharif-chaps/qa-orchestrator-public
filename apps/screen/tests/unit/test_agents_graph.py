@@ -60,7 +60,19 @@ class TestAgentNodeMap:
             assert callable(fn), f"{name} node function is not callable"
 
     def test_expected_agent_names(self):
-        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team", "corporate_structure", "sanctions", "financial"}
+        expected = {
+            "profile",
+            "digital",
+            "press",
+            "jobs",
+            "products",
+            "timeline",
+            "csr",
+            "team",
+            "corporate_structure",
+            "sanctions",
+            "financial",
+        }
         assert set(AGENT_NODE_MAP.keys()) == expected
 
 

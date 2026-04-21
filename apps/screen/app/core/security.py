@@ -36,5 +36,3 @@ def verify_company_organization_access(company: Company | None, org_context: Org
         raise AuthorizationError("Company not found in your organization")
 
     return company
-
-
