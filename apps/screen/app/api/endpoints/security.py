@@ -6,10 +6,9 @@ All admin endpoints require admin role for access.
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends
-from fastapi_keycloak import OIDCUser
 
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.core.database_security import get_database_stats
-from app.core.keycloak import idp
 from app.schemas.security import (
     HealthCheckResponse,
     MiddlewareStatus,
@@ -25,7 +24,7 @@ router = APIRouter(prefix="/security", tags=["security"])
     response_model=SecurityStatsResponse,
     openapi_extra={"x-permissions": ["admin"]},
 )
-async def get_security_stats(user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))):
+async def get_security_stats(user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin"]))):
     """Get security statistics (admin only).
 
     Requires admin role for access.

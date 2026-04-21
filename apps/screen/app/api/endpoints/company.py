@@ -10,12 +10,11 @@ import asyncio
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi import Response as FastAPIResponse
-from fastapi_keycloak import OIDCUser
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.core.dependencies import get_company_service, get_global_service_client
-from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.organization_context import OrganizationContext, get_user_organization
 from app.core.security import verify_company_organization_access
@@ -330,7 +329,7 @@ async def update_company(
     company_data: CompanyUpdate,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["organization.write"])),
     db: Session = Depends(get_db),
 ):
     """Update a company.
@@ -370,7 +369,7 @@ async def soft_delete_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.delete"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["company.delete"])),
     db: Session = Depends(get_db),
 ):
     """Soft delete a company (archive).
@@ -413,7 +412,7 @@ async def restore_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.delete"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["company.delete"])),
     db: Session = Depends(get_db),
 ):
     """Restore a soft-deleted company.
@@ -463,7 +462,7 @@ async def refresh_company(
     response: FastAPIResponse,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["company.create"])),
     db: Session = Depends(get_db),
 ):
     """Refresh company data by re-running all tasks.
@@ -578,7 +577,7 @@ async def validate_csv_companies(
     service: CompanyService = Depends(get_company_service),
     global_service: GlobalServiceClient = Depends(get_global_service_client),
     org_context: OrganizationContext = Depends(get_user_organization),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["company.create"])),
 ):
     """Validate CSV company data without creating companies.
 
@@ -653,7 +652,7 @@ async def import_csv_companies(
     service: CompanyService = Depends(get_company_service),
     global_service: GlobalServiceClient = Depends(get_global_service_client),
     org_context: OrganizationContext = Depends(get_user_organization),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["company.create"])),
 ):
     """Import companies from CSV data.
 

@@ -327,8 +327,20 @@ class TestFinancialSchema:
     def test_metrics_list(self):
         data = {
             "metrics": [
-                {"metricName": "revenue", "period": "FY2023", "value": "$394.3B", "unit": "USD", "source": "https://sec.gov"},
-                {"metricName": "netIncome", "period": "FY2023", "value": "$96.9B", "unit": "USD", "source": "https://sec.gov"},
+                {
+                    "metricName": "revenue",
+                    "period": "FY2023",
+                    "value": "$394.3B",
+                    "unit": "USD",
+                    "source": "https://sec.gov",
+                },
+                {
+                    "metricName": "netIncome",
+                    "period": "FY2023",
+                    "value": "$96.9B",
+                    "unit": "USD",
+                    "source": "https://sec.gov",
+                },
             ]
         }
         result = FinancialAgentOutput.model_validate(data)

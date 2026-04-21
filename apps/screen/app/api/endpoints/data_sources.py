@@ -9,10 +9,9 @@ Endpoints:
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi_keycloak import OIDCUser
 from sqlalchemy.orm import Session
 
-from app.core.keycloak import idp
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.core.logging_config import get_logger
 from app.database import get_db
 from app.models.organization import FeatureFlag
@@ -43,7 +42,7 @@ async def update_data_source_config(
     source: str,
     request: DataSourceConfigRequest,
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.organizations"])),
 ) -> DataSourceConfigResponse:
     """Update data source configuration for an organization.
 
@@ -112,7 +111,7 @@ async def get_data_source_config(
     organization_id: str,
     source: str,
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.organizations"])),
 ) -> DataSourceConfigResponse:
     """Get data source configuration for an organization.
 

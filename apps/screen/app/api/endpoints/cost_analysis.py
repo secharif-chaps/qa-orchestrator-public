@@ -6,11 +6,10 @@ All endpoints require admin.costs role for access.
 from datetime import date, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from fastapi_keycloak import OIDCUser
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.core.keycloak import idp
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.database import get_db
 from app.models import Task, TaskStatus
 from app.models.company import Company
@@ -41,7 +40,7 @@ router = APIRouter(prefix="/cost-analysis", tags=["cost-analysis"])
 async def get_global_cost_analysis(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
     end_date: date | None = Query(None, description="End date for analysis (inclusive)"),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db),
 ):
     """Get global cost analysis across all organizations.
@@ -116,7 +115,7 @@ async def get_cost_by_organization(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
     end_date: date | None = Query(None, description="End date for analysis (inclusive)"),
     organization_id: str | None = Query(None, description="Filter by specific organization ID"),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db),
 ):
     """Get cost analysis broken down by organization.
@@ -205,7 +204,7 @@ async def get_cost_by_task_type(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
     end_date: date | None = Query(None, description="End date for analysis (inclusive)"),
     organization_id: str | None = Query(None, description="Filter by specific organization ID"),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db),
 ):
     """Get cost analysis broken down by task type.
@@ -296,7 +295,7 @@ async def get_cost_trends(
     end_date: date | None = Query(None, description="End date for analysis (inclusive)"),
     granularity: str = Query("daily", description="Granularity: daily, weekly, or monthly"),
     organization_id: str | None = Query(None, description="Filter by specific organization ID"),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db),
 ):
     """Get cost trends over time.
@@ -388,7 +387,7 @@ async def get_cost_trends(
     openapi_extra={"x-permissions": ["admin.costs"]},
 )
 async def refresh_materialized_views(
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])), db: Session = Depends(get_db)
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.costs"])), db: Session = Depends(get_db)
 ):
     """Refresh the materialized views for cost analysis.
 

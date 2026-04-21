@@ -8,12 +8,11 @@ Provides endpoints for:
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
-from fastapi_keycloak import OIDCUser
 from sqlalchemy.orm import Session
 
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.core.dependencies import get_db
 from app.core.exceptions import AuthorizationError, ExternalServiceError, ResourceNotFoundError
-from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.organization_context import OrganizationContext, get_user_organization
 from app.core.rate_limit import check_chapse_chat_rate_limit
@@ -60,7 +59,7 @@ def get_chapse_service(db: Session = Depends(get_db)) -> ChatService:
 )
 async def chat(
     request: ChapseChatRequest,
-    user: OIDCUser = Depends(check_chapse_chat_rate_limit),
+    user: AuthenticatedUser = Depends(check_chapse_chat_rate_limit),
     org_context: OrganizationContext = Depends(get_user_organization),
     service: ChatService = Depends(get_chapse_service),
 ):
@@ -141,7 +140,7 @@ async def chat(
 async def list_conversations(
     limit: int = Query(default=20, ge=1, le=100),
     last_id: str | None = Query(default=None),
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: AuthenticatedUser = Depends(get_current_user()),
     service: ChatService = Depends(get_chapse_service),
 ):
     """List user's conversations with company context.
@@ -185,7 +184,7 @@ async def get_conversation(
     conversation_id: str,
     limit: int = Query(default=50, ge=1, le=100),
     first_id: str | None = Query(default=None),
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: AuthenticatedUser = Depends(get_current_user()),
     service: ChatService = Depends(get_chapse_service),
 ):
     """Get conversation detail with messages.
@@ -233,7 +232,7 @@ async def get_conversation(
 )
 async def delete_conversation(
     conversation_id: str,
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: AuthenticatedUser = Depends(get_current_user()),
     service: ChatService = Depends(get_chapse_service),
 ):
     """Delete a conversation.
@@ -278,7 +277,7 @@ async def delete_conversation(
 async def rename_conversation(
     conversation_id: str,
     request: RenameRequest,
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: AuthenticatedUser = Depends(get_current_user()),
     service: ChatService = Depends(get_chapse_service),
 ):
     """Rename a conversation.
@@ -333,7 +332,7 @@ async def rename_conversation(
 )
 async def get_context(
     conversation_id: str,
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: AuthenticatedUser = Depends(get_current_user()),
     service: ChatService = Depends(get_chapse_service),
 ):
     """Get company context for a conversation.
@@ -372,7 +371,7 @@ async def get_context(
 async def update_context(
     conversation_id: str,
     request: UpdateContextRequest,
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: AuthenticatedUser = Depends(get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
     service: ChatService = Depends(get_chapse_service),
 ):

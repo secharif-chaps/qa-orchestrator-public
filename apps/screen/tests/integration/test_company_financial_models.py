@@ -16,7 +16,6 @@ import pytest
 from app.models.company import Company
 from app.models.company_financial import CompanyFinancial, CompanyFinancialMetric, CompanyFundingRound
 
-
 pytestmark = pytest.mark.integration
 
 
@@ -352,10 +351,12 @@ class TestCascadeDelete:
 
     def test_delete_company_cascades_to_metrics(self, db_session, sample_company):
         """Deleting company removes all CompanyFinancialMetric records."""
-        db_session.add_all([
-            CompanyFinancialMetric(company_id=sample_company.id, metric_name="Revenue", period="FY2024"),
-            CompanyFinancialMetric(company_id=sample_company.id, metric_name="EBITDA", period="FY2024"),
-        ])
+        db_session.add_all(
+            [
+                CompanyFinancialMetric(company_id=sample_company.id, metric_name="Revenue", period="FY2024"),
+                CompanyFinancialMetric(company_id=sample_company.id, metric_name="EBITDA", period="FY2024"),
+            ]
+        )
         db_session.commit()
 
         db_session.delete(sample_company)
@@ -366,10 +367,12 @@ class TestCascadeDelete:
 
     def test_delete_company_cascades_to_funding_rounds(self, db_session, sample_company):
         """Deleting company removes all CompanyFundingRound records."""
-        db_session.add_all([
-            CompanyFundingRound(company_id=sample_company.id, round_type="Seed"),
-            CompanyFundingRound(company_id=sample_company.id, round_type="Series A"),
-        ])
+        db_session.add_all(
+            [
+                CompanyFundingRound(company_id=sample_company.id, round_type="Seed"),
+                CompanyFundingRound(company_id=sample_company.id, round_type="Series A"),
+            ]
+        )
         db_session.commit()
 
         db_session.delete(sample_company)

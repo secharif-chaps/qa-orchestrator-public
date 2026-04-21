@@ -64,9 +64,7 @@ class TestBuildCompanyResponseFinancial:
 
     def test_financial_data_included_in_response(self, mock_db, mock_company):
         """Financial section from read_all_section_data appears in CompanyResponse."""
-        with patch(
-            "app.services.company.read_all_section_data", return_value=FULL_SECTION_DATA
-        ):
+        with patch("app.services.company.read_all_section_data", return_value=FULL_SECTION_DATA):
             response = _build_company_response(mock_db, mock_company)
 
         assert response.financial == SAMPLE_FINANCIAL_DATA
@@ -95,9 +93,7 @@ class TestBuildCompanyResponseFinancial:
 
     def test_other_sections_unaffected(self, mock_db, mock_company):
         """Adding financial does not break existing section fields."""
-        with patch(
-            "app.services.company.read_all_section_data", return_value=FULL_SECTION_DATA
-        ):
+        with patch("app.services.company.read_all_section_data", return_value=FULL_SECTION_DATA):
             response = _build_company_response(mock_db, mock_company)
 
         assert response.profile == FULL_SECTION_DATA["profile"]

@@ -23,7 +23,6 @@ from app.services.company_section_service import (
     write_section_data,
 )
 
-
 pytestmark = pytest.mark.integration
 
 

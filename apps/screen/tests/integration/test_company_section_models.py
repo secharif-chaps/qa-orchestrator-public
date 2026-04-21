@@ -22,7 +22,6 @@ from app.models.company_sections import (
     CompanyTimeline,
 )
 
-
 pytestmark = pytest.mark.integration
 
 

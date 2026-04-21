@@ -71,6 +71,11 @@ async def _announce_to_gateway(app: FastAPI) -> None:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage async resource lifecycle (checkpoint pool, graph compilation, outbox relay)."""
+    # Startup: validate security-critical config before opening the port
+    from app.core.internal_jwt import validate_internal_auth_config
+
+    validate_internal_auth_config()
+
     # Startup: pre-compile graph and open checkpoint pool
     from app.agents.graph import get_analysis_graph
     from app.services.outbox_relay import OutboxRelay

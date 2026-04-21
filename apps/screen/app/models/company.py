@@ -124,9 +124,7 @@ class Company(Base):
     csr_initiatives = relationship("CompanyCsrInitiative", back_populates="company", cascade="all, delete-orphan")
     press_items = relationship("CompanyPressItem", back_populates="company", cascade="all, delete-orphan")
     team_members = relationship("CompanyTeamMember", back_populates="company", cascade="all, delete-orphan")
-    corporate_entities = relationship(
-        "CompanyCorporateEntity", back_populates="company", cascade="all, delete-orphan"
-    )
+    corporate_entities = relationship("CompanyCorporateEntity", back_populates="company", cascade="all, delete-orphan")
     sanction_items = relationship("CompanySanctionItem", back_populates="company", cascade="all, delete-orphan")
 
     # Enrichment data from external APIs (1:N)

@@ -4,11 +4,10 @@ from collections.abc import AsyncGenerator
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
-from fastapi_keycloak import OIDCUser
 
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.core.config import settings
 from app.core.dependencies import get_company_service
-from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.organization_context import OrganizationContext, get_user_organization
 from app.core.security import verify_company_organization_access
@@ -92,7 +91,7 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
 async def get_company_tasks(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: AuthenticatedUser = Depends(get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
     """Get all tasks for a company with automatic stale task cleanup.
@@ -134,7 +133,7 @@ async def get_company_tasks(
 async def restart_task(
     task_id: int,
     service: CompanyService = Depends(get_company_service),
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: AuthenticatedUser = Depends(get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
     """Restart a specific task (if user has access to the company's organization).
@@ -179,7 +178,7 @@ async def restart_task(
         401: {"description": "Missing or invalid authentication token"},
     },
 )
-async def task_events_stream(request: Request, user: OIDCUser = Depends(idp.get_current_user())):
+async def task_events_stream(request: Request, user: AuthenticatedUser = Depends(get_current_user())):
     """SSE endpoint for real-time task status updates.
 
     Streams task status updates for all companies the user has access to.

@@ -1,38 +1,205 @@
-"""Generic role verification helper functions.
+"""Authentication and authorization for Screen backend.
 
-This module provides reusable helper functions for verifying user roles
-in endpoint bodies when dependency injection alone is not sufficient.
+All requests come through the global-service gateway which:
+1. Validates the Keycloak JWT
+2. Creates an Internal JWT (HS256, 60s TTL)
+3. Forwards `Authorization: Internal {token}` to Screen
 
-Note: For most use cases, prefer using dependency injection directly:
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))
-
-Use these helpers only when you need conditional role checks or dynamic
-role verification within endpoint logic.
+This module verifies those Internal JWTs and extracts user context.
+No Keycloak SDK needed — only shared-secret JWT verification.
 """
 
-from fastapi_keycloak import OIDCUser
+from collections.abc import Awaitable, Callable
+
+from fastapi import HTTPException, Request, status
+from pydantic import BaseModel
 
 from app.core.exceptions import AuthorizationError
+from app.core.internal_jwt import (
+    InternalJWTError,
+    IPNotAllowedError,
+    TokenExpiredError,
+    TokenInvalidError,
+    is_internal_request,
+    verify_internal_request,
+)
 from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
 
 
-def verify_role_access(user: OIDCUser, required_role: str) -> OIDCUser:
+class AuthenticatedUser(BaseModel):
+    """Authenticated user extracted from Internal JWT.
+
+    Fields are flat (mirroring the gateway's InternalTokenPayload):
+    no Keycloak-shaped ``organization`` claim reconstruction.
+    """
+
+    sub: str
+    preferred_username: str
+    email: str | None = None
+    given_name: str | None = None
+    roles: list[str] = []
+    org_id: str | None = None
+    org_name: str | None = None
+    iat: int = 0
+    exp: int = 0
+    iss: str = ""
+
+
+_REQUEST_USER_ATTR = "_authenticated_user"
+
+
+def verify_internal_jwt(request: Request) -> AuthenticatedUser:
+    """Verify the Internal JWT from the gateway and build an AuthenticatedUser.
+
+    The result is memoized on ``request.state`` so endpoints that depend on
+    both ``get_current_user`` and ``get_user_organization`` only pay the JWT
+    verification cost once per request (FastAPI caches by callable identity,
+    and our factory returns a fresh closure per call).
+
+    Args:
+        request: FastAPI request object
+
+    Returns:
+        AuthenticatedUser with user context
+
+    Raises:
+        HTTPException 401: If token is missing, expired, or invalid
+        HTTPException 403: If source IP is not allowed
+        HTTPException 500: If internal auth is misconfigured
+    """
+    cached: AuthenticatedUser | None = getattr(request.state, _REQUEST_USER_ATTR, None)
+    if cached is not None:
+        return cached
+
+    try:
+        payload = verify_internal_request(request)
+    except IPNotAllowedError as e:
+        logger.warning(f"Internal request rejected: IP not allowed - {e}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: IP not in allowed range",
+        )
+    except TokenExpiredError as e:
+        logger.warning(f"Internal request rejected: token expired - {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Internal token has expired",
+        )
+    except TokenInvalidError as e:
+        logger.warning(f"Internal request rejected: invalid token - {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid internal token",
+        )
+    except InternalJWTError as e:
+        logger.error(f"Internal JWT error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal authentication error",
+        )
+
+    user = AuthenticatedUser(
+        sub=payload.sub,
+        preferred_username=payload.username,
+        email=payload.email,
+        roles=payload.roles,
+        org_id=payload.org_id,
+        org_name=payload.org_name,
+        iat=payload.iat,
+        exp=payload.exp,
+        iss=payload.iss,
+    )
+    request.state._authenticated_user = user
+    return user
+
+
+def get_current_user(
+    required_roles: list[str] | None = None,
+) -> Callable[[Request], Awaitable[AuthenticatedUser]]:
+    """FastAPI dependency factory that verifies Internal JWT and optionally checks roles.
+
+    Args:
+        required_roles: If provided, user must have at least one of these roles (OR logic).
+            Pass ``None`` to skip role checking. An empty list is rejected to
+            prevent accidentally permissive routes when the list is computed
+            dynamically and happens to be empty.
+
+    Returns:
+        FastAPI dependency function returning AuthenticatedUser
+
+    Raises:
+        ValueError: If ``required_roles`` is an empty list (use ``None`` instead).
+
+    Example:
+        @router.get("/admin/users")
+        def list_users(
+            user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin"]))
+        ):
+            return {"users": [...]}
+    """
+    if required_roles is not None and not required_roles:
+        raise ValueError(
+            "required_roles must be None (skip role check) or a non-empty list. "
+            "An empty list would silently allow any authenticated user."
+        )
+
+    async def _dependency(
+        request: Request,
+    ) -> AuthenticatedUser:
+        if not is_internal_request(request):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Missing Internal authorization header",
+            )
+
+        user = verify_internal_jwt(request)
+
+        if required_roles:
+            user_roles = set(user.roles)
+            if not user_roles.intersection(required_roles):
+                logger.warning(
+                    "Insufficient permissions",
+                    extra={
+                        "user_id": user.sub,
+                        "username": user.preferred_username,
+                        "required": required_roles,
+                        "actual": user.roles,
+                    },
+                )
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Insufficient permissions",
+                )
+
+        logger.debug(f"Internal JWT auth OK: user={user.preferred_username}")
+        return user
+
+    return _dependency
+
+
+# --- Role verification helpers ---
+# For conditional role checks within endpoint logic when dependency injection
+# alone is not sufficient. For most use cases, prefer:
+#     user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin"]))
+
+
+def verify_role_access(user: AuthenticatedUser, required_role: str) -> AuthenticatedUser:
     """Verify user has required role.
 
     Args:
-        user: OIDC user from JWT token
+        user: Authenticated user from Internal JWT
         required_role: Role string (e.g., "admin", "admin.organizations")
 
     Returns:
-        OIDCUser if authorized
+        AuthenticatedUser if authorized
 
     Raises:
         AuthorizationError: If user lacks role
 
     Example:
-        user = Depends(idp.get_current_user())
+        user = Depends(get_current_user())
         verify_role_access(user, "admin")  # Raises if not admin
     """
     if not user.roles or required_role not in user.roles:
@@ -59,21 +226,21 @@ def verify_role_access(user: OIDCUser, required_role: str) -> OIDCUser:
     return user
 
 
-def verify_any_role_access(user: OIDCUser, required_roles: list[str]) -> OIDCUser:
+def verify_any_role_access(user: AuthenticatedUser, required_roles: list[str]) -> AuthenticatedUser:
     """Verify user has at least one of the required roles.
 
     Args:
-        user: OIDC user from JWT token
+        user: Authenticated user from Internal JWT
         required_roles: List of role strings (user needs ANY one)
 
     Returns:
-        OIDCUser if authorized
+        AuthenticatedUser if authorized
 
     Raises:
         AuthorizationError: If user has none of the required roles
 
     Example:
-        user = Depends(idp.get_current_user())
+        user = Depends(get_current_user())
         verify_any_role_access(user, ["admin", "admin.organizations"])
     """
     if not user.roles or not any(role in user.roles for role in required_roles):
@@ -90,7 +257,6 @@ def verify_any_role_access(user: OIDCUser, required_roles: list[str]) -> OIDCUse
             details={"required_roles": required_roles, "user_roles": user.roles},
         )
 
-    # Find which role(s) the user has
     matched_roles = [role for role in required_roles if role in user.roles]
     logger.debug(
         "Role access granted (any)",

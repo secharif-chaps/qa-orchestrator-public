@@ -5,7 +5,6 @@ Run with:
 """
 
 import asyncio
-import json
 import sys
 
 sys.path.insert(0, ".")
@@ -14,7 +13,7 @@ sys.path.insert(0, ".")
 async def test_yfinance(ticker: str):
     from app.agents.tools.yfinance_tool import fetch_yfinance_data
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"yfinance → {ticker}")
     print("=" * 60)
     data = await fetch_yfinance_data(ticker)
@@ -29,7 +28,7 @@ async def test_yfinance(ticker: str):
 async def test_sec_edgar(company_name: str, ticker: str | None = None):
     from app.agents.tools.sec_edgar_tool import fetch_sec_edgar_data
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"SEC EDGAR → {company_name} (ticker={ticker})")
     print("=" * 60)
     data = await fetch_sec_edgar_data(company_name, ticker)
@@ -50,14 +49,14 @@ async def main():
     # --- yfinance tests ---
     await test_yfinance("AAPL")
     await test_yfinance("MSFT")
-    await test_yfinance("MC.PA")   # Non-US: LVMH on Euronext
+    await test_yfinance("MC.PA")  # Non-US: LVMH on Euronext
 
     # --- SEC EDGAR tests ---
     await test_sec_edgar("Apple Inc.", "AAPL")
     await test_sec_edgar("Microsoft", "MSFT")
     await test_sec_edgar("Unknown Private Co", None)  # Should return {}
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("Done.")
 
 

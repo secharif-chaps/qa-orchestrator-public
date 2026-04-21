@@ -236,6 +236,46 @@ def is_internal_request(request: Request) -> bool:
     return auth.startswith(INTERNAL_AUTH_PREFIX)
 
 
+MIN_JWT_SECRET_LENGTH = 32
+
+
+def validate_internal_auth_config() -> None:
+    """Fail-fast startup check for internal-auth configuration.
+
+    A leaked Internal JWT lets the holder impersonate the bearer's user/roles
+    until the token expires (default 60s). The IP allowlist is the
+    second-layer defense-in-depth that limits where such a token can be used.
+    Outside DEV_MODE we refuse to start without it.
+
+    Raises:
+        InternalJWTError: If running with DEV_MODE=False and
+            INTERNAL_ALLOWED_IPS is empty, INTERNAL_JWT_SECRET is missing,
+            or INTERNAL_JWT_SECRET is shorter than 32 bytes.
+    """
+    if not settings.INTERNAL_JWT_SECRET:
+        raise InternalJWTError(
+            "INTERNAL_JWT_SECRET is not configured. Refusing to start: "
+            "internal authentication cannot work without a shared secret."
+        )
+
+    # RFC 8725 §3.2 — HS256 keys SHOULD be at least the digest length (32 bytes).
+    # Shorter secrets weaken HMAC and make brute-forcing the token signature feasible.
+    if len(settings.INTERNAL_JWT_SECRET) < MIN_JWT_SECRET_LENGTH:
+        raise InternalJWTError(
+            f"INTERNAL_JWT_SECRET is too short ({len(settings.INTERNAL_JWT_SECRET)} bytes). "
+            f"Minimum is {MIN_JWT_SECRET_LENGTH} bytes for HS256. "
+            f"Generate one with: openssl rand -base64 32"
+        )
+
+    if not settings.DEV_MODE and not _get_allowed_networks():
+        raise InternalJWTError(
+            "INTERNAL_ALLOWED_IPS is empty but DEV_MODE is False. "
+            "Refusing to start: a leaked Internal JWT could be replayed from "
+            "anywhere. Set INTERNAL_ALLOWED_IPS to the gateway/proxy CIDR(s), "
+            "or set DEV_MODE=true for local development only."
+        )
+
+
 def verify_internal_token(token: str) -> InternalTokenPayload:
     """
     Verify an internal JWT and extract the payload.

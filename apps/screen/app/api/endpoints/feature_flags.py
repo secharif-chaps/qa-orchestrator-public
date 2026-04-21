@@ -12,11 +12,10 @@ Endpoints:
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi_keycloak import OIDCUser
 from pydantic import BaseModel, HttpUrl, field_validator
 from sqlalchemy.orm import Session
 
-from app.core.keycloak import idp
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.core.logging_config import get_logger
 from app.core.organization_context import OrganizationContext, get_user_organization
 from app.database import get_db
@@ -117,7 +116,7 @@ class FeatureFlagToggleResponse(BaseModel):
 async def get_organization_feature_flags(
     organization_id: str,
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user()),
+    user: AuthenticatedUser = Depends(get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
     """Get all feature flags for an organization.
@@ -135,7 +134,7 @@ async def get_organization_feature_flags(
         FeatureFlagsResponse with list of feature flags
     """
     # Check if user has admin.organizations role or belongs to the organization
-    is_org_admin = hasattr(user, "roles") and user.roles and "admin.organizations" in user.roles
+    is_org_admin = "admin.organizations" in user.roles
     is_org_member = org_context.organization_id == organization_id
 
     if not (is_org_admin or is_org_member):
@@ -189,7 +188,7 @@ async def toggle_feature_flag(
     flag: FeatureFlag,
     request: FeatureFlagToggleRequest,
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.organizations"])),
 ):
     """Toggle a feature flag for an organization.
 

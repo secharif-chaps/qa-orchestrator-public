@@ -25,7 +25,6 @@ from app.models.company_children import (
     ProductItemType,
 )
 
-
 pytestmark = pytest.mark.integration
 
 

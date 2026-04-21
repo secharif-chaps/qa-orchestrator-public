@@ -1,17 +1,16 @@
 """Admin endpoints requiring admin role.
 
 This module contains all admin-only endpoints that require specific admin roles.
-Uses fastapi-keycloak for automatic role-based access control via dependency injection.
+Uses role-based access control via dependency injection.
 """
 
 from datetime import date, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi_keycloak import OIDCUser
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.core.keycloak import idp
+from app.core.auth import AuthenticatedUser, get_current_user
 from app.core.logging_config import get_logger
 from app.database import get_db
 from app.models.company import Company
@@ -39,7 +38,7 @@ logger = get_logger(__name__)
 )
 async def fail_stuck_tasks(
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.organizations"])),
 ):
     """Fail all pending and running tasks.
 
@@ -227,7 +226,7 @@ async def get_usage_stats(
     start_date: str = Query(..., description="Start date in ISO format (YYYY-MM-DD)", examples=["2025-01-01"]),
     end_date: str = Query(..., description="End date in ISO format (YYYY-MM-DD)", examples=["2025-01-07"]),
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.organizations"])),
 ):
     """Get usage statistics for the admin dashboard.
 

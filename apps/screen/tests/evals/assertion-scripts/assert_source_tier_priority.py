@@ -125,9 +125,7 @@ def get_assert(output, context):
     has_tier1a = bool(vars_.get("scraped", "").strip())
     has_tier1b = bool(vars_.get("wikipedia", "").strip())
     has_tier2 = bool(vars_.get("items", "").strip())
-    has_tier3 = bool(vars_.get("mistral", "").strip()) or bool(
-        vars_.get("gpt", "").strip()
-    )
+    has_tier3 = bool(vars_.get("mistral", "").strip()) or bool(vars_.get("gpt", "").strip())
 
     # Build set of available tiers
     available_tiers = set()
@@ -188,8 +186,7 @@ def get_assert(output, context):
         return {
             "pass": len(violations) == 0,
             "score": score,
-            "reason": f"{len(violations)} tier priority violation(s): "
-            + "; ".join(violations),
+            "reason": f"{len(violations)} tier priority violation(s): " + "; ".join(violations),
         }
 
     return {
