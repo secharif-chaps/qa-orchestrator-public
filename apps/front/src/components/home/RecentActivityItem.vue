@@ -1,7 +1,7 @@
 <template>
   <RouterLink
     :to="activityRoute"
-    class="hover:bg-base-200 flex cursor-pointer items-center gap-2 self-stretch transition-colors"
+    class="hover:bg-sage-100 dark:hover:bg-sage-800 -mx-2 flex cursor-pointer items-center gap-2 self-stretch rounded-md px-2 py-1.5 transition-colors"
   >
     <AvatarInitials :name="activity.owner" />
 
