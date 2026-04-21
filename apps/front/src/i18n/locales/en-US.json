@@ -989,6 +989,7 @@
       "title": "Confirm Logout"
     },
     "modules": {
+      "discover": "Discover",
       "explore": "Knowledge Graph",
       "screen": "Company Card",
       "target": "Watchfile",
