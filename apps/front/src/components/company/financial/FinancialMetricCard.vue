@@ -1,8 +1,11 @@
 <template>
-  <div v-if="sourcedValue?.value" class="bg-base-200 rounded-card border-primary-stroke border p-4">
+  <div
+    v-if="sourcedValue?.value"
+    class="bg-primary-lighter rounded-card border-primary-lighter-stroke border p-4"
+  >
     <div class="relative flex items-center gap-4">
-      <div class="bg-base-300 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
-        <i :class="icon" class="text-secondary text-lg"></i>
+      <div class="bg-base-300 flex size-10 shrink-0 items-center justify-center rounded-lg">
+        <Icon :icon="icon" class="text-neutral-black-font text-lg" />
       </div>
 
       <div class="min-w-0 flex-1">
@@ -12,16 +15,16 @@
           </h3>
           <Tag
             v-if="growthTag"
-            :variant="growthPositive ? 'success' : 'error'"
+            :intent="growthPositive ? 'success' : 'danger'"
             :label="growthTag"
             size="xs"
-            :icon="growthPositive ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"
+            :icon="growthPositive ? 'fa-arrow-up' : 'fa-arrow-down'"
           />
         </div>
-        <p v-if="sourcedValue.context" class="text-secondary/40 text-xs">
+        <p v-if="sourcedValue.context" class="text-neutral-black-font text-xs">
           {{ sourcedValue.context }}
         </p>
-        <p class="text-secondary/70 text-sm">{{ label }}</p>
+        <p class="text-neutral-black-font/70 text-sm">{{ label }}</p>
       </div>
 
       <div class="absolute top-0 right-0">
@@ -33,8 +36,8 @@
 
 <script lang="ts" setup>
 import Source from '@/components/company/Source.vue'
-import Tag from '@/components/ui/Tag.vue'
 import type { SourcedValue } from '@/types/company'
+import { Icon, Tag } from '@owlint/feathers-vue'
 
 interface Props {
   icon: string

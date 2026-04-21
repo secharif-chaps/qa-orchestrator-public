@@ -1,5 +1,8 @@
 <template>
-  <div v-if="metrics.length > 0" class="flex flex-col gap-4">
+  <div
+    v-if="metrics.length > 0"
+    class="bg-primary-lightest rounded-card border-primary-lighter-stroke flex flex-col gap-4 border p-6"
+  >
     <h3 class="text-base font-semibold">
       {{ t('screen.profile.sections.financial.history.title') }}
     </h3>
@@ -8,60 +11,28 @@
       <template #cell(period)="{ item }">
         <td class="px-4 py-3 font-medium">{{ item.period }}</td>
       </template>
-
       <template #cell(revenue)="{ item }">
-        <td class="px-4 py-3">
-          <span v-if="item.revenue">{{ item.revenue.value }}</span>
-          <span v-else class="text-secondary/50">{{ t('common.na') }}</span>
-          <p v-if="item.revenue?.context" class="text-secondary/50 text-xs italic">
-            {{ item.revenue.context }}
-          </p>
-          <Source v-if="item.revenue?.source" :source="item.revenue.source" />
-        </td>
+        <FinancialHistoryCell :cell="item.revenue" />
       </template>
-
       <template #cell(ebitda)="{ item }">
-        <td class="px-4 py-3">
-          <span v-if="item.ebitda">{{ item.ebitda.value }}</span>
-          <span v-else class="text-secondary/50">{{ t('common.na') }}</span>
-          <p v-if="item.ebitda?.context" class="text-secondary/50 text-xs italic">
-            {{ item.ebitda.context }}
-          </p>
-          <Source v-if="item.ebitda?.source" :source="item.ebitda.source" />
-        </td>
+        <FinancialHistoryCell :cell="item.ebitda" />
       </template>
-
       <template #cell(netIncome)="{ item }">
-        <td class="px-4 py-3">
-          <span v-if="item.netIncome">{{ item.netIncome.value }}</span>
-          <span v-else class="text-secondary/50">{{ t('common.na') }}</span>
-          <p v-if="item.netIncome?.context" class="text-secondary/50 text-xs italic">
-            {{ item.netIncome.context }}
-          </p>
-          <Source v-if="item.netIncome?.source" :source="item.netIncome.source" />
-        </td>
+        <FinancialHistoryCell :cell="item.netIncome" />
       </template>
-
       <template #cell(fcf)="{ item }">
-        <td class="px-4 py-3">
-          <span v-if="item.fcf">{{ item.fcf.value }}</span>
-          <span v-else class="text-secondary/50">{{ t('common.na') }}</span>
-          <p v-if="item.fcf?.context" class="text-secondary/50 text-xs italic">
-            {{ item.fcf.context }}
-          </p>
-          <Source v-if="item.fcf?.source" :source="item.fcf.source" />
-        </td>
+        <FinancialHistoryCell :cell="item.fcf" />
       </template>
     </Table>
   </div>
 </template>
 
 <script lang="ts" setup>
+import type { FinancialMetric } from '@/types/company'
+import { Table } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Table } from '@owlint/feathers-vue'
-import Source from '@/components/company/Source.vue'
-import type { FinancialMetric } from '@/types/company'
+import FinancialHistoryCell from './FinancialHistoryCell.vue'
 
 const { t } = useI18n()
 
