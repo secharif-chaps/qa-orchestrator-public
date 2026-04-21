@@ -8,16 +8,16 @@
     <div class="flex flex-col items-center justify-center px-4 py-12 text-center">
       <Icon
         :icon="icon"
-        class="mb-4 text-5xl text-gray-300"
+        class="text-neutral-light-font mb-4 text-5xl"
         :lib="fill ? 'fa-solid' : 'fa-regular'"
       />
-      <h3 v-if="title" class="mb-1 text-lg font-medium text-gray-900">
+      <h3 v-if="title" class="text-neutral-font mb-1 text-lg font-medium">
         {{ title }}
       </h3>
-      <h3 v-else class="mb-1 text-lg font-medium text-gray-900">
+      <h3 v-else class="text-neutral-font mb-1 text-lg font-medium">
         {{ $t('common.empty') }}
       </h3>
-      <p v-if="description" class="max-w-112 text-gray-500">
+      <p v-if="description" class="text-neutral-muted-font max-w-112">
         {{ description }}
       </p>
     </div>

@@ -77,21 +77,18 @@
       />
     </div>
 
-    <div
-      v-else-if="!loading && !error"
-      class="flex flex-col items-center py-16"
-      :class="fixedHeight ? 'mb-6 flex-1' : ''"
-    >
-      <Icon icon="fa-user-slash" class="mb-3 text-4xl text-gray-400" />
-      <span class="text-lg text-gray-500">
-        {{ $t('target.watchFiles.actors.selection_modal.no_actors') }}
-      </span>
+    <div v-else-if="!loading && !error" :class="fixedHeight ? 'mb-6 flex-1' : ''">
+      <EmptyState
+        :title="$t('target.watchFiles.actors.selection_modal.no_actors')"
+        icon="fa-user-slash"
+        vertical-align="center"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@owlint/feathers-vue'
+import EmptyState from '@target/components/global/EmptyState.vue'
 import ErrorMessage from '@target/components/global/ErrorMessage.vue'
 import SectionListPaginator from '@target/components/watchFiles/EditSection/SectionListPaginator.vue'
 import type { WatchFileActor } from '@target/types/watchFile'
