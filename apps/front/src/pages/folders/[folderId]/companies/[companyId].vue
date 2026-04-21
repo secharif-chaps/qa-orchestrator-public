@@ -1,92 +1,23 @@
 <template>
   <div class="gap-xl flex flex-col">
-    <!-- Company Header -->
-    <div class="flex items-center gap-4">
-      <div class="flex min-w-0 shrink items-center gap-4">
-        <!-- Loading around the image when task running -->
-        <SquareProgressRing :segments="progressSegments" :show-progress="showProgressRing">
-          <div class="relative size-12 shrink-0 overflow-hidden rounded-md bg-white">
-            <img
-              v-if="getCompanyDomain(company?.website)"
-              :src="getLogoUrl(company?.website)"
-              :alt="`${company?.name} logo`"
-              class="h-full w-full object-contain"
-              :class="{ 'opacity-30': showProgressRing }"
-              @error="showFallbackIcon = true"
-              v-show="!showFallbackIcon"
-            />
-            <Badge
-              v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
-              variant="secondary"
-              color="sage"
-              icon="fa-building"
-              size="lg"
-              class="h-full w-full rounded-none"
-            />
-          </div>
-        </SquareProgressRing>
-        <div class="flex flex-col gap-1">
-          <h1 class="text-2xl font-bold">{{ company?.name }}</h1>
-          <Transition
-            mode="out-in"
-            enter-active-class="transition-all duration-300 ease-out"
-            leave-active-class="transition-all duration-300 ease-out"
-            enter-from-class="opacity-0 translate-y-1.5"
-            leave-to-class="opacity-0 -translate-y-1.5"
-          >
-            <div v-if="showProgressRing" key="activity" class="relative h-5 overflow-y-clip">
-              <Transition
-                enter-active-class="transition-all duration-300 ease-out"
-                leave-active-class="transition-all duration-300 ease-out"
-                enter-from-class="opacity-0 translate-y-full"
-                leave-to-class="opacity-0 -translate-y-full"
-              >
-                <span
-                  :key="currentMessage"
-                  class="text-sage-600 absolute top-0 left-0 text-sm whitespace-nowrap"
-                >
-                  {{ currentMessage }}
-                </span>
-              </Transition>
-            </div>
-          </Transition>
-        </div>
-      </div>
-
-      <!-- Tabs — flex-1 gives the wrapper a stable width for overflow calc -->
-      <CompanyHeaderTabs
-        class="min-w-0 flex-1"
-        :folder-id="folderId"
-        :company-id="companyId"
-        :job-offers-count="company?.jobs?.offers?.length"
-      />
-
-      <!-- Action Buttons -->
-      <div class="flex shrink-0 items-center gap-2">
-        <CompanyTranslation v-model="selectedLanguage" :company-id="companyId" />
-        <Export />
-        <span v-if="isOwner" :title="refreshButtonTooltip">
-          <Button
-            variant="tertiary"
-            icon="fa fa-refresh"
-            :label="t('screen.company.refresh.button')"
-            :disabled="hasRunningTasks || !allTasksSucceeded || !hasEnoughTokens"
-            :loading="isRefreshing"
-            @click="openRefreshModal"
-          />
-        </span>
-        <CompanyDeleteButton :company="company" />
-        <Button
-          v-if="isDebugUser"
-          variant="tertiary"
-          size="sm"
-          icon="fa-bug"
-          icon-only
-          :title="t('screen.company.debug.workflowTitle')"
-          @click="showTasksModal = true"
-        />
-      </div>
-    </div>
+    <CompanyHeader
+      :company="company"
+      :folder-id="folderId"
+      :company-id="companyId"
+      :progress-segments="progressSegments"
+      :show-progress-ring="showProgressRing"
+      :current-message="currentMessage"
+      :is-owner="isOwner"
+      :refresh-button-tooltip="refreshButtonTooltip"
+      :has-running-tasks="hasRunningTasks"
+      :all-tasks-succeeded="allTasksSucceeded"
+      :has-enough-tokens="hasEnoughTokens"
+      :is-refreshing="isRefreshing"
+      :is-debug-user="isDebugUser"
+      v-model:selected-language="selectedLanguage"
+      @open-refresh-modal="openRefreshModal"
+      @open-tasks-modal="showTasksModal = true"
+    />
 
     <!-- Created by + Tab content -->
     <div class="gap-xl bg-neutral p-xl flex flex-col rounded-xl">
@@ -116,13 +47,9 @@
 </template>
 
 <script lang="ts" setup>
+import CompanyHeader from '@/components/company/CompanyHeader.vue'
 import CompanyRefreshModal from '@/components/companies/CompanyRefreshModal.vue'
-import CompanyDeleteButton from '@/components/company/CompanyDeleteButton.vue'
-import CompanyHeaderTabs from '@/components/company/CompanyHeaderTabs.vue'
-import CompanyTranslation from '@/components/company/CompanyTranslation.vue'
-import Export from '@/components/company/Export.vue'
 import TasksFlowModal from '@/components/company/TasksFlowModal.vue'
-import SquareProgressRing from '@/components/ui/SquareProgressRing.vue'
 import { useActivityMessages } from '@/composables/useActivityMessages'
 import { useTaskProgress } from '@/composables/useTaskProgress'
 import { useRefreshCompany } from '@/mutations/companies'
@@ -132,7 +59,7 @@ import { companyTasksQuery } from '@/queries/tasks'
 import { organizationBalanceQuery } from '@/queries/tokens'
 import { useAuthStore } from '@/stores/auth'
 import { formatFullDate } from '@/utils/time'
-import { Badge, Button } from '@owlint/feathers-vue'
+import { Badge } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, provide, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -177,7 +104,6 @@ const { currentMessage } = useActivityMessages(showProgressRing)
 
 // Modal state
 const showTasksModal = ref(false)
-const showFallbackIcon = ref(false)
 const showRefreshModal = ref(false)
 
 // Get current organization
@@ -209,11 +135,6 @@ const refreshButtonTooltip = computed(() => {
   return ''
 })
 
-// Reset fallback icon when company changes
-watch(company, () => {
-  showFallbackIcon.value = false
-})
-
 // Handle 404 errors - redirect to companies list if company doesn't exist
 watch([error, status], ([newError, newStatus]) => {
   // Check for 404 error in multiple possible formats
@@ -238,27 +159,6 @@ const handleRefreshCompany = () => {
 const openRefreshModal = () => {
   if (company.value) {
     showRefreshModal.value = true
-  }
-}
-
-// Helper function to get logo URL from logo.dev
-const getLogoUrl = (website?: string) => {
-  const domain = getCompanyDomain(website)
-  if (!domain) return ''
-  return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
-}
-
-// Helper function to extract domain from website URL
-const getCompanyDomain = (website?: string) => {
-  if (!website) return null
-  try {
-    // Remove protocol and www
-    let domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '')
-    // Remove trailing slash and any path
-    domain = domain.split('/')[0]
-    return domain
-  } catch {
-    return null
   }
 }
 </script>
