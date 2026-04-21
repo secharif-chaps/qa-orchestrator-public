@@ -15,7 +15,13 @@ export default {
     'cd apps/front && npx stylelint --fix',
     'cd apps/front && npx prettier --write',
   ],
-  // Python backends: ruff (via Docker — not installed on host).
+  // Frontend: i18n locale files (via Docker — consistent Node version)
+  'apps/front/src/i18n/locales/*.json': [
+    'docker compose exec -T frontend node scripts/i18n/format.mjs',
+    'docker compose exec -T frontend node scripts/i18n/duplicates.mjs',
+    'docker compose exec -T frontend node scripts/i18n/check.mjs',
+  ],
+  // Python backends: ruff (via Docker — not installed on host)
   'apps/screen/**/*.py': (filenames) => {
     const relative = filenames.map((f) => f.replace(/.*apps\/screen\//, ''))
     return [
@@ -58,4 +64,12 @@ export default {
       `docker compose exec -T target php vendor/bin/phpstan --memory-limit=1G analyse`,
     ]
   },
+  // Taskfile validation + formatting
+  'Taskfile.yml': ['cd apps/front && npx prettier --write ../../Taskfile.yml'],
+  // Documentation
+  'docs/**/*.md': (files) => [`cd apps/front && npx prettier --write ${files.map((f) => `../../${f}`).join(' ')}`],
+  // Catch-all: format everything else not already handled
+  '!(apps/**|node_modules/**|.husky/**|infra/**|docs/**)*.{json,yaml,yml,md}': (files) => [
+    `cd apps/front && npx prettier --write --ignore-unknown ${files.map((f) => `../../${f}`).join(' ')}`,
+  ],
 }
