@@ -76,21 +76,21 @@
           <p class="text-neutral-black-font text-lg font-bold">
             {{ t('screen.company.onlinePresence.title') }}
           </p>
-          <div class="grid grid-cols-2 lg:grid-cols-3">
+          <div class="gap-xs grid grid-cols-2 lg:grid-cols-3">
             <a
               v-if="company?.website"
               :href="formatWebsiteUrl(company.website)"
               target="_blank"
               rel="noopener noreferrer"
-              class="bg-primary-lighter border-primary-lighter-stroke hover:bg-primary-lighter p-xs gap-md flex cursor-pointer items-center rounded-lg border transition-colors"
+              class="bg-primary-lighter border-primary-light-stroke text-secondary-alt-font hover:bg-primary-lighter p-xs gap-md flex cursor-pointer items-center rounded-lg border transition-colors"
             >
-              <Icon icon="fa-link" class="fa-fw text-neutral-black-font" />
+              <Icon icon="fa-link" class="fa-fw" />
               <div class="flex w-44 flex-col">
-                <div class="gap-3xs text-neutral-black-font-alt-font flex items-center text-sm">
+                <div class="gap-3xs flex items-center">
                   <span class="truncate">
                     {{ t('screen.company.onlinePresence.website') }}
                   </span>
-                  <Icon icon="fa-external-link" />
+                  <Icon icon="fa-external-link" class="text-base" />
                 </div>
                 <span class="text-neutral-black-font truncate text-sm">
                   {{ company.website }}
