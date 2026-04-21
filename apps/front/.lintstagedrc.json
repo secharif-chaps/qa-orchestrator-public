@@ -1,3 +1,0 @@
-{
-  "src/i18n/locales/*.json": ["node scripts/i18n/format.mjs"]
-}
