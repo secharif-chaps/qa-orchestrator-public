@@ -119,7 +119,9 @@ const {
   refetch: refetchModules,
 } = useQuery(() => organizationModulesQuery({ organizationId: organizationId?.value || '' }))
 
-const modules = computed(() => modulesData.value?.modules ?? [])
+const modules = computed(() =>
+  (modulesData.value?.modules ?? []).filter((m) => m.name !== 'stream'),
+)
 
 // Query for feature flags
 const { data: featureFlagsData, isLoading: isLoadingFeatureFlags } = useQuery({

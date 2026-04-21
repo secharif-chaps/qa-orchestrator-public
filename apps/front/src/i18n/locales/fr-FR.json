@@ -722,6 +722,8 @@
         "companyScreen": "Fiche entreprise",
         "graphrag": "Cartographie",
         "graphragDescription": "Explorez les connexions et relations",
+        "stream": "Stream",
+        "streamDescription": "Distribuez les événements vers des canaux externes",
         "watchfile": "Veille",
         "watchfileDescription": "Configurez une surveillance sur des sujets spécifiques"
       },
@@ -927,12 +929,19 @@
       "shared": {
         "badge": "Partagé"
       },
+      "tab": {
+        "items": "Éléments"
+      },
       "table": {
         "actions": "Actions",
         "created": "Créé le",
         "items": "Éléments",
         "name": "Nom",
         "owner": "Propriétaire"
+      },
+      "tabs": {
+        "broadcasts": "Diffusions",
+        "items": "Éléments"
       },
       "title": "Dossiers",
       "tooltip": {
@@ -2313,6 +2322,10 @@
         "description": "Enrichissez les profils d'entreprises avec les données officielles du registre français via Pappers.",
         "name": "Pappers"
       },
+      "stream": {
+        "description": "Distribution multi-canal des événements (Teams, Slack, Webhook)",
+        "name": "Stream"
+      },
       "toggle": {
         "disabled": "désactivée",
         "enabled": "activée",
@@ -2634,6 +2647,128 @@
       }
     },
     "viewSection": "Configurer"
+  },
+  "stream": {
+    "actions": {
+      "activate": "Activer",
+      "archive": "Archiver",
+      "delete": "Supprimer",
+      "dispatch": "Envoyer maintenant",
+      "edit": "Modifier",
+      "pause": "Mettre en pause"
+    },
+    "card": {
+      "lastModified": "Dernière modification {date}"
+    },
+    "channel": {
+      "slack_webhook": "Slack",
+      "teams": "Teams",
+      "webhook": "Webhook"
+    },
+    "deleteModal": {
+      "description": "Êtes-vous sûr de vouloir supprimer la diffusion « {name} » ? Cette action est irréversible.",
+      "title": "Supprimer la diffusion"
+    },
+    "delivery": {
+      "columns": {
+        "attempts": "Tentatives",
+        "deliveredAt": "Livré le",
+        "error": "Erreur",
+        "eventType": "Type d'événement",
+        "status": "Statut"
+      },
+      "empty": "Aucune livraison pour le moment",
+      "status": {
+        "delivered": "Livré",
+        "failed": "Échoué",
+        "pending": "En attente",
+        "skipped": "Ignoré"
+      },
+      "title": "Historique des livraisons"
+    },
+    "filter": {
+      "all": "Tous les stream",
+      "slack": "Slack",
+      "teams": "Teams",
+      "webhook": "Webhook"
+    },
+    "form": {
+      "cancel": "Annuler",
+      "channelConfig": "Configuration du canal",
+      "channelType": "Type de canal",
+      "createDescription": "Configurez un nouveau canal de distribution pour les événements de ce dossier.",
+      "createTitle": "Créer une diffusion",
+      "description": "Description",
+      "descriptionPlaceholder": "Description optionnelle",
+      "events": "Événements",
+      "eventsComingSoon": "Bientôt disponible",
+      "eventsRequired": "Sélectionnez au moins un événement",
+      "mode": "Mode de diffusion",
+      "modeComingSoon": "Bientôt disponible",
+      "name": "Nom",
+      "namePlaceholder": "Nom de la diffusion",
+      "nameRequired": "Le nom est requis",
+      "slackUrl": "URL du webhook",
+      "slackUrlPlaceholder": "https://hooks.slack.com/services/...",
+      "submit": "Créer la diffusion",
+      "submitEdit": "Enregistrer les modifications",
+      "teamsUrl": "URL du workflow",
+      "teamsUrlPlaceholder": "https://prod-xx.westeurope.logic.azure.com/...",
+      "testConnection": "Tester la connexion",
+      "testError": "Échec de la connexion",
+      "testSuccess": "Connexion réussie",
+      "webhookAddHeader": "Ajouter un en-tête",
+      "webhookHeaderKey": "Clé",
+      "webhookHeaders": "En-têtes personnalisés",
+      "webhookHeaderValue": "Valeur",
+      "webhookMethod": "Méthode HTTP",
+      "webhookSecret": "Secret HMAC",
+      "webhookSecretPlaceholder": "Secret partagé (optionnel)",
+      "webhookUrl": "URL",
+      "webhookUrlPlaceholder": "https://api.example.com/webhook"
+    },
+    "list": {
+      "columns": {
+        "actions": "Actions",
+        "lastModified": "Dernière modification",
+        "name": "Nom du stream",
+        "status": "Statut",
+        "type": "Type"
+      },
+      "count": "{count, plural, =0 {Aucune diffusion dans ce dossier} one {# diffusion dans ce dossier} other {# diffusions dans ce dossier}}",
+      "empty": {
+        "cta": "Créer une diffusion",
+        "description": "Créez votre première diffusion pour distribuer les événements de ce dossier.",
+        "title": "Aucune diffusion"
+      },
+      "noResults": "Aucun résultat trouvé"
+    },
+    "mode": {
+      "live": "Temps réel",
+      "recurrence": "Récurrence"
+    },
+    "status": {
+      "active": "Actif",
+      "archived": "Archivé",
+      "draft": "Brouillon",
+      "paused": "En pause"
+    },
+    "tabs": {
+      "history": "Historique",
+      "settings": "Paramètres"
+    },
+    "toast": {
+      "createError": "Échec de la création de la diffusion",
+      "createSuccess": "Diffusion créée avec succès",
+      "deleteError": "Échec de la suppression de « {name} »",
+      "deleteSuccess": "Diffusion « {name} » supprimée",
+      "dispatchError": "Échec de l'envoi des événements",
+      "dispatchSuccess": "Événements envoyés avec succès",
+      "statusUpdateError": "Échec de la mise à jour du statut",
+      "statusUpdateSuccess": "Statut de la diffusion mis à jour",
+      "updateError": "Échec de la mise à jour de la diffusion",
+      "updateSuccess": "Diffusion mise à jour avec succès"
+    }
   },
   "target": {
     "document": {

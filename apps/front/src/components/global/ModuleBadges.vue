@@ -60,7 +60,7 @@ import { useQuery } from '@pinia/colada'
 import { Tag } from '@owlint/feathers-vue'
 import { organizationModulesQuery } from '@/queries/tokens'
 import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
-import { MODULE_CONFIG, getModuleDisplayConfig, type ModuleDisplayConfig } from '@/config/modules'
+import { getModuleDisplayConfig, type ModuleDisplayConfig } from '@/config/modules'
 
 const { organizationId } = defineProps<{ organizationId: string }>()
 
@@ -70,9 +70,8 @@ const { data: featureFlagsData } = useQuery(() => organizationFeatureFlagsQuery(
 const modules = computed(() => {
   if (!modulesData.value?.modules) return []
 
-  // Skip unrecognized module names to prevent phantom "Unknown module" buttons
   return modulesData.value.modules
-    .filter((module) => module.name in MODULE_CONFIG)
+    .filter((module) => module.name !== 'stream') // stream is a feature flag, not a module badge
     .map((module) => getModuleDisplayConfig(module.name, module.enabled))
 })
 

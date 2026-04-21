@@ -7,7 +7,7 @@
  */
 
 // Feature flag names - matches backend FeatureFlag enum
-export type FeatureFlagName = 'translation' | 'discover' | 'pappers' | 'worldcheck'
+export type FeatureFlagName = 'translation' | 'discover' | 'pappers' | 'worldcheck' | 'stream'
 
 /**
  * Feature flag configuration for an organization.
@@ -82,6 +82,11 @@ export const FEATURE_FLAG_CONFIG: Record<
     labelKey: 'settings.featureFlags.worldcheck.name',
     descriptionKey: 'settings.featureFlags.worldcheck.description',
     icon: 'fa fa-shield',
+  },
+  stream: {
+    labelKey: 'settings.featureFlags.stream.name',
+    descriptionKey: 'settings.featureFlags.stream.description',
+    icon: 'fa fa-paper-plane',
   },
 }
 

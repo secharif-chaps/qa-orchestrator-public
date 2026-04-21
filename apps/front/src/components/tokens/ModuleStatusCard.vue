@@ -62,24 +62,13 @@ const moduleIcons: Record<ModuleName, string> = {
   screen: 'fa fa-search',
   target: 'fa fa-bullseye',
   explore: 'fa fa-compass',
+  stream: 'fa fa-paper-plane',
 }
 
 // Computed properties
 const moduleIcon = computed(() => moduleIcons[props.module] || 'fa fa-cog')
 
-const moduleDescription = computed(() =>
-  t(`settings.tokens.modules.${props.module}.description`, getDefaultDescription(props.module)),
-)
-
-// Default descriptions for modules (core modules only)
-function getDefaultDescription(module: ModuleName): string {
-  const descriptions: Record<ModuleName, string> = {
-    screen: 'Search and create company profiles',
-    target: 'Target specific companies',
-    explore: 'Explore company relationships',
-  }
-  return descriptions[module] || 'Module functionality'
-}
+const moduleDescription = computed(() => t(`settings.tokens.modules.${props.module}.description`))
 
 // Toggle module enabled state
 async function handleToggle() {

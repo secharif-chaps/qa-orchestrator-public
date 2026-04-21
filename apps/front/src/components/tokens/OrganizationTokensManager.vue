@@ -234,7 +234,9 @@ const errorMessage = computed(() => {
 const balance = computed(() => balanceData.value?.balance ?? 0)
 const companyEquivalent = computed(() => Math.floor(balance.value / tokensPerCompany.value))
 
-const modules = computed(() => modulesData.value?.modules ?? [])
+const modules = computed(() =>
+  (modulesData.value?.modules ?? []).filter((m) => m.name !== 'stream'),
+)
 
 const companyEquivalentColor = computed(() => {
   if (companyEquivalent.value === 0) return 'text-error'

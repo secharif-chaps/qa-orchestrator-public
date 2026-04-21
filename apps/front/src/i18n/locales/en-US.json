@@ -722,6 +722,8 @@
         "companyScreen": "Company Screen",
         "graphrag": "Knowledge Graph",
         "graphragDescription": "Explore connections and relationships",
+        "stream": "Stream",
+        "streamDescription": "Distribute events to external channels",
         "watchfile": "Watchfile",
         "watchfileDescription": "Set up monitoring for specific topics"
       },
@@ -927,12 +929,19 @@
       "shared": {
         "badge": "Shared"
       },
+      "tab": {
+        "items": "Items"
+      },
       "table": {
         "actions": "Actions",
         "created": "Created",
         "items": "Items",
         "name": "Name",
         "owner": "Owner"
+      },
+      "tabs": {
+        "broadcasts": "Broadcasts",
+        "items": "Items"
       },
       "title": "Folders",
       "tooltip": {
@@ -2313,6 +2322,10 @@
         "description": "Enrich company profiles with official French registry data from Pappers.",
         "name": "Pappers"
       },
+      "stream": {
+        "description": "Multi-channel event distribution (Teams, Slack, Webhook)",
+        "name": "Stream"
+      },
       "toggle": {
         "disabled": "disabled",
         "enabled": "enabled",
@@ -2634,6 +2647,128 @@
       }
     },
     "viewSection": "Configure"
+  },
+  "stream": {
+    "actions": {
+      "activate": "Activate",
+      "archive": "Archive",
+      "delete": "Delete",
+      "dispatch": "Send now",
+      "edit": "Edit",
+      "pause": "Pause"
+    },
+    "card": {
+      "lastModified": "Last modified {date}"
+    },
+    "channel": {
+      "slack_webhook": "Slack",
+      "teams": "Teams",
+      "webhook": "Webhook"
+    },
+    "deleteModal": {
+      "description": "Are you sure you want to delete the broadcast \"{name}\"? This action cannot be undone.",
+      "title": "Delete broadcast"
+    },
+    "delivery": {
+      "columns": {
+        "attempts": "Attempts",
+        "deliveredAt": "Delivered at",
+        "error": "Error",
+        "eventType": "Event type",
+        "status": "Status"
+      },
+      "empty": "No deliveries yet",
+      "status": {
+        "delivered": "Delivered",
+        "failed": "Failed",
+        "pending": "Pending",
+        "skipped": "Skipped"
+      },
+      "title": "Delivery history"
+    },
+    "filter": {
+      "all": "All streams",
+      "slack": "Slack",
+      "teams": "Teams",
+      "webhook": "Webhook"
+    },
+    "form": {
+      "cancel": "Cancel",
+      "channelConfig": "Channel configuration",
+      "channelType": "Channel type",
+      "createDescription": "Set up a new distribution channel for events in this folder.",
+      "createTitle": "Create a broadcast",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional description",
+      "events": "Events",
+      "eventsComingSoon": "Coming soon",
+      "eventsRequired": "Select at least one event",
+      "mode": "Broadcast mode",
+      "modeComingSoon": "Coming soon",
+      "name": "Name",
+      "namePlaceholder": "Broadcast name",
+      "nameRequired": "Name is required",
+      "slackUrl": "Webhook URL",
+      "slackUrlPlaceholder": "https://hooks.slack.com/services/...",
+      "submit": "Create broadcast",
+      "submitEdit": "Save changes",
+      "teamsUrl": "Workflow URL",
+      "teamsUrlPlaceholder": "https://prod-xx.westeurope.logic.azure.com/...",
+      "testConnection": "Test connection",
+      "testError": "Connection failed",
+      "testSuccess": "Connection successful",
+      "webhookAddHeader": "Add header",
+      "webhookHeaderKey": "Key",
+      "webhookHeaders": "Custom Headers",
+      "webhookHeaderValue": "Value",
+      "webhookMethod": "HTTP Method",
+      "webhookSecret": "HMAC Secret",
+      "webhookSecretPlaceholder": "Shared secret (optional)",
+      "webhookUrl": "URL",
+      "webhookUrlPlaceholder": "https://api.example.com/webhook"
+    },
+    "list": {
+      "columns": {
+        "actions": "Actions",
+        "lastModified": "Last modified",
+        "name": "Stream name",
+        "status": "Status",
+        "type": "Type"
+      },
+      "count": "{count, plural, =0 {No broadcasts in this folder} one {# broadcast in this folder} other {# broadcasts in this folder}}",
+      "empty": {
+        "cta": "Create a broadcast",
+        "description": "Create your first broadcast to distribute events from this folder.",
+        "title": "No broadcasts"
+      },
+      "noResults": "No results found"
+    },
+    "mode": {
+      "live": "Real-time",
+      "recurrence": "Recurrence"
+    },
+    "status": {
+      "active": "Active",
+      "archived": "Archived",
+      "draft": "Draft",
+      "paused": "Paused"
+    },
+    "tabs": {
+      "history": "History",
+      "settings": "Settings"
+    },
+    "toast": {
+      "createError": "Failed to create broadcast",
+      "createSuccess": "Broadcast created successfully",
+      "deleteError": "Failed to delete \"{name}\"",
+      "deleteSuccess": "Broadcast \"{name}\" deleted",
+      "dispatchError": "Failed to dispatch events",
+      "dispatchSuccess": "Events dispatched successfully",
+      "statusUpdateError": "Failed to update status",
+      "statusUpdateSuccess": "Broadcast status updated",
+      "updateError": "Failed to update broadcast",
+      "updateSuccess": "Broadcast updated successfully"
+    }
   },
   "target": {
     "document": {

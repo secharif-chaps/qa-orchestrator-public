@@ -118,6 +118,20 @@
                 "
               />
 
+              <!-- Stream - Only visible when Stream feature flag is enabled -->
+              <DropdownItem
+                v-if="isStreamEnabled && canWriteStreams"
+                icon="fas fa-paper-plane"
+                color="purple"
+                :label="$t('common.folder.addItems.stream')"
+                :description="$t('common.folder.addItems.streamDescription')"
+                @click="
+                  $router.push(
+                    `/folders/${($route.params as Record<string, string>).folderId}/streams/create`,
+                  )
+                "
+              />
+
               <!-- Watchfile - Disabled -->
               <DropdownItem
                 disabled
@@ -165,6 +179,8 @@ import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import { useScreenModule } from '@/composables/useScreenModule'
+import { useStreamModule } from '@/composables/useStreamModule'
+import { useStreamPermissions } from '@/composables/useStreamPermissions'
 import { useToggleFolderFavorite } from '@/mutations/folders'
 import type { Folder } from '@/types/folder'
 import { formatDate } from '@/utils/time'
@@ -191,6 +207,8 @@ const { canEditFolder, canDeleteFolder, canCreateItems, isSharedWithMe } =
   useFolderPermissions(folderRef)
 
 const { isScreenEnabled } = useScreenModule()
+const { isStreamEnabled } = useStreamModule()
+const { canWriteStreams } = useStreamPermissions()
 
 // Use mutation for optimistic UI
 const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } =
