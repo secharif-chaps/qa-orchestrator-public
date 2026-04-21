@@ -192,6 +192,10 @@ declare module 'vue-router/auto-routes' {
       | '/folders/[folderId]/create/company'
       | '/folders/[folderId]/create/company-csv'
       | '/folders/[folderId]/edit'
+      | '/folders/[folderId]/streams'
+      | '/folders/[folderId]/streams/(list)'
+      | '/folders/[folderId]/streams/[streamId]'
+      | '/folders/[folderId]/streams/create'
     >,
     '/folders/[folderId]/(folderId)': RouteRecordInfo<
       '/folders/[folderId]/(folderId)',
@@ -311,6 +315,36 @@ declare module 'vue-router/auto-routes' {
     '/folders/[folderId]/edit': RouteRecordInfo<
       '/folders/[folderId]/edit',
       '/folders/:folderId/edit',
+      { folderId: ParamValue<true> },
+      { folderId: ParamValue<false> },
+      | never
+    >,
+    '/folders/[folderId]/streams': RouteRecordInfo<
+      '/folders/[folderId]/streams',
+      '/folders/:folderId/streams',
+      { folderId: ParamValue<true> },
+      { folderId: ParamValue<false> },
+      | '/folders/[folderId]/streams/(list)'
+      | '/folders/[folderId]/streams/[streamId]'
+      | '/folders/[folderId]/streams/create'
+    >,
+    '/folders/[folderId]/streams/(list)': RouteRecordInfo<
+      '/folders/[folderId]/streams/(list)',
+      '/folders/:folderId/streams',
+      { folderId: ParamValue<true> },
+      { folderId: ParamValue<false> },
+      | never
+    >,
+    '/folders/[folderId]/streams/[streamId]': RouteRecordInfo<
+      '/folders/[folderId]/streams/[streamId]',
+      '/folders/:folderId/streams/:streamId',
+      { folderId: ParamValue<true>, streamId: ParamValue<true> },
+      { folderId: ParamValue<false>, streamId: ParamValue<false> },
+      | never
+    >,
+    '/folders/[folderId]/streams/create': RouteRecordInfo<
+      '/folders/[folderId]/streams/create',
+      '/folders/:folderId/streams/create',
       { folderId: ParamValue<true> },
       { folderId: ParamValue<false> },
       | never
@@ -631,6 +665,10 @@ declare module 'vue-router/auto-routes' {
         | '/folders/[folderId]/create/company'
         | '/folders/[folderId]/create/company-csv'
         | '/folders/[folderId]/edit'
+        | '/folders/[folderId]/streams'
+        | '/folders/[folderId]/streams/(list)'
+        | '/folders/[folderId]/streams/[streamId]'
+        | '/folders/[folderId]/streams/create'
       views:
         | 'default'
     }
@@ -738,6 +776,33 @@ declare module 'vue-router/auto-routes' {
     'src/pages/folders/[folderId]/edit.vue': {
       routes:
         | '/folders/[folderId]/edit'
+      views:
+        | never
+    }
+    'src/pages/folders/[folderId]/streams.vue': {
+      routes:
+        | '/folders/[folderId]/streams'
+        | '/folders/[folderId]/streams/(list)'
+        | '/folders/[folderId]/streams/[streamId]'
+        | '/folders/[folderId]/streams/create'
+      views:
+        | 'default'
+    }
+    'src/pages/folders/[folderId]/streams/(list).vue': {
+      routes:
+        | '/folders/[folderId]/streams/(list)'
+      views:
+        | never
+    }
+    'src/pages/folders/[folderId]/streams/[streamId].vue': {
+      routes:
+        | '/folders/[folderId]/streams/[streamId]'
+      views:
+        | never
+    }
+    'src/pages/folders/[folderId]/streams/create.vue': {
+      routes:
+        | '/folders/[folderId]/streams/create'
       views:
         | never
     }

@@ -13,7 +13,8 @@ export type ReferenceType = 'company' | 'csv_import' | 'manual' | 'system'
 
 // Module names - core product modules an organization can subscribe to
 // Note: 'translation' is now a feature flag, not a module (see feature-flags.ts)
-export type ModuleName = 'screen' | 'target' | 'explore'
+// Note: 'stream' is returned by global-service for routing but displayed as a feature flag, not a module badge
+export type ModuleName = 'screen' | 'target' | 'explore' | 'stream'
 
 /**
  * Module configuration without token count.

@@ -30,6 +30,11 @@ export const MODULE_CONFIG: Record<ModuleName, Omit<ModuleDisplayConfig, 'status
     icon: 'fa-regular fa-chart-network',
     color: 'almond',
   },
+  stream: {
+    labelKey: 'common.modules.stream',
+    icon: 'fa-solid fa-paper-plane',
+    color: 'cyan',
+  },
 }
 
 // Default config for unknown modules

@@ -3,6 +3,7 @@
   "admin.tasks.status.*",
   "admin.tasks.taskTypes.*",
   "common.documentType_*",
+  "common.folder.tab.*",
   "common.language_*",
   "common.sidebar.chapse.suggestions.*",
   "screen.company.sections.financial.*",

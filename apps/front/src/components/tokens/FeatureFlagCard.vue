@@ -93,6 +93,7 @@ const defaultDescriptions: Record<FeatureFlagName, string> = {
   discover: 'Access external Discover dashboard',
   pappers: 'Fetch company data from Pappers API',
   worldcheck: 'Due diligence screening via WorldCheck One API',
+  stream: 'Multi-channel event distribution (Teams, Slack, Webhook)',
 }
 
 const defaultDescription = computed(
