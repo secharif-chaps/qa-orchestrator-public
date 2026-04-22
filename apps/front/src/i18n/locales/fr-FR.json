@@ -2038,38 +2038,31 @@
     },
     "team": {
       "departments": "Départements",
+      "employees": {
+        "title": "Employés de l'équipe"
+      },
       "executives": "Dirigeants",
-      "export": "Exporter",
       "hierarchy": {
         "interactive": "Interactif",
-        "screenshot": "Capture d'écran",
-        "title": "Hiérarchie de Management"
-      },
-      "insights": {
-        "title": "Aperçu de l'équipe"
-      },
-      "levels": {
-        "all": "Tous les niveaux",
-        "ceo": "PDG",
-        "executives": "Cadres dirigeants",
-        "managers": "Managers",
-        "teamMembers": "Membres de l'équipe"
+        "reset": "Réinitialiser la vue",
+        "screenshot": "Capture d'écran"
       },
       "managers": "Managers",
-      "managingCount": "Gère {count} personnes",
-      "members": {
-        "title": "Membres de l'équipe"
-      },
+      "managingCount": "{count, plural, one {Management de # personne} other {Management de # personnes}}",
       "noResults": "Aucun membre de l'équipe ne correspond à vos critères",
-      "searchPlaceholder": "Rechercher par nom ou poste...",
-      "subtitle": "Explorez la structure organisationnelle",
-      "title": "Équipe & Management",
+      "table": {
+        "action": "Action",
+        "management": "Management",
+        "managingCount": "{count, plural, one {# personne} other {# personnes}}",
+        "name": "Prénom et nom",
+        "position": "Description du poste"
+      },
       "totalMembers": "Total des membres",
       "viewInHierarchy": "Voir dans la hiérarchie",
       "viewLinkedIn": "Voir le profil LinkedIn",
       "views": {
-        "grid": "Vue grille",
-        "list": "Vue liste"
+        "grid": "Grille",
+        "table": "Tableau"
       }
     },
     "timeline": {

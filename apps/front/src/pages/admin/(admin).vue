@@ -22,7 +22,7 @@
         >
           <div class="p-6">
             <div class="mb-4 flex items-center">
-              <Badge variant="secondary" color="sage" :icon="feature.icon" />
+              <Badge class="shrink-0" variant="secondary" color="sage" :icon="feature.icon" />
               <div class="ml-4">
                 <h3 class="text-lg font-semibold">
                   {{ $t(feature.titleKey, feature.titleDefault) }}

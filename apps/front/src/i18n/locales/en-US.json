@@ -2038,38 +2038,31 @@
     },
     "team": {
       "departments": "Departments",
+      "employees": {
+        "title": "Team members"
+      },
       "executives": "Executives",
-      "export": "Export",
       "hierarchy": {
         "interactive": "Interactive",
-        "screenshot": "Take Screenshot",
-        "title": "Management Hierarchy"
-      },
-      "insights": {
-        "title": "Team Insights"
-      },
-      "levels": {
-        "all": "All Levels",
-        "ceo": "CEO",
-        "executives": "Executives",
-        "managers": "Managers",
-        "teamMembers": "Team Members"
+        "reset": "Reset view",
+        "screenshot": "Take Screenshot"
       },
       "managers": "Managers",
-      "managingCount": "Managing {count} people",
-      "members": {
-        "title": "Team Members"
-      },
+      "managingCount": "{count, plural, one {Managing # person} other {Managing # people}}",
       "noResults": "No team members found matching your criteria",
-      "searchPlaceholder": "Search by name or position...",
-      "subtitle": "Explore the organizational structure",
-      "title": "Team & Management",
+      "table": {
+        "action": "Action",
+        "management": "Management",
+        "managingCount": "{count, plural, one {# person} other {# people}}",
+        "name": "Name",
+        "position": "Position"
+      },
       "totalMembers": "Total Members",
       "viewInHierarchy": "View in Hierarchy",
       "viewLinkedIn": "View LinkedIn Profile",
       "views": {
-        "grid": "Grid View",
-        "list": "List View"
+        "grid": "Grid",
+        "table": "Table"
       }
     },
     "timeline": {

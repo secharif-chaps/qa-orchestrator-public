@@ -1,29 +1,16 @@
 <template>
   <div
-    class="border-primary-lighter-stroke hover:border-primary/30 rounded-sm border bg-white p-4 transition-all duration-200 hover:shadow-lg"
+    class="gap-2xs bg-absolute-pure-white shadow-2 p-xl flex h-full flex-col justify-center rounded-xl"
   >
-    <div class="flex items-start justify-between gap-4">
-      <!-- Avatar & Basic Info -->
-      <div class="flex items-center gap-4">
-        <div
-          class="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full"
-          :class="[
-            isExecutive
-              ? 'bg-gradient-to-br from-purple-100 to-purple-200 text-purple-600 dark:from-purple-900/30 dark:to-purple-800/30 dark:text-purple-400'
-              : 'bg-gradient-to-br from-orange-100 to-orange-200 text-orange-600 dark:from-orange-900/30 dark:to-orange-800/30 dark:text-orange-400',
-          ]"
-        >
-          <i class="fa fa-user text-xl"></i>
-        </div>
+    <div class="flex items-center gap-4">
+      <Avatar :label="initials" size="md" variant="secondary" />
 
-        <div class="flex-1">
-          <h3 class="text-neutral-black-font text-lg font-semibold">
-            {{ member.firstName }} {{ member.lastName }}
-          </h3>
-          <p class="text-neutral-black-font mt-0.5 text-sm">
-            {{ member.position }}
-          </p>
-        </div>
+      <!-- Name & Position -->
+      <div class="flex min-w-0 flex-1 flex-col text-base">
+        <span class="truncate font-bold"> {{ member.firstName }} {{ member.lastName }} </span>
+        <span>
+          {{ member.position }}
+        </span>
       </div>
 
       <!-- Actions -->
@@ -37,14 +24,12 @@
           :title="$t('screen.team.viewLinkedIn')"
           icon-only
           size="sm"
-          class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+          class="shrink-0"
         />
-
-        <!-- View in Hierarchy -->
         <Button
           @click="$emit('viewInHierarchy', member)"
           variant="tertiary"
-          icon="fa fa-sitemap"
+          icon="fa-sitemap"
           :title="$t('screen.team.viewInHierarchy')"
           icon-only
           size="sm"
@@ -52,38 +37,34 @@
       </div>
     </div>
 
-    <!-- Subordinates Count -->
-    <div v-if="subordinatesCount > 0" class="border-primary-lighter-stroke mt-3 border-t pt-3">
-      <div class="text-neutral-black-font flex items-center gap-2 text-sm">
-        <i class="fa fa-users"></i>
-        <span>{{
-          $t(
-            'screen.team.managingCount',
-            `Managing ${subordinatesCount} ${subordinatesCount === 1 ? 'person' : 'people'}`,
-          )
-        }}</span>
-      </div>
+    <!-- Subordinates Badge -->
+    <div v-if="subordinatesCount > 0" class="border-primary-lighter-stroke pt-2xs border-t">
+      <Tag icon="fa-users" color="indigo" size="sm">{{
+        $t('screen.team.managingCount', { count: subordinatesCount })
+      }}</Tag>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { useInitials } from '@/composables/useInitials'
 import type { TeamMember } from '@/types/company'
-import { Button } from '@owlint/feathers-vue'
+import { Avatar, Button, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 
-const props = defineProps<{
+interface Props {
   member: TeamMember
   level?: number
-}>()
+}
+
+const { member } = defineProps<Props>()
 
 defineEmits<{
   viewInHierarchy: [member: TeamMember]
 }>()
 
-const isExecutive = computed(() => {
-  return props.level === 0 || props.level === 1
-})
+const { getInitials } = useInitials()
+const initials = computed(() => getInitials(member.firstName, member.lastName))
 
 const subordinatesCount = computed(() => {
   const countSubordinates = (member: TeamMember): number => {
@@ -92,12 +73,12 @@ const subordinatesCount = computed(() => {
       return total + 1 + countSubordinates(sub)
     }, 0)
   }
-  return countSubordinates(props.member)
+  return countSubordinates(member)
 })
 
 const openLinkedIn = () => {
-  if (props.member.linkedinUrl) {
-    window.open(props.member.linkedinUrl, '_blank', 'noopener,noreferrer')
+  if (member.linkedinUrl) {
+    window.open(member.linkedinUrl, '_blank', 'noopener,noreferrer')
   }
 }
 </script>

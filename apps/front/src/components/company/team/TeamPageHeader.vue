@@ -1,123 +1,27 @@
 <template>
-  <div class="rounded-sm bg-white p-6">
-    <div class="mb-6 flex items-center justify-between">
-      <div>
-        <h2 class="text-neutral-black-font flex items-center gap-3 text-2xl font-bold">
-          <i class="fa fa-users"></i>
-          <span>{{ $t('screen.team.title') }}</span>
-        </h2>
-        <p class="text-neutral-black-font mt-1">
-          {{ $t('screen.team.subtitle') }}
-        </p>
-      </div>
-
-      <!-- Export Button -->
-      <Button
-        @click="$emit('export')"
-        variant="secondary"
-        icon="fa fa-download"
-        :label="$t('screen.team.export')"
-      />
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <!-- Total Members -->
-      <div class="bg-primary-lightest rounded-sm p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-neutral-black-font text-sm">
-              {{ $t('screen.team.totalMembers') }}
-            </p>
-            <p class="text-neutral-black-font mt-1 text-2xl font-bold">{{ totalMembers }}</p>
-          </div>
-          <div class="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full">
-            <i class="fa fa-users text-neutral-black-font"></i>
-          </div>
-        </div>
-      </div>
-
-      <!-- Executives -->
-      <div class="bg-primary-lightest rounded-sm p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-neutral-black-font text-sm">
-              {{ $t('screen.team.executives') }}
-            </p>
-            <p class="mt-1 text-2xl font-bold text-purple-600 dark:text-purple-400">
-              {{ executivesCount }}
-            </p>
-          </div>
-          <div
-            class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30"
-          >
-            <i class="fa fa-user-tie text-purple-600 dark:text-purple-400"></i>
-          </div>
-        </div>
-      </div>
-
-      <!-- Managers -->
-      <div class="bg-primary-lightest rounded-sm p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-neutral-black-font text-sm">
-              {{ $t('screen.team.managers') }}
-            </p>
-            <p class="mt-1 text-2xl font-bold text-orange-600 dark:text-orange-400">
-              {{ managersCount }}
-            </p>
-          </div>
-          <div
-            class="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/30"
-          >
-            <i class="fa fa-user-cog text-orange-600 dark:text-orange-400"></i>
-          </div>
-        </div>
-      </div>
-
-      <!-- Departments -->
-      <div class="bg-primary-lightest rounded-sm p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-neutral-black-font text-sm">
-              {{ $t('screen.team.departments') }}
-            </p>
-            <p class="text-neutral-black-font mt-1 text-2xl font-bold">{{ departmentsCount }}</p>
-          </div>
-          <div
-            class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30"
-          >
-            <i class="fa fa-building text-blue-600 dark:text-blue-400"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Insights Alert -->
-    <Alert
-      v-if="hasInsights"
-      variant="info"
-      :title="$t('screen.team.insights.title')"
-      :description="teamInsights"
-      icon="fa-lightbulb"
-      class="mt-6"
+  <div class="gap-2xs flex flex-wrap">
+    <StatCard
+      v-for="stat in stats"
+      :key="stat.labelKey"
+      :icon="stat.icon"
+      :label="$t(stat.labelKey)"
+      :value="stat.value"
+      :color="stat.color"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
+import StatCard from '@/components/ui/StatCard.vue'
 import type { TeamMember } from '@/types/company'
-import { Alert, Button } from '@owlint/feathers-vue'
+import type { StatCardColor } from '@/types/ui'
 import { computed } from 'vue'
 
-const props = defineProps<{
+interface Props {
   team: TeamMember[]
-  teamInsights?: string
-}>()
+}
 
-defineEmits<{
-  export: []
-}>()
+const { team } = defineProps<Props>()
 
 // Calculate total members recursively
 const totalMembers = computed(() => {
@@ -128,7 +32,7 @@ const totalMembers = computed(() => {
       return total + 1 + subordinatesCount
     }, 0)
   }
-  return countMembers(props.team || [])
+  return countMembers(team)
 })
 
 // Count executives (level 0 and 1)
@@ -143,7 +47,7 @@ const executivesCount = computed(() => {
       return total + isTarget + subordinatesCount
     }, 0)
   }
-  return countByLevel(props.team || [], 1)
+  return countByLevel(team, 1)
 })
 
 // Count managers (level 2)
@@ -158,7 +62,7 @@ const managersCount = computed(() => {
       return total + isManager + subordinatesCount
     }, 0)
   }
-  return countManagers(props.team || [])
+  return countManagers(team)
 })
 
 // Count unique departments
@@ -168,7 +72,6 @@ const departmentsCount = computed(() => {
   const collectDepartments = (members: TeamMember[]) => {
     if (!members) return
     members.forEach((member) => {
-      // Extract department from position (e.g., "VP of Sales" -> "Sales")
       if (member.position) {
         const dept = member.position.replace(/^(VP of |Head of |Director of |Manager of )/i, '')
         if (dept && !dept.includes('CEO') && !dept.includes('Chief')) {
@@ -181,11 +84,36 @@ const departmentsCount = computed(() => {
     })
   }
 
-  collectDepartments(props.team || [])
+  collectDepartments(team)
   return departments.size
 })
 
-const hasInsights = computed(() => {
-  return !!props.teamInsights && props.teamInsights.trim().length > 0
-})
+const stats = computed<{ icon: string; labelKey: string; value: number; color: StatCardColor }[]>(
+  () => [
+    {
+      icon: 'fa-users',
+      labelKey: 'screen.team.totalMembers',
+      value: totalMembers.value,
+      color: 'sage',
+    },
+    {
+      icon: 'fa-user-tie',
+      labelKey: 'screen.team.executives',
+      value: executivesCount.value,
+      color: 'indigo',
+    },
+    {
+      icon: 'fa-user-cog',
+      labelKey: 'screen.team.managers',
+      value: managersCount.value,
+      color: 'blue',
+    },
+    {
+      icon: 'fa-building',
+      labelKey: 'screen.team.departments',
+      value: departmentsCount.value,
+      color: 'cherry',
+    },
+  ],
+)
 </script>
