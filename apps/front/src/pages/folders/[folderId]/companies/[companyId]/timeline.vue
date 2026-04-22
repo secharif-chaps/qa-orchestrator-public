@@ -110,18 +110,54 @@ const extractDateValue = (field: SourcedValue<string> | string | undefined): str
   return ''
 }
 
+const MONTH_MAP: Record<string, number> = {
+  jan: 0,
+  feb: 1,
+  mar: 2,
+  apr: 3,
+  may: 4,
+  jun: 5,
+  jul: 6,
+  aug: 7,
+  sep: 8,
+  oct: 9,
+  nov: 10,
+  dec: 11,
+}
+
+// Parse a free-form LLM date string into a sortable timestamp.
+// Tries native Date.parse first (covers ISO and "March 15, 1959"),
+// then falls back to regex extraction of year + month name + day.
+const parseDateToTimestamp = (dateStr: string): number => {
+  if (!dateStr) return 0
+
+  const nativeParsed = Date.parse(dateStr)
+  if (!isNaN(nativeParsed)) return nativeParsed
+
+  const yearMatch = dateStr.match(/\b(\d{4})\b/)
+  if (!yearMatch) return 0
+  const year = parseInt(yearMatch[1])
+
+  const monthMatch = dateStr
+    .toLowerCase()
+    .match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\b/)
+  const month = monthMatch ? MONTH_MAP[monthMatch[1]] : 0
+
+  // Extract day from the string after removing the year to avoid misidentifying it
+  const withoutYear = dateStr.replace(yearMatch[0], '')
+  const dayMatch = withoutYear.match(/\b([12]\d|3[01]|0?[1-9])\b/)
+  const day = dayMatch ? parseInt(dayMatch[1]) : 1
+
+  return new Date(year, month, day).getTime()
+}
+
 const getTimelineEvents = computed(() => {
   if (!company.value?.timeline?.events) return []
 
-  // Sort events by date
   return [...company.value.timeline.events].sort((a, b) => {
-    // Extract date value (handle SourcedValue or plain string)
-    const dateA = extractDateValue(a.date)
-    const dateB = extractDateValue(b.date)
-    const yearA = dateA.substring(0, 4) || '0'
-    const yearB = dateB.substring(0, 4) || '0'
-    const diff = parseInt(yearA) - parseInt(yearB)
-    // Return based on sort order: ascending (oldest first) or descending (newest first)
+    const tsA = parseDateToTimestamp(extractDateValue(a.date))
+    const tsB = parseDateToTimestamp(extractDateValue(b.date))
+    const diff = tsA - tsB
     return sortAscending.value ? diff : -diff
   })
 })

@@ -89,11 +89,11 @@ const formattedDate = computed(() => {
 
   if (!dateStr) return t('common.na')
 
-  if (dateStr.length === 4) {
-    return dateStr
-  }
+  // Pure 4-digit year (e.g. "1959")
+  if (/^\d{4}$/.test(dateStr)) return dateStr
 
-  if (dateStr.length === 7) {
+  // YYYY-MM (e.g. "1959-03")
+  if (/^\d{4}-\d{2}$/.test(dateStr)) {
     const [year, month] = dateStr.split('-')
     return new Date(parseInt(year), parseInt(month) - 1).toLocaleDateString(locale.value, {
       month: '2-digit',
@@ -101,10 +101,17 @@ const formattedDate = computed(() => {
     })
   }
 
-  return new Date(dateStr).toLocaleDateString(locale.value, {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  })
+  // Full parseable date — fall back to raw string if native parsing fails
+  // (handles LLM dates like "circa 2020", "Early 2020s", "2020–2023")
+  const date = new Date(dateStr)
+  if (!isNaN(date.getTime())) {
+    return date.toLocaleDateString(locale.value, {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+  }
+
+  return dateStr
 })
 </script>
