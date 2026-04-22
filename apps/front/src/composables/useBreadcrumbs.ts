@@ -253,14 +253,6 @@ export function useBreadcrumbs() {
           })
           break
 
-        case 'workflows':
-          items.push({
-            name: t('common.breadcrumb.workflows'),
-            to: isLast ? undefined : currentPath,
-            current: isLast,
-          })
-          break
-
         case 'history':
           items.push({
             name: t('common.breadcrumb.history'),
