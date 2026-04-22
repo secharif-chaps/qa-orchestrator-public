@@ -53,18 +53,48 @@ export const companyByIdQuery = defineQueryOptions(
 
 ## Using in Components
 
+### Correct `useQuery` signature
+
+**Always pass a single getter function** that returns the full query options. This keeps reactivity — Vue tracks every reactive value read inside the getter.
+
+```typescript
+// CORRECT — single getter, fully reactive
+useQuery(() => companyByIdQuery({ id: props.companyId }))
+
+// WRONG — two arguments, old pattern, do not use
+useQuery(companyByIdQuery, () => ({ id: props.companyId }))
+```
+
+### With options (`enabled`, `staleTime`, …)
+
+Spread the query result and add options **inside the same getter**:
+
+```typescript
+useQuery(() => ({
+  ...companyByIdQuery({ id: props.companyId }),
+  enabled: !!props.companyId,   // reactive: re-evaluated on every render
+}))
+```
+
+Because everything lives in one getter, `enabled` (and any other option) reacts to props, refs, and computed values automatically — no need for `computed()` wrappers.
+
+### Full component example
+
 ```vue
 <script setup lang="ts">
 import { useQuery } from "@pinia/colada";
 import { companyByIdQuery } from "@/queries/companies";
 
-const props = defineProps<{ companyId: number }>();
+const props = defineProps<{ companyId: number | null }>();
 
 const {
   data: company,
   isLoading,
   error,
-} = useQuery(companyByIdQuery, () => ({ id: props.companyId }));
+} = useQuery(() => ({
+  ...companyByIdQuery({ id: props.companyId! }),
+  enabled: props.companyId !== null,
+}));
 </script>
 
 <template>
