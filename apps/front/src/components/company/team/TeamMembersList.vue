@@ -1,82 +1,109 @@
 <template>
-  <div class="space-y-4">
-    <!-- Search and Filter Bar -->
-    <div class="flex flex-col gap-4 sm:flex-row">
-      <div class="flex-1">
-        <Input
-          id="team-search"
-          v-model="searchQuery"
-          :placeholder="$t('screen.team.searchPlaceholder')"
-          icon="fa-search"
-        />
-      </div>
+  <div class="flex flex-col gap-3">
+    <!-- Header: Title + View Toggle -->
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-bold">
+        {{ $t('screen.team.employees.title') }}
+      </h3>
 
-      <div class="flex gap-2">
-        <!-- Level Filter -->
-        <select
-          v-model="selectedLevel"
-          class="bg-primary-lightest border-border text-neutral-black-font focus:ring-primary/50 rounded-sm border px-4 py-2 focus:ring-2 focus:outline-none"
-        >
-          <option value="">{{ $t('screen.team.levels.all') }}</option>
-          <option value="0">{{ $t('screen.team.levels.ceo') }}</option>
-          <option value="1">{{ $t('screen.team.levels.executives') }}</option>
-          <option value="2">{{ $t('screen.team.levels.managers') }}</option>
-          <option value="3">{{ $t('screen.team.levels.teamMembers') }}</option>
-        </select>
-
-        <!-- View Mode Toggle -->
-        <div class="bg-primary-lightest flex rounded-sm p-1">
-          <Button
-            @click="viewMode = 'grid'"
-            :variant="viewMode === 'grid' ? 'primary' : 'tertiary'"
-            icon="fa fa-th"
-            icon-only
-            size="sm"
-            :title="$t('screen.team.views.grid')"
-          />
-          <Button
-            @click="viewMode = 'list'"
-            :variant="viewMode === 'list' ? 'primary' : 'tertiary'"
-            icon="fa fa-list"
-            icon-only
-            size="sm"
-            :title="$t('screen.team.views.list')"
-          />
-        </div>
-      </div>
+      <!-- View Mode Toggle -->
+      <Toggle v-model="viewMode" :options="viewModeOptions" variant="pill" />
     </div>
 
-    <!-- Team Members Grid/List -->
-    <div v-if="filteredMembers.length > 0">
-      <!-- Grid View -->
-      <div v-if="viewMode === 'grid'" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <!-- Grid View -->
+    <div
+      v-if="flattenedMembers.length > 0 && viewMode === 'grid'"
+      class="gap-xs grid md:grid-cols-2"
+    >
+      <div
+        v-for="item in flattenedMembers"
+        :key="`grid-${item.member.position}-${item.member.firstName}-${item.member.lastName}`"
+      >
         <TeamMemberCard
-          v-for="item in filteredMembers"
-          :key="`${item.member.position}-${item.member.firstName}-${item.member.lastName}`"
-          :member="item.member"
-          :level="item.level"
-          @view-in-hierarchy="$emit('viewInHierarchy', $event)"
-        />
-      </div>
-
-      <!-- List View -->
-      <div v-else class="space-y-2">
-        <TeamMemberCard
-          v-for="item in filteredMembers"
-          :key="`${item.member.position}-${item.member.firstName}-${item.member.lastName}`"
           :member="item.member"
           :level="item.level"
           @view-in-hierarchy="$emit('viewInHierarchy', $event)"
         />
       </div>
     </div>
+
+    <!-- Table View -->
+    <Table
+      v-else-if="flattenedMembers.length > 0 && viewMode === 'table'"
+      :fields="tableFields"
+      :items="flattenedMembers"
+      :row-key="
+        (item: FlattenedMember) =>
+          `${item.member.position}-${item.member.firstName}-${item.member.lastName}`
+      "
+      striped
+    >
+      <template #head(action)="{ field }">
+        <td class="px-3 py-3.5 text-sm font-medium">
+          <div class="flex justify-end">
+            {{ field.label }}
+          </div>
+        </td>
+      </template>
+      <template #cell(name)="{ item }">
+        <td class="px-2 py-2">
+          <div class="flex items-center gap-2">
+            <Avatar
+              :label="`${item.member.firstName?.charAt(0) ?? ''}${item.member.lastName?.charAt(0) ?? ''}`"
+              size="md"
+              variant="secondary"
+            />
+            <span class="truncate font-medium">
+              {{ item.member.firstName }} {{ item.member.lastName }}
+            </span>
+          </div>
+        </td>
+      </template>
+
+      <template #cell(position)="{ item }">
+        <td class="truncate px-2 py-2">
+          {{ item.member.position }}
+        </td>
+      </template>
+
+      <template #cell(management)="{ item }">
+        <td class="px-2 py-2">
+          <div v-if="getSubordinatesCount(item.member) > 0" class="flex">
+            <Tag
+              color="indigo"
+              icon="fa-users"
+              :label="
+                t('screen.team.table.managingCount', { count: getSubordinatesCount(item.member) })
+              "
+              size="sm"
+              class="shrink-0"
+            />
+          </div>
+        </td>
+      </template>
+
+      <template #cell(action)="{ item }">
+        <td class="px-2 py-2">
+          <div class="flex justify-end">
+            <Button
+              @click="$emit('viewInHierarchy', item.member)"
+              variant="tertiary"
+              icon="fa-sitemap"
+              :title="t('screen.team.viewInHierarchy')"
+              icon-only
+              size="sm"
+            />
+          </div>
+        </td>
+      </template>
+    </Table>
 
     <!-- No Results -->
-    <div v-else class="rounded-sm bg-white p-8 text-center">
-      <div class="text-neutral-black-font mb-3 text-4xl">
-        <i class="fa fa-search"></i>
+    <div v-else class="rounded-block bg-base-100 p-8 text-center">
+      <div class="mb-3 text-4xl opacity-40">
+        <Icon icon="fa-users" />
       </div>
-      <p class="text-neutral-black-font">
+      <p class="text-sm opacity-60">
         {{ $t('screen.team.noResults') }}
       </p>
     </div>
@@ -85,21 +112,51 @@
 
 <script lang="ts" setup>
 import type { TeamMember } from '@/types/company'
-import { Button, Input } from '@owlint/feathers-vue'
+import { Avatar, Button, Icon, Table, Tag, Toggle } from '@owlint/feathers-vue'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import TeamMemberCard from './TeamMemberCard.vue'
 
-const props = defineProps<{
+interface Props {
   team: TeamMember[]
-}>()
+}
 
-defineEmits<{
+const { team } = defineProps<Props>()
+
+interface Emits {
   viewInHierarchy: [member: TeamMember]
-}>()
+}
 
-const searchQuery = ref('')
-const selectedLevel = ref('')
-const viewMode = ref<'grid' | 'list'>('grid')
+defineEmits<Emits>()
+
+const { t } = useI18n()
+
+const viewMode = ref<'grid' | 'table'>('grid')
+
+interface FlattenedMember {
+  member: TeamMember
+  level: number
+}
+
+const tableFields = computed(() => [
+  { key: 'name', label: t('screen.team.table.name') },
+  { key: 'position', label: t('screen.team.table.position') },
+  { key: 'management', label: t('screen.team.table.management') },
+  { key: 'action', label: t('screen.team.table.action'), class: 'w-1/3 text-right' },
+])
+
+const viewModeOptions = computed(() => [
+  {
+    value: 'grid',
+    label: t('screen.team.views.grid'),
+    icon: 'fa-grid-2',
+  },
+  {
+    value: 'table',
+    label: t('screen.team.views.table'),
+    icon: 'fa-table-list',
+  },
+])
 
 // Flatten team hierarchy with levels
 const flattenedMembers = computed(() => {
@@ -114,33 +171,17 @@ const flattenedMembers = computed(() => {
     })
   }
 
-  if (props.team) {
-    flatten(props.team)
+  if (team) {
+    flatten(team)
   }
 
   return result
 })
 
-// Filter members based on search and level
-const filteredMembers = computed(() => {
-  let filtered = [...flattenedMembers.value]
-
-  // Search filter
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter((item) => {
-      const fullName = `${item.member.firstName} ${item.member.lastName}`.toLowerCase()
-      const position = item.member.position.toLowerCase()
-      return fullName.includes(query) || position.includes(query)
-    })
-  }
-
-  // Level filter
-  if (selectedLevel.value !== '') {
-    const level = parseInt(selectedLevel.value)
-    filtered = filtered.filter((item) => item.level === level)
-  }
-
-  return filtered
-})
+const getSubordinatesCount = (member: TeamMember): number => {
+  if (!member.subordinates || member.subordinates.length === 0) return 0
+  return member.subordinates.reduce((total, sub) => {
+    return total + 1 + getSubordinatesCount(sub)
+  }, 0)
+}
 </script>

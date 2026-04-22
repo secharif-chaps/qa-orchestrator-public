@@ -113,7 +113,7 @@
     0px 20px 25px -5px rgba(45, 57, 58, 0.1), 0px 10px 10px -5px rgba(45, 57, 58, 0.04);
   --shadow-shadow-4: 0px 25px 50px -12px rgba(45, 57, 58, 0.25);
   --shadow-inner:
-    inset 1px 1px 6px 0px rgba(45, 57, 58, 0.24), inset -1px -1px 6px 1px rgba(45, 57, 58, 0.16);
+    1px 1px 6px 0 rgba(45, 57, 58, 0.24) inset, -1px -1px 6px 1px rgba(45, 57, 58, 0.16) inset;
   --shadow-volume:
     0px -23px 25px 0px rgba(45, 57, 58, 0.17) inset,
     0px -36px 30px 0px rgba(45, 57, 58, 0.15) inset, 0px -79px 40px 0px rgba(45, 57, 58, 0.1) inset,

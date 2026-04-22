@@ -10,7 +10,7 @@
         class="mt-[68px] max-h-[calc(100vh-68px)] overflow-y-auto rounded-t-lg transition-all duration-300"
         :class="[isFullscreen ? 'w-0' : 'w-full']"
       >
-        <div class="dark:bg-sage-900 min-h-[calc(100vh-68px)] w-full bg-white">
+        <div class="dark:bg-sage-900 bg-grey-50 min-h-[calc(100vh-68px)] w-full">
           <div class="mx-auto px-4 py-24 pt-4 sm:px-6 lg:px-8">
             <slot />
           </div>
