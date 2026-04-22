@@ -260,7 +260,7 @@
         "roles": "Rôles rapides"
       },
       "targetCreate": {
-        "description": "Créer de nouveaux watchfiles (module Target)",
+        "description": "Créer de nouveaux dossiers de veille (module Target)",
         "label": "Créer des cibles"
       },
       "title": "Gérer les Permissions"
@@ -3028,7 +3028,7 @@
           "success": "Acteur supprimé avec succès"
         },
         "see_more": "Consulter la fiche",
-        "select_actor": "Choisir les acteurs",
+        "select_actor": "Choisir des acteurs",
         "selection_modal": {
           "add_actors": "{count, plural, one {Ajouter # acteur et {sources} sources} other {Ajouter # acteurs et {sources} sources}}",
           "add_actors_no_sources": "{count, plural, one {Ajouter # acteur} other {Ajouter # acteurs}}",
@@ -3414,7 +3414,7 @@
         "pagination": {
           "result": " Sources par page"
         },
-        "select_source": "Choisir une source",
+        "select_source": "Choisir des sources",
         "selection_modal": {
           "add_sources": "{count, plural, one {Ajouter # source} other {Ajouter # sources}}",
           "title": "Choisir des sources"

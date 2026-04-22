@@ -260,7 +260,7 @@
         "roles": "Quick Roles"
       },
       "targetCreate": {
-        "description": "Create new watchfiles (Target module)",
+        "description": "Create new watch files (Target module)",
         "label": "Create Targets"
       },
       "title": "Manage Permissions"
@@ -724,7 +724,7 @@
         "graphragDescription": "Explore connections and relationships",
         "stream": "Stream",
         "streamDescription": "Distribute events to external channels",
-        "watchfile": "Watchfile",
+        "watchfile": "Watch file",
         "watchfileDescription": "Set up monitoring for specific topics"
       },
       "clearSearch": "Clear Search",
@@ -1001,7 +1001,7 @@
       "discover": "Discover",
       "explore": "Knowledge Graph",
       "screen": "Company Card",
-      "target": "Watchfile",
+      "target": "Watch file",
       "unknown": "Unknown module"
     },
     "na": "N/A",
@@ -1160,10 +1160,10 @@
           "comingSoon": "Coming Soon"
         },
         "target": {
-          "cardAction": "New watchfile",
+          "cardAction": "New watch file",
           "cardDescription": "Master your strategic issues",
-          "cardStat": "{count, plural, one {# active watchfile} other {# active watchfiles}}",
-          "cardTitle": "Watchfile"
+          "cardStat": "{count, plural, one {# active watch file} other {# active watch files}}",
+          "cardTitle": "Watch file"
         }
       },
       "recentActivities": {
@@ -3414,7 +3414,7 @@
         "pagination": {
           "result": " Sources per page"
         },
-        "select_source": "Choose a source",
+        "select_source": "Choose sources",
         "selection_modal": {
           "add_sources": "{count, plural, one {Add # source} other {Add # sources}}",
           "title": "Choose sources"
