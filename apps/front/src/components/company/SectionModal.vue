@@ -11,7 +11,7 @@
 
       <div class="max-h-[70vh] overflow-x-hidden overflow-y-auto">
         <component :is="sectionComponent" v-if="sectionComponent" />
-        <div v-else class="text-neutral-black-font py-12 text-center">
+        <div v-else-if="section" class="text-neutral-black-font py-12 text-center">
           <i class="fas fa-exclamation-triangle mb-4 text-4xl"></i>
           <p>{{ t('screen.company.sections.notAvailable') }}</p>
         </div>
