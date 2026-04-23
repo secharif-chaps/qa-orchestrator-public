@@ -1,19 +1,19 @@
 <template>
   <Tag
     v-if="label"
-    :variant="variant"
     :intent="intent"
     size="sm"
     :icon="icon"
-    :label="label"
     :title="truncate ? label : undefined"
     :class="truncate ? 'job-tag-truncate' : ''"
-  />
+  >
+    {{ label }}</Tag
+  >
 </template>
 
 <script setup lang="ts">
-import { Tag } from '@owlint/feathers-vue'
 import { JOB_TAG_TYPES, type JobTagType } from '@/types/company'
+import { Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 
 interface Props {
@@ -24,10 +24,7 @@ interface Props {
 
 const { type } = defineProps<Props>()
 
-const icon = computed(() =>
-  type === JOB_TAG_TYPES.LOCATION ? 'fa fa-map-marker' : 'fa fa-building',
-)
-const variant = computed(() => 'primary' as const)
+const icon = computed(() => (type === JOB_TAG_TYPES.LOCATION ? 'fa-location-dot' : 'fa-building'))
 const intent = computed(() => (type === JOB_TAG_TYPES.LOCATION ? 'neutral' : undefined))
 </script>
 
