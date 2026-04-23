@@ -315,12 +315,6 @@
         "clientRole": false
       },
       {
-        "name": "company.delete",
-        "description": "Can archive (soft-delete) companies from folders",
-        "composite": false,
-        "clientRole": false
-      },
-      {
         "name": "organization.read",
         "description": "Read folders and companies shared with user",
         "composite": false,
