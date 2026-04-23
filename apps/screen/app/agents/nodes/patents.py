@@ -45,6 +45,8 @@ ABSTRACT_MAX_CHARS = 600
 # Cap the number of top classification codes surfaced to the LLM.
 MAX_TOP_CODES = 20
 
+# Cap the number of countries surfaced in the prompt's geographic coverage block.
+MAX_GEO_COUNTRIES_IN_PROMPT = 15
 
 async def run_patents_agent(state: CompanyAnalysisState) -> dict:
     """Execute the two-phase patents analysis.
@@ -64,6 +66,7 @@ async def run_patents_agent(state: CompanyAnalysisState) -> dict:
     enrichment = state.get("enrichment_data") or {}
     publications = enrichment.get("epo_publications") or {}
     families_payload = enrichment.get("epo_families") or {}
+    legal_payload = enrichment.get("epo_legal") or {}
 
     raw_patents = publications.get("patents") or []
     if not raw_patents:
@@ -74,7 +77,13 @@ async def run_patents_agent(state: CompanyAnalysisState) -> dict:
         return _empty_success(company_name, start_time)
 
     # Phase 1: programmatic extraction.
-    patents, filing_trend, code_counts = _extract_features(raw_patents, families_payload)
+    (
+        patents,
+        filing_trend,
+        code_counts,
+        geographic_coverage,
+        status_breakdown,
+    ) = _extract_features(raw_patents, families_payload, legal_payload)
 
     # Phase 2: LLM analysis (timeout-bounded, errors swallowed into status="error").
     try:
@@ -83,6 +92,8 @@ async def run_patents_agent(state: CompanyAnalysisState) -> dict:
                 company_name=company_name,
                 patents=patents,
                 code_counts=code_counts,
+                geographic_coverage=geographic_coverage,
+                status_breakdown=status_breakdown,
             ),
             timeout=AGENT_TIMEOUT_SECONDS,
         )
@@ -96,6 +107,8 @@ async def run_patents_agent(state: CompanyAnalysisState) -> dict:
             company_name=company_name,
             patents=patents,
             filing_trend=filing_trend,
+            geographic_coverage=geographic_coverage,
+            status_breakdown=status_breakdown,
             error=f"Agent timed out after {AGENT_TIMEOUT_SECONDS} seconds",
             duration_ms=duration_ms,
         )
@@ -110,6 +123,8 @@ async def run_patents_agent(state: CompanyAnalysisState) -> dict:
             company_name=company_name,
             patents=patents,
             filing_trend=filing_trend,
+            geographic_coverage=geographic_coverage,
+            status_breakdown=status_breakdown,
             error=str(exc),
             duration_ms=duration_ms,
         )
@@ -130,6 +145,9 @@ async def run_patents_agent(state: CompanyAnalysisState) -> dict:
                     "total_patents_count": len(patents),
                     "top_cpc_domains": llm_out["data"].get("top_cpc_domains") or [],
                     "filing_trend": filing_trend,
+                    "geographic_coverage": geographic_coverage,
+                    "status_breakdown": status_breakdown,
+                    "portfolio_strength": llm_out["data"].get("portfolio_strength") or "",
                     "patents": patents,
                 },
                 sources=[],
@@ -150,30 +168,44 @@ async def run_patents_agent(state: CompanyAnalysisState) -> dict:
 def _extract_features(
     raw_patents: list[dict[str, Any]],
     families_payload: dict[str, Any],
-) -> tuple[list[dict[str, Any]], dict[str, int], Counter]:
-    """Dedupe, compute yearly trend, and index CPC codes from families.
+    legal_payload: dict[str, Any],
+) -> tuple[list[dict[str, Any]], dict[str, int], Counter, dict[str, int], dict[str, int]]:
+    """Dedupe, compute yearly trend, CPC codes, and families / legal aggregates.
 
     Args:
         raw_patents: The list under ``epo_publications.patents``.
         families_payload: Full ``epo_families`` enrichment (``{"families": [...]}``)
             or ``{}`` when families were not collected.
+        legal_payload: Full ``epo_legal`` enrichment (``{"legal_statuses": [...]}``)
+            or ``{}`` when legal data was not collected.
 
     Returns:
-        Tuple ``(patents, filing_trend, code_counts)``:
+        Tuple ``(patents, filing_trend, code_counts, geographic_coverage, status_breakdown)``:
             - ``patents``: normalised list of patent dicts ready for the
-              persistence layer (doc_id under ``patent_number`` + all
-              supporting fields + empty ``is_key_patent``).
+              persistence layer. Each dict carries ``patent_number``,
+              bibliographic fields, ``cpc_codes``, ``family_size``,
+              ``family_countries``, ``legal_status`` and
+              ``is_key_patent`` (initially False).
             - ``filing_trend``: ``{year_str: count}`` — patents without a
               publication date are skipped.
             - ``code_counts``: :class:`~collections.Counter` of CPC codes
               across the deduped portfolio; empty when no family data.
+            - ``geographic_coverage``: ``{country_code: count}`` summing
+              family members across the portfolio; empty when no family
+              data is available.
+            - ``status_breakdown``: ``{legal_status: count}`` for items
+              with a known simplified status; empty when no legal data.
     """
     cpc_by_doc_id = _index_cpc_by_doc_id(families_payload)
+    family_meta_by_doc_id = _index_family_meta(families_payload)
+    legal_by_doc_id = _index_legal(legal_payload)
 
     seen: set[str] = set()
     patents: list[dict[str, Any]] = []
     filing_trend: Counter[str] = Counter()
     code_counts: Counter[str] = Counter()
+    geographic_coverage: Counter[str] = Counter()
+    status_breakdown: Counter[str] = Counter()
 
     for raw in raw_patents:
         doc_id = raw.get("doc_id")
@@ -192,6 +224,17 @@ def _extract_features(
             if prefix:
                 code_counts[prefix] += 1
 
+        family_size, family_countries, member_countries = family_meta_by_doc_id.get(doc_id, (0, [], []))
+        # geographic_coverage aggregates *every* family member: a patent
+        # with two EP members and one US member contributes +2 to EP
+        # and +1 to US (reflecting the portfolio's real footprint).
+        for country in member_countries:
+            geographic_coverage[country] += 1
+
+        legal_status = legal_by_doc_id.get(doc_id)
+        if legal_status:
+            status_breakdown[legal_status] += 1
+
         patents.append(
             {
                 "patent_number": doc_id,
@@ -201,12 +244,21 @@ def _extract_features(
                 "applicants": list(raw.get("applicants") or []),
                 "publication_date": pub_date,
                 "cpc_codes": cpc_codes,
+                "family_size": family_size,
+                "family_countries": family_countries,
+                "legal_status": legal_status,
                 "is_key_patent": False,
             }
         )
 
-    # JSONB column is a dict — convert Counter to plain dict.
-    return patents, dict(filing_trend), code_counts
+    # JSONB columns are dicts — convert Counters to plain dicts.
+    return (
+        patents,
+        dict(filing_trend),
+        code_counts,
+        dict(geographic_coverage),
+        dict(status_breakdown),
+    )
 
 
 def _index_cpc_by_doc_id(families_payload: dict[str, Any]) -> dict[str, list[str]]:
@@ -220,6 +272,62 @@ def _index_cpc_by_doc_id(families_payload: dict[str, Any]) -> dict[str, list[str
         if not doc_id:
             continue
         index[doc_id] = list(family.get("cpc_classifications") or [])
+    return index
+
+
+def _index_family_meta(
+    families_payload: dict[str, Any],
+) -> dict[str, tuple[int, list[str], list[str]]]:
+    """Build a ``{doc_id: (family_size, unique_countries, member_countries)}`` index.
+
+    ``unique_countries`` is the sorted deduplicated list of country codes
+    (used to populate ``CompanyPatentItem.family_countries``), while
+    ``member_countries`` keeps every member's country so the caller can
+    sum per-country coverage across the full portfolio.
+    """
+    families = families_payload.get("families") if isinstance(families_payload, dict) else None
+    if not families:
+        return {}
+
+    index: dict[str, tuple[int, list[str], list[str]]] = {}
+    for family in families:
+        doc_id = family.get("doc_id")
+        if not doc_id:
+            continue
+        members = family.get("family_members") or []
+        member_countries: list[str] = []
+        unique_countries: set[str] = set()
+        for member in members:
+            country = (member.get("country") or "").strip()
+            if not country:
+                continue
+            member_countries.append(country)
+            unique_countries.add(country)
+        # family_size falls back to the number of parsed members when the
+        # EPO payload omits the explicit integer (the pydantic model
+        # defaults to len(members) anyway).
+        raw_size = family.get("family_size")
+        family_size = int(raw_size) if isinstance(raw_size, int) and raw_size > 0 else len(member_countries)
+        index[doc_id] = (family_size, sorted(unique_countries), member_countries)
+    return index
+
+
+def _index_legal(legal_payload: dict[str, Any]) -> dict[str, str]:
+    """Build a ``{doc_id: simplified_status}`` index from ``epo_legal``.
+
+    Skips entries without a ``doc_id`` or without a simplified status —
+    the caller treats missing entries as "legal data unavailable" rather
+    than defaulting them to any specific bucket.
+    """
+    legal_statuses = legal_payload.get("legal_statuses") if isinstance(legal_payload, dict) else None
+    if not legal_statuses:
+        return {}
+    index: dict[str, str] = {}
+    for entry in legal_statuses:
+        doc_id = entry.get("doc_id")
+        status = entry.get("simplified_status")
+        if doc_id and status:
+            index[doc_id] = status
     return index
 
 
@@ -246,6 +354,9 @@ def _condense_for_prompt(patents: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
     Keeps the most recent ``MAX_PATENTS_IN_PROMPT`` entries (by
     publication_date desc, undated last) and truncates each abstract.
+    Threads ``family_size``, ``family_countries`` and ``legal_status``
+    so the LLM can reason about geographic reach and legal solidity of
+    the representative sample.
     """
     ordered = sorted(
         patents,
@@ -264,6 +375,9 @@ def _condense_for_prompt(patents: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "abstract": abstract,
                 "publication_date": p.get("publication_date"),
                 "cpc_codes": p.get("cpc_codes") or [],
+                "family_size": int(p.get("family_size") or 0),
+                "family_countries": list(p.get("family_countries") or []),
+                "legal_status": p.get("legal_status"),
             }
         )
     return condensed
@@ -273,6 +387,8 @@ async def _analyze_with_llm(
     company_name: str,
     patents: list[dict[str, Any]],
     code_counts: Counter,
+    geographic_coverage: dict[str, int],
+    status_breakdown: dict[str, int],
 ) -> dict[str, Any]:
     """Issue the Phase 2 LLM call via Chat Completions and return parsed output.
 
@@ -281,20 +397,37 @@ async def _analyze_with_llm(
     agent works exclusively from the structured EPO data passed in the
     user message. The response is constrained to JSON object mode and
     validated against :class:`PatentsAgentOutput`.
+
+    Geographic coverage and legal status breakdown blocks are injected
+    only when the corresponding aggregates carry data, matching the
+    system prompt's graceful degradation clause for
+    ``portfolio_strength``.
     """
     output_schema = AGENT_OUTPUT_SCHEMAS["patents"]
 
     condensed_patents = _condense_for_prompt(patents)
     top_codes = [{"code": code, "count": count} for code, count in code_counts.most_common(MAX_TOP_CODES)]
 
-    user_query = (
-        f"Analyze the patent portfolio of {company_name}.\n\n"
-        "## Top classification codes (across all patents)\n"
-        f"{json.dumps(top_codes, indent=2, ensure_ascii=False)}\n\n"
-        "## Patents to analyse (most recent first, truncated for brevity)\n"
-        f"{json.dumps(condensed_patents, indent=2, ensure_ascii=False)}\n\n"
-        "Produce the JSON object now."
-    )
+    sections = [
+        f"Analyze the patent portfolio of {company_name}.",
+        "## Top classification codes (across all patents)",
+        json.dumps(top_codes, indent=2, ensure_ascii=False),
+    ]
+
+    if geographic_coverage:
+        top_geo = dict(Counter(geographic_coverage).most_common(MAX_GEO_COUNTRIES_IN_PROMPT))
+        sections.append("## Geographic coverage (family members per country, top 15)")
+        sections.append(json.dumps(top_geo, indent=2, ensure_ascii=False))
+
+    if status_breakdown:
+        sections.append("## Legal status breakdown")
+        sections.append(json.dumps(status_breakdown, indent=2, ensure_ascii=False))
+
+    sections.append("## Patents to analyse (most recent first, truncated for brevity)")
+    sections.append(json.dumps(condensed_patents, indent=2, ensure_ascii=False))
+    sections.append("Produce the JSON object now.")
+
+    user_query = "\n\n".join(sections)
 
     client = get_chat_client()
     response = await client.chat.completions.create(
@@ -341,6 +474,9 @@ def _empty_success(company_name: str, start_time: float) -> dict:
                     "total_patents_count": 0,
                     "top_cpc_domains": [],
                     "filing_trend": {},
+                    "geographic_coverage": {},
+                    "status_breakdown": {},
+                    "portfolio_strength": "",
                     "patents": [],
                 },
                 sources=[],
@@ -357,11 +493,13 @@ def _error_result(
     company_name: str,
     patents: list[dict[str, Any]],
     filing_trend: dict[str, int],
+    geographic_coverage: dict[str, int],
+    status_breakdown: dict[str, int],
     error: str,
     duration_ms: int,
 ) -> dict:
     """AgentResult for an LLM failure: keep Phase 1 artefacts so the UI
-    can still show counts / trend while flagging the error.
+    can still show counts / trend / coverage while flagging the error.
     """
     return {
         "agent_results": [
@@ -373,6 +511,9 @@ def _error_result(
                     "total_patents_count": len(patents),
                     "top_cpc_domains": [],
                     "filing_trend": filing_trend,
+                    "geographic_coverage": geographic_coverage,
+                    "status_breakdown": status_breakdown,
+                    "portfolio_strength": "",
                     "patents": patents,
                 },
                 sources=[],

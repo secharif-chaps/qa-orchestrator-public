@@ -43,7 +43,7 @@ from app.models.company_children import (
     SanctionType,
 )
 from app.models.company_financial import CompanyFinancial, CompanyFinancialMetric, CompanyFundingRound
-from app.models.company_patents import CompanyPatentItem, CompanyPatents
+from app.models.company_patents import CompanyPatentItem, CompanyPatents, LegalStatus
 from app.models.company_sections import (
     CompanyCsr,
     CompanyDigital,
@@ -2011,6 +2011,11 @@ def save_patents_data(db: Session, company_id: int, data: dict) -> None:
     section.total_patents_count = int(data.get("total_patents_count") or 0)
     section.top_cpc_domains = data.get("top_cpc_domains") or []
     section.filing_trend = data.get("filing_trend") or {}
+    section.geographic_coverage = data.get("geographic_coverage") or {}
+    section.status_breakdown = data.get("status_breakdown") or {}
+    # portfolio_strength stays NULL when the LLM could not produce one
+    # (graceful degradation when families AND legal are both missing).
+    section.portfolio_strength = _get_string_value(data, "portfolio_strength") or None
 
     db.flush()
 
@@ -2044,10 +2049,29 @@ def _save_patent_items(db: Session, company_id: int, items: list[dict]) -> None:
                 publication_date=_parse_patent_publication_date(item.get("publication_date")),
                 cpc_codes=list(item.get("cpc_codes") or []),
                 is_key_patent=bool(item.get("is_key_patent")),
+                family_size=int(item.get("family_size") or 0),
+                family_countries=list(item.get("family_countries") or []),
+                legal_status=_parse_legal_status(item.get("legal_status")),
             )
         )
 
     db.flush()
+
+
+def _parse_legal_status(value: Any) -> LegalStatus | None:
+    """Coerce a legal_status string into a ``LegalStatus`` member.
+
+    Returns ``None`` for empty / unknown-shaped values so rows without
+    legal data are stored as NULL rather than a synthetic bucket.
+    """
+    if value is None or value == "":
+        return None
+    if isinstance(value, LegalStatus):
+        return value
+    try:
+        return LegalStatus(value)
+    except ValueError:
+        return None
 
 
 def _parse_patent_publication_date(raw: Any) -> Any:
@@ -2091,6 +2115,9 @@ def get_patents_data(db: Session, company_id: int) -> dict[str, Any]:
         "total_patents_count": section.total_patents_count or 0,
         "top_cpc_domains": section.top_cpc_domains or [],
         "filing_trend": section.filing_trend or {},
+        "geographic_coverage": section.geographic_coverage or {},
+        "status_breakdown": section.status_breakdown or {},
+        "portfolio_strength": section.portfolio_strength or "",
         "patents": [_serialize_patent_item(item) for item in items],
     }
 
@@ -2106,6 +2133,9 @@ def _serialize_patent_item(item: CompanyPatentItem) -> dict[str, Any]:
         "publication_date": item.publication_date.isoformat() if item.publication_date else None,
         "cpc_codes": item.cpc_codes or [],
         "is_key_patent": bool(item.is_key_patent),
+        "family_size": int(item.family_size or 0),
+        "family_countries": list(item.family_countries or []),
+        "legal_status": item.legal_status.value if item.legal_status is not None else None,
     }
 
 

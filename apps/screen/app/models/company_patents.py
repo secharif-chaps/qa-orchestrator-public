@@ -10,14 +10,23 @@ Two tables mirroring the existing section / items pattern
 
 CPC codes on items come exclusively from ``epo_families``; when the
 companion ``epo_families`` enrichment is unavailable, ``cpc_codes`` is
-simply an empty list.
+simply an empty list. The families / legal enrichment extensions
+(``geographic_coverage``, ``status_breakdown``, ``portfolio_strength``
+on the section; ``family_size``, ``family_countries``, ``legal_status``
+on items) mirror the same graceful-degradation contract: empty
+aggregates and ``None`` / zero / ``[]`` at the item level when families
+or legal are missing.
 """
 
+import enum
+
 from sqlalchemy import (
+    ARRAY,
     Boolean,
     Column,
     Date,
     DateTime,
+    Enum,
     ForeignKey,
     Integer,
     Text,
@@ -28,6 +37,20 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.database import SCREEN_SCHEMA, Base
+
+
+class LegalStatus(enum.StrEnum):
+    """Simplified patent legal status.
+
+    Mirrors the four buckets produced by the EPO parser
+    (``SimplifiedLegalStatus`` in ``app.infrastructure.epo.schemas``)
+    so the agent can persist the status as-is without remapping.
+    """
+
+    active = "active"
+    expired = "expired"
+    pending = "pending"
+    unknown = "unknown"
 
 
 class CompanyPatents(Base):
@@ -46,6 +69,15 @@ class CompanyPatents(Base):
         filing_trend: Mapping of ``{year: count}`` derived programmatically
             from publication dates; keys are year strings (``"2024"``)
             so the JSONB payload is stable under JSON serialisation
+        geographic_coverage: Mapping of ``{country_code: count}`` aggregating
+            family members across the portfolio; empty dict when
+            ``epo_families`` was not collected
+        status_breakdown: Mapping of ``{legal_status: count}`` with the
+            four ``LegalStatus`` buckets; empty dict when ``epo_legal``
+            was not collected
+        portfolio_strength: LLM assessment of portfolio solidity and
+            geographic strategy (1-2 paragraphs); ``None`` when families
+            AND legal data are both missing (graceful degradation)
         created_at: Record creation timestamp
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
@@ -64,6 +96,10 @@ class CompanyPatents(Base):
     total_patents_count = Column(Integer, nullable=False, default=0)
     top_cpc_domains = Column(JSONB, nullable=False, default=list)
     filing_trend = Column(JSONB, nullable=False, default=dict)
+
+    geographic_coverage = Column(JSONB, nullable=False, default=dict)
+    status_breakdown = Column(JSONB, nullable=False, default=dict)
+    portfolio_strength = Column(Text, nullable=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
@@ -91,6 +127,13 @@ class CompanyPatentItem(Base):
             empty list when families data is unavailable for this doc_id
         is_key_patent: True when the LLM flagged this publication as a
             representative / breakthrough patent for the portfolio
+        family_size: Number of publications in the international patent
+            family, from ``epo_families``; ``0`` when absent
+        family_countries: Sorted unique country codes present in the
+            family members; empty list when families data is unavailable
+        legal_status: Simplified legal status from ``epo_legal``
+            (active / expired / pending / unknown); ``None`` when legal
+            data is unavailable for this doc_id
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
@@ -117,6 +160,18 @@ class CompanyPatentItem(Base):
     publication_date = Column(Date, nullable=True)
     cpc_codes = Column(JSONB, nullable=False, default=list)
     is_key_patent = Column(Boolean, nullable=False, default=False)
+
+    family_size = Column(Integer, nullable=False, default=0)
+    family_countries = Column(ARRAY(Text), nullable=False, default=list)
+    legal_status = Column(
+        Enum(
+            LegalStatus,
+            values_callable=lambda obj: [e.value for e in obj],
+            name="patent_legal_status_enum",
+            schema=SCREEN_SCHEMA,
+        ),
+        nullable=True,
+    )
 
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
