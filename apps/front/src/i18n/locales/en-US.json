@@ -1749,6 +1749,10 @@
       "edit": "Edit",
       "enabled": "Enabled",
       "enabledAt": "Enabled at",
+      "epo": {
+        "description": "European Patent Office — patent data enrichment for company cards",
+        "name": "EPO"
+      },
       "lastUpdated": "Last updated",
       "pappers": {
         "description": "French company data provider (legal info, financials, officers)",
@@ -2286,6 +2290,10 @@
         "urlPlaceholder": "https://discover.example.com"
       },
       "enabled": "Enabled",
+      "epo": {
+        "description": "Enrich company profiles with patent data from the European Patent Office.",
+        "name": "EPO"
+      },
       "globalFeatures": "Global Features",
       "pappers": {
         "description": "Enrich company profiles with official French registry data from Pappers.",

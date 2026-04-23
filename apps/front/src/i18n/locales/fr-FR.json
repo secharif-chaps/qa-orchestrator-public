@@ -1749,6 +1749,10 @@
       "edit": "Modifier",
       "enabled": "Activé",
       "enabledAt": "Activé le",
+      "epo": {
+        "description": "Office Européen des Brevets — données brevets pour enrichir les fiches entreprise",
+        "name": "EPO"
+      },
       "lastUpdated": "Dernière mise à jour",
       "pappers": {
         "description": "Fournisseur de données d'entreprises françaises (infos légales, financières, dirigeants)",
@@ -2286,6 +2290,10 @@
         "urlPlaceholder": "https://discover.example.com"
       },
       "enabled": "Activé",
+      "epo": {
+        "description": "Enrichissez les profils d'entreprises avec les données brevets de l'Office Européen des Brevets.",
+        "name": "EPO"
+      },
       "globalFeatures": "Fonctionnalités globales",
       "pappers": {
         "description": "Enrichissez les profils d'entreprises avec les données officielles du registre français via Pappers.",

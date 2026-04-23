@@ -51,5 +51,12 @@ const availableSources = computed<DataSourceInfo[]>(() => [
     logo: '/src/assets/logos/worldcheck.svg',
     isDualCredential: true,
   },
+  {
+    source: 'epo',
+    name: t('screen.dataSources.epo.name'),
+    description: t('screen.dataSources.epo.description'),
+    logo: '/src/assets/logos/epo.svg',
+    isDualCredential: true,
+  },
 ])
 </script>
