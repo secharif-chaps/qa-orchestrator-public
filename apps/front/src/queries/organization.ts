@@ -22,9 +22,14 @@ export const currentOrganizationQuery = defineQueryOptions(() => ({
 /**
  * Query for recent organization activities.
  * Shows last 10 companies and folders created by other users.
+ *
+ * Drives the notifications UI (bell badge + sidebar), so a short staleTime
+ * lets `refetchOnWindowFocus` fire on every tab-return. Polling is handled
+ * separately by the useActivitiesPolling composable.
  */
 export const organizationActivitiesQuery = defineQueryOptions(() => ({
   key: ORGANIZATION_QUERY_KEYS.activities(),
   query: () => getOrganizationActivities(),
-  staleTime: 1000 * 60, // 1 minute - activities should be relatively fresh
+  staleTime: 1000 * 10,
+  refetchOnWindowFocus: true,
 }))

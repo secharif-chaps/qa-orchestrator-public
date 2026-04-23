@@ -79,10 +79,11 @@
 <script setup lang="ts">
 import { organizationActivitiesQuery } from '@/queries/organization'
 import { useAuthStore } from '@/stores/auth'
+import { useNotificationsStore } from '@/stores/notifications'
 import { formatRelativeTime } from '@/utils/time'
 import { Badge, Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import NotificationItem from '../ui/NotificationItem.vue'
@@ -108,13 +109,16 @@ interface Notification {
 const router = useRouter()
 const { t } = useI18n()
 const authStore = useAuthStore()
+const notificationsStore = useNotificationsStore()
 
 const canViewActivities = computed(() => authStore.hasPermission('organization.read'))
 
-// Track read notifications (in real app, this would be persisted)
-const readNotifications = ref<Set<string>>(new Set())
+// Locally-dismissed notifications during the current session.
+// Unread status itself is driven by notificationsStore.lastSeenAt (persisted),
+// but a user clicking a single notification should mark it read immediately
+// without waiting for the sidebar to close.
+const dismissedIds = ref<Set<string>>(new Set())
 
-// Only fetch activities if user has permission
 const {
   data: activitiesData,
   isLoading,
@@ -131,6 +135,8 @@ const notifications = computed<Notification[]>(() => {
   return activitiesData.value.slice(0, 20).map((activity, index) => {
     const isCompany = activity.type === 'company'
     const notificationId = `${activity.type}-${activity.name}-${index}`
+    const isRead =
+      dismissedIds.value.has(notificationId) || !notificationsStore.isUnread(activity.created_at)
 
     return {
       id: notificationId,
@@ -142,7 +148,7 @@ const notifications = computed<Notification[]>(() => {
       category: isCompany
         ? t('common.sidebar.notifications.categoryCompany')
         : t('common.sidebar.notifications.categoryFolder'),
-      read: readNotifications.value.has(notificationId),
+      read: isRead,
       icon: {
         icon: isCompany ? 'fa fa-building' : 'fa fa-folder',
         color: isCompany ? 'pink' : 'sage',
@@ -152,24 +158,23 @@ const notifications = computed<Notification[]>(() => {
   })
 })
 
-// Computed unread count
-const unreadCount = computed(() => {
-  return notifications.value.filter((n) => !n.read).length
+const unreadCount = computed(() => notifications.value.filter((n) => !n.read).length)
+
+// Opening the sidebar counts as acknowledging every notification that has
+// arrived so far; the badge on the bell should clear immediately.
+onMounted(() => {
+  notificationsStore.markAllSeen()
 })
 
-// Mark all as read
 function markAllAsRead() {
-  notifications.value.forEach((n) => {
-    readNotifications.value.add(n.id)
-  })
+  notifications.value.forEach((n) => dismissedIds.value.add(n.id))
+  notificationsStore.markAllSeen()
 }
 
-// Mark single notification as read
 function markNotificationAsRead(id: number | string) {
-  readNotifications.value.add(String(id))
+  dismissedIds.value.add(String(id))
 }
 
-// Handle notification click
 function handleNotificationClick(id: number | string) {
   const notification = notifications.value.find((n) => n.id === id)
   if (notification?.action) {
