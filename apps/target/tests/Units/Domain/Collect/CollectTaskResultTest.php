@@ -12,8 +12,18 @@ class CollectTaskResultTest extends TestCase
     public function testSuccessResult(): void
     {
         $data = [
-            'items' => [1, 2, 3],
-            'count' => 3,
+            [
+                'id' => 1,
+                'value' => 'a',
+            ],
+            [
+                'id' => 2,
+                'value' => 'b',
+            ],
+            [
+                'id' => 3,
+                'value' => 'c',
+            ],
         ];
         $metadata = [
             'execution_time' => 1.5,
@@ -72,7 +82,9 @@ class CollectTaskResultTest extends TestCase
     public function testToArray(): void
     {
         $data = [
-            'result' => 'success',
+            [
+                'result' => 'success',
+            ],
         ];
         $metadata = [
             'duration' => 2.3,

@@ -28,6 +28,8 @@ services:
       tags: ['collect_data_handler']
     App\Domain\DocumentQuality\DocumentProcessorInterface:
       tags: ['app.document_processor']
+    App\Domain\Collect\ApifyDocumentNormalizerInterface:
+      tags: ['apify.normalizer']
 
   App\:
     resource: '../src/'
@@ -37,6 +39,10 @@ services:
 
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
+
+  # specific normalizers that are checked first in the tagged iterator.
+  App\Infrastructure\Collect\Apify\Normalizer\GenericApifyNormalizer:
+    autoconfigure: false
 
   App\Domain\DocumentQuality\ScoringStrategyInterface:
     class: App\Domain\DocumentQuality\DefaultScoringStrategy

@@ -36,6 +36,7 @@ class ApifyWebhookController extends AbstractController
             throw new BadRequestHttpException('Missing collect_task_id from authentication');
         }
 
+        $dispatchId = $request->headers->get('X-Apify-Webhook-Dispatch-Id');
         $payload = $this->decodePayload($request);
         $status = $this->extractStatus($payload);
 
@@ -43,6 +44,7 @@ class ApifyWebhookController extends AbstractController
 
         $this->logger?->info('Apify webhook received', [
             'collect_task_id' => $collectTaskId,
+            'apify_dispatch_id' => $dispatchId,
             'event_type' => $payload['eventType'] ?? null,
             'apify_status' => $status,
             'mapped_status' => $collectTaskStatus->value,

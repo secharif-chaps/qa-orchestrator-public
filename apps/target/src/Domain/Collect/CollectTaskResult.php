@@ -7,8 +7,8 @@ namespace App\Domain\Collect;
 readonly class CollectTaskResult
 {
     /**
-     * @param array<string, mixed>|null $data
-     * @param array<string, mixed>|null $metadata
+     * @param list<array<string, mixed>>|null $data
+     * @param array<string, mixed>|null       $metadata
      */
     public function __construct(
         private bool $success,
@@ -19,8 +19,8 @@ readonly class CollectTaskResult
     }
 
     /**
-     * @param array<string, mixed> $data
-     * @param array<string, mixed> $metadata
+     * @param list<array<string, mixed>> $data
+     * @param array<string, mixed>       $metadata
      */
     public static function success(array $data = [], array $metadata = []): self
     {
@@ -46,7 +46,7 @@ readonly class CollectTaskResult
     }
 
     /**
-     * @return array<string, mixed>|null
+     * @return list<array<string, mixed>>|null
      */
     public function getData(): ?array
     {

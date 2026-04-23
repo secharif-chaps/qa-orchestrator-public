@@ -6,288 +6,389 @@ namespace App\Tests\Units\Application\Collect\Apify;
 
 use App\Application\Collect\Apify\FetchApifyDatasetAction;
 use App\Application\Collect\Apify\FetchApifyDatasetHandler;
+use App\Application\Document\AddDocumentAction;
+use App\Domain\Collect\ApifyDocumentNormalizerInterface;
+use App\Domain\Collect\ApifyNormalizerResolverInterface;
 use App\Domain\Collect\CollectTask;
-use App\Domain\Collect\CollectTaskGatewayInterface;
 use App\Domain\Collect\CollectTaskStatus;
+use App\Domain\Collect\Exception\ApifyDatasetNotFoundException;
 use App\Domain\Collect\Exception\CollectException;
+use App\Domain\Collect\NormalizerContext;
+use App\Domain\Document\Document;
+use App\Domain\Organisation\Organisation;
+use App\Domain\Shared\TranslatedText;
 use App\Domain\Source\Source;
 use App\Domain\Source\SourceType;
 use App\Domain\WatchFile\WatchFile;
-use App\Infrastructure\Collect\Apify\Client\ApifyHttpClient;
-use App\Infrastructure\SourceActivity\SourceActivityLogger;
+use App\Infrastructure\Collect\Apify\Normalizer\ApifyNormalizerResolver;
+use App\Infrastructure\Collect\Apify\Normalizer\GenericApifyNormalizer;
+use App\Tests\Units\Infrastructure\Collect\Apify\NullApifyHttpClient;
+use App\Tests\Units\Infrastructure\Collect\NullCollectTaskGateway;
+use App\Tests\Units\Infrastructure\SourceActivity\NullSourceActivityLogger;
 use App\Tests\Utils\EntityUtilsTrait;
+use App\Tests\Utils\Symfony\NullMessageBus;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Uid\Uuid;
 
 #[CoversClass(FetchApifyDatasetHandler::class)]
 class FetchApifyDatasetHandlerTest extends TestCase
 {
     use EntityUtilsTrait;
-    private Stub $apifyClient;
-    private Stub $collectTaskGateway;
-    private Stub $eventDispatcher;
-    private Stub $sourceActivityLogger;
-    private Stub $logger;
+    private const string TASK_ID = 'test-collect-task-id';
+    private NullApifyHttpClient $apifyClient;
+    private NullCollectTaskGateway $collectTaskGateway;
+
+    /** @var EventDispatcherInterface&Stub */
+    private EventDispatcherInterface $eventDispatcher;
+    private NullSourceActivityLogger $sourceActivityLogger;
+    private NullMessageBus $messageBus;
+    private ApifyNormalizerResolverInterface $normalizerResolver;
     private FetchApifyDatasetHandler $handler;
 
     protected function setUp(): void
     {
-        $this->apifyClient = $this->createStub(ApifyHttpClient::class);
-        $this->collectTaskGateway = $this->createStub(CollectTaskGatewayInterface::class);
+        $this->apifyClient = new NullApifyHttpClient();
+        $this->collectTaskGateway = new NullCollectTaskGateway();
         $this->eventDispatcher = $this->createStub(EventDispatcherInterface::class);
-        $this->sourceActivityLogger = $this->createStub(SourceActivityLogger::class);
-        $this->logger = $this->createStub(LoggerInterface::class);
+        $this->sourceActivityLogger = new NullSourceActivityLogger();
+        $this->messageBus = new NullMessageBus();
+        $this->normalizerResolver = new ApifyNormalizerResolver(new \ArrayObject([]), new GenericApifyNormalizer());
 
         $this->handler = new FetchApifyDatasetHandler(
             $this->apifyClient,
             $this->collectTaskGateway,
             $this->eventDispatcher,
             $this->sourceActivityLogger,
-            $this->logger
+            $this->normalizerResolver,
+            $this->messageBus,
+            new NullLogger()
         );
     }
 
     public function testSuccessfullyFetchesDatasetItems(): void
     {
-        $collectTaskId = Uuid::v4()->toRfc4122();
         $datasetId = 'dataset_123';
-        $action = new FetchApifyDatasetAction($collectTaskId, $datasetId);
-
-        // Create test data
-        $collectTask = $this->createCollectTask($collectTaskId);
         $testItems = [
             [
                 'id' => 'item1',
-                'name' => 'Item 1',
+                'title' => 'Item 1',
+                'url' => 'https://example.com/1',
+                'text' => 'Content of item 1 for testing',
             ],
             [
                 'id' => 'item2',
-                'name' => 'Item 2',
+                'title' => 'Item 2',
+                'url' => 'https://example.com/2',
+                'text' => 'Content of item 2 for testing',
             ],
             [
                 'id' => 'item3',
-                'name' => 'Item 3',
+                'title' => 'Item 3',
+                'url' => 'https://example.com/3',
+                'text' => 'Content of item 3 for testing',
             ],
         ];
 
-        // Setup mocks
-        $this->collectTaskGateway->method('get')
-            ->with($collectTaskId)
-            ->willReturn($collectTask);
+        $this->createAndSaveCollectTask();
+        $this->apifyClient->addResponse('/datasets/' . $datasetId . '/items', $testItems);
+        $this->apifyClient->addResponse('/datasets/' . $datasetId, [
+            'data' => [
+                'itemCount' => \count($testItems),
+                'id' => $datasetId,
+            ],
+        ]);
 
-        $this->apifyClient->method('request')
-            ->willReturnCallback(function ($method, $path) use ($datasetId, $testItems) {
-                if (str_contains($path, '/datasets/' . $datasetId) && !str_contains($path, '/items')) {
-                    // Dataset metadata request
-                    return [
-                        'data' => [
-                            'itemCount' => \count($testItems),
-                            'id' => $datasetId,
-                        ],
-                    ];
-                }
+        ($this->handler)(new FetchApifyDatasetAction(self::TASK_ID, $datasetId));
 
-                // Items request
-                return $testItems;
-            });
+        $saved = $this->collectTaskGateway->get(self::TASK_ID);
+        $this->assertEquals(CollectTaskStatus::COMPLETED, $saved->getStatus());
+        $this->assertSame(3, $this->messageBus->countDispatched(AddDocumentAction::class));
 
-        // Execute
-        ($this->handler)($action);
-
-        // Verify
-        $this->assertEquals(CollectTaskStatus::COMPLETED, $collectTask->getStatus());
-
-        $configuration = $collectTask->getConfiguration();
-        $this->assertArrayHasKey('result', $configuration);
+        $configuration = $saved->getConfiguration();
         /** @var array<string, mixed> $result */
         $result = $configuration['result'];
         $this->assertTrue($result['success']);
-        /** @var list<array<string, mixed>> $data */
-        $data = $result['data'];
-        $this->assertCount(3, $data);
-        $this->assertEquals('item1', $data[0]['id']);
+        /** @var array<string, mixed> $metadata */
+        $metadata = $result['metadata'];
+        $this->assertSame(3, $metadata['documentsCreated']);
     }
 
     public function testFetchesLargeDatasetWithPagination(): void
     {
-        $collectTaskId = Uuid::v4()->toRfc4122();
         $datasetId = 'dataset_large';
-        $action = new FetchApifyDatasetAction($collectTaskId, $datasetId);
-
-        $collectTask = $this->createCollectTask($collectTaskId);
-
-        // Create 250 test items (requires pagination with batch size 100)
         $testItems = [];
         for ($i = 1; $i <= 250; ++$i) {
             $testItems[] = [
                 'id' => 'item' . $i,
-                'name' => 'Item ' . $i,
+                'title' => 'Item ' . $i,
+                'url' => 'https://example.com/item/' . $i,
+                'text' => 'Content of item ' . $i . ' for testing purposes with enough text',
             ];
         }
 
-        // Setup mocks
-        $this->collectTaskGateway->method('get')
-            ->with($collectTaskId)
-            ->willReturn($collectTask);
-
-        $this->apifyClient->method('request')
-            ->willReturnCallback(function ($method, $path, $options = []) use ($datasetId, $testItems) {
-                if (str_contains($path, '/datasets/' . $datasetId) && !str_contains($path, '/items')) {
-                    return [
-                        'data' => [
-                            'itemCount' => \count($testItems),
-                            'id' => $datasetId,
-                        ],
-                    ];
-                }
-
-                // Extract offset from query params for pagination
+        $this->createAndSaveCollectTask();
+        $this->apifyClient->addResponse('/datasets/' . $datasetId, [
+            'data' => [
+                'itemCount' => \count($testItems),
+                'id' => $datasetId,
+            ],
+        ]);
+        $this->apifyClient->addResponse(
+            '/datasets/' . $datasetId . '/items',
+            function (string $method, string $path, array $options) use ($testItems): array {
                 $offset = (int) ($options['query']['offset'] ?? 0);
                 $limit = (int) ($options['query']['limit'] ?? 100);
 
                 return \array_slice($testItems, $offset, $limit);
-            });
+            }
+        );
 
-        // Execute
-        ($this->handler)($action);
+        ($this->handler)(new FetchApifyDatasetAction(self::TASK_ID, $datasetId));
 
-        // Verify all items were fetched
-        $configuration = $collectTask->getConfiguration();
+        $this->assertSame(250, $this->messageBus->countDispatched(AddDocumentAction::class));
+
+        $saved = $this->collectTaskGateway->get(self::TASK_ID);
+        $configuration = $saved->getConfiguration();
         /** @var array<string, mixed> $result */
         $result = $configuration['result'];
         $this->assertTrue($result['success']);
-        /** @var list<array<string, mixed>> $data */
-        $data = $result['data'];
-        $this->assertCount(250, $data);
-        $this->assertEquals('item1', $data[0]['id']);
-        $this->assertEquals('item250', $data[249]['id']);
+        /** @var array<string, mixed> $metadata */
+        $metadata = $result['metadata'];
+        $this->assertSame(250, $metadata['documentsCreated']);
     }
 
     public function testFailsWhenDatasetMetadataNotFound(): void
     {
-        $collectTaskId = Uuid::v4()->toRfc4122();
-        $datasetId = 'dataset_not_found';
-        $action = new FetchApifyDatasetAction($collectTaskId, $datasetId);
+        $this->createAndSaveCollectTask();
+        $this->apifyClient->throwOnRequest(ApifyDatasetNotFoundException::withId('dataset_not_found'));
 
-        $collectTask = $this->createCollectTask($collectTaskId);
+        try {
+            ($this->handler)(new FetchApifyDatasetAction(self::TASK_ID, 'dataset_not_found'));
+            $this->fail('Expected CollectException to be thrown');
+        } catch (CollectException $e) {
+            $this->assertMatchesRegularExpression('/not found or metadata unavailable/', $e->getMessage());
+        }
 
-        // Setup mocks
-        $this->collectTaskGateway->method('get')
-            ->willReturn($collectTask);
+        $saved = $this->collectTaskGateway->get(self::TASK_ID);
+        $this->assertSame(CollectTaskStatus::FAILED, $saved->getStatus());
 
-        $this->apifyClient->method('request')
-            ->willThrowException(new \RuntimeException('Dataset not found'));
-
-        // Execute and verify exception
-        $this->expectException(CollectException::class);
-        $this->expectExceptionMessageMatches('/Failed to fetch/');
-
-        ($this->handler)($action);
-
-        // Verify task was marked as failed
-        $this->assertEquals(CollectTaskStatus::FAILED, $collectTask->getStatus());
-
-        $configuration = $collectTask->getConfiguration();
-        $this->assertArrayHasKey('result', $configuration);
+        $configuration = $saved->getConfiguration();
         /** @var array<string, mixed> $result */
         $result = $configuration['result'];
         $this->assertFalse($result['success']);
+        $this->assertNotEmpty($result['error_message']);
+        /** @var array<string, mixed> $metadata */
+        $metadata = $result['metadata'];
+        $this->assertSame('dataset_not_found', $metadata['datasetId']);
+        $this->assertArrayHasKey('failedAt', $metadata);
     }
 
     public function testStoresResultMetadata(): void
     {
-        $collectTaskId = Uuid::v4()->toRfc4122();
         $datasetId = 'dataset_meta';
-        $action = new FetchApifyDatasetAction($collectTaskId, $datasetId);
+        $testItems = [[
+            'id' => 'item1',
+            'data' => 'test',
+        ]];
 
-        $collectTask = $this->createCollectTask($collectTaskId);
-        $testItems = [
-            [
-                'id' => 'item1',
-                'data' => 'test',
+        $this->createAndSaveCollectTask();
+        $this->apifyClient->addResponse('/datasets/' . $datasetId, [
+            'data' => [
+                'itemCount' => \count($testItems),
+                'id' => $datasetId,
             ],
-        ];
+        ]);
+        $this->apifyClient->addResponse('/datasets/' . $datasetId . '/items', $testItems);
 
-        $this->collectTaskGateway->method('get')
-            ->willReturn($collectTask);
+        ($this->handler)(new FetchApifyDatasetAction(self::TASK_ID, $datasetId));
 
-        $this->apifyClient->method('request')
-            ->willReturnCallback(function ($method, $path) use ($datasetId, $testItems) {
-                if (str_contains($path, '/datasets/' . $datasetId) && !str_contains($path, '/items')) {
-                    return [
-                        'data' => [
-                            'itemCount' => \count($testItems),
-                            'id' => $datasetId,
-                        ],
-                    ];
-                }
-
-                return $testItems;
-            });
-
-        // Execute
-        ($this->handler)($action);
-
-        // Verify metadata is stored
-        $configuration = $collectTask->getConfiguration();
+        $saved = $this->collectTaskGateway->get(self::TASK_ID);
+        $configuration = $saved->getConfiguration();
         /** @var array<string, mixed> $result */
         $result = $configuration['result'];
         $this->assertArrayHasKey('metadata', $result);
         /** @var array<string, mixed> $metadata */
         $metadata = $result['metadata'];
-        $this->assertEquals(1, $metadata['itemCount']);
-        $this->assertEquals($datasetId, $metadata['datasetId']);
+        $this->assertSame(1, $metadata['itemCount']);
+        $this->assertSame($datasetId, $metadata['datasetId']);
         $this->assertArrayHasKey('fetchedAt', $metadata);
+        $this->assertArrayHasKey('documentsCreated', $metadata);
+        $this->assertSame(1, $metadata['documentsCreated']);
     }
 
     public function testLogsCollectTaskNotFound(): void
     {
-        $collectTaskId = 'unknown-id';
-        $action = new FetchApifyDatasetAction($collectTaskId, 'dataset_123');
-
-        $this->collectTaskGateway->method('get')
-            ->willThrowException(new \RuntimeException('CollectTask not found'));
-
-        // Execute and verify exception
         $this->expectException(CollectException::class);
 
-        ($this->handler)($action);
+        ($this->handler)(new FetchApifyDatasetAction('unknown-id', 'dataset_123'));
     }
 
-    private function createCollectTask(?string $taskId = null): CollectTask
+    public function testSkipsItemsWhenNormalizerReturnsNull(): void
     {
-        $source = $this->createStub(Source::class);
-        $source->method('getType')
-            ->willReturn(SourceType::WEBSITE);
-        $source->method('getId')
-            ->willReturn(Uuid::v4()->toRfc4122());
+        $datasetId = 'dataset_null_normalizer';
+        $testItems = [
+            [
+                'id' => 'item1',
+                'title' => 'Item 1',
+                'url' => 'https://example.com/1',
+                'text' => 'Content 1',
+            ],
+            [
+                'id' => 'item2',
+                'title' => 'Item 2',
+                'url' => 'https://example.com/2',
+                'text' => 'Content 2',
+            ],
+        ];
 
-        $watchFile = $this->createStub(WatchFile::class);
-        $watchFile->method('getId')
-            ->willReturn(Uuid::v4()->toRfc4122());
+        $nullNormalizer = new class implements ApifyDocumentNormalizerInterface {
+            public function supports(string $actorType): bool
+            {
+                return true;
+            }
+
+            /** @param array<string, mixed> $item */
+            public function normalize(array $item, NormalizerContext $context): ?Document
+            {
+                return null;
+            }
+        };
+
+        $resolver = new class($nullNormalizer) implements ApifyNormalizerResolverInterface {
+            public function __construct(
+                private readonly ApifyDocumentNormalizerInterface $normalizer,
+            ) {
+            }
+
+            public function resolveFor(CollectTask $collectTask): ApifyDocumentNormalizerInterface
+            {
+                return $this->normalizer;
+            }
+        };
+
+        $handler = new FetchApifyDatasetHandler(
+            $this->apifyClient,
+            $this->collectTaskGateway,
+            $this->eventDispatcher,
+            $this->sourceActivityLogger,
+            $resolver,
+            $this->messageBus,
+            new NullLogger()
+        );
+
+        $this->createAndSaveCollectTask();
+        $this->apifyClient->addResponse('/datasets/' . $datasetId, [
+            'data' => [
+                'itemCount' => \count($testItems),
+                'id' => $datasetId,
+            ],
+        ]);
+        $this->apifyClient->addResponse('/datasets/' . $datasetId . '/items', $testItems);
+
+        ($handler)(new FetchApifyDatasetAction(self::TASK_ID, $datasetId));
+
+        $this->assertSame(0, $this->messageBus->countDispatched(AddDocumentAction::class));
+
+        $saved = $this->collectTaskGateway->get(self::TASK_ID);
+        $this->assertEquals(CollectTaskStatus::COMPLETED, $saved->getStatus());
+        $configuration = $saved->getConfiguration();
+        /** @var array<string, mixed> $result */
+        $result = $configuration['result'];
+        /** @var array<string, mixed> $metadata */
+        $metadata = $result['metadata'];
+        $this->assertSame(0, $metadata['documentsCreated']);
+    }
+
+    public function testDocumentProviderIdIsPrefixedWithActorType(): void
+    {
+        $datasetId = 'dataset_providerid';
+        $actorType = 'lhotanova/google-news-scraper';
+        $url = 'https://example.com/article';
+        $expectedProviderId = \sprintf('apify:%s:%s', $actorType, $url);
+
+        $this->createAndSaveCollectTask(\sprintf('%s:run_abc123', $actorType));
+        $this->apifyClient->addResponse('/datasets/' . $datasetId, [
+            'data' => [
+                'itemCount' => 1,
+                'id' => $datasetId,
+            ],
+        ]);
+        $this->apifyClient->addResponse('/datasets/' . $datasetId . '/items', [[
+            'url' => $url,
+            'title' => 'Article Title',
+            'text' => 'Long enough content to pass the excerpt minimum length check',
+        ]]);
+
+        ($this->handler)(new FetchApifyDatasetAction(self::TASK_ID, $datasetId));
+
+        $dispatched = $this->messageBus->getFirstDispatched(AddDocumentAction::class);
+        $this->assertNotNull($dispatched);
+        $this->assertSame($expectedProviderId, $dispatched->document->getProviderId());
+    }
+
+    public function testHandlesEmptyDataset(): void
+    {
+        $datasetId = 'dataset_empty';
+
+        $this->createAndSaveCollectTask();
+        $this->apifyClient->addResponse('/datasets/' . $datasetId, [
+            'data' => [
+                'itemCount' => 0,
+                'id' => $datasetId,
+            ],
+        ]);
+        $this->apifyClient->addResponse('/datasets/' . $datasetId . '/items', []);
+
+        ($this->handler)(new FetchApifyDatasetAction(self::TASK_ID, $datasetId));
+
+        $this->assertSame(0, $this->messageBus->countDispatched(AddDocumentAction::class));
+
+        $saved = $this->collectTaskGateway->get(self::TASK_ID);
+        $this->assertEquals(CollectTaskStatus::COMPLETED, $saved->getStatus());
+        $configuration = $saved->getConfiguration();
+        /** @var array<string, mixed> $result */
+        $result = $configuration['result'];
+        /** @var array<string, mixed> $metadata */
+        $metadata = $result['metadata'];
+        $this->assertSame(0, $metadata['documentsCreated']);
+    }
+
+    private function createAndSaveCollectTask(string $providerTaskId = 'apify_run_id'): CollectTask
+    {
+        $organisation = new Organisation('Test Org', 'test-org-id');
+        $watchFile = new WatchFile('Test WatchFile', 'Test objective', $organisation);
+        $source = new Source(
+            'Test Source',
+            TranslatedText::fromArray([
+                'fr' => 'desc fr',
+                'en' => 'desc en',
+            ]),
+            SourceType::WEBSITE,
+            'https://example.com',
+            'example.com',
+            TranslatedText::fromArray([
+                'fr' => 'rel fr',
+                'en' => 'rel en',
+            ]),
+            null,
+            $watchFile
+        );
 
         $task = new CollectTask(
             source: $source,
             watchFile: $watchFile,
             providerName: 'apify',
             configuration: [],
-            providerTaskId: 'apify_run_id'
+            providerTaskId: $providerTaskId
         );
 
-        // Set ID if provided
-        if (null !== $taskId) {
-            $this->forcePropertyValue($task, $taskId, 'id');
-        }
-
-        // Transition to RUNNING state (the webhook callback assumes task is already running)
-        // CREATED -> QUEUED -> RUNNING
-        /* @phpstan-ignore-next-line */
-        $task->start('apify_run_id', $this->eventDispatcher);
+        $this->forcePropertyValue($task, self::TASK_ID);
+        $task->start($providerTaskId, $this->eventDispatcher);
         $this->forcePropertyValue($task, CollectTaskStatus::RUNNING, 'status');
+        $this->collectTaskGateway->save($task);
 
         return $task;
     }
