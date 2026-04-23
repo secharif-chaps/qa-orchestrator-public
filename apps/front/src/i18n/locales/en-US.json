@@ -1828,13 +1828,17 @@
         },
         "csr": {
           "awards": "Awards & Certifications",
+          "categoryLabel": "{category, select, responsibility {Responsibility Statement} responsibility_initiatives {Responsibility Initiatives} charity {Charity Actions} sustainability {Sustainability Programs} community {Community Involvement} diversity {Diversity & Inclusion} ethics {Ethical Practices} awards {Awards & Certifications} other {}}",
           "charity": "Charity Actions",
           "community": "Community Involvement",
           "diversity": "Diversity & Inclusion",
+          "engagements": "Engagements & Initiatives",
           "ethics": "Ethical Practices",
+          "insightsTitle": "CSR Insights",
           "noData": "No CSR data available",
           "responsibility": "Responsibility Statement",
           "responsibility_initiatives": "Responsibility Initiatives",
+          "searchPlaceholder": "Search...",
           "sustainability": "Sustainability Programs",
           "title": "Corporate Social Responsibility"
         },

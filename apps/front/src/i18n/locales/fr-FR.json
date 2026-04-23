@@ -1828,13 +1828,17 @@
         },
         "csr": {
           "awards": "Prix et certifications",
+          "categoryLabel": "{category, select, responsibility {Déclaration de responsabilité} responsibility_initiatives {Initiatives de responsabilité} charity {Actions caritatives} sustainability {Programmes de développement durable} community {Implication communautaire} diversity {Diversité et inclusion} ethics {Pratiques éthiques} awards {Prix et certifications} other {}}",
           "charity": "Actions caritatives",
           "community": "Implication communautaire",
           "diversity": "Diversité et inclusion",
+          "engagements": "Engagements et initiatives",
           "ethics": "Pratiques éthiques",
+          "insightsTitle": "Analyse de la couverture médiatique",
           "noData": "Aucune donnée RSE disponible",
           "responsibility": "Déclaration de responsabilité",
           "responsibility_initiatives": "Initiatives de responsabilité",
+          "searchPlaceholder": "Rechercher un élément...",
           "sustainability": "Programmes de développement durable",
           "title": "Responsabilité Sociale d'Entreprise"
         },

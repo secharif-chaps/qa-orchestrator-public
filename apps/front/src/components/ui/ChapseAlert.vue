@@ -41,10 +41,7 @@ interface Props {
   icon?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  variant: 'default',
-  icon: 'fa-solid fa-wand-sparkles',
-})
+const { variant = 'default', icon = 'fas fa-wand-sparkles' } = defineProps<Props>()
 
 const imageSource = computed(() => {
   const images = {
@@ -52,7 +49,7 @@ const imageSource = computed(() => {
     head: new URL('@/assets/chapse/head.svg', import.meta.url).href,
     mage: new URL('@/assets/chapse/mage.svg', import.meta.url).href,
   }
-  return images[props.variant]
+  return images[variant]
 })
 
 const imageAlt = computed(() => {
@@ -61,6 +58,6 @@ const imageAlt = computed(() => {
     head: 'Chapse head',
     mage: 'Chapse mage character',
   }
-  return altTexts[props.variant]
+  return altTexts[variant]
 })
 </script>
