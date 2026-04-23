@@ -1,5 +1,5 @@
 <template>
-  <div class="gap-md flex flex-col rounded-xl bg-white p-6">
+  <div class="gap-md bg-neutral-white p-xl shadow-2 flex flex-col rounded-xl">
     <div v-if="$slots.header">
       <slot name="header" />
     </div>

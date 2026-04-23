@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="text-neutral-black-font flex flex-col gap-4">
     <!-- Loading State -->
     <SectionLoadingState
       v-if="company && (task?.status === 'pending' || task?.status === 'running')"
@@ -10,7 +10,7 @@
 
     <!-- No Data State -->
     <NoData v-else-if="!hasJobsData">
-      <p class="text-neutral-black-font text-lg font-medium">
+      <p class="text-lg font-medium">
         {{ $t('screen.profile.sections.jobs.noData') }}
       </p>
     </NoData>
@@ -26,7 +26,7 @@
         :title="$t('screen.jobs.insights.totalOpenings')"
       >
         <template #aside>
-          <span class="text-neutral-black-font text-sm">
+          <span class="text-sm">
             {{ getSourcedValue(company?.jobs?.insights?.total_openings) ?? jobOffers.length }}
           </span>
         </template>
@@ -41,7 +41,6 @@
               <Tag
                 v-for="department in topDepartmentsList"
                 :key="department"
-                variant="primary"
                 intent="neutral"
                 :label="department"
                 size="sm"
@@ -50,13 +49,13 @@
           </div>
           <div>
             <SectionTitle :title="$t('screen.jobs.insights.hiringFocus')" />
-            <p class="text-neutral-black-font text-justify text-base">
+            <p class="text-justify text-base">
               {{ getSourcedValue(company?.jobs?.insights?.hiring_focus) }}
             </p>
           </div>
           <div>
             <SectionTitle :title="$t('screen.jobs.insights.growthIndicators')" />
-            <p class="text-neutral-black-font text-justify text-base">
+            <p class="text-justify text-base">
               {{ getSourcedValue(company?.jobs?.insights?.growth_indicators) }}
             </p>
           </div>
@@ -74,7 +73,7 @@
                 v-model="searchQuery"
                 :placeholder="$t('screen.jobs.listings.search.placeholder')"
               />
-              <div class="text-neutral-black-font flex items-center gap-1 text-sm">
+              <div class="flex items-center gap-1 text-sm">
                 <Icon icon="fa-regular fa-building" />
                 {{ filteredJobs.length }}
               </div>
@@ -98,7 +97,7 @@
 
         <!-- No results message -->
         <NoData v-if="filteredJobs.length === 0 && searchQuery">
-          <p class="text-neutral-black-font text-lg font-medium">
+          <p class="text-lg font-medium">
             {{ $t('screen.jobs.listings.noResults', { query: searchQuery }) }}
           </p>
         </NoData>

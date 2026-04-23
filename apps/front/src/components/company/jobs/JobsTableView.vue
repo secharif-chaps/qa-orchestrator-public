@@ -11,14 +11,26 @@
     </template>
 
     <template #cell(department)="{ item }">
-      <td class="max-w-25 px-4 py-3 align-text-top" :title="extractValue(item.department)">
-        <JobTag :type="JOB_TAG_TYPES.DEPARTMENT" :label="extractValue(item.department)" truncate />
+      <td class="px-4 py-3 align-text-top">
+        <Tooltip v-if="extractValue(item.department)" arrow class="max-w-25">
+          <JobTag
+            :type="JOB_TAG_TYPES.DEPARTMENT"
+            :label="extractValue(item.department)"
+            truncate
+          />
+          <template #tooltip>{{ extractValue(item.department) }}</template>
+        </Tooltip>
+        <JobTag v-else :type="JOB_TAG_TYPES.DEPARTMENT" :label="extractValue(item.department)" />
       </td>
     </template>
 
     <template #cell(location)="{ item }">
-      <td class="max-w-25 px-4 py-3 align-text-top" :title="extractValue(item.location)">
-        <JobTag :type="JOB_TAG_TYPES.LOCATION" :label="extractValue(item.location)" truncate />
+      <td class="px-4 py-3 align-text-top">
+        <Tooltip v-if="extractValue(item.location)" arrow class="max-w-25">
+          <JobTag :type="JOB_TAG_TYPES.LOCATION" :label="extractValue(item.location)" truncate />
+          <template #tooltip>{{ extractValue(item.location) }}</template>
+        </Tooltip>
+        <JobTag v-else :type="JOB_TAG_TYPES.LOCATION" :label="extractValue(item.location)" />
       </td>
     </template>
 
@@ -47,10 +59,10 @@
 <script setup lang="ts">
 import type { SourcedValue } from '@/types/company'
 import { JOB_TAG_TYPES } from '@/types/company'
-import { Table } from '@owlint/feathers-vue'
-import JobTag from './JobTag.vue'
+import { Table, Tooltip } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import JobTag from './JobTag.vue'
 
 const { t } = useI18n()
 

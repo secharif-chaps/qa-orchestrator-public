@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-primary-lighter border-primary-lighter-stroke p-xs relative overflow-hidden rounded-lg border"
+    class="bg-primary-lighter border-primary-light-stroke p-xs relative overflow-hidden rounded-lg border"
     role="alert"
     :aria-labelledby="title ? 'alert-title' : undefined"
   >
