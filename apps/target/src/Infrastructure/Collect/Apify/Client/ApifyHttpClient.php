@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Collect\Apify\Client;
 
+use App\Domain\Collect\ApifyClientInterface;
 use App\Domain\Collect\Exception\CollectException;
 use App\Domain\Collect\Exception\CollectHttpException;
 use Psr\Log\LoggerInterface;
@@ -13,7 +14,7 @@ use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class ApifyHttpClient
+class ApifyHttpClient implements ApifyClientInterface
 {
     private const int MAX_RETRY_ATTEMPTS = 3;
     private const int DEFAULT_RETRY_DELAY_MS = 1000;
