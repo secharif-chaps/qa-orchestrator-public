@@ -16,9 +16,7 @@ const {
   isLoading,
   error,
   refetch,
-} = useQuery(companyByIdQuery, () => ({
-  id: props.companyId,
-}))
+} = useQuery(() => companyByIdQuery({ id: props.companyId }))
 </script>
 
 <template>
@@ -80,11 +78,13 @@ const size = ref(10)
 const search = ref('')
 
 // Query automatically refetches when parameters change
-const { data, isLoading, error } = useQuery(companiesQuery, () => ({
-  page: page.value,
-  size: size.value,
-  search: search.value || undefined,
-}))
+const { data, isLoading, error } = useQuery(() =>
+  companiesQuery({
+    page: page.value,
+    size: size.value,
+    search: search.value || undefined,
+  })
+)
 
 // Computed for template
 const companies = computed(() => data.value?.items ?? [])
@@ -195,7 +195,7 @@ const filters = reactive<TaskFilters>({
   companyId: undefined,
 })
 
-const { data: tasks, isLoading } = useQuery(tasksQuery, () => ({ ...filters }))
+const { data: tasks, isLoading } = useQuery(() => tasksQuery({ ...filters }))
 
 function applyFilter(key: keyof TaskFilters, value: any) {
   filters[key] = value
@@ -225,18 +225,15 @@ const props = defineProps<{ companyId: number }>()
 
 // First query: Get company
 const { data: company, isLoading: companyLoading } = useQuery(
-  companyByIdQuery,
-  () => ({ id: props.companyId })
+  () => companyByIdQuery({ id: props.companyId })
 )
 
-// Second query: Get tasks (only runs when company exists)
-const { data: tasks, isLoading: tasksLoading } = useQuery(
-  tasksByCompanyQuery,
-  () => ({ companyId: props.companyId }),
-  {
-    enabled: () => !!company.value, // Only fetch when company is loaded
-  }
-)
+// Second query: Get tasks — only runs after company is loaded
+// Spread query + add enabled inside the same getter to stay reactive
+const { data: tasks, isLoading: tasksLoading } = useQuery(() => ({
+  ...tasksByCompanyQuery({ companyId: props.companyId }),
+  enabled: !!company.value,
+}))
 
 const isLoading = computed(() => companyLoading.value || tasksLoading.value)
 </script>

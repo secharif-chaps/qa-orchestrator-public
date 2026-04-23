@@ -131,9 +131,7 @@ const {
   isLoading,
   error,
   refetch,
-} = useQuery(companyByIdQuery, () => ({
-  id: props.companyId,
-}))
+} = useQuery(() => companyByIdQuery({ id: props.companyId }))
 </script>
 
 <template>
@@ -171,11 +169,10 @@ import { companiesQuery } from '@/queries/companies'
 const page = ref(1)
 const size = ref(10)
 
-// Query automatically refetches when parameters change
-const { data: companies, isLoading } = useQuery(companiesQuery, () => ({
-  page: page.value,
-  size: size.value,
-}))
+// Single getter — Vue tracks page.value and size.value, refetches automatically
+const { data: companies, isLoading } = useQuery(
+  () => companiesQuery({ page: page.value, size: size.value })
+)
 
 function nextPage() {
   page.value++
@@ -192,11 +189,39 @@ import { companyByIdQuery } from '@/queries/companies'
 
 const route = useRoute()
 
-const { data: company, isLoading } = useQuery(companyByIdQuery, () => ({
-  id: Number(route.params.id),
+const { data: company, isLoading } = useQuery(
+  () => companyByIdQuery({ id: Number(route.params.id) })
+)
+</script>
+```
+
+### Conditional Query with `enabled`
+
+Spread the query result and add `enabled` **inside the same getter** to keep it reactive:
+
+```vue
+<script setup lang="ts">
+import { useQuery } from '@pinia/colada'
+import { companyByIdQuery } from '@/queries/companies'
+import { tasksByCompanyQuery } from '@/queries/tasks'
+
+const props = defineProps<{ companyId: number | null }>()
+
+// Only fetch when companyId is provided
+const { data: company } = useQuery(() => ({
+  ...companyByIdQuery({ id: props.companyId! }),
+  enabled: props.companyId !== null,
+}))
+
+// Dependent query — only runs after company is loaded
+const { data: tasks } = useQuery(() => ({
+  ...tasksByCompanyQuery({ companyId: props.companyId! }),
+  enabled: !!company.value,
 }))
 </script>
 ```
+
+**Rule**: `enabled` and all other options live **inside the getter** — they are re-evaluated reactively on every render. Never extract them outside the getter.
 
 ---
 

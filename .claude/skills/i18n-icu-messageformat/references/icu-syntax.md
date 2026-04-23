@@ -281,6 +281,67 @@ The `#` shorthand always resolves to the **selector variable** value (here `nb`,
 
 ---
 
+## Avoiding Key Concatenation with Select
+
+**Never create multiple suffixed keys for variants of the same concept.** Use `select` instead.
+
+### Anti-pattern — concatenated keys
+
+```json
+// WRONG — forces the component to build the key dynamically
+{
+  "company": {
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "pending": "En attente",
+      "archived": "Archivé"
+    }
+  }
+}
+```
+
+```typescript
+// WRONG — string concatenation in the component
+t(`company.status.${company.status}`)
+```
+
+### Correct pattern — single key with `select`
+
+```json
+// CORRECT — one key, all variants expressed declaratively
+{
+  "company": {
+    "status": "{status, select, active {Actif} inactive {Inactif} pending {En attente} archived {Archivé} other {Inconnu}}"
+  }
+}
+```
+
+```typescript
+// CORRECT — value passed as parameter
+t('company.status', { status: company.status })
+```
+
+**Why it matters**:
+- Dynamic key construction (`t(\`key.${value}\`)`) hides which keys exist and breaks static analysis
+- `select` keeps all translations in one place, in all locale files consistently
+- The `other` branch handles unknown values gracefully instead of returning an empty string
+
+### When `select` applies
+
+Use `select` whenever you would otherwise suffix keys by: type, status, role, category, gender, or any other string enum from the backend.
+
+```json
+{
+  "task": {
+    "type": "{type, select, analysis {Analyse} monitoring {Veille} reporting {Rapport} other {Tâche}}",
+    "priority": "{priority, select, high {Haute} medium {Moyenne} low {Basse} other {—}}"
+  }
+}
+```
+
+---
+
 ## Common Mistakes
 
 ### 1. Using pipe syntax (disabled)

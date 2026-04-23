@@ -18,6 +18,7 @@ metadata:
 - When adding or modifying translation keys in `src/i18n/locales/*.json`
 - When implementing plurals in translation messages
 - When implementing gender agreement or conditional branching (select)
+- When tempted to create multiple keys for the same concept with type/status suffixes — use `select` instead
 - When nesting select + plural combinations in a single key
 - When calling `t()` or `$t()` in Vue components with parameters
 - When adding a new language to the application
@@ -38,6 +39,7 @@ metadata:
 7. **Key naming**: `module.feature.element` in camelCase — namespaces: `common`, `target`, `screen`, `dashboard`, `settings`, `admin`
 8. **File format**: Nested JSON, one file per language in `src/i18n/locales/`
 9. **All locales**: Add keys to ALL locale files (`en-US.json`, `fr-FR.json`)
+10. **No concatenated keys for variants**: if you need `status.active`, `status.inactive`, `status.pending` → use a single `status` key with `select` instead
 
 ## Patterns
 
@@ -75,6 +77,24 @@ t('target.watchFiles.sub_title', { count: 0, total: 10 })  // "No actors display
 t('target.watchFiles.sub_title', { count: 1, total: 10 })  // "1 actor displayed out of 10"
 t('target.watchFiles.sub_title', { count: 5, total: 10 })  // "5 actors displayed out of 10"
 ```
+
+### Select — when to use
+
+**Use `select` any time you would otherwise create multiple suffixed keys for the same concept.**
+
+`select` is not just for gender — it handles any string-based branching: type, status, role, category, etc.
+
+```
+// WRONG — concatenated keys, hard to maintain
+company.status.active   → "Actif"
+company.status.inactive → "Inactif"
+company.status.pending  → "En attente"
+
+// CORRECT — single key with select
+company.status → "{status, select, active {Actif} inactive {Inactif} pending {En attente} other {Inconnu}}"
+```
+
+Called with: `t('company.status', { status: company.status })`
 
 ### Select (gender)
 
@@ -154,6 +174,19 @@ Without `=0`, French count=0 would match `one` and display "0 document" instead 
 2. Add datetime formats in `src/i18n/datetime-formats.ts`
 3. Add the locale option in `LocaleSwitcher.vue`
 4. No other changes needed — the `messageCompiler` handles all locales automatically
+
+## Common Mistake — Concatenated Keys
+
+```typescript
+// WRONG — dynamic key construction hides variants, breaks static analysis
+t(`company.status.${company.status}`)
+
+// CORRECT — pass the value as a select parameter
+t('company.status', { status: company.status })
+// JSON: "company.status": "{status, select, active {Actif} inactive {Inactif} other {Inconnu}}"
+```
+
+See advanced examples in [references/icu-syntax.md](references/icu-syntax.md) — section "Avoiding Key Concatenation".
 
 ## References
 
