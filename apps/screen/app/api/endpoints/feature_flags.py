@@ -112,6 +112,17 @@ class FeatureFlagToggleResponse(BaseModel):
     # Expressing "admin OR same-org membership" at gateway level is not possible,
     # so the cross-org check is enforced in the handler body.
     openapi_extra={"x-permissions": []},
+    summary="Get organization feature flags",
+    description=(
+        "Return the feature flag state (translation, Pappers, WorldCheck, Discover, Stream, …) "
+        "for the given organization. "
+        "Any member of the organization can read their own flags; `admin.organizations` can read any organization's flags."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User is not a member of the target organization and lacks admin.organizations"},
+        404: {"description": "Organization not found"},
+    },
 )
 async def get_organization_feature_flags(
     organization_id: str,
@@ -182,6 +193,14 @@ async def get_organization_feature_flags(
     "/{organization_id}/feature-flags/{flag}",
     response_model=FeatureFlagToggleResponse,
     openapi_extra={"x-permissions": ["admin.organizations"]},
+    summary="Toggle a feature flag",
+    description=("Enable or disable a single feature flag for the organization. Requires `admin.organizations` role."),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.organizations role"},
+        404: {"description": "Organization or flag not found"},
+        422: {"description": "Invalid flag value"},
+    },
 )
 async def toggle_feature_flag(
     organization_id: str,

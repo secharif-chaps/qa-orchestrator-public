@@ -133,6 +133,17 @@ def _get_module_enabled_status(db: Session, organization_id: str) -> dict[str, b
     "/{organization_id}/credits/stats",
     response_model=CreditStatsResponse,
     openapi_extra={"x-permissions": ["admin.organizations", "organization.manage"]},
+    summary="Get credit statistics for an organization",
+    description=(
+        "Return the current credit balance, usage breakdown by module (screen, target, explore), "
+        "and forecast of remaining capacity per module. "
+        "Requires `organization.manage` for the caller's own organization or `admin.organizations` for any."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks organization.manage / admin.organizations role"},
+        404: {"description": "Organization not found"},
+    },
 )
 async def get_credit_stats(
     organization_id: str,
@@ -243,6 +254,18 @@ async def get_credit_stats(
     "/{organization_id}/credits/top-users",
     response_model=TopCreditUsersResponse,
     openapi_extra={"x-permissions": ["admin.organizations", "organization.manage"]},
+    summary="List top credit-consuming users",
+    description=(
+        "Return the paginated ranking of users in the organization by credit consumption "
+        "over the selected period (7d / 30d / 90d / custom). "
+        "Supports optional module filter and username/email search."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks organization.manage / admin.organizations role"},
+        404: {"description": "Organization not found"},
+        422: {"description": "Invalid date range or pagination parameters"},
+    },
 )
 async def get_top_credit_users(
     organization_id: str,
@@ -401,6 +424,17 @@ async def get_top_credit_users(
     "/{organization_id}/credits/daily-usage",
     response_model=DailyCreditUsageResponse,
     openapi_extra={"x-permissions": ["admin.organizations", "organization.manage"]},
+    summary="Get daily credit usage time series",
+    description=(
+        "Return the day-by-day credit consumption for the organization over the selected period. "
+        "Useful for rendering usage charts. Supports period preset (7d / 30d / 90d / custom) and optional module filter."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks organization.manage / admin.organizations role"},
+        404: {"description": "Organization not found"},
+        422: {"description": "Invalid date range"},
+    },
 )
 async def get_daily_credit_usage(
     organization_id: str,

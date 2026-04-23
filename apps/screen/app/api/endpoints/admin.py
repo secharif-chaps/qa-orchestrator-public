@@ -35,6 +35,16 @@ logger = get_logger(__name__)
     "/tasks/fail-stuck",
     response_model=FailStuckTasksResponse,
     openapi_extra={"x-permissions": ["admin.organizations"]},
+    summary="Fail all stuck tasks",
+    description=(
+        "Force every task stuck in `pending` or `running` state for longer than the configured timeout "
+        "to transition to `failed`. Typically used to unblock the system after a worker crash. "
+        "Requires `admin.organizations` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.organizations role"},
+    },
 )
 async def fail_stuck_tasks(
     db: Session = Depends(get_db),
@@ -221,6 +231,17 @@ async def _get_companies_by_organization(db: Session, start_date: date, end_date
     "/usage-stats",
     response_model=UsageStatsResponse,
     openapi_extra={"x-permissions": ["admin.organizations"]},
+    summary="Get admin usage statistics",
+    description=(
+        "Return aggregated usage metrics for the admin dashboard over the given date range: "
+        "total tasks, successful tasks, tokens consumed, and cost estimates. "
+        "Dates must be in ISO format (YYYY-MM-DD). Requires `admin.organizations` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.organizations role"},
+        422: {"description": "Invalid date range or format"},
+    },
 )
 async def get_usage_stats(
     start_date: str = Query(..., description="Start date in ISO format (YYYY-MM-DD)", examples=["2025-01-01"]),

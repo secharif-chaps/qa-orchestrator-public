@@ -40,6 +40,17 @@ INTERNAL_ORG_IDENTIFIER = "chapsvision"
     "",
     response_model=AdminTasksListResponse,
     openapi_extra={"x-permissions": ["admin.tasks"]},
+    summary="List tasks across all organizations",
+    description=(
+        "Return a paginated, filterable list of tasks across every organization. "
+        "Supports filters by status, task type, organization, date range, and free-text search. "
+        "Used by the admin task monitoring dashboard. Requires `admin.tasks` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.tasks role"},
+        422: {"description": "Invalid filter or pagination parameters"},
+    },
 )
 async def get_admin_tasks(
     status_filter: list[str] | None = Query(None, alias="status"),
@@ -158,6 +169,16 @@ async def get_admin_tasks(
     "/stats",
     response_model=AdminTaskStatsResponse,
     openapi_extra={"x-permissions": ["admin.tasks"]},
+    summary="Get task statistics across all organizations",
+    description=(
+        "Return aggregate counts of tasks by status (pending / running / completed / failed) "
+        "across every organization, for the admin monitoring dashboard. "
+        "Requires `admin.tasks` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.tasks role"},
+    },
 )
 async def get_admin_task_stats(
     hours: int = Query(24, ge=1, le=168),
@@ -228,6 +249,17 @@ async def get_admin_task_stats(
     "/restart",
     response_model=BulkRestartResponse,
     openapi_extra={"x-permissions": ["admin.tasks"]},
+    summary="Bulk restart tasks",
+    description=(
+        "Re-queue multiple failed or completed tasks in a single call. "
+        "Returns per-task success/failure to surface partial failures. "
+        "Requires `admin.tasks` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.tasks role"},
+        422: {"description": "Invalid task ID list"},
+    },
 )
 async def bulk_restart_tasks(
     request: BulkRestartRequest,
@@ -302,6 +334,16 @@ org_router = APIRouter(prefix="/admin/organizations", tags=["admin-tasks"])
     "",
     response_model=OrganizationsListResponse,
     openapi_extra={"x-permissions": ["admin.tasks"]},
+    summary="List organizations for the admin task filter",
+    description=(
+        "Return the minimal list of organizations (id + display name) used to populate the "
+        "organization filter in the admin task monitoring dashboard. "
+        "Requires `admin.tasks` role."
+    ),
+    responses={
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.tasks role"},
+    },
 )
 async def get_admin_organizations(user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin.tasks"]))):
     """Fetch all organizations for the organization filter dropdown and name mapping.

@@ -37,6 +37,20 @@ DUAL_CREDENTIAL_SOURCES = {"worldcheck", "epo"}
     "/{organization_id}/data-sources/{source}/config",
     response_model=DataSourceConfigResponse,
     openapi_extra={"x-permissions": ["admin.organizations"]},
+    summary="Configure a data source for an organization",
+    description=(
+        "Store or update credentials/configuration for an external data source (e.g. Pappers API key, "
+        "WorldCheck credentials). Secrets are encrypted at rest and masked in responses. "
+        "Setting an API key automatically enables the corresponding feature flag. "
+        "Requires `admin.organizations` role."
+    ),
+    responses={
+        400: {"description": "Invalid data source identifier"},
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.organizations role"},
+        404: {"description": "Organization not found"},
+        422: {"description": "Invalid configuration payload"},
+    },
 )
 async def update_data_source_config(
     organization_id: str,
@@ -107,6 +121,18 @@ async def update_data_source_config(
     "/{organization_id}/data-sources/{source}/config",
     response_model=DataSourceConfigResponse,
     openapi_extra={"x-permissions": ["admin.organizations"]},
+    summary="Get a data source configuration",
+    description=(
+        "Return the (redacted) configuration of a data source for the organization. "
+        "API keys and secrets are masked — only the last characters are visible. "
+        "Requires `admin.organizations` role."
+    ),
+    responses={
+        400: {"description": "Invalid data source identifier"},
+        401: {"description": "Missing or invalid authentication token"},
+        403: {"description": "User lacks admin.organizations role"},
+        404: {"description": "Organization not found"},
+    },
 )
 async def get_data_source_config(
     organization_id: str,

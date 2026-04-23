@@ -127,10 +127,6 @@ openapi_tags = [
         "description": "Keycloak-based authentication — login, token refresh, logout, and introspection.",
     },
     {
-        "name": "webhooks",
-        "description": "Internal webhook endpoints for Dify workflow callbacks and token usage updates.",
-    },
-    {
         "name": "admin",
         "description": "Administrative operations — stuck task management and usage statistics.",
     },
