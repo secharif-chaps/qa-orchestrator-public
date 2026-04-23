@@ -98,7 +98,7 @@ import ModuleStatusCard from '@/components/tokens/ModuleStatusCard.vue'
 import Card from '@/components/ui/Card.vue'
 import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
 import { organizationModulesQuery } from '@/queries/tokens'
-import type { FeatureFlagName } from '@/types/feature-flags'
+import { FEATURE_FLAG_CONFIG, type FeatureFlagName } from '@/types/feature-flags'
 import type { OrganizationAdminResponse } from '@/types/organization'
 import { formatDateTime } from '@/utils/time'
 import { useQuery } from '@pinia/colada'
@@ -131,10 +131,14 @@ const { data: featureFlagsData, isLoading: isLoadingFeatureFlags } = useQuery({
 
 const featureFlags = computed(() => {
   const flags = featureFlagsData.value?.feature_flags ?? []
-  return flags.map((f) => ({
-    flag: f.flag as FeatureFlagName,
-    enabled: f.enabled,
-    config: f.config,
-  }))
+  // Skip flags the frontend does not yet know about (backend may expose new
+  // flags before the frontend catches up — e.g. 'stream' added in TAR-1465).
+  return flags
+    .filter((f) => f.flag in FEATURE_FLAG_CONFIG)
+    .map((f) => ({
+      flag: f.flag as FeatureFlagName,
+      enabled: f.enabled,
+      config: f.config,
+    }))
 })
 </script>

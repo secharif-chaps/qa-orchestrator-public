@@ -94,6 +94,7 @@ const defaultDescriptions: Record<FeatureFlagName, string> = {
   pappers: 'Fetch company data from Pappers API',
   worldcheck: 'Due diligence screening via WorldCheck One API',
   stream: 'Multi-channel event distribution (Teams, Slack, Webhook)',
+  epo: 'European Patent Office — patent data for company cards',
 }
 
 const defaultDescription = computed(
