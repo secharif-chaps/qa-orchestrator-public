@@ -91,6 +91,7 @@ class FeatureFlag(StrEnum):
         PAPPERS: Pappers API for French business registry data
         WORLDCHECK: WorldCheck One API for due diligence screening (sanctions, PEP, adverse media)
         STREAM: Multi-channel event distribution (Teams, Slack, Webhook)
+        EPO: European Patent Office OPS API for patent search and bibliographic data
     """
 
     TRANSLATION = "translation"
@@ -98,6 +99,7 @@ class FeatureFlag(StrEnum):
     PAPPERS = "pappers"
     WORLDCHECK = "worldcheck"
     STREAM = "stream"
+    EPO = "epo"
 
 
 class Organization(Base):

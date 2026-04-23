@@ -26,10 +26,11 @@ router = APIRouter(prefix="/organizations", tags=["data-sources"])
 VALID_DATA_SOURCES = {
     "pappers": FeatureFlag.PAPPERS,
     "worldcheck": FeatureFlag.WORLDCHECK,
+    "epo": FeatureFlag.EPO,
 }
 
 # Data sources that require dual credentials (api_key + api_secret)
-DUAL_CREDENTIAL_SOURCES = {"worldcheck"}
+DUAL_CREDENTIAL_SOURCES = {"worldcheck", "epo"}
 
 
 @router.put(

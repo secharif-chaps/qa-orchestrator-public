@@ -30,6 +30,7 @@ starlette = ">=0.36"
 h11 = ">=0.16.0"
 PyJWT = "^2.8.0"
 yfinance = "^0.2.0"
+lxml = "^5.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.3"
