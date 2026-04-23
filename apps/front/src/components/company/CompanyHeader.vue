@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-neutral-white sticky top-0 z-10 flex items-center gap-4 py-4">
+  <div
+    class="bg-neutral-white sticky top-0 z-10 -mx-4 flex items-center gap-4 px-4 py-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+  >
     <div class="flex min-w-0 shrink items-center gap-4">
       <!-- Loading ring around the logo when a task is running -->
       <SquareProgressRing :segments="progressSegments" :show-progress="showProgressRing">

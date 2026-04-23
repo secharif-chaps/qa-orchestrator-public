@@ -18,215 +18,41 @@
     <!-- Main Content -->
     <div v-else class="flex flex-col gap-6">
       <!-- AI-Generated CSR Insights -->
-      <ChapseAlert v-if="company?.csr?.insights" variant="mage">
+      <ChapseAlert
+        v-if="company?.csr?.insights"
+        variant="mage"
+        :title="$t('screen.profile.sections.csr.insightsTitle')"
+      >
         {{ company.csr.insights }}
       </ChapseAlert>
 
-      <!-- CSR Responsibility Statement -->
-      <div v-if="responsibilityValue" class="rounded-sm bg-white p-6">
-        <h4 class="text-neutral-black-font mb-3 font-semibold">
-          {{ $t('screen.profile.sections.csr.responsibility') }}
-        </h4>
-        <p class="text-neutral-black-font text-sm leading-relaxed">
-          {{ responsibilityValue }}
-          <Source
-            v-if="company?.csr?.responsibility && typeof company.csr.responsibility !== 'string'"
-            :source="getSourcedSource(company.csr.responsibility)"
+      <!-- Engagements & Initiatives Card -->
+      <SectionCard>
+        <!-- Header -->
+        <template #header>
+          <div class="flex items-center justify-between">
+            <SectionTitle :title="$t('screen.profile.sections.csr.engagements')" />
+            <Searchbar
+              id="csr-search"
+              v-model="searchQuery"
+              :placeholder="$t('screen.profile.sections.csr.searchPlaceholder')"
+              class="w-64"
+            />
+          </div>
+        </template>
+
+        <!-- Items list -->
+        <div class="gap-2xs flex flex-col">
+          <CsrItem
+            v-for="(item, index) in filteredItems"
+            :key="`${item.category}-${index}`"
+            :item
           />
-        </p>
-      </div>
-
-      <!-- CSR Sections Grid -->
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <!-- Responsibility Initiatives -->
-        <div class="rounded-sm bg-white p-6">
-          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
-            <i class="fa fa-handshake"></i>
-            {{ $t('screen.profile.sections.csr.responsibility_initiatives') }}
-          </h4>
-          <ul class="space-y-2">
-            <li
-              class="text-neutral-black-font flex items-start gap-2"
-              v-for="initiative in company?.csr?.responsibility_initiatives || []"
-              :key="initiative.value"
-            >
-              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
-              <div class="min-w-0 flex-1">
-                <span class="text-sm">{{ getSourcedValue(initiative) }}</span>
-                <Source :source="initiative.source" />
-              </div>
-            </li>
-            <li
-              v-if="!company?.csr?.responsibility_initiatives?.length"
-              class="text-neutral-black-font text-sm italic"
-            >
-              {{ $t('common.notFound') }}
-            </li>
-          </ul>
+          <p v-if="filteredItems.length === 0" class="text-neutral-black-font text-sm italic">
+            {{ $t('common.notFound') }}
+          </p>
         </div>
-
-        <!-- Charity Actions -->
-        <div class="rounded-sm bg-white p-6">
-          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
-            <i class="fa fa-heart"></i>
-            {{ $t('screen.profile.sections.csr.charity') }}
-          </h4>
-          <ul class="space-y-2">
-            <li
-              class="text-neutral-black-font flex items-start gap-2"
-              v-for="action in company?.csr?.charity_actions || []"
-              :key="action.value"
-            >
-              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
-              <div class="min-w-0 flex-1">
-                <span class="text-sm">{{ getSourcedValue(action) }}</span>
-                <Source :source="action.source" />
-              </div>
-            </li>
-            <li
-              v-if="!company?.csr?.charity_actions?.length"
-              class="text-neutral-black-font text-sm italic"
-            >
-              {{ $t('common.notFound') }}
-            </li>
-          </ul>
-        </div>
-
-        <!-- Sustainability Programs -->
-        <div class="rounded-sm bg-white p-6">
-          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
-            <i class="fa fa-leaf"></i>
-            {{ $t('screen.profile.sections.csr.sustainability') }}
-          </h4>
-          <ul class="space-y-2">
-            <li
-              class="text-neutral-black-font flex items-start gap-2"
-              v-for="program in company?.csr?.sustainability_programs || []"
-              :key="program.value"
-            >
-              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
-              <div class="min-w-0 flex-1">
-                <span class="text-sm">{{ getSourcedValue(program) }}</span>
-                <Source :source="program.source" />
-              </div>
-            </li>
-            <li
-              v-if="!company?.csr?.sustainability_programs?.length"
-              class="text-neutral-black-font text-sm italic"
-            >
-              {{ $t('common.notFound') }}
-            </li>
-          </ul>
-        </div>
-
-        <!-- Community Involvement -->
-        <div class="rounded-sm bg-white p-6">
-          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
-            <i class="fa fa-users"></i>
-            {{ $t('screen.profile.sections.csr.community') }}
-          </h4>
-          <ul class="space-y-2">
-            <li
-              class="text-neutral-black-font flex items-start gap-2"
-              v-for="involvement in company?.csr?.community_involvement || []"
-              :key="involvement.value"
-            >
-              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
-              <div class="min-w-0 flex-1">
-                <span class="text-sm">{{ getSourcedValue(involvement) }}</span>
-                <Source :source="involvement.source" />
-              </div>
-            </li>
-            <li
-              v-if="!company?.csr?.community_involvement?.length"
-              class="text-neutral-black-font text-sm italic"
-            >
-              {{ $t('common.notFound') }}
-            </li>
-          </ul>
-        </div>
-
-        <!-- Diversity & Inclusion -->
-        <div class="rounded-sm bg-white p-6">
-          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
-            <i class="fa fa-people-group"></i>
-            {{ $t('screen.profile.sections.csr.diversity') }}
-          </h4>
-          <ul class="space-y-2">
-            <li
-              class="text-neutral-black-font flex items-start gap-2"
-              v-for="initiative in company?.csr?.diversity_inclusion || []"
-              :key="initiative.value"
-            >
-              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
-              <div class="min-w-0 flex-1">
-                <span class="text-sm">{{ getSourcedValue(initiative) }}</span>
-                <Source :source="initiative.source" />
-              </div>
-            </li>
-            <li
-              v-if="!company?.csr?.diversity_inclusion?.length"
-              class="text-neutral-black-font text-sm italic"
-            >
-              {{ $t('common.notFound') }}
-            </li>
-          </ul>
-        </div>
-
-        <!-- Ethical Practices -->
-        <div class="rounded-sm bg-white p-6">
-          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
-            <i class="fa fa-scale-balanced"></i>
-            {{ $t('screen.profile.sections.csr.ethics') }}
-          </h4>
-          <ul class="space-y-2">
-            <li
-              class="text-neutral-black-font flex items-start gap-2"
-              v-for="practice in company?.csr?.ethical_practices || []"
-              :key="practice.value"
-            >
-              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
-              <div class="min-w-0 flex-1">
-                <span class="text-sm">{{ getSourcedValue(practice) }}</span>
-                <Source :source="practice.source" />
-              </div>
-            </li>
-            <li
-              v-if="!company?.csr?.ethical_practices?.length"
-              class="text-neutral-black-font text-sm italic"
-            >
-              {{ $t('common.notFound') }}
-            </li>
-          </ul>
-        </div>
-
-        <!-- Awards & Certifications -->
-        <div class="rounded-sm bg-white p-6 md:col-span-2">
-          <h4 class="text-neutral-black-font mb-4 flex items-center gap-2 font-semibold">
-            <i class="fa fa-award"></i>
-            {{ $t('screen.profile.sections.csr.awards') }}
-          </h4>
-          <ul class="space-y-2">
-            <li
-              class="text-neutral-black-font flex items-start gap-2"
-              v-for="award in company?.csr?.awards_certifications || []"
-              :key="award.value"
-            >
-              <i class="fa-solid fa-circle text-neutral-black-font mt-1.5 text-[6px]"></i>
-              <div class="min-w-0 flex-1">
-                <span class="text-sm">{{ getSourcedValue(award) }}</span>
-                <Source :source="award.source" />
-              </div>
-            </li>
-            <li
-              v-if="!company?.csr?.awards_certifications?.length"
-              class="text-neutral-black-font text-sm italic"
-            >
-              {{ $t('common.notFound') }}
-            </li>
-          </ul>
-        </div>
-      </div>
+      </SectionCard>
     </div>
   </div>
 </template>
@@ -240,12 +66,17 @@ meta:
 <script lang="ts" setup>
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
-import Source from '@/components/company/Source.vue'
+import CsrItem from '@/components/company/csr/CsrItem.vue'
+import type { CsrFlatItem } from '@/components/company/csr/types'
 import { getSourcedSource, getSourcedValue } from '@/components/helpers/sourcedValues'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
 import NoData from '@/components/ui/NoData.vue'
+import SectionCard from '@/components/ui/SectionCard.vue'
+import SectionTitle from '@/components/ui/SectionTitle.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
+import type { SourcedValue } from '@/types/company'
+import { Searchbar } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import type { Ref } from 'vue'
 import { computed, inject, ref } from 'vue'
@@ -275,19 +106,56 @@ const { data: company } = useQuery(() =>
   }),
 )
 
-// Extract responsibility value (handles both string and SourcedValue)
-const responsibilityValue = computed(() => {
-  const resp = company.value?.csr?.responsibility
-  if (!resp) return null
-  if (typeof resp === 'string') return resp
-  return getSourcedValue(resp)
+const searchQuery = ref('')
+
+const allItems = computed((): CsrFlatItem[] => {
+  const csr = company.value?.csr
+  if (!csr) return []
+
+  const items: CsrFlatItem[] = []
+
+  // Single responsibility field (string or SourcedValue)
+  if (csr.responsibility) {
+    const value = getSourcedValue(csr.responsibility)
+    const source =
+      typeof csr.responsibility !== 'string'
+        ? getSourcedSource(csr.responsibility as SourcedValue<string>)
+        : undefined
+    if (value) items.push({ value, source, category: 'responsibility' })
+  }
+
+  // Array fields
+  const arrays: Array<{ data?: SourcedValue<string>[]; category: string }> = [
+    { data: csr.responsibility_initiatives, category: 'responsibility_initiatives' },
+    { data: csr.charity_actions, category: 'charity' },
+    { data: csr.sustainability_programs, category: 'sustainability' },
+    { data: csr.community_involvement, category: 'community' },
+    { data: csr.diversity_inclusion, category: 'diversity' },
+    { data: csr.ethical_practices, category: 'ethics' },
+    { data: csr.awards_certifications, category: 'awards' },
+  ]
+
+  for (const { data, category } of arrays) {
+    if (!data) continue
+    for (const item of data) {
+      const value = getSourcedValue(item)
+      if (value) items.push({ value, source: item.source, category })
+    }
+  }
+
+  return items
+})
+
+const filteredItems = computed(() => {
+  if (!searchQuery.value.trim()) return allItems.value
+  const q = searchQuery.value.toLowerCase()
+  return allItems.value.filter((item) => item.value.toLowerCase().includes(q))
 })
 
 const hasCsrData = computed(() => {
   const csr = company.value?.csr
   if (!csr) return false
 
-  // Check if there's any meaningful content
   return !!(
     csr.insights ||
     csr.responsibility ||

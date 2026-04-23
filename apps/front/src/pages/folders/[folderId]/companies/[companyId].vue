@@ -20,7 +20,7 @@
     />
 
     <!-- Created by + Tab content -->
-    <div class="gap-xl bg-neutral p-xl -px-4 sm:-px-6 flex flex-col lg:-mx-8">
+    <div class="gap-xl bg-neutral p-xl -mx-4 flex flex-col sm:-mx-6 lg:-mx-8">
       <div v-if="company?.created_at" class="text-neutral-black-font flex items-center gap-2">
         <Badge icon="fa-pen" variant="secondary" size="sm" />
         <span class="text-base">
@@ -47,8 +47,8 @@
 </template>
 
 <script lang="ts" setup>
-import CompanyHeader from '@/components/company/CompanyHeader.vue'
 import CompanyRefreshModal from '@/components/companies/CompanyRefreshModal.vue'
+import CompanyHeader from '@/components/company/CompanyHeader.vue'
 import TasksFlowModal from '@/components/company/TasksFlowModal.vue'
 import { useActivityMessages } from '@/composables/useActivityMessages'
 import { useTaskProgress } from '@/composables/useTaskProgress'
