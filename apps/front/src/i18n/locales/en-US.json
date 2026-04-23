@@ -1087,6 +1087,7 @@
       "hoursAgo": "{count}h ago",
       "minutesAgo": "{count} min ago"
     },
+    "today": "Today",
     "validation": {
       "password": {
         "lowercase": "Password must contain at least one lowercase letter",
@@ -3297,11 +3298,6 @@
         }
       },
       "header_section": {
-        "activation": {
-          "modal": {
-            "warning_message": "Your watch file can be activated now, but we recommend completing the configuration for optimal results."
-          }
-        },
         "activation_modal": {
           "confirm": "Activate collect",
           "description": "You are about to put the watch file <b>\"{name}\"</b> in active mode.",

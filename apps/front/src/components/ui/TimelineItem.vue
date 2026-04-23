@@ -2,7 +2,10 @@
   <div class="gap-4xl text-neutral-black-font mt-xl relative flex items-start">
     <!-- Date indicator -->
     <div class="pt-lg w-20 text-right">
-      <Tag size="sm" color="sage">
+      <Tag v-if="isToday" size="sm" intent="accent" variant="primary">
+        {{ date }}
+      </Tag>
+      <Tag v-else size="sm" color="sage">
         {{ date }}
       </Tag>
     </div>
@@ -12,7 +15,8 @@
 
     <!-- Timeline dot -->
     <div class="relative">
-      <Bullet color="sage" class="absolute top-6 -left-2" />
+      <Bullet v-if="isToday" intent="accent" class="absolute top-6 -left-2" />
+      <Bullet v-else color="sage" class="absolute top-6 -left-2" />
     </div>
 
     <!-- Event content -->
@@ -27,6 +31,7 @@ import { Bullet, Tag } from '@owlint/feathers-vue'
 
 interface Props {
   date: string
+  isToday?: boolean
 }
 
 defineProps<Props>()

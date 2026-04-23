@@ -1087,6 +1087,7 @@
       "hoursAgo": "il y a {count}h",
       "minutesAgo": "il y a {count} min"
     },
+    "today": "Aujourd'hui",
     "validation": {
       "password": {
         "lowercase": "Le mot de passe doit contenir au moins une lettre minuscule",
@@ -3297,11 +3298,6 @@
         }
       },
       "header_section": {
-        "activation": {
-          "modal": {
-            "warning_message": "Votre dossier peut être activé maintenant, mais nous recommandons de compléter la configuration pour les résultats optimaux."
-          }
-        },
         "activation_modal": {
           "confirm": "Activer la collecte",
           "description": "Vous êtes sur le point d'activer la collecte du dossier de veille <b>\"{name}\"</b>.",
