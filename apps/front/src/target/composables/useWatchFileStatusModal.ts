@@ -64,9 +64,6 @@ export function useWatchFileStatusModal(
           t('common.dialog.info_item_ai_validation'),
         ],
       },
-      warningSection: {
-        message: t('target.watchFiles.header_section.activation.modal.warning_message'),
-      },
       confirmLabel: t('target.watchFiles.header_section.activation_modal.confirm'),
       type: 'warning',
       onConfirm: () => {
