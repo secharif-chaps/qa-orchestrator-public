@@ -16,6 +16,8 @@ abstract class TriggerAgent
         public string $responseType,
         public ?string $watchFileId = null,
         public ?string $userId = null,
+        public ?string $organisationId = null,
+        public ?string $impersonatorId = null,
         public \DateTime $triggeredAt = new \DateTime(),
     ) {
     }

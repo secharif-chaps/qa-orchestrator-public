@@ -17,12 +17,12 @@ class ClassifyWatchFileTypeAgent extends TriggerAgent
         \DateTime $triggeredAt = new \DateTime(),
     ) {
         parent::__construct(
-            self::NAME,
-            $data,
-            ProcessWatchFileClassificationResultAction::class,
-            $watchFileId,
-            $userId,
-            $triggeredAt,
+            name: self::NAME,
+            data: $data,
+            responseType: ProcessWatchFileClassificationResultAction::class,
+            watchFileId: $watchFileId,
+            userId: $userId,
+            triggeredAt: $triggeredAt,
         );
     }
 }

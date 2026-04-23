@@ -11,6 +11,7 @@ framework:
     buses:
       command.bus:
         middleware:
+          - App\Infrastructure\Organisation\Messenger\TenantMiddleware
           - doctrine_ping_connection
           - doctrine_close_connection
           - doctrine_transaction

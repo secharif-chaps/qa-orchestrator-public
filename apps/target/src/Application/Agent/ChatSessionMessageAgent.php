@@ -17,12 +17,12 @@ class ChatSessionMessageAgent extends TriggerAgent
         \DateTime $triggeredAt = new \DateTime(),
     ) {
         parent::__construct(
-            self::NAME,
-            $data,
-            ModelMessageAction::class,
-            $watchFileId,
-            $userId,
-            $triggeredAt,
+            name: self::NAME,
+            data: $data,
+            responseType: ModelMessageAction::class,
+            watchFileId: $watchFileId,
+            userId: $userId,
+            triggeredAt: $triggeredAt,
         );
     }
 }
