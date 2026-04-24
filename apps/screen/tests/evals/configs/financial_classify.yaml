@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://www.promptfoo.dev/config-schema.json
+description: "Screen — Financial agent (classify step) evaluation"
+
+providers: file://../shared/providers.yaml
+
+prompts:
+  - id: file://../providers/loaders.py:load_financial_classify
+    label: "Financial Classify Agent"
+
+defaultTest: file://../shared/base_test.yaml
+
+tests:
+  - ../tests/tests_financial.yaml
+
+outputPath: ../eval-results/results_financial_classify.json

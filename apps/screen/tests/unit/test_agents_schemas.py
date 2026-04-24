@@ -440,20 +440,20 @@ class TestOutputFormatsAutoGeneration:
     """Tests for auto-generated AGENT_OUTPUT_FORMATS."""
 
     def test_all_agents_have_output_formats(self):
-        from app.agents.prompts.output_formats import AGENT_OUTPUT_FORMATS
+        from app.agents.prompts.shared.output_formats import AGENT_OUTPUT_FORMATS
 
         expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team", "financial"}
         assert set(AGENT_OUTPUT_FORMATS.keys()) == expected
 
     def test_output_formats_are_valid_json(self):
-        from app.agents.prompts.output_formats import AGENT_OUTPUT_FORMATS
+        from app.agents.prompts.shared.output_formats import AGENT_OUTPUT_FORMATS
 
         for name, fmt in AGENT_OUTPUT_FORMATS.items():
             parsed = json.loads(fmt)
             assert isinstance(parsed, dict), f"{name} output format is not a dict"
 
     def test_output_formats_contain_no_title_keys(self):
-        from app.agents.prompts.output_formats import AGENT_OUTPUT_FORMATS
+        from app.agents.prompts.shared.output_formats import AGENT_OUTPUT_FORMATS
 
         def _find_title_keys(obj, path=""):
             """Recursively check for 'title' keys in a JSON structure."""
@@ -542,7 +542,7 @@ class TestCleanSchemaForPrompt:
     """Tests for _clean_schema_for_prompt helper."""
 
     def test_strips_title(self):
-        from app.agents.prompts.output_formats import _clean_schema_for_prompt
+        from app.agents.prompts.shared.output_formats import _clean_schema_for_prompt
 
         schema = {"title": "MyModel", "type": "object", "properties": {}}
         result = _clean_schema_for_prompt(schema)
@@ -550,14 +550,14 @@ class TestCleanSchemaForPrompt:
         assert result["type"] == "object"
 
     def test_strips_description(self):
-        from app.agents.prompts.output_formats import _clean_schema_for_prompt
+        from app.agents.prompts.shared.output_formats import _clean_schema_for_prompt
 
         schema = {"description": "A model", "type": "object"}
         result = _clean_schema_for_prompt(schema)
         assert "description" not in result
 
     def test_recurses_into_properties(self):
-        from app.agents.prompts.output_formats import _clean_schema_for_prompt
+        from app.agents.prompts.shared.output_formats import _clean_schema_for_prompt
 
         schema = {
             "title": "Root",
@@ -574,7 +574,7 @@ class TestCleanSchemaForPrompt:
         assert result["properties"]["name"]["type"] == "string"
 
     def test_keeps_defs_but_cleans_inside(self):
-        from app.agents.prompts.output_formats import _clean_schema_for_prompt
+        from app.agents.prompts.shared.output_formats import _clean_schema_for_prompt
 
         schema = {
             "$defs": {
@@ -595,7 +595,7 @@ class TestCleanSchemaForPrompt:
         assert result["$defs"]["SourcedValue"]["type"] == "object"
 
     def test_handles_lists(self):
-        from app.agents.prompts.output_formats import _clean_schema_for_prompt
+        from app.agents.prompts.shared.output_formats import _clean_schema_for_prompt
 
         schema = {
             "anyOf": [
@@ -609,7 +609,7 @@ class TestCleanSchemaForPrompt:
         assert "title" not in result["anyOf"][1]
 
     def test_preserves_non_metadata_keys(self):
-        from app.agents.prompts.output_formats import _clean_schema_for_prompt
+        from app.agents.prompts.shared.output_formats import _clean_schema_for_prompt
 
         schema = {"type": "object", "required": ["a", "b"], "additionalProperties": False}
         result = _clean_schema_for_prompt(schema)

@@ -1,0 +1,10 @@
+- id: openai:chat:gpt-4o-mini-sweden
+  config: &provider_config
+    apiKey: "{{env.LLM_GATEWAY_API_KEY}}"
+    apiBaseUrl: "{{env.LLM_GATEWAY_BASE_URL}}"
+    temperature: 0.1
+    max_tokens: 4096
+- id: openai:chat:gpt-oss-120b-ovh
+  config: *provider_config
+- id: openai:chat:gemini-2.5-flash
+  config: *provider_config

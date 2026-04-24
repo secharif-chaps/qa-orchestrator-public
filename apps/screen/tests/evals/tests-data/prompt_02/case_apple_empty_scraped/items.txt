@@ -1,8 +1,0 @@
-Source: PitchBook
-Apple Inc. - Tech giant with $383B revenue. CEO: Tim Cook. Employees: 164,000. HQ: Cupertino, CA. Founded: 1976.
-
-Source: Crunchbase
-Apple Inc. Publicly traded on NASDAQ. Market cap: $2.8T. Industry: Consumer Electronics.
-
-Source: LinkedIn
-Apple has 164,000 employees worldwide. Revenue: $383.29B (FY2023).

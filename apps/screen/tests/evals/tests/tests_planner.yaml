@@ -1,0 +1,40 @@
+# Planner node — A/B/C difficulty ladder.
+#
+# Scoring: 3 equal-weight assertions (is-json + schema + rubric), each worth 1/3.
+# A single structural failure caps the score at 0.67, failing all passing thresholds.
+#
+# Tier A (threshold: 0.9) — must always pass, blocks CI on failure.
+# Tier B (threshold: 0.7) — should reliably pass, tracked but advisory.
+# Tier C (threshold: 0.0) — hard/ambiguous case, never blocks CI.
+
+# Tier A: one of the most documented companies online — easy to plan comprehensively.
+- description: "planner/A — Apple (massive global web presence)"
+  threshold: 0.9
+  vars:
+    _agent_name: "planner"  # routes Pydantic schema validation in validate_schema.py
+    user_message: "Company: Apple, website: apple.com"
+    rubric: |
+      Response identifies Apple as an American technology company,
+      with country United States, industry covering consumer electronics/software/services,
+      a meaningful summary, and at least some relevant pages or subsidiaries identified.
+
+# Tier B: real company with limited public web footprint — tests planning with sparse data.
+- description: "planner/B — ChapsVision (French AI/ESG software, limited web presence)"
+  threshold: 0.7
+  vars:
+    _agent_name: "planner"
+    user_message: "Company: ChapsVision, website: chapsvision.com"
+    rubric: |
+      Response identifies ChapsVision as a French software or technology company
+      with a meaningful summary, and discovers at least some relevant web pages
+      or business context despite limited public data.
+
+# Tier C: niche French fintech — advisory only, limited footprint, harder to plan.
+- description: "planner/C — Swile (niche French benefits fintech)"
+  threshold: 0
+  vars:
+    _agent_name: "planner"
+    user_message: "Company: Swile, website: swile.co"
+    rubric: |
+      Response identifies Swile as a French fintech offering employee benefits,
+      meal vouchers, or benefit cards to SMBs and enterprise clients.

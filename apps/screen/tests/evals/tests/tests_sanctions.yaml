@@ -1,0 +1,52 @@
+# Sanctions agent — A/B/C difficulty ladder.
+#
+# Scoring: 3 equal-weight assertions (is-json + schema + rubric), each worth 1/3.
+# A single structural failure caps the score at 0.67, failing all passing thresholds.
+#
+# Tier A (threshold: 0.9) — must always pass, blocks CI on failure.
+# Tier B (threshold: 0.7) — should reliably pass, tracked but advisory.
+# Tier C (threshold: 0.0) — hard/ambiguous case, never blocks CI.
+
+# Tier A: clean global brand, empty WorldCheck results — unambiguous low-risk response.
+- description: "sanctions/A — Apple (empty WorldCheck results, no findings)"
+  threshold: 0.9
+  vars:
+    _agent_name: "sanctions"  # routes Pydantic schema validation in validate_schema.py
+    user_message: '{"results": [], "referenceId": "APPLE-001"}'
+    rubric: |
+      Response assigns low risk level, items list is empty or contains no findings,
+      and insights clearly state that no adverse records were identified.
+
+# Tier B: minor regulatory inquiry — moderate complexity, requires nuanced risk assessment.
+- description: "sanctions/B — ChapsVision (minor CNIL data processing inquiry)"
+  threshold: 0.7
+  vars:
+    _agent_name: "sanctions"
+    user_message: >
+      {"results": [{"name": "ChapsVision", "type": "Regulatory Action",
+      "description": "Routine CNIL inquiry regarding data processing practices
+      under GDPR Article 30 record-keeping obligations, resolved with
+      compliance measures in 2023"}], "referenceId": "CHAPS-001"}
+    rubric: |
+      Response correctly identifies this as a minor/resolved regulatory matter,
+      assigns low or medium risk level (not high, not critical), and notes
+      the administrative/compliance nature of the finding without overstating the risk.
+
+# Tier C: multi-jurisdictional criminal + PEP — highest complexity, multiple findings.
+- description: "sanctions/C — Binance multi-jurisdictional findings (criminal + PEP)"
+  threshold: 0
+  vars:
+    _agent_name: "sanctions"
+    user_message: >
+      {"results": [
+        {"name": "Binance Holdings Ltd", "type": "Criminal Conviction",
+         "description": "FinCEN AML violations — $4.3B settlement with DOJ/FinCEN in 2023"},
+        {"name": "Binance", "type": "Regulatory Action",
+         "description": "SEC charges for operating unregistered securities exchange and broker-dealer"},
+        {"name": "Changpeng Zhao", "type": "PEP",
+         "description": "Former CEO convicted of AML violations, sentenced to 4 months prison"}
+      ], "referenceId": "BNB-003"}
+    rubric: |
+      Response assigns critical or high risk level, identifies the criminal conviction
+      and PEP connection, processes all three findings, and provides comprehensive
+      risk analysis covering multiple jurisdictions (US DOJ, SEC, FinCEN).

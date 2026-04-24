@@ -1,0 +1,42 @@
+# Financial agent (classify step) — A/B/C difficulty ladder.
+#
+# Scoring: 3 equal-weight assertions (is-json + schema + rubric), each worth 1/3.
+# A single structural failure caps the score at 0.67, failing all passing thresholds.
+#
+# Tier A (threshold: 0.9) — must always pass, blocks CI on failure.
+# Tier B (threshold: 0.7) — should reliably pass, tracked but advisory.
+# Tier C (threshold: 0.0) — hard/ambiguous case, never blocks CI.
+
+# Tier A: most recognized public company in the world — classification is unambiguous.
+- description: "financial/classify/A — Apple (NASDAQ blue chip)"
+  threshold: 0.9
+  vars:
+    _agent_name: "financial_classify"  # routes Pydantic schema validation in validate_schema.py
+    company_name: "Apple"
+    user_message: "Research Apple financial classification"
+    rubric: |
+      Response classifies Apple as public (companyType: "public"), ticker AAPL,
+      listed on NASDAQ, US-listed (isUSListed: true), country United States.
+
+# Tier B: private French tech company — less data, tests ability to classify non-public firms.
+- description: "financial/classify/B — ChapsVision (private French software company)"
+  threshold: 0.7
+  vars:
+    _agent_name: "financial_classify"
+    company_name: "ChapsVision"
+    user_message: "Research ChapsVision financial classification"
+    rubric: |
+      Response classifies ChapsVision as a private company (companyType: "private"),
+      not US-listed (isUSListed: false), country France.
+
+# Tier C: ambiguous history — listed 2021, taken private via buyout 2024.
+- description: "financial/classify/C — Believe Digital (IPO then taken private 2024)"
+  threshold: 0
+  vars:
+    _agent_name: "financial_classify"
+    company_name: "Believe Digital"
+    user_message: "Research Believe Digital financial classification"
+    rubric: |
+      Response handles the ambiguity correctly: Believe Digital listed on Euronext Paris
+      (ticker BLV) in 2021 then taken private via buyout in 2024.
+      Acceptable answers: private (post-buyout) or public (if data predates the buyout).
