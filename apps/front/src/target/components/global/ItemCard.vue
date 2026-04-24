@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { Tag } from '@owlint/feathers-vue'
-import Logo from '@target/components/global/Logo.vue'
+import Logo from '@/components/ui/Logo.vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 

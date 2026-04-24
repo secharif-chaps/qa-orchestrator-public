@@ -25,7 +25,7 @@
 
 <script lang="ts" setup>
 import { Icon } from '@owlint/feathers-vue'
-import Logo from '@target/components/global/Logo.vue'
+import Logo from '@/components/ui/Logo.vue'
 import type { Source } from '@target/types/facet'
 
 interface Props {

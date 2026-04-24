@@ -10,20 +10,13 @@
         <div
           class="ring-primary-stroke flex h-12 w-12 items-center justify-center overflow-hidden rounded-sm bg-white ring-1"
         >
-          <img
-            v-if="getCompanyDomain(company.website)"
-            :src="getLogoUrl(company.website)"
-            :alt="`${company.name} logo`"
-            class="h-full w-full object-contain p-1"
-            @error="showFallbackIcon = true"
-            v-show="!showFallbackIcon"
+          <Logo
+            :website="company.website"
+            :name="company.name"
+            :alt="company.name"
+            :width="48"
+            :height="48"
           />
-          <div
-            v-show="showFallbackIcon || !getCompanyDomain(company.website)"
-            class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
-          >
-            <i class="fas fa-building text-neutral-black-font text-xl"></i>
-          </div>
         </div>
         <div class="min-w-0 flex-1">
           <h3
@@ -90,20 +83,13 @@
         <div
           class="ring-primary-stroke flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white ring-1"
         >
-          <img
-            v-if="getCompanyDomain(company.website)"
-            :src="getLogoUrl(company.website)"
-            :alt="`${company.name} logo`"
-            class="h-full w-full object-contain p-1"
-            @error="showFallbackIcon = true"
-            v-show="!showFallbackIcon"
+          <Logo
+            :website="company.website"
+            :name="company.name"
+            :alt="company.name"
+            :width="40"
+            :height="40"
           />
-          <div
-            v-show="showFallbackIcon || !getCompanyDomain(company.website)"
-            class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
-          >
-            <i class="fas fa-building text-neutral-black-font"></i>
-          </div>
         </div>
 
         <div class="min-w-0 flex-1">
@@ -164,12 +150,12 @@
 </template>
 
 <script setup lang="ts">
+import Logo from '@/components/ui/Logo.vue'
 import Tag, { type BadgeVariant } from '@/components/ui/Tag.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import type { Company } from '@/types/company'
 import { formatFullDate } from '@/utils/time'
 import { Button } from '@owlint/feathers-vue'
-import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -188,30 +174,6 @@ defineEmits<{
 
 // Permissions
 const { canDeleteCompany } = useCompanyPermissions()
-
-// Logo state
-const showFallbackIcon = ref(false)
-
-// Helper function to extract domain from website URL
-const getCompanyDomain = (website?: string) => {
-  if (!website) return null
-  try {
-    // Remove protocol and www
-    let domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '')
-    // Remove trailing slash and any path
-    domain = domain.split('/')[0]
-    return domain
-  } catch {
-    return null
-  }
-}
-
-// Helper function to get logo URL from logo.dev
-const getLogoUrl = (website?: string) => {
-  const domain = getCompanyDomain(website)
-  if (!domain) return ''
-  return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
-}
 
 // Methods
 const formatWebsiteUrl = (website: string) => {

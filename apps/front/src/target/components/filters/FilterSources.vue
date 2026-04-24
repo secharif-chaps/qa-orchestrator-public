@@ -62,7 +62,7 @@
 
 <script lang="ts" setup>
 import { Button, Checkbox, Searchbar } from '@owlint/feathers-vue'
-import Logo from '@target/components/global/Logo.vue'
+import Logo from '@/components/ui/Logo.vue'
 import type { Source, SourceFacet } from '@target/types/facet'
 import { watchDebounced } from '@vueuse/core'
 import { computed, ref, watchEffect } from 'vue'

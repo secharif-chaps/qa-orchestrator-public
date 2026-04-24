@@ -136,20 +136,16 @@
             <div
               class="ring-primary-stroke flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white ring-1"
             >
-              <img
-                v-if="item.type === 'company' && getCompanyDomain(item.website)"
-                :src="getLogoUrl(item.website)"
-                :alt="`${item.name} logo`"
-                class="h-full w-full object-contain p-1"
-                @error="item.showFallbackIcon = true"
-                v-show="!item.showFallbackIcon"
+              <Logo
+                v-if="item.type === 'company'"
+                :website="item.website"
+                :name="item.name"
+                :alt="item.name"
+                :width="32"
+                :height="32"
               />
               <div
-                v-show="
-                  item.showFallbackIcon ||
-                  !getCompanyDomain(item.website) ||
-                  item.type !== 'company'
-                "
+                v-else
                 class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
               >
                 <i class="fas fa-building text-neutral-black-font text-sm"></i>
@@ -204,6 +200,7 @@
 
 <script setup lang="ts">
 import AvatarInitials from '@/components/ui/AvatarInitials.vue'
+import Logo from '@/components/ui/Logo.vue'
 import UiTag from '@/components/ui/Tag.vue'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import type { Folder } from '@/types/folder'
@@ -253,27 +250,6 @@ function formatItemType(type: string): string {
     return t('common.folder.itemTypes.company')
   }
   return type.charAt(0).toUpperCase() + type.slice(1)
-}
-
-// Helper function to extract domain from website URL
-function getCompanyDomain(website?: string) {
-  if (!website) return null
-  try {
-    // Remove protocol and www
-    let domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '')
-    // Remove trailing slash and any path
-    domain = domain.split('/')[0]
-    return domain
-  } catch {
-    return null
-  }
-}
-
-// Helper function to get logo URL from logo.dev
-function getLogoUrl(website?: string) {
-  const domain = getCompanyDomain(website)
-  if (!domain) return ''
-  return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
 }
 
 // Compute folder color classes based on the color prop

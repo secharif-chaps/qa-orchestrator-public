@@ -13,16 +13,16 @@
         <div
           class="ring-primary-stroke flex h-12 w-12 items-center justify-center overflow-hidden rounded-sm bg-white ring-1"
         >
-          <img
-            v-if="item.type === 'company' && getCompanyDomain(item.website)"
-            :src="getLogoUrl(item.website)"
-            :alt="`${item.name} logo`"
-            class="h-full w-full object-contain p-1"
-            @error="showFallbackIcon = true"
-            v-show="!showFallbackIcon"
+          <Logo
+            v-if="item.type === 'company'"
+            :website="item.website"
+            :name="item.name"
+            :alt="item.name"
+            :width="48"
+            :height="48"
           />
           <div
-            v-show="showFallbackIcon || !getCompanyDomain(item.website) || item.type !== 'company'"
+            v-else
             class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
           >
             <i class="fas fa-building text-neutral-black-font text-xl"></i>
@@ -86,6 +86,7 @@
 </template>
 
 <script setup lang="ts">
+import Logo from '@/components/ui/Logo.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import type { FolderItem } from '@/types/folder'
 import { formatDate } from '@/utils/time'
@@ -112,7 +113,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { canDeleteCompany } = useCompanyPermissions()
-const showFallbackIcon = ref(false)
 const isParentHovered = ref(false)
 const isChildHovered = ref(false)
 
@@ -123,27 +123,6 @@ const handleClick = () => {
   if (props.item.type === 'company') {
     emit('viewItem', props.item.id)
   }
-}
-
-// Helper function to extract domain from website URL
-const getCompanyDomain = (website?: string) => {
-  if (!website) return null
-  try {
-    // Remove protocol and www
-    let domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '')
-    // Remove trailing slash and any path
-    domain = domain.split('/')[0]
-    return domain
-  } catch {
-    return null
-  }
-}
-
-// Helper function to get logo URL from logo.dev
-const getLogoUrl = (website?: string) => {
-  const domain = getCompanyDomain(website)
-  if (!domain) return ''
-  return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
 }
 
 function formatType(type: string): string {

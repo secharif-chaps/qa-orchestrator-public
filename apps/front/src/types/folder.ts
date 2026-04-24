@@ -24,7 +24,6 @@ export interface FolderItem {
   owner?: string
   created_at_item: string
   website?: string
-  showFallbackIcon?: boolean // For logo fallback state
 }
 
 export interface Folder {
