@@ -3,7 +3,7 @@
 import asyncio
 from urllib.parse import urlparse
 
-from app.agents.config import AGENT_PROMPTS, AGENT_TIMEOUT_SECONDS
+from app.agents.config import AGENT_TIMEOUT_SECONDS, PROMPTS_REGISTRY
 from app.agents.prompts.domains import AGENT_ALLOWED_DOMAINS
 from app.agents.schemas import AGENT_OUTPUT_SCHEMAS
 from app.agents.state import AgentResult
@@ -99,7 +99,7 @@ async def run_agent(
     """Execute a single research agent.
 
     Args:
-        agent_name: Name of the agent (matches keys in AGENT_PROMPTS)
+        agent_name: Name of the agent (matches keys in PROMPTS_REGISTRY)
         company_name: Company name for the search query
         website: Company website URL
         company_brief: Optional brief from planner node
@@ -110,7 +110,7 @@ async def run_agent(
     Returns:
         AgentResult with data, sources, tokens, and timing
     """
-    system_prompt = AGENT_PROMPTS.get(agent_name, "")
+    system_prompt = PROMPTS_REGISTRY.get(agent_name, "")
     company_domain = _extract_domain(website)
     output_schema = AGENT_OUTPUT_SCHEMAS.get(agent_name)
 

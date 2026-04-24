@@ -34,3 +34,4 @@ Return a JSON object with this structure:
 }
 
 IMPORTANT: Return ONLY valid JSON. No markdown, no explanations, just the JSON object."""
+

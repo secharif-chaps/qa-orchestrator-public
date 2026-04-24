@@ -6,8 +6,9 @@ vars:
 tasks:
   up:
     desc: Start screen service and run migrations
-    cmds: 
+    cmds:
       - bash infra/scripts/init-profile.sh screen
+
   lint:
     desc: Lint backend code (ruff)
     cmd: "{{.COMPOSE}} exec screen ruff check . {{.CLI_ARGS}}"
@@ -21,9 +22,62 @@ tasks:
     cmd: "{{.COMPOSE}} exec screen pytest"
 
   mypy:
-    desc: Run mypy type checking on backend code
+    desc: Run mypy type checking
     cmd: "{{.COMPOSE}} exec screen mypy app/ --ignore-missing-imports"
 
   shell:
-    desc: Open bash shell in screen backend container
+    desc: Open bash shell in screen container
     cmd: "{{.COMPOSE}} exec screen bash"
+
+  # ---------------------------------------------------------------------------
+  # Evals
+  # ---------------------------------------------------------------------------
+  #
+  # evals:local — single composable task, accepts named vars:
+  #   AGENT=profile                    run a single agent (default: all)
+  #   PROVIDERS=gpt-4o-mini-sweden     filter providers by id/label (default: all)
+  #   NO_CACHE=true                    disable LLM response cache (default: false)
+  #
+  # Examples:
+  #   task screen:evals:local                                        # all agents, all providers
+  #   task screen:evals:local AGENT=financial_classify               # single agent, regression check
+  #   task screen:evals:local AGENT=financial_classify NO_CACHE=true # fresh run, no cache
+  #   task screen:evals:local PROVIDERS=gemini-2.5-flash             # filter to one provider
+  #
+  # evals:ci   — CI gate preset (1 provider, no cache, fixed output names)
+  # evals:view — promptfoo UI with full run history
+
+  evals:local:
+    desc: "Run promptfoo evals locally. AGENT=x NO_CACHE=true PROVIDERS=y"
+    dir: "{{.ROOT_DIR}}/apps/screen/tests/evals"
+    vars:
+      NO_CACHE: '{{.NO_CACHE | default "false"}}'
+      SHOW_PROGRESS: '{{.SHOW_PROGRESS | default "true"}}'
+      _CONFIGS: '{{if .AGENT}}configs/{{.AGENT}}.yaml{{else}}configs/*.yaml{{end}}'
+      _FLAGS: >-
+        {{if eq .NO_CACHE "true"}}--no-cache {{end}}
+        {{if eq .SHOW_PROGRESS "false"}}--no-progress-bar {{end}}
+        {{if .PROVIDERS}}--filter-providers {{.PROVIDERS}}{{end}}
+    cmd: |
+      ts="{{.TIMESTAMP | default ""}}"
+      [ -z "$ts" ] && ts=$(date +%Y%m%d_%H%M%S)
+      for config in {{._CONFIGS}}; do
+        agent=$(basename "$config" .yaml)
+        PROMPTFOO_PYTHON=../../.venv/bin/python PYTHONPATH=../.. \
+        npx promptfoo eval -c "$config" --env-file {{.ROOT_DIR}}/.env \
+          --output "eval-results/${agent}_${ts}.json" {{._FLAGS}}
+      done
+
+  evals:ci:
+    desc: "CI gate — 1 provider, no cache, fixed output names for artifact collection"
+    cmds:
+      - task: evals:local
+        vars:
+          PROVIDERS: "gpt-4o-mini-sweden"
+          NO_CACHE: "true"
+          SHOW_PROGRESS: "false"
+          TIMESTAMP: "ci"
+
+  evals:view:
+    desc: "Open promptfoo UI — shows all historical runs from local database"
+    cmd: npx promptfoo view

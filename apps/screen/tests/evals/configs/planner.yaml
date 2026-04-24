@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://www.promptfoo.dev/config-schema.json
+description: "Screen — Planner node evaluation"
+
+providers: file://../shared/providers.yaml
+
+prompts:
+  - id: file://../providers/loaders.py:load_planner
+    label: "Planner Agent"
+
+defaultTest: file://../shared/base_test.yaml
+
+tests:
+  - ../tests/tests_planner.yaml
+
+outputPath: ../eval-results/results_planner.json

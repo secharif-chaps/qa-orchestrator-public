@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from app.agents.config import AGENT_PROMPTS, AGENT_TIMEOUT_SECONDS
+from app.agents.config import AGENT_TIMEOUT_SECONDS, PROMPTS_REGISTRY
 from app.agents.nodes.base import (
     _build_allowed_domains,
     _extract_domain,
@@ -171,7 +171,7 @@ class TestRunAgent:
         await run_agent("profile", "Acme Corp", "https://acme.com")
 
         call_kwargs = mock_ws.call_args[1]
-        assert call_kwargs["system_prompt"] == AGENT_PROMPTS["profile"]
+        assert call_kwargs["system_prompt"] == PROMPTS_REGISTRY["profile"]
 
     @pytest.mark.asyncio
     @patch("app.agents.nodes.base.web_search_query", new_callable=AsyncMock)

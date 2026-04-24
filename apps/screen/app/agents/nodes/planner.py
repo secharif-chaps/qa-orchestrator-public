@@ -2,9 +2,8 @@
 
 import asyncio
 
-from app.agents.config import AGENT_TIMEOUT_SECONDS, ALL_AGENT_TYPES
+from app.agents.config import AGENT_TIMEOUT_SECONDS, ALL_AGENT_TYPES, PROMPTS_REGISTRY
 from app.agents.nodes.base import _extract_domain, _infer_country_code
-from app.agents.prompts.planner import PLANNER_SYSTEM_PROMPT
 from app.agents.state import CompanyAnalysisState
 from app.agents.tools.web_search import web_search_query
 from app.core.logging_config import get_logger
@@ -76,7 +75,7 @@ async def planner_node(state: CompanyAnalysisState) -> dict:
     try:
         result = await asyncio.wait_for(
             web_search_query(
-                system_prompt=PLANNER_SYSTEM_PROMPT,
+                system_prompt=PROMPTS_REGISTRY["planner"],
                 user_query=user_query,
                 agent_name="planner",
                 country_code=state.get("country_code"),
