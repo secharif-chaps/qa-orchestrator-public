@@ -103,6 +103,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDateTime } from '@/composables/useDateTime'
 import { recentCompaniesQuery } from '@/queries/companies'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { organizationBalanceQuery } from '@/queries/tokens'
@@ -117,6 +118,7 @@ import TokenHistoryItem from './TokenHistoryItem.vue'
 
 const route = useRoute()
 const authStore = useAuthStore()
+const { formatDate } = useDateTime()
 const canViewCredits = computed(() => authStore.hasPermission('organization.manage'))
 
 // Check if we're on the token history page
@@ -161,7 +163,7 @@ function formatRelativeDate(dateString: string | null | undefined) {
   } else if (date.getTime() === yesterday.getTime()) {
     return 'yesterday'
   } else {
-    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+    return formatDate(date, 'eventDate')
   }
 }
 

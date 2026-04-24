@@ -23,7 +23,7 @@
       <template #cell(delivered_at)="{ value }">
         <td class="px-4 py-3">
           <span class="text-secondary text-sm">
-            {{ value ? formatDate(value) : '-' }}
+            {{ value ? formatDate(value, 'long') : '-' }}
           </span>
         </td>
       </template>
@@ -52,6 +52,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDateTime } from '@/composables/useDateTime'
 import { deliveriesQuery } from '@/queries/streams'
 import type { DeliveryStatus } from '@/types/stream'
 import { Table, Tag } from '@owlint/feathers-vue'
@@ -64,7 +65,8 @@ interface Props {
 }
 
 const { streamId } = defineProps<Props>()
-const { t, locale } = useI18n()
+const { t } = useI18n()
+const { formatDate } = useDateTime()
 
 const page = ref(1)
 const perPage = ref(20)
@@ -95,10 +97,5 @@ const deliveryStatusIntent = (status: DeliveryStatus) => {
     skipped: 'accent',
   }
   return map[status]
-}
-
-const formatDate = (dateString: string) => {
-  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
-  return new Date(dateString).toLocaleString(localeCode)
 }
 </script>

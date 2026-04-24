@@ -71,7 +71,7 @@
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
 import type { ChannelType, StreamRead } from '@/types/stream'
-import { formatRelativeTime } from '@/utils/time'
+import { useDateTime } from '@/composables/useDateTime'
 import { Badge, Icon, Table, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -92,6 +92,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const router = useRouter()
+const { formatRelativeTime } = useDateTime()
 const route = useRoute()
 
 const columns = computed(() => [

@@ -46,13 +46,15 @@
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import TimelineCard from '@/components/ui/TimelineCard.vue'
 import TimelineItem from '@/components/ui/TimelineItem.vue'
+import { useDateTime } from '@/composables/useDateTime'
 import type { SourcedValue } from '@/types/company'
 import { Alert, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Source from '../Source.vue'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
+const { formatDate } = useDateTime()
 
 interface TimelineEvent {
   date: SourcedValue<string>
@@ -95,21 +97,14 @@ const formattedDate = computed(() => {
   // YYYY-MM (e.g. "1959-03")
   if (/^\d{4}-\d{2}$/.test(dateStr)) {
     const [year, month] = dateStr.split('-')
-    return new Date(parseInt(year), parseInt(month) - 1).toLocaleDateString(locale.value, {
-      month: '2-digit',
-      year: 'numeric',
-    })
+    return formatDate(new Date(parseInt(year), parseInt(month) - 1), 'short')
   }
 
   // Full parseable date — fall back to raw string if native parsing fails
   // (handles LLM dates like "circa 2020", "Early 2020s", "2020–2023")
   const date = new Date(dateStr)
   if (!isNaN(date.getTime())) {
-    return date.toLocaleDateString(locale.value, {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
+    return formatDate(date, 'short')
   }
 
   return dateStr

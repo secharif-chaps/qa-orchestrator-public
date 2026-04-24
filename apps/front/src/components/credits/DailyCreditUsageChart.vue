@@ -20,6 +20,7 @@ import {
   type TooltipItem,
 } from 'chart.js'
 import { Bar } from 'vue-chartjs'
+import { useDateTime } from '@/composables/useDateTime'
 import type { DailyUsage } from '@/types/credits'
 
 // Register Chart.js components
@@ -30,17 +31,10 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-
-const formatDate = (dateStr: string): string => {
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('fr-FR', {
-    month: 'short',
-    day: 'numeric',
-  })
-}
+const { formatDate } = useDateTime()
 
 const chartData = computed(() => {
-  const labels = props.dailyUsage.map((item) => formatDate(item.date))
+  const labels = props.dailyUsage.map((item) => formatDate(item.date, 'short'))
   const data = props.dailyUsage.map((item) => item.creditsConsumed)
 
   return {

@@ -1,5 +1,5 @@
 import { useApi } from '@target/composables/useApi'
-import { useDate } from '@target/composables/useDate'
+import { convertDateStringToDate, formatToISOWithTimezone, getPeriodDates } from '@/utils/date'
 import type { DefaultErrorMessage } from '@target/types/api'
 import type {
   BatchValidationResponse,
@@ -134,7 +134,6 @@ export const batchDocumentValidation = async (
 
 const buildFilterQuery = (filters: FilterParams): Record<string, string | number | string[]> => {
   const query: Record<string, string | number | string[]> = {}
-  const { getPeriodDates, convertDateStringToDate, formatToISOWithTimezone } = useDate()
   if (filters.actors?.length) {
     query['actor.id[]'] = filters.actors
   }

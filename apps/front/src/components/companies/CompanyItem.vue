@@ -63,7 +63,10 @@
     <!-- Footer with creation date and owner -->
     <div class="border-primary-lighter-stroke mt-4 border-t pt-3">
       <div class="text-neutral-black-font flex items-center justify-between text-xs">
-        <span>{{ t('screen.company.item.created') }} {{ formatFullDate(company.created_at) }}</span>
+        <span
+          >{{ t('screen.company.item.created') }}
+          {{ formatDate(company.created_at, 'eventDate') }}</span
+        >
         <span v-if="company.owner_username"
           >{{ t('screen.company.item.by') }} {{ company.owner_username }}</span
         >
@@ -105,7 +108,7 @@
       <!-- Column 2: Created Date (2 cols) -->
       <div class="col-span-2">
         <div class="text-neutral-black-font text-sm">
-          {{ formatFullDate(company.created_at) }}
+          {{ formatDate(company.created_at, 'eventDate') }}
         </div>
       </div>
 
@@ -153,12 +156,13 @@
 import Logo from '@/components/ui/Logo.vue'
 import Tag, { type BadgeVariant } from '@/components/ui/Tag.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { useDateTime } from '@/composables/useDateTime'
 import type { Company } from '@/types/company'
-import { formatFullDate } from '@/utils/time'
 import { Button } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const { formatDate } = useDateTime()
 
 interface Props {
   company: Company

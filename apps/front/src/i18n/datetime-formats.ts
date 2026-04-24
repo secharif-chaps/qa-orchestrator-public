@@ -31,6 +31,12 @@ export const datetimeFormats: Record<string, DateTimeFormat> = {
       minute: '2-digit',
       hour12: true,
     },
+    fullDate: {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    },
   },
   'fr-FR': {
     short: {
@@ -61,6 +67,12 @@ export const datetimeFormats: Record<string, DateTimeFormat> = {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
+    },
+    fullDate: {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     },
   },
 }

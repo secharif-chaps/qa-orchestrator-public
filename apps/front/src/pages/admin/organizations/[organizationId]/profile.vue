@@ -28,13 +28,13 @@
           <label class="text-neutral-black-font mb-1 block text-sm font-medium">{{
             $t('admin.organization.created')
           }}</label>
-          <p class="text-base">{{ formatDateTime(organization.created_at) }}</p>
+          <p class="text-base">{{ formatDate(organization.created_at, 'long') }}</p>
         </div>
         <div v-if="organization?.updated_at">
           <label class="text-neutral-black-font mb-1 block text-sm font-medium">{{
             $t('admin.organization.updated')
           }}</label>
-          <p class="text-base">{{ formatDateTime(organization.updated_at) }}</p>
+          <p class="text-base">{{ formatDate(organization.updated_at, 'long') }}</p>
         </div>
       </div>
     </Card>
@@ -96,13 +96,15 @@
 import FeatureFlagCard from '@/components/tokens/FeatureFlagCard.vue'
 import ModuleStatusCard from '@/components/tokens/ModuleStatusCard.vue'
 import Card from '@/components/ui/Card.vue'
+import { useDateTime } from '@/composables/useDateTime'
 import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
 import { organizationModulesQuery } from '@/queries/tokens'
 import { FEATURE_FLAG_CONFIG, type FeatureFlagName } from '@/types/feature-flags'
 import type { OrganizationAdminResponse } from '@/types/organization'
-import { formatDateTime } from '@/utils/time'
 import { useQuery } from '@pinia/colada'
 import { computed, inject } from 'vue'
+
+const { formatDate } = useDateTime()
 
 // Inject organization data from parent layout
 const organization =

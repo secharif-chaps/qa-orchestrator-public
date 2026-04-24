@@ -50,6 +50,7 @@
 
 <script setup lang="ts">
 import Tag from '@/components/ui/Tag.vue'
+import { useDateTime } from '@/composables/useDateTime'
 
 interface User {
   expired?: boolean
@@ -66,6 +67,8 @@ interface Props {
 
 defineProps<Props>()
 
+const { formatDate: formatDateLocale } = useDateTime()
+
 const formatDate = (timestamp?: number) => {
   if (!timestamp) return 'N/A'
 
@@ -74,6 +77,6 @@ const formatDate = (timestamp?: number) => {
 
   if (isNaN(date.getTime())) return 'Invalid Date'
 
-  return date.toLocaleString()
+  return formatDateLocale(date, 'long')
 }
 </script>

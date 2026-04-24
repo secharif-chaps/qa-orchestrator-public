@@ -19,6 +19,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useDateTime } from '@/composables/useDateTime'
 import { companyByIdQuery } from '@/queries/companies'
 import type { Company, SourcedValue, TeamMember } from '@/types/company'
 import { Button } from '@owlint/feathers-vue'
@@ -28,6 +29,8 @@ import pptxgen from 'pptxgenjs'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import ExportModal from './ExportModal.vue'
+
+const { formatDate } = useDateTime()
 
 const route = useRoute()
 const { data: company } = useQuery(() =>
@@ -677,7 +680,7 @@ const createTitleSlide = (pptx: PptxGenJS, company: Company) => {
   )
 
   // Add date at bottom
-  const currentDate = new Date().toLocaleDateString()
+  const currentDate = formatDate(new Date(), 'short')
   slide.addText(`Generated on ${currentDate}`, {
     x: 0.5,
     y: 5.2,

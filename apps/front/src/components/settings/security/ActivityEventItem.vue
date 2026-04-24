@@ -17,13 +17,15 @@
 </template>
 
 <script setup lang="ts">
+import { useDateTime } from '@/composables/useDateTime'
 import type { ActivityEvent, ActivityEventType } from '@/types/account'
-import { formatDate } from '@/utils/time'
 import { computed } from 'vue'
 
 const props = defineProps<{
   event: ActivityEvent
 }>()
+
+const { formatDate } = useDateTime()
 
 const iconClass = computed(() => {
   return getEventIconClass(props.event.displayType)

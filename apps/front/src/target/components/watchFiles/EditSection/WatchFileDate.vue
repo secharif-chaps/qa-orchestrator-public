@@ -1,19 +1,20 @@
 <template>
   <p class="text-sm text-slate-600">
     <span>{{ datePrefix }}</span>
-    <span>{{ formatTimeReactive(date) }}</span>
+    <span>{{ relativeDate }}</span>
   </p>
 </template>
 
 <script setup lang="ts">
-import { useTimeDisplay } from '@target/composables/useTimeDisplay'
+import { toRef } from 'vue'
+import { useRelativeTimeRef } from '@/composables/useDateTime'
 
 interface Props {
   datePrefix: string
   date: string
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
-const { formatTimeReactive } = useTimeDisplay()
+const relativeDate = useRelativeTimeRef(toRef(props, 'date'))
 </script>

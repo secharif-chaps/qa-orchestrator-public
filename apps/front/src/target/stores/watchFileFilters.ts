@@ -1,4 +1,4 @@
-import { useDate } from '@target/composables/useDate'
+import { convertDateToDateValue } from '@/utils/date'
 import type { DocumentFacets } from '@target/types/document'
 import type { Actor, AnalysisFacets, Source } from '@target/types/facet'
 import type {
@@ -349,7 +349,6 @@ export const useWatchFileFiltersStore = defineStore('watchFileFilters', () => {
     }
 
     const state = getState(type)
-    const { convertDateToDateValue } = useDate()
 
     // Initialize actors from URL
     if (query.actors && facets) {

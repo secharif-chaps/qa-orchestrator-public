@@ -63,6 +63,7 @@
  * - Limits to top 10 organizations with "Other" category
  * - Loading and empty states
  */
+import { useDateTime } from '@/composables/useDateTime'
 import type { OrganizationBreakdown, TimeSeriesDataPoint } from '@/types/usage'
 import {
   BarElement,
@@ -122,16 +123,7 @@ const limitedOrganizations = computed(() => {
   return props.organizationData.slice(0, MAX_ORGANIZATIONS)
 })
 
-/**
- * Format ISO date string to a readable format.
- */
-const formatDate = (isoDate: string): string => {
-  const date = new Date(isoDate)
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  })
-}
+const { formatDate } = useDateTime()
 
 /**
  * Normalize a date string to YYYY-MM-DD format.
@@ -192,7 +184,7 @@ const chartData = computed(() => {
     return { labels: [], datasets: [] }
   }
 
-  const labels = filledData.map((point) => formatDate(point.period))
+  const labels = filledData.map((point) => formatDate(point.period, 'short'))
   const totalCount = filledData.reduce((sum, point) => sum + point.count, 0)
 
   // Create a dataset for each organization

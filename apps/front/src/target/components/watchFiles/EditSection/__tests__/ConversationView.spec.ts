@@ -47,10 +47,13 @@ vi.mock('@target/composables/useToast', () => ({
   }),
 }))
 
-vi.mock('@target/composables/useTimeDisplay', () => ({
-  useTimeDisplay: () => ({
-    formatTime: () => '2 hours ago',
+vi.mock('@/composables/useDateTime', () => ({
+  useDateTime: () => ({
+    formatDate: (date: Date | string) => new Date(date).toISOString(),
+    formatRelativeTime: () => '2 hours ago',
+    formatChatDate: () => 'Today',
   }),
+  useRelativeTimeRef: () => ({ value: '2 hours ago' }),
 }))
 
 vi.mock('@target/composables/useMarkdown', () => ({
@@ -62,13 +65,6 @@ vi.mock('@target/composables/useMarkdown', () => ({
 vi.mock('@target/composables/useStringUtils', () => ({
   useStringUtils: () => ({
     unescapeString: (str: string) => str,
-  }),
-}))
-
-vi.mock('@target/composables/useChatDateDisplay', () => ({
-  useChatDateDisplay: () => ({
-    getContextualDate: () => 'Today',
-    getFullDateTime: () => 'January 1, 2026 at 12:00 PM',
   }),
 }))
 

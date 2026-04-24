@@ -199,7 +199,7 @@
                 class="transition-colors hover:bg-white"
               >
                 <td class="px-4 py-3 text-sm">
-                  {{ formatDateTime(transaction.created_at) }}
+                  {{ formatDate(transaction.created_at, 'long') }}
                 </td>
                 <td class="px-4 py-3">
                   <Tag
@@ -259,17 +259,18 @@
 import Pagination from '@/components/ui/Pagination.vue'
 import type { BadgeVariant } from '@/components/ui/Tag.vue'
 import Tag from '@/components/ui/Tag.vue'
+import { useDateTime } from '@/composables/useDateTime'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { organizationBalanceQuery, tokenHistoryQuery } from '@/queries/tokens'
 import type { ReferenceType, TokenHistoryFilters, TransactionType } from '@/types/tokens'
 import { transformToPaginationMeta } from '@/utils/pagination'
-import { formatDateTime } from '@/utils/time'
 import { Alert, Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const { formatDate } = useDateTime()
 
 // Filter state
 const filters = reactive<TokenHistoryFilters>({

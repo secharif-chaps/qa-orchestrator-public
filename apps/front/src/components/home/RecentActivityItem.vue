@@ -34,7 +34,7 @@ import { useI18n } from 'vue-i18n'
 import { Icon } from '@owlint/feathers-vue'
 import AvatarInitials from '@/components/ui/AvatarInitials.vue'
 import type { Activity } from '@/types/organization'
-import { formatRelativeTime } from '@/utils/time'
+import { useDateTime } from '@/composables/useDateTime'
 
 interface Props {
   activity: Activity
@@ -43,6 +43,7 @@ interface Props {
 const { activity } = defineProps<Props>()
 
 const { t } = useI18n()
+const { formatRelativeTime } = useDateTime()
 
 const username = computed(() => activity.owner || 'Unknown')
 
