@@ -104,4 +104,23 @@ class NullDocumentGateway implements DocumentGatewayInterface
     {
         return [];
     }
+
+    public function findAllIds(?string $watchFileId = null, int $limit = 500, ?string $searchAfter = null): array
+    {
+        $ids = array_keys($this->documents);
+        sort($ids);
+
+        if (null !== $watchFileId) {
+            $ids = array_values(array_filter(
+                $ids,
+                fn (string $id): bool => $this->documents[$id]->getWatchFile()?->getId() === $watchFileId,
+            ));
+        }
+
+        if (null !== $searchAfter) {
+            $ids = array_values(array_filter($ids, static fn (string $id): bool => $id > $searchAfter));
+        }
+
+        return \array_slice($ids, 0, $limit > 0 ? $limit : null);
+    }
 }

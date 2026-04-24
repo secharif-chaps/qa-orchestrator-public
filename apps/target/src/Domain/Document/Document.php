@@ -649,6 +649,9 @@ class Document implements HasWatchFileInterface
     #[Groups(['document:save'])]
     private ?string $providerId = null;
 
+    #[Groups(['document:save'])]
+    private ?float $contentRatio = null;
+
     public function __construct(
         ?string $id,
         string $title,
@@ -748,6 +751,20 @@ class Document implements HasWatchFileInterface
         return $this;
     }
 
+    public function hasContent(): bool
+    {
+        // $content can be uninitialized when Document is hydrated via newInstanceWithoutConstructor() (OpenSearch denormalization)
+        // @phpstan-ignore isset.initializedProperty
+        return isset($this->content) && '' !== $this->content;
+    }
+
+    public function hasDatePublish(): bool
+    {
+        // $datePublish can be uninitialized when Document is hydrated via newInstanceWithoutConstructor() (OpenSearch denormalization)
+        // @phpstan-ignore isset.initializedProperty
+        return isset($this->datePublish);
+    }
+
     public function getContent(): string
     {
         return $this->content;
@@ -758,6 +775,22 @@ class Document implements HasWatchFileInterface
         $this->content = $content;
 
         return $this;
+    }
+
+    public function getWordCount(): int
+    {
+        if (!$this->hasContent()) {
+            return 0;
+        }
+
+        $content = $this->content;
+
+        // Each CJK character is one lexical unit (no spaces between words in Han/Kana/Hangul scripts)
+        $cjkCount = (int) preg_match_all('/[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]/u', $content);
+
+        $withoutCjk = (string) preg_replace('/[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]/u', ' ', $content);
+
+        return $cjkCount + str_word_count($withoutCjk);
     }
 
     public function getStatus(): DocumentStatus
@@ -1166,6 +1199,18 @@ class Document implements HasWatchFileInterface
     public function setProviderId(?string $providerId): self
     {
         $this->providerId = $providerId;
+
+        return $this;
+    }
+
+    public function getContentRatio(): ?float
+    {
+        return $this->contentRatio;
+    }
+
+    public function setContentRatio(?float $contentRatio): self
+    {
+        $this->contentRatio = $contentRatio;
 
         return $this;
     }

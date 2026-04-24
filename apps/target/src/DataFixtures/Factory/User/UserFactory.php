@@ -24,10 +24,10 @@ class UserFactory extends PersistentObjectFactory
         return $this->with([
             'id' => self::BASIL_USER_ID,
             'roles' => [User::ROLE_USER],
-            'firstName' => 'Basil',
-            'lastName' => 'Target',
-            'userName' => 'basil',
-            'email' => 'basil@chapsvision.com',
+            'firstName' => 'Admin',
+            'lastName' => 'User',
+            'userName' => 'admin',
+            'email' => 'admin@chapsmind.local',
         ]);
     }
 

@@ -10,27 +10,34 @@ use App\Domain\DocumentQuality\Signal;
 use App\Domain\DocumentQuality\SignalCategory;
 use App\Domain\Shared\TranslatedText;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
+use Webmozart\Assert\Assert;
 
 #[AsTaggedItem(priority: 75)]
 final class HttpsProcessor implements DocumentProcessorInterface
 {
+    private const float HTTPS_SCORE = 0.80;
+    private const float HTTP_SCORE = 0.35;
+    private const float WEIGHT = 0.5;
+
     public function process(ProcessingContext $context): ProcessingContext
     {
         $url = $context->document->getUrl();
-        $isHttps = null !== $url && str_starts_with($url, 'https://');
+        Assert::notNull($url, 'HttpsProcessor requires a URL (guarded by supports())');
+
+        $isHttps = str_starts_with($url, 'https://');
 
         return $context->withSignal('https', new Signal(
-            value: $isHttps ? 1.0 : 0.0,
-            weight: 1.0,
+            value: $isHttps ? self::HTTPS_SCORE : self::HTTP_SCORE,
+            weight: self::WEIGHT,
             category: SignalCategory::INFRASTRUCTURE_TRUST,
             reason: $isHttps
                 ? new TranslatedText(fr: "L'URL utilise HTTPS", en: 'URL uses HTTPS')
-                : new TranslatedText(fr: "L'URL n'utilise pas HTTPS", en: 'URL does not use HTTPS'),
+                : new TranslatedText(fr: "L'URL n'utilise pas HTTPS", en: 'URL uses HTTP only (unusual in 2026)'),
         ));
     }
 
     public function supports(ProcessingContext $context): bool
     {
-        return !$context->hasEarlyDecision();
+        return !$context->hasEarlyDecision() && null !== $context->document->getUrl();
     }
 }
