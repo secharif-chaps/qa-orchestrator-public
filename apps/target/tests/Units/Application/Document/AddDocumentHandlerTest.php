@@ -6,7 +6,7 @@ namespace App\Tests\Units\Application\Document;
 
 use App\Application\Document\AddDocumentAction;
 use App\Application\Document\AddDocumentHandler;
-use App\Application\Document\TriggerDocumentAiValidationAction;
+use App\Application\DocumentQuality\Message\ProcessDocumentQualityAction;
 use App\Domain\Actor\Actor;
 use App\Domain\Collect\CollectTask;
 use App\Domain\Collect\CollectTaskGatewayInterface;
@@ -332,7 +332,7 @@ class AddDocumentHandlerTest extends TestCase
         $this->assertSame($actor, $result->getActor());
     }
 
-    public function testInvokeTriggersAiValidationAction(): void
+    public function testInvokeDispatchesOnlyQualityAction(): void
     {
         $collectTaskGatewayMock = $this->createMock(CollectTaskGatewayInterface::class);
         $this->collectTaskGateway = $collectTaskGatewayMock;
@@ -341,9 +341,9 @@ class AddDocumentHandlerTest extends TestCase
         $messageBusMock = $this->createMock(MessageBusInterface::class);
         $this->messageBus = $messageBusMock;
         $this->buildHandler();
-        // Arrange
+
         $collectTaskId = 'collect-task-789';
-        $documentId = 'doc-with-ai-validation';
+        $documentId = 'doc-123';
         $document = $this->createValidDocument($documentId);
 
         $watchFile = $this->createWatchFile();
@@ -365,28 +365,20 @@ class AddDocumentHandlerTest extends TestCase
             ->method('save')
             ->with($document);
 
-        // Assert that TriggerDocumentAiValidationAction is dispatched with correct documentId and stamp
+        $dispatchedMessages = [];
         $messageBusMock->expects($this->once())
             ->method('dispatch')
-            ->with(
-                $this->callback(function ($message) use ($documentId) {
-                    return $message instanceof TriggerDocumentAiValidationAction
-                        && $message->documentId === $documentId;
-                }),
-                $this->callback(function ($stamps) {
-                    return \is_array($stamps)
-                        && 1 === \count($stamps)
-                        && $stamps[0] instanceof DispatchAfterCurrentBusStamp;
-                })
-            )
-            ->willReturn(new Envelope(new TriggerDocumentAiValidationAction($documentId)));
+            ->willReturnCallback(function ($message) use (&$dispatchedMessages) {
+                $dispatchedMessages[] = $message;
 
-        $action = new AddDocumentAction($collectTaskId, $document);
+                return new Envelope($message);
+            });
 
-        // Act
-        ($this->handler)($action);
+        ($this->handler)(new AddDocumentAction($collectTaskId, $document));
 
-        // Assert - expectations are verified automatically by PHPUnit
+        self::assertCount(1, $dispatchedMessages);
+        self::assertInstanceOf(ProcessDocumentQualityAction::class, $dispatchedMessages[0]);
+        self::assertSame($documentId, $dispatchedMessages[0]->documentId);
     }
 
     public function testInvokeCreatesNewDocumentWithProviderIdWhenNoExistingDocumentFound(): void
@@ -790,9 +782,21 @@ class AddDocumentHandlerTest extends TestCase
             ->method('get')
             ->willReturn($collectTask);
 
-        // Assert that AI validation is NOT triggered when document exists and has AI validation
-        $messageBusMock->expects($this->never())
-            ->method('dispatch');
+        // AI validation is NOT re-triggered when document already has one, but quality scoring always runs
+        $messageBusMock->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                $this->callback(function ($message) use ($existingDocumentId) {
+                    return $message instanceof ProcessDocumentQualityAction
+                        && $message->documentId === $existingDocumentId;
+                }),
+                $this->callback(function ($stamps) {
+                    return \is_array($stamps)
+                        && 1 === \count($stamps)
+                        && $stamps[0] instanceof DispatchAfterCurrentBusStamp;
+                })
+            )
+            ->willReturn(new Envelope(new ProcessDocumentQualityAction($existingDocumentId)));
 
         $handler = new AddDocumentHandler(
             $this->collectTaskGateway,

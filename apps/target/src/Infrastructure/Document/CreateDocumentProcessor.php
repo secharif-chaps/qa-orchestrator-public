@@ -105,6 +105,8 @@ class CreateDocumentProcessor implements ProcessorInterface
         );
 
         $document->setLanguage($metadata->language);
+        $htmlLength = mb_strlen($html);
+        $document->setContentRatio($htmlLength > 0 ? mb_strlen($metadata->content) / $htmlLength : null);
 
         // Use canonical URL for dedup when available (more stable than redirect URLs)
         $dedupUrl = $metadata->canonicalUrl ?? $inputDto->url;

@@ -37,7 +37,10 @@ export function useAuth() {
   const userEmail = computed(() => authStore.user?.profile?.email || null)
 
   const isInternalUser = computed(
-    () => typeof userEmail.value === 'string' && userEmail.value.endsWith('@chapsvision.com'),
+    () =>
+      typeof userEmail.value === 'string' &&
+      (userEmail.value.endsWith('@chapsvision.com') ||
+        userEmail.value.endsWith('@chapsmind.local')),
   )
 
   const isLoading = computed(() => !authStore.initialized || isTokenRefreshing.value)

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Document;
 
+use App\Application\DocumentQuality\Message\ProcessDocumentQualityAction;
 use App\Domain\Collect\CollectTaskGatewayInterface;
 use App\Domain\Document\Document;
 use App\Domain\Document\DocumentGatewayInterface;
@@ -28,7 +29,6 @@ readonly class AddDocumentHandler
 
     public function __invoke(AddDocumentAction $action): Document
     {
-        // Validate the document
         $violations = $this->validator->validate($action->document);
         if (\count($violations) > 0) {
             throw ValidationException::validationFailed(
@@ -37,12 +37,9 @@ readonly class AddDocumentHandler
             );
         }
 
-        // Get the collect task to extract watch file and source information
         $collectTask = $this->collectTaskGateway->get($action->collectTaskId);
 
         $document = $action->document;
-
-        // Set the watch file and source information
         $document->capitalizeFrom($collectTask);
 
         // Check if document exists by providerId (for synchronization between raw_result and document_refined_result)
@@ -56,16 +53,12 @@ readonly class AddDocumentHandler
             $document = $existingDocument;
         }
 
-        // Save to OpenSearch
         $this->documentGateway->save($document);
 
-        // Trigger AI validation after save
-        if (null === $existingDocument || null === $document->getAiValidation()) {
-            $this->messageBus->dispatch(
-                new TriggerDocumentAiValidationAction(documentId: $document->getId()),
-                [new DispatchAfterCurrentBusStamp()]
-            );
-        }
+        $this->messageBus->dispatch(
+            new ProcessDocumentQualityAction(documentId: $document->getId()),
+            [new DispatchAfterCurrentBusStamp()],
+        );
 
         return $document;
     }

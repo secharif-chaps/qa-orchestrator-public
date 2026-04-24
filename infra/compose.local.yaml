@@ -30,6 +30,15 @@ x-target-env: &target-env
   BAKUS_WEBSOCKET_SERVER_SSL_ENABLED: ${BAKUS_WEBSOCKET_SERVER_SSL_ENABLED:-false}
   BAKUS_WEBSOCKET_MAX_CONNECTIONS: ${BAKUS_WEBSOCKET_MAX_CONNECTIONS:-100}
   BAKUS_WEBSOCKET_TIMEOUT: ${BAKUS_WEBSOCKET_TIMEOUT:-25}
+  # ─── Mercure (hub embedded in target container) ────────
+  MERCURE_URL: http://target:8000/.well-known/mercure
+  MERCURE_PUBLIC_URL: http://localhost/.well-known/mercure
+  MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET:-local-dev-mercure-jwt-secret-for-chapsmind-min256bits!}
+  MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_SECRET:-local-dev-mercure-jwt-secret-for-chapsmind-min256bits!}
+  MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_JWT_SECRET:-local-dev-mercure-jwt-secret-for-chapsmind-min256bits!}
+  # ─── N8N Agent Executor ────────────────────────────
+  N8N_API_URL: http://n8n:5678
+  N8N_API_KEY: ${N8N_API_KEY:-}
 
 x-local-keycloak: &local-keycloak
   KEYCLOAK_SERVER_URL: http://keycloak:8080
@@ -198,11 +207,6 @@ services:
       <<: [*target-env, *local-internal-auth]
       SERVER_NAME: ":8000"
       TRUSTED_HOSTS: "^(localhost|target)$$"
-      MERCURE_URL: http://target:8000/.well-known/mercure
-      MERCURE_PUBLIC_URL: http://localhost/.well-known/mercure
-      MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET:-local-dev-mercure-jwt-secret-for-chapsmind-min256bits!}
-      MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_JWT_SECRET:-local-dev-mercure-jwt-secret-for-chapsmind-min256bits!}
-      MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_JWT_SECRET:-local-dev-mercure-jwt-secret-for-chapsmind-min256bits!}
 
   # Target runner — local build for Symfony Messenger consumers (1 replica in local dev)
   target-runner:

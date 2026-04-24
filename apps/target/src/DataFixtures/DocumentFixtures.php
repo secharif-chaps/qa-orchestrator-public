@@ -220,9 +220,15 @@ class DocumentFixtures extends Fixture implements DependentFixtureInterface
     }
 
     /**
-     * Create 2 documents with fixed UUIDs for quality pipeline testing.
-     * One with HTTPS URL (expected: ACCEPTED), one with HTTP (expected: LOW_QUALITY).
-     * Fixed UUIDs ensure these documents are stable and identifiable across fixture reloads.
+     * Create documents with fixed UUIDs for quality pipeline testing.
+     * Each document targets a specific processor branch to allow signal-level verification.
+     * Fixed UUIDs ensure documents are stable and identifiable across fixture reloads.
+     *
+     * UUID ranges:
+     *   000001–000002  HttpsProcessor         (HTTPS vs HTTP)
+     *   000010–000012  PublicationDateProcessor (today / 2 years ago / future)
+     *   000020–000021  WordCountProcessor      (medium ~400 words / short ~20 words)
+     *   000030–000031  UrlPatternProcessor     (/article/ editorial / /login auth page)
      *
      * @param array<int, Actor>  $actors
      * @param array<int, Source> $sources
@@ -235,69 +241,143 @@ class DocumentFixtures extends Fixture implements DependentFixtureInterface
         $source = $sources[0];
         $now = new \DateTime()
 ->format('Y-m-d\TH:i:s');
+        $twoYearsAgo = new \DateTime('-730 days')
+->format('Y-m-d\TH:i:s');
+        $futureMonth = new \DateTime('+30 days')
+->format('Y-m-d\TH:i:s');
+
+        $base = [
+            'type' => 'html',
+            'dateCollect' => $now,
+            'status' => DocumentStatus::VALIDATED->value,
+            'watchFileId' => $watchFile->getId(),
+            'actorId' => $actor->getId(),
+            'sourceId' => $source->getId(),
+            'source' => [
+                'id' => $source->getId(),
+                'name' => $source->getName(),
+                'url' => $source->getUrl(),
+            ],
+            'actor' => [
+                'id' => $actor->getId(),
+                'label' => $actor->getLabel(),
+                'primaryDomain' => $actor->getPrimaryDomain(),
+            ],
+            'watchFile' => [
+                'id' => $watchFile->getId(),
+                'name' => $watchFile->getName(),
+            ],
+            'cfcRestricted' => false,
+            'language' => 'en',
+        ];
 
         return [
-            [
+            // ─── HttpsProcessor ────────────────────────────────────────────────
+            // https signal: 0.80 (HTTPS) vs 0.35 (HTTP)
+            array_merge($base, [
                 'id' => '00000000-0000-4000-8000-000000000001',
-                'title' => '[Quality Test] HTTPS document — expected ACCEPTED',
+                'title' => '[Quality Test] HTTPS — https signal = 0.80',
                 'excerpt' => 'Test document with HTTPS URL for quality pipeline validation.',
-                'type' => 'html',
                 'url' => 'https://example.com/quality-test/accepted',
                 'datePublish' => $now,
-                'dateCollect' => $now,
-                'status' => DocumentStatus::VALIDATED->value,
-                'watchFileId' => $watchFile->getId(),
-                'actorId' => $actor->getId(),
-                'sourceId' => $source->getId(),
-                'source' => [
-                    'id' => $source->getId(),
-                    'name' => $source->getName(),
-                    'url' => $source->getUrl(),
-                ],
-                'actor' => [
-                    'id' => $actor->getId(),
-                    'label' => $actor->getLabel(),
-                    'primaryDomain' => $actor->getPrimaryDomain(),
-                ],
-                'watchFile' => [
-                    'id' => $watchFile->getId(),
-                    'name' => $watchFile->getName(),
-                ],
-                'cfcRestricted' => false,
-                'language' => 'en',
                 'isInteresting' => true,
-            ],
-            [
+            ]),
+            array_merge($base, [
                 'id' => '00000000-0000-4000-8000-000000000002',
-                'title' => '[Quality Test] HTTP document — expected LOW_QUALITY',
+                'title' => '[Quality Test] HTTP — https signal = 0.35',
                 'excerpt' => 'Test document with HTTP URL for quality pipeline validation.',
-                'type' => 'html',
                 'url' => 'http://example.com/quality-test/low-quality',
                 'datePublish' => $now,
-                'dateCollect' => $now,
-                'status' => DocumentStatus::VALIDATED->value,
-                'watchFileId' => $watchFile->getId(),
-                'actorId' => $actor->getId(),
-                'sourceId' => $source->getId(),
-                'source' => [
-                    'id' => $source->getId(),
-                    'name' => $source->getName(),
-                    'url' => $source->getUrl(),
-                ],
-                'actor' => [
-                    'id' => $actor->getId(),
-                    'label' => $actor->getLabel(),
-                    'primaryDomain' => $actor->getPrimaryDomain(),
-                ],
-                'watchFile' => [
-                    'id' => $watchFile->getId(),
-                    'name' => $watchFile->getName(),
-                ],
-                'cfcRestricted' => false,
-                'language' => 'en',
                 'isInteresting' => false,
-            ],
+            ]),
+
+            // ─── PublicationDateProcessor ───────────────────────────────────────
+            // publication_date signal: 0.85 (today) / 0.65 (1–3 years) / 0.25 (future)
+            array_merge($base, [
+                'id' => '00000000-0000-4000-8000-000000000010',
+                'title' => '[Quality Test] Publication date: today — pub_date signal = 0.85',
+                'excerpt' => 'Test document published today to exercise the fresh article branch of PublicationDateProcessor.',
+                'url' => 'https://example.com/quality-test/pub-date-today',
+                'datePublish' => $now,
+                'isInteresting' => true,
+            ]),
+            array_merge($base, [
+                'id' => '00000000-0000-4000-8000-000000000011',
+                'title' => '[Quality Test] Publication date: 2 years ago — pub_date signal = 0.65',
+                'excerpt' => 'Test document published 730 days ago to exercise the 1–3 year bracket of PublicationDateProcessor.',
+                'url' => 'https://example.com/quality-test/pub-date-2-years-ago',
+                'datePublish' => $twoYearsAgo,
+                'isInteresting' => true,
+            ]),
+            array_merge($base, [
+                'id' => '00000000-0000-4000-8000-000000000012',
+                'title' => '[Quality Test] Publication date: future +30 days — pub_date signal = 0.25',
+                'excerpt' => 'Test document with a future publication date to exercise the suspicious date branch of PublicationDateProcessor.',
+                'url' => 'https://example.com/quality-test/pub-date-future',
+                'datePublish' => $futureMonth,
+                'isInteresting' => false,
+            ]),
+
+            // ─── WordCountProcessor ─────────────────────────────────────────────
+            // word_count signal: 0.80 (200–1000 words) / 0.20 (< 50 words)
+            array_merge($base, [
+                'id' => '00000000-0000-4000-8000-000000000020',
+                'title' => '[Quality Test] Word count: ~400 words — word_count signal = 0.80',
+                'excerpt' => 'Test document with medium-length content (200–1000 words range).',
+                'content' => $this->generateMediumWordCountContent(),
+                'url' => 'https://example.com/quality-test/word-count-medium',
+                'datePublish' => $now,
+                'isInteresting' => true,
+            ]),
+            array_merge($base, [
+                'id' => '00000000-0000-4000-8000-000000000021',
+                'title' => '[Quality Test] Word count: ~20 words — word_count signal = 0.20',
+                'excerpt' => 'Very short test document.',
+                'content' => 'The award has been confirmed by the certification body. No additional details are currently available regarding the specific evaluation criteria.',
+                'url' => 'https://example.com/quality-test/word-count-short',
+                'datePublish' => $now,
+                'isInteresting' => false,
+            ]),
+
+            // ─── UrlPatternProcessor ────────────────────────────────────────────
+            // url_pattern signal: 0.85 (/article/ editorial) / 0.10 (/login auth page)
+            array_merge($base, [
+                'id' => '00000000-0000-4000-8000-000000000030',
+                'title' => '[Quality Test] URL pattern: /article/ — url_pattern signal = 0.85',
+                'excerpt' => 'Test document with an editorial article URL to exercise the positive pattern branch of UrlPatternProcessor.',
+                'content' => $this->generateMediumWordCountContent(),
+                'url' => 'https://example.com/article/employer-branding-pharma-2024',
+                'datePublish' => $now,
+                'isInteresting' => true,
+            ]),
+            array_merge($base, [
+                'id' => '00000000-0000-4000-8000-000000000031',
+                'title' => '[Quality Test] URL pattern: /login — url_pattern signal = 0.10',
+                'excerpt' => 'Test document with a login page URL to exercise the authentication page branch of UrlPatternProcessor.',
+                'url' => 'https://example.com/login',
+                'datePublish' => $now,
+                'isInteresting' => false,
+            ]),
         ];
+    }
+
+    private function generateMediumWordCountContent(): string
+    {
+        return 'The pharmaceutical and cosmetic industry has witnessed significant growth in employer recognition programs over the past decade. Organizations in this sector now compete not only for market share but also for talented professionals, making employer branding a critical strategic priority for human resources departments worldwide.
+
+Leading organizations such as L\'Oréal, Sanofi, and Servier consistently appear in prestigious employer rankings including the Top Employers certification and the Forbes Best Employers list. These recognitions reflect sustained investment in employee development, diversity initiatives, and workplace well-being programs that extend beyond standard compensation packages to include career development and flexible working arrangements.
+
+The Top Employers Institute, founded in the Netherlands, certifies organizations based on rigorous criteria covering talent strategy, learning and development, well-being, diversity and inclusion, and leadership development practices. Companies seeking this certification must complete a detailed assessment covering human resources practices and organizational policies across all business units and geographic regions.
+
+Forbes, in partnership with market research company Statista, surveys large numbers of employees across multiple countries each year. Participants evaluate their current employers on criteria including working conditions, salary levels, advancement opportunities, and overall satisfaction with the company culture. The resulting rankings are widely cited in recruitment campaigns and employer branding communications across the industry.
+
+The Great Place to Work certification is awarded by the eponymous institute based on employee surveys and a rigorous assessment of workplace culture and management practices. The methodology distinguishes between employee perception and organizational practices, providing a comprehensive evaluation of the employment experience within a company.
+
+In the pharmaceutical sector, employer labels serve functions beyond recruitment marketing. They signal organizational stability, ethical governance, and long-term commitment to workforce development, which can influence investor confidence and strategic partnership decisions. Companies with strong employer reputations tend to demonstrate higher employee retention rates, reducing ongoing recruitment costs and preserving valuable institutional knowledge.
+
+The cosmetic industry faces distinct challenges in employer branding due to rapid product cycles and consumer trend sensitivity. Labels such as Happy at Work and Best Workplaces help cosmetic brands communicate their commitment to employee satisfaction in this competitive and dynamic environment.
+
+Monitoring employer labels is therefore a valuable competitive intelligence activity for organizations operating in the pharmaceutical and cosmetic sectors. Understanding which competitors receive which certifications provides meaningful insight into their human resources strategies and competitive positioning in the talent market.';
     }
 
     /**

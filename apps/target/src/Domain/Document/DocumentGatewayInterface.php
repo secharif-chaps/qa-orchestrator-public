@@ -56,4 +56,13 @@ interface DocumentGatewayInterface
      * @return list<array{id: string, title: string, processedAt: string, watchFileId: ?string}>
      */
     public function findStaleAiValidationDocuments(\DateTimeImmutable $cutoff, int $limit): array;
+
+    /**
+     * Return a page of document IDs sorted by id, optionally filtered by WatchFile.
+     * Use $searchAfter with the last id of the previous page to paginate past the
+     * default OpenSearch `max_result_window` (10k documents).
+     *
+     * @return list<string>
+     */
+    public function findAllIds(?string $watchFileId = null, int $limit = 500, ?string $searchAfter = null): array;
 }

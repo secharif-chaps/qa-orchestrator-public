@@ -138,6 +138,37 @@ else
   warn "Git pre-commit hook not installed — run 'yarn install' from repo root"
 fi
 
+# ─── Keycloak realm (optional, only when running) ─────
+
+echo ""
+echo "🔍 Checking Keycloak realm configuration..."
+echo ""
+
+KEYCLOAK_URL="${KEYCLOAK_URL:-http://localhost:8080}"
+KEYCLOAK_REALM="${KEYCLOAK_REALM:-chapsmind}"
+KEYCLOAK_AUTH_REALM="${KEYCLOAK_AUTH_REALM:-master}"
+KEYCLOAK_ADMIN_USER="${KEYCLOAK_ADMIN:-admin}"
+KEYCLOAK_ADMIN_PASS="${KEYCLOAK_ADMIN_PASSWORD:-admin}"
+
+if curl -sf --connect-timeout 2 "${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/.well-known/openid-configuration" > /dev/null 2>&1; then
+  # Invoke nested doctor without tripping our `set -e`. Its exit code (1 on errors) is
+  # mapped back to our ERRORS counter so the summary below reflects the full state.
+  set +e
+  bash infra/scripts/doctor-keycloak.sh \
+    --url "$KEYCLOAK_URL" \
+    --realm "$KEYCLOAK_REALM" \
+    --auth-realm "$KEYCLOAK_AUTH_REALM" \
+    --user "$KEYCLOAK_ADMIN_USER" \
+    --pass "$KEYCLOAK_ADMIN_PASS"
+  KC_STATUS=$?
+  set -e
+  if [ "$KC_STATUS" -ne 0 ]; then
+    ERRORS=$((ERRORS + 1))
+  fi
+else
+  echo "ℹ️  Keycloak not reachable at ${KEYCLOAK_URL} — skipping realm inspection (run 'task up' first)"
+fi
+
 # ─── Summary ──────────────────────────────────────────
 
 echo ""

@@ -348,4 +348,38 @@ readonly class DocumentOpenSearchGateway implements DocumentGatewayInterface
 
         return $documents;
     }
+
+    public function findAllIds(?string $watchFileId = null, int $limit = 500, ?string $searchAfter = null): array
+    {
+        $query = null !== $watchFileId
+            ? [
+                'term' => [
+                    'watchFile.id' => $watchFileId,
+                ],
+            ]
+            : [
+                'match_all' => (object) [],
+            ];
+
+        $body = [
+            'query' => $query,
+            'size' => $limit,
+            'sort' => [[
+                '_id' => 'asc',
+            ]],
+            '_source' => false,
+        ];
+
+        // search_after avoids the 10k max_result_window limit of from+size pagination.
+        if (null !== $searchAfter) {
+            $body['search_after'] = [$searchAfter];
+        }
+
+        $response = $this->openSearch->search([
+            'index' => Document::INDEX_NAME,
+            'body' => $body,
+        ]);
+
+        return array_values(array_map(static fn (array $hit) => $hit['_id'], $response['hits']['hits'] ?? []));
+    }
 }

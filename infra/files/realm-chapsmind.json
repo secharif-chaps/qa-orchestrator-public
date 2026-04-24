@@ -15,6 +15,7 @@
   "organizationsEnabled": true,
   "users": [
     {
+      "id": "116f1d59-c72d-486c-bf55-a5e587d88cfc",
       "username": "admin",
       "enabled": true,
       "emailVerified": true,
@@ -42,6 +43,7 @@
       ]
     },
     {
+      "id": "e258ebaa-e0b6-4c59-afc6-d8341698f943",
       "username": "company_manager",
       "enabled": true,
       "emailVerified": true,
@@ -66,6 +68,7 @@
       ]
     },
     {
+      "id": "b2a2e2c1-2a2b-4c2d-8e2f-2a2b2c2d2e2f",
       "username": "company_viewer",
       "enabled": true,
       "emailVerified": true,
@@ -86,6 +89,7 @@
       ]
     },
     {
+      "id": "b3a3e3c2-3a3b-4c3d-8e3f-3a3b3c3d3e3f",
       "username": "no_access",
       "enabled": true,
       "emailVerified": true,
@@ -408,5 +412,19 @@
   "registrationFlow": "registration",
   "directGrantFlow": "direct grant",
   "resetCredentialsFlow": "reset credentials",
-  "clientAuthenticationFlow": "clients"
+  "clientAuthenticationFlow": "clients",
+  "organizations": [
+    {
+      "id": "bb23edbd-aaa0-4e26-863d-dfff9c700827",
+      "name": "ChapsMind Dev",
+      "alias": "chapsmind-dev",
+      "enabled": true,
+      "domains": [
+        {
+          "name": "chapsmind.local",
+          "verified": true
+        }
+      ]
+    }
+  ]
 }

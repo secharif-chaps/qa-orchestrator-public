@@ -185,6 +185,7 @@ services:
       - "async_priority_low"
       - "agent_commands"
       - "agent_responses"
+      - "quality_processing"
       - "--time-limit=3600"
       - "--memory-limit=2G"
     healthcheck:

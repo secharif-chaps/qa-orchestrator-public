@@ -274,6 +274,19 @@ if [ "$ORG_COUNT" -eq 0 ]; then
 else
     ok "$ORG_COUNT organization(s)"
     echo "$ORGS" | jq -r '.[] | "   → \(.name) (ID: \(.id[:8])...)"'
+
+    # Each organization declared in the realm JSON should be present on the server with its
+    # declared ID. A mismatch means the realm import was skipped and the org was recreated
+    # with a fresh UUID — breaking fixtures/tests that expect a stable ID.
+    while IFS=$'\t' read -r EXPECTED_ID EXPECTED_NAME; do
+        [ -z "$EXPECTED_ID" ] && continue
+        ACTUAL_ID=$(echo "$ORGS" | jq -r --arg name "$EXPECTED_NAME" '.[] | select(.name==$name) | .id')
+        if [ -z "$ACTUAL_ID" ] || [ "$ACTUAL_ID" = "null" ]; then
+            warn "Organization \"$EXPECTED_NAME\" declared in $REALM_JSON_DISPLAY is missing on the server"
+        elif [ "$ACTUAL_ID" != "$EXPECTED_ID" ]; then
+            warn "Organization \"$EXPECTED_NAME\" has ID ${ACTUAL_ID:0:8}... on the server but ${EXPECTED_ID:0:8}... in $REALM_JSON_DISPLAY — realm JSON import may have been skipped, fixtures relying on the stable ID will drift"
+        fi
+    done < <(jq -r '(.organizations // []) | .[] | [.id, .name] | @tsv' "$REALM_JSON")
 fi
 
 echo ""

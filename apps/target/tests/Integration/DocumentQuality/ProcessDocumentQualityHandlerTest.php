@@ -70,7 +70,7 @@ class ProcessDocumentQualityHandlerTest extends AbstractApiTestCase
         /** @var array<string, array{value: float}> $signals */
         $signals = json_decode($row['signals'], true);
         $this->assertArrayHasKey('https', $signals);
-        $this->assertEquals(0.0, $signals['https']['value']);
+        $this->assertEquals(0.35, $signals['https']['value']);
     }
 
     public function testDocumentQualityProcessedEventIsDispatched(): void
