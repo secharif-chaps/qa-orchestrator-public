@@ -22,9 +22,11 @@ vi.mock('vue-i18n', () => ({
   }),
 }))
 
-vi.mock('@target/composables/useTimeDisplay', () => ({
-  useTimeDisplay: () => ({
-    formatTime: () => '2 hours ago',
+vi.mock('@/composables/useDateTime', () => ({
+  useDateTime: () => ({
+    formatDate: (date: Date | string) => new Date(date).toISOString(),
+    formatRelativeTime: () => '2 hours ago',
+    formatChatDate: () => '12:00',
   }),
 }))
 

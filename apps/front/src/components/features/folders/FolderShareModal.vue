@@ -234,7 +234,7 @@ import {
 } from '@/mutations/folderShares'
 import { folderSharesQuery, userSearchQuery } from '@/queries/folderShares'
 import type { FolderShare, ShareableUser, ShareRole } from '@/types/folder'
-import { formatDate } from '@/utils/time'
+import { useDateTime } from '@/composables/useDateTime'
 import { Avatar, Button, Label, Modal, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { ref, watch } from 'vue'
@@ -249,6 +249,7 @@ const props = defineProps<Props>()
 const isOpen = defineModel<boolean>({ required: true })
 
 const { t } = useI18n()
+const { formatDate } = useDateTime()
 
 // Get role options with disabled property based on user's write permission
 function getRoleOptionsForUser(user: ShareableUser) {

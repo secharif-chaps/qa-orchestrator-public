@@ -148,7 +148,7 @@
           </template>
           <template #cell(updatedAt)="{ value }">
             <td class="px-4 py-3">
-              <span class="text-sm text-gray-900">{{ formatDateTime(value) }}</span>
+              <span class="text-sm text-gray-900">{{ formatDate(value, 'long') }}</span>
             </td>
           </template>
           <template #cell(countAccess)="{ item }">
@@ -228,6 +228,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDateTime } from '@/composables/useDateTime'
 import { useToast } from '@/target/composables/useToast'
 import { RouteNames } from '@/target/types/route-names'
 import { Button, Checkbox, HeaderCell, Icon, ORadio, Searchbar, Table } from '@owlint/feathers-vue'
@@ -316,11 +317,7 @@ const columns: TableColumn[] = [
   createColumn('actions', ''),
 ]
 
-// Utils
-const formatDateTime = (date: string) => {
-  const d = new Date(date)
-  return d.toLocaleString()
-}
+const { formatDate } = useDateTime()
 
 const shareWatchFile = (watchFile: WatchFile) => {
   currentWatchFile.value = watchFile

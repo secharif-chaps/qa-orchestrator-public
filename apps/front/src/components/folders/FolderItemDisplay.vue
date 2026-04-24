@@ -88,8 +88,8 @@
 <script setup lang="ts">
 import Logo from '@/components/ui/Logo.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { useDateTime } from '@/composables/useDateTime'
 import type { FolderItem } from '@/types/folder'
-import { formatDate } from '@/utils/time'
 import { Button } from '@owlint/feathers-vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -113,6 +113,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { canDeleteCompany } = useCompanyPermissions()
+const { formatDate } = useDateTime()
 const isParentHovered = ref(false)
 const isChildHovered = ref(false)
 

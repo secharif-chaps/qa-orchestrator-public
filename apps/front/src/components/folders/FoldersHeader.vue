@@ -177,13 +177,13 @@
 import FolderShareButton from '@/components/features/folders/FolderShareButton.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
+import { useDateTime } from '@/composables/useDateTime'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import { useScreenModule } from '@/composables/useScreenModule'
 import { useStreamModule } from '@/composables/useStreamModule'
 import { useStreamPermissions } from '@/composables/useStreamPermissions'
 import { useToggleFolderFavorite } from '@/mutations/folders'
 import type { Folder } from '@/types/folder'
-import { formatDate } from '@/utils/time'
 import { Button, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
 import { computed, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -200,6 +200,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { formatDate } = useDateTime()
 
 // Folder permissions
 const folderRef = toRef(props, 'folder')

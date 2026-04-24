@@ -38,10 +38,12 @@ import Source from '@/components/company/Source.vue'
 
 import TimelineCard from '@/components/ui/TimelineCard.vue'
 import TimelineItem from '@/components/ui/TimelineItem.vue'
+import { useDateTime } from '@/composables/useDateTime'
 import type { FundingRound } from '@/types/company'
 import { Tag } from '@owlint/feathers-vue'
 
 const { t } = useI18n()
+const { formatDate } = useDateTime()
 
 interface Props {
   round: FundingRound
@@ -56,12 +58,10 @@ const formattedDate = computed(() => {
   if (dateStr.length === 4) return dateStr
   if (dateStr.length === 7) {
     const [year, month] = dateStr.split('-')
-    const date = new Date(parseInt(year), parseInt(month) - 1)
-    return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short' })
+    return formatDate(new Date(parseInt(year), parseInt(month) - 1), 'short')
   }
 
   const [year, month, day] = dateStr.split('-').map(Number)
-  const date = new Date(year, month - 1, day)
-  return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+  return formatDate(new Date(year, month - 1, day), 'eventDate')
 })
 </script>

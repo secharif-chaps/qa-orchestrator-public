@@ -1,6 +1,6 @@
+import { convertDateStringToDate, formatToISOWithTimezone, getPeriodDates } from '@/utils/date'
 import type { SortOrder } from '@owlint/feathers-vue'
 import { useApi } from '@target/composables/useApi'
-import { useDate } from '@target/composables/useDate'
 import { DatesPeriod } from '@target/types/filter'
 import type {
   WatchFileEventCollection,
@@ -35,8 +35,6 @@ export const getWatchFileEvents = async (
   }
 
   if (filters) {
-    const { getPeriodDates, convertDateStringToDate, formatToISOWithTimezone } = useDate()
-
     let startDate: Date | undefined = undefined
     let endDate: Date | undefined = undefined
 

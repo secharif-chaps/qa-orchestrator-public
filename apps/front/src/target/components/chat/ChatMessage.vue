@@ -139,10 +139,10 @@
 </template>
 
 <script setup lang="ts">
+import { useChatDateRef, useDateTime } from '@/composables/useDateTime'
 import { Badge, Button, OPopper } from '@owlint/feathers-vue'
 import { useAddMessage, useRetryMessage } from '@target/api/mutations/conversation'
 import chapse_head from '@target/assets/images/chapse_head.svg'
-import { useChatDateDisplay } from '@target/composables/useChatDateDisplay'
 import { useMarkdown } from '@target/composables/useMarkdown'
 import { useStringUtils } from '@target/composables/useStringUtils'
 import { useChatStore } from '@target/stores/chat'
@@ -170,7 +170,7 @@ const { toHtml } = useMarkdown({
 })
 const chatStore = useChatStore()
 const conversationStore = useConversationStore()
-const { getContextualDate, getFullDateTime } = useChatDateDisplay()
+const { formatDate } = useDateTime()
 
 const { retryMessage, isLoading: isRetrying } = useRetryMessage()
 const { addMessage, isLoading: isRetryingTimeout } = useAddMessage()
@@ -212,15 +212,9 @@ const isLoading = computed(() => message.loading === true)
 const isError = computed(() => message.status === 'error')
 const canRetry = computed(() => (message.retryCount ?? 0) < MAX_RETRY_ATTEMPTS)
 
-const contextualDate = computed(() => {
-  if (!message.createdAt) return ''
-  return getContextualDate(message.createdAt).value
-})
+const contextualDate = useChatDateRef(() => message.createdAt)
 
-const fullDateTime = computed(() => {
-  if (!message.createdAt) return ''
-  return getFullDateTime(message.createdAt).value
-})
+const fullDateTime = computed(() => formatDate(message.createdAt, 'long'))
 
 // Test ID for E2E testing - maps role to test identifier
 const messageTestId = computed(() => `message-${message.role}`)

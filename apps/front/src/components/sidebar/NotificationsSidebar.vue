@@ -80,7 +80,7 @@
 import { organizationActivitiesQuery } from '@/queries/organization'
 import { useAuthStore } from '@/stores/auth'
 import { useNotificationsStore } from '@/stores/notifications'
-import { formatRelativeTime } from '@/utils/time'
+import { useDateTime } from '@/composables/useDateTime'
 import { Badge, Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, onMounted, ref } from 'vue'
@@ -110,6 +110,7 @@ const router = useRouter()
 const { t } = useI18n()
 const authStore = useAuthStore()
 const notificationsStore = useNotificationsStore()
+const { formatRelativeTime } = useDateTime()
 
 const canViewActivities = computed(() => authStore.hasPermission('organization.read'))
 

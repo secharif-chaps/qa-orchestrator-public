@@ -55,7 +55,7 @@
             </div>
             <div class="flex justify-between">
               <span class="text-neutral-black-font">{{ $t('screen.company.created') }}:</span>
-              <span>{{ formatDate(companyToDelete.created_at) }}</span>
+              <span>{{ formatDate(companyToDelete.created_at, 'eventDate') }}</span>
             </div>
             <div
               v-if="companyToDelete.tasks && companyToDelete.tasks.length > 0"
@@ -106,10 +106,13 @@
 </template>
 
 <script setup lang="ts">
+import { useDateTime } from '@/composables/useDateTime'
 import { useDeleteCompany } from '@/mutations/companies'
 import type { Company } from '@/types/company'
 import { Button, Input } from '@owlint/feathers-vue'
 import { computed, ref } from 'vue'
+
+const { formatDate } = useDateTime()
 
 interface Props {
   companyToDelete: Company | null
@@ -158,13 +161,5 @@ const handleDelete = async () => {
     // Error toast is shown by the mutation's onError handler
     console.error('Error deleting company:', error)
   }
-}
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
 }
 </script>

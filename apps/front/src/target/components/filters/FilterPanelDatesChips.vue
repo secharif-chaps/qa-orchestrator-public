@@ -15,16 +15,15 @@
 </template>
 
 <script lang="ts" setup>
+import { getPeriodDates } from '@/utils/date'
 import { getLocalTimeZone } from '@internationalized/date'
 import { Icon } from '@owlint/feathers-vue'
-import { useDate } from '@target/composables/useDate'
 import type { DatesPeriod, FilterDates } from '@target/types/filter'
 import type { DateRange } from 'reka-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t, d } = useI18n()
-const { getPeriodDates } = useDate()
 
 interface Props {
   datesPicker?: DateRange

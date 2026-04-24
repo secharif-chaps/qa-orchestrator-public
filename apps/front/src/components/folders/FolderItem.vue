@@ -170,9 +170,9 @@
 
 <script setup lang="ts">
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
+import { useDateTime } from '@/composables/useDateTime'
 import { useToggleFolderFavorite } from '@/mutations/folders'
 import type { Folder } from '@/types/folder'
-import { formatDate } from '@/utils/time'
 import { Tag } from '@owlint/feathers-vue'
 import { computed, ref, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -182,6 +182,7 @@ import CompanyCardItem from './CompanyCardItem.vue'
 
 const { t } = useI18n()
 const router = useRouter()
+const { formatDate } = useDateTime()
 
 interface Props {
   folder: Folder

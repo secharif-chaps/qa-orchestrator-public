@@ -28,7 +28,7 @@
           {{
             t('screen.company.header.createdBy', {
               username: company.owner_username,
-              date: formatFullDate(company.created_at),
+              date: formatDate(company.created_at, 'eventDate'),
             })
           }}
         </span>
@@ -59,8 +59,8 @@ import { folderByIdQuery } from '@/queries/folders'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { companyTasksQuery } from '@/queries/tasks'
 import { organizationBalanceQuery } from '@/queries/tokens'
+import { useDateTime } from '@/composables/useDateTime'
 import { useAuthStore } from '@/stores/auth'
-import { formatFullDate } from '@/utils/time'
 import { Badge } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, provide, ref, watch } from 'vue'
@@ -71,6 +71,7 @@ const route = useRoute('/folders/[folderId]/companies/[companyId]')
 const router = useRouter()
 const { t } = useI18n()
 const authStore = useAuthStore()
+const { formatDate } = useDateTime()
 
 const companyId = computed(() => route.params.companyId)
 const folderId = computed(() => route.params.folderId)

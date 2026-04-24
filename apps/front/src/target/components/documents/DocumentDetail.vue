@@ -40,7 +40,7 @@
     >
       <template #subtitle>
         <Tag v-if="document.summaryGeneratedAt" size="sm" icon="fa-clock" variant="secondary">
-          {{ d(document.summaryGeneratedAt, 'long') }}
+          {{ formatDate(document.summaryGeneratedAt, 'long') }}
         </Tag>
       </template>
     </DocumentAccordion>
@@ -55,7 +55,7 @@
     >
       <template #subtitle>
         <Tag v-if="document.aiValidation.processedAt" size="sm" icon="fa-clock" variant="secondary">
-          {{ d(document.aiValidation.processedAt, 'long') }}
+          {{ formatDate(document.aiValidation.processedAt, 'long') }}
         </Tag>
       </template>
     </DocumentAccordion>
@@ -81,6 +81,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDateTime } from '@/composables/useDateTime'
 import { Icon, Tag } from '@owlint/feathers-vue'
 import InformationMessage from '@target/components/global/InformationMessage.vue'
 import UrlDomain from '@target/components/global/UrlDomain.vue'
@@ -93,7 +94,8 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import DocumentAccordion from './DocumentAccordion.vue'
 
-const { d, t } = useI18n()
+const { t } = useI18n()
+const { formatDate } = useDateTime()
 const { getDocumentIcon } = useDocumentIcon()
 const { getLocalizedString } = useLocalized()
 
@@ -103,10 +105,6 @@ interface Props {
 }
 
 const { document = undefined, isLoading = false } = defineProps<Props>()
-
-const formatDate = (date: string, format: string = 'long') => {
-  return d(date, format)
-}
 
 const summaryText = getLocalizedString(computed(() => document?.summary))
 const validationReasonText = getLocalizedString(
@@ -167,12 +165,12 @@ const metadataItems = computed(() => {
     {
       key: 'publishDate',
       label: t('target.documents.detail.publishDate'),
-      value: formatDate(document?.datePublish),
+      value: formatDate(document?.datePublish, 'long'),
     },
     {
       key: 'creationDate',
       label: t('target.documents.detail.creationDate'),
-      value: formatDate(document?.dateCollect),
+      value: formatDate(document?.dateCollect, 'long'),
     },
     {
       key: 'type',

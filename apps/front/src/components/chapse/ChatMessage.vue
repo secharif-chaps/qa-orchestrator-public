@@ -44,11 +44,14 @@
 
 <script setup lang="ts">
 import chapseHead from '@/assets/chapse/head.svg'
+import { useDateTime } from '@/composables/useDateTime'
 import { useAuthStore } from '@/stores/auth'
 import type { ChatMessage as ChatMessageType } from '@/stores/chapse'
 import { useSidebarStore } from '@/stores/sidebar'
 import { Avatar, Icon } from '@owlint/feathers-vue'
 import { computed } from 'vue'
+
+const { formatDate } = useDateTime()
 
 const authStore = useAuthStore()
 
@@ -133,8 +136,5 @@ const formattedContent = computed(() => {
   return formatted
 })
 
-const formattedTime = computed(() => {
-  const date = new Date(props.message.timestamp)
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-})
+const formattedTime = computed(() => formatDate(props.message.timestamp, 'time'))
 </script>

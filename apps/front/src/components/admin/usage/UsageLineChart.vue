@@ -46,6 +46,7 @@
  * - Loading and empty states
  * - Formatted date labels
  */
+import { useDateTime } from '@/composables/useDateTime'
 import type { TimeSeriesDataPoint } from '@/types/usage'
 import {
   CategoryScale,
@@ -93,17 +94,7 @@ const props = defineProps<Props>()
 const primaryColor = 'rgb(184, 150, 187)'
 const primaryColorAlpha = 'rgba(184, 150, 187, 0.15)'
 
-/**
- * Format ISO date string to a readable format.
- * Shows month and day for short ranges, includes year for longer ranges.
- */
-const formatDate = (isoDate: string): string => {
-  const date = new Date(isoDate)
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  })
-}
+const { formatDate } = useDateTime()
 
 /**
  * Normalize a date string to YYYY-MM-DD format.
@@ -160,7 +151,7 @@ const chartData = computed(() => {
   }
 
   return {
-    labels: filledData.map((point) => formatDate(point.period)),
+    labels: filledData.map((point) => formatDate(point.period, 'short')),
     datasets: [
       {
         label: t('admin.usage.lineChart.label'),

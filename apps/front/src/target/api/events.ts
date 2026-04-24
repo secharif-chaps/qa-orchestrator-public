@@ -1,5 +1,5 @@
+import { convertDateStringToDate, formatToISOWithTimezone, getPeriodDates } from '@/utils/date'
 import { useApi } from '@target/composables/useApi'
-import { useDate } from '@target/composables/useDate'
 import type { AnalysisFacets } from '@target/types/facet'
 import { DatesPeriod } from '@target/types/filter'
 import type { JsonLdCollection } from '@target/types/jsonld'
@@ -21,8 +21,6 @@ export const getEventsGraph = async (watchFileId: string, filters?: LocationQuer
   const queryParams: EventsGraphFilters = {}
 
   if (filters) {
-    const { getPeriodDates, convertDateStringToDate, formatToISOWithTimezone } = useDate()
-
     let startDate: Date | undefined = undefined
     let endDate: Date | undefined = undefined
 

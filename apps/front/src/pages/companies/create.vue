@@ -175,6 +175,7 @@ import { InsufficientTokensError } from '@/api/client'
 import FormInput from '@/components/forms/FormInput.vue'
 import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
 import TokenCounter from '@/components/tokens/TokenCounter.vue'
+import { useDateTime } from '@/composables/useDateTime'
 import { useTokenConfig } from '@/composables/useGlobalTokens'
 import { useCreateCompany } from '@/mutations/companies'
 import { useAddItemToFolder } from '@/mutations/folders'
@@ -198,6 +199,7 @@ import { useRoute, useRouter } from 'vue-router'
 const { tokensPerCompany } = useTokenConfig()
 
 const { t, locale } = useI18n()
+const { formatDate } = useDateTime()
 const router = useRouter()
 const route = useRoute()
 
@@ -303,20 +305,10 @@ const folderSelectOptions = computed(() => folderOptions.value)
 // Format folder creation info (shown in dropdown options only)
 const formatFolderCreationInfo = (option: FolderOption) => {
   if (!option.createdAt || !option.ownerUsername) return ''
-  const date = new Date(option.createdAt)
-  const formattedDate = date.toLocaleDateString(locale.value, {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  })
-  const formattedTime = date.toLocaleTimeString(locale.value, {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
   return t('common.folder.tooltip.createdBy', {
     username: option.ownerUsername,
-    date: formattedDate,
-    time: formattedTime,
+    date: formatDate(option.createdAt, 'short'),
+    time: formatDate(option.createdAt, 'time'),
   })
 }
 

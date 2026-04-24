@@ -51,7 +51,7 @@ import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
 import RecentActivitiesList from '@/components/home/RecentActivitiesList.vue'
 import RecentProjectsList from '@/components/home/RecentProjectsList.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
-import { useRelativeTime } from '@/composables/useRelativeTime'
+import { useDateTime } from '@/composables/useDateTime'
 import { recentCompaniesQuery } from '@/queries/companies'
 import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
 import { currentOrganizationQuery, organizationActivitiesQuery } from '@/queries/organization'
@@ -69,7 +69,7 @@ const user = authStore.user
 const { t } = useI18n()
 const router = useRouter()
 const { canCreateCompany, canViewCompany } = useCompanyPermissions()
-const { formatRelativeTime } = useRelativeTime()
+const { formatDate, formatRelativeTime } = useDateTime()
 
 const RECENT_PROJECTS_LIMIT = 6
 
@@ -189,17 +189,8 @@ const handleModuleNavigate = (action: ModuleAction) => {
 
 const updateTime = () => {
   const now = new Date()
-  currentTime.value = now.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  })
-  currentDate.value = now.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  currentTime.value = formatDate(now, 'time')
+  currentDate.value = formatDate(now, 'fullDate')
 }
 
 const timeInterval = ref<ReturnType<typeof setInterval> | null>(null)

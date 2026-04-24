@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import Tag from '@/components/ui/Tag.vue'
-import { useRelativeTime } from '@/composables/useRelativeTime'
+import { useDateTime } from '@/composables/useDateTime'
 import type { Session } from '@/types/account'
 import { Button } from '@owlint/feathers-vue'
 
@@ -63,7 +63,7 @@ const emit = defineEmits<{
   revoke: [sessionId: string]
 }>()
 
-const { formatRelativeTime } = useRelativeTime()
+const { formatRelativeTime } = useDateTime()
 
 function handleRevoke() {
   emit('revoke', props.session.id)

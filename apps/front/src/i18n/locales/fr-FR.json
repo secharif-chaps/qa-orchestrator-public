@@ -602,14 +602,6 @@
     "close": "Fermer",
     "collectedOn": "Collecté le {date}",
     "comingSoon": "Bientôt disponible",
-    "composables": {
-      "useTimeDisplay": {
-        "hoursAgo": "{count, plural, one {il y a # heure} other {il y a # heures}}",
-        "invalidDate": "Date invalide",
-        "justNow": "à l'instant",
-        "minutesAgo": "{count, plural, one {il y a # minute} other {il y a # minutes}}"
-      }
-    },
     "confirm": "Confirmer",
     "copied": "Copié dans le presse-papier !",
     "dialog": {

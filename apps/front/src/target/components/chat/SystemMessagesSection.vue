@@ -38,8 +38,8 @@
 </template>
 
 <script setup lang="ts">
+import { useDateTime } from '@/composables/useDateTime'
 import { Button } from '@owlint/feathers-vue'
-import { useTimeDisplay } from '@target/composables/useTimeDisplay'
 import { useChatStore } from '@target/stores/chat'
 import type { Message } from '@target/types/conversation'
 import { computed } from 'vue'
@@ -55,7 +55,7 @@ const { messages, groupId } = defineProps<Props>()
 
 const { t } = useI18n()
 const chatStore = useChatStore()
-const { formatTime } = useTimeDisplay()
+const { formatRelativeTime } = useDateTime()
 
 const DEFAULT_VISIBLE_COUNT = 3
 
@@ -89,7 +89,7 @@ const groupTimeDisplay = computed(() => {
   const oldestMessage = olderMessages.value[0]
   if (!oldestMessage?.createdAt) return ''
 
-  return formatTime(oldestMessage.createdAt)
+  return formatRelativeTime(oldestMessage.createdAt)
 })
 
 const showOlderMessagesLabel = computed(() => {

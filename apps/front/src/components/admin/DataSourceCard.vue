@@ -119,11 +119,11 @@
         >
           <span v-if="config?.enabled_at">
             {{ $t('screen.dataSources.enabledAt') }}:
-            {{ formatDateTime(config.enabled_at) }}
+            {{ formatDate(config.enabled_at, 'long') }}
           </span>
           <span v-if="config?.updated_at" class="ml-3">
             {{ $t('screen.dataSources.lastUpdated') }}:
-            {{ formatDateTime(config.updated_at) }}
+            {{ formatDate(config.updated_at, 'long') }}
           </span>
         </div>
       </div>
@@ -132,10 +132,10 @@
 </template>
 
 <script setup lang="ts">
+import { useDateTime } from '@/composables/useDateTime'
 import { useUpdateDataSourceConfig } from '@/mutations/data-sources'
 import { dataSourceConfigQuery } from '@/queries/data-sources'
 import type { DataSourceInfo } from '@/types/data-source'
-import { formatDateTime } from '@/utils/time'
 import { Button, Icon, Input } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, ref } from 'vue'
@@ -144,6 +144,8 @@ const props = defineProps<{
   source: DataSourceInfo
   organizationId: string
 }>()
+
+const { formatDate } = useDateTime()
 
 const isEditing = ref(false)
 const newApiKey = ref('')

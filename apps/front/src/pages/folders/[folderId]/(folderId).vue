@@ -203,6 +203,7 @@ import CompanyMoveModal from '@/components/folders/CompanyMoveModal.vue'
 import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
 import Logo from '@/components/ui/Logo.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { useDateTime } from '@/composables/useDateTime'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import { useMoveCompanyToFolder } from '@/mutations/folders'
 import type { Company } from '@/types/company'
@@ -231,7 +232,8 @@ const companyFilterModel = computed(() => companyFilter)
 
 const route = useRoute('/folders/[folderId]')
 const router = useRouter()
-const { t, locale } = useI18n()
+const { t } = useI18n()
+const { formatDate: formatDateTime } = useDateTime()
 const { canDeleteCompany } = useCompanyPermissions()
 
 const showArchiveCompanyModal = ref(false)
@@ -260,8 +262,7 @@ const filteredItems = computed(() => {
 
 const formatDate = (dateString: string) => {
   if (!dateString) return t('common.na')
-  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
-  return new Date(dateString).toLocaleDateString(localeCode)
+  return formatDateTime(dateString, 'short')
 }
 
 const formatItemType = (type: string): string => {

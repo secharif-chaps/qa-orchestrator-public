@@ -202,14 +202,15 @@
 import AvatarInitials from '@/components/ui/AvatarInitials.vue'
 import Logo from '@/components/ui/Logo.vue'
 import UiTag from '@/components/ui/Tag.vue'
+import { useDateTime } from '@/composables/useDateTime'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import type { Folder } from '@/types/folder'
-import { formatDate } from '@/utils/time'
 import { Button } from '@owlint/feathers-vue'
 import { computed, ref, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const { formatDate } = useDateTime()
 
 interface Props {
   folder: Folder

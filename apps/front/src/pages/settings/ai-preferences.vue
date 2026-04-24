@@ -142,6 +142,7 @@
 
 <script setup lang="ts">
 import { getAiPreferences, saveAiPreferences } from '@/api/ai-preferences'
+import { useDateTime } from '@/composables/useDateTime'
 import type { AiPreferencesCreate } from '@/types/ai-preferences'
 import { Alert, Button, Input, Textarea } from '@owlint/feathers-vue'
 import { onMounted, reactive, ref } from 'vue'
@@ -150,6 +151,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const { t } = useI18n()
+const { formatDate } = useDateTime()
 
 // Loading state
 const isLoading = ref(true)
@@ -192,12 +194,7 @@ async function loadPreferences() {
       form.documentation_text = preferences.documentation_text || ''
 
       // Format last updated date (would come from API in real implementation)
-      const now = new Date()
-      lastUpdated.value = now.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
+      lastUpdated.value = formatDate(new Date(), 'eventDate')
     } else {
       hasPreferences.value = false
     }
@@ -279,12 +276,7 @@ async function handleSubmit() {
     successMessage.value = t('settings.aiPreferences.settings.success.message')
 
     // Update last updated date
-    const now = new Date()
-    lastUpdated.value = now.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
+    lastUpdated.value = formatDate(new Date(), 'eventDate')
 
     // Clear success message after 3 seconds
     setTimeout(() => {
