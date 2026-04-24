@@ -7,20 +7,13 @@
         <div
           class="ring-primary-stroke relative size-14 overflow-hidden rounded-md bg-white ring-2"
         >
-          <img
-            v-if="getCompanyDomain(company?.website)"
-            :src="getLogoUrl(company?.website)"
-            :alt="`${company?.name} logo`"
-            class="h-full w-full object-contain p-2"
-            @error="showFallbackIcon = true"
-            v-show="!showFallbackIcon"
+          <Logo
+            :website="company?.website"
+            :name="company?.name"
+            :alt="company?.name"
+            :width="56"
+            :height="56"
           />
-          <div
-            v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
-            class="from-primary/10 to-primary/20 flex h-full w-full items-center justify-center bg-gradient-to-br"
-          >
-            <i class="fa fa-building text-neutral-black-font text-3xl"></i>
-          </div>
         </div>
 
         <!-- Company Info Section -->
@@ -72,10 +65,11 @@
 <script setup lang="ts">
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Card from '@/components/ui/Card.vue'
+import Logo from '@/components/ui/Logo.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Source from '../Source.vue'
 import ProfileInfoItem from './ProfileInfoItem.vue'
@@ -89,8 +83,6 @@ const { data: company } = useQuery(() =>
     id: companyId.value,
   }),
 )
-
-const showFallbackIcon = ref(false)
 
 // Quick info items for the grid
 const infoItems = computed(() => [
@@ -115,27 +107,6 @@ const infoItems = computed(() => [
     value: getSourcedValue(company.value?.profile?.businessLine) as string | undefined,
   },
 ])
-
-// Helper function to extract domain from website URL
-const getCompanyDomain = (website?: string) => {
-  if (!website) return null
-  try {
-    // Remove protocol and www
-    let domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '')
-    // Remove trailing slash and any path
-    domain = domain.split('/')[0]
-    return domain
-  } catch {
-    return null
-  }
-}
-
-// Helper function to get logo URL from logo.dev
-const getLogoUrl = (website?: string) => {
-  const domain = getCompanyDomain(website)
-  if (!domain) return ''
-  return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
-}
 
 const getIcon = (media: string) => {
   switch (media.toLowerCase()) {

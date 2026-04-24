@@ -106,7 +106,7 @@
 import { Button } from '@owlint/feathers-vue'
 import DocumentDetail from '@target/components/documents/DocumentDetail.vue'
 import ErrorMessage from '@target/components/global/ErrorMessage.vue'
-import Logo from '@target/components/global/Logo.vue'
+import Logo from '@/components/ui/Logo.vue'
 import DocumentViewerSkeleton from '@target/components/skeletons/DocumentViewerSkeleton.vue'
 import type { Document } from '@target/types/document'
 import { computed, onMounted, onUnmounted } from 'vue'

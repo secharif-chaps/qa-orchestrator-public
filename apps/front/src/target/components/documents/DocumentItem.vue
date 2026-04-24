@@ -87,7 +87,7 @@ import type { Document } from '@target/types/document'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Logo from '../global/Logo.vue'
+import Logo from '@/components/ui/Logo.vue'
 import DocumentValidationButtons from './DocumentValidationButtons.vue'
 
 const { t, d } = useI18n()

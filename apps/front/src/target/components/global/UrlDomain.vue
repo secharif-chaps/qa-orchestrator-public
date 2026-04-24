@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { Icon, Link, OPopper } from '@owlint/feathers-vue'
-import Logo from '@target/components/global/Logo.vue'
+import Logo from '@/components/ui/Logo.vue'
 import { computed } from 'vue'
 
 interface Props {

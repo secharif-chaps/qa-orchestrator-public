@@ -17,15 +17,15 @@
         >
           <div class="flex items-center gap-3">
             <div
-              class="border-primary-lighter-stroke flex h-12 w-12 items-center justify-center rounded-sm border bg-white"
+              class="border-primary-lighter-stroke flex h-12 w-12 items-center justify-center overflow-hidden rounded-sm border bg-white"
             >
-              <img
-                v-if="companyLogoUrl"
-                :src="companyLogoUrl"
-                :alt="`${company.name} logo`"
-                class="h-10 w-10 object-contain"
+              <Logo
+                :website="company.website"
+                :name="company.name"
+                :alt="company.name"
+                :width="48"
+                :height="48"
               />
-              <i v-else class="fa fa-building text-neutral-black-font text-2xl"></i>
             </div>
             <div>
               <div class="font-medium">{{ company.name }}</div>
@@ -148,6 +148,7 @@
 </template>
 
 <script setup lang="ts">
+import Logo from '@/components/ui/Logo.vue'
 import { foldersQuery } from '@/queries/folders'
 import type { Folder, FolderItem } from '@/types/folder'
 import { Button, Label, Modal, Searchbar, Tag } from '@owlint/feathers-vue'
@@ -160,7 +161,6 @@ interface Props {
   company: FolderItem | null
   currentFolderId: string
   displayModal: boolean
-  companyLogoUrl?: string
 }
 
 interface Emits {

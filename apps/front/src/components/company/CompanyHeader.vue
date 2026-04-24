@@ -6,23 +6,15 @@
       <!-- Loading ring around the logo when a task is running -->
       <SquareProgressRing :segments="progressSegments" :show-progress="showProgressRing">
         <div class="relative size-12 shrink-0 overflow-hidden rounded-md bg-white">
-          <img
-            v-if="getCompanyDomain(company?.website)"
-            :src="getLogoUrl(company?.website)"
-            :alt="`${company?.name} logo`"
-            class="h-full w-full object-contain"
-            :class="{ 'opacity-30': showProgressRing }"
-            @error="showFallbackIcon = true"
-            v-show="!showFallbackIcon"
-          />
-          <Badge
-            v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
-            variant="secondary"
-            color="sage"
-            icon="fa-building"
-            size="lg"
-            class="h-full w-full rounded-none"
-          />
+          <div :class="{ 'opacity-30': showProgressRing }">
+            <Logo
+              :website="company?.website"
+              :name="company?.name"
+              :alt="company?.name"
+              :width="48"
+              :height="48"
+            />
+          </div>
         </div>
       </SquareProgressRing>
 
@@ -95,11 +87,11 @@ import CompanyDeleteButton from '@/components/company/CompanyDeleteButton.vue'
 import CompanyHeaderTabs from '@/components/company/CompanyHeaderTabs.vue'
 import CompanyTranslation from '@/components/company/CompanyTranslation.vue'
 import Export from '@/components/company/Export.vue'
+import Logo from '@/components/ui/Logo.vue'
 import SquareProgressRing from '@/components/ui/SquareProgressRing.vue'
 import type { ProgressSegment } from '@/composables/useTaskProgress'
 import type { Company } from '@/types/company'
-import { Badge, Button } from '@owlint/feathers-vue'
-import { ref, watch } from 'vue'
+import { Button } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -142,31 +134,4 @@ const emit = defineEmits<{
 const selectedLanguage = defineModel<string | undefined>('selectedLanguage')
 
 const { t } = useI18n()
-
-const showFallbackIcon = ref(false)
-
-// Reset fallback icon when company changes
-watch(
-  () => company,
-  () => {
-    showFallbackIcon.value = false
-  },
-)
-
-const getLogoUrl = (website?: string) => {
-  const domain = getCompanyDomain(website)
-  if (!domain) return ''
-  return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
-}
-
-const getCompanyDomain = (website?: string) => {
-  if (!website) return null
-  try {
-    let domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '')
-    domain = domain.split('/')[0]
-    return domain
-  } catch {
-    return null
-  }
-}
 </script>

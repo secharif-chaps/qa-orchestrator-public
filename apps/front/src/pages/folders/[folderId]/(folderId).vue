@@ -54,22 +54,18 @@
                 <div class="flex items-center gap-3">
                   <div
                     class="ring-primary-stroke flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white ring-1"
+                    :class="{ grayscale: companyFilter === 'archived' }"
                   >
-                    <img
-                      v-if="item.type === 'company' && getCompanyDomain(item.website)"
-                      :src="getLogoUrl(item.website)"
-                      :alt="`${item.name} logo`"
-                      class="h-full w-full object-contain p-1"
-                      :class="{ grayscale: companyFilter === 'archived' }"
-                      @error="item.showFallbackIcon = true"
-                      v-show="!item.showFallbackIcon"
+                    <Logo
+                      v-if="item.type === 'company'"
+                      :website="item.website"
+                      :name="item.name"
+                      :alt="item.name"
+                      :width="40"
+                      :height="40"
                     />
                     <div
-                      v-show="
-                        item.showFallbackIcon ||
-                        !getCompanyDomain(item.website) ||
-                        item.type !== 'company'
-                      "
+                      v-else
                       class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
                     >
                       <i class="fas fa-building text-neutral-black-font"></i>
@@ -189,7 +185,6 @@
       v-model:display-modal="showMoveModal"
       :company="companyToMove"
       :current-folder-id="route.params.folderId"
-      :company-logo-url="companyToMove ? getLogoUrl(companyToMove.website) : undefined"
       @move="handleMoveCompany"
     />
   </div>
@@ -206,6 +201,7 @@ import CompanyArchiveModal from '@/components/companies/CompanyArchiveModal.vue'
 import CompanyRestoreModal from '@/components/companies/CompanyRestoreModal.vue'
 import CompanyMoveModal from '@/components/folders/CompanyMoveModal.vue'
 import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
+import Logo from '@/components/ui/Logo.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import { useMoveCompanyToFolder } from '@/mutations/folders'
@@ -261,25 +257,6 @@ const filteredItems = computed(() => {
   const query = searchTerm.value.toLowerCase()
   return folder.items.filter((item) => item.name.toLowerCase().includes(query))
 })
-
-// Helper function to extract domain from website URL
-const getCompanyDomain = (website?: string) => {
-  if (!website) return null
-  try {
-    let domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '')
-    domain = domain.split('/')[0]
-    return domain
-  } catch {
-    return null
-  }
-}
-
-// Helper function to get logo URL from logo.dev
-const getLogoUrl = (website?: string) => {
-  const domain = getCompanyDomain(website)
-  if (!domain) return ''
-  return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
-}
 
 const formatDate = (dateString: string) => {
   if (!dateString) return t('common.na')

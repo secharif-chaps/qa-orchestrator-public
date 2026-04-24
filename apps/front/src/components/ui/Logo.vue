@@ -31,18 +31,35 @@ const { endpoints } = useEndpointResolver()
 
 interface Props {
   domain?: string
+  website?: string
   alt?: string
   name?: string
   width?: number
   height?: number
 }
 
-const { domain = '', alt = '', name = undefined, width = 32, height = 32 } = defineProps<Props>()
+const {
+  domain = '',
+  website = undefined,
+  alt = '',
+  name = undefined,
+  width = 32,
+  height = 32,
+} = defineProps<Props>()
+
+const effectiveDomain = computed(() => {
+  if (domain) return domain
+  if (!website?.trim()) return ''
+  return website
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .split('/')[0]
+})
 
 const shouldShowFallback = ref(false)
 
 const logo = computed(() => {
-  return `${endpoints.value.apiUrl}/logo/${domain}`
+  return `${endpoints.value.apiUrl}/logo/${effectiveDomain.value}`
 })
 
 const fallbackInitials = computed(() => {
@@ -50,7 +67,6 @@ const fallbackInitials = computed(() => {
     return name
       .split(/\s+|-/)
       .map((word) => {
-        // Filter to only alphabetic characters, then take first character
         const letters = word.match(/[A-Za-z]/g)
         return letters?.[0] || ''
       })
@@ -60,15 +76,14 @@ const fallbackInitials = computed(() => {
       .slice(0, 2)
   }
 
-  if (!domain || domain.trim() === '') {
+  if (!effectiveDomain.value) {
     return '?'
   }
 
-  return domain
+  return effectiveDomain.value
     .split('.')
     .slice(0, -1)
     .map((part) => {
-      // Filter to only alphabetic characters, then take first character
       const letters = part.match(/[A-Za-z]/g)
       return letters?.[0] || ''
     })
@@ -78,9 +93,8 @@ const fallbackInitials = computed(() => {
     .slice(0, 2)
 })
 
-// Show fallback immediately if domain is empty
 watchEffect(() => {
-  shouldShowFallback.value = !domain || domain.trim() === ''
+  shouldShowFallback.value = !effectiveDomain.value
 })
 
 const handleImageError = () => {
