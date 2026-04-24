@@ -17,7 +17,7 @@ class ApifyRunReferenceTest extends TestCase
     {
         $ref = ApifyRunReference::fromProviderTaskId('myActor~scraper:abc123def');
 
-        $this->assertSame('myActor~scraper', $ref->actorId);
+        $this->assertSame('myActor~scraper', $ref->apifyActorId);
         $this->assertSame('abc123def', $ref->runId);
     }
 
@@ -52,7 +52,7 @@ class ApifyRunReferenceTest extends TestCase
     {
         $ref = ApifyRunReference::fromProviderTaskId('apify~scraper:run:with:colons');
 
-        $this->assertSame('apify~scraper', $ref->actorId);
+        $this->assertSame('apify~scraper', $ref->apifyActorId);
         $this->assertSame('run:with:colons', $ref->runId);
     }
 
@@ -62,7 +62,7 @@ class ApifyRunReferenceTest extends TestCase
         $providerTaskId = $original->toProviderTaskId();
         $parsed = ApifyRunReference::fromProviderTaskId($providerTaskId);
 
-        $this->assertSame($original->actorId, $parsed->actorId);
+        $this->assertSame($original->apifyActorId, $parsed->apifyActorId);
         $this->assertSame($original->runId, $parsed->runId);
         $this->assertSame('actor123:run456', $providerTaskId);
     }

@@ -245,7 +245,7 @@ class FetchApifyDatasetHandlerTest extends TestCase
         ];
 
         $nullNormalizer = new class implements ApifyDocumentNormalizerInterface {
-            public function supports(string $actorType): bool
+            public function supports(string $apifyActorId): bool
             {
                 return true;
             }
@@ -305,11 +305,11 @@ class FetchApifyDatasetHandlerTest extends TestCase
     public function testDocumentProviderIdIsPrefixedWithActorType(): void
     {
         $datasetId = 'dataset_providerid';
-        $actorType = 'lhotanova/google-news-scraper';
+        $apifyActorId = 'lhotanova/google-news-scraper';
         $url = 'https://example.com/article';
-        $expectedProviderId = \sprintf('apify:%s:%s', $actorType, $url);
+        $expectedProviderId = \sprintf('apify:%s:%s', $apifyActorId, $url);
 
-        $this->createAndSaveCollectTask(\sprintf('%s:run_abc123', $actorType));
+        $this->createAndSaveCollectTask(\sprintf('%s:run_abc123', $apifyActorId));
         $this->apifyClient->addResponse('/datasets/' . $datasetId, [
             'data' => [
                 'itemCount' => 1,

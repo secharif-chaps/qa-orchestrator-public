@@ -43,6 +43,49 @@ parameters:
     website: 'apify/website-content-crawler'
     blog: 'apify/website-content-crawler'
 
+  # Input templates for Apify actors — Phase 1 (website, news, linkedin)
+  app.apify.input_templates:
+    # Website crawler (website, blog)
+    apify/website-content-crawler:
+      name: 'Website Crawler'
+      source_types: ['website', 'blog']
+      defaults:
+        startUrls:
+          - '{{source.url}}'
+        maxCrawlPages: '{{config.maxCrawlPages|default:50}}'
+        maxCrawlDepth: '{{config.maxCrawlDepth|default:2}}'
+        crawlerType: 'cheerio'
+        saveMarkdown: true
+        proxyConfiguration:
+          useApifyProxy: true
+      required_fields: ['startUrls']
+
+    # Google News scraper (news:newsapi, news:newsapi:headlines)
+    lhotanova/google-news-scraper:
+      name: 'Google News Scraper'
+      source_types: ['news:newsapi', 'news:newsapi:headlines']
+      defaults:
+        keywords:
+          - '{{source.query}}'
+        maxArticles: '{{config.maxArticles|default:50}}'
+        timeframe: '{{config.timeframe|default:24h}}'
+        region_language: '{{config.region|default:FR:fr}}'
+        extractDescriptions: true
+      required_fields: ['keywords']
+
+    # LinkedIn profile scraper (social_media:linkedin:user)
+    curious_coder/linkedin-profile-scraper:
+      name: 'LinkedIn Profile Scraper'
+      source_types: ['social_media:linkedin:user']
+      defaults:
+        profileUrls:
+          - '{{source.url}}'
+        proxyConfiguration:
+          useApifyProxy: true
+          apifyProxyGroups:
+            - 'RESIDENTIAL'
+      required_fields: ['profileUrls']
+
   app.collect_task.jwt_secret: '%env(string:COLLECT_TASK_JWT_SECRET)%'
 
   app.collect.provider_routing.default: '%env(string:COLLECT_DEFAULT_PROVIDER)%'
