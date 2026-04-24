@@ -109,9 +109,7 @@ def _parse_organization_claim(organization_claim: Any) -> tuple[str, str] | None
     org_data = org_dict[org_name_from_dict]
 
     if not isinstance(org_data, dict) or "id" not in org_data:
-        logger.warning(
-            "Organization data missing id field", extra={"org_data": org_data}
-        )
+        logger.warning("Organization data missing id field", extra={"org_data": org_data})
         return None
 
     org_id = org_data["id"]
@@ -148,9 +146,7 @@ def extract_organization_from_validated_user(user: OIDCUser) -> tuple[str, str] 
     # idp.get_current_user(extra_fields=["organization"]).
     # For direct OIDCUser construction (e.g., tests), the field may be
     # stored as a direct attribute due to pydantic's extra="allow" config.
-    organization_claim = (
-        user.extra_fields.get("organization") if user.extra_fields else None
-    )
+    organization_claim = user.extra_fields.get("organization") if user.extra_fields else None
     if organization_claim is None:
         organization_claim = getattr(user, "organization", None)
     return _parse_organization_claim(organization_claim)
@@ -160,9 +156,7 @@ def extract_organization_from_validated_user(user: OIDCUser) -> tuple[str, str] 
 # The actual Keycloak connection happens lazily when a request is made (via _LazyIdp).
 # For tests, this dependency should be overridden in conftest.py using FastAPI's
 # app.dependency_overrides mechanism.
-_keycloak_user_dependency = idp.get_current_user(
-    extra_fields=["organization", "enabled_modules"]
-)
+_keycloak_user_dependency = idp.get_current_user(extra_fields=["organization", "enabled_modules"])
 
 
 async def get_user_organization(

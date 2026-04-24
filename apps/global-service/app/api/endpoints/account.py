@@ -371,12 +371,15 @@ _EVENT_TYPE_FILTERS: dict[str, list[str]] = {
 
 def _get_event_display_info(event_type: str) -> dict[str, str]:
     """Map a Keycloak event type to user-friendly display information."""
-    return _EVENT_DISPLAY_MAP.get(event_type, {
-        "display_type": "update",
-        "icon": "fas fa-info-circle",
-        "title": event_type.replace("_", " ").title(),
-        "description": f"Event: {event_type}",
-    })
+    return _EVENT_DISPLAY_MAP.get(
+        event_type,
+        {
+            "display_type": "update",
+            "icon": "fas fa-info-circle",
+            "title": event_type.replace("_", " ").title(),
+            "description": f"Event: {event_type}",
+        },
+    )
 
 
 @router.get(
@@ -453,7 +456,8 @@ async def get_activity_events(
             display = _get_event_display_info(event_type_str)
 
             timestamp = datetime.fromtimestamp(
-                kc_event.get("time", 0) / 1000, tz=UTC,
+                kc_event.get("time", 0) / 1000,
+                tz=UTC,
             )
 
             description = display["description"]
@@ -461,16 +465,18 @@ async def get_activity_events(
             if details and "auth_method" in details:
                 description += f" ({details['auth_method']})"
 
-            events.append(ActivityEventResponse(
-                id=str(kc_event.get("time", 0)),
-                type=event_type_str,
-                display_type=display["display_type"],
-                icon=display["icon"],
-                title=display["title"],
-                description=description,
-                ip_address=kc_event.get("ipAddress"),
-                timestamp=timestamp,
-            ))
+            events.append(
+                ActivityEventResponse(
+                    id=str(kc_event.get("time", 0)),
+                    type=event_type_str,
+                    display_type=display["display_type"],
+                    icon=display["icon"],
+                    title=display["title"],
+                    description=description,
+                    ip_address=kc_event.get("ipAddress"),
+                    timestamp=timestamp,
+                )
+            )
 
         logger.info(
             "Successfully fetched activity events",

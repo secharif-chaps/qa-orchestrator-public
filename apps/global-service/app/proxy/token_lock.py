@@ -32,10 +32,12 @@ logger = get_logger(__name__)
 DEFAULT_LOCK_EXPIRY_SECONDS = 300
 
 # Internal headers that backends may set but should not leak to the client
-INTERNAL_RESPONSE_HEADERS = frozenset({
-    "x-token-cost-override",
-    "x-token-reference-id",
-})
+INTERNAL_RESPONSE_HEADERS = frozenset(
+    {
+        "x-token-cost-override",
+        "x-token-reference-id",
+    }
+)
 
 
 class InsufficientTokensError(Exception):
@@ -44,9 +46,7 @@ class InsufficientTokensError(Exception):
     def __init__(self, current_balance: int, required: int):
         self.current_balance = current_balance
         self.required = required
-        super().__init__(
-            f"Insufficient tokens: {current_balance} available, {required} required"
-        )
+        super().__init__(f"Insufficient tokens: {current_balance} available, {required} required")
 
 
 class TokenLockManager:
@@ -90,9 +90,7 @@ class TokenLockManager:
 
         # Lock organization row
         result = await self.db.execute(
-            select(Organization)
-            .filter(Organization.organization_id == organization_id)
-            .with_for_update()
+            select(Organization).filter(Organization.organization_id == organization_id).with_for_update()
         )
         org = result.scalar_one_or_none()
 
@@ -182,9 +180,7 @@ class TokenLockManager:
 
         # Always lock organization row to get a consistent balance_after
         result = await self.db.execute(
-            select(Organization)
-            .filter(Organization.organization_id == lock.organization_id)
-            .with_for_update()
+            select(Organization).filter(Organization.organization_id == lock.organization_id).with_for_update()
         )
         org = result.scalar_one()
 
@@ -244,9 +240,7 @@ class TokenLockManager:
 
         # Lock organization row and refund
         result = await self.db.execute(
-            select(Organization)
-            .filter(Organization.organization_id == lock.organization_id)
-            .with_for_update()
+            select(Organization).filter(Organization.organization_id == lock.organization_id).with_for_update()
         )
         org = result.scalar_one()
         org.token_balance += lock.amount
@@ -321,8 +315,4 @@ def strip_internal_headers(headers: dict) -> dict:
     Case-insensitive: handles both lowercase and mixed-case header names
     (e.g. both "x-token-cost-override" and "X-Token-Cost-Override").
     """
-    return {
-        key: value
-        for key, value in headers.items()
-        if key.lower() not in INTERNAL_RESPONSE_HEADERS
-    }
+    return {key: value for key, value in headers.items() if key.lower() not in INTERNAL_RESPONSE_HEADERS}

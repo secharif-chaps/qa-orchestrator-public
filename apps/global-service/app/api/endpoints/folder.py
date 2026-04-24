@@ -84,7 +84,8 @@ async def _build_folder_response(
 
     # Get folder items with full context for company enrichment
     folder_items = await FolderService._get_folder_items_summary(
-        db, folder.id,
+        db,
+        folder.id,
         user_id=user_id,
         org_id=org_id,
         username=username,
@@ -108,7 +109,7 @@ async def _build_folder_response(
         "is_deleted": folder.is_deleted,
         "created_at": folder.created_at,
         "updated_at": folder.updated_at,
-        "items": folder_items
+        "items": folder_items,
     }
 
 
@@ -144,16 +145,13 @@ async def search_users_for_sharing(
             "user": org_context.username,
             "query": q,
             "limit": limit,
-            "organization_id": org_context.organization_id
-        }
+            "organization_id": org_context.organization_id,
+        },
     )
 
     # Search organization members via Keycloak Admin API
     members = await keycloak_admin_service.get_organization_members(
-        organization_id=org_context.organization_id,
-        first=0,
-        max_results=limit,
-        search=q
+        organization_id=org_context.organization_id, first=0, max_results=limit, search=q
     )
 
     results = []
@@ -172,20 +170,11 @@ async def search_users_for_sharing(
         role_names = {r.get("name") for r in user_roles}
         has_write_permission = "organization.write" in role_names
 
-        results.append(UserSearchResult(
-            user_id=user_id,
-            username=username,
-            email=email,
-            has_write_permission=has_write_permission
-        ))
+        results.append(
+            UserSearchResult(user_id=user_id, username=username, email=email, has_write_permission=has_write_permission)
+        )
 
-    logger.debug(
-        "User search results",
-        extra={
-            "query": q,
-            "result_count": len(results)
-        }
-    )
+    logger.debug("User search results", extra={"query": q, "result_count": len(results)})
 
     return results
 
@@ -205,7 +194,7 @@ async def create_folder(
     folder: FolderCreate,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Create a new folder in the organization.
 
@@ -217,8 +206,8 @@ async def create_folder(
         extra={
             "user": org_context.username,
             "folder_name": folder.name,
-            "organization_id": org_context.organization_id
-        }
+            "organization_id": org_context.organization_id,
+        },
     )
 
     folder_obj = await FolderService.create_folder(
@@ -226,20 +215,19 @@ async def create_folder(
         organization_id=org_context.organization_id,
         owner_id=org_context.user_id,
         owner_username=org_context.username,
-        folder_data=folder
+        folder_data=folder,
     )
 
-    logger.info(
-        "Folder created successfully",
-        extra={"folder_id": str(folder_obj.id), "folder_name": folder_obj.name}
-    )
+    logger.info("Folder created successfully", extra={"folder_id": str(folder_obj.id), "folder_name": folder_obj.name})
 
     return await _build_folder_response(
-        db, folder_obj, org_context.user_id,
+        db,
+        folder_obj,
+        org_context.user_id,
         org_id=org_context.organization_id,
         username=org_context.username,
-        org_name=getattr(org_context, 'organization_name', ''),
-        user_roles=user.realm_access.get('roles', []),
+        org_name=getattr(org_context, "organization_name", ""),
+        user_roles=user.realm_access.get("roles", []),
     )
 
 
@@ -257,7 +245,7 @@ async def list_folders(
     size: int = Query(12, ge=1, le=100, description="Items per page"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """List folders accessible to the current user (owned + shared).
 
@@ -279,7 +267,7 @@ async def list_folders(
             "include_all": include_all,
             "page": page,
             "size": size,
-        }
+        },
     )
 
     user_favorite_ids = await FolderService.get_user_favorite_folder_ids(
@@ -287,29 +275,22 @@ async def list_folders(
     )
 
     if include_all:
-        user_roles = user.realm_access.get('roles', [])
-        has_manager_permission = 'organization.manage' in user_roles or 'admin.organizations' in user_roles
+        user_roles = user.realm_access.get("roles", [])
+        has_manager_permission = "organization.manage" in user_roles or "admin.organizations" in user_roles
 
         if not has_manager_permission:
             logger.warning(
                 "Non-manager attempted to use include_all parameter",
-                extra={
-                    "user": org_context.username,
-                    "user_id": org_context.user_id,
-                    "roles": user_roles
-                }
+                extra={"user": org_context.username, "user_id": org_context.user_id, "roles": user_roles},
             )
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Requires organization.manage permission to view all organization folders"
+                detail="Requires organization.manage permission to view all organization folders",
             )
 
         logger.info(
             "Manager viewing all organization folders",
-            extra={
-                "user": org_context.username,
-                "organization_id": org_context.organization_id
-            }
+            extra={"user": org_context.username, "organization_id": org_context.organization_id},
         )
 
         folders, total = await FolderService.list_all_org_folders(
@@ -334,22 +315,20 @@ async def list_folders(
         )
 
     logger.info(
-        "Found folders",
-        extra={
-            "count": len(folders),
-            "total": total,
-            "organization_id": org_context.organization_id
-        }
+        "Found folders", extra={"count": len(folders), "total": total, "organization_id": org_context.organization_id}
     )
 
     # Build response with access control fields
-    user_roles = user.realm_access.get('roles', []) if user.realm_access else []
+    user_roles = user.realm_access.get("roles", []) if user.realm_access else []
     response_folders = [
         await _build_folder_response(
-            db, folder, org_context.user_id, user_favorite_ids,
+            db,
+            folder,
+            org_context.user_id,
+            user_favorite_ids,
             org_id=org_context.organization_id,
             username=org_context.username,
-            org_name=getattr(org_context, 'organization_name', ''),
+            org_name=getattr(org_context, "organization_name", ""),
             user_roles=user_roles,
         )
         for folder in folders
@@ -379,7 +358,7 @@ async def get_folder(
     archived: bool = Query(False),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Get a folder with its items.
 
@@ -387,33 +366,25 @@ async def get_folder(
     Returns 404 if user has no access to the folder (owner or shared).
     """
     logger.info(
-        f"GET /folders/{folder_id} - Getting folder",
-        extra={
-            "user": org_context.username,
-            "folder_id": str(folder_id)
-        }
+        f"GET /folders/{folder_id} - Getting folder", extra={"user": org_context.username, "folder_id": str(folder_id)}
     )
 
     # Check access - returns 404 for security (not 403)
     # Managers (organization.manage or admin.organizations) can access all folders
-    user_roles = user.realm_access.get('roles', [])
+    user_roles = user.realm_access.get("roles", [])
     if not await FolderService.has_folder_access(
-        db, folder_id, org_context.user_id, org_context.organization_id,
+        db,
+        folder_id,
+        org_context.user_id,
+        org_context.organization_id,
         username=org_context.username,
-        user_roles=user_roles
+        user_roles=user_roles,
     ):
         logger.warning(
             "Folder not found or no access",
-            extra={
-                "folder_id": str(folder_id),
-                "user_id": org_context.user_id,
-                "user_roles": user_roles
-            }
+            extra={"folder_id": str(folder_id), "user_id": org_context.user_id, "user_roles": user_roles},
         )
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     folder_data = await FolderService.get_folder_with_items(
         db=db,
@@ -422,31 +393,23 @@ async def get_folder(
         item_archived_filter=archived,
         user_id=org_context.user_id,
         username=org_context.username,
-        org_name=getattr(org_context, 'organization_name', ''),
-        roles=user.realm_access.get('roles', []),
+        org_name=getattr(org_context, "organization_name", ""),
+        roles=user.realm_access.get("roles", []),
     )
 
     if not folder_data:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     # Add access control fields
     folder = await FolderService.get_folder(db, folder_id, org_context.organization_id)
     share_role = await FolderService.get_user_folder_role(db, folder_id, org_context.user_id)
 
-    folder_data['owner_id'] = folder.owner_id if folder else None
-    folder_data['is_owner'] = share_role == "owner"
-    folder_data['share_role'] = share_role
-    folder_data['is_favorite'] = await FolderService.is_favorite(
-        db, folder_id, org_context.user_id
-    )
+    folder_data["owner_id"] = folder.owner_id if folder else None
+    folder_data["is_owner"] = share_role == "owner"
+    folder_data["share_role"] = share_role
+    folder_data["is_favorite"] = await FolderService.is_favorite(db, folder_id, org_context.user_id)
 
-    logger.debug(
-        "Returning folder data",
-        extra={"folder_id": str(folder_id), "share_role": share_role}
-    )
+    logger.debug("Returning folder data", extra={"folder_id": str(folder_id), "share_role": share_role})
     return folder_data
 
 
@@ -461,7 +424,7 @@ async def update_folder(
     folder_update: FolderUpdate,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Update a folder (owner only).
 
@@ -469,52 +432,34 @@ async def update_folder(
     Returns 403 if user is not the folder owner.
     """
     logger.info(
-        f"PUT /folders/{folder_id} - Updating folder",
-        extra={
-            "user": org_context.username,
-            "folder_id": str(folder_id)
-        }
+        f"PUT /folders/{folder_id} - Updating folder", extra={"user": org_context.username, "folder_id": str(folder_id)}
     )
 
-    folder = await FolderService.get_folder(
-        db=db,
-        folder_id=folder_id,
-        organization_id=org_context.organization_id
-    )
+    folder = await FolderService.get_folder(db=db, folder_id=folder_id, organization_id=org_context.organization_id)
 
     if not folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     # Check ownership - only owner can update folder metadata
     if not await FolderService.is_folder_owner(db, folder_id, org_context.user_id):
         logger.warning(
             "Non-owner attempted to update folder",
-            extra={
-                "folder_id": str(folder_id),
-                "user_id": org_context.user_id,
-                "owner_id": folder.owner_id
-            }
+            extra={"folder_id": str(folder_id), "user_id": org_context.user_id, "owner_id": folder.owner_id},
         )
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the folder owner can edit folder settings"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Only the folder owner can edit folder settings"
         )
 
-    updated_folder = await FolderService.update_folder(
-        db=db,
-        folder=folder,
-        folder_update=folder_update
-    )
+    updated_folder = await FolderService.update_folder(db=db, folder=folder, folder_update=folder_update)
 
     return await _build_folder_response(
-        db, updated_folder, org_context.user_id,
+        db,
+        updated_folder,
+        org_context.user_id,
         org_id=org_context.organization_id,
         username=org_context.username,
-        org_name=getattr(org_context, 'organization_name', ''),
-        user_roles=user.realm_access.get('roles', []),
+        org_name=getattr(org_context, "organization_name", ""),
+        user_roles=user.realm_access.get("roles", []),
     )
 
 
@@ -529,7 +474,7 @@ async def patch_folder(
     folder_update: FolderUpdate,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Partially update a folder (owner only).
 
@@ -539,50 +484,33 @@ async def patch_folder(
     """
     logger.info(
         f"PATCH /folders/{folder_id} - Patching folder",
-        extra={
-            "user": org_context.username,
-            "folder_id": str(folder_id)
-        }
+        extra={"user": org_context.username, "folder_id": str(folder_id)},
     )
 
-    folder = await FolderService.get_folder(
-        db=db,
-        folder_id=folder_id,
-        organization_id=org_context.organization_id
-    )
+    folder = await FolderService.get_folder(db=db, folder_id=folder_id, organization_id=org_context.organization_id)
 
     if not folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     # Check ownership - only owner can update folder metadata
     if not await FolderService.is_folder_owner(db, folder_id, org_context.user_id):
         logger.warning(
-            "Non-owner attempted to patch folder",
-            extra={
-                "folder_id": str(folder_id),
-                "user_id": org_context.user_id
-            }
+            "Non-owner attempted to patch folder", extra={"folder_id": str(folder_id), "user_id": org_context.user_id}
         )
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the folder owner can edit folder settings"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Only the folder owner can edit folder settings"
         )
 
-    updated_folder = await FolderService.update_folder(
-        db=db,
-        folder=folder,
-        folder_update=folder_update
-    )
+    updated_folder = await FolderService.update_folder(db=db, folder=folder, folder_update=folder_update)
 
     return await _build_folder_response(
-        db, updated_folder, org_context.user_id,
+        db,
+        updated_folder,
+        org_context.user_id,
         org_id=org_context.organization_id,
         username=org_context.username,
-        org_name=getattr(org_context, 'organization_name', ''),
-        user_roles=user.realm_access.get('roles', []),
+        org_name=getattr(org_context, "organization_name", ""),
+        user_roles=user.realm_access.get("roles", []),
     )
 
 
@@ -596,7 +524,7 @@ async def delete_folder(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Delete a folder (owner only).
 
@@ -605,46 +533,31 @@ async def delete_folder(
     """
     logger.info(
         f"DELETE /folders/{folder_id} - Deleting folder",
-        extra={
-            "user": org_context.username,
-            "folder_id": str(folder_id)
-        }
+        extra={"user": org_context.username, "folder_id": str(folder_id)},
     )
 
-    folder = await FolderService.get_folder(
-        db=db,
-        folder_id=folder_id,
-        organization_id=org_context.organization_id
-    )
+    folder = await FolderService.get_folder(db=db, folder_id=folder_id, organization_id=org_context.organization_id)
 
     if not folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     # Check ownership - only owner can delete folder
     if not await FolderService.is_folder_owner(db, folder_id, org_context.user_id):
         logger.warning(
-            "Non-owner attempted to delete folder",
-            extra={
-                "folder_id": str(folder_id),
-                "user_id": org_context.user_id
-            }
+            "Non-owner attempted to delete folder", extra={"folder_id": str(folder_id), "user_id": org_context.user_id}
         )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the folder owner can delete the folder"
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the folder owner can delete the folder")
 
     deleted_folder = await FolderService.soft_delete_folder(db=db, folder=folder)
 
     return await _build_folder_response(
-        db, deleted_folder, org_context.user_id,
+        db,
+        deleted_folder,
+        org_context.user_id,
         org_id=org_context.organization_id,
         username=org_context.username,
-        org_name=getattr(org_context, 'organization_name', ''),
-        user_roles=user.realm_access.get('roles', []),
+        org_name=getattr(org_context, "organization_name", ""),
+        user_roles=user.realm_access.get("roles", []),
     )
 
 
@@ -658,7 +571,7 @@ async def restore_folder(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Restore a soft-deleted folder (owner only).
 
@@ -667,53 +580,38 @@ async def restore_folder(
     """
     logger.info(
         f"POST /folders/{folder_id}/restore - Restoring folder",
-        extra={
-            "user": org_context.username,
-            "folder_id": str(folder_id)
-        }
+        extra={"user": org_context.username, "folder_id": str(folder_id)},
     )
 
     folder = await FolderService.get_folder(
-        db=db,
-        folder_id=folder_id,
-        organization_id=org_context.organization_id,
-        include_deleted=True
+        db=db, folder_id=folder_id, organization_id=org_context.organization_id, include_deleted=True
     )
 
     if not folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     # Check ownership - only owner can restore folder
     if not await FolderService.is_folder_owner(db, folder_id, org_context.user_id):
         logger.warning(
-            "Non-owner attempted to restore folder",
-            extra={
-                "folder_id": str(folder_id),
-                "user_id": org_context.user_id
-            }
+            "Non-owner attempted to restore folder", extra={"folder_id": str(folder_id), "user_id": org_context.user_id}
         )
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the folder owner can restore the folder"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Only the folder owner can restore the folder"
         )
 
     if not folder.is_deleted:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Folder is not deleted"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Folder is not deleted")
 
     restored_folder = await FolderService.restore_folder(db=db, folder=folder)
 
     return await _build_folder_response(
-        db, restored_folder, org_context.user_id,
+        db,
+        restored_folder,
+        org_context.user_id,
         org_id=org_context.organization_id,
         username=org_context.username,
-        org_name=getattr(org_context, 'organization_name', ''),
-        user_roles=user.realm_access.get('roles', []),
+        org_name=getattr(org_context, "organization_name", ""),
+        user_roles=user.realm_access.get("roles", []),
     )
 
 
@@ -734,7 +632,7 @@ async def create_folder_share(
     share_data: FolderShareCreate,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Share a folder with a user (owner only).
 
@@ -747,68 +645,40 @@ async def create_folder_share(
             "user": org_context.username,
             "folder_id": str(folder_id),
             "share_user_id": share_data.user_id,
-            "share_role": share_data.role.value
-        }
+            "share_role": share_data.role.value,
+        },
     )
 
     # Check folder exists
-    folder = await FolderService.get_folder(
-        db=db,
-        folder_id=folder_id,
-        organization_id=org_context.organization_id
-    )
+    folder = await FolderService.get_folder(db=db, folder_id=folder_id, organization_id=org_context.organization_id)
 
     if not folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     # Check ownership - only owner can manage sharing
     if not await FolderService.is_folder_owner(db, folder_id, org_context.user_id):
         logger.warning(
-            "Non-owner attempted to share folder",
-            extra={
-                "folder_id": str(folder_id),
-                "user_id": org_context.user_id
-            }
+            "Non-owner attempted to share folder", extra={"folder_id": str(folder_id), "user_id": org_context.user_id}
         )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the folder owner can manage sharing"
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the folder owner can manage sharing")
 
     # Prevent sharing with self
     if share_data.user_id == org_context.user_id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot share folder with yourself"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot share folder with yourself")
 
     # Map Pydantic enum to SQLAlchemy enum
     role = ShareRole.writer if share_data.role.value == "writer" else ShareRole.reader
 
     try:
         share = await FolderService.share_folder(
-            db=db,
-            folder_id=folder_id,
-            user_id=share_data.user_id,
-            user_username=share_data.user_username,
-            role=role
+            db=db, folder_id=folder_id, user_id=share_data.user_id, user_username=share_data.user_username, role=role
         )
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     logger.info(
         "Folder share created",
-        extra={
-            "folder_id": str(folder_id),
-            "share_user_id": share_data.user_id,
-            "share_id": str(share.id)
-        }
+        extra={"folder_id": str(folder_id), "share_user_id": share_data.user_id, "share_id": str(share.id)},
     )
 
     return share
@@ -824,7 +694,7 @@ async def get_folder_shares(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """List all shares for a folder (owner only).
 
@@ -836,37 +706,23 @@ async def get_folder_shares(
     """
     logger.info(
         f"GET /folders/{folder_id}/shares - Listing shares",
-        extra={
-            "user": org_context.username,
-            "folder_id": str(folder_id)
-        }
+        extra={"user": org_context.username, "folder_id": str(folder_id)},
     )
 
     # Check folder exists
-    folder = await FolderService.get_folder(
-        db=db,
-        folder_id=folder_id,
-        organization_id=org_context.organization_id
-    )
+    folder = await FolderService.get_folder(db=db, folder_id=folder_id, organization_id=org_context.organization_id)
 
     if not folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     # Check ownership - only owner can view shares
     if not await FolderService.is_folder_owner(db, folder_id, org_context.user_id):
         logger.warning(
             "Non-owner attempted to view folder shares",
-            extra={
-                "folder_id": str(folder_id),
-                "user_id": org_context.user_id
-            }
+            extra={"folder_id": str(folder_id), "user_id": org_context.user_id},
         )
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the folder owner can view sharing settings"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Only the folder owner can view sharing settings"
         )
 
     shares = await FolderService.get_folder_shares(db, folder_id)
@@ -879,23 +735,19 @@ async def get_folder_shares(
         role_names = {r.get("name") for r in user_roles}
         has_write_permission = "organization.write" in role_names
 
-        enriched_shares.append(FolderShareResponse(
-            id=share.id,
-            folder_id=share.folder_id,
-            user_id=share.user_id,
-            user_username=share.user_username,
-            role=share.role,
-            created_at=share.created_at,
-            has_write_permission=has_write_permission
-        ))
+        enriched_shares.append(
+            FolderShareResponse(
+                id=share.id,
+                folder_id=share.folder_id,
+                user_id=share.user_id,
+                user_username=share.user_username,
+                role=share.role,
+                created_at=share.created_at,
+                has_write_permission=has_write_permission,
+            )
+        )
 
-    logger.debug(
-        "Returning folder shares",
-        extra={
-            "folder_id": str(folder_id),
-            "share_count": len(enriched_shares)
-        }
-    )
+    logger.debug("Returning folder shares", extra={"folder_id": str(folder_id), "share_count": len(enriched_shares)})
 
     return enriched_shares
 
@@ -911,7 +763,7 @@ async def delete_folder_share(
     share_user_id: str,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Remove a user's access to a folder (owner only).
 
@@ -920,55 +772,29 @@ async def delete_folder_share(
     """
     logger.info(
         f"DELETE /folders/{folder_id}/shares/{share_user_id} - Removing share",
-        extra={
-            "user": org_context.username,
-            "folder_id": str(folder_id),
-            "share_user_id": share_user_id
-        }
+        extra={"user": org_context.username, "folder_id": str(folder_id), "share_user_id": share_user_id},
     )
 
     # Check folder exists
-    folder = await FolderService.get_folder(
-        db=db,
-        folder_id=folder_id,
-        organization_id=org_context.organization_id
-    )
+    folder = await FolderService.get_folder(db=db, folder_id=folder_id, organization_id=org_context.organization_id)
 
     if not folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     # Check ownership - only owner can manage sharing
     if not await FolderService.is_folder_owner(db, folder_id, org_context.user_id):
         logger.warning(
             "Non-owner attempted to remove folder share",
-            extra={
-                "folder_id": str(folder_id),
-                "user_id": org_context.user_id
-            }
+            extra={"folder_id": str(folder_id), "user_id": org_context.user_id},
         )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the folder owner can manage sharing"
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the folder owner can manage sharing")
 
     removed = await FolderService.unshare_folder(db, folder_id, share_user_id)
 
     if not removed:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Share not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Share not found")
 
-    logger.info(
-        "Folder share removed",
-        extra={
-            "folder_id": str(folder_id),
-            "share_user_id": share_user_id
-        }
-    )
+    logger.info("Folder share removed", extra={"folder_id": str(folder_id), "share_user_id": share_user_id})
 
     return {"message": "Share removed successfully"}
 
@@ -985,7 +811,7 @@ async def update_folder_share(
     share_update: FolderShareUpdate,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Update a user's share role (owner only).
 
@@ -998,36 +824,23 @@ async def update_folder_share(
             "user": org_context.username,
             "folder_id": str(folder_id),
             "share_user_id": share_user_id,
-            "new_role": share_update.role.value
-        }
+            "new_role": share_update.role.value,
+        },
     )
 
     # Check folder exists
-    folder = await FolderService.get_folder(
-        db=db,
-        folder_id=folder_id,
-        organization_id=org_context.organization_id
-    )
+    folder = await FolderService.get_folder(db=db, folder_id=folder_id, organization_id=org_context.organization_id)
 
     if not folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     # Check ownership - only owner can manage sharing
     if not await FolderService.is_folder_owner(db, folder_id, org_context.user_id):
         logger.warning(
             "Non-owner attempted to update folder share",
-            extra={
-                "folder_id": str(folder_id),
-                "user_id": org_context.user_id
-            }
+            extra={"folder_id": str(folder_id), "user_id": org_context.user_id},
         )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the folder owner can manage sharing"
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the folder owner can manage sharing")
 
     # Map Pydantic enum to SQLAlchemy enum
     role = ShareRole.writer if share_update.role.value == "writer" else ShareRole.reader
@@ -1035,18 +848,11 @@ async def update_folder_share(
     share = await FolderService.update_share_role(db, folder_id, share_user_id, role)
 
     if not share:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Share not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Share not found")
 
     logger.info(
         "Folder share updated",
-        extra={
-            "folder_id": str(folder_id),
-            "share_user_id": share_user_id,
-            "new_role": share_update.role.value
-        }
+        extra={"folder_id": str(folder_id), "share_user_id": share_user_id, "new_role": share_update.role.value},
     )
 
     return share
@@ -1067,7 +873,7 @@ async def add_folder_favorite(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Add a folder to the current user's favorites.
 
@@ -1076,36 +882,20 @@ async def add_folder_favorite(
     """
     logger.info(
         f"POST /folders/{folder_id}/favorite - Adding favorite",
-        extra={
-            "user": org_context.username,
-            "folder_id": str(folder_id)
-        }
+        extra={"user": org_context.username, "folder_id": str(folder_id)},
     )
 
     # Check access - user must have access to favorite a folder
     if not await FolderService.has_folder_access(
-        db, folder_id, org_context.user_id, org_context.organization_id,
-        username=org_context.username
+        db, folder_id, org_context.user_id, org_context.organization_id, username=org_context.username
     ):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     added = await FolderService.add_favorite(db, folder_id, org_context.user_id)
     if not added:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Folder already in favorites"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Folder already in favorites")
 
-    logger.info(
-        "Folder added to favorites",
-        extra={
-            "folder_id": str(folder_id),
-            "user": org_context.username
-        }
-    )
+    logger.info("Folder added to favorites", extra={"folder_id": str(folder_id), "user": org_context.username})
 
     return {"message": "Folder added to favorites", "is_favorite": True}
 
@@ -1120,7 +910,7 @@ async def remove_folder_favorite(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Remove a folder from the current user's favorites.
 
@@ -1129,36 +919,20 @@ async def remove_folder_favorite(
     """
     logger.info(
         f"DELETE /folders/{folder_id}/favorite - Removing favorite",
-        extra={
-            "user": org_context.username,
-            "folder_id": str(folder_id)
-        }
+        extra={"user": org_context.username, "folder_id": str(folder_id)},
     )
 
     # Check access - user must have access to unfavorite a folder
     if not await FolderService.has_folder_access(
-        db, folder_id, org_context.user_id, org_context.organization_id,
-        username=org_context.username
+        db, folder_id, org_context.user_id, org_context.organization_id, username=org_context.username
     ):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     removed = await FolderService.remove_favorite(db, folder_id, org_context.user_id)
     if not removed:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Folder not in favorites"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Folder not in favorites")
 
-    logger.info(
-        "Folder removed from favorites",
-        extra={
-            "folder_id": str(folder_id),
-            "user": org_context.username
-        }
-    )
+    logger.info("Folder removed from favorites", extra={"folder_id": str(folder_id), "user": org_context.username})
 
     return {"message": "Folder removed from favorites", "is_favorite": False}
 
@@ -1179,7 +953,7 @@ async def add_item_to_folder(
     item: FolderItemAdd,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Add an item to a folder.
 
@@ -1192,22 +966,15 @@ async def add_item_to_folder(
             "user": org_context.username,
             "folder_id": str(folder_id),
             "item_id": item.item_id,
-            "item_type": item.item_type
-        }
+            "item_type": item.item_type,
+        },
     )
 
     # Check folder exists and get user's role
-    folder = await FolderService.get_folder(
-        db=db,
-        folder_id=folder_id,
-        organization_id=org_context.organization_id
-    )
+    folder = await FolderService.get_folder(db=db, folder_id=folder_id, organization_id=org_context.organization_id)
 
     if not folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     # Check role-based access - must be owner or writer
     role = await FolderService.get_user_folder_role(db, folder_id, org_context.user_id)
@@ -1216,20 +983,11 @@ async def add_item_to_folder(
         if role == "reader":
             logger.warning(
                 "Reader attempted to add item to folder",
-                extra={
-                    "folder_id": str(folder_id),
-                    "user_id": org_context.user_id
-                }
+                extra={"folder_id": str(folder_id), "user_id": org_context.user_id},
             )
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Readers cannot add items to folders"
-            )
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Readers cannot add items to folders")
         else:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Folder not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     folder_item = await FolderService.add_item_to_folder(
         db=db,
@@ -1237,16 +995,10 @@ async def add_item_to_folder(
         item_id=item.item_id,
         item_type=item.item_type,
         owner=org_context.username,
-        position=item.position
+        position=item.position,
     )
 
-    logger.info(
-        "Item added to folder",
-        extra={
-            "folder_id": str(folder_id),
-            "folder_item_id": str(folder_item.id)
-        }
-    )
+    logger.info("Item added to folder", extra={"folder_id": str(folder_id), "folder_item_id": str(folder_item.id)})
 
     return folder_item
 
@@ -1262,7 +1014,7 @@ async def remove_item_from_folder(
     item_type: str = Query(..., pattern="^(company|contact|document)$"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Remove an item from a folder (owner only).
 
@@ -1275,56 +1027,31 @@ async def remove_item_from_folder(
             "user": org_context.username,
             "folder_id": str(folder_id),
             "item_id": str(item_id),
-            "item_type": item_type
-        }
+            "item_type": item_type,
+        },
     )
 
-    folder = await FolderService.get_folder(
-        db=db,
-        folder_id=folder_id,
-        organization_id=org_context.organization_id
-    )
+    folder = await FolderService.get_folder(db=db, folder_id=folder_id, organization_id=org_context.organization_id)
 
     if not folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
 
     # Check ownership - only owner can delete items
     if not await FolderService.is_folder_owner(db, folder_id, org_context.user_id):
         logger.warning(
             "Non-owner attempted to remove item from folder",
-            extra={
-                "folder_id": str(folder_id),
-                "user_id": org_context.user_id
-            }
+            extra={"folder_id": str(folder_id), "user_id": org_context.user_id},
         )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the folder owner can remove items"
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the folder owner can remove items")
 
     removed = await FolderService.remove_item_from_folder(
-        db=db,
-        folder_id=folder_id,
-        item_id=str(item_id),
-        item_type=item_type
+        db=db, folder_id=folder_id, item_id=str(item_id), item_type=item_type
     )
 
     if not removed:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Item not found in folder"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found in folder")
 
-    logger.info(
-        "Item removed from folder",
-        extra={
-            "folder_id": str(folder_id),
-            "item_id": str(item_id)
-        }
-    )
+    logger.info("Item removed from folder", extra={"folder_id": str(folder_id), "item_id": str(item_id)})
 
     return {"message": "Item removed from folder"}
 
@@ -1342,7 +1069,7 @@ async def update_folder_item(
     move_data: FolderItemMove,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
-    db: AsyncSession = Depends(get_global_db)
+    db: AsyncSession = Depends(get_global_db),
 ):
     """Update an item's folder (move item to a different folder).
 
@@ -1358,70 +1085,46 @@ async def update_folder_item(
             "current_folder_id": str(folder_id),
             "destination_folder_id": str(move_data.folder_id),
             "item_id": item_id,
-            "item_type": item_type
-        }
+            "item_type": item_type,
+        },
     )
 
     # Validate current folder exists and user has access
     current_folder = await FolderService.get_folder(
-        db=db,
-        folder_id=folder_id,
-        organization_id=org_context.organization_id
+        db=db, folder_id=folder_id, organization_id=org_context.organization_id
     )
 
     if not current_folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Current folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Current folder not found")
 
     # Check write access to current folder (owner or writer)
-    current_role = await FolderService.get_user_folder_role(
-        db, folder_id, org_context.user_id
-    )
-    if not current_role or current_role not in ['owner', 'writer']:
+    current_role = await FolderService.get_user_folder_role(db, folder_id, org_context.user_id)
+    if not current_role or current_role not in ["owner", "writer"]:
         logger.warning(
             "User lacks write access to current folder",
-            extra={
-                "folder_id": str(folder_id),
-                "user_id": org_context.user_id,
-                "role": current_role
-            }
+            extra={"folder_id": str(folder_id), "user_id": org_context.user_id, "role": current_role},
         )
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You need write access to the current folder to move items"
+            status_code=status.HTTP_403_FORBIDDEN, detail="You need write access to the current folder to move items"
         )
 
     # Validate destination folder exists and user has access
     destination_folder = await FolderService.get_folder(
-        db=db,
-        folder_id=move_data.folder_id,
-        organization_id=org_context.organization_id
+        db=db, folder_id=move_data.folder_id, organization_id=org_context.organization_id
     )
 
     if not destination_folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Destination folder not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Destination folder not found")
 
     # Check write access to destination folder (owner or writer)
-    dest_role = await FolderService.get_user_folder_role(
-        db, move_data.folder_id, org_context.user_id
-    )
-    if not dest_role or dest_role not in ['owner', 'writer']:
+    dest_role = await FolderService.get_user_folder_role(db, move_data.folder_id, org_context.user_id)
+    if not dest_role or dest_role not in ["owner", "writer"]:
         logger.warning(
             "User lacks write access to destination folder",
-            extra={
-                "folder_id": str(move_data.folder_id),
-                "user_id": org_context.user_id,
-                "role": dest_role
-            }
+            extra={"folder_id": str(move_data.folder_id), "user_id": org_context.user_id, "role": dest_role},
         )
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You need write access to the destination folder to add items"
+            status_code=status.HTTP_403_FORBIDDEN, detail="You need write access to the destination folder to add items"
         )
 
     # Move the item
@@ -1431,25 +1134,19 @@ async def update_folder_item(
         item_id=item_id,
         item_type=item_type,
         destination_folder_id=move_data.folder_id,
-        organization_id=org_context.organization_id
+        organization_id=org_context.organization_id,
     )
 
     if not moved_item:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Item not found in current folder"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found in current folder")
 
     logger.info(
         "Item moved successfully",
         extra={
             "current_folder_id": str(folder_id),
             "destination_folder_id": str(move_data.folder_id),
-            "item_id": item_id
-        }
+            "item_id": item_id,
+        },
     )
 
-    return FolderItemMoveResponse(
-        message="Item moved successfully",
-        item=moved_item
-    )
+    return FolderItemMoveResponse(message="Item moved successfully", item=moved_item)

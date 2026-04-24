@@ -28,6 +28,7 @@ class FolderShareRole(StrEnum):
         writer: Can view folder and add items (if has module permission),
                 but cannot edit/delete folder or manage sharing
     """
+
     reader = "reader"
     writer = "writer"
 
@@ -45,7 +46,6 @@ class FolderBase(BaseModel):
 
 
 class FolderCreate(FolderBase):
-
     model_config = ConfigDict(
         json_schema_extra={
             "examples": [
@@ -79,7 +79,6 @@ class FolderItemBase(BaseModel):
 
 
 class FolderItemAdd(FolderItemBase):
-
     model_config = ConfigDict(
         json_schema_extra={
             "examples": [
@@ -95,6 +94,7 @@ class FolderItemAdd(FolderItemBase):
 
 class FolderItemMove(BaseModel):
     """Schema for moving an item between folders."""
+
     folder_id: UUID = Field(..., description="Destination folder ID")
 
 
@@ -109,6 +109,7 @@ class FolderItemResponse(FolderItemBase):
 
 class FolderItemMoveResponse(BaseModel):
     """Response schema for moving an item to a folder."""
+
     message: str
     item: FolderItemResponse
 
@@ -160,6 +161,7 @@ class FolderResponse(FolderBase):
         updated_at: Last update timestamp
         items: List of items in the folder
     """
+
     id: UUID
     organization_id: str
     owner: str
@@ -167,8 +169,7 @@ class FolderResponse(FolderBase):
     owner_username: str = Field(..., description="Owner username for display in global view")
     is_owner: bool = Field(False, description="True if current user is folder owner")
     share_role: str | None = Field(
-        None,
-        description="User's role for this folder: 'owner', 'writer', 'reader', or null"
+        None, description="User's role for this folder: 'owner', 'writer', 'reader', or null"
     )
     is_favorite: bool
     is_deleted: bool
@@ -205,6 +206,7 @@ class FolderResponse(FolderBase):
 
 class FolderListResponse(BaseModel):
     """Paginated response for folder list."""
+
     data: list[FolderResponse]
     pagination: dict = Field(..., description="Pagination metadata with total, page, limit, total_pages")
 
@@ -229,6 +231,7 @@ class FolderWithItemsResponse(BaseModel):
         organization_id: Organization UUID
         items: List of items with details
     """
+
     id: str
     name: str
     color: str | None
@@ -238,8 +241,7 @@ class FolderWithItemsResponse(BaseModel):
     owner_id: str | None = Field(None, description="Owner Keycloak UUID")
     is_owner: bool = Field(False, description="True if current user is folder owner")
     share_role: str | None = Field(
-        None,
-        description="User's role for this folder: 'owner', 'writer', 'reader', or null"
+        None, description="User's role for this folder: 'owner', 'writer', 'reader', or null"
     )
     is_favorite: bool
     is_deleted: bool
@@ -262,11 +264,11 @@ class FolderShareCreate(BaseModel):
         user_username: Username for display (denormalized)
         role: Share role (reader or writer)
     """
+
     user_id: str = Field(..., description="Keycloak user UUID to share with")
     user_username: str = Field(..., description="Username for display")
     role: FolderShareRole = Field(
-        default=FolderShareRole.reader,
-        description="Share role - reader (view only) or writer (can add items)"
+        default=FolderShareRole.reader, description="Share role - reader (view only) or writer (can add items)"
     )
 
     model_config = ConfigDict(
@@ -288,10 +290,8 @@ class FolderShareUpdate(BaseModel):
     Attributes:
         role: New share role (reader or writer)
     """
-    role: FolderShareRole = Field(
-        ...,
-        description="New share role - reader (view only) or writer (can add items)"
-    )
+
+    role: FolderShareRole = Field(..., description="New share role - reader (view only) or writer (can add items)")
 
 
 class FolderShareResponse(BaseModel):
@@ -306,6 +306,7 @@ class FolderShareResponse(BaseModel):
         created_at: Timestamp when share was created
         has_write_permission: Whether user has organization.write permission
     """
+
     id: UUID
     folder_id: UUID
     user_id: str
@@ -313,8 +314,7 @@ class FolderShareResponse(BaseModel):
     role: FolderShareRole
     created_at: datetime
     has_write_permission: bool = Field(
-        default=False,
-        description="Whether user has organization.write permission (can be assigned Writer role)"
+        default=False, description="Whether user has organization.write permission (can be assigned Writer role)"
     )
 
     model_config = ConfigDict(from_attributes=True)
@@ -327,6 +327,7 @@ class FolderShareResponse(BaseModel):
 
 class CompanyFolderInfoResponse(BaseModel):
     """Response containing folder info for a company (internal API)."""
+
     folder_id: str = Field(..., description="Folder UUID")
     folder_name: str = Field(..., description="Folder name")
     is_owner: bool = Field(..., description="Whether the requesting user owns the folder")
@@ -342,10 +343,10 @@ class UserSearchResult(BaseModel):
         email: User's email address
         has_write_permission: Whether user has organization.write permission
     """
+
     user_id: str = Field(..., description="Keycloak user UUID")
     username: str = Field(..., description="Username for display")
     email: str | None = Field(None, description="User's email address")
     has_write_permission: bool = Field(
-        False,
-        description="Whether user has organization.write permission (can be Writer)"
+        False, description="Whether user has organization.write permission (can be Writer)"
     )

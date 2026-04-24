@@ -109,7 +109,10 @@ class KeycloakAdminService:
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                         detail="Unable to connect to Keycloak server after multiple retries",
                     )
-                logger.warning("Network error during admin token refresh", extra={"attempt": attempt, "max_retries": max_retries, "error_type": type(e).__name__})
+                logger.warning(
+                    "Network error during admin token refresh",
+                    extra={"attempt": attempt, "max_retries": max_retries, "error_type": type(e).__name__},
+                )
                 await asyncio.sleep(retry_delay)
                 retry_delay *= 2
 
@@ -124,9 +127,7 @@ class KeycloakAdminService:
 
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to obtain admin token")
 
-    async def _make_admin_request(
-        self, method: str, endpoint: str, data: Any | None = None
-    ) -> httpx.Response:
+    async def _make_admin_request(self, method: str, endpoint: str, data: Any | None = None) -> httpx.Response:
         """Make authenticated request to Keycloak Admin API."""
         token = await self._get_admin_token()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
@@ -159,7 +160,9 @@ class KeycloakAdminService:
             logger.error("Failed to get user", extra={"user_id": user_id, "status_code": response.status_code})
             return None
         except Exception as e:
-            logger.error("Exception getting user", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__})
+            logger.error(
+                "Exception getting user", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__}
+            )
             return None
 
     async def search_users(
@@ -214,9 +217,11 @@ class KeycloakAdminService:
         except HTTPException:
             raise
         except Exception as e:
-            logger.error("Error updating user", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__})
+            logger.error(
+                "Error updating user", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__}
+            )
             return False
-    
+
     async def get_users(self, first: int = 0, max_results: int = 100) -> list[dict[str, Any]]:
         """Get paginated list of users."""
         try:
@@ -230,7 +235,9 @@ class KeycloakAdminService:
                 return []
 
         except Exception as e:
-            logger.error("Exception getting users", exc_info=True, extra={"endpoint": endpoint, "error_type": type(e).__name__})
+            logger.error(
+                "Exception getting users", exc_info=True, extra={"endpoint": endpoint, "error_type": type(e).__name__}
+            )
             return []
 
     async def create_user(self, user_data: dict[str, Any]) -> dict[str, Any]:
@@ -243,7 +250,7 @@ class KeycloakAdminService:
                     "email": user_data.get("email"),
                     "firstName": user_data.get("firstName"),
                     "lastName": user_data.get("lastName"),
-                }
+                },
             )
 
             # Generate temporary password if not provided
@@ -257,11 +264,13 @@ class KeycloakAdminService:
                 "lastName": user_data.get("lastName", ""),
                 "enabled": True,
                 "emailVerified": True,
-                "credentials": [{
-                    "type": "password",
-                    "value": temp_password,
-                    "temporary": True,
-                }],
+                "credentials": [
+                    {
+                        "type": "password",
+                        "value": temp_password,
+                        "temporary": True,
+                    }
+                ],
             }
 
             response = await self._make_admin_request("POST", "/users", keycloak_payload)
@@ -276,7 +285,7 @@ class KeycloakAdminService:
                     extra={
                         "user_id": user_id,
                         "username": user_data["username"],
-                    }
+                    },
                 )
 
                 if user_id:
@@ -306,7 +315,7 @@ class KeycloakAdminService:
                         "username": user_data["username"],
                         "email": user_data["email"],
                         "error_detail": error_detail,
-                    }
+                    },
                 )
                 error_msg = error_detail.get("errorMessage", "").lower()
                 if "username" in error_msg:
@@ -333,7 +342,7 @@ class KeycloakAdminService:
                         "error_text": error_text,
                         "username": user_data["username"],
                         "email": user_data["email"],
-                    }
+                    },
                 )
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -354,13 +363,13 @@ class KeycloakAdminService:
                     "error_message": str(e),
                     "username": user_data.get("username"),
                     "email": user_data.get("email"),
-                }
+                },
             )
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Internal error creating user",
             )
-        
+
     def generate_temp_password(self, length: int = 12) -> str:
         """Generate a secure temporary password."""
         if length < 8:
@@ -388,7 +397,7 @@ class KeycloakAdminService:
         # Shuffle to avoid predictable pattern
         secrets.SystemRandom().shuffle(password)
 
-        return ''.join(password)
+        return "".join(password)
 
     async def set_user_password(self, user_id: str, password: str, temporary: bool = True) -> bool:
         """Set a new password for a user directly."""
@@ -406,7 +415,9 @@ class KeycloakAdminService:
         except HTTPException:
             raise
         except Exception as e:
-            logger.error("Error setting user password", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__})
+            logger.error(
+                "Error setting user password", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__}
+            )
             return False
 
     # ── Role methods ────────────────────────────────────────────────
@@ -434,7 +445,9 @@ class KeycloakAdminService:
             logger.error("Failed to get user roles", extra={"user_id": user_id, "status_code": response.status_code})
             return []
         except Exception as e:
-            logger.error("Error getting user roles", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__})
+            logger.error(
+                "Error getting user roles", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__}
+            )
             return []
 
     async def assign_realm_roles_to_user(self, user_id: str, roles: list[dict[str, Any]]) -> bool:
@@ -450,7 +463,9 @@ class KeycloakAdminService:
         except HTTPException:
             raise
         except Exception as e:
-            logger.error("Error assigning roles", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__})
+            logger.error(
+                "Error assigning roles", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__}
+            )
             return False
 
     async def remove_realm_roles_from_user(self, user_id: str, roles: list[dict[str, Any]]) -> bool:
@@ -466,7 +481,9 @@ class KeycloakAdminService:
         except HTTPException:
             raise
         except Exception as e:
-            logger.error("Error removing roles", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__})
+            logger.error(
+                "Error removing roles", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__}
+            )
             return False
 
     async def sync_user_realm_roles(self, user_id: str, target_roles: list[str]) -> bool:
@@ -524,7 +541,9 @@ class KeycloakAdminService:
 
             return success
         except Exception as e:
-            logger.error("Error syncing user roles", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__})
+            logger.error(
+                "Error syncing user roles", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__}
+            )
             return False
 
     # ── Organization methods ────────────────────────────────────────
@@ -549,7 +568,7 @@ class KeycloakAdminService:
                     extra={
                         "organization_id": organization_id,
                         "organization_name": org.get("name"),
-                    }
+                    },
                 )
                 return org
             elif response.status_code == 404:
@@ -568,7 +587,7 @@ class KeycloakAdminService:
                         "organization_id": organization_id,
                         "status_code": response.status_code,
                         "response_text": response.text[:500],
-                    }
+                    },
                 )
                 return None
 
@@ -582,7 +601,7 @@ class KeycloakAdminService:
                     "organization_id": organization_id,
                     "error_type": type(e).__name__,
                     "error_message": str(e),
-                }
+                },
             )
             return None
 
@@ -625,10 +644,17 @@ class KeycloakAdminService:
             if response.status_code == 404:
                 logger.warning("Organization not found", extra={"organization_id": organization_id})
             else:
-                logger.error("Failed to get org members", extra={"organization_id": organization_id, "status_code": response.status_code})
+                logger.error(
+                    "Failed to get org members",
+                    extra={"organization_id": organization_id, "status_code": response.status_code},
+                )
             return []
         except Exception as e:
-            logger.error("Error getting organization members", exc_info=True, extra={"organization_id": organization_id, "error_type": type(e).__name__})
+            logger.error(
+                "Error getting organization members",
+                exc_info=True,
+                extra={"organization_id": organization_id, "error_type": type(e).__name__},
+            )
             return []
 
     async def count_organization_members(self, organization_id: str) -> int:
@@ -643,36 +669,51 @@ class KeycloakAdminService:
                 if total:
                     return int(total)
                 # Fallback: fetch all and count
-                all_members = await self.get_organization_members(
-                    organization_id, first=0, max_results=10000
-                )
+                all_members = await self.get_organization_members(organization_id, first=0, max_results=10000)
                 return len(all_members)
             if response.status_code == 404:
-                logger.warning("Organization not found", extra={"organization_id": organization_id, "status_code": response.status_code})
+                logger.warning(
+                    "Organization not found",
+                    extra={"organization_id": organization_id, "status_code": response.status_code},
+                )
                 return 0
-            logger.error("Failed to count organization members", extra={"organization_id": organization_id, "status_code": response.status_code})
+            logger.error(
+                "Failed to count organization members",
+                extra={"organization_id": organization_id, "status_code": response.status_code},
+            )
             return 0
         except Exception as e:
-            logger.error("Exception counting organization members", exc_info=True, extra={"organization_id": organization_id, "error_type": type(e).__name__})
+            logger.error(
+                "Exception counting organization members",
+                exc_info=True,
+                extra={"organization_id": organization_id, "error_type": type(e).__name__},
+            )
             return 0
 
     async def add_user_to_organization(self, organization_id: str, user_id: str) -> bool:
         """Add a user to an organization."""
         try:
-            response = await self._make_admin_request(
-                "POST", f"/organizations/{organization_id}/members", data=user_id
-            )
+            response = await self._make_admin_request("POST", f"/organizations/{organization_id}/members", data=user_id)
             if response.status_code in [204, 201]:
-                logger.info("Added user to organization", extra={"organization_id": organization_id, "user_id": user_id})
+                logger.info(
+                    "Added user to organization", extra={"organization_id": organization_id, "user_id": user_id}
+                )
                 return True
             if response.status_code == 404:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Organization or user not found")
-            logger.error("Failed to add user to org", extra={"organization_id": organization_id, "user_id": user_id, "status_code": response.status_code})
+            logger.error(
+                "Failed to add user to org",
+                extra={"organization_id": organization_id, "user_id": user_id, "status_code": response.status_code},
+            )
             return False
         except HTTPException:
             raise
         except Exception as e:
-            logger.error("Error adding user to organization", exc_info=True, extra={"organization_id": organization_id, "user_id": user_id, "error_type": type(e).__name__})
+            logger.error(
+                "Error adding user to organization",
+                exc_info=True,
+                extra={"organization_id": organization_id, "user_id": user_id, "error_type": type(e).__name__},
+            )
             return False
 
     async def remove_user_from_organization(self, organization_id: str, user_id: str) -> bool:
@@ -683,12 +724,19 @@ class KeycloakAdminService:
                 return True
             if response.status_code == 404:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Organization or user not found")
-            logger.error("Failed to remove user from org", extra={"organization_id": organization_id, "user_id": user_id, "status_code": response.status_code})
+            logger.error(
+                "Failed to remove user from org",
+                extra={"organization_id": organization_id, "user_id": user_id, "status_code": response.status_code},
+            )
             return False
         except HTTPException:
             raise
         except Exception as e:
-            logger.error("Error removing user from organization", exc_info=True, extra={"organization_id": organization_id, "user_id": user_id, "error_type": type(e).__name__})
+            logger.error(
+                "Error removing user from organization",
+                exc_info=True,
+                extra={"organization_id": organization_id, "user_id": user_id, "error_type": type(e).__name__},
+            )
             return False
 
     async def get_user_organization_optimized(self, user_id: str) -> dict[str, Any] | None:
@@ -714,7 +762,10 @@ class KeycloakAdminService:
                         if member.get("id") == user_id:
                             return {"id": org_id, "name": org.get("name")}
                 except Exception as e:
-                    logger.warning("Failed to check membership for org", extra={"organization_id": org_id, "error_type": type(e).__name__})
+                    logger.warning(
+                        "Failed to check membership for org",
+                        extra={"organization_id": org_id, "error_type": type(e).__name__},
+                    )
                 return None
 
             results = await asyncio.gather(
@@ -988,15 +1039,24 @@ class KeycloakAdminService:
                     members = await self.get_organization_members(org_id, first=0, max_results=10000)
                     for member in members:
                         if member.get("id") == user_id:
-                            user_orgs.append({"id": org_id, "name": org.get("name"), "description": org.get("description", "")})
+                            user_orgs.append(
+                                {"id": org_id, "name": org.get("name"), "description": org.get("description", "")}
+                            )
                             break
                 except Exception as e:
-                    logger.warning("Failed to check membership for org", extra={"organization_id": org_id, "error_type": type(e).__name__})
+                    logger.warning(
+                        "Failed to check membership for org",
+                        extra={"organization_id": org_id, "error_type": type(e).__name__},
+                    )
                     continue
 
             return user_orgs
         except Exception as e:
-            logger.error("Exception getting user organizations", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__})
+            logger.error(
+                "Exception getting user organizations",
+                exc_info=True,
+                extra={"user_id": user_id, "error_type": type(e).__name__},
+            )
             return []
 
 

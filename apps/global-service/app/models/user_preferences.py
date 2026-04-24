@@ -38,12 +38,8 @@ class UserPreferences(GlobalBase):
     user_id = Column(String, nullable=False, unique=True, index=True)
     # JSON type maps to JSONB on PostgreSQL and JSON on SQLite (for tests)
     preferences = Column(JSON, nullable=False, server_default="{}")
-    created_at = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-    updated_at = Column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     def __repr__(self) -> str:
         return f"<UserPreferences(user_id='{self.user_id}')>"

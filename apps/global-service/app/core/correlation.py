@@ -47,9 +47,7 @@ class CorrelationIdMiddleware(BaseHTTPMiddleware):
     - Adds it to the response headers
     """
 
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         correlation_id = get_or_create_correlation_id(request)
         request.state.correlation_id = correlation_id
 

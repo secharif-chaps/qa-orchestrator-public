@@ -126,9 +126,7 @@ async def generate_quick_actions(
     payload["ai_preferences"] = ai_preferences
 
     # Build internal headers for screen backend
-    is_valid, user, internal_headers = await auth_middleware.validate_request(
-        request, "ai-preferences/quick-actions"
-    )
+    is_valid, user, internal_headers = await auth_middleware.validate_request(request, "ai-preferences/quick-actions")
 
     if not is_valid:
         return Response(

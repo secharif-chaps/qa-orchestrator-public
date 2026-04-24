@@ -92,7 +92,7 @@ async def get_organization_modules(
         extra={
             "organization_id": org_id_str,
             "module_count": len(module_responses),
-        }
+        },
     )
 
     return OrganizationModulesResponse(modules=module_responses)
@@ -112,9 +112,7 @@ async def update_organization_modules(
     ),
     updates: dict[ModuleName, ModuleUpdateRequest] = ...,
     token_manager: TokenManager = Depends(get_token_manager),
-    user: OIDCUser = Depends(
-        idp.get_current_user(required_roles=["admin.organizations"])
-    ),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Update module enablement for an organization.
 
@@ -140,10 +138,8 @@ async def update_organization_modules(
         extra={
             "organization_id": org_id_str,
             "user": user.preferred_username,
-            "updates": {
-                str(module): req.enabled for module, req in updates.items()
-            },
-        }
+            "updates": {str(module): req.enabled for module, req in updates.items()},
+        },
     )
 
     # Update each module
@@ -184,9 +180,7 @@ async def toggle_module(
     module: ModuleName = Path(..., description="Module name to toggle"),
     body: ModuleUpdateRequest | None = None,
     token_manager: TokenManager = Depends(get_token_manager),
-    user: OIDCUser = Depends(
-        idp.get_current_user(required_roles=["admin.organizations"])
-    ),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Toggle or set module enabled/disabled state.
 
@@ -208,9 +202,7 @@ async def toggle_module(
         HTTPException: 403 if user doesn't have admin.organizations role.
     """
     org_id_str = str(organization_id)
-    current_module = await token_manager.get_or_create_module(
-        org_id_str, module
-    )
+    current_module = await token_manager.get_or_create_module(org_id_str, module)
 
     # If body specifies enabled state, use it; otherwise toggle
     new_enabled = body.enabled if body is not None and body.enabled is not None else not current_module.enabled
@@ -223,7 +215,7 @@ async def toggle_module(
             "old_enabled": current_module.enabled,
             "new_enabled": new_enabled,
             "user": user.preferred_username,
-        }
+        },
     )
 
     updated_module = await token_manager.update_module_config(

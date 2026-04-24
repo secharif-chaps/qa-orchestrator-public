@@ -196,10 +196,7 @@ def _prefix_schema_refs(obj: dict, prefix: str) -> dict:
         elif isinstance(value, dict):
             result[key] = _prefix_schema_refs(value, prefix)
         elif isinstance(value, list):
-            result[key] = [
-                _prefix_schema_refs(item, prefix) if isinstance(item, dict) else item
-                for item in value
-            ]
+            result[key] = [_prefix_schema_refs(item, prefix) if isinstance(item, dict) else item for item in value]
         else:
             result[key] = value
     return result
@@ -243,9 +240,7 @@ def _merge_screen_schema(gateway_schema: dict, screen_schema: dict) -> dict:
     screen_paths = screen_schema.get("paths", {})
     for path, methods in screen_paths.items():
         if path not in merged.get("paths", {}):
-            merged.setdefault("paths", {})[path] = _prefix_schema_refs(
-                methods, _SCREEN_SCHEMA_PREFIX
-            )
+            merged.setdefault("paths", {})[path] = _prefix_schema_refs(methods, _SCREEN_SCHEMA_PREFIX)
 
     # Merge component schemas with prefix
     screen_schemas = screen_schema.get("components", {}).get("schemas", {})
@@ -253,9 +248,7 @@ def _merge_screen_schema(gateway_schema: dict, screen_schema: dict) -> dict:
         prefixed_name = f"{_SCREEN_SCHEMA_PREFIX}{name}"
         merged.setdefault("components", {}).setdefault("schemas", {})
         if prefixed_name not in merged["components"]["schemas"]:
-            merged["components"]["schemas"][prefixed_name] = _prefix_schema_refs(
-                definition, _SCREEN_SCHEMA_PREFIX
-            )
+            merged["components"]["schemas"][prefixed_name] = _prefix_schema_refs(definition, _SCREEN_SCHEMA_PREFIX)
 
     return merged
 
@@ -292,9 +285,7 @@ def setup_merged_openapi(app: FastAPI) -> None:
         gateway_schema["x-tagGroups"] = TAG_GROUPS
 
         # Override security schemes with public Keycloak URLs
-        gateway_schema.setdefault("components", {})["securitySchemes"] = (
-            _build_security_schemes()
-        )
+        gateway_schema.setdefault("components", {})["securitySchemes"] = _build_security_schemes()
 
         screen_schema = await _fetch_screen_schema()
         if screen_schema:

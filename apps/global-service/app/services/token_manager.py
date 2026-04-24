@@ -134,16 +134,12 @@ class TokenManager:
         )
 
         # Fetch guaranteed-to-exist record
-        result = await self.db.execute(
-            select(Organization).filter(Organization.organization_id == org_id)
-        )
+        result = await self.db.execute(select(Organization).filter(Organization.organization_id == org_id))
         org = result.scalar_one_or_none()
 
         if not org:
             # Should never happen - indicates serious database issue
-            raise RuntimeError(
-                f"Failed to ensure organization {org_id} exists"
-            )
+            raise RuntimeError(f"Failed to ensure organization {org_id} exists")
 
         return org
 
@@ -212,9 +208,7 @@ class TokenManager:
 
         # Lock organization row for update to prevent race conditions
         result = await self.db.execute(
-            select(Organization)
-            .filter(Organization.organization_id == org_id)
-            .with_for_update()
+            select(Organization).filter(Organization.organization_id == org_id).with_for_update()
         )
         org = result.scalar_one()
 
@@ -298,9 +292,7 @@ class TokenManager:
 
         # Lock organization row for update to prevent race conditions
         result = await self.db.execute(
-            select(Organization)
-            .filter(Organization.organization_id == org_id)
-            .with_for_update()
+            select(Organization).filter(Organization.organization_id == org_id).with_for_update()
         )
         org = result.scalar_one()
 
@@ -429,9 +421,7 @@ class TokenManager:
             List of TokenTransaction records matching filters
         """
         query = select(TokenTransaction)
-        query = self._build_transaction_filters(
-            query, org_id, transaction_type, reference_type, date_from, date_to
-        )
+        query = self._build_transaction_filters(query, org_id, transaction_type, reference_type, date_from, date_to)
 
         # Order by most recent first
         query = query.order_by(TokenTransaction.created_at.desc())
@@ -466,18 +456,14 @@ class TokenManager:
         from sqlalchemy import func
 
         query = select(func.count()).select_from(TokenTransaction)
-        query = self._build_transaction_filters(
-            query, org_id, transaction_type, reference_type, date_from, date_to
-        )
+        query = self._build_transaction_filters(query, org_id, transaction_type, reference_type, date_from, date_to)
 
         result = await self.db.execute(query)
         return result.scalar() or 0
 
     # Module management methods
 
-    async def get_or_create_module(
-        self, organization_id: str, module_name: ModuleName
-    ) -> OrganizationModule:
+    async def get_or_create_module(self, organization_id: str, module_name: ModuleName) -> OrganizationModule:
         """Get or create a organization module configuration using atomic upsert.
 
         Uses PostgreSQL INSERT ... ON CONFLICT DO NOTHING for atomic,
@@ -503,9 +489,7 @@ class TokenManager:
                 module_name=module_name,
                 enabled=False,
             )
-            .on_conflict_do_nothing(
-                index_elements=["organization_id", "module_name"]
-            )
+            .on_conflict_do_nothing(index_elements=["organization_id", "module_name"])
         )
 
         await self._execute_upsert(
@@ -528,16 +512,11 @@ class TokenManager:
 
         if not module:
             # Should never happen - indicates serious database issue
-            raise RuntimeError(
-                f"Failed to ensure module {module_name} exists "
-                f"for organization {organization_id}"
-            )
+            raise RuntimeError(f"Failed to ensure module {module_name} exists for organization {organization_id}")
 
         return module
 
-    async def get_all_organization_modules(
-        self, organization_id: str
-    ) -> list[OrganizationModule]:
+    async def get_all_organization_modules(self, organization_id: str) -> list[OrganizationModule]:
         """Get all modules for an organization.
 
         Ensures all module types exist for the organization using bulk upsert.
@@ -563,9 +542,7 @@ class TokenManager:
         stmt = (
             insert(OrganizationModule)
             .values(values)
-            .on_conflict_do_nothing(
-                index_elements=["organization_id", "module_name"]
-            )
+            .on_conflict_do_nothing(index_elements=["organization_id", "module_name"])
         )
 
         await self._execute_upsert(
@@ -576,9 +553,7 @@ class TokenManager:
 
         # Fetch all modules in one query (2 DB calls total: 1 upsert + 1 select)
         result = await self.db.execute(
-            select(OrganizationModule).filter(
-                OrganizationModule.organization_id == organization_id
-            )
+            select(OrganizationModule).filter(OrganizationModule.organization_id == organization_id)
         )
         return list(result.scalars().all())
 
@@ -610,9 +585,7 @@ class TokenManager:
 
         if enabled is None:
             # No change requested → just ensure the row exists
-            stmt = insert_stmt.on_conflict_do_nothing(
-                index_elements=["organization_id", "module_name"]
-            )
+            stmt = insert_stmt.on_conflict_do_nothing(index_elements=["organization_id", "module_name"])
         else:
             stmt = insert_stmt.on_conflict_do_update(
                 index_elements=["organization_id", "module_name"],

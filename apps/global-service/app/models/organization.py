@@ -147,9 +147,7 @@ class Organization(GlobalBase):
     token_balance = Column(Integer, default=0, nullable=False)
 
     # Timestamps
-    created_at = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationship to token transactions
@@ -204,9 +202,7 @@ class TokenTransaction(GlobalBase):
     # Foreign key to organization (schema-qualified)
     organization_id = Column(
         String,
-        ForeignKey(
-            f"{GLOBAL_SCHEMA}.organizations.organization_id", ondelete="CASCADE"
-        ),
+        ForeignKey(f"{GLOBAL_SCHEMA}.organizations.organization_id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
@@ -241,9 +237,7 @@ class TokenTransaction(GlobalBase):
     reference_id = Column(String, nullable=True)
 
     # Audit fields
-    created_at = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     created_by = Column(String, nullable=False)  # Keycloak user ID
 
     # Relationship to organization
@@ -277,9 +271,7 @@ class OrganizationModule(GlobalBase):
     )
 
     id = Column(Integer, primary_key=True, index=True)
-    organization_id = Column(
-        String, nullable=False, index=True
-    )  # Keycloak organization UUID
+    organization_id = Column(String, nullable=False, index=True)  # Keycloak organization UUID
     module_name = Column(
         SQLEnum(
             ModuleName,
@@ -319,12 +311,8 @@ class OrganizationFeatureFlag(GlobalBase):
 
     __tablename__ = "organization_feature_flags"
     __table_args__ = (
-        UniqueConstraint(
-            "organization_id", "flag", name="uq_organization_feature_flags_org_flag"
-        ),
-        Index(
-            "ix_organization_feature_flags_org_enabled", "organization_id", "enabled"
-        ),
+        UniqueConstraint("organization_id", "flag", name="uq_organization_feature_flags_org_flag"),
+        Index("ix_organization_feature_flags_org_enabled", "organization_id", "enabled"),
         {"schema": GLOBAL_SCHEMA},
     )
 
@@ -387,9 +375,7 @@ class TokenLock(GlobalBase):
 
     organization_id = Column(
         String,
-        ForeignKey(
-            f"{GLOBAL_SCHEMA}.organizations.organization_id", ondelete="CASCADE"
-        ),
+        ForeignKey(f"{GLOBAL_SCHEMA}.organizations.organization_id", ondelete="CASCADE"),
         nullable=False,
     )
 
@@ -419,9 +405,7 @@ class TokenLock(GlobalBase):
         server_default=TokenLockStatus.locked.value,
     )
 
-    locked_at = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
+    locked_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     expires_at = Column(DateTime(timezone=True), nullable=False)
     settled_at = Column(DateTime(timezone=True), nullable=True)
 

@@ -41,14 +41,10 @@ class UserPreferencesService:
         Returns:
             UserPreferences record or None if not found
         """
-        result = await self.db.execute(
-            select(UserPreferences).filter(UserPreferences.user_id == user_id)
-        )
+        result = await self.db.execute(select(UserPreferences).filter(UserPreferences.user_id == user_id))
         return result.scalar_one_or_none()
 
-    async def _get_user_preferences_for_update(
-        self, user_id: str
-    ) -> UserPreferences | None:
+    async def _get_user_preferences_for_update(self, user_id: str) -> UserPreferences | None:
         """Get the full preferences record with row-level lock.
 
         Uses SELECT ... FOR UPDATE to prevent race conditions
@@ -61,9 +57,7 @@ class UserPreferencesService:
             UserPreferences record (locked) or None if not found
         """
         result = await self.db.execute(
-            select(UserPreferences)
-            .filter(UserPreferences.user_id == user_id)
-            .with_for_update()
+            select(UserPreferences).filter(UserPreferences.user_id == user_id).with_for_update()
         )
         return result.scalar_one_or_none()
 
@@ -81,9 +75,7 @@ class UserPreferencesService:
             return None
         return user_prefs.get_ai_preferences()
 
-    async def set_ai_preferences(
-        self, user_id: str, ai_data: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def set_ai_preferences(self, user_id: str, ai_data: dict[str, Any]) -> dict[str, Any]:
         """Create or update AI preferences for a user.
 
         Uses row-level locking for existing records to prevent race conditions.

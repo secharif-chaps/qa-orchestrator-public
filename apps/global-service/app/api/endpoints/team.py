@@ -71,9 +71,7 @@ async def list_team_members(
             search=search,
         )
 
-        total = await keycloak_admin_service.count_organization_members(
-            org_context.organization_id
-        )
+        total = await keycloak_admin_service.count_organization_members(org_context.organization_id)
 
         if not keycloak_members:
             return TeamMemberListResponse(
@@ -100,9 +98,7 @@ async def list_team_members(
         ]
 
         # Sort: current user first, then alphabetically
-        team_members.sort(
-            key=lambda m: (not m.is_current_user, m.username.lower())
-        )
+        team_members.sort(key=lambda m: (not m.is_current_user, m.username.lower()))
 
         total_pages = (total + limit - 1) // limit if total > 0 else 0
 
@@ -160,9 +156,7 @@ async def get_member_permissions(
     """Get permission tier for a specific team member (lazy-loaded)."""
     try:
         uid = str(user_id)
-        user_roles_response = await keycloak_admin_service.get_user_realm_roles(
-            uid
-        )
+        user_roles_response = await keycloak_admin_service.get_user_realm_roles(uid)
 
         if user_roles_response is None:
             raise HTTPException(
@@ -174,11 +168,7 @@ async def get_member_permissions(
                 },
             )
 
-        role_names = (
-            [role["name"] for role in user_roles_response]
-            if user_roles_response
-            else []
-        )
+        role_names = [role["name"] for role in user_roles_response] if user_roles_response else []
         permission_tier = get_tier_from_roles(role_names)
 
         logger.info(
@@ -233,9 +223,7 @@ async def invite_team_member(
     and assigns the requested permission tier roles.
     """
     try:
-        verify_any_role_access(
-            user, ["organization.manage", "admin.organizations"]
-        )
+        verify_any_role_access(user, ["organization.manage", "admin.organizations"])
 
         # 1. Create user in Keycloak
         new_user_id = await keycloak_admin_service.create_user(
@@ -253,8 +241,8 @@ async def invite_team_member(
                 detail={
                     "error": "user_action_failed",
                     "message": "Failed to create user in Keycloak",
-                    "user_id": new_user_id
-                }
+                    "user_id": new_user_id,
+                },
             )
 
         # 2. Add user to the organization
@@ -266,10 +254,7 @@ async def invite_team_member(
         if not added:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail={
-                    "error": "action_failed",
-                    "message": "User created but failed to add to organization"
-                }
+                detail={"error": "action_failed", "message": "User created but failed to add to organization"},
             )
 
         # 3. Assign permission tier roles
@@ -341,9 +326,7 @@ async def update_member_permissions(
     """
     try:
         uid = str(user_id)
-        verify_any_role_access(
-            user, ["organization.manage", "admin.organizations"]
-        )
+        verify_any_role_access(user, ["organization.manage", "admin.organizations"])
 
         # Only admins can assign the admin tier (prevent privilege escalation)
         if update_data.permission_tier == PermissionTier.ADMIN:
@@ -372,9 +355,7 @@ async def update_member_permissions(
 
         # Only admins can modify users who currently have admin tier
         current_roles = await keycloak_admin_service.get_user_realm_roles(uid)
-        current_tier = get_tier_from_roles(
-            [r["name"] for r in current_roles] if current_roles else []
-        )
+        current_tier = get_tier_from_roles([r["name"] for r in current_roles] if current_roles else [])
         if current_tier == PermissionTier.ADMIN:
             verify_any_role_access(user, ["admin.organizations"])
 
@@ -395,14 +376,8 @@ async def update_member_permissions(
                 },
             )
 
-        updated_user_roles = (
-            await keycloak_admin_service.get_user_realm_roles(uid)
-        )
-        updated_roles = (
-            [role["name"] for role in updated_user_roles]
-            if updated_user_roles
-            else []
-        )
+        updated_user_roles = await keycloak_admin_service.get_user_realm_roles(uid)
+        updated_roles = [role["name"] for role in updated_user_roles] if updated_user_roles else []
 
         team_member = TeamMember(
             id=uid,
@@ -471,11 +446,8 @@ async def update_team_member(
     Prevents users from modifying themselves.
     """
     try:
-
         uid = str(user_id)
-        verify_any_role_access(
-            user, ["organization.manage", "admin.organizations"]
-        )
+        verify_any_role_access(user, ["organization.manage", "admin.organizations"])
 
         # Only admins can assign the admin tier (prevent privilege escalation)
         if update_data.permission_tier == PermissionTier.ADMIN:
@@ -504,9 +476,7 @@ async def update_team_member(
 
         # Only admins can modify users who currently have admin tier
         current_roles = await keycloak_admin_service.get_user_realm_roles(uid)
-        current_tier = get_tier_from_roles(
-            [r["name"] for r in current_roles] if current_roles else []
-        )
+        current_tier = get_tier_from_roles([r["name"] for r in current_roles] if current_roles else [])
         if current_tier == PermissionTier.ADMIN:
             verify_any_role_access(user, ["admin.organizations"])
 
@@ -556,11 +526,7 @@ async def update_team_member(
             updated_keycloak_user = keycloak_user
 
         updated_user_roles = await keycloak_admin_service.get_user_realm_roles(uid)
-        updated_roles = (
-            [role["name"] for role in updated_user_roles]
-            if updated_user_roles
-            else []
-        )
+        updated_roles = [role["name"] for role in updated_user_roles] if updated_user_roles else []
 
         team_member = TeamMember(
             id=uid,
@@ -624,9 +590,7 @@ async def reset_member_password(
     """
     try:
         uid = str(user_id)
-        verify_any_role_access(
-            user, ["organization.manage", "admin.organizations"]
-        )
+        verify_any_role_access(user, ["organization.manage", "admin.organizations"])
 
         keycloak_user = await keycloak_admin_service.get_user(uid)
         if not keycloak_user:
@@ -707,9 +671,7 @@ async def remove_team_member(
     """
     try:
         uid = str(user_id)
-        verify_any_role_access(
-            user, ["organization.manage", "admin.organizations"]
-        )
+        verify_any_role_access(user, ["organization.manage", "admin.organizations"])
 
         if uid == user.sub:
             raise HTTPException(

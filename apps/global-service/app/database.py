@@ -28,9 +28,7 @@ class SchemaValidationError(ValueError):
 # Convert DATABASE_URL to async format (postgresql:// -> postgresql+asyncpg://)
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 if SQLALCHEMY_DATABASE_URL.startswith("postgresql://"):
-    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace(
-        "postgresql://", "postgresql+asyncpg://", 1
-    )
+    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 # Schema names
 GLOBAL_SCHEMA = "global_schema"
@@ -75,25 +73,20 @@ def _validate_schema(schema: str) -> None:
             },
         )
         raise SchemaValidationError(
-            f"Invalid schema name: {schema}. "
-            f"Must be one of: {', '.join(sorted(VALID_SCHEMAS))}"
+            f"Invalid schema name: {schema}. Must be one of: {', '.join(sorted(VALID_SCHEMAS))}"
         )
     logger.debug("Schema validation passed", extra={"schema": schema})
 
 
 @overload
-def _register_schema_event_listener(
-    engine: AsyncEngine, schema: str, *, is_async: Literal[True]
-) -> None: ...
+def _register_schema_event_listener(engine: AsyncEngine, schema: str, *, is_async: Literal[True]) -> None: ...
+
 
 @overload
-def _register_schema_event_listener(
-    engine: Engine, schema: str, *, is_async: Literal[False] = ...
-) -> None: ...
+def _register_schema_event_listener(engine: Engine, schema: str, *, is_async: Literal[False] = ...) -> None: ...
 
-def _register_schema_event_listener(
-    engine: Engine | AsyncEngine, schema: str, *, is_async: bool = False
-) -> None:
+
+def _register_schema_event_listener(engine: Engine | AsyncEngine, schema: str, *, is_async: bool = False) -> None:
     """Register event listener to set search_path on connection.
 
     Validates schema immediately before use to prevent TOCTOU vulnerabilities.
@@ -168,9 +161,7 @@ AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, **SESSION_CO
 global_engine = _create_async_engine_with_schema(GLOBAL_SCHEMA)
 
 # Schema-specific async session factory
-GlobalAsyncSessionLocal = async_sessionmaker(
-    global_engine, class_=AsyncSession, **SESSION_CONFIG
-)
+GlobalAsyncSessionLocal = async_sessionmaker(global_engine, class_=AsyncSession, **SESSION_CONFIG)
 
 # Synchronous engines and sessions for scripts/migrations
 # Use original DATABASE_URL (without asyncpg driver) for sync operations
@@ -216,9 +207,8 @@ def _create_sync_engine_with_schema(schema: str | None = None) -> Engine:
 
 # Synchronous session factory for scripts/migrations (global_schema)
 global_sync_engine = _create_sync_engine_with_schema(GLOBAL_SCHEMA)
-GlobalSessionLocal = sessionmaker(
-    bind=global_sync_engine, class_=Session, **SESSION_CONFIG
-)
+GlobalSessionLocal = sessionmaker(bind=global_sync_engine, class_=Session, **SESSION_CONFIG)
+
 
 @contextmanager
 def get_global_sync_session() -> Generator[Session, None, None]:

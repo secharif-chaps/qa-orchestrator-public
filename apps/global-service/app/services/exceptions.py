@@ -27,10 +27,7 @@ class InsufficientTokensException(HTTPException):
 
     def __init__(self, current_balance: int, required_tokens: int):
         error_detail = TokenError(
-            message=(
-                f"Insufficient tokens. "
-                f"Current balance: {current_balance}, required: {required_tokens}"
-            ),
+            message=(f"Insufficient tokens. Current balance: {current_balance}, required: {required_tokens}"),
             current_balance=current_balance,
             required_tokens=required_tokens,
         )
