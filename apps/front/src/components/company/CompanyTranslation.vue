@@ -4,6 +4,7 @@
       <Button
         variant="tertiary"
         icon="fa fa-language"
+        size="sm"
         :label="t('screen.company.translation.button')"
       />
     </template>

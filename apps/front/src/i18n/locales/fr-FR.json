@@ -1241,7 +1241,6 @@
         "loading": "Chargement de l'analyse..."
       },
       "analysisCard": {
-        "comingSoon": "Bientôt disponible",
         "error": {
           "generic": {
             "description": "Une erreur est survenue lors de la génération du profil. Veuillez réessayer ultérieurement ou contacter le support si le problème persiste.",
@@ -1258,38 +1257,25 @@
           },
           "retry": "Réessayer"
         },
-        "loading": "Analyse en cours...",
-        "noData": "Aucune donnée disponible pour cette section",
         "status": {
           "error": "Erreur",
           "notStarted": "Non démarré",
           "pending": "En attente",
           "running": "En cours",
           "succeeded": "Terminé"
-        },
-        "viewMore": "Voir plus"
+        }
       },
       "analysisCards": {
-        "communications": {
-          "description": "Communiqués de presse, déclarations publiques et communications officielles",
-          "title": "Communications d'Entreprise"
-        },
         "corporateStructure": {
           "description": "Sociétés mères, filiales, affiliées et hiérarchie du groupe",
-          "insights": "Découvrez la structure du groupe",
           "title": "Structure Corporate"
         },
         "csr": {
           "description": "Initiatives RSE, programmes de durabilité et impact social",
           "title": "Responsabilité Sociale d'Entreprise"
         },
-        "financial": {
-          "description": "Chiffre d'affaires, financements, valorisations et indicateurs financiers clés",
-          "title": "Données Financières"
-        },
         "jobs": {
           "description": "Postes vacants actuels et opportunités de carrière",
-          "insights": "Informations Emplois",
           "title": "Offres d'Emploi"
         },
         "press": {
@@ -1298,7 +1284,6 @@
         },
         "products": {
           "description": "Parcourez les produits, services et offres",
-          "insights": "Informations Produits",
           "title": "Produits & Services"
         },
         "profile": {
@@ -1307,17 +1292,14 @@
         },
         "sanctions": {
           "description": "Sanctions, actions reglementaires et problemes de conformite issus de WorldCheck",
-          "insights": "Decouvrez les informations sur les sanctions et la conformite",
           "title": "Sanctions & Conformite"
         },
         "team": {
           "description": "Équipe dirigeante, structure organizationnelle et personnel clé",
-          "insights": "Informations Équipe",
           "title": "Équipe & Management"
         },
         "timeline": {
           "description": "Historique de l'entreprise, jalons et événements clés",
-          "insights": "Informations Historiques",
           "title": "Chronologie & Historique"
         }
       },
@@ -1452,6 +1434,7 @@
         "revenue": "Revenus"
       },
       "header": {
+        "backToFolder": "Retour au dossier",
         "createdBy": "Créé le {date} par {username}"
       },
       "item": {
@@ -1530,7 +1513,6 @@
         "placeholder": "Rechercher des entreprises..."
       },
       "sections": {
-        "analyses": "Analyses",
         "financial": {
           "desc": "Revenus, rentabilité et financement",
           "funding": {
@@ -1577,8 +1559,7 @@
             "peRatio": "Ratio C/B",
             "title": "Valorisation"
           }
-        },
-        "notAvailable": "Section non disponible"
+        }
       },
       "tabs": {
         "csr": "RSE",

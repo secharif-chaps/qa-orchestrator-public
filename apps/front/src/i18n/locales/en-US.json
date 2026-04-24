@@ -1241,7 +1241,6 @@
         "loading": "Loading analysis..."
       },
       "analysisCard": {
-        "comingSoon": "Coming soon",
         "error": {
           "generic": {
             "description": "An error occurred during profile generation. Please retry later or contact support if the problem persists.",
@@ -1258,38 +1257,25 @@
           },
           "retry": "Retry"
         },
-        "loading": "Analysis in progress...",
-        "noData": "No data available for this section",
         "status": {
           "error": "Error",
           "notStarted": "Not started",
           "pending": "Pending",
           "running": "In progress",
           "succeeded": "Completed"
-        },
-        "viewMore": "View more"
+        }
       },
       "analysisCards": {
-        "communications": {
-          "description": "Press releases, public statements, and official communications",
-          "title": "Corporate Communications"
-        },
         "corporateStructure": {
           "description": "Parent companies, subsidiaries, affiliates, and group hierarchy",
-          "insights": "Discover the corporate group structure",
           "title": "Corporate Structure"
         },
         "csr": {
           "description": "CSR initiatives, sustainability programs, and social impact",
           "title": "Corporate Social Responsibility"
         },
-        "financial": {
-          "description": "Revenue, funding, valuations, and key financial metrics",
-          "title": "Financial Data"
-        },
         "jobs": {
           "description": "Current job openings and career opportunities",
-          "insights": "Job Insights",
           "title": "Job Offers"
         },
         "press": {
@@ -1298,7 +1284,6 @@
         },
         "products": {
           "description": "Browse products, services, and offerings",
-          "insights": "Product Insights",
           "title": "Products & Services"
         },
         "profile": {
@@ -1307,17 +1292,14 @@
         },
         "sanctions": {
           "description": "Sanctions, regulatory enforcement actions, and compliance issues from WorldCheck",
-          "insights": "Discover sanctions and compliance information",
           "title": "Sanctions & Compliance"
         },
         "team": {
           "description": "Leadership team, organizational structure, and key personnel",
-          "insights": "Team Insights",
           "title": "Team & Management"
         },
         "timeline": {
           "description": "Company history, milestones, and key events over time",
-          "insights": "Historical Insights",
           "title": "Timeline & History"
         }
       },
@@ -1452,6 +1434,7 @@
         "revenue": "Revenue"
       },
       "header": {
+        "backToFolder": "Back to folder",
         "createdBy": "Created on {date} by {username}"
       },
       "item": {
@@ -1530,7 +1513,6 @@
         "placeholder": "Search companies..."
       },
       "sections": {
-        "analyses": "Analysis",
         "financial": {
           "desc": "Revenue, profitability & funding",
           "funding": {
@@ -1577,8 +1559,7 @@
             "peRatio": "P/E Ratio",
             "title": "Valuation"
           }
-        },
-        "notAvailable": "Section not available"
+        }
       },
       "tabs": {
         "csr": "CSR",
