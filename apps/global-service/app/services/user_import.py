@@ -92,12 +92,8 @@ async def check_duplicates_in_import(
 
     # Return occurrences for error messages
     duplicates_info = {}
-    duplicates_info.update({
-        f"email:{k}": v for k, v in email_occurrences.items() if len(v) > 1
-    })
-    duplicates_info.update({
-        f"username:{k}": v for k, v in username_occurrences.items() if len(v) > 1
-    })
+    duplicates_info.update({f"email:{k}": v for k, v in email_occurrences.items() if len(v) > 1})
+    duplicates_info.update({f"username:{k}": v for k, v in username_occurrences.items() if len(v) > 1})
 
     return duplicate_rows, duplicates_info
 
@@ -134,7 +130,7 @@ async def import_users_bulk(
             "organization_id": request.organization_id,
             "user_count": len(request.users),
             "generate_passwords": request.generate_passwords,
-        }
+        },
     )
 
     # Verify organization exists
@@ -142,21 +138,15 @@ async def import_users_bulk(
         org = await keycloak_admin_service.get_organization(request.organization_id)
         if not org:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Organization {request.organization_id} not found"
+                status_code=status.HTTP_404_NOT_FOUND, detail=f"Organization {request.organization_id} not found"
             )
         org_name = org.get("name", request.organization_id)
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(
-            "Failed to verify organization",
-            exc_info=e,
-            extra={"organization_id": request.organization_id}
-        )
+        logger.error("Failed to verify organization", exc_info=e, extra={"organization_id": request.organization_id})
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Organization {request.organization_id} not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Organization {request.organization_id} not found"
         )
 
     results: list[UserImportResult] = []
@@ -167,15 +157,10 @@ async def import_users_bulk(
     existing_emails, existing_usernames = await check_existing_users(request.users)
 
     # Step 2: Check for duplicates within the import
-    internal_duplicate_rows, internal_duplicates_info = await check_duplicates_in_import(
-        request.users
-    )
+    internal_duplicate_rows, internal_duplicates_info = await check_duplicates_in_import(request.users)
 
     if internal_duplicates_info:
-        logger.warning(
-            "Found duplicates within import file",
-            extra={"duplicates": internal_duplicates_info}
-        )
+        logger.warning("Found duplicates within import file", extra={"duplicates": internal_duplicates_info})
 
     # Step 3: Process each user
     for idx, user in enumerate(request.users):
@@ -229,7 +214,7 @@ async def import_users_bulk(
                     "username": user.username,
                     "email": user.email,
                     "row_index": idx,
-                }
+                },
             )
 
             user_data = {
@@ -263,7 +248,7 @@ async def import_users_bulk(
                     extra={
                         "user_id": user_id,
                         "organization_id": request.organization_id,
-                    }
+                    },
                 )
                 result.error_message = "User created but organization assignment failed"
 
@@ -287,11 +272,11 @@ async def import_users_bulk(
                     "user_id": user_id,
                     "username": user.username,
                     "row_index": idx,
-                }
+                },
             )
 
         except HTTPException as e:
-            error_detail = e.detail if hasattr(e, 'detail') else str(e)
+            error_detail = e.detail if hasattr(e, "detail") else str(e)
             result.error_message = error_detail
             results.append(result)
             error_count += 1
@@ -301,7 +286,7 @@ async def import_users_bulk(
                     "username": user.username,
                     "error": error_detail,
                     "row_index": idx,
-                }
+                },
             )
 
         except ValidationError as e:
@@ -314,7 +299,7 @@ async def import_users_bulk(
                     "username": user.username,
                     "error": str(e),
                     "row_index": idx,
-                }
+                },
             )
 
         except Exception as e:
@@ -327,7 +312,7 @@ async def import_users_bulk(
                 extra={
                     "username": user.username,
                     "row_index": idx,
-                }
+                },
             )
 
     logger.info(
@@ -339,7 +324,7 @@ async def import_users_bulk(
             "total_count": len(request.users),
             "success_count": success_count,
             "error_count": error_count,
-        }
+        },
     )
 
     return BulkUserImportResponse(

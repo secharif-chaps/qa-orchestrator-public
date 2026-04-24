@@ -45,7 +45,6 @@ class GrpcAuthInterceptor(grpc.ServerInterceptor):
         continuation: Callable,
         handler_call_details: grpc.HandlerCallDetails,
     ) -> grpc.RpcMethodHandler | None:
-
         method = handler_call_details.method
 
         # ✅ Allow reflection without auth (Postman / grpcurl)
@@ -215,10 +214,9 @@ class GrpcAuthInterceptor(grpc.ServerInterceptor):
         return handler
 
     # Error handler
-    def _unauthenticated(
-        self, status: grpc.StatusCode, mess: str
-    ) -> grpc.RpcMethodHandler:
+    def _unauthenticated(self, status: grpc.StatusCode, mess: str) -> grpc.RpcMethodHandler:
         """Return a gRPC handler that immediately aborts with UNAUTHENTICATED."""
+
         def terminate(request: message.Message, context: grpc.ServicerContext):
             context.abort(status, mess)
 

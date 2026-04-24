@@ -82,7 +82,7 @@ async def list_organizations(
         # Calculate pagination
         total = len(organizations)
         offset = (page - 1) * limit
-        paginated_orgs = organizations[offset: offset + limit]
+        paginated_orgs = organizations[offset : offset + limit]
 
         # Convert to response format using OrganizationResponse schema
         orgs_list = []
@@ -265,7 +265,8 @@ async def get_organization_users_admin(
                     "default-roles-" + settings.KEYCLOAK_REALM.lower(),
                 }
                 permissions = [
-                    role["name"] for role in user_roles
+                    role["name"]
+                    for role in user_roles
                     if role["name"] not in internal_roles and not role["name"].startswith("realm-management")
                 ]
                 tier = get_tier_from_roles(permissions)
@@ -349,14 +350,14 @@ async def get_organization_user_admin(
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User {user_id} not found")
 
         return OrganizationUserDetailResponse(
-            id=user_data.get('id'),
-            username=user_data.get('username'),
-            email=user_data.get('email'),
-            firstName=user_data.get('firstName'),
-            lastName=user_data.get('lastName'),
-            enabled=user_data.get('enabled', True),
-            emailVerified=user_data.get('emailVerified', False),
-            createdTimestamp=user_data.get('createdTimestamp'),
+            id=user_data.get("id"),
+            username=user_data.get("username"),
+            email=user_data.get("email"),
+            firstName=user_data.get("firstName"),
+            lastName=user_data.get("lastName"),
+            enabled=user_data.get("enabled", True),
+            emailVerified=user_data.get("emailVerified", False),
+            createdTimestamp=user_data.get("createdTimestamp"),
         )
 
     except HTTPException:
@@ -498,14 +499,14 @@ async def create_organization_user_admin(
         )
 
         return OrganizationUserDetailResponse(
-            id=created_user.get('id'),
-            username=created_user.get('username'),
-            email=created_user.get('email'),
-            firstName=created_user.get('firstName'),
-            lastName=created_user.get('lastName'),
-            enabled=created_user.get('enabled', True),
-            emailVerified=created_user.get('emailVerified', False),
-            createdTimestamp=created_user.get('createdTimestamp'),
+            id=created_user.get("id"),
+            username=created_user.get("username"),
+            email=created_user.get("email"),
+            firstName=created_user.get("firstName"),
+            lastName=created_user.get("lastName"),
+            enabled=created_user.get("enabled", True),
+            emailVerified=created_user.get("emailVerified", False),
+            createdTimestamp=created_user.get("createdTimestamp"),
         )
 
     except HTTPException as he:
@@ -573,10 +574,7 @@ async def update_organization_user_admin(
         success = await keycloak_admin_service.update_user(user_id, user_data)
 
         if success:
-            logger.info(
-                "Successfully updated user",
-                extra={"user_id": user_id, "organization_id": organization_id}
-            )
+            logger.info("Successfully updated user", extra={"user_id": user_id, "organization_id": organization_id})
             return SuccessMessageResponse(success=True, message="User updated successfully")
         else:
             raise HTTPException(
@@ -690,10 +688,7 @@ async def reset_user_password(
         success = await keycloak_admin_service.send_password_reset_email(user_id)
 
         if success:
-            logger.info(
-                "Successfully sent password reset email",
-                extra={"user_id": user_id}
-            )
+            logger.info("Successfully sent password reset email", extra={"user_id": user_id})
             return SuccessMessageResponse(success=True, message="Password reset email sent")
         else:
             raise HTTPException(
@@ -760,11 +755,8 @@ async def update_user_status(
         success = await keycloak_admin_service.update_user(user_id, {"enabled": status_data["enabled"]})
 
         if success:
-            status_text = "enabled" if status_data['enabled'] else "disabled"
-            logger.info(
-                f"Successfully {status_text} user",
-                extra={"user_id": user_id}
-            )
+            status_text = "enabled" if status_data["enabled"] else "disabled"
+            logger.info(f"Successfully {status_text} user", extra={"user_id": user_id})
             return SuccessMessageResponse(success=True, message=f"User {status_text}")
         else:
             raise HTTPException(

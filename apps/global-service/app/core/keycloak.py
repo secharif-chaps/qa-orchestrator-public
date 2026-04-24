@@ -41,17 +41,11 @@ class OIDCUser(BaseOIDCUser):
     ["OrgName", {"OrgName": {"id": "uuid"}}]
     """
 
-    organization: Any | None = (
-        None  # Can be list, dict, or string depending on Keycloak config
-    )
-    enabled_modules: list[
-        str
-    ] = []  # List of enabled modules for this user's organization
+    organization: Any | None = None  # Can be list, dict, or string depending on Keycloak config
+    enabled_modules: list[str] = []  # List of enabled modules for this user's organization
 
 
-def _initialize_keycloak_with_retry(
-    max_retries: int = 5, initial_backoff: float = 2.0
-) -> FastAPIKeycloak:
+def _initialize_keycloak_with_retry(max_retries: int = 5, initial_backoff: float = 2.0) -> FastAPIKeycloak:
     """Initialize FastAPIKeycloak with exponential backoff retry logic.
 
     During startup, Keycloak may not be immediately available or may be slow to respond.
@@ -77,8 +71,7 @@ def _initialize_keycloak_with_retry(
     backoff = initial_backoff
     # Construct expected OpenID configuration URL for debugging
     openid_config_url = (
-        f"{settings.KEYCLOAK_SERVER_URL}/realms/{settings.KEYCLOAK_REALM}"
-        f"/.well-known/openid-configuration"
+        f"{settings.KEYCLOAK_SERVER_URL}/realms/{settings.KEYCLOAK_REALM}/.well-known/openid-configuration"
     )
 
     for attempt in range(1, max_retries + 1):
@@ -198,9 +191,7 @@ def _initialize_keycloak_with_retry(
             # HTTP error (4xx, 5xx response codes)
             elapsed_time = time.time() - start_time
             status_code = e.response.status_code if hasattr(e, "response") else None
-            response_text = (
-                e.response.text[:500] if hasattr(e, "response") else None
-            )  # Limit to 500 chars
+            response_text = e.response.text[:500] if hasattr(e, "response") else None  # Limit to 500 chars
 
             error_details = {
                 "exception_type": "HTTPError",

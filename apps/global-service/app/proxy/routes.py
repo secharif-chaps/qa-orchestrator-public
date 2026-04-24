@@ -348,7 +348,11 @@ async def _check_company_folder_access(path: str, method: str, user) -> Response
 
 
 def _check_permission_gate(
-    path: str, method: str, user: GatewayUser | None, registry: ModuleRegistry | None, module: ModuleDefinition,
+    path: str,
+    method: str,
+    user: GatewayUser | None,
+    registry: ModuleRegistry | None,
+    module: ModuleDefinition,
 ) -> Response | None:
     """Fast-reject requests where user lacks required permissions (x-permissions).
 
@@ -536,11 +540,13 @@ async def proxy_request(request: Request, path: str) -> Response:
                     token_lock_id = str(lock.id)
             except InsufficientTokensError as e:
                 return Response(
-                    content=json.dumps({
-                        "detail": "Insufficient tokens",
-                        "required": e.required,
-                        "current_balance": e.current_balance,
-                    }).encode(),
+                    content=json.dumps(
+                        {
+                            "detail": "Insufficient tokens",
+                            "required": e.required,
+                            "current_balance": e.current_balance,
+                        }
+                    ).encode(),
                     status_code=402,
                     media_type="application/json",
                 )
@@ -799,11 +805,13 @@ async def _handle_streaming_request(
     # Strip internal token-lock headers defensively.
     # Currently streaming responses don't forward backend headers, but this
     # protects against future changes that might start forwarding them.
-    streaming_headers = strip_internal_headers({
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-        "X-Accel-Buffering": "no",  # Disable nginx buffering
-    })
+    streaming_headers = strip_internal_headers(
+        {
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",  # Disable nginx buffering
+        }
+    )
 
     return StreamingResponse(
         stream_generator(),

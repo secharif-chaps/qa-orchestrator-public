@@ -96,6 +96,7 @@ app.add_middleware(
 # which is the desired behavior (correlation ID is set early).
 app.add_middleware(CorrelationIdMiddleware)
 
+
 # Health check endpoints
 @app.get("/health/live", tags=["health"])
 def health_live():

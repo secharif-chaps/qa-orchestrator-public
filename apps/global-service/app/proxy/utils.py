@@ -10,49 +10,55 @@ import httpx
 from fastapi import Request
 
 # Headers to exclude from proxying (hop-by-hop, RFC 2616 + security headers)
-EXCLUDED_REQUEST_HEADERS: frozenset[str] = frozenset({
-    # Hop-by-hop headers (RFC 2616) — must not be forwarded by proxies
-    "host",
-    "connection",
-    "keep-alive",
-    "proxy-authenticate",
-    "proxy-authorization",
-    "te",
-    "trailers",
-    "transfer-encoding",
-    "upgrade",
-    "content-length",  # httpx will recalculate this
-    "accept-encoding",  # Strip: Caddy/FrankenPHP compresses but gateway streams body as-is
-    # Security: prevent client from spoofing forwarding headers
-    "x-forwarded-for",
-    "x-forwarded-host",
-    "x-forwarded-proto",
-    "x-forwarded-port",
-    "x-real-ip",
-    "forwarded",  # RFC 7239
-    # Security: prevent proxy chain info leakage
-    "via",
-})
+EXCLUDED_REQUEST_HEADERS: frozenset[str] = frozenset(
+    {
+        # Hop-by-hop headers (RFC 2616) — must not be forwarded by proxies
+        "host",
+        "connection",
+        "keep-alive",
+        "proxy-authenticate",
+        "proxy-authorization",
+        "te",
+        "trailers",
+        "transfer-encoding",
+        "upgrade",
+        "content-length",  # httpx will recalculate this
+        "accept-encoding",  # Strip: Caddy/FrankenPHP compresses but gateway streams body as-is
+        # Security: prevent client from spoofing forwarding headers
+        "x-forwarded-for",
+        "x-forwarded-host",
+        "x-forwarded-proto",
+        "x-forwarded-port",
+        "x-real-ip",
+        "forwarded",  # RFC 7239
+        # Security: prevent proxy chain info leakage
+        "via",
+    }
+)
 
-EXCLUDED_RESPONSE_HEADERS: frozenset[str] = frozenset({
-    "connection",
-    "keep-alive",
-    "proxy-authenticate",
-    "proxy-authorization",
-    "te",
-    "trailers",
-    "transfer-encoding",
-    "upgrade",
-    "content-encoding",  # Let FastAPI handle compression
-    "content-length",  # Will be recalculated
-})
+EXCLUDED_RESPONSE_HEADERS: frozenset[str] = frozenset(
+    {
+        "connection",
+        "keep-alive",
+        "proxy-authenticate",
+        "proxy-authorization",
+        "te",
+        "trailers",
+        "transfer-encoding",
+        "upgrade",
+        "content-encoding",  # Let FastAPI handle compression
+        "content-length",  # Will be recalculated
+    }
+)
 
 # Content types that require streaming with a dedicated long-lived client
-STREAMING_CONTENT_TYPES: frozenset[str] = frozenset({
-    "text/event-stream",        # Server-Sent Events (SSE)
-    "application/x-ndjson",     # Newline Delimited JSON
-    "application/stream+json",  # JSON streaming
-})
+STREAMING_CONTENT_TYPES: frozenset[str] = frozenset(
+    {
+        "text/event-stream",  # Server-Sent Events (SSE)
+        "application/x-ndjson",  # Newline Delimited JSON
+        "application/stream+json",  # JSON streaming
+    }
+)
 
 
 def filter_request_headers(headers: dict) -> dict:

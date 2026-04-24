@@ -35,6 +35,7 @@ def _get_internal_roles() -> set[str]:
     """Internal Keycloak roles to exclude from application permissions."""
     return {"uma_authorization", "offline_access", "default-roles-" + settings.KEYCLOAK_REALM.lower()}
 
+
 # Performance limits for organization-based user search
 MAX_ORGS_TO_SEARCH = 10
 MAX_MEMBERS_PER_ORG = 100
@@ -88,9 +89,7 @@ async def search_users_with_org(search: str) -> list[dict[str, Any]]:
     seen_user_ids = {u.get("id") for u in kc_users}
 
     if matching_orgs:
-        orgs_to_search = [org for org in matching_orgs if org.get("id")][
-            :MAX_ORGS_TO_SEARCH
-        ]
+        orgs_to_search = [org for org in matching_orgs if org.get("id")][:MAX_ORGS_TO_SEARCH]
 
         if len(matching_orgs) > MAX_ORGS_TO_SEARCH:
             logger.warning(
@@ -114,9 +113,7 @@ async def search_users_with_org(search: str) -> list[dict[str, Any]]:
                         org.get("id"), first=0, max_results=MAX_MEMBERS_PER_ORG
                     )
 
-            org_member_results = await asyncio.gather(
-                *[fetch_org_members(org) for org in orgs_to_search]
-            )
+            org_member_results = await asyncio.gather(*[fetch_org_members(org) for org in orgs_to_search])
 
             for members in org_member_results:
                 for member in members:
@@ -148,9 +145,7 @@ async def list_users_paginated(
 ) -> tuple[list[dict[str, Any]], int]:
     """List users without search using Keycloak's native pagination."""
     total = await keycloak_admin_service.count_users_with_search(None)
-    kc_users = await keycloak_admin_service.search_users(
-        search=None, first=first, max_results=limit
-    )
+    kc_users = await keycloak_admin_service.search_users(search=None, first=first, max_results=limit)
     return kc_users, total
 
 
@@ -170,9 +165,7 @@ async def update_user_enabled_status(
     )
 
     try:
-        success = await keycloak_admin_service.update_user(
-            user_id=user_id, user_data={"enabled": enabled}
-        )
+        success = await keycloak_admin_service.update_user(user_id=user_id, user_data={"enabled": enabled})
 
         if not success:
             raise HTTPException(
@@ -212,23 +205,17 @@ async def update_user_enabled_status(
             "username": kc_user.get("username"),
             "email": kc_user.get("email"),
             "organization_id": (
-                attributes.get("organization_id", [None])[0]
-                if "organization_id" in attributes
-                else None
+                attributes.get("organization_id", [None])[0] if "organization_id" in attributes else None
             ),
             "organization_name": (
-                attributes.get("organization_name", [None])[0]
-                if "organization_name" in attributes
-                else None
+                attributes.get("organization_name", [None])[0] if "organization_name" in attributes else None
             ),
             "status": status_value,
             "created_at": str(kc_user.get("createdTimestamp", 0)),
             "permissions": permissions,
         }
 
-        logger.info(
-            f"Successfully {action_past} user", extra={"user_id": user_id}
-        )
+        logger.info(f"Successfully {action_past} user", extra={"user_id": user_id})
 
         return user_data
 
@@ -261,14 +248,10 @@ async def update_user_enabled_status(
 async def get_all_users(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
     limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
-    search: str | None = Query(
-        None, description="Search by username, name, email or organization"
-    ),
+    search: str | None = Query(None, description="Search by username, name, email or organization"),
     sort: str = Query("created_at", description="Sort field: username, created_at"),
     order: str = Query("desc", description="Sort order: asc or desc"),
-    user: OIDCUser = Depends(
-        idp.get_current_user(required_roles=["admin.organizations"])
-    ),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Get all users with search and pagination."""
     start_time = time.time()
@@ -348,7 +331,7 @@ async def get_all_users(
         # Apply pagination for search results (already paginated for non-search)
         if search and search.strip():
             first_idx = (page - 1) * limit
-            users_data = users_data[first_idx: first_idx + limit]
+            users_data = users_data[first_idx : first_idx + limit]
 
         total_pages = (total + limit - 1) // limit if total > 0 else 1
 
@@ -454,9 +437,7 @@ async def get_user_organization(
 async def assign_user_to_organization(
     user_id: str,
     request: AssignOrganizationRequest,
-    user: OIDCUser = Depends(
-        idp.get_current_user(required_roles=["admin.organizations"])
-    ),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Assign a user to a different organization."""
     organization_id = request.organization_id
@@ -506,9 +487,7 @@ async def assign_user_to_organization(
                     },
                 )
                 try:
-                    await keycloak_admin_service.remove_user_from_organization(
-                        organization_id=org_id, user_id=user_id
-                    )
+                    await keycloak_admin_service.remove_user_from_organization(organization_id=org_id, user_id=user_id)
                     logger.info(
                         "Successfully removed user from old organization",
                         extra={"user_id": user_id, "organization_id": org_id},
@@ -524,9 +503,7 @@ async def assign_user_to_organization(
                     )
 
         # Check if user is already in the target organization
-        is_already_member = any(
-            org.get("id") == organization_id for org in current_orgs
-        )
+        is_already_member = any(org.get("id") == organization_id for org in current_orgs)
 
         if is_already_member:
             logger.info(
@@ -667,9 +644,7 @@ async def get_user_permissions(
 async def update_user_permissions(
     user_id: str,
     request: UpdatePermissionsRequest,
-    user: OIDCUser = Depends(
-        idp.get_current_user(required_roles=["admin.organizations"])
-    ),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Update user's permissions by syncing their Keycloak realm roles."""
     logger.info(
@@ -682,9 +657,7 @@ async def update_user_permissions(
     )
 
     try:
-        success = await keycloak_admin_service.sync_user_realm_roles(
-            user_id=user_id, target_roles=request.permissions
-        )
+        success = await keycloak_admin_service.sync_user_realm_roles(user_id=user_id, target_roles=request.permissions)
 
         if not success:
             raise HTTPException(
@@ -726,14 +699,10 @@ async def update_user_permissions(
             "username": kc_user.get("username"),
             "email": kc_user.get("email"),
             "organization_id": (
-                attributes.get("organization_id", [None])[0]
-                if "organization_id" in attributes
-                else None
+                attributes.get("organization_id", [None])[0] if "organization_id" in attributes else None
             ),
             "organization_name": (
-                attributes.get("organization_name", [None])[0]
-                if "organization_name" in attributes
-                else None
+                attributes.get("organization_name", [None])[0] if "organization_name" in attributes else None
             ),
             "status": "active" if kc_user.get("enabled", True) else "revoked",
             "created_at": str(kc_user.get("createdTimestamp", 0)),
@@ -786,9 +755,7 @@ async def update_user_permissions(
 )
 async def disable_user(
     user_id: str,
-    user: OIDCUser = Depends(
-        idp.get_current_user(required_roles=["admin.organizations"])
-    ),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ) -> dict[str, Any]:
     """Disable a user account (soft delete — account exists but cannot login)."""
     return await update_user_enabled_status(
@@ -805,9 +772,7 @@ async def disable_user(
 )
 async def enable_user(
     user_id: str,
-    user: OIDCUser = Depends(
-        idp.get_current_user(required_roles=["admin.organizations"])
-    ),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ) -> dict[str, Any]:
     """Enable a previously disabled user account."""
     return await update_user_enabled_status(
@@ -825,9 +790,7 @@ async def enable_user(
 async def reset_user_password(
     user_id: str,
     request: ResetPasswordRequest,
-    user: OIDCUser = Depends(
-        idp.get_current_user(required_roles=["admin.organizations"])
-    ),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Reset user password by setting a temporary password."""
     logger.info(
@@ -932,7 +895,7 @@ async def reset_user_password(
 )
 async def bulk_import_users(
     request: BulkUserImportRequest,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Bulk import users into Keycloak.
 
@@ -954,9 +917,8 @@ async def bulk_import_users(
             extra={
                 "admin_user": user.preferred_username,
                 "organization_id": request.organization_id,
-            }
+            },
         )
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal error during bulk import"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal error during bulk import"
         )

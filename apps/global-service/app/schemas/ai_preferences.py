@@ -4,7 +4,6 @@ Defines request/response models for the Chapse Assist AI preferences feature.
 Field names and types match the monolith schemas for frontend compatibility.
 """
 
-
 from pydantic import BaseModel, ConfigDict, Field
 
 

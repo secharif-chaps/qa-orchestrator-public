@@ -4,6 +4,7 @@ Pydantic schemas for Keycloak Organizations.
 Organizations are managed in Keycloak, not in the application database.
 These schemas represent organization context extracted from JWT tokens.
 """
+
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -16,6 +17,7 @@ class OrganizationResponse(BaseModel):
     Organizations are managed in Keycloak. This represents organization data
     either from JWT token or Keycloak Admin API.
     """
+
     id: str = Field(..., description="Keycloak organization UUID")
     name: str = Field(..., description="Organization name")
     description: str | None = Field(None, description="Organization description")
@@ -104,6 +106,7 @@ class ActivityResponse(BaseModel):
     Represents a recent action (company or folder creation) by other users
     in the organization.
     """
+
     id: str = Field(..., description="ID of the item (company or folder)")
     type: str = Field(..., description="Activity type: 'company' or 'folder'")
     name: str = Field(..., description="Name of the created item")

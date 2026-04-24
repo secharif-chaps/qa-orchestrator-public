@@ -37,6 +37,7 @@ class ItemType(enum.Enum):
 
     Note: Enum names must be lowercase to match PostgreSQL enum values.
     """
+
     company = "company"
     watchfile = "watchfile"
     explore = "explore"
@@ -52,6 +53,7 @@ class ShareRole(enum.Enum):
 
     Note: Enum names must be lowercase to match PostgreSQL enum values.
     """
+
     reader = "reader"
     writer = "writer"
 

@@ -40,17 +40,10 @@ async def get_current_organization(
     Organization management is handled in Keycloak.
     """
     logger.info(
-        "Get current organization",
-        extra={
-            "user": org_context.username,
-            "organization_id": org_context.organization_id
-        }
+        "Get current organization", extra={"user": org_context.username, "organization_id": org_context.organization_id}
     )
 
-    return OrganizationResponse(
-        id=org_context.organization_id,
-        name=org_context.organization_name
-    )
+    return OrganizationResponse(id=org_context.organization_id, name=org_context.organization_name)
 
 
 @router.get(
@@ -76,10 +69,7 @@ async def get_organization_activities(
     """
     logger.info(
         "Get organization activities",
-        extra={
-            "user": org_context.username,
-            "organization_id": org_context.organization_id
-        }
+        extra={"user": org_context.username, "organization_id": org_context.organization_id},
     )
 
     try:
@@ -142,14 +132,16 @@ async def get_organization_activities(
                     # Only show companies created by other users
                     if company_info.owner_username == current_username:
                         continue
-                    activities.append(ActivityResponse(
-                        type="company",
-                        name=company_info.name,
-                        owner=company_info.owner_username or "Unknown",
-                        created_at=folder_item.added_at,
-                        id=cid_str,
-                        folder_id=str(folder.id),
-                    ))
+                    activities.append(
+                        ActivityResponse(
+                            type="company",
+                            name=company_info.name,
+                            owner=company_info.owner_username or "Unknown",
+                            created_at=folder_item.added_at,
+                            id=cid_str,
+                            folder_id=str(folder.id),
+                        )
+                    )
 
         # Get folders shared with the current user (created by other users)
         stmt = (
@@ -168,23 +160,21 @@ async def get_organization_activities(
         folders = result.scalars().all()
 
         for folder in folders:
-            activities.append(ActivityResponse(
-                type="folder",
-                name=folder.name,
-                owner=folder.owner or "Unknown",
-                created_at=folder.created_at,
-                id=str(folder.id),
-            ))
+            activities.append(
+                ActivityResponse(
+                    type="folder",
+                    name=folder.name,
+                    owner=folder.owner or "Unknown",
+                    created_at=folder.created_at,
+                    id=str(folder.id),
+                )
+            )
 
         # Sort by creation time (most recent first) and return top 10
         activities.sort(key=lambda x: x.created_at, reverse=True)
 
         logger.debug(
-            "Retrieved organization activities",
-            extra={
-                "count": len(activities[:10]),
-                "user": org_context.username
-            }
+            "Retrieved organization activities", extra={"count": len(activities[:10]), "user": org_context.username}
         )
 
         return activities[:10]
@@ -193,9 +183,9 @@ async def get_organization_activities(
         logger.error(
             "Unexpected error fetching activities",
             exc_info=True,  # This will log the full traceback
-            extra={"error": str(e), "error_type": type(e).__name__}
+            extra={"error": str(e), "error_type": type(e).__name__},
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Unable to retrieve recent activities. Please try again later."
+            detail="Unable to retrieve recent activities. Please try again later.",
         )

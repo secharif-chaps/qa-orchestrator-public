@@ -35,9 +35,7 @@ class TokenBalanceResponse(BaseModel):
 class AddTokensRequest(BaseModel):
     """Request schema for adding tokens to an organization."""
 
-    amount: int = Field(
-        ..., gt=0, description="Number of tokens to add (must be positive)"
-    )
+    amount: int = Field(..., gt=0, description="Number of tokens to add (must be positive)")
 
     model_config = ConfigDict(
         json_schema_extra={
@@ -61,9 +59,7 @@ class TokenTransactionRead(BaseModel):
     reference_type: ReferenceType = Field(..., description="Reference type")
     reference_id: str | None = Field(None, description="Reference entity ID")
     created_at: datetime = Field(..., description="Transaction timestamp")
-    created_by: str = Field(
-        ..., description="Keycloak user ID who created the transaction"
-    )
+    created_by: str = Field(..., description="Keycloak user ID who created the transaction")
 
     model_config = ConfigDict(
         from_attributes=True,

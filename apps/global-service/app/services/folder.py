@@ -38,7 +38,7 @@ def _user_is_manager(user_roles: list[str]) -> bool:
     Returns:
         True if user is a manager, False otherwise
     """
-    return 'organization.manage' in user_roles or 'admin.organizations' in user_roles
+    return "organization.manage" in user_roles or "admin.organizations" in user_roles
 
 
 class FolderService:
@@ -48,11 +48,7 @@ class FolderService:
 
     @staticmethod
     async def create_folder(
-        db: AsyncSession,
-        organization_id: str,
-        owner_id: str,
-        owner_username: str,
-        folder_data: FolderCreate
+        db: AsyncSession, organization_id: str, owner_id: str, owner_username: str, folder_data: FolderCreate
     ) -> Folder:
         """Create a new folder.
 
@@ -73,7 +69,7 @@ class FolderService:
             name=folder_data.name,
             color=folder_data.color,
             icon=folder_data.icon,
-            tags=folder_data.tags or []
+            tags=folder_data.tags or [],
         )
         db.add(folder)
         await db.commit()
@@ -82,10 +78,7 @@ class FolderService:
 
     @staticmethod
     async def get_folder(
-        db: AsyncSession,
-        folder_id: UUID,
-        organization_id: str,
-        include_deleted: bool = False
+        db: AsyncSession, folder_id: UUID, organization_id: str, include_deleted: bool = False
     ) -> Folder | None:
         """Get a folder by ID.
 
@@ -98,10 +91,7 @@ class FolderService:
         Returns:
             Folder instance if found, None otherwise
         """
-        stmt = select(Folder).where(
-            Folder.id == folder_id,
-            Folder.organization_id == organization_id
-        )
+        stmt = select(Folder).where(Folder.id == folder_id, Folder.organization_id == organization_id)
 
         if not include_deleted:
             stmt = stmt.where(Folder.is_deleted.is_(False))
@@ -124,9 +114,11 @@ class FolderService:
 
         Enriches company items with details from the backend API.
         """
-        stmt = select(FolderItem).where(
-            FolderItem.folder_id == folder_id
-        ).order_by(FolderItem.position.nullsfirst(), FolderItem.added_at)
+        stmt = (
+            select(FolderItem)
+            .where(FolderItem.folder_id == folder_id)
+            .order_by(FolderItem.position.nullsfirst(), FolderItem.added_at)
+        )
 
         result = await db.execute(stmt)
         folder_items = result.scalars().all()
@@ -173,17 +165,19 @@ class FolderService:
                 if company.is_deleted != item_archived_filter:
                     continue
 
-                items.append({
-                    'id': str(item.item_id),
-                    'type': item.item_type.value,
-                    'position': item.position,
-                    'added_at': item.added_at.isoformat() if item.added_at else None,
-                    'name': company.name,
-                    'website': company.website,
-                    'created_at': company.created_at,
-                    'owner': company.owner_username or 'Unknown',
-                    'is_deleted': company.is_deleted,
-                })
+                items.append(
+                    {
+                        "id": str(item.item_id),
+                        "type": item.item_type.value,
+                        "position": item.position,
+                        "added_at": item.added_at.isoformat() if item.added_at else None,
+                        "name": company.name,
+                        "website": company.website,
+                        "created_at": company.created_at,
+                        "owner": company.owner_username or "Unknown",
+                        "is_deleted": company.is_deleted,
+                    }
+                )
             # Add support for other item types (watchfile, explore) here in the future
 
         return items
@@ -217,17 +211,17 @@ class FolderService:
         )
 
         return {
-            'id': str(folder.id),
-            'name': folder.name,
-            'color': folder.color,
-            'icon': folder.icon,
-            'tags': folder.tags,
-            'is_deleted': folder.is_deleted,
-            'created_at': folder.created_at.isoformat() if folder.created_at else None,
-            'updated_at': folder.updated_at.isoformat() if folder.updated_at else None,
-            'owner': folder.owner,
-            'organization_id': folder.organization_id,
-            'items': items
+            "id": str(folder.id),
+            "name": folder.name,
+            "color": folder.color,
+            "icon": folder.icon,
+            "tags": folder.tags,
+            "is_deleted": folder.is_deleted,
+            "created_at": folder.created_at.isoformat() if folder.created_at else None,
+            "updated_at": folder.updated_at.isoformat() if folder.updated_at else None,
+            "owner": folder.owner,
+            "organization_id": folder.organization_id,
+            "items": items,
             # Note: is_favorite is computed per-user and added by the endpoint
         }
 
@@ -271,25 +265,17 @@ class FolderService:
         # Fallback: match by owner (username) if owner_id is NULL (legacy data)
         ownership_conditions = [Folder.owner_id == user_id]
         if username:
-            ownership_conditions.append(
-                and_(Folder.owner_id.is_(None), Folder.owner == username)
-            )
+            ownership_conditions.append(and_(Folder.owner_id.is_(None), Folder.owner == username))
 
         # Build base filter conditions
         base_conditions = [
             Folder.organization_id == organization_id,
-            or_(
-                *ownership_conditions,
-                FolderShare.user_id == user_id
-            )
+            or_(*ownership_conditions, FolderShare.user_id == user_id),
         ]
 
         # Build base query with ownership OR sharing filter
         # This uses a LEFT JOIN with folder_shares to include both owned and shared folders
-        stmt = select(Folder).outerjoin(
-            FolderShare,
-            FolderShare.folder_id == Folder.id
-        ).where(*base_conditions)
+        stmt = select(Folder).outerjoin(FolderShare, FolderShare.folder_id == Folder.id).where(*base_conditions)
 
         # Apply archived filter
         if archived:
@@ -303,7 +289,7 @@ class FolderService:
         if favorites_only:
             stmt = stmt.join(
                 UserFolderFavorite,
-                (UserFolderFavorite.folder_id == Folder.id) & (UserFolderFavorite.user_id == user_id)
+                (UserFolderFavorite.folder_id == Folder.id) & (UserFolderFavorite.user_id == user_id),
             )
 
         stmt = stmt.distinct()
@@ -357,9 +343,7 @@ class FolderService:
             f"archived: {archived}, favorites_only: {favorites_only}"
         )
 
-        stmt = select(Folder).where(
-            Folder.organization_id == organization_id
-        )
+        stmt = select(Folder).where(Folder.organization_id == organization_id)
 
         stmt = stmt.where(Folder.is_deleted.is_(True)) if archived else stmt.where(Folder.is_deleted.is_(False))
 
@@ -368,7 +352,7 @@ class FolderService:
                 raise ValueError("user_id is required when favorites_only=True")
             stmt = stmt.join(
                 UserFolderFavorite,
-                (UserFolderFavorite.folder_id == Folder.id) & (UserFolderFavorite.user_id == user_id)
+                (UserFolderFavorite.folder_id == Folder.id) & (UserFolderFavorite.user_id == user_id),
             )
 
         # Count total before pagination
@@ -387,11 +371,7 @@ class FolderService:
         return list(folders), total
 
     @staticmethod
-    async def update_folder(
-        db: AsyncSession,
-        folder: Folder,
-        folder_update: FolderUpdate
-    ) -> Folder:
+    async def update_folder(db: AsyncSession, folder: Folder, folder_update: FolderUpdate) -> Folder:
         """Update a folder."""
         update_data = folder_update.model_dump(exclude_unset=True)
 
@@ -404,10 +384,7 @@ class FolderService:
         return folder
 
     @staticmethod
-    async def soft_delete_folder(
-        db: AsyncSession,
-        folder: Folder
-    ) -> Folder:
+    async def soft_delete_folder(db: AsyncSession, folder: Folder) -> Folder:
         """Soft delete a folder."""
         folder.is_deleted = True
         folder.updated_at = datetime.now(UTC)
@@ -416,10 +393,7 @@ class FolderService:
         return folder
 
     @staticmethod
-    async def restore_folder(
-        db: AsyncSession,
-        folder: Folder
-    ) -> Folder:
+    async def restore_folder(db: AsyncSession, folder: Folder) -> Folder:
         """Restore a soft-deleted folder."""
         folder.is_deleted = False
         folder.updated_at = datetime.now(UTC)
@@ -431,20 +405,13 @@ class FolderService:
 
     @staticmethod
     async def add_item_to_folder(
-        db: AsyncSession,
-        folder_id: UUID,
-        item_id: str,
-        item_type: str,
-        owner: str,
-        position: int | None = None
+        db: AsyncSession, folder_id: UUID, item_id: str, item_type: str, owner: str, position: int | None = None
     ) -> FolderItem:
         """Add an item to a folder."""
         try:
             # Check if item already exists in folder
             stmt = select(FolderItem).where(
-                FolderItem.folder_id == folder_id,
-                FolderItem.item_id == item_id,
-                FolderItem.item_type == item_type
+                FolderItem.folder_id == folder_id, FolderItem.item_id == item_id, FolderItem.item_type == item_type
             )
             result = await db.execute(stmt)
             existing = result.scalars().first()
@@ -464,11 +431,7 @@ class FolderService:
             )
 
             folder_item = FolderItem(
-                folder_id=folder_id,
-                item_id=item_id,
-                item_type=item_type,
-                owner=owner,
-                position=position
+                folder_id=folder_id, item_id=item_id, item_type=item_type, owner=owner, position=position
             )
             db.add(folder_item)
             await db.commit()
@@ -482,17 +445,10 @@ class FolderService:
             raise
 
     @staticmethod
-    async def remove_item_from_folder(
-        db: AsyncSession,
-        folder_id: UUID,
-        item_id: str,
-        item_type: str
-    ) -> bool:
+    async def remove_item_from_folder(db: AsyncSession, folder_id: UUID, item_id: str, item_type: str) -> bool:
         """Remove an item from a folder."""
         stmt = select(FolderItem).where(
-            FolderItem.folder_id == folder_id,
-            FolderItem.item_id == item_id,
-            FolderItem.item_type == item_type
+            FolderItem.folder_id == folder_id, FolderItem.item_id == item_id, FolderItem.item_type == item_type
         )
         result = await db.execute(stmt)
         folder_item = result.scalars().first()
@@ -511,7 +467,7 @@ class FolderService:
         item_id: str,
         item_type: str,
         destination_folder_id: UUID,
-        organization_id: str
+        organization_id: str,
     ) -> FolderItem | None:
         """Update the folder_id of an item (move it to a different folder).
 
@@ -531,24 +487,20 @@ class FolderService:
         """
         # Find the folder item
         stmt = select(FolderItem).where(
-            FolderItem.folder_id == folder_id,
-            FolderItem.item_id == item_id,
-            FolderItem.item_type == item_type
+            FolderItem.folder_id == folder_id, FolderItem.item_id == item_id, FolderItem.item_type == item_type
         )
         result = await db.execute(stmt)
         folder_item = result.scalars().first()
 
         if not folder_item:
-            logger.warning(
-                f"Item not found in folder - item_id: {item_id}, folder_id: {folder_id}"
-            )
+            logger.warning(f"Item not found in folder - item_id: {item_id}, folder_id: {folder_id}")
             return None
 
         # Check if item already exists in destination folder
         stmt = select(FolderItem).where(
             FolderItem.folder_id == destination_folder_id,
             FolderItem.item_id == item_id,
-            FolderItem.item_type == item_type
+            FolderItem.item_type == item_type,
         )
         result = await db.execute(stmt)
         existing_in_destination = result.scalars().first()
@@ -577,10 +529,7 @@ class FolderService:
 
     @staticmethod
     async def get_folders_for_item(
-        db: AsyncSession,
-        item_id: str,
-        item_type: str,
-        organization_id: str
+        db: AsyncSession, item_id: str, item_type: str, organization_id: str
     ) -> list[Folder]:
         """Get all folders containing a specific item.
 
@@ -618,11 +567,7 @@ class FolderService:
 
     @staticmethod
     async def share_folder(
-        db: AsyncSession,
-        folder_id: UUID,
-        user_id: str,
-        user_username: str,
-        role: ShareRole
+        db: AsyncSession, folder_id: UUID, user_id: str, user_username: str, role: ShareRole
     ) -> FolderShare:
         """Share a folder with a user.
 
@@ -644,41 +589,25 @@ class FolderService:
         """
 
         # Check for existing share
-        stmt = select(FolderShare).where(
-            FolderShare.folder_id == folder_id,
-            FolderShare.user_id == user_id
-        )
+        stmt = select(FolderShare).where(FolderShare.folder_id == folder_id, FolderShare.user_id == user_id)
         result = await db.execute(stmt)
         existing = result.scalars().first()
 
         if existing:
-            logger.warning(
-                f"Share already exists for folder {folder_id} and user {user_id}"
-            )
+            logger.warning(f"Share already exists for folder {folder_id} and user {user_id}")
             raise ValueError(f"Folder is already shared with user {user_username}")
 
         # Create new share
-        share = FolderShare(
-            folder_id=folder_id,
-            user_id=user_id,
-            user_username=user_username,
-            role=role
-        )
+        share = FolderShare(folder_id=folder_id, user_id=user_id, user_username=user_username, role=role)
         db.add(share)
         await db.commit()
         await db.refresh(share)
 
-        logger.info(
-            f"Created folder share: folder={folder_id}, user={user_id}, role={role.value}"
-        )
+        logger.info(f"Created folder share: folder={folder_id}, user={user_id}, role={role.value}")
         return share
 
     @staticmethod
-    async def unshare_folder(
-        db: AsyncSession,
-        folder_id: UUID,
-        user_id: str
-    ) -> bool:
+    async def unshare_folder(db: AsyncSession, folder_id: UUID, user_id: str) -> bool:
         """Remove a user's access to a folder.
 
         Args:
@@ -690,10 +619,7 @@ class FolderService:
             True if share was removed, False if no share existed
         """
 
-        stmt = select(FolderShare).where(
-            FolderShare.folder_id == folder_id,
-            FolderShare.user_id == user_id
-        )
+        stmt = select(FolderShare).where(FolderShare.folder_id == folder_id, FolderShare.user_id == user_id)
         result = await db.execute(stmt)
         share = result.scalars().first()
 
@@ -708,10 +634,7 @@ class FolderService:
         return True
 
     @staticmethod
-    async def get_folder_shares(
-        db: AsyncSession,
-        folder_id: UUID
-    ) -> list[FolderShare]:
+    async def get_folder_shares(db: AsyncSession, folder_id: UUID) -> list[FolderShare]:
         """Get all shares for a folder.
 
         Args:
@@ -721,20 +644,13 @@ class FolderService:
         Returns:
             List of FolderShare instances for the folder
         """
-        stmt = select(FolderShare).where(
-            FolderShare.folder_id == folder_id
-        ).order_by(FolderShare.created_at.desc())
+        stmt = select(FolderShare).where(FolderShare.folder_id == folder_id).order_by(FolderShare.created_at.desc())
 
         result = await db.execute(stmt)
         return list(result.scalars().all())
 
     @staticmethod
-    async def update_share_role(
-        db: AsyncSession,
-        folder_id: UUID,
-        user_id: str,
-        role: ShareRole
-    ) -> FolderShare | None:
+    async def update_share_role(db: AsyncSession, folder_id: UUID, user_id: str, role: ShareRole) -> FolderShare | None:
         """Update a user's share role for a folder.
 
         Args:
@@ -747,10 +663,7 @@ class FolderService:
             Updated FolderShare instance, or None if no share exists
         """
 
-        stmt = select(FolderShare).where(
-            FolderShare.folder_id == folder_id,
-            FolderShare.user_id == user_id
-        )
+        stmt = select(FolderShare).where(FolderShare.folder_id == folder_id, FolderShare.user_id == user_id)
         result = await db.execute(stmt)
         share = result.scalars().first()
 
@@ -778,7 +691,7 @@ class FolderService:
         user_id: str,
         organization_id: str,
         username: str | None = None,
-        user_roles: list[str] | None = None
+        user_roles: list[str] | None = None,
     ) -> bool:
         """Check if a user has access to a folder.
 
@@ -802,10 +715,7 @@ class FolderService:
         """
 
         # First check if folder exists in the organization
-        stmt = select(Folder).where(
-            Folder.id == folder_id,
-            Folder.organization_id == organization_id
-        )
+        stmt = select(Folder).where(Folder.id == folder_id, Folder.organization_id == organization_id)
         result = await db.execute(stmt)
         folder = result.scalars().first()
 
@@ -831,21 +741,14 @@ class FolderService:
             return True
 
         # Check if user has a share
-        stmt = select(FolderShare).where(
-            FolderShare.folder_id == folder_id,
-            FolderShare.user_id == user_id
-        )
+        stmt = select(FolderShare).where(FolderShare.folder_id == folder_id, FolderShare.user_id == user_id)
         result = await db.execute(stmt)
         share = result.scalars().first()
 
         return share is not None
 
     @staticmethod
-    async def get_user_folder_role(
-        db: AsyncSession,
-        folder_id: UUID,
-        user_id: str
-    ) -> str | None:
+    async def get_user_folder_role(db: AsyncSession, folder_id: UUID, user_id: str) -> str | None:
         """Get a user's role for a folder.
 
         Args:
@@ -870,10 +773,7 @@ class FolderService:
         if folder.owner_id == user_id:
             return "owner"
 
-        stmt = select(FolderShare).where(
-            FolderShare.folder_id == folder_id,
-            FolderShare.user_id == user_id
-        )
+        stmt = select(FolderShare).where(FolderShare.folder_id == folder_id, FolderShare.user_id == user_id)
         result = await db.execute(stmt)
         share = result.scalars().first()
 
@@ -883,11 +783,7 @@ class FolderService:
         return share.role.value  # Returns 'reader' or 'writer'
 
     @staticmethod
-    async def is_folder_owner(
-        db: AsyncSession,
-        folder_id: UUID,
-        user_id: str
-    ) -> bool:
+    async def is_folder_owner(db: AsyncSession, folder_id: UUID, user_id: str) -> bool:
         """Check if a user is the owner of a folder.
 
         Args:
@@ -898,20 +794,14 @@ class FolderService:
         Returns:
             True if user is the folder owner, False otherwise
         """
-        stmt = select(Folder).where(
-            Folder.id == folder_id,
-            Folder.owner_id == user_id
-        )
+        stmt = select(Folder).where(Folder.id == folder_id, Folder.owner_id == user_id)
         result = await db.execute(stmt)
         return result.scalars().first() is not None
 
     # ==================== Orphaned Folder Methods ====================
 
     @staticmethod
-    async def flag_folder_orphaned(
-        db: AsyncSession,
-        folder_id: UUID
-    ) -> bool:
+    async def flag_folder_orphaned(db: AsyncSession, folder_id: UUID) -> bool:
         """Flag a folder as orphaned.
 
         Used when a folder owner leaves the organization or is disabled.
@@ -943,11 +833,7 @@ class FolderService:
     # ==================== User Favorites Methods ====================
 
     @staticmethod
-    async def add_favorite(
-        db: AsyncSession,
-        folder_id: UUID,
-        user_id: str
-    ) -> bool:
+    async def add_favorite(db: AsyncSession, folder_id: UUID, user_id: str) -> bool:
         """Add a folder to user's favorites.
 
         Returns:
@@ -955,8 +841,7 @@ class FolderService:
         """
         # Check if already favorited
         stmt = select(UserFolderFavorite).where(
-            UserFolderFavorite.folder_id == folder_id,
-            UserFolderFavorite.user_id == user_id
+            UserFolderFavorite.folder_id == folder_id, UserFolderFavorite.user_id == user_id
         )
         result = await db.execute(stmt)
         existing = result.scalars().first()
@@ -964,28 +849,20 @@ class FolderService:
         if existing:
             return False
 
-        favorite = UserFolderFavorite(
-            folder_id=folder_id,
-            user_id=user_id
-        )
+        favorite = UserFolderFavorite(folder_id=folder_id, user_id=user_id)
         db.add(favorite)
         await db.commit()
         return True
 
     @staticmethod
-    async def remove_favorite(
-        db: AsyncSession,
-        folder_id: UUID,
-        user_id: str
-    ) -> bool:
+    async def remove_favorite(db: AsyncSession, folder_id: UUID, user_id: str) -> bool:
         """Remove a folder from user's favorites.
 
         Returns:
             True if favorite was removed, False if not favorited
         """
         stmt = select(UserFolderFavorite).where(
-            UserFolderFavorite.folder_id == folder_id,
-            UserFolderFavorite.user_id == user_id
+            UserFolderFavorite.folder_id == folder_id, UserFolderFavorite.user_id == user_id
         )
         result = await db.execute(stmt)
         favorite = result.scalars().first()
@@ -998,37 +875,30 @@ class FolderService:
         return True
 
     @staticmethod
-    async def is_favorite(
-        db: AsyncSession,
-        folder_id: UUID,
-        user_id: str
-    ) -> bool:
+    async def is_favorite(db: AsyncSession, folder_id: UUID, user_id: str) -> bool:
         """Check if a folder is favorited by a user."""
         stmt = select(UserFolderFavorite).where(
-            UserFolderFavorite.folder_id == folder_id,
-            UserFolderFavorite.user_id == user_id
+            UserFolderFavorite.folder_id == folder_id, UserFolderFavorite.user_id == user_id
         )
         result = await db.execute(stmt)
         return result.scalars().first() is not None
 
     @staticmethod
-    async def get_user_favorite_folder_ids(
-        db: AsyncSession,
-        user_id: str,
-        organization_id: str
-    ) -> set[UUID]:
+    async def get_user_favorite_folder_ids(db: AsyncSession, user_id: str, organization_id: str) -> set[UUID]:
         """Get all folder IDs favorited by a user in an organization."""
         """Get all folder IDs favorited by a user in an organization.
 
         Returns:
             Set of folder UUIDs that the user has favorited
         """
-        stmt = select(UserFolderFavorite.folder_id).join(
-            Folder, UserFolderFavorite.folder_id == Folder.id
-        ).where(
-            UserFolderFavorite.user_id == user_id,
-            Folder.organization_id == organization_id,
-            Folder.is_deleted.is_(False)
+        stmt = (
+            select(UserFolderFavorite.folder_id)
+            .join(Folder, UserFolderFavorite.folder_id == Folder.id)
+            .where(
+                UserFolderFavorite.user_id == user_id,
+                Folder.organization_id == organization_id,
+                Folder.is_deleted.is_(False),
+            )
         )
         result = await db.execute(stmt)
         return {row[0] for row in result.all()}
@@ -1042,7 +912,7 @@ class FolderService:
         user_id: str,
         organization_id: str,
         username: str | None = None,
-        user_roles: list[str] | None = None
+        user_roles: list[str] | None = None,
     ) -> bool:
         """Check if a user has access to a company via folder sharing.
 
@@ -1065,12 +935,14 @@ class FolderService:
         # Managers have access to ALL companies in their organization
         if user_roles and _user_is_manager(user_roles):
             # Check if the company exists in any folder of the organization
-            stmt = select(FolderItem).join(
-                Folder, FolderItem.folder_id == Folder.id
-            ).where(
-                FolderItem.item_id == str(company_id),
-                FolderItem.item_type == 'company',
-                Folder.organization_id == organization_id,
+            stmt = (
+                select(FolderItem)
+                .join(Folder, FolderItem.folder_id == Folder.id)
+                .where(
+                    FolderItem.item_id == str(company_id),
+                    FolderItem.item_type == "company",
+                    Folder.organization_id == organization_id,
+                )
             )
             result = await db.execute(stmt)
             if result.scalars().first():
@@ -1079,37 +951,32 @@ class FolderService:
             return False
 
         # Find all folders containing this company in the organization
-        stmt = select(FolderItem).join(
-            Folder, FolderItem.folder_id == Folder.id
-        ).where(
-            FolderItem.item_id == str(company_id),
-            FolderItem.item_type == 'company',
-            Folder.organization_id == organization_id,
-            Folder.is_deleted.is_(False)
+        stmt = (
+            select(FolderItem)
+            .join(Folder, FolderItem.folder_id == Folder.id)
+            .where(
+                FolderItem.item_id == str(company_id),
+                FolderItem.item_type == "company",
+                Folder.organization_id == organization_id,
+                Folder.is_deleted.is_(False),
+            )
         )
         result = await db.execute(stmt)
         folder_items = result.scalars().all()
 
         if not folder_items:
-            logger.debug(
-                f"Company {company_id} not found in any folder in organization {organization_id}"
-            )
+            logger.debug(f"Company {company_id} not found in any folder in organization {organization_id}")
             return False
 
         for folder_item in folder_items:
             folder_id = folder_item.folder_id
             if await FolderService.has_folder_access(
-                db, folder_id, user_id, organization_id,
-                username=username, user_roles=user_roles
+                db, folder_id, user_id, organization_id, username=username, user_roles=user_roles
             ):
-                logger.debug(
-                    f"User {user_id} has access to company {company_id} via folder {folder_id}"
-                )
+                logger.debug(f"User {user_id} has access to company {company_id} via folder {folder_id}")
                 return True
 
-        logger.debug(
-            f"User {user_id} does not have access to company {company_id}"
-        )
+        logger.debug(f"User {user_id} does not have access to company {company_id}")
         return False
 
     @staticmethod
@@ -1135,9 +1002,7 @@ class FolderService:
         """
         ownership_conditions = [Folder.owner_id == user_id]
         if username:
-            ownership_conditions.append(
-                and_(Folder.owner_id.is_(None), Folder.owner == username)
-            )
+            ownership_conditions.append(and_(Folder.owner_id.is_(None), Folder.owner == username))
 
         stmt = (
             select(Folder.id)
@@ -1155,10 +1020,7 @@ class FolderService:
 
     @staticmethod
     async def get_accessible_company_ids(
-        db: AsyncSession,
-        user_id: str,
-        organization_id: str,
-        username: str | None = None
+        db: AsyncSession, user_id: str, organization_id: str, username: str | None = None
     ) -> set[int]:
         """Get all company IDs that a user can access via folder sharing.
 
@@ -1186,10 +1048,7 @@ class FolderService:
             return set()
 
         # Get all company IDs from these folders
-        stmt = select(FolderItem.item_id).where(
-            FolderItem.folder_id.in_(folder_ids),
-            FolderItem.item_type == 'company'
-        )
+        stmt = select(FolderItem.item_id).where(FolderItem.folder_id.in_(folder_ids), FolderItem.item_type == "company")
         result = await db.execute(stmt)
 
         company_ids = set()
@@ -1199,9 +1058,6 @@ class FolderService:
             except (ValueError, TypeError):
                 continue
 
-        logger.debug(
-            f"User {user_id} has access to {len(company_ids)} companies "
-            f"via {len(folder_ids)} folders"
-        )
+        logger.debug(f"User {user_id} has access to {len(company_ids)} companies via {len(folder_ids)} folders")
 
         return company_ids

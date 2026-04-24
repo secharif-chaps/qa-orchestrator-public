@@ -4,7 +4,6 @@ During the migration period, company data still lives in mint_db.
 This client calls the backend API to enrich folder items with company details.
 """
 
-
 import httpx
 from pydantic import BaseModel
 
@@ -17,6 +16,7 @@ logger = get_logger(__name__)
 
 class CompanyInfo(BaseModel):
     """Minimal company info for folder item enrichment."""
+
     id: int
     name: str
     website: str | None = None
@@ -115,15 +115,9 @@ async def get_companies_by_ids(
                 elif response.status_code == 404:
                     logger.debug(f"Company {company_id} not found on backend")
                 else:
-                    logger.warning(
-                        f"Backend returned {response.status_code} for company {company_id}"
-                    )
+                    logger.warning(f"Backend returned {response.status_code} for company {company_id}")
             except httpx.RequestError as e:
-                logger.error(
-                    f"Failed to fetch company {company_id} from backend: {e}"
-                )
+                logger.error(f"Failed to fetch company {company_id} from backend: {e}")
 
-    logger.debug(
-        f"Fetched {len(result)}/{len(company_ids)} companies from backend"
-    )
+    logger.debug(f"Fetched {len(result)}/{len(company_ids)} companies from backend")
     return result

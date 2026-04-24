@@ -6,7 +6,6 @@ abstracting individual Keycloak roles into permission tiers.
 Ported from the backend monolith (back/app/schemas/team.py).
 """
 
-
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.core.permissions import PermissionTier

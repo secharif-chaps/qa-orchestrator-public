@@ -115,9 +115,7 @@ async def add_organization_tokens(
         examples=["550e8400-e29b-41d4-a716-446655440000"],
     ),
     request: AddTokensRequest = ...,
-    user: OIDCUser = Depends(
-        idp.get_current_user(required_roles=["admin.organizations"])
-    ),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
     token_manager: TokenManager = Depends(get_token_manager),
 ) -> TokenBalanceResponse:
     """Add tokens to an organization's balance.
@@ -173,18 +171,10 @@ async def get_transaction_history(
         description="Organization UUID",
         examples=["550e8400-e29b-41d4-a716-446655440000"],
     ),
-    transaction_type: TransactionType | None = Query(
-        None, description="Filter by transaction type"
-    ),
-    reference_type: ReferenceType | None = Query(
-        None, description="Filter by reference type"
-    ),
-    date_from: datetime | None = Query(
-        None, description="Filter transactions after this date"
-    ),
-    date_to: datetime | None = Query(
-        None, description="Filter transactions before this date"
-    ),
+    transaction_type: TransactionType | None = Query(None, description="Filter by transaction type"),
+    reference_type: ReferenceType | None = Query(None, description="Filter by reference type"),
+    date_from: datetime | None = Query(None, description="Filter transactions after this date"),
+    date_to: datetime | None = Query(None, description="Filter transactions before this date"),
     page: int = Query(1, ge=1, description="Page number"),
     size: int = Query(50, ge=1, le=100, description="Page size"),
     org_context: OrganizationContext = Depends(get_user_organization),
