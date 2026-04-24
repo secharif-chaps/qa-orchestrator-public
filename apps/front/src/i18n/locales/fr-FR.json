@@ -1934,15 +1934,11 @@
           "viewAll": "Voir tout"
         },
         "press": {
+          "activities": {
+            "title": "Activités et source"
+          },
           "categories": {
-            "articles": "Articles",
-            "awardsRecognition": "Prix et reconnaissances",
-            "executiveInterviews": "Interviews de dirigeants",
-            "financialNews": "Actualités financières",
-            "mediaMentions": "Mentions médiatiques",
-            "partnershipAnnouncements": "Annonces de partenariats",
-            "pressReleases": "Communiqués de presse",
-            "productLaunches": "Lancements de produits"
+            "categoryLabel": "{category, select, financial_news {Actualités financières} press_releases {Communiqués de presse} product_launches {Lancements de produits} executive_interviews {Interviews de dirigeants} media_mentions {Mentions médiatiques} articles {Articles} partnership_announcements {Annonces de partenariats} awards_recognition {Prix et reconnaissances} other {Autre}}"
           },
           "insights": {
             "title": "Aperçu de la Couverture Presse"

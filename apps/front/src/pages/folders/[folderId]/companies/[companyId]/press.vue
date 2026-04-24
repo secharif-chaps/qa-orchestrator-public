@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="text-neutral-black-font gap-xl flex flex-col">
     <!-- Loading State -->
     <SectionLoadingState
       v-if="company && (task?.status === 'pending' || task?.status === 'running')"
@@ -10,224 +10,59 @@
 
     <!-- No Data State -->
     <NoData v-else-if="!hasAnyPressData">
-      <p class="text-neutral-black-font text-lg font-medium">
+      <p class="text-lg font-medium">
         {{ $t('screen.profile.sections.press.noData') }}
       </p>
     </NoData>
 
     <!-- Main Content -->
-    <div v-else class="mx-auto">
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div v-if="company?.press?.insights" class="lg:col-span-3">
-          <ChapseAlert variant="mage" :title="$t('screen.profile.sections.press.insights.title')">
-            {{ company.press.insights }}
-          </ChapseAlert>
+    <template v-else>
+      <!-- Insights block -->
+      <ChapseAlert
+        v-if="company?.press?.insights"
+        variant="mage"
+        :title="$t('screen.profile.sections.press.insights.title')"
+      >
+        {{ company.press.insights }}
+      </ChapseAlert>
+
+      <!-- Activités et source -->
+      <SectionCard>
+        <template #header>
+          <SectionTitle :title="$t('screen.profile.sections.press.activities.title')" />
+        </template>
+        <div class="gap-2xs flex flex-col">
+          <PressItemCard
+            v-for="(item, index) in allPressItems"
+            :key="`${item.category}-${index}`"
+            :item
+          />
+          <NoData v-if="!allPressItems.length">
+            <p class="text-lg font-medium">
+              {{ $t('screen.profile.sections.press.noData') }}
+            </p>
+          </NoData>
         </div>
-        <!-- Main Content Area -->
-        <div class="space-y-6 lg:col-span-2">
-          <!-- Press Insights -->
+      </SectionCard>
 
-          <!-- Financial News -->
-          <div v-if="company?.press?.financial_news?.length" class="rounded-sm bg-white p-6">
-            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-xl font-semibold">
-              <i class="fa fa-chart-line"></i>
-              {{ $t('screen.profile.sections.press.categories.financialNews') }}
-            </h2>
-            <div class="space-y-3">
-              <div
-                v-for="(item, index) in company.press.financial_news"
-                :key="index"
-                class="bg-primary-lightest hover:bg-primary-lightest/80 rounded-sm p-4 transition-colors"
-              >
-                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
-                <Source :source="item.source" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Product Launches -->
-          <div v-if="company?.press?.product_launches?.length" class="rounded-sm bg-white p-6">
-            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-xl font-semibold">
-              <i class="fa fa-rocket"></i>
-              {{ $t('screen.profile.sections.press.categories.productLaunches') }}
-            </h2>
-            <div class="space-y-3">
-              <div
-                v-for="(item, index) in company.press.product_launches"
-                :key="index"
-                class="bg-primary-lightest hover:bg-primary-lightest/80 rounded-sm p-4 transition-colors"
-              >
-                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
-                <Source :source="item.source" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Executive Interviews -->
-          <div v-if="company?.press?.executive_interviews?.length" class="rounded-sm bg-white p-6">
-            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-xl font-semibold">
-              <i class="fa fa-microphone"></i>
-              {{ $t('screen.profile.sections.press.categories.executiveInterviews') }}
-            </h2>
-            <div class="space-y-3">
-              <div
-                v-for="(item, index) in company.press.executive_interviews"
-                :key="index"
-                class="bg-primary-lightest hover:bg-primary-lightest/80 rounded-sm p-4 transition-colors"
-              >
-                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
-                <Source :source="item.source" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Media Mentions -->
-          <div v-if="company?.press?.media_mentions?.length" class="rounded-sm bg-white p-6">
-            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-xl font-semibold">
-              <i class="fa fa-newspaper"></i>
-              {{ $t('screen.profile.sections.press.categories.mediaMentions') }}
-            </h2>
-            <div class="space-y-3">
-              <div
-                v-for="(item, index) in company.press.media_mentions"
-                :key="index"
-                class="bg-primary-lightest hover:bg-primary-lightest/80 rounded-sm p-4 transition-colors"
-              >
-                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
-                <Source :source="item.source" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Press Releases -->
-          <div v-if="company?.press?.press_releases?.length" class="rounded-sm bg-white p-6">
-            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-xl font-semibold">
-              <i class="fa fa-file-alt"></i>
-              {{ $t('screen.profile.sections.press.categories.pressReleases') }}
-            </h2>
-            <div class="space-y-3">
-              <div
-                v-for="(item, index) in company.press.press_releases"
-                :key="index"
-                class="bg-primary-lightest hover:bg-primary-lightest/80 rounded-sm p-4 transition-colors"
-              >
-                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
-                <Source :source="item.source" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Articles (backward compatibility) -->
-          <div v-if="company?.press?.articles?.length" class="rounded-sm bg-white p-6">
-            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-xl font-semibold">
-              <i class="fa fa-newspaper"></i>
-              {{ $t('screen.profile.sections.press.categories.articles') }}
-            </h2>
-            <div class="space-y-3">
-              <div
-                v-for="(item, index) in company.press.articles"
-                :key="index"
-                class="bg-primary-lightest hover:bg-primary-lightest/80 rounded-sm p-4 transition-colors"
-              >
-                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
-                <Source :source="item.source" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sidebar -->
-        <div class="space-y-6 lg:col-span-1">
-          <!-- Partnership Announcements -->
-          <div
-            v-if="company?.press?.partnership_announcements?.length"
-            class="rounded-sm bg-white p-6"
+      <!-- Statistiques de couverture presse -->
+      <div class="gap-md flex flex-col">
+        <SectionTitle :title="$t('screen.profile.sections.press.stats.title')" />
+        <div class="gap-2xs grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <Alert
+            v-for="stat in pressStats"
+            :key="stat.key"
+            :title="
+              t('screen.profile.sections.press.categories.categoryLabel', { category: stat.key })
+            "
           >
-            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-lg font-semibold">
-              <i class="fa fa-handshake"></i>
-              {{ $t('screen.profile.sections.press.categories.partnershipAnnouncements') }}
-            </h2>
-            <div class="space-y-3">
-              <div
-                v-for="(item, index) in company.press.partnership_announcements"
-                :key="index"
-                class="bg-primary-lightest rounded-sm p-3"
-              >
-                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
-                <Source :source="item.source" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Awards & Recognition -->
-          <div v-if="company?.press?.awards_recognition?.length" class="rounded-sm bg-white p-6">
-            <h2 class="text-neutral-black-font mb-4 flex items-center gap-2 text-lg font-semibold">
-              <i class="fa fa-trophy"></i>
-              {{ $t('screen.profile.sections.press.categories.awardsRecognition') }}
-            </h2>
-            <div class="space-y-3">
-              <div
-                v-for="(item, index) in company.press.awards_recognition"
-                :key="index"
-                class="bg-primary-lightest rounded-sm p-3"
-              >
-                <span class="text-neutral-black-font mr-2">{{ item.value }}</span>
-                <Source :source="item.source" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Quick Stats -->
-          <div class="rounded-sm bg-white p-6">
-            <h3 class="text-neutral-black-font mb-4 text-lg font-semibold">
-              {{ $t('screen.profile.sections.press.stats.title') }}
-            </h3>
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-neutral-black-font text-sm">{{
-                  $t('screen.profile.sections.press.categories.financialNews')
-                }}</span>
-                <span class="text-neutral-black-font font-medium">{{
-                  company?.press?.financial_news?.length || 0
-                }}</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-neutral-black-font text-sm">{{
-                  $t('screen.profile.sections.press.categories.productLaunches')
-                }}</span>
-                <span class="text-neutral-black-font font-medium">{{
-                  company?.press?.product_launches?.length || 0
-                }}</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-neutral-black-font text-sm">{{
-                  $t('screen.profile.sections.press.categories.mediaMentions')
-                }}</span>
-                <span class="text-neutral-black-font font-medium">{{
-                  company?.press?.media_mentions?.length || 0
-                }}</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-neutral-black-font text-sm">{{
-                  $t('screen.profile.sections.press.categories.pressReleases')
-                }}</span>
-                <span class="text-neutral-black-font font-medium">{{
-                  company?.press?.press_releases?.length || 0
-                }}</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-neutral-black-font text-sm">{{
-                  $t('screen.profile.sections.press.categories.executiveInterviews')
-                }}</span>
-                <span class="text-neutral-black-font font-medium">{{
-                  company?.press?.executive_interviews?.length || 0
-                }}</span>
-              </div>
-            </div>
-          </div>
+            <template #aside>
+              <span class="text-sm">{{ stat.count }}</span>
+            </template>
+          </Alert>
         </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -240,36 +75,34 @@ meta:
 <script lang="ts" setup>
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
-import Source from '@/components/company/Source.vue'
+import PressItemCard from '@/components/company/press/PressItemCard.vue'
+import Alert from '@/components/ui/Alert.vue'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
 import NoData from '@/components/ui/NoData.vue'
+import SectionCard from '@/components/ui/SectionCard.vue'
+import SectionTitle from '@/components/ui/SectionTitle.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
+import { CATEGORY_CONFIG, type PressItemWithCategory } from '@/types/press'
 import { useQuery } from '@pinia/colada'
 import type { Ref } from 'vue'
 import { computed, inject, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
+const { t } = useI18n()
 const route = useRoute('/folders/[folderId]/companies/[companyId]/press')
 
 const companyId = computed(() => route.params.companyId)
 
-const { data: tasks } = useQuery(() =>
-  companyTasksQuery({
-    companyId: companyId.value,
-  }),
-)
+const { data: tasks } = useQuery(() => companyTasksQuery({ companyId: companyId.value }))
 
-const task = computed(() => tasks.value?.find((t) => t.type === 'press'))
+const task = computed(() => tasks.value?.find((task) => task.type === 'press'))
 const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
 const { data: company } = useQuery(
   // Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
   // No polling needed - cache is invalidated automatically when tasks update.
-  () =>
-    companyByIdQuery({
-      id: companyId.value,
-      language: selectedLanguage.value,
-    }),
+  () => companyByIdQuery({ id: companyId.value, language: selectedLanguage.value }),
 )
 
 const hasAnyPressData = computed(() => {
@@ -288,4 +121,24 @@ const hasAnyPressData = computed(() => {
     (press.partnership_announcements && press.partnership_announcements.length > 0)
   )
 })
+
+const allPressItems = computed<PressItemWithCategory[]>(() => {
+  const press = company.value?.press
+  if (!press) return []
+
+  return Object.keys(CATEGORY_CONFIG).flatMap((key) =>
+    ((press[key as keyof typeof press] as PressItemWithCategory[]) ?? []).map((item) => ({
+      value: item.value,
+      source: item.source,
+      category: key,
+    })),
+  )
+})
+
+const pressStats = computed(() =>
+  Object.keys(CATEGORY_CONFIG).map((key) => ({
+    key,
+    count: company.value?.press?.[key as keyof typeof company.value.press]?.length ?? 0,
+  })),
+)
 </script>
