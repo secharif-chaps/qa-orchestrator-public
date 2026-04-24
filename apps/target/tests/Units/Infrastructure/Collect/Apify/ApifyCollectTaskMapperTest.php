@@ -9,31 +9,39 @@ use App\Domain\Collect\Exception\NotSupportedCollectorException;
 use App\Domain\Source\Source;
 use App\Domain\Source\SourceType;
 use App\Infrastructure\Collect\Apify\ApifyCollectTaskMapper;
+use App\Infrastructure\Collect\Apify\ApifyInputInterpolator;
+use App\Infrastructure\Collect\Apify\ApifyInputTemplateProvider;
 use App\Tests\Utils\Symfony\NullMessageBus;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[CoversClass(ApifyCollectTaskMapper::class)]
 class ApifyCollectTaskMapperTest extends TestCase
 {
     /**
-     * @param array<string, string> $actorMapping
+     * @param array<string, string>               $actorMapping
+     * @param array<string, array<string, mixed>> $inputTemplates
      */
     private function createMapper(
         string $webhookBaseUrl = 'https://example.com',
         string $maxTotalChargeUsd = '0.10',
         array $actorMapping = [],
+        array $inputTemplates = [],
         ?MessageBusInterface $messageBus = null,
         ?LoggerInterface $logger = null,
     ): ApifyCollectTaskMapper {
         $messageBus ??= new NullMessageBus();
+        $logger ??= new NullLogger();
 
         return new ApifyCollectTaskMapper(
             $webhookBaseUrl,
             $maxTotalChargeUsd,
             $actorMapping,
+            new ApifyInputInterpolator(),
+            new ApifyInputTemplateProvider($inputTemplates),
             $messageBus,
             $logger,
         );
@@ -83,7 +91,7 @@ class ApifyCollectTaskMapperTest extends TestCase
         $collectTask = $this->createCollectTask();
         $config = $mapper->mapToActorRun($collectTask);
 
-        $this->assertSame('apify/rss-scraper', $config->actorId);
+        $this->assertSame('apify/rss-scraper', $config->apifyActorId);
     }
 
     public function testMapUnknownSourceTypeThrows(): void
@@ -240,8 +248,8 @@ class ApifyCollectTaskMapperTest extends TestCase
             ->with(
                 $this->stringContains('normalizing for providerTaskId encoding'),
                 $this->callback(function (array $context): bool {
-                    $this->assertSame('foo:bar', $context['actor_id_raw']);
-                    $this->assertSame('foo_bar', $context['actor_id_normalized']);
+                    $this->assertSame('foo:bar', $context['apify_actor_id_raw']);
+                    $this->assertSame('foo_bar', $context['apify_actor_id_normalized']);
 
                     return true;
                 }),
@@ -260,6 +268,6 @@ class ApifyCollectTaskMapperTest extends TestCase
         $config = $mapper->mapToActorRun($collectTask);
 
         // ":" is reserved as providerTaskId separator and must not appear in actorId
-        $this->assertSame('foo_bar', $config->actorId);
+        $this->assertSame('foo_bar', $config->apifyActorId);
     }
 }

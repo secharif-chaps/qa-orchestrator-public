@@ -54,7 +54,7 @@ class ApifyProviderGateway implements ProviderGatewayInterface
             /** @var array<string, mixed> $data */
             $data = $this->apifyClient->request(
                 'POST',
-                \sprintf('/v2/acts/%s/runs', $config->actorId),
+                \sprintf('/v2/acts/%s/runs', $config->apifyActorId),
                 [
                     'json' => $config->input,
                     'query' => $config->queryParams,
@@ -69,7 +69,7 @@ class ApifyProviderGateway implements ProviderGatewayInterface
                     'Failed to create task in Apify: Missing "data.id" in response',
                     [
                         'collect_task_id' => $collectTask->getId(),
-                        'actor_id' => $config->actorId,
+                        'apify_actor_id' => $config->apifyActorId,
                         'response' => $data,
                     ],
                 );
@@ -81,13 +81,13 @@ class ApifyProviderGateway implements ProviderGatewayInterface
             }
 
             $runId = (string) $runData['id'];
-            $ref = new ApifyRunReference($config->actorId, $runId);
+            $ref = new ApifyRunReference($config->apifyActorId, $runId);
             $providerTaskId = $ref->toProviderTaskId();
 
             $this->logger?->info('CollectTask created in Apify', [
                 'collect_task_id' => $collectTask->getId(),
                 'provider_task_id' => $providerTaskId,
-                'actor_id' => $config->actorId,
+                'apify_actor_id' => $config->apifyActorId,
                 'run_id' => $runId,
             ]);
 
@@ -99,7 +99,7 @@ class ApifyProviderGateway implements ProviderGatewayInterface
         } catch (CollectHttpException $e) {
             $this->logger?->error('Failed to create task in Apify', [
                 'collect_task_id' => $collectTask->getId(),
-                'actor_id' => $config->actorId,
+                'apify_actor_id' => $config->apifyActorId,
                 'error' => $e->getMessage(),
                 'status_code' => $e->response->getStatusCode(),
             ]);
@@ -126,7 +126,7 @@ class ApifyProviderGateway implements ProviderGatewayInterface
 
             $this->logger?->info('Task cancelled in Apify', [
                 'provider_task_id' => $taskId,
-                'actor_id' => $ref->actorId,
+                'apify_actor_id' => $ref->apifyActorId,
                 'run_id' => $ref->runId,
             ]);
         } catch (CollectHttpException $e) {
@@ -208,13 +208,13 @@ class ApifyProviderGateway implements ProviderGatewayInterface
         $actorMapping = $this->mapper->getActorMapping();
         $collectors = [];
 
-        foreach ($actorMapping as $sourceTypeValue => $actorId) {
+        foreach ($actorMapping as $sourceTypeValue => $apifyActorId) {
             try {
                 $sourceType = SourceType::from($sourceTypeValue);
             } catch (\ValueError $e) {
                 $this->logger?->warning('Invalid source type in Apify actor mapping', [
                     'source_type' => $sourceTypeValue,
-                    'actor_id' => $actorId,
+                    'apify_actor_id' => $apifyActorId,
                     'error' => $e->getMessage(),
                 ]);
 
@@ -222,12 +222,12 @@ class ApifyProviderGateway implements ProviderGatewayInterface
             }
 
             $collectors[] = new Collector(
-                name: $actorId,
+                name: $apifyActorId,
                 displayName: [
-                    'en' => $actorId,
+                    'en' => $apifyActorId,
                 ],
                 description: [
-                    'en' => \sprintf('Apify actor: %s', $actorId),
+                    'en' => \sprintf('Apify actor: %s', $apifyActorId),
                 ],
                 type: 'apify',
                 version: '1.0.0',

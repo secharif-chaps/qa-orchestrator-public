@@ -14,7 +14,7 @@ readonly class ApifyActorRunConfig
      * @param array<string, mixed> $queryParams Query parameters (webhooks, maxTotalChargeUsd, etc.)
      */
     public function __construct(
-        public string $actorId,
+        public string $apifyActorId,
         public array $input,
         public array $queryParams,
     ) {

@@ -28,10 +28,10 @@ readonly class ApifyNormalizerResolver implements ApifyNormalizerResolverInterfa
 
     public function resolveFor(CollectTask $collectTask): ApifyDocumentNormalizerInterface
     {
-        $actorType = $this->extractActorType($collectTask);
-        if (null !== $actorType) {
+        $apifyActorId = $this->extractApifyActorId($collectTask);
+        if (null !== $apifyActorId) {
             foreach ($this->normalizers as $normalizer) {
-                if ($normalizer->supports($actorType)) {
+                if ($normalizer->supports($apifyActorId)) {
                     return $normalizer;
                 }
             }
@@ -40,7 +40,7 @@ readonly class ApifyNormalizerResolver implements ApifyNormalizerResolverInterfa
         return $this->fallback;
     }
 
-    private function extractActorType(CollectTask $collectTask): ?string
+    private function extractApifyActorId(CollectTask $collectTask): ?string
     {
         $providerTaskId = $collectTask->getProviderTaskId();
         if (null === $providerTaskId || '' === $providerTaskId) {
@@ -48,9 +48,9 @@ readonly class ApifyNormalizerResolver implements ApifyNormalizerResolverInterfa
         }
 
         try {
-            return ApifyRunReference::fromProviderTaskId($providerTaskId)->actorId;
+            return ApifyRunReference::fromProviderTaskId($providerTaskId)->apifyActorId;
         } catch (CollectException) {
-            $this->logger?->warning('Could not parse actor type from providerTaskId, using generic normalizer', [
+            $this->logger?->warning('Could not parse Apify actor ID from providerTaskId, using generic normalizer', [
                 'provider_task_id' => $providerTaskId,
             ]);
 

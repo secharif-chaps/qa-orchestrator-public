@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Infrastructure\Collect\Apify;
 
 use App\Application\Collect\Auth\GenerateCollectTaskTokenAction;
+use App\Domain\Collect\ApifyInputTemplate;
 use App\Domain\Collect\CollectTask;
+use App\Domain\Collect\Exception\ApifyConfigurationException;
 use App\Domain\Collect\Exception\NotSupportedCollectorException;
+use App\Domain\Source\Source;
 use App\Domain\Source\SourceType;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -27,6 +30,8 @@ class ApifyCollectTaskMapper
          */
         #[Autowire('%app.apify.actor_mapping%')]
         private readonly array $actorMapping,
+        private readonly ApifyInputInterpolator $interpolator,
+        private readonly ApifyInputTemplateProvider $templateProvider,
         private MessageBusInterface $messageBus,
         private readonly ?LoggerInterface $logger = null,
     ) {
@@ -36,19 +41,19 @@ class ApifyCollectTaskMapper
     {
         $source = $collectTask->getSource();
         $sourceType = $source->getType();
-        $actorId = $this->resolveActorId($sourceType);
+        $apifyActorId = $this->resolveApifyActorId($sourceType);
 
-        $input = $this->buildInput($collectTask);
-        $queryParams = $this->buildQueryParams($collectTask, $actorId);
+        $input = $this->buildInput($collectTask, $apifyActorId);
+        $queryParams = $this->buildQueryParams($collectTask);
 
-        return new ApifyActorRunConfig(actorId: $actorId, input: $input, queryParams: $queryParams);
+        return new ApifyActorRunConfig(apifyActorId: $apifyActorId, input: $input, queryParams: $queryParams);
     }
 
-    private function resolveActorId(SourceType $sourceType): string
+    private function resolveApifyActorId(SourceType $sourceType): string
     {
-        $actorId = $this->actorMapping[$sourceType->value] ?? null;
+        $apifyActorId = $this->actorMapping[$sourceType->value] ?? null;
 
-        if (null === $actorId) {
+        if (null === $apifyActorId) {
             throw new NotSupportedCollectorException(\sprintf(
                 'No Apify actor configured for source type: %s',
                 $sourceType->value,
@@ -58,31 +63,58 @@ class ApifyCollectTaskMapper
         // The compound providerTaskId uses ":" as a separator (see ApifyRunReference).
         // Apify-issued actor IDs never contain ":", but misconfigured YAML could.
         // Normalize here to guarantee round-trip parsing in fromProviderTaskId().
-        if (str_contains($actorId, ApifyRunReference::SEPARATOR)) {
-            $normalized = str_replace(ApifyRunReference::SEPARATOR, '_', $actorId);
+        if (str_contains($apifyActorId, ApifyRunReference::SEPARATOR)) {
+            $normalized = str_replace(ApifyRunReference::SEPARATOR, '_', $apifyActorId);
             $this->logger?->warning(
-                'Apify actorId contains reserved separator ":"; normalizing for providerTaskId encoding.',
+                'Apify actor ID contains reserved separator ":"; normalizing for providerTaskId encoding.',
                 [
                     'source_type' => $sourceType->value,
-                    'actor_id_raw' => $actorId,
-                    'actor_id_normalized' => $normalized,
+                    'apify_actor_id_raw' => $apifyActorId,
+                    'apify_actor_id_normalized' => $normalized,
                 ],
             );
-            $actorId = $normalized;
+            $apifyActorId = $normalized;
         }
 
-        return $actorId;
+        return $apifyActorId;
     }
 
     /**
      * Build the actor input payload from the collect task source.
      *
+     * Uses input templates for known actors, falls back to legacy input for unknown ones.
+     *
      * @return array<string, mixed>
      */
-    private function buildInput(CollectTask $collectTask): array
+    private function buildInput(CollectTask $collectTask, string $apifyActorId): array
     {
         $source = $collectTask->getSource();
 
+        // Try to get template for this actor
+        $template = $this->templateProvider->getTemplateForActor($apifyActorId);
+
+        if (null === $template) {
+            // Fallback for actors without templates (backward compat)
+            return $this->buildLegacyInput($source);
+        }
+
+        // Interpolate variables from template
+        $sourceConfig = $source->getParameters() ?? [];
+        $input = $this->interpolator->interpolate($template->defaults, $source, $sourceConfig);
+
+        // Validate required fields are present
+        $this->validateInput($input, $template);
+
+        return $input;
+    }
+
+    /**
+     * Legacy input builder for backward compatibility with actors without templates.
+     *
+     * @return array<string, mixed>
+     */
+    private function buildLegacyInput(Source $source): array
+    {
         $input = [
             'url' => $source->getUrl(),
         ];
@@ -97,11 +129,29 @@ class ApifyCollectTaskMapper
     }
 
     /**
+     * Validate that required fields exist in the input.
+     *
+     * @param array<string, mixed> $input Final input array
+     */
+    private function validateInput(array $input, ApifyInputTemplate $template): void
+    {
+        foreach ($template->getRequiredFields() as $field) {
+            if (!isset($input[$field])) {
+                throw ApifyConfigurationException::missingRequiredField($field);
+            }
+
+            if ('' === $input[$field]) {
+                throw ApifyConfigurationException::missingRequiredField($field);
+            }
+        }
+    }
+
+    /**
      * Build query parameters including webhook configuration and cost limit.
      *
      * @return array<string, string>
      */
-    private function buildQueryParams(CollectTask $collectTask, string $actorId): array
+    private function buildQueryParams(CollectTask $collectTask): array
     {
         $params = [];
 

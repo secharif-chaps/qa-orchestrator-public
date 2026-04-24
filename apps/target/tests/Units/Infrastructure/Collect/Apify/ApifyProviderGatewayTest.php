@@ -44,7 +44,7 @@ class ApifyProviderGatewayTest extends TestCase
     {
         $collectTask = $this->createStub(CollectTask::class);
         $config = new ApifyActorRunConfig(
-            actorId: 'myActor',
+            apifyActorId: 'myActor',
             input: [
                 'url' => 'https://example.com',
             ],
