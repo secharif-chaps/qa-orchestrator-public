@@ -4,7 +4,8 @@
       v-if="canDeleteCompany"
       variant="tertiary"
       intent="danger"
-      icon="fa fa-trash"
+      icon="fa-trash"
+      size="sm"
       :label="t('screen.company.delete.button')"
       @click="showModal = true"
     />
@@ -18,13 +19,13 @@
 </template>
 
 <script lang="ts" setup>
+import CompanyArchiveModal from '@/components/companies/CompanyArchiveModal.vue'
+import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import type { Company } from '@/types/company'
 import { Button } from '@owlint/feathers-vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
-import CompanyArchiveModal from '@/components/companies/CompanyArchiveModal.vue'
-import type { Company } from '@/types/company'
 
 defineProps<{
   company: Company | null | undefined

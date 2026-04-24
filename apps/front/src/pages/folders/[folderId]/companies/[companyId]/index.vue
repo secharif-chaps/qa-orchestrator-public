@@ -164,33 +164,7 @@
         </div>
       </Card>
     </div>
-
-    <div>
-      <h4 class="font-semibold">{{ t('screen.company.sections.analyses') }}</h4>
-    </div>
-
-    <!-- Analysis Cards Grid -->
-    <div class="grid auto-rows-fr grid-cols-1 gap-6 md:grid-cols-2">
-      <AnalysisCard
-        v-for="card in analysisCards"
-        :key="card.section"
-        :title="card.title"
-        :description="card.description"
-        :icon="card.icon"
-        :insights="card.insights"
-        :task-status="card.taskStatus"
-        :error-details="card.errorDetails"
-        :task-id="card.taskId"
-        :task-updated-at="card.taskUpdatedAt"
-        :disabled="card.disabled"
-        @click="openSection(card.section)"
-        @restart="handleRestartTask"
-      />
-    </div>
   </div>
-
-  <!-- Section Modal -->
-  <SectionModal v-model="showSectionModal" v-model:section="activeSection" />
 </template>
 
 <route lang="yaml">
@@ -200,21 +174,18 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import AnalysisCard from '@/components/company/AnalysisCard.vue'
 import ProfileInfoItem from '@/components/company/profile/ProfileInfoItem.vue'
 import ProfileTabDigitalStrategy from '@/components/company/profile/ProfileTabDigitalStrategy.vue'
 import ProfileTabPartnersLabels from '@/components/company/profile/ProfileTabPartnersLabels.vue'
 import ProfileTabProductsOverview from '@/components/company/profile/ProfileTabProductsOverview.vue'
-import SectionModal from '@/components/company/SectionModal.vue'
 import ChapseAssistAlert from '@/components/features/chapse-assist/ChapseAssistAlert.vue'
 import ChapseAssistQuickActions from '@/components/features/chapse-assist/ChapseAssistQuickActions.vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Card from '@/components/ui/Card.vue'
-import { useRestartTask } from '@/mutations/tasks'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import type { QuickAction } from '@/types/ai-preferences'
-import type { TaskStatus, TaskType } from '@/types/task'
+import type { TaskType } from '@/types/task'
 import { Icon, Tag, Toggle } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import type { Ref } from 'vue'
@@ -225,8 +196,6 @@ import { useRoute, useRouter } from 'vue-router'
 const router = useRouter()
 const route = useRoute('/folders/[folderId]/companies/[companyId]/')
 const { t } = useI18n()
-const showSectionModal = ref(false)
-const activeSection = ref<TaskType | null>(null)
 
 const companyId = computed(() => route.params.companyId)
 
@@ -278,9 +247,6 @@ const { data: company } = useQuery(() =>
   }),
 )
 
-// Restart task mutation
-const { mutate: restartTaskMutation } = useRestartTask()
-
 const { data: tasks } = useQuery(() =>
   companyTasksQuery({
     companyId: companyId.value,
@@ -295,34 +261,6 @@ const isTaskRunning = (taskType: TaskType): boolean => {
 
 // Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
 // No polling needed - cache is invalidated automatically when tasks update.
-
-// Helper function to get task status by type
-const getTaskStatus = (taskType: TaskType): TaskStatus | null => {
-  if (!tasks.value) return null
-  const task = tasks.value?.find((t) => t.type === taskType)
-  return task?.status || null
-}
-
-// Helper function to get structured Dify error details
-const getTaskErrorDetails = (taskType: TaskType) => {
-  if (!tasks.value) return null
-  const task = tasks.value?.find((t) => t.type === taskType)
-  return task?.error_details || null
-}
-
-// Helper function to get task updated_at timestamp (used for accurate countdown after refresh/reopen)
-const getTaskUpdatedAt = (taskType: TaskType): string | null => {
-  if (!tasks.value) return null
-  const task = tasks.value?.find((t) => t.type === taskType)
-  return task?.updated_at || null
-}
-
-// Helper function to get task ID by type
-const getTaskId = (taskType: TaskType): number | null => {
-  if (!tasks.value) return null
-  const task = tasks.value?.find((t) => t.type === taskType)
-  return task?.id || null
-}
 
 // Company info items for the grid
 const companyInfoItems = computed(() => [
@@ -347,176 +285,6 @@ const companyInfoItems = computed(() => [
     value: company.value?.profile?.revenue?.value,
   },
 ])
-
-const jobsInsights = computed(() => {
-  const hiringFocus = company.value?.jobs?.insights?.hiring_focus?.value
-  if (hiringFocus) return hiringFocus
-
-  const hasOffers = company.value?.jobs?.offers?.length
-  if (hasOffers) return t('screen.company.analysisCards.jobs.insights')
-
-  return undefined
-})
-
-// Analysis cards configuration
-const analysisCards = computed(() => {
-  return [
-    {
-      section: 'profile' as TaskType,
-      title: t('screen.company.analysisCards.profile.title'),
-      description: t('screen.company.analysisCards.profile.description'),
-      icon: 'fas fa-building',
-      insights: company.value?.profile?.businessLine?.value || company.value?.digital?.insights,
-      taskStatus: getTaskStatus('profile') || getTaskStatus('digital'),
-      errorDetails: getTaskErrorDetails('profile') || getTaskErrorDetails('digital'),
-      taskId: getTaskId('profile') || getTaskId('digital'),
-      taskUpdatedAt: getTaskUpdatedAt('profile') || getTaskUpdatedAt('digital'),
-      disabled: false,
-    },
-    {
-      section: 'financial' as TaskType,
-      title: t('screen.company.analysisCards.financial.title'),
-      description: t('screen.company.analysisCards.financial.description'),
-      icon: 'fas fa-chart-line',
-      insights: company.value?.financial?.insights?.value,
-      taskStatus: getTaskStatus('financial'),
-      errorDetails: getTaskErrorDetails('financial'),
-      taskId: getTaskId('financial'),
-      taskUpdatedAt: getTaskUpdatedAt('financial'),
-      disabled: false,
-    },
-    {
-      section: 'timeline' as TaskType,
-      title: t('screen.company.analysisCards.timeline.title'),
-      description: t('screen.company.analysisCards.timeline.description'),
-      icon: 'fas fa-calendar-days',
-      insights: t('screen.company.analysisCards.timeline.insights'),
-      taskStatus: getTaskStatus('timeline'),
-      errorDetails: getTaskErrorDetails('timeline'),
-      taskId: getTaskId('timeline'),
-      taskUpdatedAt: getTaskUpdatedAt('timeline'),
-      disabled: false,
-    },
-    {
-      section: 'products' as TaskType,
-      title: t('screen.company.analysisCards.products.title'),
-      description: t('screen.company.analysisCards.products.description'),
-      icon: 'fas fa-box',
-      insights:
-        company.value?.products?.insights || t('screen.company.analysisCards.products.insights'),
-      taskStatus: getTaskStatus('products'),
-      errorDetails: getTaskErrorDetails('products'),
-      taskId: getTaskId('products'),
-      taskUpdatedAt: getTaskUpdatedAt('products'),
-      disabled: false,
-    },
-    {
-      section: 'team' as TaskType,
-      title: t('screen.company.analysisCards.team.title'),
-      description: t('screen.company.analysisCards.team.description'),
-      icon: 'fas fa-users',
-      insights: t('screen.company.analysisCards.team.insights'),
-      taskStatus: getTaskStatus('team'),
-      errorDetails: getTaskErrorDetails('team'),
-      taskId: getTaskId('team'),
-      taskUpdatedAt: getTaskUpdatedAt('team'),
-      disabled: false,
-    },
-    {
-      section: 'corporate_structure' as TaskType,
-      title: t('screen.company.analysisCards.corporateStructure.title'),
-      description: t('screen.company.analysisCards.corporateStructure.description'),
-      icon: 'fas fa-sitemap',
-      insights: t('screen.company.analysisCards.corporateStructure.insights'),
-      taskStatus: getTaskStatus('corporate_structure'),
-      errorDetails: getTaskErrorDetails('corporate_structure'),
-      taskId: getTaskId('corporate_structure'),
-      taskUpdatedAt: getTaskUpdatedAt('corporate_structure'),
-      disabled: false,
-    },
-    {
-      section: 'sanctions' as TaskType,
-      title: t('screen.company.analysisCards.sanctions.title'),
-      description: t('screen.company.analysisCards.sanctions.description'),
-      icon: 'fas fa-shield-halved',
-      insights: t('screen.company.analysisCards.sanctions.insights'),
-      taskStatus: getTaskStatus('sanctions'),
-      errorDetails: getTaskErrorDetails('sanctions'),
-      taskId: getTaskId('sanctions'),
-      taskUpdatedAt: getTaskUpdatedAt('sanctions'),
-      disabled: false,
-    },
-    {
-      section: 'jobs' as TaskType,
-      title: t('screen.company.analysisCards.jobs.title'),
-      description: t('screen.company.analysisCards.jobs.description'),
-      icon: 'fas fa-briefcase',
-      insights: jobsInsights.value,
-      taskStatus: getTaskStatus('jobs'),
-      errorDetails: getTaskErrorDetails('jobs'),
-      taskId: getTaskId('jobs'),
-      taskUpdatedAt: getTaskUpdatedAt('jobs'),
-      disabled: false,
-    },
-    {
-      section: 'press' as TaskType,
-      title: t('screen.company.analysisCards.press.title'),
-      description: t('screen.company.analysisCards.press.description'),
-      icon: 'fas fa-newspaper',
-      insights: company.value?.press?.insights,
-      taskStatus: getTaskStatus('press'),
-      errorDetails: getTaskErrorDetails('press'),
-      taskId: getTaskId('press'),
-      taskUpdatedAt: getTaskUpdatedAt('press'),
-      disabled: false,
-    },
-    {
-      section: 'csr' as TaskType,
-      title: t('screen.company.analysisCards.csr.title'),
-      description: t('screen.company.analysisCards.csr.description'),
-      icon: 'fas fa-leaf',
-      insights: company.value?.csr?.insights,
-      taskStatus: getTaskStatus('csr'),
-      errorDetails: getTaskErrorDetails('csr'),
-      taskId: getTaskId('csr'),
-      taskUpdatedAt: getTaskUpdatedAt('csr'),
-      disabled: false,
-    },
-    {
-      section: 'digital' as TaskType,
-      title: t('screen.company.analysisCards.communications.title'),
-      description: t('screen.company.analysisCards.communications.description'),
-      icon: 'fas fa-bullhorn',
-      insights: null,
-      taskStatus: null,
-      errorDetails: null,
-      taskId: null,
-      taskUpdatedAt: null,
-      disabled: true,
-    },
-  ]
-})
-
-// Open section in modal
-const openSection = (section: TaskType) => {
-  activeSection.value = section
-  showSectionModal.value = true
-
-  // Update URL with query param
-  router.push({
-    query: { ...route.query, section },
-  })
-}
-
-// Handle restart task with optimistic UI
-const handleRestartTask = async (taskId: number) => {
-  try {
-    await restartTaskMutation(taskId)
-    console.log('✅ Task restarted successfully')
-  } catch (error) {
-    console.error('❌ Error restarting task:', error)
-  }
-}
 
 // Helper function to get social media icon
 const getSocialIcon = (platform: string) => {

@@ -2,7 +2,8 @@
   <div>
     <Button
       variant="tertiary"
-      icon="fa fa-download"
+      icon="fa-download"
+      size="sm"
       :label="$t('screen.company.export.button')"
       @click="showModal = true"
     />
@@ -18,15 +19,15 @@
 </template>
 
 <script lang="ts" setup>
-import { Button } from '@owlint/feathers-vue'
 import { companyByIdQuery } from '@/queries/companies'
-import type { SourcedValue, Company, TeamMember } from '@/types/company'
-import pptxgen from 'pptxgenjs'
-import type PptxGenJS from 'pptxgenjs'
-import { ref } from 'vue'
-import ExportModal from './ExportModal.vue'
-import { useRoute } from 'vue-router'
+import type { Company, SourcedValue, TeamMember } from '@/types/company'
+import { Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
+import type PptxGenJS from 'pptxgenjs'
+import pptxgen from 'pptxgenjs'
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import ExportModal from './ExportModal.vue'
 
 const route = useRoute()
 const { data: company } = useQuery(() =>

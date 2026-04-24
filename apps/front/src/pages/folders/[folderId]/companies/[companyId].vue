@@ -2,6 +2,7 @@
   <div class="gap-xl flex flex-col">
     <CompanyHeader
       :company="company"
+      :folder="folder"
       :folder-id="folderId"
       :company-id="companyId"
       :progress-segments="progressSegments"
@@ -54,6 +55,7 @@ import { useActivityMessages } from '@/composables/useActivityMessages'
 import { useTaskProgress } from '@/composables/useTaskProgress'
 import { useRefreshCompany } from '@/mutations/companies'
 import { companyByIdQuery } from '@/queries/companies'
+import { folderByIdQuery } from '@/queries/folders'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { companyTasksQuery } from '@/queries/tasks'
 import { organizationBalanceQuery } from '@/queries/tokens'
@@ -95,6 +97,9 @@ const {
 
 // Get company tasks
 const { data: tasks } = useQuery(() => companyTasksQuery({ companyId: companyId.value }))
+
+// Get folder data for privacy tag in header
+const { data: folder } = useQuery(() => folderByIdQuery({ id: folderId.value }))
 
 // Task progress ring — revert to sage ring once all tasks complete
 const { segments: progressSegments, isInProgress: showProgressRing } = useTaskProgress(tasks)
