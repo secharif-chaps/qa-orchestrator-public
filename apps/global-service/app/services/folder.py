@@ -11,7 +11,7 @@ This module provides business logic for:
 
 import logging
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, Literal
 from uuid import UUID
 
 from sqlalchemy import and_, func, or_, select
@@ -23,6 +23,36 @@ from app.schemas.folder import FolderCreate, FolderUpdate
 from app.services.backend_client import get_companies_by_ids
 
 logger = logging.getLogger(__name__)
+
+FolderSortBy = Literal["name", "created_at", "updated_at"]
+SortOrder = Literal["asc", "desc"]
+
+_SORTABLE_COLUMNS = {
+    "name": Folder.name,
+    "created_at": Folder.created_at,
+    "updated_at": Folder.updated_at,
+}
+
+
+def _build_folder_order_by(sort_by: FolderSortBy, sort_order: SortOrder):
+    """Build an ORDER BY clause for folder listing queries.
+
+    ``sort_by`` is constrained by the ``FolderSortBy`` Literal at the API
+    boundary, so an unknown value here means the service was misused; a
+    KeyError is the intended signal.
+    """
+    column = _SORTABLE_COLUMNS[sort_by]
+    return column.asc() if sort_order == "asc" else column.desc()
+
+
+def _escape_like(value: str) -> str:
+    """Escape LIKE wildcards so user input is matched literally.
+
+    Without escaping, ``%`` and ``_`` in user input are interpreted as
+    wildcards by PostgreSQL's ILIKE, allowing unintended matches and
+    forcing a full scan on malicious patterns such as ``%%`` or ``__``.
+    """
+    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
 
 def _user_is_manager(user_roles: list[str]) -> bool:
@@ -235,6 +265,9 @@ class FolderService:
         username: str | None = None,
         page: int = 1,
         limit: int = 12,
+        name: str | None = None,
+        sort_by: FolderSortBy = "created_at",
+        sort_order: SortOrder = "desc",
     ) -> tuple[list[Folder], int]:
         """List folders accessible to a user (owned + shared) with pagination.
 
@@ -251,13 +284,17 @@ class FolderService:
             username: Optional username for legacy fallback when owner_id is NULL
             page: Page number (1-indexed)
             limit: Items per page
+            name: Optional case-insensitive substring to filter by folder name
+            sort_by: Column to sort by (name, created_at, updated_at)
+            sort_order: Sort direction (asc or desc)
 
         Returns:
             Tuple of (list of Folder instances, total count)
         """
         logger.debug(
             f"list_folders - organization_id: {organization_id}, "
-            f"user_id: {user_id}, archived: {archived}, favorites_only: {favorites_only}"
+            f"user_id: {user_id}, archived: {archived}, favorites_only: {favorites_only}, "
+            f"name: {name}, sort_by: {sort_by}, sort_order: {sort_order}"
         )
 
         # Build ownership conditions
@@ -292,6 +329,10 @@ class FolderService:
                 (UserFolderFavorite.folder_id == Folder.id) & (UserFolderFavorite.user_id == user_id),
             )
 
+        # Apply name search (case-insensitive substring match)
+        if name:
+            stmt = stmt.where(Folder.name.ilike(f"%{_escape_like(name)}%", escape="\\"))
+
         stmt = stmt.distinct()
 
         # Count total before pagination
@@ -301,7 +342,7 @@ class FolderService:
 
         # Apply ordering and pagination
         offset = (page - 1) * limit
-        stmt = stmt.order_by(Folder.created_at.desc()).offset(offset).limit(limit)
+        stmt = stmt.order_by(_build_folder_order_by(sort_by, sort_order)).offset(offset).limit(limit)
 
         result = await db.execute(stmt)
         folders = result.scalars().all()
@@ -318,6 +359,9 @@ class FolderService:
         user_id: str | None = None,
         page: int = 1,
         limit: int = 12,
+        name: str | None = None,
+        sort_by: FolderSortBy = "created_at",
+        sort_order: SortOrder = "desc",
     ) -> tuple[list[Folder], int]:
         """List ALL folders in an organization (for managers) with pagination.
 
@@ -333,6 +377,9 @@ class FolderService:
             user_id: User ID for favorites filtering (required if favorites_only=True)
             page: Page number (1-indexed)
             limit: Items per page
+            name: Optional case-insensitive substring to filter by folder name
+            sort_by: Column to sort by (name, created_at, updated_at)
+            sort_order: Sort direction (asc or desc)
 
         Returns:
             Tuple of (list of Folder instances, total count)
@@ -340,7 +387,8 @@ class FolderService:
 
         logger.debug(
             f"list_all_org_folders - organization_id: {organization_id}, "
-            f"archived: {archived}, favorites_only: {favorites_only}"
+            f"archived: {archived}, favorites_only: {favorites_only}, "
+            f"name: {name}, sort_by: {sort_by}, sort_order: {sort_order}"
         )
 
         stmt = select(Folder).where(Folder.organization_id == organization_id)
@@ -355,6 +403,10 @@ class FolderService:
                 (UserFolderFavorite.folder_id == Folder.id) & (UserFolderFavorite.user_id == user_id),
             )
 
+        # Apply name search (case-insensitive substring match)
+        if name:
+            stmt = stmt.where(Folder.name.ilike(f"%{_escape_like(name)}%", escape="\\"))
+
         # Count total before pagination
         count_stmt = select(func.count()).select_from(stmt.subquery())
         total_result = await db.execute(count_stmt)
@@ -362,7 +414,7 @@ class FolderService:
 
         # Apply ordering and pagination
         offset = (page - 1) * limit
-        stmt = stmt.order_by(Folder.created_at.desc()).offset(offset).limit(limit)
+        stmt = stmt.order_by(_build_folder_order_by(sort_by, sort_order)).offset(offset).limit(limit)
 
         result = await db.execute(stmt)
         folders = result.scalars().all()

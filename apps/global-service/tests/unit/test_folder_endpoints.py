@@ -42,6 +42,7 @@ WRITER_USERNAME = "writer_user"
 # Helpers
 # ============================================================================
 
+
 def _make_org_context(
     user_id: str = OWNER_USER_ID,
     username: str = OWNER_USERNAME,
@@ -63,8 +64,7 @@ def _make_mock_user(roles: list[str] | None = None):
     return user
 
 
-def _override_auth(app, user_id=OWNER_USER_ID, username=OWNER_USERNAME,
-                   org_id=TEST_ORG_ID, roles=None):
+def _override_auth(app, user_id=OWNER_USER_ID, username=OWNER_USERNAME, org_id=TEST_ORG_ID, roles=None):
     """Apply auth dependency overrides on the app.
 
     Overrides both the Keycloak user dependency and the organization context.
@@ -266,6 +266,241 @@ class TestListFolders:
         response = await folder_client.get("/api/folders/")
         assert response.status_code == 200
         assert len(response.json()["data"]) == 0
+
+
+class TestListFoldersSortAndSearch:
+    """GET /api/folders/ — name search and sort_by/sort_order (TAR-1446)."""
+
+    @pytest.fixture
+    async def seed_sortable_folders(self, global_db_session):
+        """Create 3 folders with distinct names and staggered timestamps."""
+        from datetime import UTC, datetime, timedelta
+
+        base = datetime(2026, 1, 1, tzinfo=UTC)
+        folders = [
+            Folder(
+                id=uuid4(),
+                organization_id=TEST_ORG_ID,
+                owner_id=OWNER_USER_ID,
+                owner=OWNER_USERNAME,
+                name=name,
+                tags=[],
+                created_at=base + timedelta(days=i),
+                updated_at=base + timedelta(days=updated_offset),
+            )
+            for i, (name, updated_offset) in enumerate(
+                [
+                    ("Alpha test project", 30),  # oldest created, most recently updated
+                    ("Beta initiative", 20),
+                    ("Gamma TEST", 10),  # newest created, least recently updated
+                ]
+            )
+        ]
+        for f in folders:
+            global_db_session.add(f)
+        await global_db_session.commit()
+        return folders
+
+    async def test_name_search_filters_case_insensitive(self, folder_client, seed_sortable_folders):
+        """?name=test matches both 'Alpha test project' and 'Gamma TEST'."""
+        response = await folder_client.get("/api/folders/", params={"name": "test"})
+        assert response.status_code == 200
+        names = [f["name"] for f in response.json()["data"]]
+        assert set(names) == {"Alpha test project", "Gamma TEST"}
+
+    async def test_name_search_partial_match(self, folder_client, seed_sortable_folders):
+        """Partial substring returns only matching folders."""
+        response = await folder_client.get("/api/folders/", params={"name": "init"})
+        assert response.status_code == 200
+        data = response.json()["data"]
+        assert len(data) == 1
+        assert data[0]["name"] == "Beta initiative"
+
+    async def test_name_search_no_match(self, folder_client, seed_sortable_folders):
+        response = await folder_client.get("/api/folders/", params={"name": "nomatch"})
+        assert response.status_code == 200
+        assert response.json()["data"] == []
+
+    async def test_name_search_escapes_like_wildcards(self, folder_client, global_db_session):
+        """User-supplied % and _ must be matched literally, not as SQL wildcards."""
+        for name in [
+            "Plain folder",
+            "Report 50% off",
+            "snake_case folder",
+            "100%_weird",
+        ]:
+            global_db_session.add(
+                Folder(
+                    id=uuid4(),
+                    organization_id=TEST_ORG_ID,
+                    owner_id=OWNER_USER_ID,
+                    owner=OWNER_USERNAME,
+                    name=name,
+                    tags=[],
+                )
+            )
+        await global_db_session.commit()
+
+        # "%%" must match "50%" literally (not behave as a wildcard that matches everything)
+        response = await folder_client.get("/api/folders/", params={"name": "%"})
+        assert response.status_code == 200
+        names = {f["name"] for f in response.json()["data"]}
+        assert names == {"Report 50% off", "100%_weird"}
+
+        # "_" must match an underscore literally (not any single character)
+        response = await folder_client.get("/api/folders/", params={"name": "_"})
+        assert response.status_code == 200
+        names = {f["name"] for f in response.json()["data"]}
+        assert names == {"snake_case folder", "100%_weird"}
+
+    async def test_sort_by_name_asc(self, folder_client, seed_sortable_folders):
+        response = await folder_client.get("/api/folders/", params={"sort_by": "name", "sort_order": "asc"})
+        assert response.status_code == 200
+        names = [f["name"] for f in response.json()["data"]]
+        assert names == ["Alpha test project", "Beta initiative", "Gamma TEST"]
+
+    async def test_sort_by_name_desc(self, folder_client, seed_sortable_folders):
+        response = await folder_client.get("/api/folders/", params={"sort_by": "name", "sort_order": "desc"})
+        assert response.status_code == 200
+        names = [f["name"] for f in response.json()["data"]]
+        assert names == ["Gamma TEST", "Beta initiative", "Alpha test project"]
+
+    async def test_default_sort_is_created_at_desc(self, folder_client, seed_sortable_folders):
+        """Backward-compatibility: no params → created_at DESC (newest first)."""
+        response = await folder_client.get("/api/folders/")
+        assert response.status_code == 200
+        names = [f["name"] for f in response.json()["data"]]
+        assert names == ["Gamma TEST", "Beta initiative", "Alpha test project"]
+
+    async def test_sort_by_created_at_asc(self, folder_client, seed_sortable_folders):
+        response = await folder_client.get("/api/folders/", params={"sort_by": "created_at", "sort_order": "asc"})
+        assert response.status_code == 200
+        names = [f["name"] for f in response.json()["data"]]
+        assert names == ["Alpha test project", "Beta initiative", "Gamma TEST"]
+
+    async def test_sort_by_updated_at(self, folder_client, seed_sortable_folders):
+        """sort_by=updated_at works; default order is desc (most recent updates first)."""
+        response = await folder_client.get("/api/folders/", params={"sort_by": "updated_at"})
+        assert response.status_code == 200
+        names = [f["name"] for f in response.json()["data"]]
+        # Alpha has updated_at = base+30d (most recent), Gamma = base+10d (oldest)
+        assert names == ["Alpha test project", "Beta initiative", "Gamma TEST"]
+
+    async def test_invalid_sort_by_returns_422(self, folder_client):
+        response = await folder_client.get("/api/folders/", params={"sort_by": "owner"})
+        assert response.status_code == 422
+
+    async def test_invalid_sort_order_returns_422(self, folder_client):
+        response = await folder_client.get("/api/folders/", params={"sort_order": "random"})
+        assert response.status_code == 422
+
+    async def test_combined_name_sort_favorites(
+        self,
+        folder_client,
+        seed_sortable_folders,
+        global_db_session,
+    ):
+        """Name search + sort + favorites all combine correctly."""
+        # Favorite only the two folders matching "test"
+        for folder in seed_sortable_folders:
+            if "test" in folder.name.lower():
+                global_db_session.add(
+                    UserFolderFavorite(
+                        id=uuid4(),
+                        folder_id=folder.id,
+                        user_id=OWNER_USER_ID,
+                    )
+                )
+        await global_db_session.commit()
+
+        response = await folder_client.get(
+            "/api/folders/",
+            params={
+                "name": "test",
+                "favorites": "true",
+                "sort_by": "name",
+                "sort_order": "asc",
+            },
+        )
+        assert response.status_code == 200
+        names = [f["name"] for f in response.json()["data"]]
+        assert names == ["Alpha test project", "Gamma TEST"]
+
+    async def test_combined_with_archived(
+        self,
+        folder_client,
+        seed_sortable_folders,
+        global_db_session,
+    ):
+        """archived=true + name + sort combine correctly."""
+        # Soft-delete folders matching "test"
+        for folder in seed_sortable_folders:
+            if "test" in folder.name.lower():
+                folder.is_deleted = True
+        await global_db_session.commit()
+
+        response = await folder_client.get(
+            "/api/folders/",
+            params={
+                "archived": "true",
+                "name": "test",
+                "sort_by": "name",
+                "sort_order": "desc",
+            },
+        )
+        assert response.status_code == 200
+        names = [f["name"] for f in response.json()["data"]]
+        assert names == ["Gamma TEST", "Alpha test project"]
+
+    async def test_include_all_with_sort_and_search(
+        self,
+        folder_client,
+        global_db_session,
+    ):
+        """include_all=true (manager view) applies name search and sort."""
+        # Manager sees every folder regardless of ownership/shares
+        _override_auth(
+            folder_client.app,
+            user_id="manager-user-id",
+            username="manager_user",
+            roles=["organization.read", "organization.manage"],
+        )
+
+        # Create folders owned by someone else in the same org
+        for name in ["Zebra report", "Alpha deep dive", "Mid-range brief"]:
+            global_db_session.add(
+                Folder(
+                    id=uuid4(),
+                    organization_id=TEST_ORG_ID,
+                    owner_id="someone-else",
+                    owner="someone_else",
+                    name=name,
+                    tags=[],
+                )
+            )
+        await global_db_session.commit()
+
+        response = await folder_client.get(
+            "/api/folders/",
+            params={"include_all": "true", "sort_by": "name", "sort_order": "asc"},
+        )
+        assert response.status_code == 200
+        names = [f["name"] for f in response.json()["data"]]
+        assert names == ["Alpha deep dive", "Mid-range brief", "Zebra report"]
+
+        # With name filter
+        response = await folder_client.get(
+            "/api/folders/",
+            params={
+                "include_all": "true",
+                "name": "alpha",
+                "sort_by": "name",
+                "sort_order": "asc",
+            },
+        )
+        assert response.status_code == 200
+        names = [f["name"] for f in response.json()["data"]]
+        assert names == ["Alpha deep dive"]
 
 
 class TestGetFolder:
@@ -547,16 +782,12 @@ class TestDeleteShare:
     async def test_delete_share_success(self, folder_client, seed_folder_with_share):
         folder, share = seed_folder_with_share
 
-        response = await folder_client.delete(
-            f"/api/folders/{folder.id}/shares/{READER_USER_ID}"
-        )
+        response = await folder_client.delete(f"/api/folders/{folder.id}/shares/{READER_USER_ID}")
         assert response.status_code == 200
         assert "removed" in response.json()["message"].lower()
 
     async def test_delete_share_not_found(self, folder_client, seed_folder):
-        response = await folder_client.delete(
-            f"/api/folders/{seed_folder.id}/shares/nonexistent-user"
-        )
+        response = await folder_client.delete(f"/api/folders/{seed_folder.id}/shares/nonexistent-user")
         assert response.status_code == 404
 
     async def test_delete_share_non_owner_forbidden(self, folder_client, seed_folder_with_share):
@@ -564,9 +795,7 @@ class TestDeleteShare:
 
         _override_auth(folder_client.app, user_id=OTHER_USER_ID, username=OTHER_USERNAME)
 
-        response = await folder_client.delete(
-            f"/api/folders/{folder.id}/shares/{READER_USER_ID}"
-        )
+        response = await folder_client.delete(f"/api/folders/{folder.id}/shares/{READER_USER_ID}")
         assert response.status_code == 403
 
 
