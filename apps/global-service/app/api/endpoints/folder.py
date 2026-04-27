@@ -7,6 +7,7 @@ This module provides REST API endpoints for:
 - User favorites
 """
 
+from typing import Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -243,6 +244,18 @@ async def list_folders(
     include_all: bool = Query(False, description="Include all org folders (managers only)"),
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
     size: int = Query(12, ge=1, le=100, description="Items per page"),
+    name: str | None = Query(
+        None,
+        description="Case-insensitive substring search on folder name",
+    ),
+    sort_by: Literal["name", "created_at", "updated_at"] = Query(
+        "created_at",
+        description="Column to sort by",
+    ),
+    sort_order: Literal["asc", "desc"] = Query(
+        "desc",
+        description="Sort direction",
+    ),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: AsyncSession = Depends(get_global_db),
@@ -267,6 +280,9 @@ async def list_folders(
             "include_all": include_all,
             "page": page,
             "size": size,
+            "name_filter": name,
+            "sort_by": sort_by,
+            "sort_order": sort_order,
         },
     )
 
@@ -301,6 +317,9 @@ async def list_folders(
             user_id=org_context.user_id,
             page=page,
             limit=size,
+            name=name,
+            sort_by=sort_by,
+            sort_order=sort_order,
         )
     else:
         folders, total = await FolderService.list_folders(
@@ -312,6 +331,9 @@ async def list_folders(
             username=org_context.username,
             page=page,
             limit=size,
+            name=name,
+            sort_by=sort_by,
+            sort_order=sort_order,
         )
 
     logger.info(
