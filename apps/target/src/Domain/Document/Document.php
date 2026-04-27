@@ -652,6 +652,9 @@ class Document implements HasWatchFileInterface
     #[Groups(['document:save'])]
     private ?float $contentRatio = null;
 
+    #[Groups(['document:save'])]
+    private ?string $canonicalUrl = null;
+
     public function __construct(
         ?string $id,
         string $title,
@@ -1211,6 +1214,18 @@ class Document implements HasWatchFileInterface
     public function setContentRatio(?float $contentRatio): self
     {
         $this->contentRatio = $contentRatio;
+
+        return $this;
+    }
+
+    public function getCanonicalUrl(): ?string
+    {
+        return $this->canonicalUrl;
+    }
+
+    public function setCanonicalUrl(?string $canonicalUrl): self
+    {
+        $this->canonicalUrl = $canonicalUrl;
 
         return $this;
     }
