@@ -9,11 +9,7 @@
     <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State -->
-    <NoData v-else-if="!hasAnyPressData">
-      <p class="text-lg font-medium">
-        {{ $t('screen.profile.sections.press.noData') }}
-      </p>
-    </NoData>
+    <EmptyState v-else-if="!hasAnyPressData" :title="$t('screen.profile.sections.press.noData')" />
 
     <!-- Main Content -->
     <template v-else>
@@ -37,11 +33,10 @@
             :key="`${item.category}-${index}`"
             :item
           />
-          <NoData v-if="!allPressItems.length">
-            <p class="text-lg font-medium">
-              {{ $t('screen.profile.sections.press.noData') }}
-            </p>
-          </NoData>
+          <EmptyState
+            v-if="!allPressItems.length"
+            :title="$t('screen.profile.sections.press.activities.noItems')"
+          />
         </div>
       </SectionCard>
 
@@ -78,7 +73,7 @@ import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import PressItemCard from '@/components/company/press/PressItemCard.vue'
 import Alert from '@/components/ui/Alert.vue'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
-import NoData from '@/components/ui/NoData.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import SectionCard from '@/components/ui/SectionCard.vue'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import { companyByIdQuery } from '@/queries/companies'

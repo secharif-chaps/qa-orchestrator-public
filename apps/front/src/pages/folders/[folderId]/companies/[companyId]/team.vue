@@ -8,11 +8,7 @@
     <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State -->
-    <NoData v-else-if="!hasTeamData">
-      <p class="text-neutral-black-font text-lg font-medium">
-        {{ $t('screen.profile.sections.team.noData') }}
-      </p>
-    </NoData>
+    <EmptyState v-else-if="!hasTeamData" :title="$t('screen.profile.sections.team.noData')" />
 
     <!-- Main content -->
     <div v-else-if="hasTeamData" class="flex flex-col gap-6">
@@ -37,7 +33,7 @@ import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import TeamHierarchyGraph from '@/components/company/team/TeamHierarchyGraph.vue'
 import TeamMembersList from '@/components/company/team/TeamMembersList.vue'
 import TeamPageHeader from '@/components/company/team/TeamPageHeader.vue'
-import NoData from '@/components/ui/NoData.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import type { TeamMember } from '@/types/company'

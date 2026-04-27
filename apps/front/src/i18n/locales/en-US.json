@@ -1345,17 +1345,6 @@
           "title": "Warning: This will permanently delete the company"
         }
       },
-      "empty": {
-        "noCompanies": {
-          "description": "Get started by creating your first company to track and manage your business relationships.",
-          "title": "No companies yet"
-        },
-        "noResults": {
-          "description": "No companies match \"{query}\". Try adjusting your search terms.",
-          "descriptionNoQuery": "Try adjusting your search terms",
-          "title": "No companies found"
-        }
-      },
       "export": {
         "button": "Export",
         "modal": {
@@ -1440,11 +1429,6 @@
             "partial": "Partial",
             "processing": "Processing"
           }
-        }
-      },
-      "list": {
-        "create": {
-          "title": "Create New Company"
         }
       },
       "management": {
@@ -1744,9 +1728,6 @@
         "description": "Description",
         "requirements": "Requirements"
       },
-      "emptyState": {
-        "hint": "Job listings and hiring insights will appear here once available"
-      },
       "insights": {
         "growthIndicators": "Growth Indicators",
         "hiringFocus": "Hiring Focus",
@@ -1771,7 +1752,6 @@
           "table": "Table"
         }
       },
-      "loading": "Loading job offers...",
       "title": "Hiring Information"
     },
     "products": {
@@ -1908,6 +1888,7 @@
         },
         "press": {
           "activities": {
+            "noItems": "No press activities or sources listed",
             "title": "Activities and sources"
           },
           "categories": {
@@ -2019,13 +2000,9 @@
       }
     },
     "timeline": {
-      "emptyState": {
-        "hint": "Timeline data will appear here once available"
-      },
       "event": {
         "impactAnalysis": "Impact Analysis"
       },
-      "loading": "Loading timeline...",
       "search": {
         "noResults": "No events found matching \"{query}\"",
         "placeholder": "Search..."

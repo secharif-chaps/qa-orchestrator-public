@@ -9,11 +9,7 @@
     <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State -->
-    <NoData v-else-if="!hasJobsData">
-      <p class="text-lg font-medium">
-        {{ $t('screen.profile.sections.jobs.noData') }}
-      </p>
-    </NoData>
+    <EmptyState v-else-if="!hasJobsData" :title="$t('screen.profile.sections.jobs.noData')" />
 
     <!-- Main content -->
     <div v-if="hasJobsData" class="gap-xl flex flex-col">
@@ -96,11 +92,10 @@
         <JobsTableView v-else :jobs="filteredJobs" />
 
         <!-- No results message -->
-        <NoData v-if="filteredJobs.length === 0 && searchQuery">
-          <p class="text-lg font-medium">
-            {{ $t('screen.jobs.listings.noResults', { query: searchQuery }) }}
-          </p>
-        </NoData>
+        <EmptyState
+          v-if="filteredJobs.length === 0 && searchQuery"
+          :title="$t('screen.jobs.listings.noResults', { query: searchQuery })"
+        />
       </SectionCard>
     </div>
   </div>
@@ -113,7 +108,7 @@ import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Alert from '@/components/ui/Alert.vue'
-import NoData from '@/components/ui/NoData.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import SectionCard from '@/components/ui/SectionCard.vue'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import { Icon, Tag, Toggle } from '@owlint/feathers-vue'

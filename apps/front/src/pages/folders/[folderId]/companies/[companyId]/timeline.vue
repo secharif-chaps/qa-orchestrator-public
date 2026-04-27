@@ -8,11 +8,10 @@
     <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State -->
-    <NoData v-else-if="!hasTimelineData">
-      <p class="text-neutral-black-font text-lg font-medium">
-        {{ t('screen.profile.sections.timeline.noData') }}
-      </p>
-    </NoData>
+    <EmptyState
+      v-else-if="!hasTimelineData"
+      :title="t('screen.profile.sections.timeline.noData')"
+    />
 
     <!-- Timeline visualization -->
     <div v-else class="space-y-xl relative">
@@ -44,11 +43,7 @@
 
         <!-- No results message -->
         <div v-if="filteredEvents.length === 0 && searchQuery">
-          <NoData>
-            <p class="text-neutral-black-font text-lg font-medium">
-              {{ t('screen.timeline.search.noResults', { query: searchQuery }) }}
-            </p>
-          </NoData>
+          <EmptyState :title="t('screen.timeline.search.noResults', { query: searchQuery })" />
         </div>
       </div>
     </div>
@@ -59,7 +54,7 @@
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import TimelineEvent from '@/components/company/timeline/TimelineEvent.vue'
-import NoData from '@/components/ui/NoData.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import type { SourcedValue } from '@/types/company'

@@ -182,7 +182,7 @@ import {
 import { useQuery } from '@pinia/colada'
 import { getActorSourcesQuery } from '@target/api/queries/actor'
 import { getCollectionSourceQuery, getSourceTypesQuery } from '@target/api/queries/sources'
-import EmptyState from '@target/components/global/EmptyState.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import ErrorMessage from '@target/components/global/ErrorMessage.vue'
 import SourceCard from '@target/components/sources/SourceCard.vue'
 import SectionListHeader from '@target/components/watchFiles/EditSection/SectionListHeader.vue'

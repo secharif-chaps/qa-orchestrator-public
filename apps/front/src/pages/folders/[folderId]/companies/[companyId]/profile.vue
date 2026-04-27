@@ -9,11 +9,10 @@
     <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State - Show if all tasks completed but no data -->
-    <NoData v-else-if="task?.status === 'succeeded' && !hasAnyProfileData">
-      <p class="text-neutral-black-font text-lg font-medium">
-        {{ $t('screen.profile.sections.profile.noData') }}
-      </p>
-    </NoData>
+    <EmptyState
+      v-else-if="task?.status === 'succeeded' && !hasAnyProfileData"
+      :title="$t('screen.profile.sections.profile.noData')"
+    />
 
     <!-- Partial Data Layout - Show profile sections as they become available -->
     <div v-else class="grid grid-cols-12 gap-4">
@@ -55,7 +54,7 @@ import ProfileRevenue from '@/components/company/profile/ProfileRevenue.vue'
 
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
-import NoData from '@/components/ui/NoData.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import { useQuery } from '@pinia/colada'

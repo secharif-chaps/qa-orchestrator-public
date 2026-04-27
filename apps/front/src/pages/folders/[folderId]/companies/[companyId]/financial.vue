@@ -9,11 +9,10 @@
     <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State -->
-    <NoData v-else-if="company && !hasFinancialData">
-      <p class="text-neutral-black-font text-lg font-medium">
-        {{ $t('screen.profile.sections.financial.noData') }}
-      </p>
-    </NoData>
+    <EmptyState
+      v-else-if="company && !hasFinancialData"
+      :title="$t('screen.profile.sections.financial.noData')"
+    />
 
     <!-- Main Content -->
     <div v-else class="flex flex-col gap-6">
@@ -75,7 +74,7 @@ meta:
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
-import NoData from '@/components/ui/NoData.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import FinancialIdentity from '@/components/company/financial/FinancialIdentity.vue'
 import FinancialKeyMetrics from '@/components/company/financial/FinancialKeyMetrics.vue'
 import FinancialValuation from '@/components/company/financial/FinancialValuation.vue'

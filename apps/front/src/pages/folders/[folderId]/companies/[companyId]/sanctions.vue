@@ -7,7 +7,7 @@
     <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State -->
-    <NoData v-else-if="!hasSanctionsData">
+    <EmptyState v-else-if="!hasSanctionsData">
       <div class="flex flex-col items-center gap-2">
         <span
           class="bg-success-light text-success-light-content inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium"
@@ -19,7 +19,7 @@
           {{ $t('screen.profile.sections.sanctions.noData') }}
         </p>
       </div>
-    </NoData>
+    </EmptyState>
 
     <!-- Main Content -->
     <div v-else class="flex flex-col gap-6">
@@ -186,7 +186,7 @@ meta:
 <script lang="ts" setup>
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
-import NoData from '@/components/ui/NoData.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import { Icon } from '@owlint/feathers-vue'
