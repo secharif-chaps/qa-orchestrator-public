@@ -69,9 +69,9 @@ front:prettier:
   stage: lint
   needs: [front:install]
   script:
-    - cd apps/front && npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown .
+    - cd apps/front && npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown --ignore-path ../../.prettierignore ../../
   after_script:
-    - cd apps/front && npx prettier --list-different --no-error-on-unmatched-pattern --ignore-unknown .
+    - cd apps/front && npx prettier --list-different --no-error-on-unmatched-pattern --ignore-unknown --ignore-path ../../.prettierignore ../../
 
 front:stylelint:
   <<: *default-lint-job

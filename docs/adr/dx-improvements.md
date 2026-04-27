@@ -14,7 +14,7 @@ L'audit du workspace ChapsMind revele plusieurs lacunes DX independantes de la q
 ### Equipe
 
 |                  | Detail                                      |
-|------------------|---------------------------------------------|
+| ---------------- | ------------------------------------------- |
 | **Taille**       | 14 developpeurs                             |
 | **OS**           | ~9 Windows, 2 macOS, 3 Linux                |
 | **IDE**          | PHPStorm (devs PHP) + VS Code (le reste)    |
@@ -23,7 +23,7 @@ L'audit du workspace ChapsMind revele plusieurs lacunes DX independantes de la q
 ### Constats
 
 | Constat                                        | Impact                                                                                                                  |
-|------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | Pas de Dev Container                           | 9 devs Windows doivent installer Node, Python, Poetry, pnpm manuellement. Problemes de paths, line endings, permissions |
 | Aucun point d'entree unifie pour les commandes | Chaque dev memorise N commandes dans N dossiers                                                                         |
 | Pas de pre-commit hooks                        | Du code qui ne lint pas arrive en CI, aller-retour de 5+ min                                                            |
@@ -136,25 +136,25 @@ pre-commit:
   parallel: true
   commands:
     front-lint:
-      glob: "apps/front/**/*.{ts,vue,js}"
+      glob: 'apps/front/**/*.{ts,vue,js}'
       run: cd apps/front && pnpm lint {staged_files}
 
     front-typecheck:
-      glob: "apps/front/**/*.{ts,vue}"
+      glob: 'apps/front/**/*.{ts,vue}'
       run: cd apps/front && pnpm vue-tsc --noEmit
 
     back-lint:
-      glob: "apps/back/**/*.py"
+      glob: 'apps/back/**/*.py'
       run: cd apps/back && ruff check {staged_files}
 
     back-format:
-      glob: "apps/back/**/*.py"
+      glob: 'apps/back/**/*.py'
       run: cd apps/back && ruff format --check {staged_files}
 
 pre-push:
   commands:
     front-build:
-      glob: "apps/front/**/*"
+      glob: 'apps/front/**/*'
       run: cd apps/front && pnpm build
 ```
 
@@ -174,13 +174,13 @@ lefthook install
 
 **Pourquoi Lefthook et pas Husky + pre-commit** :
 
-| Critere | Husky + pre-commit | Lefthook |
-|---|---|---|
-| Installation | 2 outils (Node + Python) | 1 binary Go |
-| Config | 2 fichiers dans 2 repos | 1 fichier YAML a la racine |
-| Polyglot | Chacun sa stack | Natif |
-| Vitesse | Moyenne (Node startup) | Rapide (binary compile) |
-| Parallel | Non natif | Oui (`parallel: true`) |
+| Critere      | Husky + pre-commit       | Lefthook                   |
+| ------------ | ------------------------ | -------------------------- |
+| Installation | 2 outils (Node + Python) | 1 binary Go                |
+| Config       | 2 fichiers dans 2 repos  | 1 fichier YAML a la racine |
+| Polyglot     | Chacun sa stack          | Natif                      |
+| Vitesse      | Moyenne (Node startup)   | Rapide (binary compile)    |
+| Parallel     | Non natif                | Oui (`parallel: true`)     |
 
 > **Doc** : https://github.com/evilmartians/lefthook
 
@@ -376,16 +376,16 @@ ruff = "^0.9"
 5. Login with test credentials:
    - Admin: admin / admin123
    - Viewer: company_viewer / viewer123
-   (See CLAUDE.md for full list of test users)
+     (See CLAUDE.md for full list of test users)
 
 ## Daily Workflow
 
-- make up              — start everything
-- make front-dev       — start frontend with HMR
-- make logs            — tail service logs
-- make migrate         — run database migrations
-- make back-test       — run backend tests
-- make help            — see all commands
+- make up — start everything
+- make front-dev — start frontend with HMR
+- make logs — tail service logs
+- make migrate — run database migrations
+- make back-test — run backend tests
+- make help — see all commands
 
 ## Branch Naming
 
@@ -399,6 +399,7 @@ ruff = "^0.9"
 <gitmoji> <type>: <description>
 
 Examples:
+
 - sparkles feat: add user authentication
 - bug fix: resolve validation error
 - recycle refactor: simplify task orchestration
@@ -417,12 +418,14 @@ Examples:
 #### Le probleme
 
 Avec **9 devs sous Windows**, chaque poste doit installer et maintenir :
+
 - Node.js 20 + pnpm
 - Python 3.9 + Poetry
 - Ruff, Lefthook, git (bonne version)
 - Docker Desktop
 
 Les problemes classiques sous Windows :
+
 - **Line endings** (`CRLF` vs `LF`) qui polluent les diffs et cassent les scripts bash
 - **Paths** (`C:\Users\...` vs `/home/...`) qui cassent les outils
 - **Permissions** sur les fichiers montes dans Docker
@@ -459,11 +462,11 @@ Un Dev Container est un **environnement de dev complet defini en code**. Au lieu
 
 #### Support IDE
 
-| IDE | Support Dev Container | Statut |
-|---|---|---|
-| **VS Code** | Natif via extension "Dev Containers" | Excellent — experience fluide |
+| IDE                                   | Support Dev Container                  | Statut                                           |
+| ------------------------------------- | -------------------------------------- | ------------------------------------------------ |
+| **VS Code**                           | Natif via extension "Dev Containers"   | Excellent — experience fluide                    |
 | **JetBrains (PHPStorm, WebStorm...)** | Via JetBrains Gateway + Dev Containers | Fonctionnel — en amelioration active depuis 2024 |
-| **Terminal pur** | Via `devcontainer` CLI | Fonctionne sans IDE |
+| **Terminal pur**                      | Via `devcontainer` CLI                 | Fonctionne sans IDE                              |
 
 > **PHPStorm et les Dev Containers** : JetBrains supporte les Dev Containers via Gateway depuis 2023. Le support s'ameliore a chaque version. Les devs PHP sous PHPStorm peuvent l'utiliser, meme si l'experience est legerement moins fluide que VS Code.
 >
@@ -490,14 +493,14 @@ Un Dev Container est un **environnement de dev complet defini en code**. Au lieu
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "20",
-      "installYarnUsingApt": false
+      "installYarnUsingApt": false,
     },
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.9",
-      "installTools": true
+      "installTools": true,
     },
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers/features/git:1": {}
+    "ghcr.io/devcontainers/features/git:1": {},
   },
 
   // Script execute apres la creation du container
@@ -513,12 +516,12 @@ Un Dev Container est un **environnement de dev complet defini en code**. Au lieu
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "[python]": {
-          "editor.defaultFormatter": "charliermarsh.ruff"
+          "editor.defaultFormatter": "charliermarsh.ruff",
         },
         "[vue]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
         },
-        "files.eol": "\n"
+        "files.eol": "\n",
       },
       "extensions": [
         // Frontend
@@ -531,10 +534,10 @@ Un Dev Container est un **environnement de dev complet defini en code**. Au lieu
         // General
         "EditorConfig.EditorConfig",
         "eamodio.gitlens",
-        "ms-azuretools.vscode-docker"
-      ]
-    }
-  }
+        "ms-azuretools.vscode-docker",
+      ],
+    },
+  },
 }
 ```
 
@@ -653,32 +656,35 @@ L'option 1 est plus uniforme. L'option 2 est un fallback si Gateway ne convient 
 
 ## 3. Priorites et plan d'action
 
-| # | Amelioration | Effort | Impact DX | Devs impactes | Priorite |
-|---|---|---|---|---|---|
-| 1 | **Dev Container** | Moyen (config + test multi-IDE) | Tres eleve | 14/14 (surtout les 9 Windows) | **P0** |
-| 2 | **`.gitattributes`** (line endings) | Trivial (1 fichier) | Eleve | 9 devs Windows | **P0** |
-| 3 | **`.editorconfig`** | Trivial (1 fichier) | Moyen | 14/14 | **P0** |
-| 4 | **`.env.example`** | Faible (1 fichier) | Eleve | 14/14 | **P0** |
-| 5 | **Makefile racine** | Faible (1 fichier) | Eleve | 14/14 | **P0** |
-| 6 | **Config Ruff backend** | Faible (section pyproject.toml) | Moyen | Devs Python | **P1** |
-| 7 | **Lefthook** (pre-commit) | Moyen (install + config) | Eleve | 14/14 | **P1** |
-| 8 | **`CONTRIBUTING.md`** | Moyen (redaction) | Eleve | 14/14 | **P1** |
+| #   | Amelioration                        | Effort                          | Impact DX  | Devs impactes                 | Priorite |
+| --- | ----------------------------------- | ------------------------------- | ---------- | ----------------------------- | -------- |
+| 1   | **Dev Container**                   | Moyen (config + test multi-IDE) | Tres eleve | 14/14 (surtout les 9 Windows) | **P0**   |
+| 2   | **`.gitattributes`** (line endings) | Trivial (1 fichier)             | Eleve      | 9 devs Windows                | **P0**   |
+| 3   | **`.editorconfig`**                 | Trivial (1 fichier)             | Moyen      | 14/14                         | **P0**   |
+| 4   | **`.env.example`**                  | Faible (1 fichier)              | Eleve      | 14/14                         | **P0**   |
+| 5   | **Makefile racine**                 | Faible (1 fichier)              | Eleve      | 14/14                         | **P0**   |
+| 6   | **Config Ruff backend**             | Faible (section pyproject.toml) | Moyen      | Devs Python                   | **P1**   |
+| 7   | **Lefthook** (pre-commit)           | Moyen (install + config)        | Eleve      | 14/14                         | **P1**   |
+| 8   | **`CONTRIBUTING.md`**               | Moyen (redaction)               | Eleve      | 14/14                         | **P1**   |
 
 **Aucune de ces ameliorations ne depend de la migration monorepo.** Elles peuvent etre implementees des maintenant. Les paths dans le Makefile, Lefthook et Dev Container seront a ajuster apres migration (`front/` → `apps/front/`, etc.), mais la structure reste identique.
 
 ### Ordre d'implementation recommande
 
 **Sprint 1 — quick wins (zero risque)** :
+
 - `.gitattributes` — forcer `LF` partout, regle le probleme Windows immediatement
 - `.editorconfig` — commit direct, respecte par tous les IDE
 - `.env.example` — documenter les variables existantes
 - Makefile — centraliser les commandes existantes
 
 **Sprint 2 — environnement unifie** :
+
 - **Dev Container** — configurer, tester sur VS Code + PHPStorm Gateway, documenter
 - `CONTRIBUTING.md` — rediger l'onboarding "du clone au premier commit"
 
 **Sprint 3 — qualite de code** :
+
 - Config Ruff — ajouter au pyproject.toml + premier `ruff format .`
 - Lefthook — installer + configurer + communiquer a l'equipe
 - Pre-inclus dans le Dev Container (installe automatiquement au setup)

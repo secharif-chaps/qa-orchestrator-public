@@ -26,6 +26,7 @@ ChapsMind's frontend needs a robust data fetching solution that:
 The frontend already uses Pinia for global state management (auth, preferences). We need a complementary solution specifically for server state (data from the API).
 
 Server state has different characteristics than client state:
+
 - Owned by the server, not the client
 - Can become stale
 - Needs synchronization with backend
@@ -54,6 +55,7 @@ Key implementation decisions:
 **Description:** Vue-native data fetching library built on Pinia, providing queries and mutations with caching.
 
 **Pros:**
+
 - Vue-native (built for Vue, not ported from React)
 - Built on Pinia (consistent with existing state management)
 - Composition API first design
@@ -65,6 +67,7 @@ Key implementation decisions:
 - Cache invalidation patterns
 
 **Cons:**
+
 - Smaller community than TanStack Query
 - Fewer features than TanStack Query
 - Less battle-tested
@@ -75,6 +78,7 @@ Key implementation decisions:
 **Description:** The Vue port of React Query, part of the TanStack ecosystem.
 
 **Pros:**
+
 - Large community and ecosystem
 - Battle-tested (years of React Query usage)
 - Comprehensive feature set
@@ -82,6 +86,7 @@ Key implementation decisions:
 - Devtools available
 
 **Cons:**
+
 - Not Vue-native (ported from React)
 - Different paradigms than Vue ecosystem
 - Heavier bundle size
@@ -93,11 +98,13 @@ Key implementation decisions:
 **Description:** Build custom caching and fetching logic in Pinia stores.
 
 **Pros:**
+
 - Full control over implementation
 - No additional dependencies
 - Tailored to exact needs
 
 **Cons:**
+
 - Significant development effort
 - Must implement caching from scratch
 - No community support
@@ -109,10 +116,12 @@ Key implementation decisions:
 **Description:** SWR-style hooks for Vue.
 
 **Pros:**
+
 - Simple mental model
 - Lightweight
 
 **Cons:**
+
 - Less mature for Vue
 - Fewer features than alternatives
 - Limited TypeScript support
@@ -179,10 +188,7 @@ import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 
 const props = defineProps<{ id: string }>()
-const { data, isLoading, error } = useQuery(
-  companyByIdQuery,
-  () => ({ id: props.id })
-)
+const { data, isLoading, error } = useQuery(companyByIdQuery, () => ({ id: props.id }))
 </script>
 ```
 

@@ -25,6 +25,7 @@ ChapsMind needs to reference users and organizations throughout the application 
 The system already uses Keycloak for authentication (ADR-0003) and Keycloak Organizations for multi-tenancy (ADR-0005). The question is: should the application maintain its own user and organization tables, or rely entirely on Keycloak as the source of truth?
 
 Traditional approaches would create `users` and `organization_members` tables synchronized with Keycloak, but this introduces:
+
 - Data synchronization complexity
 - Potential for data inconsistency
 - GDPR compliance challenges with PII in multiple locations
@@ -46,6 +47,7 @@ Key implementation decisions:
 - **JWT as source**: User ID, organization ID, and roles are extracted from JWT tokens on each request
 
 Database reference pattern:
+
 ```sql
 -- Tables reference Keycloak IDs without foreign keys
 CREATE TABLE companies (
@@ -75,6 +77,7 @@ CREATE TABLE folders (
 **Description:** Store no user or organization identity data in the application database. Reference Keycloak UUIDs as simple string fields. Extract all identity information from JWT tokens at request time.
 
 **Pros:**
+
 - Single source of truth for identity data (Keycloak)
 - No data synchronization required
 - GDPR-compliant: PII stored only in Keycloak, not scattered across databases
@@ -84,6 +87,7 @@ CREATE TABLE folders (
 - Reduced maintenance burden
 
 **Cons:**
+
 - Cannot perform SQL JOINs with user data
 - Need Keycloak API calls to fetch user details (names, emails)
 - Requires denormalization for display names
@@ -94,11 +98,13 @@ CREATE TABLE folders (
 **Description:** Maintain `users` and `organization_members` tables that are synchronized with Keycloak through webhooks or periodic sync jobs.
 
 **Pros:**
+
 - Can JOIN user data in SQL queries
 - User data available even if Keycloak is temporarily unavailable
 - Familiar pattern for developers
 
 **Cons:**
+
 - Synchronization complexity and failure modes
 - Data inconsistency risk between Keycloak and database
 - GDPR complexity: PII in multiple locations
@@ -111,11 +117,13 @@ CREATE TABLE folders (
 **Description:** Store minimal user references (ID, username, email) in application database, updated on each login.
 
 **Pros:**
+
 - Basic user data available for queries
 - Updated naturally through login flow
 - Simpler than full synchronization
 
 **Cons:**
+
 - Stale data for users who haven't logged in recently
 - Still duplicates some PII (emails, usernames)
 - Inconsistent data between logged-in and not-logged-in users
@@ -156,6 +164,7 @@ CREATE TABLE folders (
 ### Backend Patterns
 
 **Extracting identity from JWT:**
+
 ```python
 # core/organization.py
 from fastapi import Depends
@@ -173,6 +182,7 @@ async def get_current_user(
 ```
 
 **Saving references:**
+
 ```python
 # services/companies.py
 async def create_company(
@@ -192,6 +202,7 @@ async def create_company(
 ```
 
 **Fetching user details (when needed):**
+
 ```python
 # services/keycloak.py
 from python_keycloak import KeycloakAdmin
@@ -206,6 +217,7 @@ async def get_organization_members(org_id: str) -> list[UserInfo]:
 ### Frontend Patterns
 
 **Auth store with user identity:**
+
 ```typescript
 // stores/auth.ts
 export const useAuthStore = defineStore('auth', () => {
@@ -221,6 +233,7 @@ export const useAuthStore = defineStore('auth', () => {
 ### Tables That Reference Identity
 
 Current tables with Keycloak ID references:
+
 - `companies.owner_id`, `companies.organization_id`
 - `folders.owner_id`, `folders.organization_id`
 - `folder_shares.shared_with_user_id`

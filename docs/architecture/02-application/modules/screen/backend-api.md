@@ -6,16 +6,16 @@ The Screen module backend is part of the FastAPI application, providing REST API
 
 ## Technology Stack
 
-| Category | Technology |
-|----------|------------|
-| **Framework** | FastAPI |
-| **Language** | Python 3.9+ |
-| **ORM** | SQLAlchemy 2.x |
-| **Validation** | Pydantic v2 |
-| **Migrations** | Alembic |
-| **Task Queue** | Celery with RabbitMQ |
-| **Auth** | fastapi-keycloak |
-| **AI Platform** | Dify |
+| Category        | Technology           |
+| --------------- | -------------------- |
+| **Framework**   | FastAPI              |
+| **Language**    | Python 3.9+          |
+| **ORM**         | SQLAlchemy 2.x       |
+| **Validation**  | Pydantic v2          |
+| **Migrations**  | Alembic              |
+| **Task Queue**  | Celery with RabbitMQ |
+| **Auth**        | fastapi-keycloak     |
+| **AI Platform** | Dify                 |
 
 ## Architecture Overview
 
@@ -151,14 +151,14 @@ screen-service/
 
 ## Key Endpoints
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/companies` | GET | List companies (filtered by org) |
-| `/api/companies` | POST | Create company card |
-| `/api/companies/{id}` | GET | Get company details |
-| `/api/companies/{id}` | DELETE | Delete company |
-| `/api/companies/{id}/tasks` | GET | List company tasks |
-| `/api/companies/{id}/tasks` | POST | Trigger task execution |
+| Endpoint                    | Method | Purpose                          |
+| --------------------------- | ------ | -------------------------------- |
+| `/api/companies`            | GET    | List companies (filtered by org) |
+| `/api/companies`            | POST   | Create company card              |
+| `/api/companies/{id}`       | GET    | Get company details              |
+| `/api/companies/{id}`       | DELETE | Delete company                   |
+| `/api/companies/{id}/tasks` | GET    | List company tasks               |
+| `/api/companies/{id}/tasks` | POST   | Trigger task execution           |
 
 ## Related Documentation
 

@@ -51,20 +51,20 @@ ChapsMind follows a **clean architecture** approach with clear separation of con
 
 ## Documentation Index
 
-| Document | Description |
-|----------|-------------|
-| [Frontend Architecture](./frontend-architecture.md) | Vue.js application structure and patterns |
-| [Backend Architecture](./backend-architecture.md) | FastAPI layer organization and service pattern |
-| [API Contracts](./api-contracts.md) | API layer patterns and data fetching |
-| [Coding Standards](./coding-standards.md) | Links to development conventions |
-| [Testing Strategy](./testing-strategy.md) | Testing approach and tools |
+| Document                                            | Description                                    |
+| --------------------------------------------------- | ---------------------------------------------- |
+| [Frontend Architecture](./frontend-architecture.md) | Vue.js application structure and patterns      |
+| [Backend Architecture](./backend-architecture.md)   | FastAPI layer organization and service pattern |
+| [API Contracts](./api-contracts.md)                 | API layer patterns and data fetching           |
+| [Coding Standards](./coding-standards.md)           | Links to development conventions               |
+| [Testing Strategy](./testing-strategy.md)           | Testing approach and tools                     |
 
 ## Quick Reference
 
 ### Frontend Stack
 
 - **Framework**: Vue 3 with Composition API (`<script setup lang="ts">`)
-- **State**: Pinia + Pinia Colada 
+- **State**: Pinia + Pinia Colada
 - **Routing**: File-based with `unplugin-vue-router`
 - **Styling**: Tailwind CSS v4 with semantic color tokens
 

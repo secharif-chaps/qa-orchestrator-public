@@ -33,6 +33,7 @@ A critical requirement is **multi-tenancy**: each client organization must have 
 We will use **self-hosted Keycloak** as the identity and access management solution.
 
 Key implementation decisions:
+
 - Use Keycloak Organizations feature for multi-tenancy
 - Store NO user data in application database (all identity in Keycloak)
 - Use OIDC protocol for authentication
@@ -42,6 +43,7 @@ Key implementation decisions:
 - Host Keycloak on our own infrastructure for full control
 
 Permission model:
+
 ```
 Organization Permissions:
 - organization.read
@@ -66,6 +68,7 @@ Admin Permissions:
 **Description:** Open-source identity and access management solution, self-hosted on our infrastructure.
 
 **Pros:**
+
 - Full control over user data (GDPR compliance)
 - Built-in Organizations feature for multi-tenancy
 - No per-user pricing
@@ -76,6 +79,7 @@ Admin Permissions:
 - Can be shared across multiple Chapsvision products
 
 **Cons:**
+
 - Requires infrastructure management and maintenance
 - Higher initial setup complexity
 - Team must maintain updates and security patches
@@ -87,6 +91,7 @@ Admin Permissions:
 **Description:** Cloud-based identity platform with comprehensive features.
 
 **Pros:**
+
 - Fully managed service (no infrastructure)
 - Excellent documentation and SDKs
 - Quick to implement
@@ -94,6 +99,7 @@ Admin Permissions:
 - Good developer experience
 
 **Cons:**
+
 - Per-user pricing becomes expensive at scale
 - User data stored in Auth0's cloud (GDPR considerations)
 - Less control over customization
@@ -106,12 +112,14 @@ Admin Permissions:
 **Description:** Amazon's identity service integrated with AWS ecosystem.
 
 **Pros:**
+
 - Tight AWS integration
 - Pay-per-use pricing
 - Managed service
 - Scales automatically
 
 **Cons:**
+
 - Limited customization options
 - No native Organizations/multi-tenancy feature
 - User data in AWS (may complicate GDPR)
@@ -152,6 +160,7 @@ Admin Permissions:
 ### Database Architecture
 
 Due to this decision, the application database:
+
 - Has NO `users` table
 - Has NO `organization_members` table
 - Stores Keycloak user IDs as `owner_id` VARCHAR fields

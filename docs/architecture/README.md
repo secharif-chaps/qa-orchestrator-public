@@ -9,15 +9,15 @@ This document serves as the entry point to the ChapsMind Technical Architecture 
 
 ## Table of Contents
 
-| View | Description | Target Audience |
-|------|-------------|-----------------|
-| [Context](./01-context/) | Objectives, scope, business constraints, and product roadmap | Everyone |
-| [Application](./02-application/) | Application architecture, modules, and data flows | Architects, Tech Leads |
-| [Development](./03-development/) | Software architecture, patterns, and coding standards | Developers |
-| [Infrastructure](./04-infrastructure/) | Deployment, CI/CD, Kubernetes (deferred) | DevOps, SRE |
-| [Security](./05-security/) | Authentication, authorization, data protection | Security, Architects |
-| [Performance](./06-performance/) | Scalability, caching, monitoring | DevOps, Architects |
-| [ADR](./adr/) | Architecture Decision Records | Everyone |
+| View                                   | Description                                                  | Target Audience        |
+| -------------------------------------- | ------------------------------------------------------------ | ---------------------- |
+| [Context](./01-context/)               | Objectives, scope, business constraints, and product roadmap | Everyone               |
+| [Application](./02-application/)       | Application architecture, modules, and data flows            | Architects, Tech Leads |
+| [Development](./03-development/)       | Software architecture, patterns, and coding standards        | Developers             |
+| [Infrastructure](./04-infrastructure/) | Deployment, CI/CD, Kubernetes (deferred)                     | DevOps, SRE            |
+| [Security](./05-security/)             | Authentication, authorization, data protection               | Security, Architects   |
+| [Performance](./06-performance/)       | Scalability, caching, monitoring                             | DevOps, Architects     |
+| [ADR](./adr/)                          | Architecture Decision Records                                | Everyone               |
 
 ---
 
@@ -25,29 +25,29 @@ This document serves as the entry point to the ChapsMind Technical Architecture 
 
 Key terms used throughout the ChapsMind documentation:
 
-| Term | Definition |
-|------|------------|
-| **ChapsMind** | AI-powered market and economic intelligence platform for discovering, monitoring, and analyzing information |
-| **OSINT** | Open Source Intelligence - publicly available information gathered from public sources |
-| **Screen** | Company screening module - primary module for gathering information about companies online |
-| **Target** | Watchfile monitoring module for automated tracking on any topic (Q1 2025) |
-| **Explore** | Graph-based relationship discovery module (planned) |
-| **Stream** | Intelligence distribution features for newsletters, Slack, RSS (planned) |
-| **Discover** | Advanced dashboard capabilities module (organization level link to already existing Discover portal) |
-| **Chaps-e** | Global AI assistant accessible from sidebar, adapts context to current page, conversational interface for data queries and watchfile setup |
-| **Chaps-e Smart Assist** | Feature providing goal-based smart action buttons on company cards based on user's AI preferences |
-| **Dify** | AI orchestration platform used for LLM workflows and intelligent analysis |
-| **Keycloak** | Identity provider (IdP) for authentication and authorization |
-| **Keycloak Organizations** | Multi-tenancy feature enabling client isolation |
-| **Organization** | Tenant unit in the multi-tenant architecture; clients are organizations |
-| **Pinia Colada** | Vue.js data fetching library for queries and mutations with caching |
-| **OIDC** | OpenID Connect - authentication protocol built on OAuth 2.0 |
-| **JWT** | JSON Web Token - token format used for authentication |
-| **RBAC** | Role-Based Access Control - permission model using `resource.action` format |
-| **Celery** | Distributed task queue for background job processing |
-| **RabbitMQ** | Message broker used for async communication |
-| **Global Service** | Single entry point acting as both API gateway and shared services (tokens, folders, orgs) |
-| **gRPC** | High-performance RPC framework for service-to-service communication |
+| Term                       | Definition                                                                                                                                 |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **ChapsMind**              | AI-powered market and economic intelligence platform for discovering, monitoring, and analyzing information                                |
+| **OSINT**                  | Open Source Intelligence - publicly available information gathered from public sources                                                     |
+| **Screen**                 | Company screening module - primary module for gathering information about companies online                                                 |
+| **Target**                 | Watchfile monitoring module for automated tracking on any topic (Q1 2025)                                                                  |
+| **Explore**                | Graph-based relationship discovery module (planned)                                                                                        |
+| **Stream**                 | Intelligence distribution features for newsletters, Slack, RSS (planned)                                                                   |
+| **Discover**               | Advanced dashboard capabilities module (organization level link to already existing Discover portal)                                       |
+| **Chaps-e**                | Global AI assistant accessible from sidebar, adapts context to current page, conversational interface for data queries and watchfile setup |
+| **Chaps-e Smart Assist**   | Feature providing goal-based smart action buttons on company cards based on user's AI preferences                                          |
+| **Dify**                   | AI orchestration platform used for LLM workflows and intelligent analysis                                                                  |
+| **Keycloak**               | Identity provider (IdP) for authentication and authorization                                                                               |
+| **Keycloak Organizations** | Multi-tenancy feature enabling client isolation                                                                                            |
+| **Organization**           | Tenant unit in the multi-tenant architecture; clients are organizations                                                                    |
+| **Pinia Colada**           | Vue.js data fetching library for queries and mutations with caching                                                                        |
+| **OIDC**                   | OpenID Connect - authentication protocol built on OAuth 2.0                                                                                |
+| **JWT**                    | JSON Web Token - token format used for authentication                                                                                      |
+| **RBAC**                   | Role-Based Access Control - permission model using `resource.action` format                                                                |
+| **Celery**                 | Distributed task queue for background job processing                                                                                       |
+| **RabbitMQ**               | Message broker used for async communication                                                                                                |
+| **Global Service**         | Single entry point acting as both API gateway and shared services (tokens, folders, orgs)                                                  |
+| **gRPC**                   | High-performance RPC framework for service-to-service communication                                                                        |
 
 ---
 
@@ -195,15 +195,15 @@ docs/architecture/
 
 ## Related Documentation
 
-| Resource | Location | Description |
-|----------|----------|-------------|
-| Workspace Guide | [`CLAUDE.md`](../../CLAUDE.md) | Development guide and patterns |
-| Product Mission | [`agent-os/product/mission.md`](../../agent-os/product/mission.md) | Product pitch and vision |
-| Tech Stack | [`agent-os/product/tech-stack.md`](../../agent-os/product/tech-stack.md) | Technology details |
-| Coding Standards | [`agent-os/standards/`](../../agent-os/standards/) | Development conventions |
-| Feature Specs | [`agent-os/specs/`](../../agent-os/specs/) | Feature specifications |
-| Frontend Components | [`front/src/components/CLAUDE.md`](../../front/src/components/CLAUDE.md) | Component guidelines |
-| API Documentation | `/docs` endpoint | Live OpenAPI documentation |
+| Resource            | Location                                                                 | Description                    |
+| ------------------- | ------------------------------------------------------------------------ | ------------------------------ |
+| Workspace Guide     | [`CLAUDE.md`](../../CLAUDE.md)                                           | Development guide and patterns |
+| Product Mission     | [`agent-os/product/mission.md`](../../agent-os/product/mission.md)       | Product pitch and vision       |
+| Tech Stack          | [`agent-os/product/tech-stack.md`](../../agent-os/product/tech-stack.md) | Technology details             |
+| Coding Standards    | [`agent-os/standards/`](../../agent-os/standards/)                       | Development conventions        |
+| Feature Specs       | [`agent-os/specs/`](../../agent-os/specs/)                               | Feature specifications         |
+| Frontend Components | [`front/src/components/CLAUDE.md`](../../front/src/components/CLAUDE.md) | Component guidelines           |
+| API Documentation   | `/docs` endpoint                                                         | Live OpenAPI documentation     |
 
 ---
 
@@ -236,10 +236,10 @@ docs/architecture/
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2026-01-12 | Initial TAD release with all views |
+| Version | Date       | Changes                            |
+| ------- | ---------- | ---------------------------------- |
+| 1.0     | 2026-01-12 | Initial TAD release with all views |
 
 ---
 
-*This Technical Architecture Document is maintained by the ChapsMind Engineering Team.*
+_This Technical Architecture Document is maintained by the ChapsMind Engineering Team._

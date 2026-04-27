@@ -22,36 +22,37 @@
 
 ### Files to Delete
 
-| File | Lines | Purpose (to be removed) |
-|------|-------|------------------------|
-| `apps/screen/app/core/celery_app.py` | 74 | Celery application configuration |
-| `apps/screen/app/core/concurrency.py` | 114 | Dify workflow concurrency control |
-| `apps/screen/app/core/dify_error_config.py` | 178 | Dify error code → message mappings |
-| `apps/screen/app/core/dify_error_i18n.py` | 261 | Dify error i18n translations |
-| `apps/screen/app/infrastructure/dify/client.py` | 603 | Dify HTTP client |
-| `apps/screen/app/infrastructure/dify/__init__.py` | — | Package marker |
-| `apps/screen/app/services/chapse.py` | 685 | Dify chat service (→ replaced by ChatService) |
-| `apps/screen/app/services/dify.py` | 960 | Dify workflow orchestration service |
-| `apps/screen/app/services/dify_error_handler.py` | 562 | Dify error handling/mapping |
-| `apps/screen/app/services/task_dependency_service.py` | 161 | Task dependency resolution |
-| `apps/screen/app/services/workflow_config.py` | 63 | Workflow config CRUD |
-| `apps/screen/app/workers/dify_tasks.py` | 236 | Celery tasks for Dify workflows |
-| `apps/screen/app/workers/translation_tasks.py` | 362 | Celery tasks for translations |
-| `apps/screen/app/api/endpoints/webhooks.py` | 562 | Dify webhook callback handlers |
-| `apps/screen/app/api/endpoints/concurrency.py` | 52 | Concurrency control endpoints |
-| `apps/screen/app/schemas/dify_errors.py` | 166 | Dify error response schemas |
+| File                                                  | Lines | Purpose (to be removed)                       |
+| ----------------------------------------------------- | ----- | --------------------------------------------- |
+| `apps/screen/app/core/celery_app.py`                  | 74    | Celery application configuration              |
+| `apps/screen/app/core/concurrency.py`                 | 114   | Dify workflow concurrency control             |
+| `apps/screen/app/core/dify_error_config.py`           | 178   | Dify error code → message mappings            |
+| `apps/screen/app/core/dify_error_i18n.py`             | 261   | Dify error i18n translations                  |
+| `apps/screen/app/infrastructure/dify/client.py`       | 603   | Dify HTTP client                              |
+| `apps/screen/app/infrastructure/dify/__init__.py`     | —     | Package marker                                |
+| `apps/screen/app/services/chapse.py`                  | 685   | Dify chat service (→ replaced by ChatService) |
+| `apps/screen/app/services/dify.py`                    | 960   | Dify workflow orchestration service           |
+| `apps/screen/app/services/dify_error_handler.py`      | 562   | Dify error handling/mapping                   |
+| `apps/screen/app/services/task_dependency_service.py` | 161   | Task dependency resolution                    |
+| `apps/screen/app/services/workflow_config.py`         | 63    | Workflow config CRUD                          |
+| `apps/screen/app/workers/dify_tasks.py`               | 236   | Celery tasks for Dify workflows               |
+| `apps/screen/app/workers/translation_tasks.py`        | 362   | Celery tasks for translations                 |
+| `apps/screen/app/api/endpoints/webhooks.py`           | 562   | Dify webhook callback handlers                |
+| `apps/screen/app/api/endpoints/concurrency.py`        | 52    | Concurrency control endpoints                 |
+| `apps/screen/app/schemas/dify_errors.py`              | 166   | Dify error response schemas                   |
 
 ### Services to Remove from Docker Compose
 
 Remove from `infra/compose.yaml` and `infra/compose.local.yaml`:
 
-| Service | Purpose |
-|---------|---------|
+| Service                | Purpose                                                            |
+| ---------------------- | ------------------------------------------------------------------ |
 | `screen_celery_worker` | Celery worker (entrypoint: `celery -A app.core.celery_app worker`) |
-| `screen_celery_flower` | Celery monitoring UI (port 5555) |
-| `rabbitmq` | Message broker (ports 5672, 15672) |
+| `screen_celery_flower` | Celery monitoring UI (port 5555)                                   |
+| `rabbitmq`             | Message broker (ports 5672, 15672)                                 |
 
 Also remove:
+
 - `rabbitmq_data` volume
 - `RABBITMQ_URL` env var from `screen` service
 - `MAX_CONCURRENT_WORKFLOWS` env var from `screen` service
@@ -61,11 +62,13 @@ Also remove:
 ### Model Fields to Remove (via Migration 029)
 
 **Tasks table**:
+
 - Column `is_prerequisite` (boolean)
 - Enum value `blocked` from `task_status_enum` (keep: `pending`, `running`, `succeeded`, `error`)
 - Enum value `data_collection` from `task_type_enum` (keep: `profile`, `digital`, `timeline`, `products`, `jobs`, `csr`, `press`, `team`)
 
 **Companies table** — remove raw knowledge columns:
+
 - `raw_mistral_knowledge`
 - `raw_gpt_knowledge`
 - `raw_wikipedia_knowledge`
@@ -92,6 +95,7 @@ dify-client = "^0.1.10"
 ### Config Settings to Remove
 
 Remove from `apps/screen/app/core/config.py`:
+
 ```python
 DIFY_API_KEY: str
 DIFY_URL: str
@@ -103,6 +107,7 @@ MAX_CONCURRENT_WORKFLOWS: int
 ### Router Registrations to Remove
 
 In `apps/screen/app/api/router.py`:
+
 - Remove webhook endpoint router
 - Remove concurrency endpoint router
 
@@ -115,6 +120,7 @@ These elements exist on current main and must be preserved:
 ### 1. `error_details` Column (TAR-1180, Migration 028)
 
 The `tasks.error_details` text column stores error information. **Reuse it** for LangGraph errors:
+
 - When an agent returns `status: "error"`, write the error message to `error_details`
 - The frontend error display already reads this column
 
@@ -129,6 +135,7 @@ Migration 026 creates the `screen` schema. No changes needed.
 ### 4. Chat Methods (→ Extract to ChatService)
 
 The current Dify chat integration in `chapse.py` handles:
+
 - Streaming chat completions
 - Conversation context management
 - Company data injection into prompts
@@ -138,6 +145,7 @@ The current Dify chat integration in `chapse.py` handles:
 ### 5. All Pinia Colada v1 Patterns (TAR-1305)
 
 The frontend was migrated to Pinia Colada v1 with `defineQueryOptions`. All new frontend code must follow v1 patterns:
+
 - Use `defineQueryOptions()` for query definitions
 - Use `useQuery()` with query options + parameter function
 - Use `defineMutation()` + `useMutation()` for mutations
@@ -197,6 +205,7 @@ apps/screen/app/agents/
 #### File Descriptions
 
 **`config.py`** (~100 lines):
+
 - `AZURE_DEPLOYMENT`: model name from settings
 - `MAX_AGENT_RETRIES = 1`: single retry via synthesizer
 - `AGENT_TIMEOUT_SECONDS = 120`: per-agent timeout (configurable per agent)
@@ -207,6 +216,7 @@ apps/screen/app/agents/
 - `AGENT_PROMPTS`: compiled prompts dict (built at import time)
 
 **`prompts/`** directory (~400 lines total):
+
 - `planner.py`: `PLANNER_SYSTEM_PROMPT` — instructs LLM to explore company website, return JSON with summary/industry/pages/people/brands
 - `methodology.py`: `RESEARCH_METHODOLOGY` — shared prefix for all agent prompts (5-level source trust hierarchy)
 - `roles.py`: `_AGENT_ROLES` — one-liner role per agent
@@ -215,11 +225,13 @@ apps/screen/app/agents/
 - `domains.py`: `AGENT_ALLOWED_DOMAINS` — per-agent domain whitelists with `{company_domain}` placeholder
 
 **`state.py`** (~50 lines):
+
 - `AgentResult(TypedDict)`: agent_name, status, data, sources, error, input_tokens, output_tokens, duration_ms
 - `_merge_agent_results(existing, new)`: append-only reducer
 - `CompanyAnalysisState(TypedDict)`: full state with Annotated reducer on agent_results
 
 **`graph.py`** (~80 lines):
+
 - `AGENT_NODE_MAP`: maps agent names to node functions
 - `_route_to_agents(state) -> list[Send]`: creates Send per agent in agents_to_run
 - `_route_after_synthesis(state) -> list[Send] | str`: retry or END
@@ -227,6 +239,7 @@ apps/screen/app/agents/
 - `analysis_graph`: module-level compiled singleton
 
 **`runner.py`** (~200 lines):
+
 - `CompanyAnalysisRunner` class with `run()` and `run_single_agent()` methods
 - `run()`: marks tasks RUNNING, streams via `astream_events(version="v2")`, intercepts `on_chain_end` for `agent_*` nodes, persists results progressively
 - `run_single_agent()`: runs a single agent outside the graph (for individual task restart)
@@ -234,21 +247,25 @@ apps/screen/app/agents/
 - Cost calculation: `(input_tokens / 1_000_000) * 1.25 + (output_tokens / 1_000_000) * 10.00` (v1); future: use API `usage.cost` field directly for multi-model accuracy
 
 **`nodes/base.py`** (~100 lines):
+
 - `run_agent(agent_name, company_name, website, company_brief, country_code) -> AgentResult`
 - `_extract_domain(website)`: strips www., handles ://
 - `_infer_country_code(website)`: TLD → country code map (27 entries)
 - `_build_allowed_domains(agent_name, company_domain)`: replaces `{company_domain}` placeholder
 
 **`nodes/planner.py`** (~120 lines):
+
 - `planner_node(state) -> dict`: calls web_search, builds company brief, returns agents_to_run
 - `_build_company_brief(planner_data, website) -> str`: multi-line text brief with discovered pages, people, brands
 
 **`nodes/synthesizer.py`** (~80 lines):
+
 - `synthesizer_node(state) -> dict`: counts results, checks retry eligibility, calculates totals
 - Returns: quality_issues, agents_to_retry, total_tokens, total_cost
 
 **`nodes/<agent>.py`** (9 files, ~15 lines each):
 Each agent node follows the identical pattern:
+
 ```python
 async def run_<agent>_agent(state: CompanyAnalysisState) -> dict:
     result = await run_agent(
@@ -262,6 +279,7 @@ async def run_<agent>_agent(state: CompanyAnalysisState) -> dict:
 ```
 
 **`tools/web_search.py`** (~150 lines):
+
 - Uses `AsyncOpenAI` with `base_url=f"{AZURE_OPENAI_ENDPOINT}/openai/v1/"`
 - Lazy-initialized module-level `_client` singleton
 - `web_search_query(system_prompt, user_query, agent_name, country_code, allowed_domains) -> dict`
@@ -301,6 +319,7 @@ class ChatService:
 ```
 
 SSE event format (compatible with existing frontend):
+
 ```json
 {"event": "message", "answer": "chunk...", "conversation_id": "..."}
 {"event": "message_end", "conversation_id": "..."}
@@ -309,6 +328,7 @@ SSE event format (compatible with existing frontend):
 ### Backend: Admin Agent Endpoints
 
 **`apps/screen/app/api/endpoints/admin_agents.py`**:
+
 - `GET /admin/agents/overview` → `AgentOverviewResponse`
   - KPIs: total_runs, total_executions, total_cost, success_rate, avg_cost_per_run, avg_latency_seconds
   - Per-agent performance rows
@@ -318,6 +338,7 @@ SSE event format (compatible with existing frontend):
 - Requires `admin.organizations` role
 
 **`apps/screen/app/schemas/admin_agents.py`**:
+
 - `AgentOverviewKpis`
 - `AgentPerformanceRow`: agent_type, total_executions, succeeded, failed, success_rate, avg_duration_seconds, avg_input_tokens, avg_output_tokens, avg_cost, total_cost
 - `CostTrendPoint`: date, cost, executions
@@ -329,6 +350,7 @@ SSE event format (compatible with existing frontend):
 ### Backend: Config Changes
 
 Add to `apps/screen/app/core/config.py`:
+
 ```python
 AZURE_OPENAI_API_KEY: Optional[str] = None
 AZURE_OPENAI_ENDPOINT: str = "https://chapsmind.cognitiveservices.azure.com"
@@ -339,6 +361,7 @@ AZURE_OPENAI_DEPLOYMENT: str = "gpt-5.1"
 ### Backend: CompanyService Integration
 
 Modify `apps/screen/app/services/company.py`:
+
 - Replace Dify workflow calls with `CompanyAnalysisRunner.run()`
 - Replace individual task restart with `CompanyAnalysisRunner.run_single_agent()`
 - Run analysis in `asyncio.create_task()` (background, non-blocking)
@@ -346,6 +369,7 @@ Modify `apps/screen/app/services/company.py`:
 ### Backend: Migrations
 
 **Migration 029** — Dify/Celery cleanup:
+
 ```python
 # 1. Delete data_collection tasks
 DELETE FROM tasks WHERE type = 'data_collection'
@@ -367,6 +391,7 @@ ALTER TABLE companies DROP COLUMN raw_pappers_knowledge
 ```
 
 **Migration 030** — Financial agent:
+
 ```python
 # 1. Add 'financial' to task_type_enum
 
@@ -387,19 +412,20 @@ ALTER TABLE companies DROP COLUMN raw_pappers_knowledge
 
 **New files**:
 
-| File | Description |
-|------|-------------|
-| `apps/front/src/types/agent-observability.ts` | TypeScript types for all observability data |
-| `apps/front/src/api/agent-observability.ts` | API functions (getAgentOverview, getAgentRuns) |
-| `apps/front/src/queries/agent-observability.ts` | Pinia Colada query definitions |
-| `apps/front/src/pages/admin/agents.vue` | Admin agent observability page |
-| `apps/front/src/components/admin/agents/AgentOverviewKpis.vue` | KPI cards (total runs, cost, success rate) |
-| `apps/front/src/components/admin/agents/AgentPerformanceTable.vue` | Per-agent performance table |
-| `apps/front/src/components/admin/agents/AgentRecentRuns.vue` | Recent runs list with expandable details |
-| `apps/front/src/components/admin/agents/AgentRunDetail.vue` | Single run detail (per-agent breakdown) |
-| `apps/front/src/components/admin/agents/AgentRunRow.vue` | Run row component with status indicators |
+| File                                                               | Description                                    |
+| ------------------------------------------------------------------ | ---------------------------------------------- |
+| `apps/front/src/types/agent-observability.ts`                      | TypeScript types for all observability data    |
+| `apps/front/src/api/agent-observability.ts`                        | API functions (getAgentOverview, getAgentRuns) |
+| `apps/front/src/queries/agent-observability.ts`                    | Pinia Colada query definitions                 |
+| `apps/front/src/pages/admin/agents.vue`                            | Admin agent observability page                 |
+| `apps/front/src/components/admin/agents/AgentOverviewKpis.vue`     | KPI cards (total runs, cost, success rate)     |
+| `apps/front/src/components/admin/agents/AgentPerformanceTable.vue` | Per-agent performance table                    |
+| `apps/front/src/components/admin/agents/AgentRecentRuns.vue`       | Recent runs list with expandable details       |
+| `apps/front/src/components/admin/agents/AgentRunDetail.vue`        | Single run detail (per-agent breakdown)        |
+| `apps/front/src/components/admin/agents/AgentRunRow.vue`           | Run row component with status indicators       |
 
 **Types** (`agent-observability.ts`):
+
 ```typescript
 interface AgentOverviewResponse {
   period: string
@@ -420,6 +446,7 @@ type RunStatus = 'all_succeeded' | 'partial' | 'all_failed' | 'running'
 ```
 
 **Route** (`pages/admin/agents.vue`):
+
 ```yaml
 meta:
   permissions:
@@ -429,19 +456,21 @@ meta:
 ```
 
 **Modified files**:
+
 - `apps/front/src/pages/admin/(admin).vue` — Add "Agents" nav link
 - `apps/front/src/types/task.ts` — Add `financial` to TaskType enum, remove `data_collection`
 
 ### Frontend: Financial Section Page
 
-| File | Description |
-|------|-------------|
+| File                                                                  | Description                         |
+| --------------------------------------------------------------------- | ----------------------------------- |
 | `apps/front/src/pages/[folderId]/companies/[companyId]/financial.vue` | Financial section page (~441 lines) |
-| `apps/front/src/components/company/SectionModal.vue` | Update to include financial section |
+| `apps/front/src/components/company/SectionModal.vue`                  | Update to include financial section |
 
 ### Frontend: i18n Updates
 
 Add translation keys for:
+
 - Financial section labels and descriptions
 - Agent observability dashboard labels
 - Agent status messages
@@ -625,6 +654,7 @@ def _merge_agent_results(
 ```
 
 Using `Annotated[list[AgentResult], _merge_agent_results]` on the state field ensures that:
+
 - Each agent node returns `{"agent_results": [result]}` (a list of one)
 - The reducer appends it to the existing list
 - Retried agents accumulate without overwriting original results
@@ -646,6 +676,7 @@ This enables the frontend to show real-time updates as each agent finishes, with
 ### 5. SSE Broadcasting Per-Agent Completion
 
 The runner uses the **existing** SSE infrastructure (`task_event_manager`):
+
 - `broadcast_task_update()` — sent when each agent completes
 - `broadcast_all_tasks_completed()` — sent when synthesizer finishes
 
@@ -721,6 +752,7 @@ langgraph-checkpoint-postgres = "^2.0"   # Enabled from v1 for crash recovery
 ```
 
 Also update `httpx` pin if still at `0.24.1`:
+
 ```toml
 httpx = ">=0.27"
 ```
@@ -728,6 +760,7 @@ httpx = ">=0.27"
 ### Environment Variables
 
 Add to `infra/compose.yaml` (screen service):
+
 ```yaml
 AZURE_OPENAI_API_KEY: ${AZURE_OPENAI_API_KEY}
 AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT:-https://chapsmind.cognitiveservices.azure.com}
@@ -736,12 +769,14 @@ AZURE_OPENAI_DEPLOYMENT: ${AZURE_OPENAI_DEPLOYMENT:-gpt-5.1}
 ```
 
 Add to `infra/compose.local.yaml` (screen service, for local dev with OpenAI direct):
+
 ```yaml
 OPENAI_API_KEY: ${OPENAI_API_KEY}
 OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1}
 ```
 
 Add to `.env.example`:
+
 ```
 AZURE_OPENAI_API_KEY=
 AZURE_OPENAI_ENDPOINT=https://chapsmind.cognitiveservices.azure.com
@@ -752,6 +787,7 @@ AZURE_OPENAI_DEPLOYMENT=gpt-5.1
 ### Python Version
 
 The POC requires Python 3.11+ (for `TypedDict` features). Update `pyproject.toml`:
+
 ```toml
 python = "^3.11"
 ```

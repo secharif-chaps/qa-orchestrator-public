@@ -151,36 +151,36 @@ C4Container
 
 ### Current Containers
 
-| Container | Technology | Purpose |
-|-----------|------------|---------|
-| **Vue.js SPA** | Vue 3, TypeScript, Pinia Colada | Unified user interface |
-| **FastAPI Backend** | Python, FastAPI, SQLAlchemy | REST API (Global + Screen combined) |
-| **Celery Workers** | Python, Celery | Background processing |
-| **Celery Flower** | Python | Task monitoring |
-| **PostgreSQL** | PostgreSQL 16 | Primary database |
-| **RabbitMQ** | RabbitMQ | Message broker |
+| Container           | Technology                      | Purpose                             |
+| ------------------- | ------------------------------- | ----------------------------------- |
+| **Vue.js SPA**      | Vue 3, TypeScript, Pinia Colada | Unified user interface              |
+| **FastAPI Backend** | Python, FastAPI, SQLAlchemy     | REST API (Global + Screen combined) |
+| **Celery Workers**  | Python, Celery                  | Background processing               |
+| **Celery Flower**   | Python                          | Task monitoring                     |
+| **PostgreSQL**      | PostgreSQL 16                   | Primary database                    |
+| **RabbitMQ**        | RabbitMQ                        | Message broker                      |
 
 ### Planned Containers
 
-| Container | Technology | Purpose |
-|-----------|------------|---------|
-| **Vue.js SPA** | Vue 3, TypeScript | Unified frontend |
-| **Global Service** | Python, FastAPI | Gateway + Shared Services (internet-facing) |
-| **Screen Service** | Python, FastAPI | Company screening module (internal) |
-| **Screen Workers** | Python, Celery | Screen background tasks |
-| **PostgreSQL** | PostgreSQL 16 | Shared database |
-| **RabbitMQ** | RabbitMQ | Message broker |
+| Container          | Technology        | Purpose                                     |
+| ------------------ | ----------------- | ------------------------------------------- |
+| **Vue.js SPA**     | Vue 3, TypeScript | Unified frontend                            |
+| **Global Service** | Python, FastAPI   | Gateway + Shared Services (internet-facing) |
+| **Screen Service** | Python, FastAPI   | Company screening module (internal)         |
+| **Screen Workers** | Python, Celery    | Screen background tasks                     |
+| **PostgreSQL**     | PostgreSQL 16     | Shared database                             |
+| **RabbitMQ**       | RabbitMQ          | Message broker                              |
 
 ## Deployment Ports
 
-| Service | Port | Environment |
-|---------|------|-------------|
-| Frontend SPA | 3000 | Development |
-| Global Service | 8000 | All (internet-facing) |
-| Screen Service | 8001 | All (internal only) |
-| PostgreSQL | 5432 | All |
-| RabbitMQ | 5672, 15672 | All |
-| Celery Flower | 5555 | All |
+| Service        | Port        | Environment           |
+| -------------- | ----------- | --------------------- |
+| Frontend SPA   | 3000        | Development           |
+| Global Service | 8000        | All (internet-facing) |
+| Screen Service | 8001        | All (internal only)   |
+| PostgreSQL     | 5432        | All                   |
+| RabbitMQ       | 5672, 15672 | All                   |
+| Celery Flower  | 5555        | All                   |
 
 ## Related Documentation
 

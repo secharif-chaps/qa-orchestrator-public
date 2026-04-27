@@ -23,6 +23,7 @@ ChapsMind serves multiple client organizations with strict data isolation requir
 - No cross-organization data leakage is acceptable
 
 We need a multi-tenancy approach that:
+
 - Provides strong isolation between tenants
 - Integrates with our chosen identity provider (Keycloak)
 - Scales without requiring separate database instances per tenant
@@ -53,6 +54,7 @@ Key implementation decisions:
 **Description:** Use Keycloak's built-in Organizations feature for multi-tenancy.
 
 **Pros:**
+
 - Native integration with existing identity provider
 - Organization membership managed in Keycloak
 - Organization ID included in JWT tokens automatically
@@ -61,6 +63,7 @@ Key implementation decisions:
 - Built-in organization administration UI
 
 **Cons:**
+
 - Requires Keycloak 24+ (relatively new feature)
 - Limited customization compared to custom implementation
 - Keycloak becomes critical dependency
@@ -70,11 +73,13 @@ Key implementation decisions:
 **Description:** Build custom `organizations` and `organization_members` tables in application database, synchronized with Keycloak.
 
 **Pros:**
+
 - Full control over organization data model
 - Can add custom organization attributes
 - SQL JOINs with organization data
 
 **Cons:**
+
 - Data synchronization complexity
 - Potential for inconsistency
 - Duplicate source of truth
@@ -86,11 +91,13 @@ Key implementation decisions:
 **Description:** Each organization gets its own database instance.
 
 **Pros:**
+
 - Strongest isolation guarantee
 - Easy to meet compliance requirements
 - Simplified data deletion per tenant
 
 **Cons:**
+
 - Significant infrastructure complexity
 - Higher costs at scale
 - Cross-tenant queries impossible
@@ -102,11 +109,13 @@ Key implementation decisions:
 **Description:** Shared database with separate schema for each organization.
 
 **Pros:**
+
 - Good isolation within single database
 - Easier backup/restore per tenant
 - Some infrastructure simplification
 
 **Cons:**
+
 - Schema proliferation at scale
 - Migration complexity (must apply to all schemas)
 - Connection string management

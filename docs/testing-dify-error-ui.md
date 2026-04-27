@@ -49,11 +49,11 @@ docker exec infra-screen-1 alembic upgrade head
 
 When a Dify workflow fails, the backend saves structured error details in the `error_details` column of the `tasks` table. The frontend reads this and displays one of three error states:
 
-| Error category | Condition | What the user sees |
-|---|---|---|
-| **Rate limit** | `error_type` is `rate_limit_llm` or `rate_limit_api` | Countdown timer + disabled retry button until timer hits 0 |
-| **Recoverable** | `is_recoverable: true` (no countdown) | Warning alert + active retry button |
-| **Permanent** | `is_recoverable: false` | Red error alert + retry button |
+| Error category  | Condition                                            | What the user sees                                         |
+| --------------- | ---------------------------------------------------- | ---------------------------------------------------------- |
+| **Rate limit**  | `error_type` is `rate_limit_llm` or `rate_limit_api` | Countdown timer + disabled retry button until timer hits 0 |
+| **Recoverable** | `is_recoverable: true` (no countdown)                | Warning alert + active retry button                        |
+| **Permanent**   | `is_recoverable: false`                              | Red error alert + retry button                             |
 
 The countdown is **persistent** — it resumes correctly after page refresh or modal close/reopen, based on `updated_at`.
 
@@ -76,6 +76,7 @@ From the **monorepo root**:
 You will be prompted through 3 steps:
 
 **Step 1 — Choose a company**
+
 ```
 ── Step 1 / 3 : Choose a company ──
 
@@ -85,6 +86,7 @@ Enter number: 1
 ```
 
 **Step 2 — Choose a task**
+
 ```
 ── Step 2 / 3 : Choose a task ──
 
@@ -100,6 +102,7 @@ Enter number: 6
 ```
 
 **Step 3 — Choose an error type**
+
 ```
 ── Step 3 / 3 : Choose an error type ──
 
@@ -180,12 +183,12 @@ Or run the script again and pick a new error type — each run overwrites the pr
 
 ## Error types reference
 
-| `error_type` | `is_recoverable` | `retry_after_seconds` | UI shown |
-|---|---|---|---|
-| `rate_limit_llm` | true | set by QA | Rate limit countdown |
-| `rate_limit_api` | true | set by QA | Rate limit countdown |
-| `context_length_exceeded` | true | null | Recoverable warning |
-| `timeout` | true | null | Recoverable warning |
-| `invalid_output` | true | null | Recoverable warning |
-| `unknown_error` | false | null | Generic permanent error |
-| `provider_error` | false | null | Generic permanent error |
+| `error_type`              | `is_recoverable` | `retry_after_seconds` | UI shown                |
+| ------------------------- | ---------------- | --------------------- | ----------------------- |
+| `rate_limit_llm`          | true             | set by QA             | Rate limit countdown    |
+| `rate_limit_api`          | true             | set by QA             | Rate limit countdown    |
+| `context_length_exceeded` | true             | null                  | Recoverable warning     |
+| `timeout`                 | true             | null                  | Recoverable warning     |
+| `invalid_output`          | true             | null                  | Recoverable warning     |
+| `unknown_error`           | false            | null                  | Generic permanent error |
+| `provider_error`          | false            | null                  | Generic permanent error |

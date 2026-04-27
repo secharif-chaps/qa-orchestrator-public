@@ -47,23 +47,23 @@ Access tokens issued by Keycloak contain claims used for authentication and auth
 
 ### Key JWT Claims
 
-| Claim | Description | Example |
-|-------|-------------|---------|
-| `sub` | Subject (user UUID) | `"123e4567-e89b-12d3-a456-426614174000"` |
-| `preferred_username` | Username | `"john.doe"` |
-| `email` | User email | `"john@example.com"` |
-| `realm_access.roles` | Realm-level roles | `["company.view", "company.create"]` |
-| `organization` | Keycloak Organization ID | `"org-uuid-456"` |
-| `exp` | Expiration timestamp | `1704067200` |
-| `iss` | Issuer (Keycloak URL) | `"https://sso.domain.com/auth/realms/mint"` |
+| Claim                | Description              | Example                                     |
+| -------------------- | ------------------------ | ------------------------------------------- |
+| `sub`                | Subject (user UUID)      | `"123e4567-e89b-12d3-a456-426614174000"`    |
+| `preferred_username` | Username                 | `"john.doe"`                                |
+| `email`              | User email               | `"john@example.com"`                        |
+| `realm_access.roles` | Realm-level roles        | `["company.view", "company.create"]`        |
+| `organization`       | Keycloak Organization ID | `"org-uuid-456"`                            |
+| `exp`                | Expiration timestamp     | `1704067200`                                |
+| `iss`                | Issuer (Keycloak URL)    | `"https://sso.domain.com/auth/realms/mint"` |
 
 ### Token Lifetime
 
-| Token Type | Default Lifetime | Purpose |
-|------------|------------------|---------|
-| Access Token | 5 minutes | API authentication |
-| Refresh Token | 30 minutes | Obtain new access tokens |
-| ID Token | 5 minutes | User identity information |
+| Token Type    | Default Lifetime | Purpose                   |
+| ------------- | ---------------- | ------------------------- |
+| Access Token  | 5 minutes        | API authentication        |
+| Refresh Token | 30 minutes       | Obtain new access tokens  |
+| ID Token      | 5 minutes        | User identity information |
 
 ## JWT Validation Process
 
@@ -159,26 +159,26 @@ The frontend API client automatically handles token refresh:
 ```typescript
 // Simplified token refresh logic in API client
 async function refreshTokenIfNeeded(): Promise<void> {
-  const expiresIn = getTokenExpirationTime();
+  const expiresIn = getTokenExpirationTime()
 
   // Refresh if token expires within 60 seconds
   if (expiresIn < 60) {
-    const newTokens = await keycloak.updateToken(60);
+    const newTokens = await keycloak.updateToken(60)
     if (newTokens) {
-      updateStoredTokens(newTokens);
+      updateStoredTokens(newTokens)
     } else {
       // Refresh token expired, redirect to login
-      redirectToLogin();
+      redirectToLogin()
     }
   }
 }
 
 // API client intercepts requests to check token validity
 apiClient.interceptors.request.use(async (config) => {
-  await refreshTokenIfNeeded();
-  config.headers.Authorization = `Bearer ${getAccessToken()}`;
-  return config;
-});
+  await refreshTokenIfNeeded()
+  config.headers.Authorization = `Bearer ${getAccessToken()}`
+  return config
+})
 ```
 
 ## Security Considerations
@@ -213,13 +213,13 @@ Every token validation performs:
 
 ### Keycloak Realm Settings
 
-| Setting | Value | Purpose |
-|---------|-------|---------|
-| Realm | `mint` | Isolated configuration space |
-| Client ID (Frontend) | `mint-frontend` | SPA client with PKCE |
-| Client ID (Backend) | `mint-backend` | Confidential client for token validation |
-| Access Token Lifespan | 5 minutes | Short-lived for security |
-| Refresh Token Lifespan | 30 minutes | Session duration |
+| Setting                | Value           | Purpose                                  |
+| ---------------------- | --------------- | ---------------------------------------- |
+| Realm                  | `mint`          | Isolated configuration space             |
+| Client ID (Frontend)   | `mint-frontend` | SPA client with PKCE                     |
+| Client ID (Backend)    | `mint-backend`  | Confidential client for token validation |
+| Access Token Lifespan  | 5 minutes       | Short-lived for security                 |
+| Refresh Token Lifespan | 30 minutes      | Session duration                         |
 
 ### Backend Environment Variables
 

@@ -26,11 +26,11 @@ ChapsMind follows these architectural principles:
 
 ChapsMind is evolving from a monolithic to a modular architecture:
 
-| Version | Description | Status |
-|---------|-------------|--------|
-| **v1 (Current)** | Single FastAPI backend with Global + Screen combined | Active |
-| **v2 (Planned)** | API Gateway + Screen Service | In Progress |
-| **v3 (Future)** | API Gateway + Screen + Target + more modules | Future |
+| Version          | Description                                          | Status      |
+| ---------------- | ---------------------------------------------------- | ----------- |
+| **v1 (Current)** | Single FastAPI backend with Global + Screen combined | Active      |
+| **v2 (Planned)** | API Gateway + Screen Service                         | In Progress |
+| **v3 (Future)**  | API Gateway + Screen + Target + more modules         | Future      |
 
 See [Containers](./containers.md) for detailed architecture diagrams.
 
@@ -97,26 +97,26 @@ C4Container
 
 ### Core Architecture
 
-| Document | Description |
-|----------|-------------|
-| [System Context](./system-context.md) | Detailed C4 Context diagram |
-| [Containers](./containers.md) | C4 Container architecture (current + planned + future) |
-| [Data Flows](./data-flows.md) | Data flow sequence diagrams |
+| Document                              | Description                                            |
+| ------------------------------------- | ------------------------------------------------------ |
+| [System Context](./system-context.md) | Detailed C4 Context diagram                            |
+| [Containers](./containers.md)         | C4 Container architecture (current + planned + future) |
+| [Data Flows](./data-flows.md)         | Data flow sequence diagrams                            |
 
 ### Module Architecture
 
-| Document | Description |
-|----------|-------------|
-| [Modules Overview](./modules/) | Modular architecture philosophy |
-| **Global Services** | |
-| [Global Services README](./modules/global-services/) | API Gateway and cross-cutting services |
-| [Auth Service](./modules/global-services/auth-service.md) | Keycloak integration details |
-| **Screen Module** | |
-| [Screen Module README](./modules/screen/) | Company screening module overview |
-| [Screen Backend API](./modules/screen/backend-api.md) | Screen FastAPI service |
-| [Screen AI Orchestration](./modules/screen/ai-orchestration.md) | Dify workflow integration |
-| **Frontend** | |
-| [Frontend Module](./modules/frontend.md) | Vue.js SPA architecture |
+| Document                                                        | Description                            |
+| --------------------------------------------------------------- | -------------------------------------- |
+| [Modules Overview](./modules/)                                  | Modular architecture philosophy        |
+| **Global Services**                                             |                                        |
+| [Global Services README](./modules/global-services/)            | API Gateway and cross-cutting services |
+| [Auth Service](./modules/global-services/auth-service.md)       | Keycloak integration details           |
+| **Screen Module**                                               |                                        |
+| [Screen Module README](./modules/screen/)                       | Company screening module overview      |
+| [Screen Backend API](./modules/screen/backend-api.md)           | Screen FastAPI service                 |
+| [Screen AI Orchestration](./modules/screen/ai-orchestration.md) | Dify workflow integration              |
+| **Frontend**                                                    |                                        |
+| [Frontend Module](./modules/frontend.md)                        | Vue.js SPA architecture                |
 
 ## Related Documentation
 

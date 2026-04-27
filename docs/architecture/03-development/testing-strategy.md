@@ -18,11 +18,11 @@ From [Test Writing Standards](../../../agent-os/standards/testing/test-writing.m
 
 ### Backend Testing
 
-| Tool | Purpose | Status |
-|------|---------|--------|
-| **pytest** | Test framework | Active |
+| Tool               | Purpose            | Status |
+| ------------------ | ------------------ | ------ |
+| **pytest**         | Test framework     | Active |
 | **pytest-asyncio** | Async test support | Active |
-| **pytest-cov** | Coverage reporting | Active |
+| **pytest-cov**     | Coverage reporting | Active |
 
 #### Backend Test Structure
 
@@ -80,10 +80,10 @@ def test_create_company_unauthorized(db_session, mock_user_no_perms):
 
 ### Frontend Testing
 
-| Tool | Purpose | Status |
-|------|---------|--------|
-| **Vitest** | Unit/component tests | Planned |
-| **Playwright** | E2E testing | Planned |
+| Tool           | Purpose              | Status  |
+| -------------- | -------------------- | ------- |
+| **Vitest**     | Unit/component tests | Planned |
+| **Playwright** | E2E testing          | Planned |
 
 #### Frontend Test Structure (Planned)
 
@@ -139,12 +139,14 @@ flowchart LR
 ```
 
 **Characteristics**:
+
 - Fast execution (milliseconds)
 - No external dependencies
 - Mock everything external
 - Test single responsibility
 
 **Examples**:
+
 - Service method logic
 - Utility functions
 - Composables
@@ -168,12 +170,14 @@ flowchart LR
 ```
 
 **Characteristics**:
+
 - Slower than unit tests
 - May use real database (test instance)
 - Test component interaction
 - Mock only external services (Dify, Keycloak)
 
 **Examples**:
+
 - API endpoint with database
 - Service with database operations
 - Multi-service workflows
@@ -198,12 +202,14 @@ flowchart LR
 ```
 
 **Characteristics**:
+
 - Slowest tests
 - Test real user scenarios
 - Full stack integration
 - Catch integration issues
 
 **Examples**:
+
 - Login flow
 - Create company workflow
 - Team management operations
@@ -212,17 +218,18 @@ flowchart LR
 
 ### Coverage Targets
 
-| Code Type | Target | Notes |
-|-----------|--------|-------|
-| **Security-critical** | 100% | Auth, permissions, validation |
-| **Business logic** | >80% | Services, core workflows |
-| **API endpoints** | >70% | Happy paths, error cases |
-| **UI components** | >60% | Core components |
-| **Utilities** | As needed | Based on complexity |
+| Code Type             | Target    | Notes                         |
+| --------------------- | --------- | ----------------------------- |
+| **Security-critical** | 100%      | Auth, permissions, validation |
+| **Business logic**    | >80%      | Services, core workflows      |
+| **API endpoints**     | >70%      | Happy paths, error cases      |
+| **UI components**     | >60%      | Core components               |
+| **Utilities**         | As needed | Based on complexity           |
 
 ### What to Test
 
 **Always Test**:
+
 - Authentication and authorization logic
 - Permission checks
 - Data validation
@@ -231,6 +238,7 @@ flowchart LR
 - Public API contracts
 
 **Defer Testing**:
+
 - Simple getters/setters
 - Framework boilerplate
 - Purely presentational components
@@ -282,6 +290,7 @@ vi.mock('@/stores/auth', () => ({
 <!-- TODO: To be completed when CI pipeline is implemented -->
 
 Tests should run automatically on:
+
 - Pull request creation
 - Push to feature branches
 - Pre-merge validation

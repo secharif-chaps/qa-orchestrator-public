@@ -6,15 +6,15 @@ The ChapsMind frontend is a Vue.js 3 single-page application (SPA) using the Com
 
 ## Technology Stack
 
-| Category | Technology |
-|----------|------------|
-| **Framework** | Vue 3 with Composition API |
-| **Language** | TypeScript (strict mode) |
-| **Build Tool** | Vite 7 |
-| **Styling** | Tailwind CSS v4 |
-| **State Management** | Pinia + Pinia Colada |
-| **Routing** | Vue Router with unplugin-vue-router |
-| **i18n** | vue-i18n |
+| Category             | Technology                          |
+| -------------------- | ----------------------------------- |
+| **Framework**        | Vue 3 with Composition API          |
+| **Language**         | TypeScript (strict mode)            |
+| **Build Tool**       | Vite 7                              |
+| **Styling**          | Tailwind CSS v4                     |
+| **State Management** | Pinia + Pinia Colada                |
+| **Routing**          | Vue Router with unplugin-vue-router |
+| **i18n**             | vue-i18n                            |
 
 ## Architecture Overview
 
@@ -84,11 +84,11 @@ src/
 
 ### Helpers vs Composables vs Utils
 
-| Folder | Purpose | Example |
-|--------|---------|---------|
-| `helpers/` | Reusable logic for specific domains (cache, mutations) | `rollbackCacheChanges()`, `updateFolderInCache()` |
-| `composables/` | Vue-specific composition functions (use refs, computed) | `useCompanyPermissions()`, `useFolderTree()` |
-| `utils/` | Pure utility functions (no Vue dependency) | `formatDate()`, `debounce()` |
+| Folder         | Purpose                                                 | Example                                           |
+| -------------- | ------------------------------------------------------- | ------------------------------------------------- |
+| `helpers/`     | Reusable logic for specific domains (cache, mutations)  | `rollbackCacheChanges()`, `updateFolderInCache()` |
+| `composables/` | Vue-specific composition functions (use refs, computed) | `useCompanyPermissions()`, `useFolderTree()`      |
+| `utils/`       | Pure utility functions (no Vue dependency)              | `formatDate()`, `debounce()`                      |
 
 ## Related Documentation
 

@@ -23,29 +23,29 @@ Examples:
 
 #### Company Permissions (Organization-Scoped)
 
-| Permission | Description | Use Case |
-|------------|-------------|----------|
-| `company.view` | View company details | View company cards, details, and data |
-| `company.create` | Create new companies | Search and create company cards |
-| `company.update` | Update existing companies | Edit company information (future) |
-| `company.delete` | Delete companies | Remove company cards from organization |
+| Permission       | Description               | Use Case                               |
+| ---------------- | ------------------------- | -------------------------------------- |
+| `company.view`   | View company details      | View company cards, details, and data  |
+| `company.create` | Create new companies      | Search and create company cards        |
+| `company.update` | Update existing companies | Edit company information (future)      |
+| `company.delete` | Delete companies          | Remove company cards from organization |
 
 #### Organization Permissions (Organization-Scoped)
 
-| Permission | Description | Use Case |
-|------------|-------------|----------|
-| `organization.read` | Read-only organization access | Access team page, view members |
-| `organization.write` | Modify organization | Manage users and organization settings |
+| Permission           | Description                   | Use Case                               |
+| -------------------- | ----------------------------- | -------------------------------------- |
+| `organization.read`  | Read-only organization access | Access team page, view members         |
+| `organization.write` | Modify organization           | Manage users and organization settings |
 
 #### Admin Permissions (Global - Internal Users)
 
 These permissions are for Chapsvision internal team members who manage the platform.
 
-| Permission | Description | Use Case | Typical User |
-|------------|-------------|----------|--------------|
-| `admin.organizations` | Organization administration | Manage all client organizations, tokens, features | Customer Success Manager |
-| `admin.tasks` | Task monitoring | Monitor and debug background tasks | Technical Developer |
-| `admin.costs` | Cost analysis access | View AI usage and cost reports (disabled, needs rework) | Product Leader |
+| Permission            | Description                 | Use Case                                                | Typical User             |
+| --------------------- | --------------------------- | ------------------------------------------------------- | ------------------------ |
+| `admin.organizations` | Organization administration | Manage all client organizations, tokens, features       | Customer Success Manager |
+| `admin.tasks`         | Task monitoring             | Monitor and debug background tasks                      | Technical Developer      |
+| `admin.costs`         | Cost analysis access        | View AI usage and cost reports (disabled, needs rework) | Product Leader           |
 
 <!-- TODO: Add permissions for Support and Sales roles when defined -->
 
@@ -145,26 +145,24 @@ sequenceDiagram
 ```typescript
 // Navigation guard in router/index.ts
 router.beforeEach(async (to, from) => {
-  const authStore = useAuthStore();
+  const authStore = useAuthStore()
 
   // Check authentication
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return { name: 'login', query: { redirect: to.fullPath } };
+    return { name: 'login', query: { redirect: to.fullPath } }
   }
 
   // Check permissions (OR logic)
   if (to.meta.permissions?.length > 0) {
-    const hasAccess = to.meta.permissions.some(
-      (permission) => authStore.hasPermission(permission)
-    );
+    const hasAccess = to.meta.permissions.some((permission) => authStore.hasPermission(permission))
 
     if (!hasAccess) {
-      return { name: 'forbidden' };
+      return { name: 'forbidden' }
     }
   }
 
-  return true;
-});
+  return true
+})
 ```
 
 ## Component-Level Authorization
@@ -175,11 +173,11 @@ Components use permission checks to show/hide UI elements.
 
 ```vue
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth';
-import { useCompanyPermissions } from '@/composables/useCompanyPermissions';
+import { useAuthStore } from '@/stores/auth'
+import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 
-const authStore = useAuthStore();
-const { canCreateCompany, canDeleteCompany } = useCompanyPermissions();
+const authStore = useAuthStore()
+const { canCreateCompany, canDeleteCompany } = useCompanyPermissions()
 </script>
 
 <template>
@@ -202,9 +200,7 @@ const { canCreateCompany, canDeleteCompany } = useCompanyPermissions();
     />
 
     <!-- Show read-only message for users without edit permissions -->
-    <Alert v-if="!canCreateCompany" variant="info">
-      You have read-only access to companies.
-    </Alert>
+    <Alert v-if="!canCreateCompany" variant="info"> You have read-only access to companies. </Alert>
   </div>
 </template>
 ```
@@ -215,28 +211,19 @@ Dedicated composables encapsulate permission logic for each resource.
 
 ```typescript
 // composables/useCompanyPermissions.ts
-import { computed } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
 export function useCompanyPermissions() {
-  const authStore = useAuthStore();
+  const authStore = useAuthStore()
 
   return {
-    canViewCompany: computed(() =>
-      authStore.hasPermission('company.view')
-    ),
-    canCreateCompany: computed(() =>
-      authStore.hasPermission('company.create')
-    ),
-    canEditCompany: computed(() =>
-      authStore.hasPermission('company.update')
-    ),
-    canDeleteCompany: computed(() =>
-      authStore.hasPermission('company.delete')
-    ),
-    canManageCompanies: computed(() =>
-      authStore.hasPermission('company.update') ||
-      authStore.hasPermission('company.delete')
+    canViewCompany: computed(() => authStore.hasPermission('company.view')),
+    canCreateCompany: computed(() => authStore.hasPermission('company.create')),
+    canEditCompany: computed(() => authStore.hasPermission('company.update')),
+    canDeleteCompany: computed(() => authStore.hasPermission('company.delete')),
+    canManageCompanies: computed(
+      () => authStore.hasPermission('company.update') || authStore.hasPermission('company.delete'),
     ),
     hasAnyCompanyAccess: computed(() =>
       authStore.hasAnyPermission([
@@ -244,9 +231,9 @@ export function useCompanyPermissions() {
         'company.create',
         'company.update',
         'company.delete',
-      ])
+      ]),
     ),
-  };
+  }
 }
 ```
 
@@ -257,22 +244,22 @@ export function useCompanyPermissions() {
 export const useAuthStore = defineStore('auth', () => {
   // Check single permission
   function hasPermission(permission: string): boolean {
-    return user.value?.roles.includes(permission) ?? false;
+    return user.value?.roles.includes(permission) ?? false
   }
 
   // Check single role (alias for hasPermission)
   function hasRole(role: string): boolean {
-    return hasPermission(role);
+    return hasPermission(role)
   }
 
   // Check if user has ANY of the roles (OR logic)
   function hasAnyRole(roles: string[]): boolean {
-    return roles.some((role) => hasPermission(role));
+    return roles.some((role) => hasPermission(role))
   }
 
   // Check if user has ALL roles (AND logic)
   function hasAllRoles(roles: string[]): boolean {
-    return roles.every((role) => hasPermission(role));
+    return roles.every((role) => hasPermission(role))
   }
 
   return {
@@ -280,8 +267,8 @@ export const useAuthStore = defineStore('auth', () => {
     hasRole,
     hasAnyRole,
     hasAllRoles,
-  };
-});
+  }
+})
 ```
 
 ## Backend Authorization

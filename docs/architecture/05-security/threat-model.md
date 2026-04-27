@@ -10,14 +10,14 @@ Threat modeling helps identify potential security threats and vulnerabilities be
 
 ## STRIDE Categories
 
-| Category | Description |
-|----------|-------------|
-| **S**poofing | Impersonating a user or system |
-| **T**ampering | Modifying data or code |
-| **R**epudiation | Denying actions without proof |
+| Category                   | Description                           |
+| -------------------------- | ------------------------------------- |
+| **S**poofing               | Impersonating a user or system        |
+| **T**ampering              | Modifying data or code                |
+| **R**epudiation            | Denying actions without proof         |
 | **I**nformation Disclosure | Exposing data to unauthorized parties |
-| **D**enial of Service | Making system unavailable |
-| **E**levation of Privilege | Gaining unauthorized access levels |
+| **D**enial of Service      | Making system unavailable             |
+| **E**levation of Privilege | Gaining unauthorized access levels    |
 
 ---
 
@@ -27,24 +27,24 @@ Threat modeling helps identify potential security threats and vulnerabilities be
 
 <!-- TODO: Complete asset inventory with security team -->
 
-| Asset | Description | Sensitivity | Owner |
-|-------|-------------|-------------|-------|
-| User Credentials | Passwords, tokens in Keycloak | Critical | Security Team |
-| JWT Signing Keys | Keycloak RS256 private keys | Critical | Security Team |
-| Company Data | Business intelligence gathered | High | Data Team |
-| API Keys | Dify, external services | High | DevOps Team |
-| Database | PostgreSQL with business data | High | DevOps Team |
+| Asset            | Description                    | Sensitivity | Owner         |
+| ---------------- | ------------------------------ | ----------- | ------------- |
+| User Credentials | Passwords, tokens in Keycloak  | Critical    | Security Team |
+| JWT Signing Keys | Keycloak RS256 private keys    | Critical    | Security Team |
+| Company Data     | Business intelligence gathered | High        | Data Team     |
+| API Keys         | Dify, external services        | High        | DevOps Team   |
+| Database         | PostgreSQL with business data  | High        | DevOps Team   |
 
 ### Data Classification
 
 <!-- TODO: Define data classification levels -->
 
-| Classification | Description | Examples |
-|----------------|-------------|----------|
-| Public | No sensitivity | Marketing content |
-| Internal | Business use only | Company analysis |
-| Confidential | Restricted access | API keys, configs |
-| Restricted | Highly sensitive | Credentials, PII |
+| Classification | Description       | Examples          |
+| -------------- | ----------------- | ----------------- |
+| Public         | No sensitivity    | Marketing content |
+| Internal       | Business use only | Company analysis  |
+| Confidential   | Restricted access | API keys, configs |
+| Restricted     | Highly sensitive  | Credentials, PII  |
 
 ---
 
@@ -54,41 +54,41 @@ Threat modeling helps identify potential security threats and vulnerabilities be
 
 <!-- TODO: To be completed by security team -->
 
-| ID | Threat | Category | Likelihood | Impact | Mitigation |
-|----|--------|----------|------------|--------|------------|
-| AUTH-01 | Credential stuffing | Spoofing | Medium | High | Rate limiting, MFA |
-| AUTH-02 | JWT token theft | Spoofing | Medium | High | Short token lifetime, HTTPS |
-| AUTH-03 | Session hijacking | Spoofing | Low | High | Secure cookies, token binding |
+| ID      | Threat              | Category | Likelihood | Impact | Mitigation                    |
+| ------- | ------------------- | -------- | ---------- | ------ | ----------------------------- |
+| AUTH-01 | Credential stuffing | Spoofing | Medium     | High   | Rate limiting, MFA            |
+| AUTH-02 | JWT token theft     | Spoofing | Medium     | High   | Short token lifetime, HTTPS   |
+| AUTH-03 | Session hijacking   | Spoofing | Low        | High   | Secure cookies, token binding |
 
 ### Authorization Threats
 
 <!-- TODO: To be completed by security team -->
 
-| ID | Threat | Category | Likelihood | Impact | Mitigation |
-|----|--------|----------|------------|--------|------------|
-| AUTHZ-01 | IDOR (Insecure Direct Object Reference) | Elevation | Medium | High | Organization scoping |
-| AUTHZ-02 | Role manipulation | Elevation | Low | Critical | Role validation in Keycloak |
-| AUTHZ-03 | Cross-tenant access | Elevation | Low | Critical | Organization ID validation |
+| ID       | Threat                                  | Category  | Likelihood | Impact   | Mitigation                  |
+| -------- | --------------------------------------- | --------- | ---------- | -------- | --------------------------- |
+| AUTHZ-01 | IDOR (Insecure Direct Object Reference) | Elevation | Medium     | High     | Organization scoping        |
+| AUTHZ-02 | Role manipulation                       | Elevation | Low        | Critical | Role validation in Keycloak |
+| AUTHZ-03 | Cross-tenant access                     | Elevation | Low        | Critical | Organization ID validation  |
 
 ### Data Threats
 
 <!-- TODO: To be completed by security team -->
 
-| ID | Threat | Category | Likelihood | Impact | Mitigation |
-|----|--------|----------|------------|--------|------------|
-| DATA-01 | SQL injection | Tampering | Low | Critical | Parameterized queries |
-| DATA-02 | XSS attacks | Tampering | Medium | Medium | Input sanitization, CSP |
-| DATA-03 | Data exfiltration | Info Disclosure | Medium | High | Access logging, DLP |
+| ID      | Threat            | Category        | Likelihood | Impact   | Mitigation              |
+| ------- | ----------------- | --------------- | ---------- | -------- | ----------------------- |
+| DATA-01 | SQL injection     | Tampering       | Low        | Critical | Parameterized queries   |
+| DATA-02 | XSS attacks       | Tampering       | Medium     | Medium   | Input sanitization, CSP |
+| DATA-03 | Data exfiltration | Info Disclosure | Medium     | High     | Access logging, DLP     |
 
 ### Infrastructure Threats
 
 <!-- TODO: To be completed by security team -->
 
-| ID | Threat | Category | Likelihood | Impact | Mitigation |
-|----|--------|----------|------------|--------|------------|
-| INFRA-01 | DDoS attack | DoS | Medium | High | Rate limiting, CDN |
-| INFRA-02 | Database breach | Info Disclosure | Low | Critical | Encryption at rest |
-| INFRA-03 | Container escape | Elevation | Low | Critical | Security contexts |
+| ID       | Threat           | Category        | Likelihood | Impact   | Mitigation         |
+| -------- | ---------------- | --------------- | ---------- | -------- | ------------------ |
+| INFRA-01 | DDoS attack      | DoS             | Medium     | High     | Rate limiting, CDN |
+| INFRA-02 | Database breach  | Info Disclosure | Low        | Critical | Encryption at rest |
+| INFRA-03 | Container escape | Elevation       | Low        | Critical | Security contexts  |
 
 ---
 
@@ -98,26 +98,26 @@ Threat modeling helps identify potential security threats and vulnerabilities be
 
 <!-- TODO: Verify and expand with security team -->
 
-| Mitigation | Threats Addressed | Status | Owner |
-|------------|-------------------|--------|-------|
-| Keycloak OIDC | AUTH-01, AUTH-02, AUTH-03 | Implemented | Backend Team |
-| JWT validation | AUTH-02, AUTHZ-02 | Implemented | Backend Team |
-| Organization scoping | AUTHZ-01, AUTHZ-03 | Implemented | Backend Team |
-| Pydantic validation | DATA-01 | Implemented | Backend Team |
-| SQLAlchemy ORM | DATA-01 | Implemented | Backend Team |
-| HTTPS everywhere | AUTH-02, DATA-03 | Implemented | DevOps Team |
+| Mitigation           | Threats Addressed         | Status      | Owner        |
+| -------------------- | ------------------------- | ----------- | ------------ |
+| Keycloak OIDC        | AUTH-01, AUTH-02, AUTH-03 | Implemented | Backend Team |
+| JWT validation       | AUTH-02, AUTHZ-02         | Implemented | Backend Team |
+| Organization scoping | AUTHZ-01, AUTHZ-03        | Implemented | Backend Team |
+| Pydantic validation  | DATA-01                   | Implemented | Backend Team |
+| SQLAlchemy ORM       | DATA-01                   | Implemented | Backend Team |
+| HTTPS everywhere     | AUTH-02, DATA-03          | Implemented | DevOps Team  |
 
 ### Planned Mitigations
 
 <!-- TODO: Prioritize with security team -->
 
-| Mitigation | Threats Addressed | Priority | Target Date |
-|------------|-------------------|----------|-------------|
-| MFA enforcement | AUTH-01 | High | TBD |
-| Rate limiting | AUTH-01, INFRA-01 | High | TBD |
-| WAF deployment | DATA-02, INFRA-01 | Medium | TBD |
-| Security logging | All | Medium | TBD |
-| Penetration testing | All | High | TBD |
+| Mitigation          | Threats Addressed | Priority | Target Date |
+| ------------------- | ----------------- | -------- | ----------- |
+| MFA enforcement     | AUTH-01           | High     | TBD         |
+| Rate limiting       | AUTH-01, INFRA-01 | High     | TBD         |
+| WAF deployment      | DATA-02, INFRA-01 | Medium   | TBD         |
+| Security logging    | All               | Medium   | TBD         |
+| Penetration testing | All               | High     | TBD         |
 
 ---
 
@@ -171,24 +171,24 @@ flowchart LR
 
 <!-- TODO: Define testing cadence with security team -->
 
-| Test Type | Frequency | Scope | Owner |
-|-----------|-----------|-------|-------|
-| SAST (Static Analysis) | Per commit | All code | CI/CD Pipeline |
-| DAST (Dynamic Analysis) | Weekly | Staging env | Security Team |
-| Dependency Scanning | Daily | All dependencies | CI/CD Pipeline |
-| Penetration Testing | Quarterly | Production | External Vendor |
-| Security Review | Per feature | New features | Security Team |
+| Test Type               | Frequency   | Scope            | Owner           |
+| ----------------------- | ----------- | ---------------- | --------------- |
+| SAST (Static Analysis)  | Per commit  | All code         | CI/CD Pipeline  |
+| DAST (Dynamic Analysis) | Weekly      | Staging env      | Security Team   |
+| Dependency Scanning     | Daily       | All dependencies | CI/CD Pipeline  |
+| Penetration Testing     | Quarterly   | Production       | External Vendor |
+| Security Review         | Per feature | New features     | Security Team   |
 
 ### Vulnerability Management
 
 <!-- TODO: Define SLAs with security team -->
 
 | Severity | Response Time | Resolution Time |
-|----------|---------------|-----------------|
-| Critical | 4 hours | 24 hours |
-| High | 24 hours | 7 days |
-| Medium | 7 days | 30 days |
-| Low | 30 days | 90 days |
+| -------- | ------------- | --------------- |
+| Critical | 4 hours       | 24 hours        |
+| High     | 24 hours      | 7 days          |
+| Medium   | 7 days        | 30 days         |
+| Low      | 30 days       | 90 days         |
 
 ---
 
@@ -198,19 +198,19 @@ flowchart LR
 
 <!-- TODO: Confirm applicable standards -->
 
-| Standard | Applicability | Status |
-|----------|---------------|--------|
-| GDPR | EU user data | Applicable |
-| SOC 2 | Enterprise clients | TBD |
-| ISO 27001 | Enterprise clients | TBD |
+| Standard  | Applicability      | Status     |
+| --------- | ------------------ | ---------- |
+| GDPR      | EU user data       | Applicable |
+| SOC 2     | Enterprise clients | TBD        |
+| ISO 27001 | Enterprise clients | TBD        |
 
 ---
 
 ## Document History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 0.1 | 2026-01-12 | Architecture Team | Initial template |
+| Version | Date       | Author            | Changes          |
+| ------- | ---------- | ----------------- | ---------------- |
+| 0.1     | 2026-01-12 | Architecture Team | Initial template |
 
 ---
 

@@ -41,6 +41,7 @@ We will use **FastAPI** as the backend framework with the following technology s
 - **Celery + RabbitMQ**: Background task processing
 
 Key implementation patterns:
+
 - Service layer pattern for business logic
 - Dependency injection for database sessions and authentication
 - Pydantic models for all API contracts
@@ -55,6 +56,7 @@ Key implementation patterns:
 **Description:** Modern Python web framework designed for building APIs with automatic OpenAPI documentation.
 
 **Pros:**
+
 - Automatic OpenAPI/Swagger documentation at `/docs`
 - Native async/await support for I/O-bound operations
 - Pydantic integration for automatic validation and serialization
@@ -65,6 +67,7 @@ Key implementation patterns:
 - Easy integration with SQLAlchemy async
 
 **Cons:**
+
 - Relatively newer framework (less mature than Django)
 - Smaller ecosystem of plugins compared to Django
 - Less opinionated (requires more architectural decisions)
@@ -75,6 +78,7 @@ Key implementation patterns:
 **Description:** Full-featured Python web framework with Django REST Framework for API development.
 
 **Pros:**
+
 - Batteries included (admin panel, ORM, auth)
 - Large ecosystem of packages
 - Mature and battle-tested
@@ -82,6 +86,7 @@ Key implementation patterns:
 - Built-in security features
 
 **Cons:**
+
 - Synchronous by default (async support is improving but not native)
 - Heavier framework with features we don't need
 - Django ORM is less flexible than SQLAlchemy
@@ -93,12 +98,14 @@ Key implementation patterns:
 **Description:** Lightweight Python microframework with extensions for REST API development.
 
 **Pros:**
+
 - Lightweight and flexible
 - Simple to understand and get started
 - Large ecosystem of extensions
 - Freedom to choose components
 
 **Cons:**
+
 - No built-in validation (requires extensions)
 - No automatic API documentation
 - Limited async support

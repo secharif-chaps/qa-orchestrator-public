@@ -6,11 +6,11 @@ The **Screen module** uses **Dify** as its AI orchestration platform for all com
 
 ## Technology Stack
 
-| Component | Purpose |
-|-----------|---------|
-| **Dify** | LLM orchestration, AI workflows, intelligent analysis, data collection |
-| **Celery** | Task queue orchestration between backend and Dify |
-| **RabbitMQ** | Message broker for async task processing |
+| Component    | Purpose                                                                |
+| ------------ | ---------------------------------------------------------------------- |
+| **Dify**     | LLM orchestration, AI workflows, intelligent analysis, data collection |
+| **Celery**   | Task queue orchestration between backend and Dify                      |
+| **RabbitMQ** | Message broker for async task processing                               |
 
 ## Architecture Overview
 
@@ -77,26 +77,26 @@ flowchart LR
 
 The complete list of task types defined in the system:
 
-| Task Type | Purpose | Prerequisite | Trigger |
-|-----------|---------|--------------|---------|
-| **data_collection** | Gather raw company data from web sources | Yes (runs first) | Company creation |
-| **profile** | Company profile and basic information | No | After data_collection |
-| **digital** | Digital presence and online metrics | No | After data_collection |
-| **timeline** | Company history and key events | No | After data_collection |
-| **products** | Products and services offered | No | After data_collection |
-| **jobs** | Job postings and hiring information | No | After data_collection |
-| **csr** | Corporate social responsibility data | No | After data_collection |
-| **press** | News and press releases | No | After data_collection |
-| **team** | Leadership and team information | No | After data_collection |
+| Task Type           | Purpose                                  | Prerequisite     | Trigger               |
+| ------------------- | ---------------------------------------- | ---------------- | --------------------- |
+| **data_collection** | Gather raw company data from web sources | Yes (runs first) | Company creation      |
+| **profile**         | Company profile and basic information    | No               | After data_collection |
+| **digital**         | Digital presence and online metrics      | No               | After data_collection |
+| **timeline**        | Company history and key events           | No               | After data_collection |
+| **products**        | Products and services offered            | No               | After data_collection |
+| **jobs**            | Job postings and hiring information      | No               | After data_collection |
+| **csr**             | Corporate social responsibility data     | No               | After data_collection |
+| **press**           | News and press releases                  | No               | After data_collection |
+| **team**            | Leadership and team information          | No               | After data_collection |
 
 ## Concurrency Configuration
 
 Parallel task execution is controlled by Celery worker configuration:
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `MAX_CONCURRENT_WORKFLOWS` | 10 | Maximum number of Dify workflows running simultaneously |
-| `TASK_TIMEOUT_MINUTES` | 5 | Tasks running longer are marked as stale/error |
+| Setting                    | Default | Description                                             |
+| -------------------------- | ------- | ------------------------------------------------------- |
+| `MAX_CONCURRENT_WORKFLOWS` | 10      | Maximum number of Dify workflows running simultaneously |
+| `TASK_TIMEOUT_MINUTES`     | 5       | Tasks running longer are marked as stale/error          |
 
 ```python
 # app/core/config.py
@@ -225,13 +225,13 @@ def dify_callback(payload: DifyCallbackPayload):
 
 ## Error Handling
 
-| Error Type | Handling |
-|------------|----------|
-| Dify timeout | Task marked as ERROR after `TASK_TIMEOUT_MINUTES` |
-| Dify API error | Mark task as failed, log error |
-| Concurrency limit | Wait up to 5 minutes for slot, then error |
-| Rate limiting | Queue delay, retry later |
-| Stale tasks | Periodic cleanup marks stuck RUNNING tasks as ERROR |
+| Error Type        | Handling                                            |
+| ----------------- | --------------------------------------------------- |
+| Dify timeout      | Task marked as ERROR after `TASK_TIMEOUT_MINUTES`   |
+| Dify API error    | Mark task as failed, log error                      |
+| Concurrency limit | Wait up to 5 minutes for slot, then error           |
+| Rate limiting     | Queue delay, retry later                            |
+| Stale tasks       | Periodic cleanup marks stuck RUNNING tasks as ERROR |
 
 ### Stale Task Cleanup
 

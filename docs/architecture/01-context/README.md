@@ -19,13 +19,13 @@ Reinvent market intelligence products with AI capabilities. ChapsMind represents
 
 ### Module Portfolio
 
-| Module | Purpose | Status |
-|--------|---------|--------|
-| **Screen** | Get information about companies online | Production (early stage) |
-| **Target** | Setup watchfiles on topics for automated monitoring | Q1 2026 early adopters, First Release by the end of Q2 |
-| **Explore** | Graph-based relationship discovery | Q4 2026 |
-| **Stream** | Intelligence distribution (newsletter, Slack, RSS) | Future |
-| **Discover** | Additional dashboard capabilities | Future |
+| Module       | Purpose                                             | Status                                                 |
+| ------------ | --------------------------------------------------- | ------------------------------------------------------ |
+| **Screen**   | Get information about companies online              | Production (early stage)                               |
+| **Target**   | Setup watchfiles on topics for automated monitoring | Q1 2026 early adopters, First Release by the end of Q2 |
+| **Explore**  | Graph-based relationship discovery                  | Q4 2026                                                |
+| **Stream**   | Intelligence distribution (newsletter, Slack, RSS)  | Future                                                 |
+| **Discover** | Additional dashboard capabilities                   | Future                                                 |
 
 ### Key Differentiators
 
@@ -44,6 +44,7 @@ The ChapsMind platform is evolving through several key phases. Detailed specific
 ### Current Phase: Screen Production (Phase 1)
 
 The Screen module is in production with first client access. Current focus areas include:
+
 - Datacollector task architecture improvements
 - Section-based workflow implementation
 - Task status monitoring enhancements
@@ -51,23 +52,29 @@ The Screen module is in production with first client access. Current focus areas
 ### Key Milestones
 
 #### Target Module Migration (Q1 2025)
+
 Migrate the Target module functionality into the ChapsMind platform, enabling watchfile-based automated monitoring.
 
 **Related specs:**
+
 - [Global Token System](../../../agent-os/specs/2025-12-16-global-token-system/) - Centralized token management
 - [Team Manager Role](../../../agent-os/specs/2025-12-18-team-manager-role/) - Enhanced role-based access
 
 #### Global Service Extraction (Q2 2025)
+
 Extract global mechanics (folders, tokens, organization settings) from the Screen FastAPI backend to a new FastAPI gRPC Python service as an API gateway.
 
 **Related specs:**
+
 - [Global Organization Service](../../../agent-os/specs/global-organization-service/) - Service extraction architecture
 - [Private Folders Sharing](../../../agent-os/specs/private-folders-sharing/) - Folder system enhancements
 
 #### Module Service Architecture (Q2 2025)
+
 Each module's specific mechanics in dedicated services, enabling true multi-module architecture.
 
 **Architectural pattern:**
+
 - Global services handle cross-cutting concerns (identity, tokens, folders)
 - Module services handle domain-specific logic (Screen, Target, Explore)
 - API gateway pattern with gRPC + REST communication

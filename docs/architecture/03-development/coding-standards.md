@@ -18,50 +18,50 @@ agent-os/standards/
 
 ### Global Standards
 
-| Document | Description |
-|----------|-------------|
-| [Tech Stack](../../../agent-os/standards/global/tech-stack.md) | Technology versions and architecture patterns |
-| [Coding Style](../../../agent-os/standards/global/coding-style.md) | General coding style guidelines |
-| [Conventions](../../../agent-os/standards/global/conventions.md) | Naming and structural conventions |
-| [Error Handling](../../../agent-os/standards/global/error-handling.md) | Error handling patterns |
-| [Validation](../../../agent-os/standards/global/validation.md) | Input validation approaches |
-| [Commenting](../../../agent-os/standards/global/commenting.md) | Code documentation standards |
+| Document                                                               | Description                                   |
+| ---------------------------------------------------------------------- | --------------------------------------------- |
+| [Tech Stack](../../../agent-os/standards/global/tech-stack.md)         | Technology versions and architecture patterns |
+| [Coding Style](../../../agent-os/standards/global/coding-style.md)     | General coding style guidelines               |
+| [Conventions](../../../agent-os/standards/global/conventions.md)       | Naming and structural conventions             |
+| [Error Handling](../../../agent-os/standards/global/error-handling.md) | Error handling patterns                       |
+| [Validation](../../../agent-os/standards/global/validation.md)         | Input validation approaches                   |
+| [Commenting](../../../agent-os/standards/global/commenting.md)         | Code documentation standards                  |
 
 ### Backend Standards
 
-| Document | Description |
-|----------|-------------|
-| [API](../../../agent-os/standards/backend/api.md) | RESTful API endpoint conventions |
-| [Models](../../../agent-os/standards/backend/models.md) | SQLAlchemy model patterns |
-| [Queries](../../../agent-os/standards/backend/queries.md) | Database query patterns |
-| [Migrations](../../../agent-os/standards/backend/migrations.md) | Alembic migration guidelines |
-| [Python](../../../agent-os/standards/backend/python.md) | Python coding standards |
+| Document                                                        | Description                      |
+| --------------------------------------------------------------- | -------------------------------- |
+| [API](../../../agent-os/standards/backend/api.md)               | RESTful API endpoint conventions |
+| [Models](../../../agent-os/standards/backend/models.md)         | SQLAlchemy model patterns        |
+| [Queries](../../../agent-os/standards/backend/queries.md)       | Database query patterns          |
+| [Migrations](../../../agent-os/standards/backend/migrations.md) | Alembic migration guidelines     |
+| [Python](../../../agent-os/standards/backend/python.md)         | Python coding standards          |
 
 ### Frontend Standards
 
-| Document | Description |
-|----------|-------------|
-| [Components](../../../agent-os/standards/frontend/components.md) | Vue component patterns |
-| [CSS](../../../agent-os/standards/frontend/css.md) | Tailwind CSS conventions |
+| Document                                                               | Description                |
+| ---------------------------------------------------------------------- | -------------------------- |
+| [Components](../../../agent-os/standards/frontend/components.md)       | Vue component patterns     |
+| [CSS](../../../agent-os/standards/frontend/css.md)                     | Tailwind CSS conventions   |
 | [Accessibility](../../../agent-os/standards/frontend/accessibility.md) | WCAG compliance guidelines |
-| [Responsive](../../../agent-os/standards/frontend/responsive.md) | Responsive design patterns |
+| [Responsive](../../../agent-os/standards/frontend/responsive.md)       | Responsive design patterns |
 
 ### Testing Standards
 
-| Document | Description |
-|----------|-------------|
+| Document                                                            | Description                 |
+| ------------------------------------------------------------------- | --------------------------- |
 | [Test Writing](../../../agent-os/standards/testing/test-writing.md) | Test coverage and practices |
 
 ## Development Guides (CLAUDE.md Files)
 
 Detailed development guides are embedded in the codebase:
 
-| Document | Description |
-|----------|-------------|
-| [Workspace CLAUDE.md](../../../CLAUDE.md) | Main development guide with patterns and examples |
-| [Backend CLAUDE.md](../../../back/CLAUDE.md) | Python/FastAPI development guide |
-| [Components CLAUDE.md](../../../front/src/components/CLAUDE.md) | Component patterns and UI guidelines |
-| [Pages CLAUDE.md](../../../front/src/pages/CLAUDE.md) | File-based routing patterns |
+| Document                                                        | Description                                       |
+| --------------------------------------------------------------- | ------------------------------------------------- |
+| [Workspace CLAUDE.md](../../../CLAUDE.md)                       | Main development guide with patterns and examples |
+| [Backend CLAUDE.md](../../../back/CLAUDE.md)                    | Python/FastAPI development guide                  |
+| [Components CLAUDE.md](../../../front/src/components/CLAUDE.md) | Component patterns and UI guidelines              |
+| [Pages CLAUDE.md](../../../front/src/pages/CLAUDE.md)           | File-based routing patterns                       |
 
 ## Key Conventions Summary
 
@@ -113,13 +113,13 @@ Detailed development guides are embedded in the codebase:
 
 Permissions follow the `resource.action` format:
 
-| Permission | Description |
-|------------|-------------|
-| `company.view` | View company details |
-| `company.create` | Create new companies |
-| `company.delete` | Delete companies |
-| `organization.read` | View organization content |
-| `organization.write` | Modify organization, manage team |
+| Permission            | Description                        |
+| --------------------- | ---------------------------------- |
+| `company.view`        | View company details               |
+| `company.create`      | Create new companies               |
+| `company.delete`      | Delete companies                   |
+| `organization.read`   | View organization content          |
+| `organization.write`  | Modify organization, manage team   |
 | `admin.organizations` | Global organization administration |
 
 See [Authorization](../05-security/authorization.md) for detailed permission documentation.

@@ -153,12 +153,12 @@ flowchart TB
 
 ### Component Responsibilities
 
-| Layer | Responsibility | Data Access |
-|-------|---------------|-------------|
-| **Pages** | Route handling, data fetching, layout | Uses `useQuery`, `useMutation` |
-| **Feature Components** | Feature-specific UI and logic | Receives data via props |
-| **UI Components** | Generic, reusable presentation | Props only, no data fetching |
-| **Layout Components** | Application structure | May access auth store |
+| Layer                  | Responsibility                        | Data Access                    |
+| ---------------------- | ------------------------------------- | ------------------------------ |
+| **Pages**              | Route handling, data fetching, layout | Uses `useQuery`, `useMutation` |
+| **Feature Components** | Feature-specific UI and logic         | Receives data via props        |
+| **UI Components**      | Generic, reusable presentation        | Props only, no data fetching   |
+| **Layout Components**  | Application structure                 | May access auth store          |
 
 ### Component Decomposition Rules
 
@@ -266,11 +266,11 @@ export const companyByIdQuery = defineQueryOptions(({ id }: { id: string }) => (
 
 Routes are automatically generated from the `src/pages/` directory structure:
 
-| File Path | Generated Route |
-|-----------|-----------------|
-| `pages/(home).vue` | `/` |
-| `pages/companies/index.vue` | `/companies` |
-| `pages/companies/[id].vue` | `/companies/:id` |
+| File Path                       | Generated Route        |
+| ------------------------------- | ---------------------- |
+| `pages/(home).vue`              | `/`                    |
+| `pages/companies/index.vue`     | `/companies`           |
+| `pages/companies/[id].vue`      | `/companies/:id`       |
 | `pages/admin/organizations.vue` | `/admin/organizations` |
 
 ### Route Protection
@@ -296,24 +296,44 @@ meta:
 ```typescript
 import {
   // Core components (Electrons)
-  Avatar, Badge, Bullet, Button, Checkbox, Input, Label, Link,
-  Radio, Select, Switch, Tab, Tag, Textarea, Toggle,
+  Avatar,
+  Badge,
+  Bullet,
+  Button,
+  Checkbox,
+  Input,
+  Label,
+  Link,
+  Radio,
+  Select,
+  Switch,
+  Tab,
+  Tag,
+  Textarea,
+  Toggle,
 
   // Building Blocks (Atoms)
-  Breadcrumb, Chips, DateRangePicker, Pagination, Searchbar, Table,
+  Breadcrumb,
+  Chips,
+  DateRangePicker,
+  Pagination,
+  Searchbar,
+  Table,
 
   // Composites (Molecules/Organisms)
-  Alert, Menu, Modal
+  Alert,
+  Menu,
+  Modal,
 } from '@owlint/feathers-vue'
 ```
 
 ### Component Selection Rules
 
-| Priority | Action |
-|----------|--------|
-| **1. Use Vuellar** | If a Vuellar component exists, use it |
-| **2. Compose Vuellar** | Combine Vuellar components for complex UI |
-| **3. Custom (Exception)** | Only when Vuellar cannot meet the need |
+| Priority                  | Action                                    |
+| ------------------------- | ----------------------------------------- |
+| **1. Use Vuellar**        | If a Vuellar component exists, use it     |
+| **2. Compose Vuellar**    | Combine Vuellar components for complex UI |
+| **3. Custom (Exception)** | Only when Vuellar cannot meet the need    |
 
 ### Creating Custom UI Components
 
@@ -329,26 +349,26 @@ Custom UI components in `src/components/ui/` should be **exceptional** and requi
 
 Some custom components exist in `src/components/ui/` from before Vuellar adoption:
 
-| Component | Status | Action |
-|-----------|--------|--------|
-| `AuthLoader.vue` | ChapsMind-specific | Keep (auth loading state) |
-| `Breadcrumbs.vue` | Deprecated | Migrate to Vuellar `Breadcrumb` |
-| `Card.vue` | ChapsMind-specific | Keep (no Vuellar equivalent) |
-| `NoData.vue` | ChapsMind-specific | Keep (empty state component) |
-| `Pagination.vue` | Deprecated | Migrate to Vuellar `Pagination` |
-| `Tag.vue` | Deprecated | Migrate to Vuellar `Tag` |
-| Others | Review needed | Evaluate for migration |
+| Component         | Status             | Action                          |
+| ----------------- | ------------------ | ------------------------------- |
+| `AuthLoader.vue`  | ChapsMind-specific | Keep (auth loading state)       |
+| `Breadcrumbs.vue` | Deprecated         | Migrate to Vuellar `Breadcrumb` |
+| `Card.vue`        | ChapsMind-specific | Keep (no Vuellar equivalent)    |
+| `NoData.vue`      | ChapsMind-specific | Keep (empty state component)    |
+| `Pagination.vue`  | Deprecated         | Migrate to Vuellar `Pagination` |
+| `Tag.vue`         | Deprecated         | Migrate to Vuellar `Tag`        |
+| Others            | Review needed      | Evaluate for migration          |
 
 ### Design System Tokens
 
 Vuellar uses a props-based design system:
 
-| Prop | Purpose | Values |
-|------|---------|--------|
-| `variant` | Visual weight | `primary`, `secondary`, `tertiary` |
-| `intent` | Semantic meaning | `neutral`, `success`, `warning`, `danger`, `info` |
-| `color` | Decorative (no meaning) | `sage`, `almond`, `pink`, `indigo`, `yellow`, `cherry`, `cyan` |
-| `size` | Dimensions | `xs`, `sm`, `md`, `lg` |
+| Prop      | Purpose                 | Values                                                         |
+| --------- | ----------------------- | -------------------------------------------------------------- |
+| `variant` | Visual weight           | `primary`, `secondary`, `tertiary`                             |
+| `intent`  | Semantic meaning        | `neutral`, `success`, `warning`, `danger`, `info`              |
+| `color`   | Decorative (no meaning) | `sage`, `almond`, `pink`, `indigo`, `yellow`, `cherry`, `cyan` |
+| `size`    | Dimensions              | `xs`, `sm`, `md`, `lg`                                         |
 
 **Rule**: Use `intent` for semantic states (errors, success), use `color` for decoration only.
 

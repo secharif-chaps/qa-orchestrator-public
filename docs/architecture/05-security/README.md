@@ -52,22 +52,22 @@ The security architecture consists of multiple complementary layers:
 
 ## Key Security Decisions
 
-| Decision | Rationale |
-|----------|-----------|
-| Keycloak for Identity | Enterprise-grade IdP with OIDC support, self-hosted control |
-| JWT-only Auth | Stateless authentication, scalable across services |
-| No Users Table | User data stays in Keycloak, reducing exposure risk |
-| Organization Isolation | Keycloak Organizations enforce multi-tenant boundaries |
-| Permission in Roles | `resource.action` format mapped to Keycloak roles |
+| Decision               | Rationale                                                   |
+| ---------------------- | ----------------------------------------------------------- |
+| Keycloak for Identity  | Enterprise-grade IdP with OIDC support, self-hosted control |
+| JWT-only Auth          | Stateless authentication, scalable across services          |
+| No Users Table         | User data stays in Keycloak, reducing exposure risk         |
+| Organization Isolation | Keycloak Organizations enforce multi-tenant boundaries      |
+| Permission in Roles    | `resource.action` format mapped to Keycloak roles           |
 
 ## Documentation Index
 
-| Document | Description |
-|----------|-------------|
-| [Authentication](./authentication.md) | Keycloak OIDC flow, JWT validation, token refresh |
-| [Authorization](./authorization.md) | RBAC permission model, route and component protection |
-| [Data Protection](./data-protection.md) | GDPR considerations, data handling principles |
-| [Threat Model](./threat-model.md) | Security threat analysis template |
+| Document                                | Description                                           |
+| --------------------------------------- | ----------------------------------------------------- |
+| [Authentication](./authentication.md)   | Keycloak OIDC flow, JWT validation, token refresh     |
+| [Authorization](./authorization.md)     | RBAC permission model, route and component protection |
+| [Data Protection](./data-protection.md) | GDPR considerations, data handling principles         |
+| [Threat Model](./threat-model.md)       | Security threat analysis template                     |
 
 ## Related Documentation
 

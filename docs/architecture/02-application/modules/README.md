@@ -22,12 +22,12 @@ ChapsMind Platform
 
 ## Global Service vs Product Modules
 
-| Aspect | Global Service | Product Modules |
-|--------|----------------|-----------------|
-| **Scope** | Platform-wide functionality + Gateway | Module-specific features |
-| **Examples** | Auth, Folders, Organizations, Tokens, Sharing, Routing | Company cards, Watchfiles, Graphs |
-| **Access** | Internet-facing (single entry point) | Internal only (via Global Service) |
-| **Deployment** | Single FastAPI service | Separate internal services |
+| Aspect         | Global Service                                         | Product Modules                    |
+| -------------- | ------------------------------------------------------ | ---------------------------------- |
+| **Scope**      | Platform-wide functionality + Gateway                  | Module-specific features           |
+| **Examples**   | Auth, Folders, Organizations, Tokens, Sharing, Routing | Company cards, Watchfiles, Graphs  |
+| **Access**     | Internet-facing (single entry point)                   | Internal only (via Global Service) |
+| **Deployment** | Single FastAPI service                                 | Separate internal services         |
 
 ## Current vs Planned Architecture
 
@@ -118,12 +118,12 @@ modules/
 
 Each module may use different AI/workflow orchestration:
 
-| Module | AI Platform | Status |
-|--------|-------------|--------|
-| **Screen** | Dify | Active |
-| **Target** | n8n | Planned (Q1-Q2 2026) |
-| **Explore** | TBD | Planned (Q4 2026) |
-| **Stream** | TBD | Future |
+| Module      | AI Platform | Status               |
+| ----------- | ----------- | -------------------- |
+| **Screen**  | Dify        | Active               |
+| **Target**  | n8n         | Planned (Q1-Q2 2026) |
+| **Explore** | TBD         | Planned (Q4 2026)    |
+| **Stream**  | TBD         | Future               |
 
 ## Related Documentation
 

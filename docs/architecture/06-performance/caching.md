@@ -6,11 +6,11 @@ This document describes ChapsMind's caching strategies and query optimization ap
 
 **Important**: ChapsMind does **not** currently use Redis or any server-side caching layer.
 
-| Layer | Caching | Technology |
-|-------|---------|------------|
-| **Frontend** | Query caching | Pinia Colada |
-| **Backend** | No caching | N/A |
-| **Database** | PostgreSQL buffer cache | Built-in |
+| Layer        | Caching                 | Technology   |
+| ------------ | ----------------------- | ------------ |
+| **Frontend** | Query caching           | Pinia Colada |
+| **Backend**  | No caching              | N/A          |
+| **Database** | PostgreSQL buffer cache | Built-in     |
 
 ## Frontend Query Caching (Pinia Colada)
 
@@ -41,7 +41,7 @@ export const COMPANY_QUERY_KEYS = {
 export const companyByIdQuery = defineQueryOptions(({ id }: { id: string }) => ({
   key: COMPANY_QUERY_KEYS.byId(id),
   query: () => getCompanyById(id),
-  staleTime: 1000 * 60 * 5,  // Consider fresh for 5 minutes
+  staleTime: 1000 * 60 * 5, // Consider fresh for 5 minutes
 }))
 ```
 
@@ -79,11 +79,11 @@ CREATE INDEX idx_folders_owner_id ON folders(owner_id);
 
 ### Query Patterns to Avoid
 
-| Pattern | Issue | Solution |
-|---------|-------|----------|
-| **N+1 Queries** | Multiple DB calls | Use `selectinload`/`joinedload` |
-| **SELECT *** | Fetch unnecessary data | Select only needed columns |
-| **Missing indexes** | Full table scans | Add appropriate indexes |
+| Pattern             | Issue                  | Solution                        |
+| ------------------- | ---------------------- | ------------------------------- |
+| **N+1 Queries**     | Multiple DB calls      | Use `selectinload`/`joinedload` |
+| **SELECT \***       | Fetch unnecessary data | Select only needed columns      |
+| **Missing indexes** | Full table scans       | Add appropriate indexes         |
 
 ### SQLAlchemy Optimization
 
@@ -112,7 +112,7 @@ query = select(Company).options(
 2. **Optimize database queries**
    - Add indexes for frequently filtered columns
    - Use eager loading for related entities
-   - Avoid SELECT * in performance-critical paths
+   - Avoid SELECT \* in performance-critical paths
 
 3. **Reduce API calls**
    - Batch related requests where possible

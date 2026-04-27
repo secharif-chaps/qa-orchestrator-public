@@ -6,15 +6,15 @@ The Global Service acts as both **API Gateway** and **shared services layer** fo
 
 ## Overview
 
-| Service | Description | Status |
-|---------|-------------|--------|
-| **Authentication** | Keycloak integration for OIDC auth and JWT validation | Active |
-| **Authorization** | Permission checking and role validation | Active |
-| **Organizations** | Multi-tenant organization management | Active |
-| **Folders** | Folder system for organizing items | Active |
-| **Tokens** | Token allocation and usage tracking | Active |
-| **Sharing** | Cross-organization sharing capabilities | Planned |
-| **Translation** | i18n and localization services | Active |
+| Service            | Description                                           | Status  |
+| ------------------ | ----------------------------------------------------- | ------- |
+| **Authentication** | Keycloak integration for OIDC auth and JWT validation | Active  |
+| **Authorization**  | Permission checking and role validation               | Active  |
+| **Organizations**  | Multi-tenant organization management                  | Active  |
+| **Folders**        | Folder system for organizing items                    | Active  |
+| **Tokens**         | Token allocation and usage tracking                   | Active  |
+| **Sharing**        | Cross-organization sharing capabilities               | Planned |
+| **Translation**    | i18n and localization services                        | Active  |
 
 ## Current Architecture
 
@@ -118,10 +118,10 @@ See [Auth Service](./auth-service.md) for details.
 
 ### API Gateway → Module Services
 
-| Protocol | Use Case | Notes |
-|----------|----------|-------|
+| Protocol | Use Case                         | Notes                    |
+| -------- | -------------------------------- | ------------------------ |
 | **gRPC** | Preferred for service-to-service | Lower latency, type-safe |
-| **REST** | Fallback or specific cases | Simpler debugging |
+| **REST** | Fallback or specific cases       | Simpler debugging        |
 
 ### Request Flow
 
