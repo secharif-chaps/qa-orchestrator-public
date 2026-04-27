@@ -18,6 +18,7 @@ use App\Domain\Collect\Exception\CollectTaskNotFoundException;
 use App\Domain\Collect\NormalizerContext;
 use App\Domain\SourceActivity\SourceActivityLoggerInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -36,7 +37,7 @@ readonly class FetchApifyDatasetHandler
         private SourceActivityLoggerInterface $sourceActivityLogger,
         private ApifyNormalizerResolverInterface $normalizerResolver,
         private MessageBusInterface $messageBus,
-        private ?LoggerInterface $logger = null,
+        private LoggerInterface $logger = new NullLogger(),
     ) {
     }
 
@@ -45,7 +46,7 @@ readonly class FetchApifyDatasetHandler
         try {
             $collectTask = $this->collectTaskGateway->get($action->collectTaskId);
         } catch (CollectTaskNotFoundException $e) {
-            $this->logger?->error('Failed to fetch CollectTask for dataset fetch', [
+            $this->logger->error('Failed to fetch CollectTask for dataset fetch', [
                 'collect_task_id' => $action->collectTaskId,
                 'dataset_id' => $action->datasetId,
                 'error' => $e->getMessage(),
@@ -56,7 +57,9 @@ readonly class FetchApifyDatasetHandler
 
         try {
             $normalizer = $this->normalizerResolver->resolveFor($collectTask);
-            $actorType = $this->extractActorType($collectTask->getProviderTaskId());
+            ['actorId' => $apifyActorId, 'runId' => $runId] = $this->parseProviderTaskId(
+                $collectTask->getProviderTaskId()
+            );
 
             $datasetMetadata = $this->fetchDatasetMetadata($action->datasetId);
             $itemCount = $datasetMetadata['itemCount'] ?? 0;
@@ -64,7 +67,7 @@ readonly class FetchApifyDatasetHandler
                 $itemCount = 0;
             }
 
-            $this->logger?->info('Starting Apify dataset fetch', [
+            $this->logger->info('Starting Apify dataset fetch', [
                 'collect_task_id' => $action->collectTaskId,
                 'dataset_id' => $action->datasetId,
                 'item_count' => $itemCount,
@@ -72,7 +75,7 @@ readonly class FetchApifyDatasetHandler
                 'provider_name' => 'apify',
             ]);
 
-            $stats = $this->processDatasetItems($action->collectTaskId, $action->datasetId, $normalizer, $actorType);
+            $stats = $this->processDatasetItems($action->collectTaskId, $action->datasetId, $normalizer, $apifyActorId);
 
             $result = CollectTaskResult::success(
                 [],
@@ -107,7 +110,32 @@ readonly class FetchApifyDatasetHandler
                 ]
             );
 
-            $this->logger?->info('Apify dataset fetch completed', [
+            if (null !== $action->runCost) {
+                $this->sourceActivityLogger->logSourceCollectCost(
+                    $source,
+                    'apify',
+                    $action->runCost,
+                    [
+                        'apify_actor_id' => $apifyActorId,
+                        'run_id' => $runId,
+                        'items_collected' => $stats['created'],
+                        'collect_task_id' => $collectTask->getId(),
+                        'dataset_id' => $action->datasetId,
+                    ]
+                );
+
+                $this->logger->info('Apify run cost logged', [
+                    'collect_task_id' => $action->collectTaskId,
+                    'dataset_id' => $action->datasetId,
+                    'apify_actor_id' => $apifyActorId,
+                    'run_id' => $runId,
+                    'compute_units' => $action->runCost->computeUnits,
+                    'cost_usd' => $action->runCost->costUsd,
+                    'provider_name' => 'apify',
+                ]);
+            }
+
+            $this->logger->info('Apify dataset fetch completed', [
                 'collect_task_id' => $action->collectTaskId,
                 'dataset_id' => $action->datasetId,
                 'item_count' => $itemCount,
@@ -168,7 +196,7 @@ readonly class FetchApifyDatasetHandler
                         ++$documentsCreated;
                     } catch (\Throwable $e) {
                         ++$normalizationErrors;
-                        $this->logger?->warning('Failed to normalize Apify item', [
+                        $this->logger->warning('Failed to normalize Apify item', [
                             'collect_task_id' => $collectTaskId,
                             'dataset_id' => $datasetId,
                             'offset' => $offset,
@@ -177,7 +205,7 @@ readonly class FetchApifyDatasetHandler
                     }
                 }
 
-                $this->logger?->debug('Processed Apify dataset batch', [
+                $this->logger->debug('Processed Apify dataset batch', [
                     'dataset_id' => $datasetId,
                     'offset' => $offset,
                     'batch_size' => \count($batch),
@@ -186,7 +214,7 @@ readonly class FetchApifyDatasetHandler
 
                 $offset += self::BATCH_SIZE;
             } catch (InvalidArgumentException|CollectException $e) {
-                $this->logger?->error('Failed to fetch dataset items from Apify', [
+                $this->logger->error('Failed to fetch dataset items from Apify', [
                     'dataset_id' => $datasetId,
                     'offset' => $offset,
                     'error' => $e->getMessage(),
@@ -219,7 +247,7 @@ readonly class FetchApifyDatasetHandler
         } catch (InvalidArgumentException $e) {
             throw new CollectException('Failed to fetch dataset metadata: ' . $e->getMessage(), 0, $e);
         } catch (CollectException $e) {
-            $this->logger?->error('Failed to fetch dataset metadata from Apify', [
+            $this->logger->error('Failed to fetch dataset metadata from Apify', [
                 'dataset_id' => $datasetId,
                 'error' => $e->getMessage(),
             ]);
@@ -260,14 +288,14 @@ readonly class FetchApifyDatasetHandler
                 ]
             );
 
-            $this->logger?->error('Apify dataset fetch failed', [
+            $this->logger->error('Apify dataset fetch failed', [
                 'collect_task_id' => $action->collectTaskId,
                 'dataset_id' => $action->datasetId,
                 'error' => $errorMessage,
                 'provider_name' => 'apify',
             ]);
         } catch (CollectException $e) {
-            $this->logger?->critical('Failed to handle dataset fetch failure', [
+            $this->logger->critical('Failed to handle dataset fetch failure', [
                 'collect_task_id' => $action->collectTaskId,
                 'dataset_id' => $action->datasetId,
                 'original_error' => $errorMessage,
@@ -277,16 +305,24 @@ readonly class FetchApifyDatasetHandler
     }
 
     /**
-     * Extracts the actor type from a providerTaskId formatted as "{actorType}:{runId}".
+     * Parses a providerTaskId formatted as "{apifyActorId}:{runId}" into its components.
+     *
+     * @return array{actorId: ?string, runId: ?string}
      */
-    private function extractActorType(?string $providerTaskId): ?string
+    private function parseProviderTaskId(?string $providerTaskId): array
     {
         if (null === $providerTaskId || '' === $providerTaskId) {
-            return null;
+            return [
+                'actorId' => null,
+                'runId' => null,
+            ];
         }
 
         $parts = explode(':', $providerTaskId, 2);
 
-        return '' !== $parts[0] ? $parts[0] : null;
+        return [
+            'actorId' => '' !== $parts[0] ? $parts[0] : null,
+            'runId' => isset($parts[1]) && '' !== $parts[1] ? $parts[1] : null,
+        ];
     }
 }

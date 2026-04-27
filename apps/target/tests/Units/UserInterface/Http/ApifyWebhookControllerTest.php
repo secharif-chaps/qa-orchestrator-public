@@ -6,6 +6,7 @@ namespace App\Tests\Units\UserInterface\Http;
 
 use App\Application\Collect\Apify\FetchApifyDatasetAction;
 use App\Application\Collect\Task\UpdateTaskStatusAction;
+use App\Domain\Collect\ApifyRunCost;
 use App\Domain\Collect\CollectTaskStatus;
 use App\Infrastructure\Collect\Apify\ApifyStatusMapper;
 use App\Tests\Utils\Symfony\NullMessageBus;
@@ -199,6 +200,185 @@ class ApifyWebhookControllerTest extends TestCase
         $this->assertSame(CollectTaskStatus::FAILED, $action->status);
         $this->assertSame(1, $messageBus->countDispatched(UpdateTaskStatusAction::class));
         $this->assertSame(0, $messageBus->countDispatched(FetchApifyDatasetAction::class));
+    }
+
+    public function testFetchActionContainsRunCostWhenUsagePresent(): void
+    {
+        $messageBus = $this->createMessageBus();
+        $controller = new ApifyWebhookController($this->statusMapper, $messageBus);
+
+        $request = $this->createWebhookRequest(
+            collectTaskId: 'task-uuid-cost',
+            payload: [
+                'eventType' => 'ACTOR.RUN.SUCCEEDED',
+                'resource' => [
+                    'status' => 'SUCCEEDED',
+                    'defaultDatasetId' => 'dataset_cost',
+                    'usage' => [
+                        'ACTOR_COMPUTE_UNITS' => 2.5,
+                    ],
+                    'usageUsd' => [
+                        'ACTOR_COMPUTE_UNITS' => 0.005,
+                    ],
+                    'startedAt' => '2024-01-01T10:00:00.000Z',
+                    'finishedAt' => '2024-01-01T10:01:00.000Z',
+                ],
+            ],
+        );
+
+        ($controller)($request);
+
+        $action = $messageBus->getFirstDispatched(FetchApifyDatasetAction::class);
+        $this->assertInstanceOf(FetchApifyDatasetAction::class, $action);
+        $this->assertInstanceOf(ApifyRunCost::class, $action->runCost);
+        $this->assertSame(2.5, $action->runCost->computeUnits);
+        $this->assertSame(0.005, $action->runCost->costUsd);
+        $this->assertSame(60, $action->runCost->durationSeconds);
+    }
+
+    public function testFetchActionHasNullRunCostWhenUsageAbsent(): void
+    {
+        $messageBus = $this->createMessageBus();
+        $controller = new ApifyWebhookController($this->statusMapper, $messageBus);
+
+        $request = $this->createWebhookRequest(
+            collectTaskId: 'task-uuid-no-cost',
+            payload: [
+                'eventType' => 'ACTOR.RUN.SUCCEEDED',
+                'resource' => [
+                    'status' => 'SUCCEEDED',
+                    'defaultDatasetId' => 'dataset_no_cost',
+                ],
+            ],
+        );
+
+        ($controller)($request);
+
+        $action = $messageBus->getFirstDispatched(FetchApifyDatasetAction::class);
+        $this->assertInstanceOf(FetchApifyDatasetAction::class, $action);
+        $this->assertNull($action->runCost);
+    }
+
+    public function testRunCostDefaultsToZeroForMissingUsageKeys(): void
+    {
+        $messageBus = $this->createMessageBus();
+        $controller = new ApifyWebhookController($this->statusMapper, $messageBus);
+
+        $request = $this->createWebhookRequest(
+            collectTaskId: 'task-uuid-empty-usage',
+            payload: [
+                'eventType' => 'ACTOR.RUN.SUCCEEDED',
+                'resource' => [
+                    'status' => 'SUCCEEDED',
+                    'defaultDatasetId' => 'dataset_empty_usage',
+                    'usage' => [],
+                    'usageUsd' => [],
+                ],
+            ],
+        );
+
+        ($controller)($request);
+
+        $action = $messageBus->getFirstDispatched(FetchApifyDatasetAction::class);
+        $this->assertInstanceOf(FetchApifyDatasetAction::class, $action);
+        $this->assertInstanceOf(ApifyRunCost::class, $action->runCost);
+        $this->assertSame(0.0, $action->runCost->computeUnits);
+        $this->assertSame(0.0, $action->runCost->costUsd);
+        $this->assertNull($action->runCost->durationSeconds);
+    }
+
+    public function testRunCostIgnoresInvalidDates(): void
+    {
+        $messageBus = $this->createMessageBus();
+        $controller = new ApifyWebhookController($this->statusMapper, $messageBus);
+
+        $request = $this->createWebhookRequest(
+            collectTaskId: 'task-uuid-bad-dates',
+            payload: [
+                'eventType' => 'ACTOR.RUN.SUCCEEDED',
+                'resource' => [
+                    'status' => 'SUCCEEDED',
+                    'defaultDatasetId' => 'dataset_bad_dates',
+                    'usage' => [
+                        'ACTOR_COMPUTE_UNITS' => 1.0,
+                    ],
+                    'usageUsd' => [
+                        'ACTOR_COMPUTE_UNITS' => 0.002,
+                    ],
+                    'startedAt' => 'not-a-date',
+                    'finishedAt' => 'also-not-a-date',
+                ],
+            ],
+        );
+
+        ($controller)($request);
+
+        $action = $messageBus->getFirstDispatched(FetchApifyDatasetAction::class);
+        $this->assertInstanceOf(FetchApifyDatasetAction::class, $action);
+        $this->assertInstanceOf(ApifyRunCost::class, $action->runCost);
+        $this->assertNull($action->runCost->durationSeconds);
+    }
+
+    public function testRunCostHandlesIntegerUsageValues(): void
+    {
+        $messageBus = $this->createMessageBus();
+        $controller = new ApifyWebhookController($this->statusMapper, $messageBus);
+
+        $request = $this->createWebhookRequest(
+            collectTaskId: 'task-uuid-int-usage',
+            payload: [
+                'eventType' => 'ACTOR.RUN.SUCCEEDED',
+                'resource' => [
+                    'status' => 'SUCCEEDED',
+                    'defaultDatasetId' => 'dataset_int_usage',
+                    'usage' => [
+                        'ACTOR_COMPUTE_UNITS' => 2,
+                    ],
+                    'usageUsd' => [
+                        'ACTOR_COMPUTE_UNITS' => 0,
+                    ],
+                ],
+            ],
+        );
+
+        ($controller)($request);
+
+        $action = $messageBus->getFirstDispatched(FetchApifyDatasetAction::class);
+        $this->assertInstanceOf(FetchApifyDatasetAction::class, $action);
+        $this->assertInstanceOf(ApifyRunCost::class, $action->runCost);
+        $this->assertSame(2.0, $action->runCost->computeUnits);
+        $this->assertSame(0.0, $action->runCost->costUsd);
+    }
+
+    public function testRunCostDefaultsToZeroForNonNumericUsageValues(): void
+    {
+        $messageBus = $this->createMessageBus();
+        $controller = new ApifyWebhookController($this->statusMapper, $messageBus);
+
+        $request = $this->createWebhookRequest(
+            collectTaskId: 'task-uuid-invalid-usage',
+            payload: [
+                'eventType' => 'ACTOR.RUN.SUCCEEDED',
+                'resource' => [
+                    'status' => 'SUCCEEDED',
+                    'defaultDatasetId' => 'dataset_invalid_usage',
+                    'usage' => [
+                        'ACTOR_COMPUTE_UNITS' => 'invalid',
+                    ],
+                    'usageUsd' => [
+                        'ACTOR_COMPUTE_UNITS' => null,
+                    ],
+                ],
+            ],
+        );
+
+        ($controller)($request);
+
+        $action = $messageBus->getFirstDispatched(FetchApifyDatasetAction::class);
+        $this->assertInstanceOf(FetchApifyDatasetAction::class, $action);
+        $this->assertInstanceOf(ApifyRunCost::class, $action->runCost);
+        $this->assertSame(0.0, $action->runCost->computeUnits);
+        $this->assertSame(0.0, $action->runCost->costUsd);
     }
 
     /**

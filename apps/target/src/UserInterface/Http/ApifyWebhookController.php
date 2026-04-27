@@ -6,6 +6,7 @@ namespace App\UserInterface\Http;
 
 use App\Application\Collect\Apify\FetchApifyDatasetAction;
 use App\Application\Collect\Task\UpdateTaskStatusAction;
+use App\Domain\Collect\ApifyRunCost;
 use App\Domain\Collect\CollectTaskStatus;
 use App\Infrastructure\Collect\Apify\ApifyStatusMapper;
 use Psr\Log\LoggerInterface;
@@ -53,14 +54,17 @@ class ApifyWebhookController extends AbstractController
         // If run succeeded, dispatch dataset fetch action; otherwise dispatch status update
         if (CollectTaskStatus::COMPLETED === $collectTaskStatus) {
             $datasetId = $this->extractDatasetId($payload);
+            $runCost = $this->extractRunCost($payload);
             $this->messageBus->dispatch(
-                new FetchApifyDatasetAction($collectTaskId, $datasetId),
+                new FetchApifyDatasetAction($collectTaskId, $datasetId, $runCost),
                 [new DispatchAfterCurrentBusStamp()]
             );
 
             $this->logger?->info('Dispatched FetchApifyDatasetAction', [
                 'collect_task_id' => $collectTaskId,
                 'dataset_id' => $datasetId,
+                'cost_usd' => $runCost?->costUsd,
+                'compute_units' => $runCost?->computeUnits,
                 'provider_name' => 'apify',
             ]);
         } else {
@@ -126,6 +130,54 @@ class ApifyWebhookController extends AbstractController
         }
 
         return $status;
+    }
+
+    /**
+     * Extract cost metrics from the Apify webhook payload.
+     *
+     * Returns null when cost data is absent (e.g. older Apify versions or test webhooks).
+     *
+     * @param array<string, mixed> $payload
+     */
+    private function extractRunCost(array $payload): ?ApifyRunCost
+    {
+        $resource = $payload['resource'] ?? null;
+        if (!\is_array($resource)) {
+            return null;
+        }
+
+        if (!isset($resource['usage']) && !isset($resource['usageUsd'])) {
+            return null;
+        }
+
+        /** @var array<string, mixed> $usage */
+        $usage = \is_array($resource['usage'] ?? null) ? $resource['usage'] : [];
+
+        /** @var array<string, mixed> $usageUsd */
+        $usageUsd = \is_array($resource['usageUsd'] ?? null) ? $resource['usageUsd'] : [];
+
+        $computeUnits = $usage['ACTOR_COMPUTE_UNITS'] ?? 0.0;
+        $costUsd = $usageUsd['ACTOR_COMPUTE_UNITS'] ?? 0.0;
+
+        $durationSeconds = null;
+        $startedAt = $resource['startedAt'] ?? null;
+        $finishedAt = $resource['finishedAt'] ?? null;
+
+        if (\is_string($startedAt) && \is_string($finishedAt)) {
+            try {
+                $start = new \DateTimeImmutable($startedAt);
+                $end = new \DateTimeImmutable($finishedAt);
+                $durationSeconds = max(0, (int) $end->getTimestamp() - (int) $start->getTimestamp());
+            } catch (\Exception) {
+                // Non-fatal: duration stays null
+            }
+        }
+
+        return new ApifyRunCost(
+            computeUnits: \is_float($computeUnits) || \is_int($computeUnits) ? (float) $computeUnits : 0.0,
+            costUsd: \is_float($costUsd) || \is_int($costUsd) ? (float) $costUsd : 0.0,
+            durationSeconds: $durationSeconds,
+        );
     }
 
     /**

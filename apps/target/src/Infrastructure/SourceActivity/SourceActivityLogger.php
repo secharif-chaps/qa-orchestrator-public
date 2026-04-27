@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\SourceActivity;
 
+use App\Domain\Collect\ApifyRunCost;
 use App\Domain\Collect\CollectTaskStatus;
 use App\Domain\Source\Source;
 use App\Domain\Source\SourceStatus;
@@ -278,5 +279,32 @@ class SourceActivityLogger implements SourceActivityLoggerInterface
         }
 
         return new SourceActivity($source, null, SourceActivityActionType::SOURCE_QUERY_LOG, $actionData);
+    }
+
+    public function logSourceCollectCost(
+        Source $source,
+        string $providerName,
+        ApifyRunCost $cost,
+        array $context = [],
+    ): SourceActivity {
+        $actionData = [
+            'source_id' => $source->getId(),
+            'source_name' => $source->getName(),
+            'source_type' => $source->getType()
+->value,
+            'source_url' => $source->getUrl(),
+            'provider_name' => $providerName,
+            'compute_units' => $cost->computeUnits,
+            'cost_usd' => $cost->costUsd,
+            'duration_seconds' => $cost->durationSeconds,
+            'timestamp' => new \DateTime()
+->format('c'),
+        ];
+
+        // Structured fields take priority over caller-supplied context
+        return new SourceActivity($source, null, SourceActivityActionType::SOURCE_COLLECT_COST, array_merge(
+            $context,
+            $actionData
+        ));
     }
 }

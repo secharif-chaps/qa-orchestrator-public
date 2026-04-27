@@ -9,6 +9,7 @@ use App\Application\Collect\Apify\FetchApifyDatasetHandler;
 use App\Application\Document\AddDocumentAction;
 use App\Domain\Collect\ApifyDocumentNormalizerInterface;
 use App\Domain\Collect\ApifyNormalizerResolverInterface;
+use App\Domain\Collect\ApifyRunCost;
 use App\Domain\Collect\CollectTask;
 use App\Domain\Collect\CollectTaskStatus;
 use App\Domain\Collect\Exception\ApifyDatasetNotFoundException;
@@ -354,6 +355,52 @@ class FetchApifyDatasetHandlerTest extends TestCase
         /** @var array<string, mixed> $metadata */
         $metadata = $result['metadata'];
         $this->assertSame(0, $metadata['documentsCreated']);
+    }
+
+    public function testLogsRunCostWhenPresent(): void
+    {
+        $datasetId = 'dataset_cost';
+        $apifyActorId = 'apify/website-content-crawler';
+        $runId = 'run_abc123';
+        $runCost = new ApifyRunCost(computeUnits: 1.5, costUsd: 0.003, durationSeconds: 42);
+
+        $this->createAndSaveCollectTask(\sprintf('%s:%s', $apifyActorId, $runId));
+        $this->apifyClient->addResponse('/datasets/' . $datasetId, [
+            'data' => [
+                'itemCount' => 0,
+                'id' => $datasetId,
+            ],
+        ]);
+        $this->apifyClient->addResponse('/datasets/' . $datasetId . '/items', []);
+
+        ($this->handler)(new FetchApifyDatasetAction(self::TASK_ID, $datasetId, $runCost));
+
+        $this->assertSame(1, $this->sourceActivityLogger->countCollectCostCalls());
+        $calls = $this->sourceActivityLogger->getCollectCostCalls();
+        $this->assertSame('apify', $calls[0]['providerName']);
+        $this->assertSame(1.5, $calls[0]['cost']->computeUnits);
+        $this->assertSame(0.003, $calls[0]['cost']->costUsd);
+        $this->assertSame($apifyActorId, $calls[0]['context']['apify_actor_id']);
+        $this->assertSame($runId, $calls[0]['context']['run_id']);
+        $this->assertSame(0, $calls[0]['context']['items_collected']);
+    }
+
+    public function testDoesNotLogRunCostWhenAbsent(): void
+    {
+        $datasetId = 'dataset_no_cost';
+
+        $this->createAndSaveCollectTask();
+        $this->apifyClient->addResponse('/datasets/' . $datasetId, [
+            'data' => [
+                'itemCount' => 0,
+                'id' => $datasetId,
+            ],
+        ]);
+        $this->apifyClient->addResponse('/datasets/' . $datasetId . '/items', []);
+
+        ($this->handler)(new FetchApifyDatasetAction(self::TASK_ID, $datasetId));
+
+        $this->assertSame(0, $this->sourceActivityLogger->countCollectCostCalls());
     }
 
     private function createAndSaveCollectTask(string $providerTaskId = 'apify_run_id'): CollectTask
