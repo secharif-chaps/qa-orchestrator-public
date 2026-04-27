@@ -266,12 +266,12 @@ flowchart TB
 
 ### Service Responsibilities
 
-| Component | Responsibility |
-|-----------|---------------|
+| Component    | Responsibility                                             |
+| ------------ | ---------------------------------------------------------- |
 | **Endpoint** | Extract dependencies, delegate to service, return response |
-| **Service** | All business logic, validation, orchestration |
-| **Model** | Database structure and relationships |
-| **Schema** | Request/response validation and serialization |
+| **Service**  | All business logic, validation, orchestration              |
+| **Model**    | Database structure and relationships                       |
+| **Schema**   | Request/response validation and serialization              |
 
 ## Database Migrations (Alembic)
 
@@ -397,11 +397,11 @@ Celery Flower provides web monitoring at port 5555:
 
 FastAPI automatically generates OpenAPI documentation:
 
-| Endpoint | Purpose |
-|----------|---------|
-| `/docs` | Swagger UI - Interactive API explorer |
-| `/redoc` | ReDoc - Alternative documentation |
-| `/openapi.json` | Raw OpenAPI schema |
+| Endpoint        | Purpose                               |
+| --------------- | ------------------------------------- |
+| `/docs`         | Swagger UI - Interactive API explorer |
+| `/redoc`        | ReDoc - Alternative documentation     |
+| `/openapi.json` | Raw OpenAPI schema                    |
 
 ## Related Documentation
 

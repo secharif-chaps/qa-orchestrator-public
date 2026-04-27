@@ -21,12 +21,14 @@
 ChapsMind is a multi-module application (TARGET, SCREEN, STREAM, EXPLORE) being unified into a single Vue 3 frontend. Translation management currently presents several inconsistencies that need to be resolved before scaling up:
 
 **Two formats coexist:**
+
 - **Main layer** (`src/i18n/locales/en-US.ts`, `fr-FR.ts`): TypeScript files with nested objects (~2900 lines, i.e. ~1750 translation keys + ~1150 lines of JSON structure: braces, indentation, commas)
 - **Target layer** (`src/target/i18n/locales/en-US.json`, `fr-FR.json`): JSON files with flat dot-notation keys (~580 keys, nearly 1:1 line/key in flat format)
 
 **Total number of translation keys: ~2330** (1750 + 580), spread across ~3480 lines of files.
 
 **Identified problems:**
+
 1. **Dual format**: two conventions (nested TS + flat JSON) merged at runtime via spread operator
 2. **Monolithic files**: ~2330 keys per language in a single bundle, loaded at startup
 3. **No tooling**: no ESLint i18n, no i18n Ally, no CI validation
@@ -51,20 +53,21 @@ All translation files use the **nested JSON** format, in a single file per langu
 
 #### Evaluated Options
 
-| Criterion | Nested JSON | Flat JSON | TypeScript | YAML | ICU MessageFormat |
-|-----------|:---:|:---:|:---:|:---:|:---:|
-| vue-i18n compatibility | Native | Native | Via import | Via plugin | Via plugin |
-| Readability | Medium (many structure lines) | Good (1 line = 1 key) | Good | Excellent | Poor |
-| Key lookup | Indirect (segments, i18n Ally) | Direct (`Ctrl+F` on full key) | Indirect | Indirect | Indirect |
-| Tooling (i18n Ally, ESLint) | Excellent | Good | Limited | Medium | Limited |
-| Loading performance | Native JSON.parse | Native | Requires compilation | Requires parsing | Requires compilation |
-| Lines/keys ratio | ~1.6 lines per key (braces, indentation) | 1 line = 1 key | ~1.6 | ~1.3 | 1 |
-| Git diffability | Medium (adding a key can shift braces) | Excellent (1 added line = 1 diff) | Good | Good | Medium |
-| Industry standard | Yes | Yes | No | Partial | Yes (but complex) |
+| Criterion                   |               Nested JSON                |             Flat JSON             |      TypeScript      |       YAML       |  ICU MessageFormat   |
+| --------------------------- | :--------------------------------------: | :-------------------------------: | :------------------: | :--------------: | :------------------: |
+| vue-i18n compatibility      |                  Native                  |              Native               |      Via import      |    Via plugin    |      Via plugin      |
+| Readability                 |      Medium (many structure lines)       |       Good (1 line = 1 key)       |         Good         |    Excellent     |         Poor         |
+| Key lookup                  |      Indirect (segments, i18n Ally)      |   Direct (`Ctrl+F` on full key)   |       Indirect       |     Indirect     |       Indirect       |
+| Tooling (i18n Ally, ESLint) |                Excellent                 |               Good                |       Limited        |      Medium      |       Limited        |
+| Loading performance         |            Native JSON.parse             |              Native               | Requires compilation | Requires parsing | Requires compilation |
+| Lines/keys ratio            | ~1.6 lines per key (braces, indentation) |          1 line = 1 key           |         ~1.6         |       ~1.3       |          1           |
+| Git diffability             |  Medium (adding a key can shift braces)  | Excellent (1 added line = 1 diff) |         Good         |       Good       |        Medium        |
+| Industry standard           |                   Yes                    |                Yes                |          No          |     Partial      |  Yes (but complex)   |
 
 > **Note on nested JSON readability**: a file of 2330 keys in nested JSON amounts to ~3700 lines (ratio ~1.6x) because each nesting level adds opening/closing brace lines. In flat JSON, the same number of keys amounts to ~2330 lines. This is a trade-off: we gain visual hierarchical structure but lose density.
 
 **Choice: Nested JSON** because:
+
 - Native vue-i18n support without additional plugins
 - Best tooling support (i18n Ally, eslint-plugin-vue-i18n) - i18n Ally compensates for the manual search deficit
 - Native `JSON.parse()` = optimal loading performance
@@ -100,17 +103,17 @@ front/src/i18n/
     └── ... (6+ folders)
 ```
 
-| Criterion | Single file (A) | Module folders (B) |
-|-----------|:---:|:---:|
-| **Simplicity** | 1 file to open, everything is there | Navigate between 6+ folders, find the right key |
-| **Key lookup** | Ctrl+F in the file, done | Search which folder/file contains the key |
-| **Adding a key** | Open 1 file, add in the right place | Determine the right module, open the right subfolder |
-| **Git conflict risk** | More conflicts on a single file | Fewer conflicts (separate files) |
-| **Lazy loading** | Possible per language (not per module) | Possible per module AND per language |
-| **Migration** | Low effort (convert format only) | Significant effort (split ~2330 keys into modules) |
-| **Cross-module keys** | No problem, everything is together | Endless debate: does this key go in `common/` or `target/`? |
-| **File size** | ~2330 keys = ~3700 lines (manageable with i18n Ally) | ~300-800 lines per file |
-| **i18n Ally DX** | Works natively | Requires `pathMatcher` + `namespace` config |
+| Criterion             |                   Single file (A)                    |                     Module folders (B)                      |
+| --------------------- | :--------------------------------------------------: | :---------------------------------------------------------: |
+| **Simplicity**        |         1 file to open, everything is there          |       Navigate between 6+ folders, find the right key       |
+| **Key lookup**        |               Ctrl+F in the file, done               |          Search which folder/file contains the key          |
+| **Adding a key**      |         Open 1 file, add in the right place          |    Determine the right module, open the right subfolder     |
+| **Git conflict risk** |           More conflicts on a single file            |              Fewer conflicts (separate files)               |
+| **Lazy loading**      |        Possible per language (not per module)        |            Possible per module AND per language             |
+| **Migration**         |           Low effort (convert format only)           |     Significant effort (split ~2330 keys into modules)      |
+| **Cross-module keys** |          No problem, everything is together          | Endless debate: does this key go in `common/` or `target/`? |
+| **File size**         | ~2330 keys = ~3700 lines (manageable with i18n Ally) |                   ~300-800 lines per file                   |
+| **i18n Ally DX**      |                    Works natively                    |         Requires `pathMatcher` + `namespace` config         |
 
 **Decision: Option A - Single file per language**
 
@@ -208,16 +211,17 @@ This provides the same logical organization as folders, but in a single easy-to-
 
 The initial namespaces are:
 
-| Namespace | Scope |
-|-----------|-------|
-| `common` | Shared keys used across 2+ modules (actions, status, validation, pagination) |
-| `target` | TARGET module specific keys |
-| `screen` | SCREEN module specific keys |
-| `dashboard` | Dashboard pages |
-| `settings` | Settings/preferences pages |
-| `admin` | Administration pages |
+| Namespace   | Scope                                                                        |
+| ----------- | ---------------------------------------------------------------------------- |
+| `common`    | Shared keys used across 2+ modules (actions, status, validation, pagination) |
+| `target`    | TARGET module specific keys                                                  |
+| `screen`    | SCREEN module specific keys                                                  |
+| `dashboard` | Dashboard pages                                                              |
+| `settings`  | Settings/preferences pages                                                   |
+| `admin`     | Administration pages                                                         |
 
 **This list is not fixed.** New namespaces can be added as the application evolves. To add a new top-level namespace:
+
 1. Propose it in an MR with justification (new module, new major feature area)
 2. Get team agreement during code review
 3. Add the namespace to both `en-US.json` and `fr-FR.json`
@@ -227,14 +231,14 @@ The initial namespaces are:
 
 #### Rules
 
-| Rule | Correct example | Incorrect example |
-|------|----------------|-------------------|
-| camelCase for each segment | `target.companyCard.title` | `target.company_card.title` |
-| No abbreviations | `common.actions.delete` | `common.act.del` |
-| Singular for feature names | `target.company.name` | `target.companies.name` |
-| Present tense for actions | `common.actions.save` | `common.actions.saved` |
-| Max 4 levels of depth | `target.company.detail.title` | `target.company.detail.header.main.title` |
-| No UI type references | `target.search.placeholder` | `target.search.inputPlaceholder` |
+| Rule                       | Correct example               | Incorrect example                         |
+| -------------------------- | ----------------------------- | ----------------------------------------- |
+| camelCase for each segment | `target.companyCard.title`    | `target.company_card.title`               |
+| No abbreviations           | `common.actions.delete`       | `common.act.del`                          |
+| Singular for feature names | `target.company.name`         | `target.companies.name`                   |
+| Present tense for actions  | `common.actions.save`         | `common.actions.saved`                    |
+| Max 4 levels of depth      | `target.company.detail.title` | `target.company.detail.header.main.title` |
+| No UI type references      | `target.search.placeholder`   | `target.search.inputPlaceholder`          |
 
 #### Shared Keys
 
@@ -258,11 +262,13 @@ Nested JSON stores keys as a tree structure. When you see `$t('common.modal.erro
 **Concrete example:**
 
 In a component:
+
 ```vue
 <h2>{{ $t('common.modal.error.title') }}</h2>
 ```
 
 In `en-US.json`, the key is stored as:
+
 ```json
 {
   "common": {
@@ -288,6 +294,7 @@ In practice, search for the most specific segment. For `common.modal.error.title
 **VS Code — i18n Ally:**
 
 The **i18n Ally** extension fully solves this problem:
+
 - **Hover over the key** in the `.vue` file → displays the translation inline, without opening the JSON file
 - **Click on the key** → navigates directly to the location in the JSON file
 - **Inline annotations** → displays the translated value next to each `$t()` directly in the editor
@@ -296,6 +303,7 @@ The **i18n Ally** extension fully solves this problem:
 **JetBrains (WebStorm / IntelliJ IDEA):**
 
 WebStorm provides built-in i18n support for Vue projects:
+
 - **Navigate to key**: `Ctrl+Click` on a `$t('key')` string navigates to the JSON key definition (requires configuring the i18n framework in Settings → Languages & Frameworks → Vue)
 - **Autocomplete**: WebStorm autocompletes translation keys inside `$t()` calls when JSON files are properly referenced
 - **Find Usages**: right-click a key in the JSON file → Find Usages to see all components using it
@@ -330,12 +338,12 @@ This script is included in the CI tasks to implement (`TASK-CI-08`).
 
 **Method summary:**
 
-| Method | Effort | Precision | Recommendation |
-|--------|--------|-----------|----------------|
-| i18n Ally (hover/click) | None | Exact | **Use daily** |
-| Search for last segment | Low | Good (if segment is unique) | When i18n Ally is unavailable |
-| Grep on intermediate segment | Low | Medium | In terminal / CI |
-| `i18n:find` script | None (after install) | Exact | For scripts and CI |
+| Method                       | Effort               | Precision                   | Recommendation                |
+| ---------------------------- | -------------------- | --------------------------- | ----------------------------- |
+| i18n Ally (hover/click)      | None                 | Exact                       | **Use daily**                 |
+| Search for last segment      | Low                  | Good (if segment is unique) | When i18n Ally is unavailable |
+| Grep on intermediate segment | Low                  | Medium                      | In terminal / CI              |
+| `i18n:find` script           | None (after install) | Exact                       | For scripts and CI            |
 
 > **Note**: This is an inherent trade-off of nested JSON. Flat JSON (`"common.modal.error.title": "..."`) allows direct `Ctrl+F` but loses hierarchical readability and tooling support. The choice of nested JSON is justified because **with i18n Ally, lookup is instant and frictionless** — it's better than `Ctrl+F` since you don't even need to open the file.
 
@@ -573,9 +581,9 @@ Adapt wording based on the type returned by the backend API:
 ```
 
 ```typescript
-t('target.entity.label', { type: entity.type })                        // "Entreprise"
-t('target.entity.created', { type: 'person', name: 'Marie' })          // "La personne Marie a été créée"
-t('target.entity.created', { type: 'unknown_value' })                  // "L'élément  a été créé" (other branch)
+t('target.entity.label', { type: entity.type }) // "Entreprise"
+t('target.entity.created', { type: 'person', name: 'Marie' }) // "La personne Marie a été créée"
+t('target.entity.created', { type: 'unknown_value' }) // "L'élément  a été créé" (other branch)
 ```
 
 ##### Statuses
@@ -591,7 +599,7 @@ t('target.entity.created', { type: 'unknown_value' })                  // "L'él
 ```
 
 ```typescript
-t('target.status.label', { status: item.status })  // "En attente"
+t('target.status.label', { status: item.status }) // "En attente"
 ```
 
 ##### Legacy suffix pattern (deprecated)
@@ -612,7 +620,8 @@ The `_male`/`_female`/`_other` suffix pattern below still works but **should not
 
 ```typescript
 // DEPRECATED: suffix pattern — migrate to ICU select
-const genderSuffix = actor.gender === 'female' ? '_female' : actor.gender === 'male' ? '_male' : '_other'
+const genderSuffix =
+  actor.gender === 'female' ? '_female' : actor.gender === 'male' ? '_male' : '_other'
 t(`target.actor.role${genderSuffix}`, { name: actor.name, role: actor.role })
 ```
 
@@ -635,9 +644,9 @@ ICU `select` and `plural` compose naturally by nesting. A single key handles all
 ```
 
 ```typescript
-t('target.search.resultCount', { type: 'company', count: 5 })  // "5 entreprises trouvées"
-t('target.search.resultCount', { type: 'person', count: 1 })   // "1 personne trouvée"
-t('target.search.resultCount', { type: 'other', count: 0 })    // "Aucun résultat"
+t('target.search.resultCount', { type: 'company', count: 5 }) // "5 entreprises trouvées"
+t('target.search.resultCount', { type: 'person', count: 1 }) // "1 personne trouvée"
+t('target.search.resultCount', { type: 'other', count: 0 }) // "Aucun résultat"
 ```
 
 ##### Gender + Plural
@@ -683,9 +692,9 @@ Use vue-i18n named formats:
 ```typescript
 const { d, n } = useI18n()
 
-d(new Date(), 'short')      // "03/04/2026" (en-US) / "04/03/2026" (fr-FR)
-d(new Date(), 'long')       // "March 4, 2026" / "4 mars 2026"
-n(1234567.89, 'currency')   // "$1,234,567.89" / "1 234 567,89 $"
+d(new Date(), 'short') // "03/04/2026" (en-US) / "04/03/2026" (fr-FR)
+d(new Date(), 'long') // "March 4, 2026" / "4 mars 2026"
+n(1234567.89, 'currency') // "$1,234,567.89" / "1 234 567,89 $"
 ```
 
 ---
@@ -730,12 +739,12 @@ Vite's dynamic import automatically generates one chunk per language file. The b
 
 #### Estimated Bundle Impact
 
-| Configuration | Estimated size (gzip) |
-|--------------|----------------------|
-| Current (everything bundled) | ~55 KB (2 languages, ~2330 keys) |
-| With lazy loading (en-US only) | ~28 KB initial + ~28 KB per loaded language |
-| With 8 languages (no lazy loading) | ~220 KB |
-| With 8 languages (lazy loading) | ~28 KB initial + ~28 KB on demand |
+| Configuration                      | Estimated size (gzip)                       |
+| ---------------------------------- | ------------------------------------------- |
+| Current (everything bundled)       | ~55 KB (2 languages, ~2330 keys)            |
+| With lazy loading (en-US only)     | ~28 KB initial + ~28 KB per loaded language |
+| With 8 languages (no lazy loading) | ~220 KB                                     |
+| With 8 languages (lazy loading)    | ~28 KB initial + ~28 KB on demand           |
 
 Lazy loading halves the initial bundle and scales linearly with added languages.
 
@@ -812,6 +821,7 @@ yarn i18n:find common.confirm.deleteMessage
 This script (see `TASK-CI-08`) resolves key paths to their file location.
 
 **Reuse rules**:
+
 - If an exact match exists in `common.*`, use it directly
 - If a close match exists (>80% similarity), evaluate whether the existing key can be generalized or if a new specific key is needed
 - If a key is used in only one module but you need it in another, move it to `common.*`
@@ -845,13 +855,13 @@ New translation key needed?
 
 #### CI Jobs to Implement
 
-| Job | Objective | Recommended tool | Trigger | Estimated execution time |
-|-----|----------|-----------------|---------|-------------------------|
-| `i18n:missing` | Detect keys present in one language but absent in another | Custom script or `vue-i18n-extract` | Each MR | ~2-3s (comparison of 2 JSON trees) |
-| `i18n:orphans` | Detect keys defined but never used in the code | `vue-i18n-extract` | Weekly | ~10-15s (scan of all `.vue` and `.ts` files + comparison with keys) |
-| `i18n:duplicates` | Detect duplicate keys between namespaces | Custom script | Each MR | ~1-2s (traversal of a single JSON file) |
-| `i18n:format` | Validate JSON format (syntax, alphabetical sorting) | `jsonlint` + `sort-json` | Each MR | ~1s (validation of 2 files) |
-| `i18n:coverage` | Coverage report per language (% of translated keys) | Custom script | Each MR | ~1-2s (key count per file) |
+| Job               | Objective                                                 | Recommended tool                    | Trigger | Estimated execution time                                            |
+| ----------------- | --------------------------------------------------------- | ----------------------------------- | ------- | ------------------------------------------------------------------- |
+| `i18n:missing`    | Detect keys present in one language but absent in another | Custom script or `vue-i18n-extract` | Each MR | ~2-3s (comparison of 2 JSON trees)                                  |
+| `i18n:orphans`    | Detect keys defined but never used in the code            | `vue-i18n-extract`                  | Weekly  | ~10-15s (scan of all `.vue` and `.ts` files + comparison with keys) |
+| `i18n:duplicates` | Detect duplicate keys between namespaces                  | Custom script                       | Each MR | ~1-2s (traversal of a single JSON file)                             |
+| `i18n:format`     | Validate JSON format (syntax, alphabetical sorting)       | `jsonlint` + `sort-json`            | Each MR | ~1s (validation of 2 files)                                         |
+| `i18n:coverage`   | Coverage report per language (% of translated keys)       | Custom script                       | Each MR | ~1-2s (key count per file)                                          |
 
 **Total estimated CI time**: ~5-8s in parallel execution on each MR (excluding `i18n:orphans` which runs weekly). The `i18n:orphans` job takes ~10-15s because it must scan the entire source code to verify that each key is used. These times are negligible compared to the rest of the pipeline (build, tests, lint).
 
@@ -879,9 +889,9 @@ front:i18n:
   desc: Run all i18n validation checks
   dir: apps/front
   cmds:
-    - yarn i18n:check       # Missing keys
-    - yarn i18n:duplicates  # Duplicate keys
-    - yarn i18n:format      # JSON syntax + alphabetical sorting
+    - yarn i18n:check # Missing keys
+    - yarn i18n:duplicates # Duplicate keys
+    - yarn i18n:format # JSON syntax + alphabetical sorting
 
 front:i18n:sort:
   desc: Sort i18n JSON keys alphabetically
@@ -911,9 +921,7 @@ Translation files are automatically sorted alphabetically on commit using `lint-
 ```javascript
 // lint-staged.config.mjs
 export default {
-  'apps/front/src/i18n/locales/*.json': [
-    'yarn --cwd apps/front i18n:sort',
-  ],
+  'apps/front/src/i18n/locales/*.json': ['yarn --cwd apps/front i18n:sort'],
 }
 ```
 
@@ -942,19 +950,19 @@ i18n-validation:
 
 Each CI job should have a **dedicated task** in the backlog to ensure clear tracking:
 
-| Task | Description | Dependency |
-|------|-------------|------------|
-| `TASK-CI-01` | Create the `i18n:check` script (detect missing keys between `en-US` and `fr-FR`) | None |
-| `TASK-CI-02` | Create the `i18n:orphans` script (detect unused keys in source code) | None |
-| `TASK-CI-03` | Create the `i18n:duplicates` script (detect duplicate keys between namespaces) | None |
-| `TASK-CI-04` | Create the `i18n:format` script (validate JSON syntax + alphabetical sorting) | None |
-| `TASK-CI-05` | Create the `i18n:coverage` script (report % of translated keys per language) | None |
-| `TASK-CI-06` | Integrate scripts into the GitLab CI pipeline (lint stage) | CI-01 to CI-05 |
-| `TASK-CI-07` | Document script usage in the dev README | CI-06 |
-| `TASK-CI-08` | Create the `i18n:find` script (resolve a dot-notation key to its position in JSON) | None |
-| `TASK-CI-09` | Add `front:i18n` aggregated tasks in `Taskfile.yml` | CI-01 to CI-05 |
-| `TASK-CI-10` | Add lint-staged config for automatic i18n key sorting on commit | CI-04 |
-| `TASK-CI-11` | Create the `i18n:search` script (fuzzy search by approximate text using `fastest-levenshtein`) | None |
+| Task         | Description                                                                                    | Dependency     |
+| ------------ | ---------------------------------------------------------------------------------------------- | -------------- |
+| `TASK-CI-01` | Create the `i18n:check` script (detect missing keys between `en-US` and `fr-FR`)               | None           |
+| `TASK-CI-02` | Create the `i18n:orphans` script (detect unused keys in source code)                           | None           |
+| `TASK-CI-03` | Create the `i18n:duplicates` script (detect duplicate keys between namespaces)                 | None           |
+| `TASK-CI-04` | Create the `i18n:format` script (validate JSON syntax + alphabetical sorting)                  | None           |
+| `TASK-CI-05` | Create the `i18n:coverage` script (report % of translated keys per language)                   | None           |
+| `TASK-CI-06` | Integrate scripts into the GitLab CI pipeline (lint stage)                                     | CI-01 to CI-05 |
+| `TASK-CI-07` | Document script usage in the dev README                                                        | CI-06          |
+| `TASK-CI-08` | Create the `i18n:find` script (resolve a dot-notation key to its position in JSON)             | None           |
+| `TASK-CI-09` | Add `front:i18n` aggregated tasks in `Taskfile.yml`                                            | CI-01 to CI-05 |
+| `TASK-CI-10` | Add lint-staged config for automatic i18n key sorting on commit                                | CI-04          |
+| `TASK-CI-11` | Create the `i18n:search` script (fuzzy search by approximate text using `fastest-levenshtein`) | None           |
 
 Each task is independent (except CI-06, CI-07, CI-09, and CI-10) and can be developed in parallel.
 
@@ -962,12 +970,12 @@ Each task is independent (except CI-06, CI-07, CI-09, and CI-10) and can be deve
 
 ### 8. Recommended Tooling
 
-| Tool | Usage | Priority |
-|------|-------|----------|
-| **i18n Ally** (VS Code) / **i18n Support** (JetBrains) | Autocomplete, inline preview, missing key detection | High |
-| **eslint-plugin-vue-i18n** | Lint keys in templates, detect `$t` with fallback | High |
-| **vue-i18n-extract** | CLI key extraction and comparison | Medium |
-| **sort-json** | Alphabetical sorting of JSON files | Medium |
+| Tool                                                   | Usage                                               | Priority |
+| ------------------------------------------------------ | --------------------------------------------------- | -------- |
+| **i18n Ally** (VS Code) / **i18n Support** (JetBrains) | Autocomplete, inline preview, missing key detection | High     |
+| **eslint-plugin-vue-i18n**                             | Lint keys in templates, detect `$t` with fallback   | High     |
+| **vue-i18n-extract**                                   | CLI key extraction and comparison                   | Medium   |
+| **sort-json**                                          | Alphabetical sorting of JSON files                  | Medium   |
 
 #### i18n Ally Configuration
 
@@ -1015,29 +1023,34 @@ front/src/
 #### Migration Plan
 
 **Phase 1: Format Normalization** (prerequisite)
+
 1. Convert `.ts` files to nested `.json` → `en-US.json`, `fr-FR.json`
 2. Convert flat Target keys (dot-notation) to nested JSON
 3. Merge both layers into a single file per language
 4. Remove the spread operator merge and old `.ts` files
 
 **Phase 2: Namespace Cleanup**
+
 1. Rename/reorganize top-level keys to follow the convention (`common`, `target`, `screen`, `dashboard`, `settings`, `admin`)
 2. Move shared keys under `common.*`
 3. Remove identified orphaned keys
 
 **Phase 3: Screen Integration**
+
 1. Import existing Screen translations into the single file
 2. Place them under the `screen.*` namespace
 3. Identify common Screen/Target keys and move them under `common.*`
 4. Resolve key conflicts (same key, different translation)
 
 **Phase 4: Lazy Loading**
+
 1. Implement asynchronous per-language loading (dynamic import)
 2. Remove synchronous loading of `fr-FR`
 
 #### Conflict Resolution Strategy
 
 When merging Target + Screen, if the same key exists with different translations:
+
 1. **Same key, same translation**: keep under `common.*`
 2. **Same key, different translation**: rename with module prefix (`target.company.name` vs `screen.company.name`)
 3. **Key unique to a module**: keep in the corresponding module
@@ -1049,6 +1062,7 @@ When merging Target + Screen, if the same key exists with different translations
 The JSON files in the repo are the source of truth. No external platform (Crowdin, Lokalise) for now.
 
 **Justification**:
+
 - Simple workflow (standard PRs)
 - Currently 2 languages = manageable manually
 - No external translators for now
@@ -1086,15 +1100,15 @@ The JSON files in the repo are the source of truth. No external platform (Crowdi
 
 ## Implementation Plan
 
-| Phase | Description | Priority |
-|-------|-------------|----------|
-| 1 | Install i18n Ally + eslint-plugin-vue-i18n | P0 |
-| 2 | Convert `.ts` → nested `.json` + merge Target layer into single file per language | P0 |
-| 3 | Clean up top-level namespaces | P0 |
-| 4 | Remove inline fallbacks in components | P1 |
-| 5 | Implement CI scripts (see tasks TASK-CI-01 to CI-08) | P1 |
-| 6 | Implement per-language lazy loading | P1 |
-| 7 | Integrate Screen translations | P2 (post-merge) |
+| Phase | Description                                                                       | Priority        |
+| ----- | --------------------------------------------------------------------------------- | --------------- |
+| 1     | Install i18n Ally + eslint-plugin-vue-i18n                                        | P0              |
+| 2     | Convert `.ts` → nested `.json` + merge Target layer into single file per language | P0              |
+| 3     | Clean up top-level namespaces                                                     | P0              |
+| 4     | Remove inline fallbacks in components                                             | P1              |
+| 5     | Implement CI scripts (see tasks TASK-CI-01 to CI-08)                              | P1              |
+| 6     | Implement per-language lazy loading                                               | P1              |
+| 7     | Integrate Screen translations                                                     | P2 (post-merge) |
 
 ---
 

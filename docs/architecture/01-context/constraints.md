@@ -8,26 +8,28 @@ This document outlines the business, legal, and technical constraints that shape
 
 ### Parent Company Relationship
 
-| Constraint | Description |
-|------------|-------------|
-| **Parent Organization** | Chapsvision (market intelligence software catalog) |
+| Constraint              | Description                                                 |
+| ----------------------- | ----------------------------------------------------------- |
+| **Parent Organization** | Chapsvision (market intelligence software catalog)          |
 | **Strategic Direction** | Rework existing Chapsvision products into ChapsMind modules |
-| **Brand Alignment** | ChapsMind must align with Chapsvision's market positioning |
+| **Brand Alignment**     | ChapsMind must align with Chapsvision's market positioning  |
 
 **Implications:**
+
 - Must support migration of existing Chapsvision product features (Target, Explore, Scan)
 - Architecture should enable gradual feature migration without disruption
 - Shared infrastructure and authentication may be required
 
 ### Modular Sales Model
 
-| Constraint | Description |
-|------------|-------------|
-| **Sales Approach** | Modules sold independently or as bundles |
-| **Pricing Model** | Per-module licensing with synergy discounts and shared token system |
-| **Client Flexibility** | Clients can start with one module and expand |
+| Constraint             | Description                                                         |
+| ---------------------- | ------------------------------------------------------------------- |
+| **Sales Approach**     | Modules sold independently or as bundles                            |
+| **Pricing Model**      | Per-module licensing with synergy discounts and shared token system |
+| **Client Flexibility** | Clients can start with one module and expand                        |
 
 **Implications:**
+
 - Each module must function independently
 - Modules must integrate seamlessly when combined
 - Feature flags and entitlements required per organization
@@ -35,13 +37,14 @@ This document outlines the business, legal, and technical constraints that shape
 
 ### Multi-Tenant Architecture
 
-| Constraint | Description |
-|------------|-------------|
-| **Tenant Model** | Single application, multiple client organizations |
-| **Data Isolation** | Complete separation between organizations |
-| **Customization** | Organization-specific settings and configurations |
+| Constraint         | Description                                       |
+| ------------------ | ------------------------------------------------- |
+| **Tenant Model**   | Single application, multiple client organizations |
+| **Data Isolation** | Complete separation between organizations         |
+| **Customization**  | Organization-specific settings and configurations |
 
 **Implications:**
+
 - All data queries must be organization-scoped
 - No cross-organization data leakage
 - Organization-level feature toggles and settings
@@ -53,10 +56,10 @@ This document outlines the business, legal, and technical constraints that shape
 
 ### GDPR Compliance
 
-| Constraint | Description |
-|------------|-------------|
-| **Regulation** | General Data Protection Regulation (EU) |
-| **Applicability** | All users in the European Union |
+| Constraint           | Description                                |
+| -------------------- | ------------------------------------------ |
+| **Regulation**       | General Data Protection Regulation (EU)    |
+| **Applicability**    | All users in the European Union            |
 | **Key Requirements** | Data protection, consent, right to erasure |
 
 **Implications:**
@@ -83,13 +86,14 @@ This document outlines the business, legal, and technical constraints that shape
 
 ### Data Source Compliance
 
-| Constraint | Description |
-|------------|-------------|
+| Constraint       | Description                            |
+| ---------------- | -------------------------------------- |
 | **Data Sources** | Publicly available company information |
-| **Web Scraping** | Must comply with terms of service |
-| **API Usage** | Licensed data sources (Pappers, etc.) |
+| **Web Scraping** | Must comply with terms of service      |
+| **API Usage**    | Licensed data sources (Pappers, etc.)  |
 
 **Implications:**
+
 - Respect robots.txt and rate limiting
 - Document data source licenses and agreements
 - Clear attribution of data sources where required
@@ -100,10 +104,10 @@ This document outlines the business, legal, and technical constraints that shape
 
 ### Keycloak Organizations for Multi-Tenancy
 
-| Constraint | Description |
-|------------|-------------|
-| **Identity Provider** | Keycloak (self-hosted) |
-| **Multi-Tenancy** | Keycloak Organizations feature |
+| Constraint              | Description                            |
+| ----------------------- | -------------------------------------- |
+| **Identity Provider**   | Keycloak (self-hosted)                 |
+| **Multi-Tenancy**       | Keycloak Organizations feature         |
 | **Version Requirement** | Keycloak 24+ for Organizations support |
 
 **Implications:**
@@ -130,13 +134,14 @@ This document outlines the business, legal, and technical constraints that shape
 
 ### AI Orchestration Platform
 
-| Constraint | Description |
-|------------|-------------|
-| **LLM Orchestration** | Dify platform |
-| **Integration** | REST API with workflow-specific API keys |
-| **Callbacks** | Dify callbacks to backend with results |
+| Constraint            | Description                              |
+| --------------------- | ---------------------------------------- |
+| **LLM Orchestration** | Dify platform                            |
+| **Integration**       | REST API with workflow-specific API keys |
+| **Callbacks**         | Dify callbacks to backend with results   |
 
 **Implications:**
+
 - Dify API must be accessible from backend
 - Each workflow has its own API key
 - Dify calls back to backend with results
@@ -145,13 +150,14 @@ This document outlines the business, legal, and technical constraints that shape
 
 ### Message Queue and Task Processing
 
-| Constraint | Description |
-|------------|-------------|
-| **Message Broker** | RabbitMQ |
-| **Task Queue** | Celery |
-| **Monitoring** | Celery Flower |
+| Constraint         | Description   |
+| ------------------ | ------------- |
+| **Message Broker** | RabbitMQ      |
+| **Task Queue**     | Celery        |
+| **Monitoring**     | Celery Flower |
 
 **Implications:**
+
 - No Redis in current stack
 - RabbitMQ for all async communication
 - Task status tracking in database
@@ -159,14 +165,15 @@ This document outlines the business, legal, and technical constraints that shape
 
 ### Frontend Framework
 
-| Constraint | Description |
-|------------|-------------|
-| **Framework** | Vue.js 3 with Composition API |
-| **Language** | TypeScript (strict) |
-| **State Management** | Pinia + Pinia Colada |
-| **Routing** | File-based (unplugin-vue-router) |
+| Constraint           | Description                      |
+| -------------------- | -------------------------------- |
+| **Framework**        | Vue.js 3 with Composition API    |
+| **Language**         | TypeScript (strict)              |
+| **State Management** | Pinia + Pinia Colada             |
+| **Routing**          | File-based (unplugin-vue-router) |
 
 **Implications:**
+
 - No Options API usage
 - Type-safe development required
 - Query caching on frontend only
@@ -174,14 +181,15 @@ This document outlines the business, legal, and technical constraints that shape
 
 ### Backend Framework
 
-| Constraint | Description |
-|------------|-------------|
-| **Framework** | FastAPI |
-| **ORM** | SQLAlchemy |
+| Constraint     | Description      |
+| -------------- | ---------------- |
+| **Framework**  | FastAPI          |
+| **ORM**        | SQLAlchemy       |
 | **Validation** | Pydantic schemas |
-| **Migrations** | Alembic |
+| **Migrations** | Alembic          |
 
 **Implications:**
+
 - Async endpoint support
 - Auto-generated OpenAPI documentation
 - Type hints for all code
@@ -191,16 +199,16 @@ This document outlines the business, legal, and technical constraints that shape
 
 ## Constraint Summary Matrix
 
-| Category | Constraint | Impact Level | Mitigation |
-|----------|------------|--------------|------------|
-| Business | Parent company direction | High | Modular architecture |
-| Business | Modular sales | High | Feature isolation |
-| Business | Multi-tenancy | High | Organization-scoped data |
-| Legal | GDPR compliance | High | Keycloak for user data |
-| Legal | Data source compliance | Medium | Licensed sources |
-| Technical | Keycloak Organizations | High | No DB user/org tables |
-| Technical | Dify workflows | Medium | Async processing |
-| Technical | RabbitMQ + Celery | Medium | Task queue patterns |
+| Category  | Constraint               | Impact Level | Mitigation               |
+| --------- | ------------------------ | ------------ | ------------------------ |
+| Business  | Parent company direction | High         | Modular architecture     |
+| Business  | Modular sales            | High         | Feature isolation        |
+| Business  | Multi-tenancy            | High         | Organization-scoped data |
+| Legal     | GDPR compliance          | High         | Keycloak for user data   |
+| Legal     | Data source compliance   | Medium       | Licensed sources         |
+| Technical | Keycloak Organizations   | High         | No DB user/org tables    |
+| Technical | Dify workflows           | Medium       | Async processing         |
+| Technical | RabbitMQ + Celery        | Medium       | Task queue patterns      |
 
 ---
 

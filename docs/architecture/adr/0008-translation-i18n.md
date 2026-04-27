@@ -47,13 +47,17 @@ Key implementation decisions:
 import { createI18n } from 'vue-i18n'
 
 const i18n = createI18n({
-  legacy: false,  // REQUIRED: Enable Composition API mode
+  legacy: false, // REQUIRED: Enable Composition API mode
   locale: 'en',
   fallbackLocale: 'en',
   messages: {
-    en: { /* translations */ },
-    fr: { /* translations */ }
-  }
+    en: {
+      /* translations */
+    },
+    fr: {
+      /* translations */
+    },
+  },
 })
 ```
 
@@ -97,6 +101,7 @@ src/
 **Description:** Use vue-i18n, the official internationalization library for Vue.js, configured in Composition API mode (`legacy: false`) to align with the project's Vue 3 architecture.
 
 **Pros:**
+
 - Official Vue.js i18n solution with full ecosystem support
 - Native Composition API support with `useI18n()` composable
 - Tree-shakable for smaller bundle sizes
@@ -107,6 +112,7 @@ src/
 - Battle-tested in production applications
 
 **Cons:**
+
 - Must use correct API pattern (Composition vs Legacy differs)
 - Learning curve for message format syntax
 - Bundle size increases with more locales
@@ -116,11 +122,13 @@ src/
 **Description:** Use vue-i18n in Legacy mode (Vue 2 compatible API) with Options API patterns.
 
 **Pros:**
+
 - Familiar API for developers from Vue 2 projects
 - More tutorials and Stack Overflow answers available
 - `this.$t()` pattern is intuitive
 
 **Cons:**
+
 - **Incompatible with Composition API architecture** (ADR-0001)
 - Uses `this` context not available in `<script setup>`
 - Mixes paradigms (Options API in Composition API project)
@@ -132,12 +140,14 @@ src/
 **Description:** Build a custom internationalization solution using simple key-value lookups and reactive locale state.
 
 **Pros:**
+
 - Full control over implementation
 - Minimal bundle size
 - No external dependencies
 - Tailored to exact requirements
 
 **Cons:**
+
 - Must implement pluralization, interpolation, formatting manually
 - Missing features (date/number formatting, message compilation)
 - Maintenance burden for i18n infrastructure
@@ -150,11 +160,13 @@ src/
 **Description:** Use vue-i18n with the unplugin for build-time optimizations and SFC i18n blocks.
 
 **Pros:**
+
 - Pre-compiles messages for better runtime performance
 - Supports `<i18n>` blocks in SFC files
 - Smaller runtime bundle
 
 **Cons:**
+
 - Additional build configuration complexity
 - Co-located translations harder to manage across locales
 - Not necessary for current application scale
@@ -197,7 +209,7 @@ import en from '@/locales/en.json'
 import fr from '@/locales/fr.json'
 
 export const i18n = createI18n({
-  legacy: false,          // CRITICAL: Enables Composition API mode
+  legacy: false, // CRITICAL: Enables Composition API mode
   locale: 'en',
   fallbackLocale: 'en',
   messages: { en, fr },

@@ -6,12 +6,12 @@ This document describes ChapsMind's current monitoring capabilities and planned 
 
 ChapsMind has **limited observability** in the current architecture. The primary monitoring tool is **Celery Flower** for task queue monitoring.
 
-| Component | Monitoring | Tool |
-|-----------|------------|------|
-| **Celery Tasks** | Task status, timing, failures | Flower |
-| **Backend Logs** | Application logs | Docker/Kubernetes logs |
-| **Database** | Connection status | Manual checks |
-| **API Health** | Basic health endpoint | `/health` endpoint |
+| Component        | Monitoring                    | Tool                   |
+| ---------------- | ----------------------------- | ---------------------- |
+| **Celery Tasks** | Task status, timing, failures | Flower                 |
+| **Backend Logs** | Application logs              | Docker/Kubernetes logs |
+| **Database**     | Connection status             | Manual checks          |
+| **API Health**   | Basic health endpoint         | `/health` endpoint     |
 
 ## Celery Flower
 
@@ -25,10 +25,10 @@ ChapsMind has **limited observability** in the current architecture. The primary
 
 ### Access
 
-| Environment | URL | Notes |
-|-------------|-----|-------|
-| **Development** | http://localhost:5555 | Via Docker Compose |
-| **Production** | Internal only | Access via kubectl port-forward |
+| Environment     | URL                   | Notes                           |
+| --------------- | --------------------- | ------------------------------- |
+| **Development** | http://localhost:5555 | Via Docker Compose              |
+| **Production**  | Internal only         | Access via kubectl port-forward |
 
 ### Dashboard Features
 
@@ -53,16 +53,17 @@ ChapsMind has **limited observability** in the current architecture. The primary
 
 ### Key Metrics in Flower
 
-| Metric | Description | Threshold |
-|--------|-------------|-----------|
-| **Task Success Rate** | Percentage of successful tasks | > 95% |
+| Metric                | Description                       | Threshold      |
+| --------------------- | --------------------------------- | -------------- |
+| **Task Success Rate** | Percentage of successful tasks    | > 95%          |
 | **Average Task Time** | Mean execution time per task type | Varies by type |
-| **Queue Depth** | Number of pending tasks | < 100 typical |
-| **Worker Heartbeat** | Worker health status | All green |
+| **Queue Depth**       | Number of pending tasks           | < 100 typical  |
+| **Worker Heartbeat**  | Worker health status              | All green      |
 
 ### Task Monitoring Queries
 
 View tasks by type:
+
 - Data collection tasks: Filter by `tasks.data_collection`
 - AI analysis tasks: Filter by task name prefix
 
@@ -96,13 +97,13 @@ kubectl logs -f deployment/celery-worker -n chapsmind
 
 Key events to monitor:
 
-| Event | Log Level | Description |
-|-------|-----------|-------------|
-| `task.started` | INFO | Task execution began |
-| `task.completed` | INFO | Task finished successfully |
-| `task.failed` | ERROR | Task execution failed |
-| `api.error` | ERROR | API endpoint error |
-| `auth.failed` | WARNING | Authentication failure |
+| Event            | Log Level | Description                |
+| ---------------- | --------- | -------------------------- |
+| `task.started`   | INFO      | Task execution began       |
+| `task.completed` | INFO      | Task finished successfully |
+| `task.failed`    | ERROR     | Task execution failed      |
+| `api.error`      | ERROR     | API endpoint error         |
+| `auth.failed`    | WARNING   | Authentication failure     |
 
 ## Health Checks
 
@@ -169,13 +170,13 @@ The following observability stack is planned but **not yet implemented**:
 
 Metrics to be exposed:
 
-| Metric | Type | Description |
-|--------|------|-------------|
-| `http_requests_total` | Counter | Total HTTP requests |
-| `http_request_duration_seconds` | Histogram | Request latency |
-| `celery_tasks_total` | Counter | Total Celery tasks |
-| `celery_task_duration_seconds` | Histogram | Task execution time |
-| `db_connections_active` | Gauge | Active database connections |
+| Metric                          | Type      | Description                 |
+| ------------------------------- | --------- | --------------------------- |
+| `http_requests_total`           | Counter   | Total HTTP requests         |
+| `http_request_duration_seconds` | Histogram | Request latency             |
+| `celery_tasks_total`            | Counter   | Total Celery tasks          |
+| `celery_task_duration_seconds`  | Histogram | Task execution time         |
+| `db_connections_active`         | Gauge     | Active database connections |
 
 ### Grafana Dashboards (Planned)
 
@@ -215,12 +216,12 @@ Using OpenTelemetry and Jaeger for:
 
 ### Alert Thresholds
 
-| Metric | Warning | Critical |
-|--------|---------|----------|
-| Task failure rate | > 5% | > 10% |
-| API error rate | > 1% | > 5% |
-| Pod restarts (1h) | > 2 | > 5 |
-| Celery queue depth | > 50 | > 100 |
+| Metric             | Warning | Critical |
+| ------------------ | ------- | -------- |
+| Task failure rate  | > 5%    | > 10%    |
+| API error rate     | > 1%    | > 5%     |
+| Pod restarts (1h)  | > 2     | > 5      |
+| Celery queue depth | > 50    | > 100    |
 
 ## Troubleshooting Guide
 

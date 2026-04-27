@@ -13,6 +13,7 @@
 **Prerequisite:** This ADR assumes the **Global Service v2 with auto-discovery** is merged and live (MRs !70–!77: correlation ID middleware, OpenAPI merge fix, health/ready aggregation, ModuleRegistry + config, proxy multi-backend via registry). Stream leverages this infrastructure — it does not build it.
 
 **Related:**
+
 - [ADR-0009 — Global Service Architecture](./0009-global-service-architecture.md)
 - [ADR-0012 — LangGraph Agent System](./0012-langgraph-agent-system.md)
 - [ADR-0013 — Chat Service Replacement](./0013-chat-service-replacement.md)
@@ -27,6 +28,7 @@ ChapsMind's intelligence is consumed passively — users must visit the app to s
 ### Requirements
 
 **Phase 1 scope (this ADR):**
+
 1. **Multi-channel distribution**: Push folder events to Teams, Slack, and webhooks
 2. **Live mode**: Immediate dispatch on event (recurrence deferred to Phase 2)
 3. **Event type subscription**: Stripe-style event filtering per stream (hardcoded catalog, auto-discovery later)
@@ -37,6 +39,7 @@ ChapsMind's intelligence is consumed passively — users must visit the app to s
 8. **Simple form UI**: Minimal frontend to create and test streams
 
 **Future iterations:**
+
 - Recurrence mode with scheduled template-based digests (Phase 2)
 - Auto-discovery of event types from producer services (Phase 3)
 - AI-assisted newsletter generation with LangGraph agent, email channel, distribution lists (Phase 4)
@@ -136,19 +139,19 @@ Channel Adapter ◄───┘
 
 ### Key Decisions
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Service placement | Standalone `apps/stream/` | Clean domain boundary, independent scaling, follows ADR-0009 |
-| Scheduling | APScheduler (in-process, PostgreSQL job store) — Phase 2 | No new infra, persistent across restarts |
-| Event storage | `stream_events` + `stream_deliveries` tables | Simple, queryable, enables preview |
-| Channel abstraction | Adapter pattern (ABC + concrete per channel) | Clean interface, easy to add channels |
-| Content generation | Template-based (Phase 1-2), LangGraph agent (future) | Validate core pipeline first, add AI content later |
-| Feature flag | Add `STREAM` to existing `FeatureFlag` enum | Reuses existing system, OFF by default |
-| Stream creation UX | Simple form-based page | Minimal UI to configure and test streams; rich editor deferred |
-| Event subscription | Stripe-style event type filtering (hardcoded catalog) | Granular control from day one; auto-discovery deferred |
-| Event transport | PostgreSQL outbox + per-service relay | Handles 10k+ events/day, guaranteed delivery, zero new infra |
-| Credit system | Variable cost per channel type and mode | Reflects different channel costs (webhook < Teams/Slack) |
-| Proxy routing | ModuleRegistry auto-discovery in Global Service v2 | Stream registers as a module; routing, health, OpenAPI merge handled automatically |
+| Decision            | Choice                                                   | Rationale                                                                          |
+| ------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Service placement   | Standalone `apps/stream/`                                | Clean domain boundary, independent scaling, follows ADR-0009                       |
+| Scheduling          | APScheduler (in-process, PostgreSQL job store) — Phase 2 | No new infra, persistent across restarts                                           |
+| Event storage       | `stream_events` + `stream_deliveries` tables             | Simple, queryable, enables preview                                                 |
+| Channel abstraction | Adapter pattern (ABC + concrete per channel)             | Clean interface, easy to add channels                                              |
+| Content generation  | Template-based (Phase 1-2), LangGraph agent (future)     | Validate core pipeline first, add AI content later                                 |
+| Feature flag        | Add `STREAM` to existing `FeatureFlag` enum              | Reuses existing system, OFF by default                                             |
+| Stream creation UX  | Simple form-based page                                   | Minimal UI to configure and test streams; rich editor deferred                     |
+| Event subscription  | Stripe-style event type filtering (hardcoded catalog)    | Granular control from day one; auto-discovery deferred                             |
+| Event transport     | PostgreSQL outbox + per-service relay                    | Handles 10k+ events/day, guaranteed delivery, zero new infra                       |
+| Credit system       | Variable cost per channel type and mode                  | Reflects different channel costs (webhook < Teams/Slack)                           |
+| Proxy routing       | ModuleRegistry auto-discovery in Global Service v2       | Stream registers as a module; routing, health, OpenAPI merge handled automatically |
 
 ---
 
@@ -169,11 +172,13 @@ When a producer service completes work (Screen: company analysis, Target: watchf
 Screen fires an HTTP POST to Stream's internal endpoint after analysis completion.
 
 **Pros:**
+
 - Simplest to implement — standard HTTP call
 - No new infrastructure or tables
 - Easy to understand and debug
 
 **Cons:**
+
 - If Stream is down or the network fails, the event is lost
 - Retry logic adds complexity (exponential backoff, dead-letter handling)
 - No transactional guarantee — analysis can commit but event delivery can fail
@@ -185,6 +190,7 @@ Screen fires an HTTP POST to Stream's internal endpoint after analysis completio
 Each producer writes events to an `outbox` table in its own database within the same transaction as the business operation. A lightweight relay process per service reads the outbox and POSTs to Stream's `POST /internal/events/ingest` endpoint. Stream keeps a single ingest endpoint regardless of how many producers exist.
 
 **Pros:**
+
 - **Guaranteed delivery**: event write is atomic with the business transaction — if the operation commits, the event is guaranteed to exist
 - **Zero new infrastructure**: uses existing PostgreSQL, no broker needed
 - **Validated at 10k+/day**: 10k events/day is ~7/min average — trivial for PostgreSQL polling; `pg_notify` can optionally reduce latency further
@@ -193,6 +199,7 @@ Each producer writes events to an `outbox` table in its own database within the 
 - **Decoupled consumer**: Stream never reads another service's database — the relay bridges the gap using REST, combining outbox transactional safety with REST simplicity
 
 **Cons:**
+
 - Polling introduces slight latency (optionally mitigated by `pg_notify` — see managed PostgreSQL note below)
 - Outbox table requires periodic cleanup (simple cron job)
 - Each producer service needs a relay process (lightweight — ~50 lines of async polling code)
@@ -202,11 +209,13 @@ Each producer writes events to an `outbox` table in its own database within the 
 Screen publishes events to a RabbitMQ exchange; Stream consumes from a queue.
 
 **Pros:**
+
 - Best queue semantics (acknowledgments, dead-letter, fan-out)
 - Proven technology for async messaging
 - Clean decoupling between producer and consumer
 
 **Cons:**
+
 - RabbitMQ is not currently deployed — it was removed when Dify (its only consumer) was dropped. Target will reintroduce it, but until then it adds a dependency that doesn't exist yet
 - Unnecessary complexity for Stream's use case: the outbox pattern provides the same delivery guarantees without a broker
 - Justified at 10k events/day volume, but infrastructure overhead is disproportionate given the outbox pattern handles it without new dependencies
@@ -217,11 +226,13 @@ Screen publishes events to a RabbitMQ exchange; Stream consumes from a queue.
 Screen writes events to a Redis Stream; Stream consumes with a consumer group.
 
 **Pros:**
+
 - Lightweight persistent queue with consumer groups
 - Sub-millisecond latency
 - Redis may already be available for caching
 
 **Cons:**
+
 - New infrastructure dependency if Redis is not already deployed
 - Less durable than PostgreSQL (depends on persistence config)
 - No transactional guarantee with Screen's database write
@@ -232,6 +243,7 @@ Screen writes events to a Redis Stream; Stream consumes with a consumer group.
 **PostgreSQL outbox + per-service relay** (Option B). At 10k+ events/day (~7/min), PostgreSQL polling handles this volume comfortably — this is a validated production choice, not a stopgap. Each producer writes to its own outbox table (transactional guarantee), and a lightweight relay process per service polls the outbox and POSTs to Stream's `POST /internal/events/ingest`. Stream maintains a single ingest endpoint regardless of the number of producers. `pg_notify` can optionally be added to reduce polling latency, but is not required — the outbox pattern is polling-first by design.
 
 **Multi-producer pattern:**
+
 - **Screen**: writes to `screen_db.outbox` → Screen relay → `POST /internal/events/ingest`
 - **Target** (next month): writes to `target_db.outbox` → Target relay → `POST /internal/events/ingest`
 - **Explore** (future): same pattern
@@ -312,11 +324,11 @@ Single-page form with dynamic sections based on channel type and mode:
 
 ### Channel Configuration (dynamic per channel type)
 
-| Channel | Integration Model | Config Fields |
-|---------|-------------------|---------------|
-| **Teams** | Power Automate Workflow URL | User creates a Workflow in Teams ("Post to a channel when a webhook request is received"), copies the generated URL, pastes it in our form |
-| **Slack** | Slack App with OAuth V2 + bot token | "Connecter Slack" button triggers OAuth flow, user approves, we store bot token + user picks target channel from dropdown |
-| **Webhook** | Generic HTTP | URL + HTTP method (POST/PUT) + optional custom headers (JSONB) |
+| Channel     | Integration Model                   | Config Fields                                                                                                                              |
+| ----------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Teams**   | Power Automate Workflow URL         | User creates a Workflow in Teams ("Post to a channel when a webhook request is received"), copies the generated URL, pastes it in our form |
+| **Slack**   | Slack App with OAuth V2 + bot token | "Connecter Slack" button triggers OAuth flow, user approves, we store bot token + user picks target channel from dropdown                  |
+| **Webhook** | Generic HTTP                        | URL + HTTP method (POST/PUT) + optional custom headers (JSONB)                                                                             |
 
 All channels expose a **"Tester la connexion"** button that sends a test payload to validate the configuration before saving.
 
@@ -389,12 +401,14 @@ AI-generated digest summaries are deferred to the agent iteration.
 ```
 
 **Limitations:**
+
 - Workflow is tied to the user who created it (orphan risk if they leave)
 - Customer needs Power Automate licensing (included in most M365 plans)
 - One-way only (our service → Teams)
 - Private channel support still in progress
 
 **Options considered and rejected:**
+
 - **Bot Framework**: Full-featured but requires Azure Bot registration, Bot Framework SDK, and Azure infrastructure. Overkill for one-way notifications in Phase 1. Worth revisiting if two-way interaction is needed later.
 - **Graph API**: Cannot send channel messages with application permissions (restricted to migration scenarios). Would require RSC + bot installation — effectively the Bot Framework approach.
 
@@ -421,12 +435,19 @@ AI-generated digest summaries are deferred to the agent iteration.
   "blocks": [
     {
       "type": "section",
-      "text": { "type": "mrkdwn", "text": "*Nouvelle fiche entreprise*\nAnthropic — créée le 28 mars 2026" }
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Nouvelle fiche entreprise*\nAnthropic — créée le 28 mars 2026"
+      }
     },
     {
       "type": "actions",
       "elements": [
-        { "type": "button", "text": { "type": "plain_text", "text": "Voir dans ChapsMind" }, "url": "https://..." }
+        {
+          "type": "button",
+          "text": { "type": "plain_text", "text": "Voir dans ChapsMind" },
+          "url": "https://..."
+        }
       ]
     }
   ]
@@ -434,12 +455,14 @@ AI-generated digest summaries are deferred to the agent iteration.
 ```
 
 **Advantages:**
+
 - **Zero infrastructure**: no OAuth flow, no token storage, no Slack App registration on our side
 - **Instant setup**: user pastes a URL, done
 - **Same message quality**: Block Kit works identically via webhooks
 - **Simple adapter**: same pattern as Generic Webhook, just different payload format
 
 **Limitations (addressed in future Slack App upgrade):**
+
 - One webhook URL = one channel (user needs a new URL per channel)
 - No channel picker dropdown (user must create webhook manually in Slack)
 - No dynamic channel targeting
@@ -457,11 +480,11 @@ When a `secret` is configured, the webhook adapter signs the payload body using 
 
 ### Summary
 
-| Channel | Integration | Auth | User Setup |
-|---------|-------------|------|------------|
-| **Teams** | Power Automate Workflow URL | URL contains signature | Create workflow in Teams, paste URL |
-| **Slack** | Incoming Webhook URL (Phase 1) | URL is secret | Create Slack App webhook, paste URL |
-| **Webhook** | Generic HTTP POST | None (URL is secret) | Paste URL |
+| Channel     | Integration                    | Auth                   | User Setup                          |
+| ----------- | ------------------------------ | ---------------------- | ----------------------------------- |
+| **Teams**   | Power Automate Workflow URL    | URL contains signature | Create workflow in Teams, paste URL |
+| **Slack**   | Incoming Webhook URL (Phase 1) | URL is secret          | Create Slack App webhook, paste URL |
+| **Webhook** | Generic HTTP POST              | None (URL is secret)   | Paste URL                           |
 
 > **Note:** Slack will be upgraded to full OAuth V2 bot token in a future phase for dynamic channel targeting and channel picker.
 
@@ -473,26 +496,26 @@ When a `secret` is configured, the webhook adapter signs the payload body using 
 
 Distribution channel configuration per folder.
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | `SERIAL PK` | |
-| `folder_id` | `VARCHAR(36)` | Folder UUID from Global Service |
-| `organization_id` | `VARCHAR(36)` | Keycloak organization ID |
-| `name` | `VARCHAR(255)` | User-defined stream name |
-| `description` | `TEXT` | Optional user-provided description |
-| `channel_type` | `ENUM` | `teams`, `slack`, `webhook` (email added in Phase 4) |
-| `mode` | `ENUM` | `live`, `recurrence` |
-| `status` | `ENUM` | `draft`, `active`, `paused`, `archived` |
-| `cron_expression` | `VARCHAR(100)` | Cron schedule (recurrence mode only) |
-| `timezone` | `VARCHAR(50)` | e.g. `Europe/Paris` |
-| `digest_goal` | `TEXT` | AI instruction for digest generation (Phase 4, nullable) |
-| `digest_language` | `VARCHAR(10)` | e.g. `fr`, `en` (Phase 4, nullable) |
-| `subscribed_events` | `JSONB` | Array of event types to listen for (e.g. `["screen.company.created"]`) |
-| `channel_config` | `JSONB` | Channel-specific config (see below) |
-| `owner_id` | `VARCHAR(36)` | Keycloak user ID |
-| `owner_username` | `VARCHAR(255)` | Denormalized for display |
-| `created_at` | `TIMESTAMP` | |
-| `updated_at` | `TIMESTAMP` | |
+| Column              | Type           | Description                                                            |
+| ------------------- | -------------- | ---------------------------------------------------------------------- |
+| `id`                | `SERIAL PK`    |                                                                        |
+| `folder_id`         | `VARCHAR(36)`  | Folder UUID from Global Service                                        |
+| `organization_id`   | `VARCHAR(36)`  | Keycloak organization ID                                               |
+| `name`              | `VARCHAR(255)` | User-defined stream name                                               |
+| `description`       | `TEXT`         | Optional user-provided description                                     |
+| `channel_type`      | `ENUM`         | `teams`, `slack`, `webhook` (email added in Phase 4)                   |
+| `mode`              | `ENUM`         | `live`, `recurrence`                                                   |
+| `status`            | `ENUM`         | `draft`, `active`, `paused`, `archived`                                |
+| `cron_expression`   | `VARCHAR(100)` | Cron schedule (recurrence mode only)                                   |
+| `timezone`          | `VARCHAR(50)`  | e.g. `Europe/Paris`                                                    |
+| `digest_goal`       | `TEXT`         | AI instruction for digest generation (Phase 4, nullable)               |
+| `digest_language`   | `VARCHAR(10)`  | e.g. `fr`, `en` (Phase 4, nullable)                                    |
+| `subscribed_events` | `JSONB`        | Array of event types to listen for (e.g. `["screen.company.created"]`) |
+| `channel_config`    | `JSONB`        | Channel-specific config (see below)                                    |
+| `owner_id`          | `VARCHAR(36)`  | Keycloak user ID                                                       |
+| `owner_username`    | `VARCHAR(255)` | Denormalized for display                                               |
+| `created_at`        | `TIMESTAMP`    |                                                                        |
+| `updated_at`        | `TIMESTAMP`    |                                                                        |
 
 **`channel_config` JSONB examples per channel type:**
 
@@ -513,66 +536,66 @@ Distribution channel configuration per folder.
 
 > **Phase 1 does not use this table.** Slack integration uses simple Incoming Webhook URLs stored in `streams.channel_config`, identical to the Generic Webhook pattern. This table will be introduced when upgrading to full Slack App with OAuth V2 bot token.
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | `SERIAL PK` | |
-| `organization_id` | `VARCHAR(36)` | Keycloak organization ID |
-| `team_id` | `VARCHAR(50)` | Slack workspace ID |
-| `team_name` | `VARCHAR(255)` | Slack workspace name |
-| `bot_token` | `TEXT` | Encrypted bot token (`xoxb-...`) |
-| `bot_user_id` | `VARCHAR(50)` | Bot's Slack user ID |
-| `installed_by` | `VARCHAR(36)` | Keycloak user ID who authorized |
-| `scopes` | `VARCHAR(500)` | Granted OAuth scopes |
-| `created_at` | `TIMESTAMP` | |
-| `updated_at` | `TIMESTAMP` | |
+| Column            | Type           | Description                      |
+| ----------------- | -------------- | -------------------------------- |
+| `id`              | `SERIAL PK`    |                                  |
+| `organization_id` | `VARCHAR(36)`  | Keycloak organization ID         |
+| `team_id`         | `VARCHAR(50)`  | Slack workspace ID               |
+| `team_name`       | `VARCHAR(255)` | Slack workspace name             |
+| `bot_token`       | `TEXT`         | Encrypted bot token (`xoxb-...`) |
+| `bot_user_id`     | `VARCHAR(50)`  | Bot's Slack user ID              |
+| `installed_by`    | `VARCHAR(36)`  | Keycloak user ID who authorized  |
+| `scopes`          | `VARCHAR(500)` | Granted OAuth scopes             |
+| `created_at`      | `TIMESTAMP`    |                                  |
+| `updated_at`      | `TIMESTAMP`    |                                  |
 
 ### Table: `stream_events`
 
 Events pushed by other services (Screen, Target, Explore).
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | `SERIAL PK` | |
-| `folder_id` | `VARCHAR(36)` | Folder UUID |
-| `organization_id` | `VARCHAR(36)` | Keycloak organization ID (for multi-tenancy isolation) |
-| `event_type` | `VARCHAR(100)` | e.g. `screen.company.created`, `target.document.published` |
-| `source` | `VARCHAR(100)` | `screen`, `target`, `explore` |
-| `entity_id` | `VARCHAR(255)` | ID of the source object |
-| `entity_type` | `VARCHAR(100)` | Type of the referenced entity |
-| `summary` | `TEXT` | Human-readable event summary |
-| `payload` | `JSONB` | Event data (company name, alert details, etc.) |
-| `is_deleted` | `BOOLEAN` | Soft-delete when source objects are removed |
-| `created_at` | `TIMESTAMP` | |
+| Column            | Type           | Description                                                |
+| ----------------- | -------------- | ---------------------------------------------------------- |
+| `id`              | `SERIAL PK`    |                                                            |
+| `folder_id`       | `VARCHAR(36)`  | Folder UUID                                                |
+| `organization_id` | `VARCHAR(36)`  | Keycloak organization ID (for multi-tenancy isolation)     |
+| `event_type`      | `VARCHAR(100)` | e.g. `screen.company.created`, `target.document.published` |
+| `source`          | `VARCHAR(100)` | `screen`, `target`, `explore`                              |
+| `entity_id`       | `VARCHAR(255)` | ID of the source object                                    |
+| `entity_type`     | `VARCHAR(100)` | Type of the referenced entity                              |
+| `summary`         | `TEXT`         | Human-readable event summary                               |
+| `payload`         | `JSONB`        | Event data (company name, alert details, etc.)             |
+| `is_deleted`      | `BOOLEAN`      | Soft-delete when source objects are removed                |
+| `created_at`      | `TIMESTAMP`    |                                                            |
 
 ### Table: `stream_deliveries`
 
 Delivery tracking per event-stream pair.
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | `SERIAL PK` | |
-| `stream_id` | `FK → streams` | |
-| `event_id` | `FK → stream_events` | |
-| `status` | `ENUM` | `pending`, `delivered`, `skipped`, `failed` |
-| `batch_id` | `VARCHAR(36)` | Groups deliveries for recurrence dispatch |
-| `error_message` | `TEXT` | Error message on failure |
-| `delivered_at` | `TIMESTAMP` | |
-| `attempt_count` | `INT` | Number of delivery attempts |
-| `next_retry_at` | `TIMESTAMP` | Scheduled time for next retry attempt |
-| `response_metadata` | `JSONB` | Response data from channel adapter |
-| `created_at` | `TIMESTAMP` | |
+| Column              | Type                 | Description                                 |
+| ------------------- | -------------------- | ------------------------------------------- |
+| `id`                | `SERIAL PK`          |                                             |
+| `stream_id`         | `FK → streams`       |                                             |
+| `event_id`          | `FK → stream_events` |                                             |
+| `status`            | `ENUM`               | `pending`, `delivered`, `skipped`, `failed` |
+| `batch_id`          | `VARCHAR(36)`        | Groups deliveries for recurrence dispatch   |
+| `error_message`     | `TEXT`               | Error message on failure                    |
+| `delivered_at`      | `TIMESTAMP`          |                                             |
+| `attempt_count`     | `INT`                | Number of delivery attempts                 |
+| `next_retry_at`     | `TIMESTAMP`          | Scheduled time for next retry attempt       |
+| `response_metadata` | `JSONB`              | Response data from channel adapter          |
+| `created_at`        | `TIMESTAMP`          |                                             |
 
 ### Table: `stream_recipients` (Future — Newsletter iteration)
 
 Newsletter distribution list per stream. Deferred until email/newsletter channel is implemented.
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | `SERIAL PK` | |
-| `stream_id` | `FK → streams` | |
-| `email` | `VARCHAR(255)` | Recipient email |
-| `name` | `VARCHAR(255)` | Display name (optional) |
-| `created_at` | `TIMESTAMP` | |
+| Column       | Type           | Description             |
+| ------------ | -------------- | ----------------------- |
+| `id`         | `SERIAL PK`    |                         |
+| `stream_id`  | `FK → streams` |                         |
+| `email`      | `VARCHAR(255)` | Recipient email         |
+| `name`       | `VARCHAR(255)` | Display name (optional) |
+| `created_at` | `TIMESTAMP`    |                         |
 
 ---
 
@@ -581,9 +604,11 @@ Newsletter distribution list per stream. Deferred until email/newsletter channel
 ### Public Endpoints (via Global Service proxy at `/api/stream/`)
 
 **Event Catalog**:
+
 - `GET /api/stream/event-types` — List available event types (hardcoded catalog)
 
 **Stream CRUD**:
+
 - `GET /api/stream/folders/{folder_id}/streams` — List streams for a folder
 - `POST /api/stream/folders/{folder_id}/streams` — Create a stream
 - `GET /api/stream/streams/{id}` — Get stream details
@@ -592,18 +617,22 @@ Newsletter distribution list per stream. Deferred until email/newsletter channel
 - `PATCH /api/stream/streams/{id}/status` — Change status (draft → active, active → paused)
 
 **Dispatch & Testing**:
+
 - `POST /api/stream/streams/{id}/dispatch` — Manual dispatch (send now)
-- `POST /api/stream/streams/{id}/test` — Send test delivery (0 credits) *(Phase 2)*
+- `POST /api/stream/streams/{id}/test` — Send test delivery (0 credits) _(Phase 2)_
 - `POST /api/stream/test-connection` — Test channel connection (Teams URL / Slack / Webhook)
 
 **Slack OAuth (Deferred — Future Phase)**:
+
 > Phase 1 uses Incoming Webhook URLs for Slack (no OAuth). The following endpoints will be added when upgrading to full Slack App:
+>
 > - `GET /api/stream/slack/authorize` — Initiate Slack OAuth flow
 > - `GET /api/stream/slack/callback` — OAuth callback
 > - `GET /api/stream/slack/channels` — List available channels
 > - `DELETE /api/stream/slack/installation` — Disconnect workspace
 
 **Delivery History**:
+
 - `GET /api/stream/streams/{id}/deliveries` — Delivery history with status
 
 ### Internal Endpoints (service-to-service, internal JWT)
@@ -617,13 +646,13 @@ Newsletter distribution list per stream. Deferred until email/newsletter channel
 
 Stream operations consume credits from the organization's global token balance (managed by Global Service). Credit costs vary by channel type and stream mode.
 
-| Operation | Channel | Estimated Cost | Rationale |
-|-----------|---------|----------------|-----------|
-| Stream creation | All | 25 credits | Base setup cost |
-| Live dispatch | Teams/Slack | 5 credits/event | Simple message formatting |
-| Live dispatch | Webhook | 2 credits/event | Raw payload, minimal processing |
+| Operation           | Channel             | Estimated Cost   | Rationale                        |
+| ------------------- | ------------------- | ---------------- | -------------------------------- |
+| Stream creation     | All                 | 25 credits       | Base setup cost                  |
+| Live dispatch       | Teams/Slack         | 5 credits/event  | Simple message formatting        |
+| Live dispatch       | Webhook             | 2 credits/event  | Raw payload, minimal processing  |
 | Recurrence dispatch | Teams/Slack/Webhook | 10 credits/batch | Template-based digest generation |
-| Test delivery | All | 0 credits | Free for testing |
+| Test delivery       | All                 | 0 credits        | Free for testing                 |
 
 Credit consumption is tracked via the internal token API (`POST /api/internal/tokens/consume`) on Global Service. If an organization has insufficient credits, dispatch is skipped and the delivery is marked as `skipped`.
 
@@ -639,13 +668,13 @@ Global Service v2 (MRs !70–!77) replaces the former single-backend proxy with 
 
 ### What Global Service v2 Provides
 
-| Capability | MR | Impact on Stream |
-|---|---|---|
-| **ModuleRegistry + config** | !76 (TAR-1378/1379) | Stream registers as a module via config; no proxy code changes needed |
-| **Multi-backend proxy** | !77 (TAR-1380) | `/api/stream/*` automatically routed to Stream service by registry path-prefix matching |
-| **Correlation ID middleware** | !70 (TAR-1375) | `X-Correlation-ID` propagated on all proxied requests — Stream gets distributed tracing for free |
-| **Aggregated health/ready** | !72 (TAR-1377) | Gateway health checks ping all registered backends; Stream health is included automatically |
-| **OpenAPI merge** | !71 (TAR-1376) | Stream's OpenAPI schema is merged into the gateway's `/docs` — no manual aggregation needed |
+| Capability                    | MR                  | Impact on Stream                                                                                 |
+| ----------------------------- | ------------------- | ------------------------------------------------------------------------------------------------ |
+| **ModuleRegistry + config**   | !76 (TAR-1378/1379) | Stream registers as a module via config; no proxy code changes needed                            |
+| **Multi-backend proxy**       | !77 (TAR-1380)      | `/api/stream/*` automatically routed to Stream service by registry path-prefix matching          |
+| **Correlation ID middleware** | !70 (TAR-1375)      | `X-Correlation-ID` propagated on all proxied requests — Stream gets distributed tracing for free |
+| **Aggregated health/ready**   | !72 (TAR-1377)      | Gateway health checks ping all registered backends; Stream health is included automatically      |
+| **OpenAPI merge**             | !71 (TAR-1376)      | Stream's OpenAPI schema is merged into the gateway's `/docs` — no manual aggregation needed      |
 
 ### Stream Registration
 
@@ -689,13 +718,13 @@ Feature-flagged: only visible when `STREAM` flag is enabled for the organization
 
 A dedicated **"Streams" tab** alongside object type tabs (Veille, Cartographie, Fiche Entreprise) in the folder view.
 
-| Column | Description |
-|--------|-------------|
-| Nom du stream | Stream name (link to edit page) |
-| Canal | Channel type icon + label (Teams / Slack / Webhook) |
-| Mode | Live / Récurrence |
-| Statut | Badge: Brouillon / Actif / En pause |
-| Dernière diffusion | Date of last dispatch (or "—") |
+| Column             | Description                                         |
+| ------------------ | --------------------------------------------------- |
+| Nom du stream      | Stream name (link to edit page)                     |
+| Canal              | Channel type icon + label (Teams / Slack / Webhook) |
+| Mode               | Live / Récurrence                                   |
+| Statut             | Badge: Brouillon / Actif / En pause                 |
+| Dernière diffusion | Date of last dispatch (or "—")                      |
 
 ### Stream Form Page
 
@@ -709,13 +738,13 @@ Single-page form for creating and editing streams (see [Stream Creation Form](#s
 
 ## Phased Delivery
 
-| Phase | Scope |
-|-------|-------|
+| Phase                         | Scope                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **1 — Foundation (this ADR)** | Service skeleton + proxy routing + Channel adapters (Teams via Power Automate Workflow, Slack via OAuth bot token, generic Webhook) in live mode only + Event type subscription (hardcoded catalog) + Feature flag + Minimal frontend (form page, stream list in folder) + Screen outbox integration (push events on analysis complete) |
-| **2 — Recurrence** | APScheduler + recurrence mode for all channels + template-based digest generation + delivery history UI |
-| **3 — Event Auto-Discovery** | Dynamic event catalog registration from producer services + multi-source producer support (Target) |
-| **4 — Agent & Newsletter** | LangGraph content generation agent + split-view editor page with chat panel + Email/Newsletter channel + distribution list management (recipients, CSV import) + AI-generated digest summaries |
-| **5 — Observability** | Stats dashboard (delivery rates, event volume, credit consumption) + admin tooling |
+| **2 — Recurrence**            | APScheduler + recurrence mode for all channels + template-based digest generation + delivery history UI                                                                                                                                                                                                                                 |
+| **3 — Event Auto-Discovery**  | Dynamic event catalog registration from producer services + multi-source producer support (Target)                                                                                                                                                                                                                                      |
+| **4 — Agent & Newsletter**    | LangGraph content generation agent + split-view editor page with chat panel + Email/Newsletter channel + distribution list management (recipients, CSV import) + AI-generated digest summaries                                                                                                                                          |
+| **5 — Observability**         | Stats dashboard (delivery rates, event volume, credit consumption) + admin tooling                                                                                                                                                                                                                                                      |
 
 ---
 
@@ -726,6 +755,7 @@ Single-page form for creating and editing streams (see [Stream Creation Form](#s
 **Description:** New FastAPI service at `apps/stream/` with dedicated database, following ADR-0009 gateway pattern.
 
 **Pros:**
+
 - Clean domain boundary (event queues, scheduling, channel integrations)
 - Independent deployment and scaling
 - Multiple services can push events (Screen now, Target/Explore later)
@@ -733,6 +763,7 @@ Single-page form for creating and editing streams (see [Stream Creation Form](#s
 - Team can work independently on Stream features
 
 **Cons:**
+
 - Additional service to deploy and monitor
 - New database to manage
 
@@ -741,11 +772,13 @@ Single-page form for creating and editing streams (see [Stream Creation Form](#s
 **Description:** Add stream functionality directly to the existing Screen service.
 
 **Pros:**
+
 - No new service to deploy
 - Direct access to Screen's database and models
 - Simpler initial implementation
 
 **Cons:**
+
 - Screen service becomes bloated with unrelated domain logic
 - Cannot receive events from Target/Explore without coupling
 - Scaling Stream means scaling all of Screen
@@ -756,10 +789,12 @@ Single-page form for creating and editing streams (see [Stream Creation Form](#s
 **Description:** Add stream as a shared service within Global Service.
 
 **Pros:**
+
 - No new service infrastructure
 - Direct access to folder and token systems
 
 **Cons:**
+
 - Global Service is a gateway, not a domain service
 - Adds significant complexity (scheduling, channel adapters, AI agents) to the gateway
 - APScheduler + LangGraph in the gateway increases failure blast radius
@@ -801,18 +836,18 @@ Single-page form for creating and editing streams (see [Stream Creation Form](#s
 
 ## Files to Modify
 
-| File | Change |
-|------|--------|
-| `apps/global-service/app/models/organization.py` | Add `STREAM = "stream"` to `FeatureFlag` enum |
-| `apps/screen/app/models/organization.py` | Add `STREAM = "stream"` to `FeatureFlag` enum |
-| `apps/global-service/` ModuleRegistry config | Register `stream` module with `STREAM_BASE_URL` — no proxy code changes needed (handled by registry auto-discovery from v2) |
-| `apps/screen/app/agents/runner.py` | Write event to outbox table after analysis completion (same transaction) |
-| `apps/front/src/components/folders/FoldersHeader.vue` | Add "Stream" to "Nouveau" dropdown (feature-flagged) |
-| `apps/front/src/pages/` | Add stream form page + stream list in folder view |
-| `apps/front/src/types/feature-flags.ts` | Add `'stream'` to `FeatureFlagName` type |
-| `infra/compose.yaml` | Add `stream` service + `stream_db` database + `STREAM_BASE_URL` env var for global-service + `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET` env vars for stream |
-| `infra/compose.local.yaml` | Add `stream` local dev service with volume mounts |
-| `Taskfile.yml` | Add `stream:` include |
+| File                                                  | Change                                                                                                                                                                            |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/global-service/app/models/organization.py`      | Add `STREAM = "stream"` to `FeatureFlag` enum                                                                                                                                     |
+| `apps/screen/app/models/organization.py`              | Add `STREAM = "stream"` to `FeatureFlag` enum                                                                                                                                     |
+| `apps/global-service/` ModuleRegistry config          | Register `stream` module with `STREAM_BASE_URL` — no proxy code changes needed (handled by registry auto-discovery from v2)                                                       |
+| `apps/screen/app/agents/runner.py`                    | Write event to outbox table after analysis completion (same transaction)                                                                                                          |
+| `apps/front/src/components/folders/FoldersHeader.vue` | Add "Stream" to "Nouveau" dropdown (feature-flagged)                                                                                                                              |
+| `apps/front/src/pages/`                               | Add stream form page + stream list in folder view                                                                                                                                 |
+| `apps/front/src/types/feature-flags.ts`               | Add `'stream'` to `FeatureFlagName` type                                                                                                                                          |
+| `infra/compose.yaml`                                  | Add `stream` service + `stream_db` database + `STREAM_BASE_URL` env var for global-service + `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET` env vars for stream |
+| `infra/compose.local.yaml`                            | Add `stream` local dev service with volume mounts                                                                                                                                 |
+| `Taskfile.yml`                                        | Add `stream:` include                                                                                                                                                             |
 
 ## New Files
 
@@ -902,16 +937,16 @@ A user has a folder "Concurrents IA" with an active **live Slack stream** config
 
 ### Detailed steps
 
-| Step | System | Action | Data |
-|------|--------|--------|------|
-| **①** | **Target Service** | Watchfile crawl detects a new document matching folder "Concurrents IA" | Document: `{title: "OpenAI lance GPT-5", source: "Les Echos", url: "..."}` |
-| **②** | **target_db** | Within the **same transaction**: insert the document row AND insert an outbox row | Outbox row: `{event_type: "watchfile_alert", folder_id: "abc-123", source_service: "target", payload: {title, source, url, watchfile_id}}` |
-| **③** | **Target Relay** | Polls `target_db.outbox` every 2-5s, picks up the new row, marks it as `processing` | Reads outbox row, builds HTTP payload |
-| **④** | **Stream Service** | Receives `POST /internal/events/ingest` with internal JWT auth, validates payload | Inserts into `stream_events`: `{folder_id: "abc-123", event_type: "watchfile_alert", source_service: "target", payload: {...}}` |
-| **⑤** | **stream_db** | Stream queries all **active streams** on folder `abc-123` whose `subscribed_events` include `target.document.published` | Finds 1 match: stream `id=42`, `channel_type=slack`, `mode=live`, `status=active` |
-| **⑥** | **Stream Dispatch** | Since mode is `live`, dispatch immediately. Creates a `stream_deliveries` row with `status=pending`, consumes 5 credits via Global Service token API | Delivery row: `{stream_id: 42, event_id: 7, status: "pending"}` |
-| **⑦** | **Slack Adapter** | Formats payload into a Slack Block Kit message, calls `chat.postMessage` using the organization's bot token to the channel stored in `streams.channel_config` | Slack message: **"📄 Nouveau document — OpenAI lance GPT-5"** with source, link, and folder context |
-| **⑧** | **Stream Dispatch** | On 200 OK from Slack, updates delivery row to `status=delivered`, `delivered_at=now()`. On failure, retries with backoff, then marks `status=failed` with `error_message` | Relay marks outbox row as `delivered` |
+| Step  | System              | Action                                                                                                                                                                    | Data                                                                                                                                       |
+| ----- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **①** | **Target Service**  | Watchfile crawl detects a new document matching folder "Concurrents IA"                                                                                                   | Document: `{title: "OpenAI lance GPT-5", source: "Les Echos", url: "..."}`                                                                 |
+| **②** | **target_db**       | Within the **same transaction**: insert the document row AND insert an outbox row                                                                                         | Outbox row: `{event_type: "watchfile_alert", folder_id: "abc-123", source_service: "target", payload: {title, source, url, watchfile_id}}` |
+| **③** | **Target Relay**    | Polls `target_db.outbox` every 2-5s, picks up the new row, marks it as `processing`                                                                                       | Reads outbox row, builds HTTP payload                                                                                                      |
+| **④** | **Stream Service**  | Receives `POST /internal/events/ingest` with internal JWT auth, validates payload                                                                                         | Inserts into `stream_events`: `{folder_id: "abc-123", event_type: "watchfile_alert", source_service: "target", payload: {...}}`            |
+| **⑤** | **stream_db**       | Stream queries all **active streams** on folder `abc-123` whose `subscribed_events` include `target.document.published`                                                   | Finds 1 match: stream `id=42`, `channel_type=slack`, `mode=live`, `status=active`                                                          |
+| **⑥** | **Stream Dispatch** | Since mode is `live`, dispatch immediately. Creates a `stream_deliveries` row with `status=pending`, consumes 5 credits via Global Service token API                      | Delivery row: `{stream_id: 42, event_id: 7, status: "pending"}`                                                                            |
+| **⑦** | **Slack Adapter**   | Formats payload into a Slack Block Kit message, calls `chat.postMessage` using the organization's bot token to the channel stored in `streams.channel_config`             | Slack message: **"📄 Nouveau document — OpenAI lance GPT-5"** with source, link, and folder context                                        |
+| **⑧** | **Stream Dispatch** | On 200 OK from Slack, updates delivery row to `status=delivered`, `delivered_at=now()`. On failure, retries with backoff, then marks `status=failed` with `error_message` | Relay marks outbox row as `delivered`                                                                                                      |
 
 ### What the user sees in Slack
 
@@ -1020,21 +1055,25 @@ Replace the hardcoded catalog with dynamic registration — each producer servic
 ## References
 
 **Internal ADRs:**
+
 - [ADR-0009 — Global Service Architecture](./0009-global-service-architecture.md)
 - [ADR-0012 — LangGraph Agent System](./0012-langgraph-agent-system.md)
 - [ADR-0013 — Chat Service Replacement](./0013-chat-service-replacement.md)
 - [ADR-0015 — Multi-Module API Gateway](./0015-multi-module-gateway.md)
 
 **Teams Integration:**
+
 - [Retirement of Office 365 Connectors in Teams](https://devblogs.microsoft.com/microsoft365dev/retirement-of-office-365-connectors-within-microsoft-teams/) — legacy webhooks die April 30, 2026
 - [Create Incoming Webhooks with Workflows](https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498) — Power Automate replacement
 - [Adaptive Cards Documentation](https://adaptivecards.io/)
 
 **Slack Integration:**
+
 - [Slack OAuth V2 — Installing with OAuth](https://docs.slack.dev/authentication/installing-with-oauth/)
 - [Slack chat.postMessage API](https://docs.slack.dev/reference/methods/chat.postMessage/)
 - [Slack Block Kit Builder](https://app.slack.com/block-kit-builder/)
 - [Classic Apps Deprecation (November 2026)](https://docs.slack.dev/changelog/2024-09-legacy-custom-bots-classic-apps-deprecation/)
 
 **Other:**
+
 - [APScheduler Documentation](https://apscheduler.readthedocs.io/)

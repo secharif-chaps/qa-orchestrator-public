@@ -17,6 +17,7 @@ Frontend → API → DB (create job) → RabbitMQ → Celery Worker → SYSTRAN 
 ```
 
 This architecture required:
+
 - RabbitMQ message broker
 - Separate Celery worker process
 - Translation-specific queue configuration
@@ -35,6 +36,7 @@ After observing translation in production, we identified several issues:
 ### Strategic Context
 
 The team is intentionally keeping the system simple while the planned API Gateway multi-module architecture is not yet implemented. Adding complexity now would:
+
 - Increase maintenance burden before proper service boundaries are defined
 - Make future architectural changes harder
 - Provide no tangible benefit given current usage patterns

@@ -13,6 +13,7 @@ That's it. Everything else (Node, Python, Yarn, Poetry, Ruff, Lefthook, Taskfile
 ### Option A: Dev Container (recommended)
 
 1. Clone the repository:
+
    ```bash
    git clone <repo-url> && cd chapsmind-monorepo
    ```
@@ -23,6 +24,7 @@ That's it. Everything else (Node, Python, Yarn, Poetry, Ruff, Lefthook, Taskfile
 3. Wait for the container to build (~5 min first time, cached after)
 
 4. Start all services:
+
    ```bash
    task up
    ```
@@ -55,14 +57,14 @@ task lint         # Lint all projects
 
 ## Test Users
 
-| User | Password | Permissions |
-|---|---|---|
-| admin | admin123 | Full access |
-| company_manager | manager123 | Company CRUD |
-| company_viewer | viewer123 | Company read-only |
-| team_viewer | teamviewer123 | Team read-only |
-| team_manager | teammanager123 | Team management |
-| no_access | noaccess123 | No permissions |
+| User            | Password       | Permissions       |
+| --------------- | -------------- | ----------------- |
+| admin           | admin123       | Full access       |
+| company_manager | manager123     | Company CRUD      |
+| company_viewer  | viewer123      | Company read-only |
+| team_viewer     | teamviewer123  | Team read-only    |
+| team_manager    | teammanager123 | Team management   |
+| no_access       | noaccess123    | No permissions    |
 
 ## Branch Naming
 

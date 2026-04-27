@@ -40,11 +40,11 @@ Evolve global-service into a **schema-driven multi-module API gateway** that:
 
 Backends declare metadata via OpenAPI extensions:
 
-| Extension | Type | Default | Meaning |
-|-----------|------|---------|---------|
-| `x-public` | bool | false | No auth required |
-| `x-permissions` | string[] | [] | Required roles (OR) |
-| `x-token-cost` | int | 0 | Tokens to reserve |
+| Extension       | Type     | Default | Meaning             |
+| --------------- | -------- | ------- | ------------------- |
+| `x-public`      | bool     | false   | No auth required    |
+| `x-permissions` | string[] | []      | Required roles (OR) |
+| `x-token-cost`  | int      | 0       | Tokens to reserve   |
 
 ---
 

@@ -16,14 +16,14 @@
 
 The ChapsMind project was previously organized as **4 git submodules** (soon 6) within a workspace parent repository:
 
-| Submodule | Stack | Commits | Active branches |
-|---|---|---|---|
-| `front` | Vue 3 / TypeScript | 641 | 22 |
-| `back` | FastAPI / Python | 525 | 23 |
-| `infra` | Docker / K8s | 56 | 11 |
-| `global-service` | Python | 3 | 3 |
-| *(planned)* `target-service` | Python | - | - |
-| *(planned)* `screen-service` | Python | - | - |
+| Submodule                    | Stack              | Commits | Active branches |
+| ---------------------------- | ------------------ | ------- | --------------- |
+| `front`                      | Vue 3 / TypeScript | 641     | 22              |
+| `back`                       | FastAPI / Python   | 525     | 23              |
+| `infra`                      | Docker / K8s       | 56      | 11              |
+| `global-service`             | Python             | 3       | 3               |
+| _(planned)_ `target-service` | Python             | -       | -               |
+| _(planned)_ `screen-service` | Python             | -       | -               |
 
 **Organization**: 2 feature-oriented teams that work across all repos.
 
@@ -40,7 +40,9 @@ The ChapsMind project was previously organized as **4 git submodules** (soon 6) 
 ## 2. Options Evaluated
 
 ### Option A: Stay with Submodules (with improvements)
+
 ### Option B: Monorepo
+
 ### Option C: Pure multi-repo (without workspace parent)
 
 ---
@@ -49,36 +51,36 @@ The ChapsMind project was previously organized as **4 git submodules** (soon 6) 
 
 ### 3.1. Developer Experience (DX) Criteria
 
-| Criterion | Weight | Submodules (A) | Monorepo (B) | Multi-repo (C) |
-|---|---|---|---|---|
-| **New dev onboarding** | High | 2/5 -- `git clone --recurse`, understand refs | **5/5** -- single `git clone` | 3/5 -- clone N repos |
-| **Cross-stack feature (1 MR)** | High | 1/5 -- 3 MRs minimum (front + back + bump) | **5/5** -- 1 MR, 1 branch | 1/5 -- N MRs |
-| **Unified review** | High | 1/5 -- review in 3 separate repos | **5/5** -- 1 MR, complete diff | 1/5 -- split context |
-| **No ref maintenance** | High | 1/5 -- 47% of commits = maintenance | **5/5** -- eliminates the problem | 4/5 -- no refs but no link |
-| **History / git blame / bisect** | Medium | 2/5 -- fragmented by repo | **5/5** -- unified | 1/5 -- fragmented |
-| **Cross-repo code search** | Medium | 2/5 -- grep in each submodule | **5/5** -- global grep | 1/5 -- external tools |
-| **CI complexity** | Medium | 3/5 -- CI per repo, simple | 4/5 -- `include:local` per app, separation of concerns | **4/5** -- independent CIs |
-| **Deployment autonomy** | Medium | 4/5 -- independent deploy per repo | 3/5 -- conditional but possible | **5/5** -- natural |
-| **Scalability (50+ services)** | Low | 3/5 -- each repo is small | 3/5 -- clone grows | **5/5** -- each repo stays small |
-| **Cross-stack refactoring** | High | 1/5 -- manual coordination | **5/5** -- atomic | 1/5 -- manual coordination |
+| Criterion                        | Weight | Submodules (A)                                | Monorepo (B)                                           | Multi-repo (C)                   |
+| -------------------------------- | ------ | --------------------------------------------- | ------------------------------------------------------ | -------------------------------- |
+| **New dev onboarding**           | High   | 2/5 -- `git clone --recurse`, understand refs | **5/5** -- single `git clone`                          | 3/5 -- clone N repos             |
+| **Cross-stack feature (1 MR)**   | High   | 1/5 -- 3 MRs minimum (front + back + bump)    | **5/5** -- 1 MR, 1 branch                              | 1/5 -- N MRs                     |
+| **Unified review**               | High   | 1/5 -- review in 3 separate repos             | **5/5** -- 1 MR, complete diff                         | 1/5 -- split context             |
+| **No ref maintenance**           | High   | 1/5 -- 47% of commits = maintenance           | **5/5** -- eliminates the problem                      | 4/5 -- no refs but no link       |
+| **History / git blame / bisect** | Medium | 2/5 -- fragmented by repo                     | **5/5** -- unified                                     | 1/5 -- fragmented                |
+| **Cross-repo code search**       | Medium | 2/5 -- grep in each submodule                 | **5/5** -- global grep                                 | 1/5 -- external tools            |
+| **CI complexity**                | Medium | 3/5 -- CI per repo, simple                    | 4/5 -- `include:local` per app, separation of concerns | **4/5** -- independent CIs       |
+| **Deployment autonomy**          | Medium | 4/5 -- independent deploy per repo            | 3/5 -- conditional but possible                        | **5/5** -- natural               |
+| **Scalability (50+ services)**   | Low    | 3/5 -- each repo is small                     | 3/5 -- clone grows                                     | **5/5** -- each repo stays small |
+| **Cross-stack refactoring**      | High   | 1/5 -- manual coordination                    | **5/5** -- atomic                                      | 1/5 -- manual coordination       |
 
 ### 3.2. Weighted Score
 
-| | Submodules (A) | Monorepo (B) | Multi-repo (C) |
-|---|---|---|---|
-| **Raw score** (sum) | 20 | **46** | 26 |
-| **Weighted score** (x weight) | 28 | **67** | 35 |
+|                               | Submodules (A) | Monorepo (B) | Multi-repo (C) |
+| ----------------------------- | -------------- | ------------ | -------------- |
+| **Raw score** (sum)           | 20             | **46**       | 26             |
+| **Weighted score** (x weight) | 28             | **67**       | 35             |
 
 > **Monorepo dominates on all high-weight criteria**, which correspond exactly to current pain points.
 
 ### 3.3. Eliminatory Criteria
 
-| Eliminatory criterion | Submodules | Monorepo | Multi-repo |
-|---|---|---|---|
-| Feature teams touch multiple repos? | Yes -> friction | **Yes -> natural** | Yes -> friction |
-| Would repo size block cloning? | No | **No (< 50 MB)** | No |
-| GitLab CI supports conditional execution? | N/A | **Yes (`rules:changes`)** | N/A |
-| More than 2 services to be added soon? | Worsens the problem | **Absorbs naturally** | Multiplies repos |
+| Eliminatory criterion                     | Submodules          | Monorepo                  | Multi-repo       |
+| ----------------------------------------- | ------------------- | ------------------------- | ---------------- |
+| Feature teams touch multiple repos?       | Yes -> friction     | **Yes -> natural**        | Yes -> friction  |
+| Would repo size block cloning?            | No                  | **No (< 50 MB)**          | No               |
+| GitLab CI supports conditional execution? | N/A                 | **Yes (`rules:changes`)** | N/A              |
+| More than 2 services to be added soon?    | Worsens the problem | **Absorbs naturally**     | Multiplies repos |
 
 ---
 
@@ -87,6 +89,7 @@ The ChapsMind project was previously organized as **4 git submodules** (soon 6) 
 ### 4.1. Current Situation: No Convention
 
 Observations:
+
 - `feat/*` and `fix/*` branches exist in front and back but without a shared convention
 - Branches do not share names between front and back for the same feature
 - Dead branches: `develop`, `pipeline`, `origin` linger in both repos
@@ -127,32 +130,33 @@ Feature branch        main               preprod             prod
    + build            + deploy integ      + deploy preprod   + deploy prod
 ```
 
-| Environment | Branch/Trigger | Deploy | Purpose |
-|---|---|---|---|
-| **Integration** | `main` (auto on merge) | Automatic (CD) | Continuous technical validation |
-| **Preprod** | Tag or `release/*` branch | Automatic (CD) | Business validation, QA |
-| **Prod** | Manual promotion | Manual (button) | Production, zero downtime |
+| Environment     | Branch/Trigger            | Deploy          | Purpose                         |
+| --------------- | ------------------------- | --------------- | ------------------------------- |
+| **Integration** | `main` (auto on merge)    | Automatic (CD)  | Continuous technical validation |
+| **Preprod**     | Tag or `release/*` branch | Automatic (CD)  | Business validation, QA         |
+| **Prod**        | Manual promotion          | Manual (button) | Production, zero downtime       |
 
 **CD objective**: eventually, merging to `main` triggers the full chain up to prod, with validation gates (E2E tests, smoke tests) between each stage.
 
 #### Rules
 
-| Rule | Description |
-|---|---|
+| Rule                          | Description                                                                   |
+| ----------------------------- | ----------------------------------------------------------------------------- |
 | **Single branch per feature** | `feat/TAR-xxx-description` touches `apps/front/` AND `apps/screen/` if needed |
-| **Single MR** | 1 feature = 1 MR, even if it touches 3 apps |
-| **Ticket prefix** | Always include Jira/GitLab number (`TAR-xxx`) |
-| **No commit on main** | Everything goes through MR |
-| **CODEOWNERS review** | Automatic approval required per touched domain |
-| **CI must be green** | Merge blocked if pipeline fails |
-| **Squash merge** | Clean history on main |
-| **main = always deployable** | Every commit on main must be production-ready |
+| **Single MR**                 | 1 feature = 1 MR, even if it touches 3 apps                                   |
+| **Ticket prefix**             | Always include Jira/GitLab number (`TAR-xxx`)                                 |
+| **No commit on main**         | Everything goes through MR                                                    |
+| **CODEOWNERS review**         | Automatic approval required per touched domain                                |
+| **CI must be green**          | Merge blocked if pipeline fails                                               |
+| **Squash merge**              | Clean history on main                                                         |
+| **main = always deployable**  | Every commit on main must be production-ready                                 |
 
 ### 4.3. Flow Comparison by Approach
 
 #### Cross-stack feature: "Add translation module"
 
 **Submodules (previous)**:
+
 ```
 1. git checkout -b feat/translation        <- in front/
 2. ... dev + commit + push + MR front
@@ -172,6 +176,7 @@ Feature branch        main               preprod             prod
 ```
 
 **Monorepo (current)**:
+
 ```
 1. git checkout -b feat/TAR-42-translation
 2. ... modify apps/front/ + apps/screen/
@@ -189,6 +194,7 @@ Feature branch        main               preprod             prod
 #### Urgent hotfix: "Production API bug"
 
 **Submodules**:
+
 ```
 1. cd back/ && git checkout -b fix/api-bug
 2. Fix + commit + push + MR
@@ -202,6 +208,7 @@ Feature branch        main               preprod             prod
 ```
 
 **Monorepo**:
+
 ```
 1. git checkout -b fix/TAR-99-api-bug
 2. Fix in apps/screen/ + commit + push + MR
@@ -323,7 +330,7 @@ front:deploy:prod:
       <<: *front-changes
   environment:
     name: production
-  when: manual  # Manual gate -> explicit promotion
+  when: manual # Manual gate -> explicit promotion
   script:
     - docker tag $CI_REGISTRY_IMAGE/chapsmind-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-front:prod
     - docker push $CI_REGISTRY_IMAGE/chapsmind-front:prod
@@ -399,14 +406,14 @@ screen:deploy:prod:
 
 ### 5.3. Advantages of Distributed CI Architecture
 
-| Advantage | Detail |
-|---|---|
-| **Separation of concerns** | Each team maintains its CI in its own directory |
-| **No monolithic CI file** | Root `.gitlab-ci.yml` stays < 15 lines |
-| **Trivial service addition** | 1 `include` line + 1 `.gitlab-ci.yml` file in the new directory |
-| **Conditional execution** | Only jobs for modified directories run (`rules:changes`) |
-| **3 environments** | integration (auto), preprod (auto on tag), prod (manual promotion) |
-| **Path to full CD** | Replace `when: manual` with automated gates (smoke tests, E2E) |
+| Advantage                    | Detail                                                             |
+| ---------------------------- | ------------------------------------------------------------------ |
+| **Separation of concerns**   | Each team maintains its CI in its own directory                    |
+| **No monolithic CI file**    | Root `.gitlab-ci.yml` stays < 15 lines                             |
+| **Trivial service addition** | 1 `include` line + 1 `.gitlab-ci.yml` file in the new directory    |
+| **Conditional execution**    | Only jobs for modified directories run (`rules:changes`)           |
+| **3 environments**           | integration (auto), preprod (auto on tag), prod (manual promotion) |
+| **Path to full CD**          | Replace `when: manual` with automated gates (smoke tests, E2E)     |
 
 ---
 
@@ -464,18 +471,20 @@ assign-reviewers:
     - pip install requests
     - python scripts/ci/assign_reviewers.py
   variables:
-    GITLAB_TOKEN: $REVIEWER_BOT_TOKEN  # Bot token with API access
+    GITLAB_TOKEN: $REVIEWER_BOT_TOKEN # Bot token with API access
 ```
 
 The script (`scripts/ci/assign_reviewers.py`) parses the `CODEOWNERS` file, retrieves modified files via the MR API, and calls `PUT /projects/:id/merge_requests/:iid` to add `reviewer_ids`.
 
 > Alternative options:
+>
 > - [Axolo](https://axolo.co/auto-assign-reviewer-for-gitlab) -- free SaaS that reads CODEOWNERS and assigns reviewers automatically via Slack
 > - Custom bash script with `curl` + GitLab API
 
 #### Concrete Example
 
 An MR `feat/TAR-42-translation` modifies:
+
 - `apps/front/src/components/TranslationPanel.vue`
 - `apps/screen/app/api/translation.py`
 
@@ -483,11 +492,11 @@ The CI job detects that `apps/front/` and `apps/screen/` are touched -> automati
 
 #### Limitations Compared to GitLab Premium
 
-| Feature | GitLab Premium | CI Alternative |
-|---|---|---|
-| Auto reviewer assignment | Native | Via CI job or Axolo |
-| **Merge blocking** without owner approval | Native | No -- team convention only |
-| Configuration | CODEOWNERS file only | CODEOWNERS + CI job + bot token |
+| Feature                                   | GitLab Premium       | CI Alternative                  |
+| ----------------------------------------- | -------------------- | ------------------------------- |
+| Auto reviewer assignment                  | Native               | Via CI job or Axolo             |
+| **Merge blocking** without owner approval | Native               | No -- team convention only      |
+| Configuration                             | CODEOWNERS file only | CODEOWNERS + CI job + bot token |
 
 Merge blocking is not possible without Premium. We compensate with a **team convention**: do not merge until all assigned reviewers have approved. If the team upgrades to GitLab Premium in the future, the CODEOWNERS file is already in place -- just enable the feature.
 
@@ -501,12 +510,12 @@ Monorepo tools (Nx, Turborepo, Bazel, Pants) solve three main problems: the **de
 
 In our case, these three problems are already covered or non-existent:
 
-| Problem | Our situation | Covered by |
-|---|---|---|
-| Inter-app dependency graph | No shared code between front (Vue/TS) and back (Python) | N/A |
-| Task caching | Each app = `docker build` | Docker layer cache |
-| Affected detection | Which service to rebuild? | GitLab CI `rules:changes` (native, free) |
-| Build performance | < 50 MB of code, 5-6 services | No performance issue |
+| Problem                    | Our situation                                           | Covered by                               |
+| -------------------------- | ------------------------------------------------------- | ---------------------------------------- |
+| Inter-app dependency graph | No shared code between front (Vue/TS) and back (Python) | N/A                                      |
+| Task caching               | Each app = `docker build`                               | Docker layer cache                       |
+| Affected detection         | Which service to rebuild?                               | GitLab CI `rules:changes` (native, free) |
+| Build performance          | < 50 MB of code, 5-6 services                           | No performance issue                     |
 
 Adding Nx would require installing Node.js as a prerequisite for Python devs (just to run Nx), writing custom plugins for FastAPI, and maintaining extra configuration -- all without measurable gain.
 
@@ -516,12 +525,12 @@ Turborepo is exclusively JS/TS, therefore incompatible with our Python backends.
 
 Reconsider adding a tool if any of these signals appear:
 
-| Signal | Tool to evaluate |
-|---|---|
-| Creation of **shared libs between Python services** (Pydantic schemas, internal SDK) | Nx with Python plugin, or Pants |
-| **20+ services** and CI > 15 min | Nx for remote caching + affected graph |
-| Need for **reproducible hermetic builds** (compliance, security) | Bazel |
-| **Shared TypeScript types** between front and a potential Node BFF | Nx or Turborepo |
+| Signal                                                                               | Tool to evaluate                       |
+| ------------------------------------------------------------------------------------ | -------------------------------------- |
+| Creation of **shared libs between Python services** (Pydantic schemas, internal SDK) | Nx with Python plugin, or Pants        |
+| **20+ services** and CI > 15 min                                                     | Nx for remote caching + affected graph |
+| Need for **reproducible hermetic builds** (compliance, security)                     | Bazel                                  |
+| **Shared TypeScript types** between front and a potential Node BFF                   | Nx or Turborepo                        |
 
 ---
 
@@ -529,33 +538,33 @@ Reconsider adding a tool if any of these signals appear:
 
 ### 8.1. Migration Risks
 
-| Risk | Probability | Impact | Mitigation |
-|---|---|---|---|
-| **Loss of git history** | Low | High | `git subtree add` preserves the full history (commits, authors, dates). Validate on a test repo before the real migration. Old repos are archived, not deleted -- we can always go back. |
-| **In-progress branches lost** | Medium | High | Plan migration after a "freeze": all in-progress MRs are merged or paused. Active branches are recreated in the monorepo after import. |
-| **Dockerfiles/paths broken** | High | Medium | `COPY`, `context:` and volumes in Dockerfiles and docker-compose change (e.g. `./` -> `./apps/screen/`). Prepare a checklist of all paths to update. Test `docker compose up` before the switch. |
-| **Resistance to change** | Medium | Medium | Present this ADR to the team. Do a live demo of monorepo DX (1 clone, 1 branch, 1 cross-stack MR). Progressive migration: work in monorepo in parallel with old repos for 1-2 sprints. |
+| Risk                          | Probability | Impact | Mitigation                                                                                                                                                                                       |
+| ----------------------------- | ----------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Loss of git history**       | Low         | High   | `git subtree add` preserves the full history (commits, authors, dates). Validate on a test repo before the real migration. Old repos are archived, not deleted -- we can always go back.         |
+| **In-progress branches lost** | Medium      | High   | Plan migration after a "freeze": all in-progress MRs are merged or paused. Active branches are recreated in the monorepo after import.                                                           |
+| **Dockerfiles/paths broken**  | High        | Medium | `COPY`, `context:` and volumes in Dockerfiles and docker-compose change (e.g. `./` -> `./apps/screen/`). Prepare a checklist of all paths to update. Test `docker compose up` before the switch. |
+| **Resistance to change**      | Medium      | Medium | Present this ADR to the team. Do a live demo of monorepo DX (1 clone, 1 branch, 1 cross-stack MR). Progressive migration: work in monorepo in parallel with old repos for 1-2 sprints.           |
 
 ### 8.2. Day-to-Day Monorepo Risks
 
-| Risk | Probability | Impact | Mitigation |
-|---|---|---|---|
-| **More complex CI** | Medium | Low | `include:local` architecture: each app manages its own CI in its directory. Root file stays < 15 lines. Each team is autonomous on its CI. |
-| **Repo too large over time** | Very low | Low | Current repos < 50 MB combined. The problem appears beyond ~1 GB. With 6 services, we're far from that. If needed later: `git sparse-checkout` to clone only a subset. |
-| **More frequent merge conflicts** | Low | Low | Teams touch different directories (`apps/front/` vs `apps/screen/`). Conflicts on shared files (docker-compose, root CI) are rare and easy to resolve. |
-| **Loss of deployment autonomy** | Low | Medium | Conditional CI (`rules:changes`): only modified services are rebuilt and deployed. A merge touching only `apps/front/` triggers no screen job. Same de facto isolation as separate repos. |
-| **MRs too large (cross-stack)** | Medium | Low | Convention: if an MR exceeds ~500 lines, split into sequential MRs (e.g. MR1 = screen API, MR2 = front UI). Monorepo doesn't prevent single-scope MRs. |
-| **No merge blocking by owner (Free)** | - | Medium | Auto reviewer assignment is handled by a CI job (see section 6). Merge blocking remains a team convention. CODEOWNERS file is ready if migration to Premium happens. |
+| Risk                                  | Probability | Impact | Mitigation                                                                                                                                                                                |
+| ------------------------------------- | ----------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **More complex CI**                   | Medium      | Low    | `include:local` architecture: each app manages its own CI in its directory. Root file stays < 15 lines. Each team is autonomous on its CI.                                                |
+| **Repo too large over time**          | Very low    | Low    | Current repos < 50 MB combined. The problem appears beyond ~1 GB. With 6 services, we're far from that. If needed later: `git sparse-checkout` to clone only a subset.                    |
+| **More frequent merge conflicts**     | Low         | Low    | Teams touch different directories (`apps/front/` vs `apps/screen/`). Conflicts on shared files (docker-compose, root CI) are rare and easy to resolve.                                    |
+| **Loss of deployment autonomy**       | Low         | Medium | Conditional CI (`rules:changes`): only modified services are rebuilt and deployed. A merge touching only `apps/front/` triggers no screen job. Same de facto isolation as separate repos. |
+| **MRs too large (cross-stack)**       | Medium      | Low    | Convention: if an MR exceeds ~500 lines, split into sequential MRs (e.g. MR1 = screen API, MR2 = front UI). Monorepo doesn't prevent single-scope MRs.                                    |
+| **No merge blocking by owner (Free)** | -           | Medium | Auto reviewer assignment is handled by a CI job (see section 6). Merge blocking remains a team convention. CODEOWNERS file is ready if migration to Premium happens.                      |
 
 ### 8.3. Risks of NOT Migrating (Status Quo)
 
-| Risk | Probability | Impact | Detail |
-|---|---|---|---|
-| **Perpetually desynchronized submodule refs** | High | Medium | Observed today: 3/4 submodules ahead of workspace. Nobody maintains the refs. Problem worsens with each new service. |
-| **Growing maintenance overhead** | High | Medium | Today 47% of commits = ref maintenance. With 6 services: ~60% noise projected. |
-| **Slowed cross-stack features** | High | High | 3 MRs per feature, manual coordination, desync risk. With 16 shared scopes between front and back, this is the majority of features. |
-| **No git flow possible** | High | High | Impossible to define a single flow when each repo has its own branches. Integration/preprod/prod environments require manual synchronization between repos. |
-| **Painful onboarding** | Medium | Medium | Each new dev must understand submodules, refs, bumping. Frequent source of errors. |
+| Risk                                          | Probability | Impact | Detail                                                                                                                                                      |
+| --------------------------------------------- | ----------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Perpetually desynchronized submodule refs** | High        | Medium | Observed today: 3/4 submodules ahead of workspace. Nobody maintains the refs. Problem worsens with each new service.                                        |
+| **Growing maintenance overhead**              | High        | Medium | Today 47% of commits = ref maintenance. With 6 services: ~60% noise projected.                                                                              |
+| **Slowed cross-stack features**               | High        | High   | 3 MRs per feature, manual coordination, desync risk. With 16 shared scopes between front and back, this is the majority of features.                        |
+| **No git flow possible**                      | High        | High   | Impossible to define a single flow when each repo has its own branches. Integration/preprod/prod environments require manual synchronization between repos. |
+| **Painful onboarding**                        | Medium      | Medium | Each new dev must understand submodules, refs, bumping. Frequent source of errors.                                                                          |
 
 ---
 
@@ -585,14 +594,14 @@ Reconsider adding a tool if any of these signals appear:
 - [x] Add Taskfile (unified commands)
 - [x] Configure ruff for all Python backends (`pyproject.toml`)
 - [x] Add SAST + Secret Detection CI templates
-- [ ] Configure `main` branch protection *(requires GitLab admin)*
-- [ ] Add merge rules (green CI, approvals) *(requires GitLab admin)*
+- [ ] Configure `main` branch protection _(requires GitLab admin)_
+- [ ] Add merge rules (green CI, approvals) _(requires GitLab admin)_
 
 ### Phase 4: Switch
 
-- [ ] Freeze old repos (read-only) *(requires GitLab admin)*
+- [ ] Freeze old repos (read-only) _(requires GitLab admin)_
 - [ ] Team communication: "everything goes in the monorepo"
-- [ ] Archive old repos on GitLab *(requires GitLab admin)*
+- [ ] Archive old repos on GitLab _(requires GitLab admin)_
 - [x] Update README with new workflow (`CONTRIBUTING.md`)
 
 ---
@@ -602,6 +611,7 @@ Reconsider adding a tool if any of these signals appear:
 **Recommendation: Option B -- Monorepo**
 
 **Justification**:
+
 1. Eliminates 47% of useless maintenance commits
 2. Reduces cross-stack feature MRs from 3 to 1
 3. Enables a single clear git flow for both teams

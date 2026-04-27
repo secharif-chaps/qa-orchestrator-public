@@ -6,10 +6,10 @@ This document describes the key data flows through the ChapsMind platform, with 
 
 Data flows differ based on the architecture version:
 
-| Version | Description |
-|---------|-------------|
+| Version          | Description                                 |
+| ---------------- | ------------------------------------------- |
 | **Current (v1)** | Single FastAPI backend handles all requests |
-| **Planned (v2)** | API Gateway routes to module services |
+| **Planned (v2)** | API Gateway routes to module services       |
 
 ## Company Creation Flow (Screen Module)
 

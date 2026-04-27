@@ -219,6 +219,7 @@ The application uses a semantic color token system similar to DaisyUI. **NEVER**
 #### Token Pattern
 
 Each semantic color has:
+
 - **Solid variant**: `{color}` - For solid backgrounds (buttons, badges)
 - **Solid content**: `{color}-content` - Text/icons on solid backgrounds (ensures accessibility)
 - **Light variant**: `{color}-light` - For light backgrounds (alerts, toasts, light badges)
@@ -229,7 +230,7 @@ Each semantic color has:
 
 ```vue
 <!-- Success Alert (light background) -->
-<div class="bg-success-light text-success-light-content border border-success-stroke">
+<div class="bg-success-light text-success-light-content border-success-stroke border">
   Success message
 </div>
 
@@ -239,12 +240,12 @@ Each semantic color has:
 </button>
 
 <!-- Primary Badge (light) -->
-<span class="bg-primary-light text-primary-light-content border border-primary-stroke">
+<span class="bg-primary-light text-primary-light-content border-primary-stroke border">
   Badge
 </span>
 
 <!-- Error Alert -->
-<div class="bg-error-light text-error-light-content border border-error-stroke">
+<div class="bg-error-light text-error-light-content border-error-stroke border">
   Error message
 </div>
 
@@ -257,6 +258,7 @@ Each semantic color has:
 #### Base Colors (Background Layering)
 
 Use for application background hierarchy:
+
 - `bg-base-100` - Main background (white/dark)
 - `bg-base-200` - Elevated surfaces (cards, modals)
 - `bg-base-300` - Further elevated (nested cards)
@@ -264,23 +266,26 @@ Use for application background hierarchy:
 #### Border Usage
 
 Use `-stroke` tokens for borders without repeating "border":
+
 ```vue
 <!-- Correct -->
-<div class="border border-primary-stroke">...</div>
+<div class="border-primary-stroke border">...</div>
 
 <!-- Incorrect - Don't use palette colors -->
-<div class="border border-primary-200">...</div>
+<div class="border-primary-200 border">...</div>
 ```
 
 #### Rules
 
 **DO**:
+
 - Use semantic tokens: `bg-success`, `text-success-content`
 - Pair colors with their `-content` variant for accessibility
 - Use `-light` variants for alerts, toasts, and subtle backgrounds
 - Use `-stroke` for borders
 
 **DON'T**:
+
 - Use palette colors directly: ~~`bg-green-500`~~, ~~`text-red-600`~~
 - Mix incompatible pairs: ~~`bg-success text-error-content`~~
 - Use raw hex colors: ~~`#29ad72`~~
@@ -704,12 +709,12 @@ const { data: companies } = useQuery(companiesQuery, () => ({
 
 All test users are defined in `infra/files/realm-chapsmind.json` and added to the **ChapsMind Dev** organization by `setup-keycloak.sh`.
 
-| Username          | Password      | Roles                                                 | Description               |
-|-------------------|---------------|-------------------------------------------------------|---------------------------|
-| `admin`           | `admin123`    | admin (composite: all roles)                          | Full access               |
+| Username          | Password      | Roles                                                                      | Description               |
+| ----------------- | ------------- | -------------------------------------------------------------------------- | ------------------------- |
+| `admin`           | `admin123`    | admin (composite: all roles)                                               | Full access               |
 | `company_manager` | `manager123`  | company.create, organization.read, organization.write, organization.manage | Company + team management |
-| `company_viewer`  | `viewer123`   | organization.read                                     | Read-only access          |
-| `no_access`       | `noaccess123` | (none)                                                | For testing 403 errors    |
+| `company_viewer`  | `viewer123`   | organization.read                                                          | Read-only access          |
+| `no_access`       | `noaccess123` | (none)                                                                     | For testing 403 errors    |
 
 ---
 
@@ -832,8 +837,8 @@ t('company.create.inFolder', { folder: folderName })
 t('common.actions.save')
 
 // WRONG: never use fallback as 2nd argument
-t('key', 'Fallback text')                    // ❌
-t('key', 'Fallback', { param: value })       // ❌
+t('key', 'Fallback text') // ❌
+t('key', 'Fallback', { param: value }) // ❌
 ```
 
 ### Adding a New Language
@@ -875,13 +880,12 @@ t('key', 'Fallback', { param: value })       // ❌
 - **Component Guidelines**: `apps/front/src/components/CLAUDE.md`
 - **Page Routing**: `apps/front/src/pages/CLAUDE.md`
 
-
-
 # Claude Code Configuration
 
 ## Kubernetes Production Environment
 
 ### Accessing Database in Kubernetes
+
 ```bash
 # Find database pod name
 kubectl get pods -n chapsmind | grep postgres
@@ -897,6 +901,7 @@ kubectl exec -it <postgres-pod-name> -n chapsmind -- psql -U postgres -d chapsmi
 ```
 
 ### Running Alembic Migrations in Kubernetes
+
 ```bash
 # Find screen backend pod name
 kubectl get pods -n chapsmind | grep screen
@@ -912,6 +917,7 @@ kubectl exec -it <screen-pod-name> -n chapsmind -- alembic history
 ```
 
 **Important Notes:**
+
 - Always use the `-n chapsmind` namespace flag
 - Use double quotes for SQL queries to handle escaping properly
 - Screen backend pod name typically starts with `chapsmind-screen-`
@@ -951,6 +957,7 @@ task init
 ```
 
 ### Services Available
+
 - **nginx**: Reverse proxy — single entry point at `http://localhost`
 - **frontend**: Vue.js app (internal, behind nginx)
 - **global-service**: API gateway (internal, behind nginx at `/api`)
@@ -960,21 +967,25 @@ task init
 - **keycloak**: Auth server at `http://localhost:8080` (local dev only)
 
 ### Authentication
+
 Uses **local Keycloak** at `http://localhost:8080` in development. Staging/preprod uses a shared Keycloak instance.
 
 ## Database Migrations
 
 ### Running Migrations
+
 ```bash
 task migrate
 ```
 
 ### Checking Migration Status
+
 ```bash
 task migrate:status
 ```
 
 ### Creating Migrations
+
 ```bash
 task screen:shell
 # Then inside the container:
@@ -986,12 +997,14 @@ alembic revision -m "description"
 ## Deployment Rules
 
 ### CRITICAL: Never Copy Files Directly to Production Server
+
 - **NEVER** use scp, ssh, or any method to directly copy files to the production server
 - **NEVER** create or modify files directly on the production server
 - **ALWAYS** commit and push changes, then ask user to deploy via proper deployment process
 - This ensures version control integrity and proper deployment procedures
 
 ### Proper Deployment Process
+
 1. Make changes locally in development environment
 2. Test changes locally
 3. Commit changes with descriptive commit message
@@ -1002,6 +1015,7 @@ alembic revision -m "description"
 ## Screen Backend Development
 
 ### Running Python Scripts
+
 ```bash
 task screen:shell
 # Then inside the container:
@@ -1009,9 +1023,11 @@ python script_name.py
 ```
 
 ### Testing Endpoints
+
 The API is available at `http://localhost/api` (via nginx → global-service → other modules like screen).
 
 ### Common Commands
+
 ```bash
 task logs:service -- screen    # Check logs
 task restart                   # Restart all services
@@ -1026,21 +1042,25 @@ task screen:test               # Run backend tests
 ### Available Permissions
 
 #### Organization Permissions (organization-specific)
+
 - **organization.read**: View organization content (basic access)
 - **organization.write**: Modify organization content and manage team members
 
 #### Company Permissions (organization-specific)
+
 - **company.view**: View companies in organization
 - **company.create**: Search and create companies (search form functionality)
 - **company.update**: Update existing companies (future feature)
 - **company.delete**: Delete companies from organization
 
 #### Global Admin Permissions
+
 - **admin.organizations**: Global organization administration (user creation, org assignment)
 
 ### Permission Implementation Rules
 
 #### When Adding New Features
+
 1. **ALWAYS ask user about permissions** before implementing
 2. **Check if existing permission covers the feature**:
    - company.create = search + create companies
@@ -1049,22 +1069,26 @@ task screen:test               # Run backend tests
 4. **User MUST decide** on permission choice before implementation
 
 #### Frontend Implementation
+
 - Use `usePermissions()` composable for permission checks
 - Show/hide UI elements based on permissions (v-if="canCreateCompany")
 - Display helpful messages for users without permissions
 
 #### Backend Implementation
+
 - Always verify permissions in API endpoints using `verify_*_permission()` functions
 - Return 403 Forbidden with clear error messages
 - Check permissions BEFORE executing business logic
 
 #### Permission Naming Convention
+
 - Format: `resource.action` (e.g., company.create, organization.write)
 - Organization permissions: organization-specific only (organization.read, organization.write)
 - Admin permissions: global only (admin.organizations)
 - Company permissions: organization-specific only
 
 ### Example Permission Checks
+
 ```python
 # Backend - Always check before action (using fastapi-keycloak)
 user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"]))
@@ -1076,6 +1100,7 @@ user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])
 ## Testing and Deployment Workflow
 
 ### Local Testing
+
 - **Application**: Available at `http://localhost` (frontend + API via nginx)
 - **API**: Available at `http://localhost/api`
 - **API Docs**: Available at `http://localhost/docs` (Swagger UI via global-service)
@@ -1090,6 +1115,7 @@ Uses **integration Keycloak** at `https://sso.dwcode.team/auth` with realm `chap
 Log in with test users defined in `infra/files/realm-chapsmind.json` (see Test Users section above).
 
 #### Using Token in API Calls
+
 ```bash
 # Example: Get folders
 curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost/api/folders/
@@ -1102,6 +1128,7 @@ curl -X POST http://localhost/api/companies/ \
 ```
 
 ### Testing Process
+
 1. Make code changes locally
 2. Test locally using `task up`
 3. Check logs: `task logs:service -- screen`
@@ -1109,6 +1136,7 @@ curl -X POST http://localhost/api/companies/ \
 5. Ask user to deploy to production server
 
 ### Deployment Process
+
 1. Make changes locally in development environment
 2. Test changes locally with `task up`
 3. Commit changes with descriptive commit message using gitmoji
@@ -1119,9 +1147,11 @@ curl -X POST http://localhost/api/companies/ \
 ## Git Commit Guidelines
 
 ### Gitmoji Usage
+
 **ALWAYS** use gitmoji in commit messages to provide visual context:
 
 Common gitmojis for this project:
+
 - ✨ `:sparkles:` - New features
 - 🐛 `:bug:` - Bug fixes
 - 🔧 `:wrench:` - Configuration changes
@@ -1136,6 +1166,7 @@ Common gitmojis for this project:
 - 📦 `:package:` - Dependencies/packages
 
 ### Commit Message Format
+
 ```
 <gitmoji> <type>(<scope>): TAR-xxx <description>
 
@@ -1145,6 +1176,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ### Examples
+
 ```bash
 # Feature
 ✨ feat(front): TAR-42 add company search filters
@@ -1165,6 +1197,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ### Git Workflow (Feature Branch)
 
 **Branch Naming Conventions**:
+
 - `feat/TAR-xxx-feature-name` - New features
 - `fix/TAR-xxx-bug-name` - Bug fixes
 - `refactor/TAR-xxx-refactor-name` - Code refactoring
@@ -1172,6 +1205,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - `chore/TAR-xxx-task-name` - Maintenance tasks
 
 **Workflow**:
+
 1. Create feature branch from main: `git checkout -b feat/TAR-xxx-feature-name`
 2. Make changes and commit using gitmoji format
 3. Push feature branch: `git push -u origin feat/TAR-xxx-feature-name`
@@ -1180,6 +1214,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 6. Deploy from main branch
 
 **Critical Rules**:
+
 - **NEVER** commit directly to main branch
 - **ALWAYS** work in feature branches
 - **ALWAYS** create merge request before merging to main
@@ -1189,6 +1224,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ## Database Schema Guidelines
 
 ### User and Organization Reference Architecture
+
 **CRITICAL**: This application does NOT use database tables for users or organization membership.
 
 - **User References**: Users are managed entirely in Keycloak
@@ -1198,6 +1234,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - **User Data**: User information and organization membership stored in Keycloak, not in application database
 
 ### Table Schema Rules
+
 - **folders.owner_id**: `VARCHAR/UUID` field containing Keycloak user ID
 - **folders.owner_username**: `VARCHAR` field containing username (denormalized for display)
 - **companies.owner_id**: `VARCHAR/UUID` field containing Keycloak user ID
@@ -1206,6 +1243,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - **NO workspace_members table** - organization membership is in Keycloak
 
 ### Model Relationships
+
 - **NO foreign key relationships to users table** (because it doesn't exist)
 - **NO foreign key relationships to organizations table** (managed in Keycloak)
 - **NO SQLAlchemy relationships to User or Organization models** (don't exist in database)
@@ -1213,6 +1251,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - User and organization data is fetched from Keycloak when needed
 
 ### Migration Rules
+
 - Never create `users` or `organization_members` tables
 - Never create foreign keys to users or organizations
 - Always use VARCHAR/String/UUID fields for user and organization references
@@ -1234,14 +1273,14 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## Jira - Modules and Components
 
-| Prefix | Description | Jira Component |
-|--------|-------------|----------------|
-| `[LEGACY]` | AMI v9 / Target v9 - Maintenance (branch ST9_3) | `Target Legacy` |
-| `[GLOBAL]` | Infrastructure, auth, cross-cutting features | `Global` |
-| `[TARGET]` | Competitive intelligence and strategic monitoring | `Target` |
-| `[SCREEN]` | Automated company cards | `Screen` |
-| `[STREAM]` | Multi-channel distribution (newsletters, API, Slack, Teams) | `Stream` |
-| `[EXPLORE]` | Data exploration as a graph | `Explore` |
+| Prefix      | Description                                                 | Jira Component  |
+| ----------- | ----------------------------------------------------------- | --------------- |
+| `[LEGACY]`  | AMI v9 / Target v9 - Maintenance (branch ST9_3)             | `Target Legacy` |
+| `[GLOBAL]`  | Infrastructure, auth, cross-cutting features                | `Global`        |
+| `[TARGET]`  | Competitive intelligence and strategic monitoring           | `Target`        |
+| `[SCREEN]`  | Automated company cards                                     | `Screen`        |
+| `[STREAM]`  | Multi-channel distribution (newsletters, API, Slack, Teams) | `Stream`        |
+| `[EXPLORE]` | Data exploration as a graph                                 | `Explore`       |
 
 ### Jira Rules
 
@@ -1261,11 +1300,11 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ### Skill Labels
 
-| Label | Usage |
-|-------|-------|
-| `Back` | API, services, database, infrastructure |
-| `Front` | UI, components, UX |
-| `Prompt` | AI, LLM, Dify workflows |
+| Label    | Usage                                   |
+| -------- | --------------------------------------- |
+| `Back`   | API, services, database, infrastructure |
+| `Front`  | UI, components, UX                      |
+| `Prompt` | AI, LLM, Dify workflows                 |
 
 Combinations: `Back + Prompt`, `Front + Prompt`, `Back + Front` (rare)
 

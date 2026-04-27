@@ -12,6 +12,19 @@ apps/front/typed-router.d.ts
 # Python (handled by ruff)
 apps/screen/
 apps/global-service/
+apps/stream/
+
+# PHP / N8N app (has its own tooling)
+apps/target/
+
+# AI tooling (out of scope for project formatter)
+.claude/
+.agents/
+agent-os/
 
 # Infrastructure
 infra/files/
+
+# YAML — keep manual control (prettier flips quotes; syntax fails loudly at runtime anyway)
+*.yml
+*.yaml

@@ -4,11 +4,11 @@ The **Screen module** provides company screening and intelligence capabilities. 
 
 ## Overview
 
-| Aspect | Description |
-|--------|-------------|
-| **Purpose** | Company screening and intelligence |
-| **AI Platform** | Dify (for workflows and AI analysis) |
-| **Status** | Active (current production module) |
+| Aspect           | Description                                                 |
+| ---------------- | ----------------------------------------------------------- |
+| **Purpose**      | Company screening and intelligence                          |
+| **AI Platform**  | Dify (for workflows and AI analysis)                        |
+| **Status**       | Active (current production module)                          |
 | **Key Features** | Company cards, AI-powered data collection, section analysis |
 
 ## Module Responsibilities
@@ -122,13 +122,13 @@ See [AI Orchestration](./ai-orchestration.md) for detailed workflow architecture
 
 ## Integration Points
 
-| Consumer | Protocol | Purpose |
-|----------|----------|---------|
-| **Frontend** | REST | Display companies, trigger actions |
-| **API Gateway** | gRPC (planned) | Route authenticated requests |
-| **Dify** | REST | AI workflow execution |
-| **PostgreSQL** | SQL | Company and task data storage |
-| **RabbitMQ** | AMQP | Celery task queue |
+| Consumer        | Protocol       | Purpose                            |
+| --------------- | -------------- | ---------------------------------- |
+| **Frontend**    | REST           | Display companies, trigger actions |
+| **API Gateway** | gRPC (planned) | Route authenticated requests       |
+| **Dify**        | REST           | AI workflow execution              |
+| **PostgreSQL**  | SQL            | Company and task data storage      |
+| **RabbitMQ**    | AMQP           | Celery task queue                  |
 
 ## Related Documentation
 

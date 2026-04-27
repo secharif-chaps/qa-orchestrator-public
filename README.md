@@ -60,6 +60,7 @@ Commit format: [Gitmoji](https://gitmoji.dev/) + [Conventional Commits](https://
 ```
 
 Examples:
+
 ```bash
 ✨ feat(front): TAR-42 add company search filters
 🐛 fix(screen): TAR-15 resolve pagination offset error

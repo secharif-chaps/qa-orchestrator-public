@@ -9,6 +9,7 @@ This document describes the users of ChapsMind, including both external customer
 ## Platform Vision: Unified Access
 
 ChapsMind serves as a **centralized platform** for both:
+
 - **External Users**: Customers using market intelligence features (Screen, Target, Explore, etc.)
 - **Internal Users**: Chapsvision team members managing clients, configuration, and operations
 
@@ -21,12 +22,15 @@ This approach reduces the number of separate applications needed for administrat
 ### Primary Customers
 
 #### Private Companies
+
 Organizations of all sizes working in market intelligence fields. These companies need systematic approaches to tracking competitors, prospects, and market trends.
 
 #### Market Intelligence Teams
+
 Professionals who need to monitor competitors, prospects, and market trends. They require tools that reduce manual research time and provide actionable insights.
 
 #### Business Development Teams
+
 Teams tracking potential partners, acquisition targets, or investment opportunities. They need quick access to comprehensive company profiles.
 
 ---
@@ -35,26 +39,29 @@ Teams tracking potential partners, acquisition targets, or investment opportunit
 
 #### Intelligence Analyst
 
-| Attribute | Description |
-|-----------|-------------|
-| **Age Range** | 28-45 |
-| **Role** | Market Intelligence Specialist |
-| **Context** | Works at a consulting firm or corporate strategy department |
-| **Permissions** | `company.view`, `company.create` |
+| Attribute       | Description                                                 |
+| --------------- | ----------------------------------------------------------- |
+| **Age Range**   | 28-45                                                       |
+| **Role**        | Market Intelligence Specialist                              |
+| **Context**     | Works at a consulting firm or corporate strategy department |
+| **Permissions** | `company.view`, `company.create`                            |
 
 **Pain Points:**
+
 - Manual research is time-consuming
 - Data becomes stale quickly
 - Difficult to track multiple companies systematically
 - Information scattered across multiple sources
 
 **Goals:**
+
 - Automate company research processes
 - Get AI-powered insights via Chaps-e
 - Maintain up-to-date intelligence on key targets
 - Reduce time spent on data gathering
 
 **Primary Needs:**
+
 - Automated data collection for company profiles
 - Real-time monitoring via watchfiles (Target module)
 - AI assistance for interpreting data (Chaps-e Smart Assist)
@@ -64,26 +71,29 @@ Teams tracking potential partners, acquisition targets, or investment opportunit
 
 #### Business Development Manager
 
-| Attribute | Description |
-|-----------|-------------|
-| **Age Range** | 30-50 |
-| **Role** | BD Lead or Sales Director |
-| **Context** | Needs to understand prospects and competitors before meetings and pitches |
-| **Permissions** | `company.view`, `company.create` |
+| Attribute       | Description                                                               |
+| --------------- | ------------------------------------------------------------------------- |
+| **Age Range**   | 30-50                                                                     |
+| **Role**        | BD Lead or Sales Director                                                 |
+| **Context**     | Needs to understand prospects and competitors before meetings and pitches |
+| **Permissions** | `company.view`, `company.create`                                          |
 
 **Pain Points:**
+
 - Scattered information across multiple sources
 - No single view of a company
 - Time spent on manual research before meetings
 - Difficulty sharing research with team members
 
 **Goals:**
+
 - Quick access to comprehensive company profiles
 - Understand organizational structure
 - Identify opportunities and partnerships
 - Prepare efficiently for client meetings
 
 **Primary Needs:**
+
 - One-stop company profiles with all relevant data
 - Organization-level sharing of company intelligence
 - Easy export and presentation of data
@@ -93,26 +103,29 @@ Teams tracking potential partners, acquisition targets, or investment opportunit
 
 #### Strategy Executive
 
-| Attribute | Description |
-|-----------|-------------|
-| **Age Range** | 35-55 |
-| **Role** | VP Strategy or C-Suite |
-| **Context** | Makes decisions about partnerships, acquisitions, and market positioning |
-| **Permissions** | `company.view` |
+| Attribute       | Description                                                              |
+| --------------- | ------------------------------------------------------------------------ |
+| **Age Range**   | 35-55                                                                    |
+| **Role**        | VP Strategy or C-Suite                                                   |
+| **Context**     | Makes decisions about partnerships, acquisitions, and market positioning |
+| **Permissions** | `company.view`                                                           |
 
 **Pain Points:**
+
 - Information overload
 - Difficulty separating signal from noise
 - Need for actionable intelligence, not raw data
 - Limited time for detailed research
 
 **Goals:**
+
 - High-level insights with drill-down capability
 - Trend analysis over time
 - Relationship mapping between companies
 - Strategic decision support
 
 **Primary Needs:**
+
 - Executive summaries and AI-generated insights
 - Dashboard views with key metrics
 - Historical trend visualization
@@ -122,13 +135,14 @@ Teams tracking potential partners, acquisition targets, or investment opportunit
 
 #### Organization Administrator (Customer)
 
-| Attribute | Description |
-|-----------|-------------|
-| **Role** | IT Admin or Team Lead at customer organization |
-| **Context** | Manages user access, organization settings within their organization |
-| **Permissions** | `organization.read`, `organization.write` |
+| Attribute       | Description                                                          |
+| --------------- | -------------------------------------------------------------------- |
+| **Role**        | IT Admin or Team Lead at customer organization                       |
+| **Context**     | Manages user access, organization settings within their organization |
+| **Permissions** | `organization.read`, `organization.write`                            |
 
 **Needs:**
+
 - User and role management within their organization
 - Organization settings configuration
 - Team member invitation and management
@@ -144,13 +158,14 @@ ChapsMind provides role-specific admin views for internal team members, eliminat
 
 #### Customer Success Manager (CSM)
 
-| Attribute | Description |
-|-----------|-------------|
-| **Role** | Customer Success Manager |
-| **Context** | Manages client relationships, onboarding, and account health |
-| **Permissions** | `admin.organizations` |
+| Attribute       | Description                                                  |
+| --------------- | ------------------------------------------------------------ |
+| **Role**        | Customer Success Manager                                     |
+| **Context**     | Manages client relationships, onboarding, and account health |
+| **Permissions** | `admin.organizations`                                        |
 
 **Responsibilities:**
+
 - Manage client organizations (create, configure, disable)
 - Update token allocations for organizations
 - Enable/disable features and modules per client
@@ -158,6 +173,7 @@ ChapsMind provides role-specific admin views for internal team members, eliminat
 - Monitor client usage and adoption
 
 **Admin Panel Access:**
+
 - Organizations management page
 - User account management
 - Token allocation interface
@@ -167,18 +183,20 @@ ChapsMind provides role-specific admin views for internal team members, eliminat
 
 #### Technical Developer
 
-| Attribute | Description |
-|-----------|-------------|
-| **Role** | Backend/Platform Developer |
-| **Context** | Maintains platform configuration and debugs production issues |
-| **Permissions** | `admin.tasks` |
+| Attribute       | Description                                                   |
+| --------------- | ------------------------------------------------------------- |
+| **Role**        | Backend/Platform Developer                                    |
+| **Context**     | Maintains platform configuration and debugs production issues |
+| **Permissions** | `admin.tasks`                                                 |
 
 **Responsibilities:**
+
 - Monitor background task execution
 - Debug failed tasks and workflow errors
 - Update application configuration
 
 **Admin Panel Access:**
+
 - Task monitoring dashboard (`admin.tasks`)
 - System health monitoring
 
@@ -190,13 +208,14 @@ ChapsMind provides role-specific admin views for internal team members, eliminat
 
 #### Product Leader / Head of Tribe
 
-| Attribute | Description |
-|-----------|-------------|
-| **Role** | Product Manager or Tribe Lead |
-| **Context** | Tracks AI costs and platform economics |
+| Attribute       | Description                                      |
+| --------------- | ------------------------------------------------ |
+| **Role**        | Product Manager or Tribe Lead                    |
+| **Context**     | Tracks AI costs and platform economics           |
 | **Permissions** | `admin.costs` (currently disabled, needs rework) |
 
 **Planned Responsibilities:**
+
 - Monitor AI usage costs across all clients
 - Track cost trends and anomalies
 - Generate cost reports for budgeting
@@ -210,19 +229,21 @@ ChapsMind provides role-specific admin views for internal team members, eliminat
 
 <!-- TODO: Define specific permissions and features -->
 
-| Attribute | Description |
-|-----------|-------------|
-| **Role** | Customer Support / Helpdesk |
-| **Context** | Resolves customer issues and handles support tickets |
-| **Permissions** | TBD |
+| Attribute       | Description                                          |
+| --------------- | ---------------------------------------------------- |
+| **Role**        | Customer Support / Helpdesk                          |
+| **Context**     | Resolves customer issues and handles support tickets |
+| **Permissions** | TBD                                                  |
 
 **Planned Responsibilities:**
+
 - View client organization details (read-only)
 - Access error logs and task failures for debugging
 - Impersonate users for troubleshooting (with audit trail)
 - Escalate technical issues to developers
 
 **Planned Admin Panel Access:**
+
 - Client organization viewer (read-only)
 - Support ticket integration
 - Error log viewer
@@ -234,19 +255,21 @@ ChapsMind provides role-specific admin views for internal team members, eliminat
 
 <!-- TODO: Define specific permissions and features -->
 
-| Attribute | Description |
-|-----------|-------------|
-| **Role** | Sales or Account Executive |
-| **Context** | Tracks upsell opportunities and client expansion |
-| **Permissions** | TBD |
+| Attribute       | Description                                      |
+| --------------- | ------------------------------------------------ |
+| **Role**        | Sales or Account Executive                       |
+| **Context**     | Tracks upsell opportunities and client expansion |
+| **Permissions** | TBD                                              |
 
 **Planned Responsibilities:**
+
 - View organization usage statistics
 - Identify upsell opportunities (module adoption, token usage)
 - Access client feature usage reports
 - Track trial conversions
 
 **Planned Admin Panel Access:**
+
 - Usage analytics dashboard
 - Module adoption reports
 - Client health scores
@@ -329,6 +352,7 @@ graph TB
 ```
 
 **Legend:**
+
 - Solid lines: Current/implemented
 - Dashed lines: Planned/future
 
@@ -338,21 +362,21 @@ graph TB
 
 ### Customer Permissions
 
-| Permission | Description | Typical Users |
-|------------|-------------|---------------|
-| `company.view` | View company cards and data | All customer users |
-| `company.create` | Create new company cards | Analysts, BD managers |
-| `company.delete` | Delete company cards | Team leads, admins |
-| `organization.read` | View team members | Team members |
-| `organization.write` | Manage team and settings | Org administrators |
+| Permission           | Description                 | Typical Users         |
+| -------------------- | --------------------------- | --------------------- |
+| `company.view`       | View company cards and data | All customer users    |
+| `company.create`     | Create new company cards    | Analysts, BD managers |
+| `company.delete`     | Delete company cards        | Team leads, admins    |
+| `organization.read`  | View team members           | Team members          |
+| `organization.write` | Manage team and settings    | Org administrators    |
 
 ### Internal Admin Permissions
 
-| Permission | Description | Typical Users | Status |
-|------------|-------------|---------------|--------|
-| `admin.organizations` | Manage all organizations | CSM | Active |
-| `admin.tasks` | Monitor and debug tasks | Developers | Active |
-| `admin.costs` | View AI cost analytics | Product Leaders | Disabled (rework needed) |
+| Permission            | Description              | Typical Users   | Status                   |
+| --------------------- | ------------------------ | --------------- | ------------------------ |
+| `admin.organizations` | Manage all organizations | CSM             | Active                   |
+| `admin.tasks`         | Monitor and debug tasks  | Developers      | Active                   |
+| `admin.costs`         | View AI cost analytics   | Product Leaders | Disabled (rework needed) |
 
 <!-- TODO: Add permissions for Support and Sales roles when defined -->
 

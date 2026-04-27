@@ -22,12 +22,12 @@ ChapsMind is currently deployed as a **single-instance architecture** optimized 
 
 ## Performance Characteristics
 
-| Aspect | Current State | Notes |
-|--------|---------------|-------|
-| **API Response Time** | < 200ms typical | For standard CRUD operations |
-| **AI Task Processing** | 30s - 5min | Depends on Dify workflow complexity |
-| **Concurrent Users** | ~50-100 | Per organization, limited by single instance |
-| **Database Size** | < 10GB typical | Per organization dataset |
+| Aspect                 | Current State   | Notes                                        |
+| ---------------------- | --------------- | -------------------------------------------- |
+| **API Response Time**  | < 200ms typical | For standard CRUD operations                 |
+| **AI Task Processing** | 30s - 5min      | Depends on Dify workflow complexity          |
+| **Concurrent Users**   | ~50-100         | Per organization, limited by single instance |
+| **Database Size**      | < 10GB typical  | Per organization dataset                     |
 
 ## Known Limitations
 
@@ -38,12 +38,12 @@ ChapsMind is currently deployed as a **single-instance architecture** optimized 
 
 ## Future Performance Roadmap
 
-| Phase | Enhancement | Timeline |
-|-------|-------------|----------|
-| **Phase 1** | Global Service extraction (API gateway pattern) | Q2 2025 |
-| **Phase 2** | Multi-instance API deployment with load balancing | Q3 2025 |
-| **Phase 3** | Redis caching layer introduction | Q3 2025 |
-| **Phase 4** | Full observability stack (Prometheus, Grafana, Jaeger) | Q4 2025 |
+| Phase       | Enhancement                                            | Timeline |
+| ----------- | ------------------------------------------------------ | -------- |
+| **Phase 1** | Global Service extraction (API gateway pattern)        | Q2 2025  |
+| **Phase 2** | Multi-instance API deployment with load balancing      | Q3 2025  |
+| **Phase 3** | Redis caching layer introduction                       | Q3 2025  |
+| **Phase 4** | Full observability stack (Prometheus, Grafana, Jaeger) | Q4 2025  |
 
 ## Section Contents
 

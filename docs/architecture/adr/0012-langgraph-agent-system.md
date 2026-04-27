@@ -79,32 +79,32 @@ Replace Dify + Celery with a **LangGraph-based agent system** running inside the
 
 ### 9 Research Agents
 
-| Agent | Section | Purpose |
-|-------|---------|---------|
-| `profile` | Company profile | General info, industry, HQ, size, description |
-| `digital` | Digital presence | Website, social media, tech stack |
-| `press` | Press coverage | News articles, press releases |
-| `jobs` | Job market | Open positions, hiring trends |
-| `products` | Products & services | Offerings, pricing, market segments |
-| `timeline` | Key events | Milestones, M&A, funding rounds |
-| `csr` | CSR & sustainability | ESG initiatives, certifications |
-| `team` | Leadership team | Key people, board members |
-| `financial` | Financial data | Revenue, funding, investors, divisions |
+| Agent       | Section              | Purpose                                       |
+| ----------- | -------------------- | --------------------------------------------- |
+| `profile`   | Company profile      | General info, industry, HQ, size, description |
+| `digital`   | Digital presence     | Website, social media, tech stack             |
+| `press`     | Press coverage       | News articles, press releases                 |
+| `jobs`      | Job market           | Open positions, hiring trends                 |
+| `products`  | Products & services  | Offerings, pricing, market segments           |
+| `timeline`  | Key events           | Milestones, M&A, funding rounds               |
+| `csr`       | CSR & sustainability | ESG initiatives, certifications               |
+| `team`      | Leadership team      | Key people, board members                     |
+| `financial` | Financial data       | Revenue, funding, investors, divisions        |
 
 ### Key Components
 
-| Component | Path | Responsibility |
-|-----------|------|----------------|
-| `config.py` | `app/agents/config.py` | Constants, pricing, agent types, `_build_agent_prompt()` (~100 lines) |
-| `prompts/` | `app/agents/prompts/` | Prompt modules: `planner.py`, `methodology.py`, `roles.py`, `search_targets.py`, `output_formats.py`, `domains.py` |
-| `state.py` | `app/agents/state.py` | `CompanyAnalysisState` TypedDict with append-only reducer |
-| `graph.py` | `app/agents/graph.py` | LangGraph `StateGraph` definition and compilation |
-| `runner.py` | `app/agents/runner.py` | `CompanyAnalysisRunner` — entry point, streaming, DB writes |
-| `nodes/base.py` | `app/agents/nodes/base.py` | Shared `run_agent()` function |
-| `nodes/planner.py` | `app/agents/nodes/planner.py` | Website reconnaissance + brief builder |
-| `nodes/synthesizer.py` | `app/agents/nodes/synthesizer.py` | Quality gate + retry routing |
-| `nodes/<agent>.py` | `app/agents/nodes/*.py` | 9 specialized agent nodes |
-| `tools/web_search.py` | `app/agents/tools/web_search.py` | Azure AI Foundry Responses API wrapper |
+| Component              | Path                              | Responsibility                                                                                                     |
+| ---------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `config.py`            | `app/agents/config.py`            | Constants, pricing, agent types, `_build_agent_prompt()` (~100 lines)                                              |
+| `prompts/`             | `app/agents/prompts/`             | Prompt modules: `planner.py`, `methodology.py`, `roles.py`, `search_targets.py`, `output_formats.py`, `domains.py` |
+| `state.py`             | `app/agents/state.py`             | `CompanyAnalysisState` TypedDict with append-only reducer                                                          |
+| `graph.py`             | `app/agents/graph.py`             | LangGraph `StateGraph` definition and compilation                                                                  |
+| `runner.py`            | `app/agents/runner.py`            | `CompanyAnalysisRunner` — entry point, streaming, DB writes                                                        |
+| `nodes/base.py`        | `app/agents/nodes/base.py`        | Shared `run_agent()` function                                                                                      |
+| `nodes/planner.py`     | `app/agents/nodes/planner.py`     | Website reconnaissance + brief builder                                                                             |
+| `nodes/synthesizer.py` | `app/agents/nodes/synthesizer.py` | Quality gate + retry routing                                                                                       |
+| `nodes/<agent>.py`     | `app/agents/nodes/*.py`           | 9 specialized agent nodes                                                                                          |
+| `tools/web_search.py`  | `app/agents/tools/web_search.py`  | Azure AI Foundry Responses API wrapper                                                                             |
 
 ### State Design
 
@@ -243,6 +243,7 @@ LangGraph removes this limitation entirely. Because agents are Python functions,
 #### Why This Matters
 
 Today, all 9 agents rely exclusively on `web_search` to gather information. This means:
+
 - They can only find what's publicly indexed and returned by search
 - They cannot cross-reference with data we already have in our database
 - They cannot call external structured APIs (business registries, financial data providers)
@@ -252,18 +253,18 @@ With tool-equipped agents, each agent becomes an **autonomous actor** that can r
 
 #### Tool Ideas
 
-| Tool | Available To | Description |
-|------|-------------|-------------|
-| **`db_lookup`** | All agents | Query existing company data in our database — avoid redundant research, detect changes vs. last analysis |
-| **`company_registry`** | `profile`, `financial` | Query official business registries (INSEE/Sirene for France, Companies House UK, SEC EDGAR) for verified legal data |
-| **`linkedin_api`** | `team`, `jobs`, `profile` | Fetch structured employee data, open positions, and company details via LinkedIn API |
-| **`financial_api`** | `financial` | Pull structured financial data from providers (Pappers, Societe.com, or open APIs) instead of scraping search results |
-| **`pdf_reader`** | `financial`, `csr`, `press` | Download and extract text from PDF documents (annual reports, ESG reports, press releases) |
-| **`screenshot`** | `digital` | Capture website screenshots for visual analysis (tech stack detection, UX assessment) |
-| **`calculator`** | `financial` | Perform financial calculations (growth rates, ratios, unit conversions) with precision instead of asking the LLM to do math |
-| **`worldcheck_lookup`** | `profile`, `team` | Cross-reference people and entities against our existing WorldCheck data |
-| **`diff_detector`** | All agents | Compare current findings with previous analysis results to highlight what changed since last run |
-| **`geocoder`** | `profile` | Resolve addresses to coordinates and normalized country/city data |
+| Tool                    | Available To                | Description                                                                                                                 |
+| ----------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **`db_lookup`**         | All agents                  | Query existing company data in our database — avoid redundant research, detect changes vs. last analysis                    |
+| **`company_registry`**  | `profile`, `financial`      | Query official business registries (INSEE/Sirene for France, Companies House UK, SEC EDGAR) for verified legal data         |
+| **`linkedin_api`**      | `team`, `jobs`, `profile`   | Fetch structured employee data, open positions, and company details via LinkedIn API                                        |
+| **`financial_api`**     | `financial`                 | Pull structured financial data from providers (Pappers, Societe.com, or open APIs) instead of scraping search results       |
+| **`pdf_reader`**        | `financial`, `csr`, `press` | Download and extract text from PDF documents (annual reports, ESG reports, press releases)                                  |
+| **`screenshot`**        | `digital`                   | Capture website screenshots for visual analysis (tech stack detection, UX assessment)                                       |
+| **`calculator`**        | `financial`                 | Perform financial calculations (growth rates, ratios, unit conversions) with precision instead of asking the LLM to do math |
+| **`worldcheck_lookup`** | `profile`, `team`           | Cross-reference people and entities against our existing WorldCheck data                                                    |
+| **`diff_detector`**     | All agents                  | Compare current findings with previous analysis results to highlight what changed since last run                            |
+| **`geocoder`**          | `profile`                   | Resolve addresses to coordinates and normalized country/city data                                                           |
 
 #### Implementation Approach
 
@@ -314,7 +315,7 @@ Production has minimal activity, so the migration can be deployed during a maint
 
 Migration numbering accounts for existing main-branch migrations (026-028):
 
-- **Migration 029** — Cleanup: remove Dify/Celery infrastructure (workflow_configs table, task_dependencies table, is_prerequisite column, blocked status, data_collection type, raw_*_knowledge columns except worldcheck)
+- **Migration 029** — Cleanup: remove Dify/Celery infrastructure (workflow*configs table, task_dependencies table, is_prerequisite column, blocked status, data_collection type, raw*\*\_knowledge columns except worldcheck)
 - **Migration 030** — Add financial agent: new task type enum value, `company_financial` table and child tables
 
 ## Dependencies

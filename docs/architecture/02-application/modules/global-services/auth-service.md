@@ -4,12 +4,12 @@ ChapsMind uses Keycloak as its identity provider, implementing OIDC authenticati
 
 ## Overview
 
-| Aspect | Description |
-|--------|-------------|
+| Aspect                | Description            |
+| --------------------- | ---------------------- |
 | **Identity Provider** | Keycloak (self-hosted) |
-| **Protocol** | OpenID Connect 1.0 |
-| **Token Format** | JWT (JSON Web Token) |
-| **Multi-Tenancy** | Keycloak Organizations |
+| **Protocol**          | OpenID Connect 1.0     |
+| **Token Format**      | JWT (JSON Web Token)   |
+| **Multi-Tenancy**     | Keycloak Organizations |
 
 ## Integration Points
 
@@ -36,11 +36,11 @@ flowchart TB
     AdminOps -->|"Admin API"| Keycloak
 ```
 
-| Consumer | Integration | Purpose |
-|----------|-------------|---------|
-| **Frontend** | OIDC Direct | User login, token refresh |
-| **API Gateway** | JWT Validation | Authenticate API requests |
-| **API Gateway** | Admin API | Manage users, orgs (CSM operations) |
+| Consumer        | Integration    | Purpose                             |
+| --------------- | -------------- | ----------------------------------- |
+| **Frontend**    | OIDC Direct    | User login, token refresh           |
+| **API Gateway** | JWT Validation | Authenticate API requests           |
+| **API Gateway** | Admin API      | Manage users, orgs (CSM operations) |
 
 ## Key Decisions
 
@@ -75,21 +75,21 @@ Permissions follow the `resource.action` format and are checked by the API Gatew
 
 ### Customer Permissions
 
-| Permission | Description |
-|------------|-------------|
-| `company.view` | View company cards |
-| `company.create` | Create company cards |
-| `company.delete` | Delete company cards |
-| `organization.read` | View organization |
-| `organization.write` | Manage organization |
+| Permission           | Description          |
+| -------------------- | -------------------- |
+| `company.view`       | View company cards   |
+| `company.create`     | Create company cards |
+| `company.delete`     | Delete company cards |
+| `organization.read`  | View organization    |
+| `organization.write` | Manage organization  |
 
 ### Admin Permissions (Internal Users)
 
-| Permission | Description |
-|------------|-------------|
+| Permission            | Description                     |
+| --------------------- | ------------------------------- |
 | `admin.organizations` | Manage all client organizations |
-| `admin.tasks` | Monitor background tasks |
-| `admin.costs` | View AI cost analytics |
+| `admin.tasks`         | Monitor background tasks        |
+| `admin.costs`         | View AI cost analytics          |
 
 ## Keycloak Admin Operations
 
@@ -97,56 +97,56 @@ The API Gateway performs admin operations via Keycloak Admin API using the `Keyc
 
 ### User Management
 
-| Operation | Method | Permission Required | Use Case |
-|-----------|--------|---------------------|----------|
-| Create User | `create_user()` | `admin.organizations` | CSM creates client user |
-| Get User | `get_user()` | `admin.organizations` | View user details |
-| Get Users | `get_users()` | `admin.organizations` | List all users (paginated) |
-| Update User | `update_user()` | `admin.organizations` | Modify user profile |
-| Delete User | `delete_user()` | `admin.organizations` | Remove user from system |
-| Count Users | `count_users()` | `admin.organizations` | Get total user count |
+| Operation   | Method          | Permission Required   | Use Case                   |
+| ----------- | --------------- | --------------------- | -------------------------- |
+| Create User | `create_user()` | `admin.organizations` | CSM creates client user    |
+| Get User    | `get_user()`    | `admin.organizations` | View user details          |
+| Get Users   | `get_users()`   | `admin.organizations` | List all users (paginated) |
+| Update User | `update_user()` | `admin.organizations` | Modify user profile        |
+| Delete User | `delete_user()` | `admin.organizations` | Remove user from system    |
+| Count Users | `count_users()` | `admin.organizations` | Get total user count       |
 
 ### Password Management
 
-| Operation | Method | Permission Required | Use Case |
-|-----------|--------|---------------------|----------|
-| Send Password Reset Email | `send_password_reset_email()` | `admin.organizations` | Trigger email-based reset |
-| Set User Password | `set_user_password()` | `admin.organizations` | Direct password reset (temporary) |
+| Operation                 | Method                        | Permission Required   | Use Case                          |
+| ------------------------- | ----------------------------- | --------------------- | --------------------------------- |
+| Send Password Reset Email | `send_password_reset_email()` | `admin.organizations` | Trigger email-based reset         |
+| Set User Password         | `set_user_password()`         | `admin.organizations` | Direct password reset (temporary) |
 
 ### Role Management
 
-| Operation | Method | Permission Required | Use Case |
-|-----------|--------|---------------------|----------|
-| Get Realm Roles | `get_realm_roles()` | `admin.organizations` | List all available roles |
-| Get User Realm Roles | `get_user_realm_roles()` | `admin.organizations` | View user's assigned roles |
-| Assign Roles to User | `assign_realm_roles_to_user()` | `admin.organizations` | Grant permissions to user |
-| Remove Roles from User | `remove_realm_roles_from_user()` | `admin.organizations` | Revoke user permissions |
-| Sync User Roles | `sync_user_realm_roles()` | `admin.organizations` | Sync roles to match target list |
+| Operation              | Method                           | Permission Required   | Use Case                        |
+| ---------------------- | -------------------------------- | --------------------- | ------------------------------- |
+| Get Realm Roles        | `get_realm_roles()`              | `admin.organizations` | List all available roles        |
+| Get User Realm Roles   | `get_user_realm_roles()`         | `admin.organizations` | View user's assigned roles      |
+| Assign Roles to User   | `assign_realm_roles_to_user()`   | `admin.organizations` | Grant permissions to user       |
+| Remove Roles from User | `remove_realm_roles_from_user()` | `admin.organizations` | Revoke user permissions         |
+| Sync User Roles        | `sync_user_realm_roles()`        | `admin.organizations` | Sync roles to match target list |
 
 ### Organization Management
 
-| Operation | Method | Permission Required | Use Case |
-|-----------|--------|---------------------|----------|
-| Get Organizations | `get_organizations()` | `admin.organizations` | List all client organizations |
-| Get Organization | `get_organization()` | `admin.organizations` | View organization details |
-| Get Organization Members | `get_organization_members()` | `admin.organizations` | List users in organization |
-| Count Organization Members | `count_organization_members()` | `admin.organizations` | Get member count |
-| Add User to Organization | `add_user_to_organization()` | `admin.organizations` | Assign user to client org |
-| Remove User from Organization | `remove_user_from_organization()` | `admin.organizations` | Remove user from org |
-| Get User Organizations | `get_user_organizations()` | `admin.organizations` | List orgs user belongs to |
+| Operation                     | Method                            | Permission Required   | Use Case                      |
+| ----------------------------- | --------------------------------- | --------------------- | ----------------------------- |
+| Get Organizations             | `get_organizations()`             | `admin.organizations` | List all client organizations |
+| Get Organization              | `get_organization()`              | `admin.organizations` | View organization details     |
+| Get Organization Members      | `get_organization_members()`      | `admin.organizations` | List users in organization    |
+| Count Organization Members    | `count_organization_members()`    | `admin.organizations` | Get member count              |
+| Add User to Organization      | `add_user_to_organization()`      | `admin.organizations` | Assign user to client org     |
+| Remove User from Organization | `remove_user_from_organization()` | `admin.organizations` | Remove user from org          |
+| Get User Organizations        | `get_user_organizations()`        | `admin.organizations` | List orgs user belongs to     |
 
 ### Session Management
 
-| Operation | Method | Permission Required | Use Case |
-|-----------|--------|---------------------|----------|
-| Get User Sessions | `get_user_sessions()` | `admin.organizations` | View active user sessions |
-| Revoke Session | `revoke_session()` | `admin.organizations` | Logout specific session |
+| Operation                | Method                       | Permission Required   | Use Case                      |
+| ------------------------ | ---------------------------- | --------------------- | ----------------------------- |
+| Get User Sessions        | `get_user_sessions()`        | `admin.organizations` | View active user sessions     |
+| Revoke Session           | `revoke_session()`           | `admin.organizations` | Logout specific session       |
 | Revoke All User Sessions | `revoke_all_user_sessions()` | `admin.organizations` | Force logout from all devices |
 
 ### Event Tracking
 
-| Operation | Method | Permission Required | Use Case |
-|-----------|--------|---------------------|----------|
+| Operation       | Method              | Permission Required   | Use Case                                     |
+| --------------- | ------------------- | --------------------- | -------------------------------------------- |
 | Get User Events | `get_user_events()` | `admin.organizations` | View user activity log (login, logout, etc.) |
 
 ## Admin Service Architecture

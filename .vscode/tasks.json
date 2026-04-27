@@ -235,46 +235,25 @@
       "id": "service",
       "type": "pickString",
       "description": "Which service?",
-      "options": [
-        "screen",
-        "stream",
-        "global-service",
-        "frontend",
-        "nginx",
-        "db",
-        "keycloak"
-      ]
+      "options": ["screen", "stream", "global-service", "frontend", "nginx", "db", "keycloak"]
     },
     {
       "id": "testableService",
       "type": "pickString",
       "description": "Which service?",
-      "options": [
-        "screen",
-        "stream",
-        "global-service"
-      ]
+      "options": ["screen", "stream", "global-service"]
     },
     {
       "id": "migratableService",
       "type": "pickString",
       "description": "Which service?",
-      "options": [
-        "screen",
-        "stream",
-        "global-service"
-      ]
+      "options": ["screen", "stream", "global-service"]
     },
     {
       "id": "database",
       "type": "pickString",
       "description": "Which database?",
-      "options": [
-        "chapsmind_db",
-        "global_db",
-        "stream_db",
-        "keycloak"
-      ]
+      "options": ["chapsmind_db", "global_db", "stream_db", "keycloak"]
     },
     {
       "id": "migrationMessage",

@@ -23,12 +23,14 @@ ChapsMind is evolving from a single-module application (Screen) to a multi-modul
 - **Deployment Flexibility**: Modules should be deployable independently for faster iteration
 
 Current state (monolith):
+
 - Single FastAPI backend (`mint-server`) serving all functionality
 - Single PostgreSQL database (`mint_db`)
 - Tightly coupled code between concerns
 - Works well for current scale but limits future growth
 
 Target state requirements:
+
 - Support multiple frontend modules (Screen, Target, Explore)
 - Share common resources (tokens, folders) across modules
 - Enable independent module development and deployment
@@ -82,13 +84,13 @@ We will implement a **simplified service architecture** where the **Global Servi
 
 ### Why Not Separate API Gateway + Global Service?
 
-| Separate Gateway | Global Service as Gateway |
-|------------------|---------------------------|
-| Additional service to deploy/maintain | Single entry point |
-| Extra network hop | Direct routing |
-| Configuration complexity (Kong/Traefik) | Built-in FastAPI routing |
-| Overkill for current scale | Right-sized for team |
-| Microservices overhead | Pragmatic simplicity |
+| Separate Gateway                        | Global Service as Gateway |
+| --------------------------------------- | ------------------------- |
+| Additional service to deploy/maintain   | Single entry point        |
+| Extra network hop                       | Direct routing            |
+| Configuration complexity (Kong/Traefik) | Built-in FastAPI routing  |
+| Overkill for current scale              | Right-sized for team      |
+| Microservices overhead                  | Pragmatic simplicity      |
 
 ### Key Implementation Decisions
 
@@ -134,6 +136,7 @@ We will implement a **simplified service architecture** where the **Global Servi
 **Description:** Global Service acts as both API Gateway and shared services layer. Module services (Screen, Target) are internal and only accessible through Global Service.
 
 **Pros:**
+
 - **Single Entry Point**: One service handles auth, routing, and shared functionality
 - **Simplified Operations**: Fewer services to deploy and monitor
 - **No Extra Network Hop**: Direct routing without separate gateway
@@ -142,6 +145,7 @@ We will implement a **simplified service architecture** where the **Global Servi
 - **Incremental Migration**: Can extract modules gradually
 
 **Cons:**
+
 - Global Service becomes critical path (must be highly available)
 - Global Service handles more responsibility
 - Module services cannot be accessed directly (by design)
@@ -151,11 +155,13 @@ We will implement a **simplified service architecture** where the **Global Servi
 **Description:** Deploy dedicated API Gateway (Kong/Traefik) in front of all services including Global Service.
 
 **Pros:**
+
 - Industry-standard gateway features (rate limiting, caching, etc.)
 - Services are more independent
 - Gateway can be managed separately
 
 **Cons:**
+
 - Additional service to deploy and maintain
 - Extra network hop for all requests
 - Configuration complexity (gateway rules, service discovery)
@@ -167,12 +173,14 @@ We will implement a **simplified service architecture** where the **Global Servi
 **Description:** Keep single backend but organize code into well-defined modules with clear boundaries.
 
 **Pros:**
+
 - Simpler deployment (single artifact)
 - No network latency between modules
 - Easier debugging and tracing
 - Lower operational overhead
 
 **Cons:**
+
 - Cannot scale modules independently
 - Single point of failure for entire application
 - Teams must coordinate all deployments
@@ -184,11 +192,13 @@ We will implement a **simplified service architecture** where the **Global Servi
 **Description:** Extract every domain into its own service with event-driven communication.
 
 **Pros:**
+
 - Maximum independence between services
 - True independent scaling
 - Clear bounded contexts
 
 **Cons:**
+
 - Massive upfront investment
 - Operational complexity explosion
 - Distributed transactions nightmare
@@ -232,6 +242,7 @@ We will implement a **simplified service architecture** where the **Global Servi
 The Global Service handles two responsibilities:
 
 **1. Gateway Layer (All Requests)**
+
 ```
 Frontend Request
       │
@@ -251,6 +262,7 @@ Frontend Request
 ```
 
 **2. Shared Services (Direct Handling)**
+
 - `/api/tokens/*` - Token management
 - `/api/folders/*` - Folder management
 - `/api/organizations/*` - Organization settings
@@ -366,13 +378,13 @@ CREATE TABLE folders (
 
 ### Service Extraction Roadmap
 
-| Phase | Service | Timeline | Description |
-|-------|---------|----------|-------------|
-| 1 | Global Service Foundation | Q1 2025 | Organization context, module enablement |
-| 2 | Token Migration | Q1 2025 | Move token tables to Global Service |
-| 3 | Folder Migration | Q2 2025 | Move folder tables with sharing |
-| 4 | Screen Service | Q2 2025 | Extract from monolith |
-| 5 | Target Service | Q2-Q3 2025 | New service for Target module |
+| Phase | Service                   | Timeline   | Description                             |
+| ----- | ------------------------- | ---------- | --------------------------------------- |
+| 1     | Global Service Foundation | Q1 2025    | Organization context, module enablement |
+| 2     | Token Migration           | Q1 2025    | Move token tables to Global Service     |
+| 3     | Folder Migration          | Q2 2025    | Move folder tables with sharing         |
+| 4     | Screen Service            | Q2 2025    | Extract from monolith                   |
+| 5     | Target Service            | Q2-Q3 2025 | New service for Target module           |
 
 ---
 

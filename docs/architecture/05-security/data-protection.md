@@ -40,13 +40,13 @@ ChapsMind handles two categories of data:
 
 ### Benefits of This Approach
 
-| Benefit | Description |
-|---------|-------------|
-| **Data Minimization** | Only store what is absolutely necessary |
-| **Single Source of Truth** | User data lives in one place (Keycloak) |
-| **Reduced Exposure Risk** | Application database breach exposes less PII |
-| **Simplified Compliance** | User data management centralized in IdP |
-| **Right to Erasure** | Delete user in Keycloak, no application cleanup needed |
+| Benefit                    | Description                                            |
+| -------------------------- | ------------------------------------------------------ |
+| **Data Minimization**      | Only store what is absolutely necessary                |
+| **Single Source of Truth** | User data lives in one place (Keycloak)                |
+| **Reduced Exposure Risk**  | Application database breach exposes less PII           |
+| **Simplified Compliance**  | User data management centralized in IdP                |
+| **Right to Erasure**       | Delete user in Keycloak, no application cleanup needed |
 
 ### Database Reference Pattern
 
@@ -70,24 +70,24 @@ class Company(Base):
 
 ### Relevant GDPR Principles
 
-| Principle | Implementation |
-|-----------|----------------|
-| **Lawful Basis** | User consent obtained during registration via Keycloak |
-| **Purpose Limitation** | Data used only for market intelligence services |
-| **Data Minimization** | No user tables in app DB; minimal JWT claims |
-| **Accuracy** | User can update profile in Keycloak directly |
-| **Storage Limitation** | Data retention policies managed in Keycloak |
-| **Integrity & Confidentiality** | Encryption at rest and in transit |
+| Principle                       | Implementation                                         |
+| ------------------------------- | ------------------------------------------------------ |
+| **Lawful Basis**                | User consent obtained during registration via Keycloak |
+| **Purpose Limitation**          | Data used only for market intelligence services        |
+| **Data Minimization**           | No user tables in app DB; minimal JWT claims           |
+| **Accuracy**                    | User can update profile in Keycloak directly           |
+| **Storage Limitation**          | Data retention policies managed in Keycloak            |
+| **Integrity & Confidentiality** | Encryption at rest and in transit                      |
 
 ### Data Subject Rights
 
-| Right | How It's Supported |
-|-------|-------------------|
-| **Access** | User can view their data in Keycloak account console |
-| **Rectification** | User can edit their profile in Keycloak |
-| **Erasure** | Admin deletes user in Keycloak; references become orphaned (acceptable) |
-| **Portability** | Keycloak provides user data export capabilities |
-| **Restriction** | User account can be disabled in Keycloak |
+| Right             | How It's Supported                                                      |
+| ----------------- | ----------------------------------------------------------------------- |
+| **Access**        | User can view their data in Keycloak account console                    |
+| **Rectification** | User can edit their profile in Keycloak                                 |
+| **Erasure**       | Admin deletes user in Keycloak; references become orphaned (acceptable) |
+| **Portability**   | Keycloak provides user data export capabilities                         |
+| **Restriction**   | User account can be disabled in Keycloak                                |
 
 ### Data Processing
 
@@ -115,22 +115,24 @@ flowchart LR
 
 ### Sensitive Data Categories
 
-| Category | Examples | Handling |
-|----------|----------|----------|
-| **Authentication Credentials** | Passwords, tokens | Keycloak only, never in app |
-| **Personal Identifiers** | Email, name | Keycloak only, JWT claims transient |
-| **Business Data** | Company information | Application database, encrypted at rest |
-| **AI Processing Results** | Analysis outputs | Application database, no PII expected |
+| Category                       | Examples            | Handling                                |
+| ------------------------------ | ------------------- | --------------------------------------- |
+| **Authentication Credentials** | Passwords, tokens   | Keycloak only, never in app             |
+| **Personal Identifiers**       | Email, name         | Keycloak only, JWT claims transient     |
+| **Business Data**              | Company information | Application database, encrypted at rest |
+| **AI Processing Results**      | Analysis outputs    | Application database, no PII expected   |
 
 ### Security Controls by Data Type
 
 #### Authentication Data (Keycloak)
+
 - Password hashing (bcrypt/Argon2)
 - Token signing (RS256)
 - Session encryption
 - MFA support (configurable)
 
 #### Business Data (Application)
+
 - Database encryption at rest (PostgreSQL TDE)
 - TLS for all connections
 - Parameterized queries (SQL injection prevention)
@@ -158,12 +160,12 @@ flowchart TD
 
 ### What Is Logged
 
-| Event Type | Data Logged | PII Included |
-|------------|-------------|--------------|
-| API Requests | Endpoint, method, status, duration | No (user ID only) |
-| Authentication | Success/failure, timestamp | Username (via Keycloak) |
-| Authorization | Resource access, permission check | User ID, resource ID |
-| Errors | Stack trace, context | No PII in error messages |
+| Event Type     | Data Logged                        | PII Included             |
+| -------------- | ---------------------------------- | ------------------------ |
+| API Requests   | Endpoint, method, status, duration | No (user ID only)        |
+| Authentication | Success/failure, timestamp         | Username (via Keycloak)  |
+| Authorization  | Resource access, permission check  | User ID, resource ID     |
+| Errors         | Stack trace, context               | No PII in error messages |
 
 ### What Is NOT Logged
 

@@ -31,10 +31,12 @@
 **Description:** [Brief description of this option]
 
 **Pros:**
+
 - [Pro 1]
 - [Pro 2]
 
 **Cons:**
+
 - [Con 1]
 - [Con 2]
 
@@ -43,10 +45,12 @@
 **Description:** [Brief description of this option]
 
 **Pros:**
+
 - [Pro 1]
 - [Pro 2]
 
 **Cons:**
+
 - [Con 1]
 - [Con 2]
 
@@ -55,10 +59,12 @@
 **Description:** [Brief description of this option]
 
 **Pros:**
+
 - [Pro 1]
 - [Pro 2]
 
 **Cons:**
+
 - [Con 1]
 - [Con 2]
 

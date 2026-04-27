@@ -8,11 +8,11 @@ This document describes how the frontend and backend communicate, including API 
 
 The backend automatically generates OpenAPI documentation:
 
-| Endpoint | Description |
-|----------|-------------|
-| **`/docs`** | Swagger UI - Interactive API explorer with try-it-out functionality |
-| **`/redoc`** | ReDoc - Clean, readable API documentation |
-| **`/openapi.json`** | Raw OpenAPI 3.0 schema for code generation |
+| Endpoint            | Description                                                         |
+| ------------------- | ------------------------------------------------------------------- |
+| **`/docs`**         | Swagger UI - Interactive API explorer with try-it-out functionality |
+| **`/redoc`**        | ReDoc - Clean, readable API documentation                           |
+| **`/openapi.json`** | Raw OpenAPI 3.0 schema for code generation                          |
 
 > **Note**: The OpenAPI specification at `/docs` is the authoritative source for API contracts. This document describes patterns and conventions, not individual endpoints.
 
@@ -53,12 +53,12 @@ flowchart TB
 
 ### Layer Responsibilities
 
-| Layer | Location | Responsibility |
-|-------|----------|---------------|
-| **Queries** | `src/queries/` | Define cached queries with Pinia Colada |
-| **Mutations** | `src/mutations/` | Define mutations with cache invalidation |
-| **API Functions** | `src/api/` | Pure functions that make HTTP calls |
-| **ApiClient** | `src/api/client.ts` | HTTP wrapper with auth token handling |
+| Layer             | Location            | Responsibility                           |
+| ----------------- | ------------------- | ---------------------------------------- |
+| **Queries**       | `src/queries/`      | Define cached queries with Pinia Colada  |
+| **Mutations**     | `src/mutations/`    | Define mutations with cache invalidation |
+| **API Functions** | `src/api/`          | Pure functions that make HTTP calls      |
+| **ApiClient**     | `src/api/client.ts` | HTTP wrapper with auth token handling    |
 
 ## API Functions Layer (`src/api/`)
 
@@ -132,12 +132,12 @@ class ApiClient {
 
 ### ApiClient Features
 
-| Feature | Description |
-|---------|-------------|
-| **Token Injection** | Automatically adds Bearer token from auth store |
-| **401 Handling** | Triggers token refresh on unauthorized response |
-| **402 Handling** | Handles insufficient tokens error |
-| **Error Transformation** | Converts HTTP errors to typed exceptions |
+| Feature                  | Description                                     |
+| ------------------------ | ----------------------------------------------- |
+| **Token Injection**      | Automatically adds Bearer token from auth store |
+| **401 Handling**         | Triggers token refresh on unauthorized response |
+| **402 Handling**         | Handles insufficient tokens error               |
+| **Error Transformation** | Converts HTTP errors to typed exceptions        |
 
 ## Query Definitions (`src/queries/`)
 
@@ -162,12 +162,10 @@ export const companyByIdQuery = defineQueryOptions(({ id }: { id: string }) => (
 }))
 
 // List query with filters
-export const companiesQuery = defineQueryOptions(
-  ({ filters }: { filters: CompanyFilters }) => ({
-    key: COMPANY_QUERY_KEYS.list(filters),
-    query: () => getCompanies(filters),
-  })
-)
+export const companiesQuery = defineQueryOptions(({ filters }: { filters: CompanyFilters }) => ({
+  key: COMPANY_QUERY_KEYS.list(filters),
+  query: () => getCompanies(filters),
+}))
 ```
 
 ### Query Key Patterns
@@ -179,6 +177,7 @@ companies.list.{filters}    # Filtered list
 ```
 
 Keys enable:
+
 - **Cache lookup**: Reuse data across components
 - **Cache invalidation**: Invalidate related data after mutations
 - **Background refetch**: Keep data fresh
@@ -238,10 +237,11 @@ import { companyByIdQuery } from '@/queries/companies'
 
 const props = defineProps<{ companyId: string }>()
 
-const { data: company, isLoading, error } = useQuery(
-  companyByIdQuery,
-  () => ({ id: props.companyId })
-)
+const {
+  data: company,
+  isLoading,
+  error,
+} = useQuery(companyByIdQuery, () => ({ id: props.companyId }))
 </script>
 
 <template>
@@ -281,13 +281,13 @@ async function handleSubmit() {
 
 ### HTTP Methods
 
-| Method | Usage | Example |
-|--------|-------|---------|
-| `GET` | Retrieve resources | `GET /companies/{id}` |
-| `POST` | Create resources | `POST /companies` |
-| `PUT` | Full resource update | `PUT /companies/{id}` |
-| `PATCH` | Partial update | `PATCH /companies/{id}` |
-| `DELETE` | Remove resources | `DELETE /companies/{id}` |
+| Method   | Usage                | Example                  |
+| -------- | -------------------- | ------------------------ |
+| `GET`    | Retrieve resources   | `GET /companies/{id}`    |
+| `POST`   | Create resources     | `POST /companies`        |
+| `PUT`    | Full resource update | `PUT /companies/{id}`    |
+| `PATCH`  | Partial update       | `PATCH /companies/{id}`  |
+| `DELETE` | Remove resources     | `DELETE /companies/{id}` |
 
 ### URL Patterns
 
@@ -301,6 +301,7 @@ async function handleSubmit() {
 ### Response Patterns
 
 **Single Resource**:
+
 ```json
 {
   "id": 1,
@@ -311,6 +312,7 @@ async function handleSubmit() {
 ```
 
 **Paginated Collection**:
+
 ```json
 {
   "items": [...],
@@ -322,6 +324,7 @@ async function handleSubmit() {
 ```
 
 **Error Response**:
+
 ```json
 {
   "detail": "Company not found"
@@ -330,17 +333,17 @@ async function handleSubmit() {
 
 ### HTTP Status Codes
 
-| Code | Meaning | Usage |
-|------|---------|-------|
-| `200` | OK | Successful GET, PUT, PATCH |
-| `201` | Created | Successful POST |
-| `204` | No Content | Successful DELETE |
-| `400` | Bad Request | Validation error |
-| `401` | Unauthorized | Missing/invalid token |
-| `403` | Forbidden | Insufficient permissions |
-| `404` | Not Found | Resource doesn't exist |
-| `422` | Unprocessable Entity | Validation failed |
-| `500` | Server Error | Unexpected error |
+| Code  | Meaning              | Usage                      |
+| ----- | -------------------- | -------------------------- |
+| `200` | OK                   | Successful GET, PUT, PATCH |
+| `201` | Created              | Successful POST            |
+| `204` | No Content           | Successful DELETE          |
+| `400` | Bad Request          | Validation error           |
+| `401` | Unauthorized         | Missing/invalid token      |
+| `403` | Forbidden            | Insufficient permissions   |
+| `404` | Not Found            | Resource doesn't exist     |
+| `422` | Unprocessable Entity | Validation failed          |
+| `500` | Server Error         | Unexpected error           |
 
 ## Related Documentation
 

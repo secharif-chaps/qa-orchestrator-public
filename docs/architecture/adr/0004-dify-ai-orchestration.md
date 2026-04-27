@@ -24,6 +24,7 @@ ChapsMind is an AI-first market intelligence platform. The core value propositio
 - Iterate on prompts without code deployments
 
 Traditional approaches would embed LLM calls directly in application code, but this creates:
+
 - Tight coupling between business logic and AI implementation
 - Difficulty in prompt iteration without deployments
 - No visibility into AI workflow performance
@@ -51,6 +52,7 @@ Key implementation decisions:
 **Description:** Use Dify as a dedicated AI orchestration platform with visual workflow builder.
 
 **Pros:**
+
 - Visual workflow editor for non-developers
 - Built-in prompt management and versioning
 - Support for multiple LLM providers
@@ -60,6 +62,7 @@ Key implementation decisions:
 - Active open-source community
 
 **Cons:**
+
 - Additional infrastructure component
 - Network latency for API calls
 - Learning curve for workflow builder
@@ -70,12 +73,14 @@ Key implementation decisions:
 **Description:** Call LLM APIs directly from application code using libraries like LangChain.
 
 **Pros:**
+
 - No additional infrastructure
 - Tighter control over implementation
 - Simpler architecture
 - Lower latency
 
 **Cons:**
+
 - Prompt changes require deployments
 - No visual editing for business users
 - Must build own monitoring and cost tracking
@@ -87,11 +92,13 @@ Key implementation decisions:
 **Description:** Build a custom microservice for AI orchestration.
 
 **Pros:**
+
 - Complete control over implementation
 - Tailored to exact requirements
 - No external dependencies
 
 **Cons:**
+
 - Significant development effort
 - Must build workflow management from scratch
 - No visual interface

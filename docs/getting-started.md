@@ -11,7 +11,7 @@ Guide to set up ChapsMind on your local machine. Supports **Ubuntu**, **Windows 
 Install the following tools before proceeding. Run `task doctor` at any time to verify.
 
 | Tool               | Version | Ubuntu / WSL                                                                         | macOS                        |
-|--------------------|---------|--------------------------------------------------------------------------------------|------------------------------|
+| ------------------ | ------- | ------------------------------------------------------------------------------------ | ---------------------------- |
 | **Docker**         | Latest  | [docs.docker.com](https://docs.docker.com/engine/install/ubuntu/)                    | `brew install --cask docker` |
 | **Docker Compose** | v2+     | Included with Docker                                                                 | Included with Docker Desktop |
 | **Node.js**        | >= 24   | [nvm](https://github.com/nvm-sh/nvm): `nvm install 24`                               | `nvm install 24`             |
@@ -20,7 +20,7 @@ Install the following tools before proceeding. Run `task doctor` at any time to 
 | **Task**           | —       | `sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin` | `brew install go-task`       |
 
 > **Windows users:** Install [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install) first (
-`wsl --install -d Ubuntu`), then follow the Ubuntu instructions inside
+> `wsl --install -d Ubuntu`), then follow the Ubuntu instructions inside
 > WSL. [Docker Desktop](https://www.docker.com/products/docker-desktop/) with WSL 2 backend is recommended.
 
 ### SSH Access
@@ -98,7 +98,7 @@ task logs        # Tail all logs
 ## Services & URLs
 
 | Service            | URL                       | Credentials   |
-|--------------------|---------------------------|---------------|
+| ------------------ | ------------------------- | ------------- |
 | Application        | http://localhost          | via nginx     |
 | API                | http://localhost/api      | Bearer token  |
 | API Docs (Swagger) | http://localhost/api/docs | —             |
@@ -112,7 +112,7 @@ task logs        # Tail all logs
 All test users are added to the **ChapsMind Dev** organization by `setup-keycloak.sh`:
 
 | Username          | Password      | Roles                                                 | Description               |
-|-------------------|---------------|-------------------------------------------------------|---------------------------|
+| ----------------- | ------------- | ----------------------------------------------------- | ------------------------- |
 | `admin`           | `admin123`    | admin (composite: all roles)                          | Full access               |
 | `company_manager` | `manager123`  | company.create, organization.read, organization.write | Company + team management |
 | `company_viewer`  | `viewer123`   | organization.read                                     | Read-only access          |
@@ -127,7 +127,7 @@ Run `task` with no arguments to see all commands.
 ### Infrastructure
 
 | Command                       | Description                      |
-|-------------------------------|----------------------------------|
+| ----------------------------- | -------------------------------- |
 | `task init`                   | One-shot first-time setup        |
 | `task doctor`                 | Check prerequisites              |
 | `task up`                     | Start all services               |
@@ -139,7 +139,7 @@ Run `task` with no arguments to see all commands.
 ### Database
 
 | Command               | Description                    |
-|-----------------------|--------------------------------|
+| --------------------- | ------------------------------ |
 | `task migrate`        | Run Alembic migrations         |
 | `task migrate:status` | Show current migration version |
 | `task seed`           | Seed sample data               |
@@ -148,14 +148,14 @@ Run `task` with no arguments to see all commands.
 ### Frontend
 
 | Command                | Description                  |
-|------------------------|------------------------------|
+| ---------------------- | ---------------------------- |
 | `task front:lint`      | Lint and fix frontend code   |
 | `task front:typecheck` | Run TypeScript type checking |
 
 ### Backend (Screen)
 
 | Command              | Description                  |
-|----------------------|------------------------------|
+| -------------------- | ---------------------------- |
 | `task screen:lint`   | Lint backend code (ruff)     |
 | `task screen:format` | Format backend code (ruff)   |
 | `task screen:test`   | Run backend tests            |
@@ -243,7 +243,7 @@ sudo chattr +i /etc/resolv.conf
 ## Related Documentation
 
 | Resource              | Location                                                              |
-|-----------------------|-----------------------------------------------------------------------|
+| --------------------- | --------------------------------------------------------------------- |
 | Architecture Overview | [`docs/architecture/`](architecture/)                                 |
 | Product Mission       | [`agent-os/product/mission.md`](../agent-os/product/mission.md)       |
 | Tech Stack            | [`agent-os/product/tech-stack.md`](../agent-os/product/tech-stack.md) |

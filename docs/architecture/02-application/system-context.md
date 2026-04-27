@@ -37,12 +37,12 @@ C4Context
 
 ## External Systems
 
-| System | Purpose | Integration |
-|--------|---------|-------------|
-| **Keycloak** | Identity management, SSO | OIDC protocol |
-| **Dify** | AI/LLM workflow orchestration | REST API with callbacks |
-| **Pappers** | French company data | REST API |
-| **Public Web** | Company information | Web scraping |
+| System         | Purpose                       | Integration             |
+| -------------- | ----------------------------- | ----------------------- |
+| **Keycloak**   | Identity management, SSO      | OIDC protocol           |
+| **Dify**       | AI/LLM workflow orchestration | REST API with callbacks |
+| **Pappers**    | French company data           | REST API                |
+| **Public Web** | Company information           | Web scraping            |
 
 ## Related Documentation
 

@@ -13,13 +13,11 @@ export default {
 
           // Allow gitmoji prefix (emoji followed by space)
           // Then conventional commit format with optional TAR-xxx
-          const pattern = /^(?:[\p{Emoji_Presentation}\p{Emoji}\u{FE0F}]+ )?[a-z]+(?:\(.+\))?!?: (?:TAR-\d+ )?.+/u
+          const pattern =
+            /^(?:[\p{Emoji_Presentation}\p{Emoji}\u{FE0F}]+ )?[a-z]+(?:\(.+\))?!?: (?:TAR-\d+ )?.+/u
           const valid = pattern.test(header)
 
-          return [
-            valid,
-            'Header must match: <gitmoji> <type>(scope): TAR-xxx description',
-          ]
+          return [valid, 'Header must match: <gitmoji> <type>(scope): TAR-xxx description']
         },
         'jira-ticket-required': (parsed, _when, _value) => {
           const { header, type } = parsed
@@ -50,7 +48,19 @@ export default {
     'type-enum': [
       2,
       'always',
-      ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'build', 'ci', 'chore', 'revert'],
+      [
+        'feat',
+        'fix',
+        'docs',
+        'style',
+        'refactor',
+        'perf',
+        'test',
+        'build',
+        'ci',
+        'chore',
+        'revert',
+      ],
     ],
     // Disable default header rules that conflict with gitmoji
     'header-max-length': [2, 'always', 120],

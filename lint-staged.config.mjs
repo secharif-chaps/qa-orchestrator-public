@@ -1,20 +1,29 @@
 export default {
   // Frontend: TypeScript & JavaScript
-  'apps/front/**/*.{ts,tsx,js}': [
-    'cd apps/front && npx eslint --no-error-on-unmatched-pattern --fix',
-    'cd apps/front && npx prettier --write',
-  ],
+  'apps/front/**/*.{ts,tsx,js}': (filenames) => {
+    const relative = filenames.map((f) => f.replace(/.*apps\/front\//, ''))
+    return [
+      `docker compose exec -T frontend npx eslint --no-error-on-unmatched-pattern --fix ${relative.join(' ')}`,
+      `docker compose exec -T frontend npx prettier --write ${relative.join(' ')}`,
+    ]
+  },
   // Frontend: Vue components (eslint + stylelint + prettier)
-  'apps/front/**/*.vue': [
-    'cd apps/front && npx eslint --no-error-on-unmatched-pattern --fix',
-    'cd apps/front && npx stylelint --fix',
-    'cd apps/front && npx prettier --write',
-  ],
+  'apps/front/**/*.vue': (filenames) => {
+    const relative = filenames.map((f) => f.replace(/.*apps\/front\//, ''))
+    return [
+      `docker compose exec -T frontend npx eslint --no-error-on-unmatched-pattern --fix ${relative.join(' ')}`,
+      `docker compose exec -T frontend npx stylelint --fix ${relative.join(' ')}`,
+      `docker compose exec -T frontend npx prettier --write ${relative.join(' ')}`,
+    ]
+  },
   // Frontend: CSS files
-  'apps/front/**/*.css': [
-    'cd apps/front && npx stylelint --fix',
-    'cd apps/front && npx prettier --write',
-  ],
+  'apps/front/**/*.css': (filenames) => {
+    const relative = filenames.map((f) => f.replace(/.*apps\/front\//, ''))
+    return [
+      `docker compose exec -T frontend npx stylelint --fix ${relative.join(' ')}`,
+      `docker compose exec -T frontend npx prettier --write ${relative.join(' ')}`,
+    ]
+  },
   // Frontend: i18n locale files (via Docker — consistent Node version)
   'apps/front/src/i18n/locales/*.json': [
     'docker compose exec -T frontend node scripts/i18n/format.mjs',
@@ -54,7 +63,9 @@ export default {
   // Fails on duplicate revision IDs and multi-head chains before they reach CI.
   'apps/screen/alembic/versions/**/*.py': () => ['.husky/scripts/check-alembic.sh screen'],
   'apps/stream/alembic/versions/**/*.py': () => ['.husky/scripts/check-alembic.sh stream'],
-  'apps/global-service/alembic/versions/**/*.py': () => ['.husky/scripts/check-alembic.sh global-service'],
+  'apps/global-service/alembic/versions/**/*.py': () => [
+    '.husky/scripts/check-alembic.sh global-service',
+  ],
   // Target backend: PHP (via Docker — ECS + PHPStan not installed on host)
   // ECS runs on staged files only, PHPStan must analyse the whole project
   'apps/target/**/*.php': (filenames) => {
@@ -64,12 +75,4 @@ export default {
       `docker compose exec -T target php vendor/bin/phpstan --memory-limit=1G analyse`,
     ]
   },
-  // Taskfile validation + formatting
-  'Taskfile.yml': ['cd apps/front && npx prettier --write ../../Taskfile.yml'],
-  // Documentation
-  'docs/**/*.md': (files) => [`cd apps/front && npx prettier --write ${files.map((f) => `../../${f}`).join(' ')}`],
-  // Catch-all: format everything else not already handled
-  '!(apps/**|node_modules/**|.husky/**|infra/**|docs/**)*.{json,yaml,yml,md}': (files) => [
-    `cd apps/front && npx prettier --write --ignore-unknown ${files.map((f) => `../../${f}`).join(' ')}`,
-  ],
 }

@@ -77,7 +77,7 @@
     "jsonc-eslint-parser": "^3.1.0",
     "lint-staged": "^16.2.7",
     "npm-run-all2": "^8.0.4",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.12",
     "postcss-html": "^1.8.1",
     "prettier": "3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
@@ -93,5 +93,9 @@
     "vue-eslint-parser": "^10.4.0",
     "vue-tsc": "^3.0.4",
     "yaml-eslint-parser": "^2.0.0"
+  },
+  "//resolutions": "Dedupe postcss to a single instance to keep instanceof checks consistent across plugins.",
+  "resolutions": {
+    "postcss": "^8"
   }
 }

@@ -29,13 +29,13 @@ ChapsMind currently operates as a **single-instance deployment**:
 
 ### Component Scaling Characteristics
 
-| Component | Current | Scalability |
-|-----------|---------|-------------|
-| **Frontend SPA** | Static assets served via CDN/nginx | Horizontally scalable (stateless) |
-| **Backend API** | Single FastAPI instance | Can scale horizontally (stateless design) |
-| **Celery Workers** | 1-2 worker instances | Can scale horizontally |
-| **PostgreSQL** | Single instance | Vertical scaling only (currently) |
-| **RabbitMQ** | Single instance | Can be clustered |
+| Component          | Current                            | Scalability                               |
+| ------------------ | ---------------------------------- | ----------------------------------------- |
+| **Frontend SPA**   | Static assets served via CDN/nginx | Horizontally scalable (stateless)         |
+| **Backend API**    | Single FastAPI instance            | Can scale horizontally (stateless design) |
+| **Celery Workers** | 1-2 worker instances               | Can scale horizontally                    |
+| **PostgreSQL**     | Single instance                    | Vertical scaling only (currently)         |
+| **RabbitMQ**       | Single instance                    | Can be clustered                          |
 
 ## Async Processing with Celery
 
@@ -55,11 +55,11 @@ The primary scalability mechanism is **Celery workers** for background processin
 
 ### Task Types
 
-| Task Category | Processing Time | Worker Requirements |
-|---------------|-----------------|---------------------|
-| **Data Collection** | 1-5 minutes | I/O bound, network heavy |
+| Task Category                     | Processing Time | Worker Requirements       |
+| --------------------------------- | --------------- | ------------------------- |
+| **Data Collection**               | 1-5 minutes     | I/O bound, network heavy  |
 | **AI specific section workflows** | 30s - 2 minutes | CPU/memory for Dify calls |
-| **Report Generation** | 10-30 seconds | I/O bound |
+| **Report Generation**             | 10-30 seconds   | I/O bound                 |
 
 ### Worker Configuration
 
@@ -102,11 +102,11 @@ Company Created
 
 ### Scalability Concerns
 
-| Scenario | Companies/Day | Dify Calls/Day | Impact |
-|----------|---------------|----------------|--------|
-| **Current** | ~10 | ~90 | Manageable |
-| **Growth** | 50 | ~450 | Queue buildup possible |
-| **Scale** | 200+ | ~1800+ | **Dify becomes bottleneck** |
+| Scenario    | Companies/Day | Dify Calls/Day | Impact                      |
+| ----------- | ------------- | -------------- | --------------------------- |
+| **Current** | ~10           | ~90            | Manageable                  |
+| **Growth**  | 50            | ~450           | Queue buildup possible      |
+| **Scale**   | 200+          | ~1800+         | **Dify becomes bottleneck** |
 
 ### Current Mitigation: DifyConcurrencyManager
 
@@ -119,23 +119,25 @@ TASK_TIMEOUT_MINUTES = 5       # Timeout for individual workflows
 ```
 
 The `DifyConcurrencyManager` uses a semaphore pattern to:
+
 - Queue Dify calls when limit is reached
 - Prevent Dify instance overload
 - Provide fair scheduling across companies
 
 ### Scaling Options (Future Considerations)
 
-| Option | Complexity | Impact |
-|--------|------------|--------|
-| **Increase MAX_CONCURRENT_WORKFLOWS** | Low | Limited by Dify instance capacity |
-| **Deploy multiple Dify instances** | Medium | Linear scaling, requires load balancing |
-| **Dify Cloud (managed)** | Low | Offload scaling to Anthropic/Dify |
-| **Replace Dify with direct LLM calls** | High | Full control, removes middleware bottleneck |
-| **Async batch processing** | Medium | Process companies in batches during off-peak |
+| Option                                 | Complexity | Impact                                       |
+| -------------------------------------- | ---------- | -------------------------------------------- |
+| **Increase MAX_CONCURRENT_WORKFLOWS**  | Low        | Limited by Dify instance capacity            |
+| **Deploy multiple Dify instances**     | Medium     | Linear scaling, requires load balancing      |
+| **Dify Cloud (managed)**               | Low        | Offload scaling to Anthropic/Dify            |
+| **Replace Dify with direct LLM calls** | High       | Full control, removes middleware bottleneck  |
+| **Async batch processing**             | Medium     | Process companies in batches during off-peak |
 
 ### Monitoring Dify Performance
 
 Key metrics to watch:
+
 - Dify workflow execution time (via task logs)
 - Queue depth in RabbitMQ (pending company tasks)
 - `DifyConcurrencyManager` semaphore wait times
@@ -155,6 +157,7 @@ Key metrics to watch:
 Components that can be scaled horizontally today:
 
 1. **Celery Workers**: Add more worker pods in Kubernetes
+
    ```yaml
    # Example: Scale workers
    kubectl scale deployment celery-worker --replicas=3 -n chapsmind
@@ -202,20 +205,20 @@ Planned architecture where Global Service acts as both API Gateway and shared se
 
 ### Why Global Service as Gateway?
 
-| Aspect | Benefit |
-|--------|---------|
-| **Single entry point** | One service handles auth, routing, and shared functionality |
-| **No microservices complexity** | Avoids separate Kong/Traefik gateway |
-| **Simplified security** | Only Global Service is internet-facing |
-| **Right-sized** | Appropriate complexity for current team and scale |
+| Aspect                          | Benefit                                                     |
+| ------------------------------- | ----------------------------------------------------------- |
+| **Single entry point**          | One service handles auth, routing, and shared functionality |
+| **No microservices complexity** | Avoids separate Kong/Traefik gateway                        |
+| **Simplified security**         | Only Global Service is internet-facing                      |
+| **Right-sized**                 | Appropriate complexity for current team and scale           |
 
 ### Services
 
-| Service | Purpose | Access |
-|---------|---------|--------|
+| Service            | Purpose                                           | Access          |
+| ------------------ | ------------------------------------------------- | --------------- |
 | **Global Service** | Gateway + shared services (tokens, folders, orgs) | Internet-facing |
-| **Screen Module** | Company monitoring functionality | Internal only |
-| **Target Module** | Sales targeting functionality | Internal only |
+| **Screen Module**  | Company monitoring functionality                  | Internal only   |
+| **Target Module**  | Sales targeting functionality                     | Internal only   |
 
 See [ADR-0009](../adr/0009-global-service-architecture.md) for detailed architecture decision.
 
