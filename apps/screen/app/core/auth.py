@@ -11,7 +11,7 @@ No Keycloak SDK needed — only shared-secret JWT verification.
 
 from collections.abc import Awaitable, Callable
 
-from fastapi import HTTPException, Request, status
+from fastapi import Depends, HTTPException, Request, status
 from pydantic import BaseModel
 
 from app.core.exceptions import AuthorizationError
@@ -47,16 +47,14 @@ class AuthenticatedUser(BaseModel):
     iss: str = ""
 
 
-_REQUEST_USER_ATTR = "_authenticated_user"
-
-
 def verify_internal_jwt(request: Request) -> AuthenticatedUser:
     """Verify the Internal JWT from the gateway and build an AuthenticatedUser.
 
-    The result is memoized on ``request.state`` so endpoints that depend on
-    both ``get_current_user`` and ``get_user_organization`` only pay the JWT
-    verification cost once per request (FastAPI caches by callable identity,
-    and our factory returns a fresh closure per call).
+    Designed to be wired in as a FastAPI dependency:
+    ``user: AuthenticatedUser = Depends(verify_internal_jwt)``. FastAPI caches
+    dependency results by callable identity within a single request, so any
+    number of dependents (``get_current_user`` factory output,
+    ``get_user_organization``, …) trigger a single verification per request.
 
     Args:
         request: FastAPI request object
@@ -69,9 +67,11 @@ def verify_internal_jwt(request: Request) -> AuthenticatedUser:
         HTTPException 403: If source IP is not allowed
         HTTPException 500: If internal auth is misconfigured
     """
-    cached: AuthenticatedUser | None = getattr(request.state, _REQUEST_USER_ATTR, None)
-    if cached is not None:
-        return cached
+    if not is_internal_request(request):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing Internal authorization header",
+        )
 
     try:
         payload = verify_internal_request(request)
@@ -100,7 +100,7 @@ def verify_internal_jwt(request: Request) -> AuthenticatedUser:
             detail="Internal authentication error",
         )
 
-    user = AuthenticatedUser(
+    return AuthenticatedUser(
         sub=payload.sub,
         preferred_username=payload.username,
         email=payload.email,
@@ -111,13 +111,11 @@ def verify_internal_jwt(request: Request) -> AuthenticatedUser:
         exp=payload.exp,
         iss=payload.iss,
     )
-    request.state._authenticated_user = user
-    return user
 
 
 def get_current_user(
     required_roles: list[str] | None = None,
-) -> Callable[[Request], Awaitable[AuthenticatedUser]]:
+) -> Callable[[AuthenticatedUser], Awaitable[AuthenticatedUser]]:
     """FastAPI dependency factory that verifies Internal JWT and optionally checks roles.
 
     Args:
@@ -146,16 +144,8 @@ def get_current_user(
         )
 
     async def _dependency(
-        request: Request,
+        user: AuthenticatedUser = Depends(verify_internal_jwt),
     ) -> AuthenticatedUser:
-        if not is_internal_request(request):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Missing Internal authorization header",
-            )
-
-        user = verify_internal_jwt(request)
-
         if required_roles:
             user_roles = set(user.roles)
             if not user_roles.intersection(required_roles):

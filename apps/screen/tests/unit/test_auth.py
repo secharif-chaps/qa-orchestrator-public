@@ -2,14 +2,16 @@
 
 Covers:
 - AuthenticatedUser model (roles property)
-- verify_internal_jwt() request-state memoization
+- verify_internal_jwt() rejects requests without an Internal authorization header
 - get_current_user() factory validation (rejects empty role list)
+- FastAPI dedupes verify_internal_jwt across dependencies on a single request
 """
 
 from unittest.mock import MagicMock, patch
 
 import pytest
-from fastapi import HTTPException
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.testclient import TestClient
 
 from app.core.auth import (
     AuthenticatedUser,
@@ -17,12 +19,13 @@ from app.core.auth import (
     verify_internal_jwt,
 )
 from app.core.internal_jwt import InternalTokenPayload, TokenInvalidError
+from app.core.organization_context import OrganizationContext, get_user_organization
 
 
 def _make_request(headers: dict[str, str] | None = None) -> MagicMock:
     """Build a mock Request with a real `state` namespace."""
     request = MagicMock()
-    request.headers = headers or {"Authorization": "Internal fake-token"}
+    request.headers = headers if headers is not None else {"Authorization": "Internal fake-token"}
 
     class _State:
         pass
@@ -58,44 +61,27 @@ class TestAuthenticatedUserRoles:
         assert user.roles == ["admin", "company.view"]
 
 
-class TestVerifyInternalJwtCache:
-    """Verify the request.state memoization in verify_internal_jwt."""
+class TestVerifyInternalJwt:
+    """verify_internal_jwt translates internal-jwt outcomes to HTTP responses."""
 
-    def test_cache_miss_runs_verification(self):
-        request = _make_request()
+    def test_missing_internal_header_raises_401(self):
+        request = _make_request(headers={})
 
-        with patch("app.core.auth.verify_internal_request", return_value=_make_payload()) as mock_verify:
-            user = verify_internal_jwt(request)
+        with pytest.raises(HTTPException) as exc_info:
+            verify_internal_jwt(request)
 
-        assert mock_verify.call_count == 1
-        assert user.sub == "user-1"
-        # Cache populated for subsequent calls
-        assert request.state._authenticated_user is user
+        assert exc_info.value.status_code == 401
+        assert "Missing Internal authorization header" in exc_info.value.detail
 
-    def test_cache_hit_skips_verification(self):
-        request = _make_request()
+    def test_bearer_header_raises_401(self):
+        request = _make_request(headers={"Authorization": "Bearer something"})
 
-        with patch("app.core.auth.verify_internal_request", return_value=_make_payload()) as mock_verify:
-            first = verify_internal_jwt(request)
-            second = verify_internal_jwt(request)
+        with pytest.raises(HTTPException) as exc_info:
+            verify_internal_jwt(request)
 
-        # verify_internal_request runs only once across two calls on the same request
-        assert mock_verify.call_count == 1
-        assert first is second
+        assert exc_info.value.status_code == 401
 
-    def test_cache_is_per_request(self):
-        """Two different requests must each trigger their own verification."""
-        request_a = _make_request()
-        request_b = _make_request()
-
-        with patch("app.core.auth.verify_internal_request", return_value=_make_payload()) as mock_verify:
-            verify_internal_jwt(request_a)
-            verify_internal_jwt(request_b)
-
-        assert mock_verify.call_count == 2
-
-    def test_failed_verification_does_not_cache(self):
-        """A failed verification must not poison request.state."""
+    def test_invalid_token_raises_401(self):
         request = _make_request()
 
         with (
@@ -105,7 +91,17 @@ class TestVerifyInternalJwtCache:
             verify_internal_jwt(request)
 
         assert exc_info.value.status_code == 401
-        assert getattr(request.state, "_authenticated_user", None) is None
+
+    def test_valid_payload_builds_user(self):
+        request = _make_request()
+
+        with patch("app.core.auth.verify_internal_request", return_value=_make_payload()):
+            user = verify_internal_jwt(request)
+
+        assert isinstance(user, AuthenticatedUser)
+        assert user.sub == "user-1"
+        assert user.preferred_username == "alice"
+        assert user.org_id == "org-1"
 
 
 class TestGetCurrentUserFactoryValidation:
@@ -124,3 +120,39 @@ class TestGetCurrentUserFactoryValidation:
         """Empty list is a footgun (silently permissive); reject it loudly."""
         with pytest.raises(ValueError, match="must be None"):
             get_current_user(required_roles=[])
+
+
+class TestSingleVerificationPerRequest:
+    """FastAPI's per-request dependency cache must dedupe verify_internal_jwt
+    when an endpoint depends on both get_current_user(...) and
+    get_user_organization on the same request.
+    """
+
+    def test_one_call_per_request_with_two_dependents(self):
+        call_count = {"n": 0}
+
+        def _stub_verify() -> AuthenticatedUser:
+            call_count["n"] += 1
+            return AuthenticatedUser(
+                sub="user-1",
+                preferred_username="alice",
+                roles=["company.view"],
+                org_id="org-1",
+                org_name="Acme",
+            )
+
+        app = FastAPI()
+        app.dependency_overrides[verify_internal_jwt] = _stub_verify
+
+        @app.get("/probe")
+        def _probe(
+            user: AuthenticatedUser = Depends(get_current_user(required_roles=["company.view"])),
+            org: OrganizationContext = Depends(get_user_organization),
+        ):
+            return {"user": user.preferred_username, "org": org.organization_id}
+
+        with TestClient(app) as client:
+            resp = client.get("/probe")
+
+        assert resp.status_code == 200, resp.text
+        assert call_count["n"] == 1

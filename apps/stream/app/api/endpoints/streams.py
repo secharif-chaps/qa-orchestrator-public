@@ -5,12 +5,11 @@ from typing import NoReturn
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.core.auth import (
-    InternalTokenPayload,
-    OrganizationContext,
+    AuthenticatedUser,
     get_current_user,
-    get_user_organization,
 )
 from app.core.dependencies import get_dispatch_service, get_stream_service
+from app.core.organization_context import OrganizationContext, get_user_organization
 from app.schemas.delivery import DeliveryRead
 from app.schemas.pagination import PaginatedResponse, create_pagination_meta
 from app.schemas.stream import (
@@ -44,7 +43,7 @@ def list_streams(
     page: int = Query(default=1, ge=1),
     per_page: int = Query(default=10, ge=1, le=100),
     org: OrganizationContext = Depends(get_user_organization),
-    _user: InternalTokenPayload = Depends(get_current_user(required_roles=["stream.read"])),
+    _user: AuthenticatedUser = Depends(get_current_user(required_roles=["stream.read"])),
     service: StreamService = Depends(get_stream_service),
 ):
     """List streams in a folder (paginated).
@@ -68,7 +67,7 @@ def create_stream(
     folder_id: str,
     data: StreamCreate,
     org: OrganizationContext = Depends(get_user_organization),
-    _user: InternalTokenPayload = Depends(get_current_user(required_roles=["stream.write"])),
+    _user: AuthenticatedUser = Depends(get_current_user(required_roles=["stream.write"])),
     service: StreamService = Depends(get_stream_service),
 ):
     """Create a stream in a folder.
@@ -98,7 +97,7 @@ def create_stream(
 def get_stream(
     stream_id: int,
     org: OrganizationContext = Depends(get_user_organization),
-    _user: InternalTokenPayload = Depends(get_current_user(required_roles=["stream.read"])),
+    _user: AuthenticatedUser = Depends(get_current_user(required_roles=["stream.read"])),
     service: StreamService = Depends(get_stream_service),
 ):
     """Get a stream by ID.
@@ -120,7 +119,7 @@ def update_stream(
     stream_id: int,
     data: StreamUpdate,
     org: OrganizationContext = Depends(get_user_organization),
-    _user: InternalTokenPayload = Depends(get_current_user(required_roles=["stream.write"])),
+    _user: AuthenticatedUser = Depends(get_current_user(required_roles=["stream.write"])),
     service: StreamService = Depends(get_stream_service),
 ):
     """Update a stream.
@@ -141,7 +140,7 @@ def update_stream(
 def delete_stream(
     stream_id: int,
     org: OrganizationContext = Depends(get_user_organization),
-    _user: InternalTokenPayload = Depends(get_current_user(required_roles=["stream.write"])),
+    _user: AuthenticatedUser = Depends(get_current_user(required_roles=["stream.write"])),
     service: StreamService = Depends(get_stream_service),
 ):
     """Delete a stream (cascade deletes deliveries).
@@ -162,7 +161,7 @@ def update_stream_status(
     stream_id: int,
     data: StreamStatusUpdate,
     org: OrganizationContext = Depends(get_user_organization),
-    _user: InternalTokenPayload = Depends(get_current_user(required_roles=["stream.write"])),
+    _user: AuthenticatedUser = Depends(get_current_user(required_roles=["stream.write"])),
     service: StreamService = Depends(get_stream_service),
 ):
     """Transition a stream's status.
@@ -188,7 +187,7 @@ def list_deliveries(
     page: int = Query(default=1, ge=1),
     per_page: int = Query(default=10, ge=1, le=100),
     org: OrganizationContext = Depends(get_user_organization),
-    _user: InternalTokenPayload = Depends(get_current_user(required_roles=["stream.read"])),
+    _user: AuthenticatedUser = Depends(get_current_user(required_roles=["stream.read"])),
     service: StreamService = Depends(get_stream_service),
 ):
     """List delivery history for a stream (paginated).
@@ -216,7 +215,7 @@ def list_deliveries(
 async def dispatch_stream(
     stream_id: int,
     org: OrganizationContext = Depends(get_user_organization),
-    user: InternalTokenPayload = Depends(get_current_user(required_roles=["stream.write"])),
+    user: AuthenticatedUser = Depends(get_current_user(required_roles=["stream.write"])),
     dispatch_svc: DispatchService = Depends(get_dispatch_service),
     stream_svc: StreamService = Depends(get_stream_service),
 ):
@@ -242,7 +241,7 @@ async def dispatch_stream(
 )
 async def test_connection(
     data: TestConnectionRequest,
-    _user: InternalTokenPayload = Depends(get_current_user(required_roles=["stream.write"])),
+    _user: AuthenticatedUser = Depends(get_current_user(required_roles=["stream.write"])),
     dispatch_svc: DispatchService = Depends(get_dispatch_service),
 ):
     """Test a channel connection by sending a test message.

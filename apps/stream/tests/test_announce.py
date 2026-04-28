@@ -40,7 +40,7 @@ class TestAnnounceToGateway:
         with (
             patch("app.main.settings") as mock_settings,
             patch("app.main.httpx.AsyncClient") as mock_client_cls,
-            patch("app.main._create_internal_token", return_value="test-token"),
+            patch("app.main.create_internal_token", return_value="test-token"),
         ):
             mock_settings.GLOBAL_SERVICE_URL = "http://gateway:8000/api"
 
@@ -64,7 +64,7 @@ class TestAnnounceToGateway:
         with (
             patch("app.main.settings") as mock_settings,
             patch("app.main.httpx.AsyncClient") as mock_client_cls,
-            patch("app.main._create_internal_token", return_value="test-jwt-token"),
+            patch("app.main.create_internal_token", return_value="test-jwt-token"),
         ):
             mock_settings.GLOBAL_SERVICE_URL = "http://gateway:8000/api"
 
@@ -94,7 +94,7 @@ class TestAnnounceToGateway:
         with (
             patch("app.main.settings") as mock_settings,
             patch("app.main.httpx.AsyncClient") as mock_client_cls,
-            patch("app.main._create_internal_token", return_value="test-token"),
+            patch("app.main.create_internal_token", return_value="test-token"),
         ):
             mock_settings.GLOBAL_SERVICE_URL = "http://gateway:8000/api"
 
@@ -130,7 +130,7 @@ class TestAnnounceToGateway:
         with (
             patch("app.main.settings") as mock_settings,
             patch("app.main.httpx.AsyncClient") as mock_client_cls,
-            patch("app.main._create_internal_token", return_value="test-token"),
+            patch("app.main.create_internal_token", return_value="test-token"),
         ):
             mock_settings.GLOBAL_SERVICE_URL = "http://gateway:8000/api"
 
@@ -162,7 +162,7 @@ class TestAnnounceToGateway:
         with (
             patch("app.main.settings") as mock_settings,
             patch("app.main.httpx.AsyncClient") as mock_client_cls,
-            patch("app.main._create_internal_token", return_value="test-token"),
+            patch("app.main.create_internal_token", return_value="test-token"),
         ):
             mock_settings.GLOBAL_SERVICE_URL = "http://gateway:8000/api"
 
@@ -193,7 +193,7 @@ class TestAnnounceToGateway:
         with (
             patch("app.main.settings") as mock_settings,
             patch("app.main.httpx.AsyncClient") as mock_client_cls,
-            patch("app.main._create_internal_token", return_value="test-token"),
+            patch("app.main.create_internal_token", return_value="test-token"),
         ):
             mock_settings.GLOBAL_SERVICE_URL = "http://gateway:8000/api/"
 
