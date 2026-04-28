@@ -24,9 +24,22 @@ readonly class CloudflareBrowserRenderingClient implements HtmlFetcherInterface
     ) {
     }
 
+    /**
+     * `.env.example` ships these vars with the `changeme` placeholder so
+     * `task doctor` flags them. Treat that value as "not configured" along
+     * with the empty string.
+     */
+    private function isConfigured(): bool
+    {
+        return '' !== $this->accountId
+            && 'changeme' !== $this->accountId
+            && '' !== $this->apiToken
+            && 'changeme' !== $this->apiToken;
+    }
+
     public function fetch(string $url): string
     {
-        if ('' === $this->accountId || '' === $this->apiToken) {
+        if (!$this->isConfigured()) {
             throw HtmlFetchException::fetchFailed(
                 $url,
                 'Cloudflare Browser Rendering is not configured. Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_BR_API_TOKEN in your .env file (credentials available in Passbolt).',
