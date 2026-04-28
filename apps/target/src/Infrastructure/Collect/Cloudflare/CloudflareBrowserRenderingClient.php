@@ -26,6 +26,13 @@ readonly class CloudflareBrowserRenderingClient implements HtmlFetcherInterface
 
     public function fetch(string $url): string
     {
+        if ('' === $this->accountId || '' === $this->apiToken) {
+            throw HtmlFetchException::fetchFailed(
+                $url,
+                'Cloudflare Browser Rendering is not configured. Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_BR_API_TOKEN in your .env file (credentials available in Passbolt).',
+            );
+        }
+
         $endpoint = \sprintf('%s/%s/browser-rendering/content', self::BASE_URL, $this->accountId);
 
         $this->logger?->info('Fetching URL via Cloudflare Browser Rendering', [
