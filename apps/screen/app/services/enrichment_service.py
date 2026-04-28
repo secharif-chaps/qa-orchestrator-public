@@ -1,7 +1,7 @@
 """Enrichment orchestrator service.
 
-Coordinates data collection from all enabled external APIs (Pappers, WorldCheck)
-in parallel. Results are stored in the company_enrichments table for later
+Coordinates data collection from all enabled external APIs (Pappers, WorldCheck,
+EPO) in parallel. Results are stored in the company_enrichments table for later
 access by agents via the get_enrichment_data function tool.
 """
 
@@ -13,10 +13,17 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
 from app.core.logging_config import get_logger
+from app.database import SessionLocal
+from app.infrastructure.epo.exceptions import EpoError
 from app.infrastructure.pappers.exceptions import PappersError
 from app.infrastructure.worldcheck.exceptions import WorldCheckError
 from app.models.company_enrichment import CompanyEnrichment
 from app.models.organization import FeatureFlag
+from app.services.epo import (
+    EpoCredentialsMissingError,
+    EpoFeatureNotEnabledError,
+    EpoService,
+)
 from app.services.feature_flags import has_feature
 from app.services.pappers import PappersService
 from app.services.worldcheck import WorldCheckService
@@ -208,6 +215,78 @@ class EnrichmentService:
             return None
 
     @staticmethod
+    async def _collect_epo(
+        db: Session,
+        company_id: int,
+        company_name: str,
+        organization_id: str,
+    ) -> dict[str, Any] | None:
+        """Collect EPO patent data for a company.
+
+        Runs the credential lookup + upsert on a dedicated SQLAlchemy
+        session so the chain of sync DB reads inside ``EpoService`` does
+        not race with the shared session used by Pappers/WorldCheck
+        upserts running concurrently in asyncio.gather. The EPO record
+        is committed independently from the shared-session batch.
+
+        Persists under ``source="epo_publications"``. An empty patent
+        list is a valid success (we still store a record so agents can
+        distinguish "not searched" from "searched, nothing found").
+        """
+        if not has_feature(db, organization_id, FeatureFlag.EPO):
+            logger.info(
+                "Skipping EPO: feature not enabled",
+                extra={"company_id": company_id, "organization_id": organization_id},
+            )
+            return None
+
+        local_db: Session = SessionLocal()
+        try:
+            try:
+                data = await EpoService.enrich_company(local_db, organization_id, company_name)
+                await asyncio.to_thread(
+                    EnrichmentService._upsert_enrichment,
+                    local_db,
+                    company_id,
+                    "epo_publications",
+                    data=data,
+                    commit=True,
+                )
+                return data
+            except (EpoError, EpoFeatureNotEnabledError, EpoCredentialsMissingError) as e:
+                logger.error(
+                    "EPO collection failed",
+                    extra={"company_id": company_id, "error": str(e)},
+                )
+                await asyncio.to_thread(
+                    EnrichmentService._upsert_enrichment,
+                    local_db,
+                    company_id,
+                    "epo_publications",
+                    status="error",
+                    error=str(e),
+                    commit=True,
+                )
+                return None
+            except Exception as e:
+                logger.error(
+                    "EPO collection failed (unexpected)",
+                    extra={"company_id": company_id, "error": str(e)},
+                )
+                await asyncio.to_thread(
+                    EnrichmentService._upsert_enrichment,
+                    local_db,
+                    company_id,
+                    "epo_publications",
+                    status="error",
+                    error=str(e),
+                    commit=True,
+                )
+                return None
+        finally:
+            await asyncio.to_thread(local_db.close)
+
+    @staticmethod
     async def collect(
         db: Session,
         company_id: int,
@@ -219,6 +298,7 @@ class EnrichmentService:
 
         - Pappers: only if country_code == "FR" (or unknown) and flag enabled
         - WorldCheck: if flag enabled
+        - EPO: if flag enabled (stored under source="epo_publications")
 
         Individual failures are caught and logged - one failure does not
         block the others.
@@ -231,7 +311,8 @@ class EnrichmentService:
             country_code: Optional country code (e.g., "FR", "DE")
 
         Returns:
-            Dict mapping source name to API data, e.g., {"pappers": {...}, "worldcheck": {...}}
+            Dict mapping source name to API data, e.g.,
+            {"pappers": {...}, "worldcheck": {...}, "epo_publications": {...}}
             Only includes sources that returned data successfully.
         """
         logger.info(
@@ -246,8 +327,9 @@ class EnrichmentService:
         # Run all collectors in parallel — each handles its own exceptions
         pappers_task = EnrichmentService._collect_pappers(db, company_id, company_name, organization_id, country_code)
         worldcheck_task = EnrichmentService._collect_worldcheck(db, company_id, company_name, organization_id)
+        epo_task = EnrichmentService._collect_epo(db, company_id, company_name, organization_id)
 
-        pappers_data, worldcheck_data = await asyncio.gather(pappers_task, worldcheck_task)
+        pappers_data, worldcheck_data, epo_data = await asyncio.gather(pappers_task, worldcheck_task, epo_task)
 
         # Single commit for all upserts in one transaction
         await asyncio.to_thread(db.commit)
@@ -260,6 +342,9 @@ class EnrichmentService:
 
         if isinstance(worldcheck_data, dict):
             result["worldcheck"] = worldcheck_data
+
+        if isinstance(epo_data, dict):
+            result["epo_publications"] = epo_data
 
         logger.info(
             "Data collection completed",

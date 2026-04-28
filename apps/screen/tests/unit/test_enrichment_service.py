@@ -23,16 +23,18 @@ class TestCollect:
     """Tests for EnrichmentService.collect()."""
 
     @pytest.mark.asyncio
-    async def test_collects_both_sources_when_enabled(self):
-        """Both pappers and worldcheck data returned when flags enabled."""
+    async def test_collects_all_sources_when_enabled(self):
+        """Pappers, worldcheck, and epo data returned when flags enabled."""
         db = MagicMock()
 
         with (
             patch.object(EnrichmentService, "_collect_pappers", new_callable=AsyncMock) as mock_pappers,
             patch.object(EnrichmentService, "_collect_worldcheck", new_callable=AsyncMock) as mock_wc,
+            patch.object(EnrichmentService, "_collect_epo", new_callable=AsyncMock) as mock_epo,
         ):
             mock_pappers.return_value = {"siren": "123"}
             mock_wc.return_value = {"matches": []}
+            mock_epo.return_value = {"applicant_query": "Test*", "total_results": 0, "patents": []}
 
             result = await EnrichmentService.collect(
                 db,
@@ -42,7 +44,11 @@ class TestCollect:
                 country_code="FR",
             )
 
-        assert result == {"pappers": {"siren": "123"}, "worldcheck": {"matches": []}}
+        assert result == {
+            "pappers": {"siren": "123"},
+            "worldcheck": {"matches": []},
+            "epo_publications": {"applicant_query": "Test*", "total_results": 0, "patents": []},
+        }
 
     @pytest.mark.asyncio
     async def test_excludes_none_results(self):
@@ -52,9 +58,11 @@ class TestCollect:
         with (
             patch.object(EnrichmentService, "_collect_pappers", new_callable=AsyncMock) as mock_pappers,
             patch.object(EnrichmentService, "_collect_worldcheck", new_callable=AsyncMock) as mock_wc,
+            patch.object(EnrichmentService, "_collect_epo", new_callable=AsyncMock) as mock_epo,
         ):
             mock_pappers.return_value = None
             mock_wc.return_value = {"matches": []}
+            mock_epo.return_value = None
 
             result = await EnrichmentService.collect(
                 db,
@@ -73,9 +81,11 @@ class TestCollect:
         with (
             patch.object(EnrichmentService, "_collect_pappers", new_callable=AsyncMock) as mock_pappers,
             patch.object(EnrichmentService, "_collect_worldcheck", new_callable=AsyncMock) as mock_wc,
+            patch.object(EnrichmentService, "_collect_epo", new_callable=AsyncMock) as mock_epo,
         ):
             mock_pappers.return_value = None
             mock_wc.return_value = None
+            mock_epo.return_value = None
 
             result = await EnrichmentService.collect(
                 db,
@@ -276,6 +286,152 @@ class TestCollectWorldCheck:
             mock_screen.side_effect = RuntimeError("unexpected")
 
             result = await EnrichmentService._collect_worldcheck(
+                db,
+                company_id=1,
+                company_name="Test",
+                organization_id="org-1",
+            )
+
+        assert result is None
+
+
+class TestCollectEpo:
+    """Tests for _collect_epo."""
+
+    @pytest.mark.asyncio
+    async def test_skips_when_feature_disabled(self):
+        db = MagicMock()
+
+        with patch("app.services.enrichment_service.has_feature", return_value=False):
+            result = await EnrichmentService._collect_epo(
+                db,
+                company_id=1,
+                company_name="Test",
+                organization_id="org-1",
+            )
+
+        assert result is None
+
+    @pytest.mark.asyncio
+    async def test_returns_data_on_success(self):
+        db = MagicMock()
+        payload = {
+            "applicant_query": "Test*",
+            "total_results": 2,
+            "patents": [
+                {"doc_id": "EP1", "title": "Widget", "abstract": "..."},
+            ],
+        }
+
+        with (
+            patch("app.services.enrichment_service.has_feature", return_value=True),
+            patch(
+                "app.services.enrichment_service.EpoService.enrich_company",
+                new_callable=AsyncMock,
+            ) as mock_enrich,
+            patch("app.services.enrichment_service.asyncio.to_thread", new_callable=AsyncMock),
+        ):
+            mock_enrich.return_value = payload
+
+            result = await EnrichmentService._collect_epo(
+                db,
+                company_id=1,
+                company_name="Test",
+                organization_id="org-1",
+            )
+
+        assert result == payload
+
+    @pytest.mark.asyncio
+    async def test_returns_empty_payload_when_no_patents(self):
+        """Empty patent list is still a success — callers persist the record."""
+        db = MagicMock()
+        payload = {"applicant_query": "Ghost*", "total_results": 0, "patents": []}
+
+        with (
+            patch("app.services.enrichment_service.has_feature", return_value=True),
+            patch(
+                "app.services.enrichment_service.EpoService.enrich_company",
+                new_callable=AsyncMock,
+            ) as mock_enrich,
+            patch("app.services.enrichment_service.asyncio.to_thread", new_callable=AsyncMock),
+        ):
+            mock_enrich.return_value = payload
+
+            result = await EnrichmentService._collect_epo(
+                db,
+                company_id=1,
+                company_name="Ghost",
+                organization_id="org-1",
+            )
+
+        assert result == payload
+
+    @pytest.mark.asyncio
+    async def test_handles_epo_error(self):
+        from app.infrastructure.epo.exceptions import EpoAuthError
+
+        db = MagicMock()
+
+        with (
+            patch("app.services.enrichment_service.has_feature", return_value=True),
+            patch(
+                "app.services.enrichment_service.EpoService.enrich_company",
+                new_callable=AsyncMock,
+            ) as mock_enrich,
+            patch("app.services.enrichment_service.asyncio.to_thread", new_callable=AsyncMock),
+        ):
+            mock_enrich.side_effect = EpoAuthError()
+
+            result = await EnrichmentService._collect_epo(
+                db,
+                company_id=1,
+                company_name="Test",
+                organization_id="org-1",
+            )
+
+        assert result is None
+
+    @pytest.mark.asyncio
+    async def test_handles_credentials_missing(self):
+        from app.services.epo import EpoCredentialsMissingError
+
+        db = MagicMock()
+
+        with (
+            patch("app.services.enrichment_service.has_feature", return_value=True),
+            patch(
+                "app.services.enrichment_service.EpoService.enrich_company",
+                new_callable=AsyncMock,
+            ) as mock_enrich,
+            patch("app.services.enrichment_service.asyncio.to_thread", new_callable=AsyncMock),
+        ):
+            mock_enrich.side_effect = EpoCredentialsMissingError("org-1")
+
+            result = await EnrichmentService._collect_epo(
+                db,
+                company_id=1,
+                company_name="Test",
+                organization_id="org-1",
+            )
+
+        assert result is None
+
+    @pytest.mark.asyncio
+    async def test_handles_unexpected_exception(self):
+        db = MagicMock()
+
+        with (
+            patch("app.services.enrichment_service.has_feature", return_value=True),
+            patch(
+                "app.services.enrichment_service.EpoService.enrich_company",
+                new_callable=AsyncMock,
+            ) as mock_enrich,
+            patch("app.services.enrichment_service.asyncio.to_thread", new_callable=AsyncMock),
+        ):
+            mock_enrich.side_effect = RuntimeError("unexpected")
+
+            result = await EnrichmentService._collect_epo(
                 db,
                 company_id=1,
                 company_name="Test",

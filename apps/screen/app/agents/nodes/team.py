@@ -8,7 +8,7 @@ async def run_team_agent(state: CompanyAnalysisState) -> dict:
     """Research leadership team and key personnel."""
     # Pass enrichment sources so the agent can use the get_enrichment_data tool
     enrichment = state.get("enrichment_data", {})
-    sources = [s for s in enrichment if s in ("pappers", "worldcheck")]
+    sources = [s for s in enrichment if s in ("pappers", "worldcheck", "epo_publications")]
 
     result = await run_agent(
         agent_name="team",

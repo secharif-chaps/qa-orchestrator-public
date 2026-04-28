@@ -59,10 +59,6 @@ BIBLIO_XML = """<?xml version="1.0" encoding="UTF-8"?>
         <ex:application-reference>
           <ex:document-id><ex:date>20180615</ex:date></ex:document-id>
         </ex:application-reference>
-        <ex:classifications-ipcr>
-          <ex:classification-ipc><ex:text>G06F 17/30</ex:text></ex:classification-ipc>
-          <ex:classification-ipc><ex:text>G06N 3/08</ex:text></ex:classification-ipc>
-        </ex:classifications-ipcr>
         <ex:parties>
           <ex:applicants>
             <ex:applicant>
@@ -203,7 +199,6 @@ class TestBiblioParser:
         assert biblio.title == "A method for doing something"  # English preferred
         assert biblio.applicants == ["Acme Corporation", "Globex S.A."]
         assert biblio.inventors == ["Smith, John"]
-        assert biblio.ipc_classes == ["G06F 17/30", "G06N 3/08"]
         assert biblio.publication_date == date(2020, 1, 2)
         assert biblio.application_date == date(2018, 6, 15)
 

@@ -46,7 +46,6 @@ class PatentBiblio(BaseModel):
     title: str | None = None
     applicants: list[str] = Field(default_factory=list)
     inventors: list[str] = Field(default_factory=list)
-    ipc_classes: list[str] = Field(default_factory=list)
     publication_date: date | None = None
     application_date: date | None = None
 
@@ -196,12 +195,6 @@ def parse_biblio_response(xml: bytes) -> PatentBiblio:
         if el.text
     ]
 
-    ipc_classes = [
-        (el.text or "").strip()
-        for el in exch_doc.findall(".//ex:classification-ipc/ex:text", namespaces=EPO_NS)
-        if el.text
-    ]
-
     pub_date = _parse_epo_date(exch_doc.findtext(".//ex:publication-reference//ex:date", namespaces=EPO_NS))
     app_date = _parse_epo_date(exch_doc.findtext(".//ex:application-reference//ex:date", namespaces=EPO_NS))
 
@@ -210,7 +203,6 @@ def parse_biblio_response(xml: bytes) -> PatentBiblio:
         title=title,
         applicants=applicants,
         inventors=inventors,
-        ipc_classes=ipc_classes,
         publication_date=pub_date,
         application_date=app_date,
     )
