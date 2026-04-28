@@ -28,7 +28,7 @@ class TestBuildEnrichmentTool:
         original_enum = ENRICHMENT_TOOL_DEFINITION["parameters"]["properties"]["source"]["enum"]
         build_enrichment_tool(company_id=1, available_sources=["pappers"])
 
-        assert original_enum == ["pappers", "worldcheck"]
+        assert original_enum == ["pappers", "worldcheck", "epo_publications"]
 
 
 class TestHandleCall:

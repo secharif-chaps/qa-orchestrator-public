@@ -383,6 +383,66 @@ class TestInputValidation:
             await client.search_patents("   ")
 
 
+EMPTY_SEARCH_XML = b"""<?xml version="1.0" encoding="UTF-8"?>
+<ops:world-patent-data xmlns:ops="http://ops.epo.org" xmlns:ex="http://www.epo.org/exchange">
+  <ops:biblio-search total-result-count="0"/>
+</ops:world-patent-data>
+"""
+
+
+class TestSearchPatents:
+    """Graceful-degradation behaviour of `search_patents`.
+
+    TAR-1576 requires the enrichment pipeline to persist a clean
+    "searched, nothing found" record both when EPO returns 0 hits
+    (delivered as HTTP 404 by OPS) and when the response page would
+    otherwise overflow the 100-hit per-call cap.
+    """
+
+    @pytest.mark.asyncio
+    async def test_404_on_search_returns_empty_result(self, client, fake_auth_payload):
+        """EPO returns 404 when the CQL yields no hits — treat as empty, not error."""
+        mock_class = _build_async_client_mock(
+            auth_responses=[make_json_response(200, fake_auth_payload)],
+            data_responses=[make_response(404, content=b"no results")],
+        )
+
+        with patch.object(epo_client_module.httpx, "AsyncClient", mock_class):
+            result = await client.search_patents("Nonexistent Corp")
+
+        assert result.total_results == 0
+        assert result.entries == []
+
+    @pytest.mark.asyncio
+    async def test_sends_x_ops_range_header(self, client, fake_auth_payload):
+        """Search MUST cap the result page with `X-OPS-Range: 1-100` to avoid 413."""
+        mock_class = _build_async_client_mock(
+            auth_responses=[make_json_response(200, fake_auth_payload)],
+            data_responses=[make_response(200, content=EMPTY_SEARCH_XML)],
+        )
+
+        with patch.object(epo_client_module.httpx, "AsyncClient", mock_class):
+            await client.search_patents("Airbus")
+
+        instance = mock_class.return_value.__aenter__.return_value
+        instance.request.assert_awaited_once()
+        sent_headers = instance.request.await_args.kwargs["headers"]
+        assert sent_headers.get("X-OPS-Range") == "1-100"
+
+    @pytest.mark.asyncio
+    async def test_biblio_still_raises_not_found(self, client, fake_auth_payload):
+        """404 softening is scoped to the search endpoint — biblio must still raise."""
+        mock_class = _build_async_client_mock(
+            auth_responses=[make_json_response(200, fake_auth_payload)],
+            data_responses=[make_response(404, content=b"not found")],
+        )
+        with (
+            patch.object(epo_client_module.httpx, "AsyncClient", mock_class),
+            pytest.raises(EpoNotFoundError),
+        ):
+            await client.get_biblio("EP.9999999.A1")
+
+
 class TestCredentialRedaction:
     """Credentials, Basic header and bearer token must never appear in logs."""
 

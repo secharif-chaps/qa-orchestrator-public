@@ -56,6 +56,13 @@ MAX_DELAY_SECONDS = 8.0
 DEFAULT_TIMEOUT_SECONDS = 30.0
 TOKEN_SAFETY_WINDOW_SECONDS = 60
 
+# EPO OPS caps `published-data/search` responses at 100 hits per call. For
+# large applicants (AIRBUS, SIEMENS…) the default open-ended response
+# triggers HTTP 413 Payload Too Large. Sending an explicit `X-OPS-Range`
+# keeps us under the cap and lets us rely on sort-by-publication-desc
+# upstream to retain the most relevant page.
+SEARCH_RESULT_RANGE = "1-100"
+
 _QUOTA_REJECTION_REASONS = {
     "IndividualQuotaPerHour",
     "IndividualQuotaPerWeek",
@@ -170,6 +177,7 @@ class EpoClient:
         method: str,
         path: str,
         params: dict[str, str] | None = None,
+        extra_headers: dict[str, str] | None = None,
     ) -> httpx.Response:
         """Make an authenticated request with quota-retry and 401 recovery."""
         url = f"{BASE_URL}{path}"
@@ -182,6 +190,8 @@ class EpoClient:
                 "Authorization": f"Bearer {token}",
                 "Accept": "application/xml",
             }
+            if extra_headers:
+                headers.update(extra_headers)
 
             try:
                 async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -303,13 +313,32 @@ class EpoClient:
             raise ValueError("doc_id contains invalid characters (allowed: letters, digits, dot, dash, underscore)")
 
     async def search_patents(self, applicant_name: str) -> PatentSearchResult:
-        """Search published patents whose applicant name matches `applicant_name`."""
+        """Search published patents whose applicant name matches `applicant_name`.
+
+        Caps the result page with the ``X-OPS-Range`` header (100 hits max —
+        EPO OPS's per-call limit) and treats a 404 as "no matches", which
+        EPO returns when the CQL query yields zero hits; both cases return
+        an empty ``PatentSearchResult`` so the enrichment pipeline can
+        persist a clean "searched, nothing found" record instead of an
+        error.
+        """
         if not applicant_name or not applicant_name.strip():
             raise ValueError("applicant_name must be a non-empty string")
         cql = f'pa="{applicant_name}"'
         path = f"/rest-services/published-data/search?q={quote(cql)}"
         logger.info("EPO search_patents", extra={"path": "/rest-services/published-data/search"})
-        response = await self._request("GET", path)
+        try:
+            response = await self._request(
+                "GET",
+                path,
+                extra_headers={"X-OPS-Range": SEARCH_RESULT_RANGE},
+            )
+        except EpoNotFoundError:
+            logger.info(
+                "EPO search returned 404 (no matching applicants)",
+                extra={"applicant_name": applicant_name},
+            )
+            return PatentSearchResult(total_results=0, entries=[])
         return parse_search_response(response.content)
 
     async def get_biblio(self, doc_id: str) -> PatentBiblio:

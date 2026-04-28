@@ -21,14 +21,16 @@ ENRICHMENT_TOOL_DEFINITION: dict = {
     "description": (
         "Retrieve pre-fetched structured data for this company from an external API. "
         "Available sources: pappers (French business registry: SIREN, legal form, capital, "
-        "officers, financials), worldcheck (due diligence screening: sanctions, PEP matches)."
+        "officers, financials), worldcheck (due diligence screening: sanctions, PEP matches), "
+        "epo_publications (European Patent Office patents: title, inventors, applicants, "
+        "publication date, patent number, and abstract for the company's most recent patents)."
     ),
     "parameters": {
         "type": "object",
         "properties": {
             "source": {
                 "type": "string",
-                "enum": ["pappers", "worldcheck"],
+                "enum": ["pappers", "worldcheck", "epo_publications"],
                 "description": "The data source to query",
             }
         },
