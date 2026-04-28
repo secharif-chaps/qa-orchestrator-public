@@ -45,6 +45,11 @@ x-target-env: &target-env
   INTERNAL_JWT_SECRET: ${INTERNAL_JWT_SECRET:-!ChangeThisInternalJWTSecretKey!!}
   INTERNAL_ALLOWED_IPS: ${INTERNAL_ALLOWED_IPS:-}
   GLOBAL_SERVICE_URL: http://global-service:8000/api
+  # Cloudflare Browser Rendering — used by HtmlFetcher for manual document
+  # creation (HTTP API + CLI). Empty in defaults; the client raises a clear
+  # "not configured" error when these are missing.
+  CLOUDFLARE_ACCOUNT_ID: ${CLOUDFLARE_ACCOUNT_ID:-}
+  CLOUDFLARE_BR_API_TOKEN: ${CLOUDFLARE_BR_API_TOKEN:-}
 
 # ─── Services ──────────────────────────────────────────
 services:
