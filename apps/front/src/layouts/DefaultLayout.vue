@@ -26,11 +26,14 @@
       </div>
     </div>
   </div>
+
+  <ConfirmModal />
 </template>
 
 <script lang="ts" setup>
 import Appbar from '@/components/global/appbar.vue'
 import BackgroundGradientBlobs from '@/components/global/background/BackgroundGradientBlobs.vue'
+import ConfirmModal from '@/components/global/ConfirmModal.vue'
 import Sidebar from '@/components/global/sidebar.vue'
 import { useSidebarStore } from '@/stores/sidebar'
 import { computed } from 'vue'

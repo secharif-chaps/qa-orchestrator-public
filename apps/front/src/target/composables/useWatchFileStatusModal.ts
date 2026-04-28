@@ -1,5 +1,5 @@
 import { useChangeWatchFileStatus } from '@target/api/mutations/watchFile'
-import { useConfirmModal } from '@target/composables/useConfirmModal'
+import { useConfirmModal } from '@/composables/useConfirmModal'
 import type { WatchFile, WatchFileStatus } from '@target/types/watchFile'
 import { WATCH_FILE_STATUS } from '@target/types/watchFile'
 import { useI18n } from 'vue-i18n'
