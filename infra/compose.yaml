@@ -182,13 +182,17 @@ services:
       target-valkey: { condition: service_healthy }
     environment:
       <<: *target-env
+    # `agent_commands` is intentionally NOT consumed here — it is the
+    # outbound queue that n8n consumes (PHP dispatches to it). Including it
+    # here would make PHP try to handle agent payloads (e.g. ChatSessionMessageAgent)
+    # for which it has no handler, leading to retry/failure noise.
     command:
       - "php"
       - "bin/console"
       - "messenger:consume"
+      - "-vv"
       - "async_priority_high"
       - "async_priority_low"
-      - "agent_commands"
       - "agent_responses"
       - "quality_processing"
       - "--time-limit=3600"
