@@ -36,6 +36,8 @@ All ADRs follow a consistent format. See [template.md](./template.md) for the st
 | [ADR-0015](./0015-multi-module-gateway.md)                     | Multi-Module API Gateway                       | Accepted | backend, architecture, api-gateway, global-service, multi-module      |
 | [ADR-0016](./0016-documentation-strategy.md)                   | Centralized Documentation and Tooling Strategy | Proposed | documentation, architecture, migration, adr, onboarding, tooling      |
 | [ADR-0017](./0017-promptfoo-llm-evaluation.md)                 | Promptfoo for LLM Prompt Evaluation            | Proposed | backend, ai, testing, evaluation, promptfoo                           |
+| [ADR-0018](./0018-role-and-permission-model.md)                | Role and Permission Model                      | Proposed | security, keycloak, rbac, permissions, multi-tenancy                  |
+| [ADR-0019](./0019-security-audit-trail.md)                     | Security Audit Trail                           | Proposed | security, audit, compliance, iso27001, observability                  |
 
 ## Status Definitions
 
