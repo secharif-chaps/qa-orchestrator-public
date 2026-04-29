@@ -29,7 +29,16 @@ tasks:
       Note: This will delete all n8n data and database, use with caution!
     cmds:
       - docker compose down n8n n8n-import
-      - docker volume rm --force "$(docker compose volumes --format '{{.Name}}' | grep n8n_data)"
+      # `docker compose volumes` only lists volumes of running services, so it
+      # would miss `n8n_data` right after `down`. Resolve the prefixed name
+      # via compose config and skip if the volume is already gone.
+      - |
+        vol="$(docker compose config --format json | jq -r '.volumes.n8n_data.name // empty')"
+        if [ -n "$vol" ] && docker volume inspect "$vol" >/dev/null 2>&1; then
+          docker volume rm --force "$vol"
+        else
+          echo "Volume n8n_data not found — already removed."
+        fi
       - docker compose exec db psql -U ${POSTGRES_USER:-postgres} -d n8n_db -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO ${N8N_DB_USER:-postgres};"
       - docker compose --profile target up -d --wait n8n
       - docker compose logs -n 45 n8n-import n8n
