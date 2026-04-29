@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\SourceActivity;
 
+use App\Domain\Collect\ApifyRunCost;
 use App\Domain\Collect\CollectTaskStatus;
 use App\Domain\Source\Source;
 use App\Domain\Source\SourceStatus;
@@ -108,5 +109,15 @@ interface SourceActivityLoggerInterface
         Source $source,
         array $queryLogData,
         ?string $providerName = null,
+    ): SourceActivity;
+
+    /**
+     * @param array<string, mixed> $context Additional context (apify_actor_id, run_id, items_collected, etc.)
+     */
+    public function logSourceCollectCost(
+        Source $source,
+        string $providerName,
+        ApifyRunCost $cost,
+        array $context = [],
     ): SourceActivity;
 }

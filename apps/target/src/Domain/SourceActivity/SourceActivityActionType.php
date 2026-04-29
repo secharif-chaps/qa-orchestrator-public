@@ -17,4 +17,5 @@ enum SourceActivityActionType: string
     case SOURCE_COLLECTOR_STATUS_CHANGED = 'source_collect_status_changed';
     case SOURCE_QUERY_LOG = 'source_query_log';
     case SOURCE_COLLECT_LOG = 'source_collect_log';
+    case SOURCE_COLLECT_COST = 'source_collect_cost';
 }

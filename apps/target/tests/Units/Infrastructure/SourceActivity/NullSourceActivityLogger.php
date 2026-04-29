@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Units\Infrastructure\SourceActivity;
 
+use App\Domain\Collect\ApifyRunCost;
 use App\Domain\Collect\CollectTaskStatus;
 use App\Domain\Source\Source;
 use App\Domain\Source\SourceStatus;
@@ -14,6 +15,22 @@ use App\Domain\User\User;
 
 class NullSourceActivityLogger implements SourceActivityLoggerInterface
 {
+    /** @var list<array{source: Source, providerName: string, cost: ApifyRunCost, context: array<string, mixed>}> */
+    private array $collectCostCalls = [];
+
+    /**
+     * @return list<array{source: Source, providerName: string, cost: ApifyRunCost, context: array<string, mixed>}>
+     */
+    public function getCollectCostCalls(): array
+    {
+        return $this->collectCostCalls;
+    }
+
+    public function countCollectCostCalls(): int
+    {
+        return \count($this->collectCostCalls);
+    }
+
     public function logSourceConnected(
         Source $source,
         ?User $user,
@@ -163,5 +180,33 @@ class NullSourceActivityLogger implements SourceActivityLoggerInterface
         }
 
         return new SourceActivity($source, null, SourceActivityActionType::SOURCE_QUERY_LOG, $actionData);
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function logSourceCollectCost(
+        Source $source,
+        string $providerName,
+        ApifyRunCost $cost,
+        array $context = [],
+    ): SourceActivity {
+        $this->collectCostCalls[] = [
+            'source' => $source,
+            'providerName' => $providerName,
+            'cost' => $cost,
+            'context' => $context,
+        ];
+
+        return new SourceActivity(
+            $source,
+            null,
+            SourceActivityActionType::SOURCE_COLLECT_COST,
+            array_merge([
+                'provider_name' => $providerName,
+                'compute_units' => $cost->computeUnits,
+                'cost_usd' => $cost->costUsd,
+            ], $context)
+        );
     }
 }
