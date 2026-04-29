@@ -33,7 +33,7 @@ import {
 } from '@target/api/queries/timeline'
 import ActorCard from '@target/components/actors/ActorCard.vue'
 import Drawer from '@target/components/global/Drawer.vue'
-import EmptyState from '@target/components/global/EmptyState.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import ErrorMessage from '@target/components/global/ErrorMessage.vue'
 import SourceCard from '@target/components/sources/SourceCard.vue'
 import type { WatchFileEventType } from '@target/types/watchFile'

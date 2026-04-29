@@ -11,15 +11,15 @@
         class="text-neutral-light-font mb-4 text-5xl"
         :lib="fill ? 'fa-solid' : 'fa-regular'"
       />
-      <h3 v-if="title" class="text-neutral-font mb-1 text-lg font-medium">
-        {{ title }}
+      <!-- Hide the heading when a custom slot is provided without a title, to avoid a double-heading with the slot's own content -->
+      <h3 v-if="title || !$slots.default" class="text-neutral-font mb-1 text-lg font-medium">
+        {{ title || $t('common.empty') }}
       </h3>
-      <h3 v-else class="text-neutral-font mb-1 text-lg font-medium">
-        {{ $t('common.empty') }}
-      </h3>
-      <p v-if="description" class="text-neutral-muted-font max-w-112">
-        {{ description }}
-      </p>
+      <div v-if="$slots.default || description" class="text-neutral-muted-font max-w-112">
+        <slot>
+          <p>{{ description }}</p>
+        </slot>
+      </div>
     </div>
   </div>
 </template>

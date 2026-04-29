@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import EmptyState from '@target/components/global/EmptyState.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import ErrorMessage from '@target/components/global/ErrorMessage.vue'
 import SectionListPaginator from '@target/components/watchFiles/EditSection/SectionListPaginator.vue'
 import type { WatchFileActor } from '@target/types/watchFile'

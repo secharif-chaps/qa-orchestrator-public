@@ -9,11 +9,7 @@
     <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State -->
-    <NoData v-else-if="!hasCsrData">
-      <p class="text-neutral-black-font text-lg font-medium">
-        {{ $t('screen.profile.sections.csr.noData') }}
-      </p>
-    </NoData>
+    <EmptyState v-else-if="!hasCsrData" :title="$t('screen.profile.sections.csr.noData')" />
 
     <!-- Main Content -->
     <div v-else class="flex flex-col gap-6">
@@ -70,7 +66,7 @@ import CsrItem from '@/components/company/csr/CsrItem.vue'
 import type { CsrFlatItem } from '@/components/company/csr/types'
 import { getSourcedSource, getSourcedValue } from '@/components/helpers/sourcedValues'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
-import NoData from '@/components/ui/NoData.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import SectionCard from '@/components/ui/SectionCard.vue'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import { companyByIdQuery } from '@/queries/companies'

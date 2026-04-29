@@ -13,11 +13,10 @@
     <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State -->
-    <NoData v-else-if="!hasCorporateStructureData">
-      <p class="text-neutral-black-font text-lg font-medium">
-        {{ $t('screen.profile.sections.corporateStructure.noData') }}
-      </p>
-    </NoData>
+    <EmptyState
+      v-else-if="!hasCorporateStructureData"
+      :title="$t('screen.profile.sections.corporateStructure.noData')"
+    />
 
     <!-- Main Content -->
     <div v-else class="flex flex-col gap-6">
@@ -69,7 +68,7 @@ meta:
 import CorporateEntityGroup from '@/components/company/CorporateEntityGroup.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
-import NoData from '@/components/ui/NoData.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import { Icon } from '@owlint/feathers-vue'

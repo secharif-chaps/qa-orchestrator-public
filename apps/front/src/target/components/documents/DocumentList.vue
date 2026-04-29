@@ -114,7 +114,7 @@ import { WATCH_FILE_STATUS } from '@target/types/watchFile'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
-import EmptyState from '../global/EmptyState.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import DocumentItem from './DocumentItem.vue'
 
 const { t } = useI18n()

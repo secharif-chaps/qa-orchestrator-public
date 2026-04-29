@@ -1345,17 +1345,6 @@
           "title": "Attention : cela supprimera définitivement l'entreprise"
         }
       },
-      "empty": {
-        "noCompanies": {
-          "description": "Commencez par créer votre première entreprise pour suivre et gérer vos relations d'affaires.",
-          "title": "Aucune entreprise pour le moment"
-        },
-        "noResults": {
-          "description": "Aucune entreprise ne correspond à \"{query}\". Essayez d'ajuster vos termes de recherche.",
-          "descriptionNoQuery": "Essayez d'ajuster vos termes de recherche",
-          "title": "Aucune entreprise trouvée"
-        }
-      },
       "export": {
         "button": "Exporter",
         "modal": {
@@ -1440,11 +1429,6 @@
             "partial": "Partiel",
             "processing": "En cours"
           }
-        }
-      },
-      "list": {
-        "create": {
-          "title": "Nouveau Screen"
         }
       },
       "management": {
@@ -1744,9 +1728,6 @@
         "description": "Description",
         "requirements": "Exigences"
       },
-      "emptyState": {
-        "hint": "Les offres d'emploi et les informations de recrutement apparaîtront ici une fois disponibles"
-      },
       "insights": {
         "growthIndicators": "Indicateurs de Croissance",
         "hiringFocus": "Objectif d'embauche",
@@ -1771,7 +1752,6 @@
           "table": "Tableau"
         }
       },
-      "loading": "Chargement des offres...",
       "title": "Informations sur l'embauche"
     },
     "products": {
@@ -1908,6 +1888,7 @@
         },
         "press": {
           "activities": {
+            "noItems": "Aucune activité ou source presse listée",
             "title": "Activités et source"
           },
           "categories": {
@@ -2019,13 +2000,9 @@
       }
     },
     "timeline": {
-      "emptyState": {
-        "hint": "Les données chronologiques apparaîtront ici une fois disponibles"
-      },
       "event": {
         "impactAnalysis": "Analyse d'impact"
       },
-      "loading": "Chargement de la chronologie...",
       "search": {
         "noResults": "Aucun événement trouvé correspondant à \"{query}\"",
         "placeholder": "Rechercher..."

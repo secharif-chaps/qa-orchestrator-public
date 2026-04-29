@@ -9,11 +9,10 @@
     <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State -->
-    <NoData v-else-if="!hasProductsData">
-      <p class="text-neutral-black-font text-lg font-medium">
-        {{ $t('screen.profile.sections.products.noData') }}
-      </p>
-    </NoData>
+    <EmptyState
+      v-else-if="!hasProductsData"
+      :title="$t('screen.profile.sections.products.noData')"
+    />
 
     <!-- Main content -->
     <template v-else>
@@ -51,11 +50,7 @@
           />
         </template>
 
-        <NoData v-else-if="searchQuery">
-          <p class="text-neutral-black-font text-lg font-medium">
-            {{ $t('screen.products.noResults') }}
-          </p>
-        </NoData>
+        <EmptyState v-else-if="searchQuery" :title="$t('screen.products.noResults')" />
       </div>
     </template>
   </div>
@@ -67,7 +62,7 @@ import ProductsHeader from '@/components/company/products/ProductsHeader.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
-import NoData from '@/components/ui/NoData.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import PaginationComponent from '@/components/ui/Pagination.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
