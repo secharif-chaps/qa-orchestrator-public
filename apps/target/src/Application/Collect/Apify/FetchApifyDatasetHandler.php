@@ -84,7 +84,7 @@ readonly class FetchApifyDatasetHandler
                     'documentsCreated' => $stats['created'],
                     'normalizationErrors' => $stats['errors'],
                     'fetchedAt' => new \DateTimeImmutable()
-->format('Y-m-d H:i:s'),
+                        ->format('Y-m-d H:i:s'),
                     'datasetId' => $action->datasetId,
                 ]
             );
