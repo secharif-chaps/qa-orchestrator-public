@@ -202,11 +202,12 @@ class NullSourceActivityLogger implements SourceActivityLoggerInterface
             $source,
             null,
             SourceActivityActionType::SOURCE_COLLECT_COST,
-            array_merge([
+            [
+                ...$context,
                 'provider_name' => $providerName,
                 'compute_units' => $cost->computeUnits,
                 'cost_usd' => $cost->costUsd,
-            ], $context)
+            ]
         );
     }
 }
