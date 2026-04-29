@@ -44,7 +44,7 @@
             />
 
             <!-- Tab Content -->
-            <div class="bg-base-200 border-primary-stroke rounded-xl border p-6">
+            <div class="bg-base-200 border-primary-lighter-stroke rounded-xl border p-6">
               <RouterView
                 :folder="folder"
                 v-model:search-term="searchTerm"
