@@ -48,9 +48,22 @@ readonly class ApifyRunReference
 
     /**
      * Returns the Apify API path segment for this run.
+     *
+     * Apify REST API uses "~" as owner/actor-name separator in URL paths,
+     * while the human-readable format uses "/". E.g. "apidojo/tweet-scraper"
+     * must be encoded as "apidojo~tweet-scraper" in the URL.
      */
     public function getRunPath(): string
     {
-        return \sprintf('/v2/acts/%s/runs/%s', $this->apifyActorId, $this->runId);
+        return \sprintf('/v2/acts/%s/runs/%s', $this->encodeActorId(), $this->runId);
+    }
+
+    /**
+     * Encodes the actor ID for use in Apify API URL paths.
+     * Apify uses "~" as the owner/name separator in URLs (not "/").
+     */
+    private function encodeActorId(): string
+    {
+        return str_replace('/', '~', $this->apifyActorId);
     }
 }

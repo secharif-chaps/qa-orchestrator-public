@@ -170,7 +170,7 @@ readonly class FetchApifyDatasetHandler
                 /** @var array<mixed> $batch */
                 $batch = $this->apifyClient->request(
                     'GET',
-                    \sprintf('/datasets/%s/items', $datasetId),
+                    \sprintf('/v2/datasets/%s/items', $datasetId),
                     [
                         'query' => [
                             'limit' => (string) self::BATCH_SIZE,
@@ -237,7 +237,7 @@ readonly class FetchApifyDatasetHandler
     {
         try {
             /** @var array<string, mixed> $data */
-            $data = $this->apifyClient->request('GET', \sprintf('/datasets/%s', $datasetId));
+            $data = $this->apifyClient->request('GET', \sprintf('/v2/datasets/%s', $datasetId));
 
             Assert::isArray($data, 'Invalid response format from Apify');
             Assert::keyExists($data, 'data', 'Missing "data" in response from Apify');
