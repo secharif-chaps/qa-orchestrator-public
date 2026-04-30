@@ -73,6 +73,7 @@ target:test:integration:
         DISABLE_SECURITY_PLUGIN: "true"
         DISABLE_INSTALL_DEMO_CONFIG: "true"
         cluster.routing.allocation.disk.threshold_enabled: "false"
+        OPENSEARCH_INITIAL_ADMIN_PASSWORD: ""
   variables:
     APP_ENV: test
     DATABASE_URL: "postgresql://test:test@database-test:5432/app_test?serverVersion=17&charset=utf8"

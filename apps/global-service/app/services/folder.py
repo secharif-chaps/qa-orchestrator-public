@@ -10,11 +10,12 @@ This module provides business logic for:
 """
 
 import logging
+import math
 from datetime import UTC, datetime
 from typing import Any, Literal
 from uuid import UUID
 
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import and_, asc, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.folder import Folder, FolderItem, FolderShare, ItemType, ShareRole
@@ -139,37 +140,57 @@ class FolderService:
         org_id: str = "",
         org_name: str = "",
         roles: list[str] | None = None,
-    ) -> list[dict[str, Any]]:
-        """Get complete items for a folder - returns dicts for internal use.
+        page: int | None = None,
+        size: int | None = None,
+        sort_by: str | None = None,
+        sort_order: str = "asc",
+        name_filter: str | None = None,
+    ) -> tuple[list[dict[str, Any]], int]:
+        """Get complete items for a folder with optional pagination, sorting, and filtering.
 
-        Enriches company items with details from the backend API.
+        Returns (items, total_count). Because the name filter/sort operates on the
+        company name resolved from the backend, ALL folder items are loaded and
+        enriched before pagination is applied in memory. Acceptable at current folder
+        volumes; if folders grow beyond a few thousand items, revisit by denormalising
+        name onto FolderItem or pushing the filter to the backend service.
         """
-        stmt = (
-            select(FolderItem)
-            .where(FolderItem.folder_id == folder_id)
-            .order_by(FolderItem.position.nullsfirst(), FolderItem.added_at)
-        )
+        base_stmt = select(FolderItem).where(FolderItem.folder_id == folder_id)
+
+        _sort_by = sort_by or "position"
+        _order_fn = desc if sort_order == "desc" else asc
+
+        # name sort is applied post-enrichment (name lives in backend, not in FolderItem)
+        if _sort_by == "added_at":
+            stmt = base_stmt.order_by(_order_fn(FolderItem.added_at))
+        elif _sort_by == "name":
+            stmt = base_stmt.order_by(FolderItem.position.nullsfirst(), FolderItem.added_at)
+        else:
+            # Default position sort: nulls first asc, nulls last desc
+            position_clause = (
+                FolderItem.position.nullsfirst() if sort_order != "desc" else FolderItem.position.nullslast()
+            )
+            stmt = base_stmt.order_by(position_clause, FolderItem.added_at)
 
         result = await db.execute(stmt)
         folder_items = result.scalars().all()
 
         if not folder_items:
-            return []
+            return [], 0
 
-        # Collect company IDs for batch enrichment
-        company_ids = []
+        # Collect all company IDs for batch enrichment (full set, needed for count + name filter)
+        all_company_ids = []
         for item in folder_items:
             if item.item_type == ItemType.company:
                 try:
-                    company_ids.append(int(item.item_id))
+                    all_company_ids.append(int(item.item_id))
                 except (ValueError, TypeError):
                     continue
 
-        # Fetch company details from backend in batch (async)
-        company_map = {}
-        if company_ids:
+        # Fetch company details from backend (all IDs on this query)
+        company_map: dict = {}
+        if all_company_ids:
             company_map = await get_companies_by_ids(
-                company_ids=company_ids,
+                company_ids=all_company_ids,
                 user_id=user_id,
                 username=username,
                 org_id=org_id,
@@ -178,8 +199,11 @@ class FolderService:
                 include_archived=item_archived_filter,
             )
 
-        # Build enriched items list
-        items = []
+        # Hoist filter string ops outside the loop (strip/lower are O(n) per call)
+        name_filter_lower = name_filter.strip().lower() if name_filter else ""
+
+        # Build full enriched list (with archived + name filters)
+        all_items = []
         for item in folder_items:
             if item.item_type == ItemType.company:
                 try:
@@ -191,11 +215,13 @@ class FolderService:
                 if not company:
                     continue
 
-                # Apply archived filter
                 if company.is_deleted != item_archived_filter:
                     continue
 
-                items.append(
+                if name_filter_lower and name_filter_lower not in company.name.lower():
+                    continue
+
+                all_items.append(
                     {
                         "id": str(item.item_id),
                         "type": item.item_type.value,
@@ -210,7 +236,20 @@ class FolderService:
                 )
             # Add support for other item types (watchfile, explore) here in the future
 
-        return items
+        # Apply name sort post-enrichment (name lives in backend, not in FolderItem)
+        if _sort_by == "name":
+            all_items.sort(key=lambda x: x["name"].lower(), reverse=(sort_order == "desc"))
+
+        total = len(all_items)
+
+        # Apply pagination if requested
+        if page is not None and size is not None:
+            offset = (page - 1) * size
+            paginated = all_items[offset : offset + size]
+        else:
+            paginated = all_items
+
+        return paginated, total
 
     @staticmethod
     async def get_folder_with_items(
@@ -222,14 +261,18 @@ class FolderService:
         username: str = "",
         org_name: str = "",
         roles: list[str] | None = None,
+        page: int | None = None,
+        size: int | None = None,
+        sort_by: str | None = None,
+        sort_order: str = "asc",
+        name_filter: str | None = None,
     ) -> dict[str, Any] | None:
-        """Get folder with summary of its items."""
+        """Get folder with summary of its items, with optional pagination/sort/filter."""
         folder = await FolderService.get_folder(db, folder_id, organization_id)
         if not folder:
             return None
 
-        # Get folder items with company details, applying filters
-        items = await FolderService._get_folder_items_summary(
+        items, total = await FolderService._get_folder_items_summary(
             db,
             folder_id,
             item_archived_filter=item_archived_filter,
@@ -238,7 +281,21 @@ class FolderService:
             org_id=organization_id,
             org_name=org_name,
             roles=roles,
+            page=page,
+            size=size,
+            sort_by=sort_by,
+            sort_order=sort_order,
+            name_filter=name_filter,
         )
+
+        pagination = None
+        if page is not None and size is not None:
+            pagination = {
+                "total": total,
+                "page": page,
+                "limit": size,
+                "total_pages": math.ceil(total / size) if size > 0 else 0,
+            }
 
         return {
             "id": str(folder.id),
@@ -252,6 +309,7 @@ class FolderService:
             "owner": folder.owner,
             "organization_id": folder.organization_id,
             "items": items,
+            "pagination": pagination,
             # Note: is_favorite is computed per-user and added by the endpoint
         }
 
