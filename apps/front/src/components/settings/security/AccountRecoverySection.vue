@@ -34,7 +34,7 @@
           </div>
           <div class="flex items-center gap-2">
             <Tag
-              :variant="backupCodesGenerated ? 'success' : 'warning'"
+              :intent="backupCodesGenerated ? 'success' : 'warning'"
               :label="
                 backupCodesGenerated
                   ? $t('settings.security.status.generated')
@@ -95,8 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Tag } from '@owlint/feathers-vue'
 
 defineProps<{
   backupCodesGenerated: boolean

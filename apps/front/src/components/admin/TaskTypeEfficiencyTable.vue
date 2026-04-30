@@ -91,10 +91,7 @@
           >
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
-                <Tag
-                  :variant="getTaskTypeVariant(taskType.task_type)"
-                  :label="taskType.task_type"
-                />
+                <Tag :intent="getTaskTypeVariant(taskType.task_type)" :label="taskType.task_type" />
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
@@ -148,7 +145,7 @@
               >{{ t('admin.taskTypes.summary.mostExpensive') }}:</span
             >
             <Tag
-              :variant="getTaskTypeVariant(data.summary.most_expensive_type)"
+              :intent="getTaskTypeVariant(data.summary.most_expensive_type)"
               :label="data.summary.most_expensive_type"
               class="ml-2"
             />
@@ -158,7 +155,7 @@
               >{{ t('admin.taskTypes.summary.mostFrequent') }}:</span
             >
             <Tag
-              :variant="getTaskTypeVariant(data.summary.most_frequent_type)"
+              :intent="getTaskTypeVariant(data.summary.most_frequent_type)"
               :label="data.summary.most_frequent_type"
               class="ml-2"
             />
@@ -177,7 +174,7 @@
 
 <script setup lang="ts">
 import type { TaskTypeCostData, TaskTypeCostResponse } from '@/api/cost-analysis'
-import Tag, { type BadgeVariant } from '@/components/ui/Tag.vue'
+import { Tag, type Intent } from '@owlint/feathers-vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -253,18 +250,18 @@ const getTaskCountPercentage = (count: number) => {
   return total > 0 ? ((count / total) * 100).toFixed(1) : '0'
 }
 
-const getTaskTypeVariant = (taskType: string): BadgeVariant => {
-  const variants: Record<string, BadgeVariant> = {
-    profile: 'primary',
+const getTaskTypeVariant = (taskType: string): Intent => {
+  const intents: Record<string, Intent> = {
+    profile: 'accent',
     digital: 'info',
     timeline: 'success',
     products: 'warning',
-    jobs: 'error',
-    csr: 'slate',
-    press: 'slate',
-    team: 'slate',
+    jobs: 'danger',
+    csr: 'neutral',
+    press: 'neutral',
+    team: 'neutral',
   }
-  return variants[taskType] || 'slate'
+  return intents[taskType] || 'neutral'
 }
 
 const getEfficiencyColor = (avgCost: number) => {

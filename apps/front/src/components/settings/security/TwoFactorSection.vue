@@ -34,7 +34,7 @@
           </div>
           <div class="flex items-center gap-2">
             <Tag
-              :variant="twoFactorEnabled ? 'success' : 'slate'"
+              :intent="twoFactorEnabled ? 'success' : 'neutral'"
               :label="
                 twoFactorEnabled
                   ? $t('settings.security.status.enabled')
@@ -81,7 +81,7 @@
           </div>
           <div class="flex items-center gap-2">
             <Tag
-              :variant="securityKeysCount > 0 ? 'success' : 'slate'"
+              :intent="securityKeysCount > 0 ? 'success' : 'neutral'"
               :label="
                 securityKeysCount > 0
                   ? `${securityKeysCount} ${$t('settings.security.twoFactor.securityKeys.count')}`
@@ -102,8 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Tag } from '@owlint/feathers-vue'
 
 defineProps<{
   twoFactorEnabled: boolean

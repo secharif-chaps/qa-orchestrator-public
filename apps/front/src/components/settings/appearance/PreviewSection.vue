@@ -33,8 +33,8 @@
               </p>
             </div>
             <div class="flex gap-2">
-              <Tag variant="success" :label="$t('settings.appearance.preview.tag1')" />
-              <Tag variant="info" :label="$t('settings.appearance.preview.tag2')" />
+              <Tag intent="success" :label="$t('settings.appearance.preview.tag1')" />
+              <Tag intent="info" :label="$t('settings.appearance.preview.tag2')" />
             </div>
           </div>
 
@@ -149,8 +149,7 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Tag } from '@owlint/feathers-vue'
 import { Switch } from 'reka-ui/namespaced'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'

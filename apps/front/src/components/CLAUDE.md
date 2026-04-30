@@ -293,63 +293,92 @@ Example usage:
 <Button variant="secondary" label="Small Button" size="sm" />
 ```
 
-### Badges
+### Tags
 
-- **ALWAYS use the custom `Badge` component** (`@/components/ui/Badge.vue`) for status indicators, labels, and tags
-- **NEVER use third-party badge components** from Feathers, Reka, or other UI libraries
-- The custom Badge component provides:
-  - 6 variants: `primary`, `success`, `warning`, `error`, `info`, `slate`
-  - 4 sizes: `xs`, `sm`, `md`, `lg`
-  - Optional icon or status dot
-  - Subtle gradient or flat solid styles
-  - Rounded (pill) style option
-  - Dismissible option
-  - Theme-aware colors with subtle pastel tones that work beautifully in light/dark mode
-
-#### Common Use Cases:
-
-- **Status indicators**: Module status, online/offline states, task progress
-- **Token counts**: Display remaining tokens with appropriate color coding
-- **User roles**: Admin, user, viewer badges
-- **Feature flags**: Beta, new, coming soon indicators
-- **Filters/Tags**: Dismissible filter badges in search interfaces
+- **ALWAYS use the Vuellar `Tag` component** from `@owlint/feathers-vue` for status indicators, labels, and badges
+- **NEVER create a custom Tag wrapper** — Vuellar is the source of truth for the design system
+- The Vuellar Tag accepts:
+  - `intent`: `neutral`, `accent`, `success`, `warning`, `danger`, `info` (semantic colors)
+  - `color`: `sage`, `almond`, `pink`, `indigo`, `yellow`, `cherry`, `cyan` (palette colors when intent doesn't fit)
+  - `variant`: `primary` (filled, default) or `secondary` (lighter)
+  - `size`: `xs`, `sm`, `md`
+  - `label`: text content (or use the default slot for custom content)
+  - `icon`: FontAwesome class
+  - `as` / `asChild`: render as another component (e.g., `<a>`)
 
 Example usage:
 
 ```vue
-<!-- Basic badge -->
-<Tag variant="success" label="Active" />
+<!-- Basic semantic tags -->
+<Tag intent="success" label="Active" />
+<Tag intent="warning" label="Pending" />
+<Tag intent="danger" label="Error" />
+<Tag intent="info" label="Info" />
+<Tag intent="neutral" label="Default" />
+
+<!-- Palette colors (when intent doesn't fit) -->
+<Tag color="sage" label="Brand" />
+<Tag color="almond" label="Highlight" />
 
 <!-- With icon -->
-<Tag variant="warning" icon="fa fa-exclamation" label="Pending" />
+<Tag intent="warning" icon="fa-exclamation" label="Pending" />
 
-<!-- With status dot -->
-<Tag variant="success" dot label="Online" />
+<!-- Lighter style -->
+<Tag intent="success" variant="secondary" label="Soft" />
 
-<!-- Rounded/pill style -->
-<Tag variant="primary" label="Admin" rounded />
-
-<!-- Without gradient (flat) -->
-<Tag variant="info" label="New" :gradient="false" />
-
-<!-- Dismissible -->
-<Tag variant="error" label="Error" dismissible @dismiss="handleDismiss" />
-
-<!-- Custom content -->
-<Tag variant="slate">
-  <i class="fa fa-users mr-1"></i>
+<!-- Custom content via slot -->
+<Tag intent="neutral">
+  <i class="fa fa-users mr-1" />
   <span>23 users</span>
-</Badge>
-
-<!-- Token count examples -->
-<Tag variant="error" icon="fa fa-coins" label="0 tokens" />
-<Tag variant="warning" icon="fa fa-coins" label="5 tokens" />
-<Tag variant="success" icon="fa fa-coins" label="100 tokens" />
-
-<!-- Module status examples -->
-<Tag variant="success" dot label="Screen Module" />
-<Tag variant="slate" dot label="Stream Module" />
+</Tag>
 ```
+
+#### Patterns for features Vuellar doesn't provide
+
+**Dismissible chips (input tags)** — compose `Tag` with a sibling Vuellar `Button`:
+
+```vue
+<div v-for="tag in tags" :key="tag" class="inline-flex items-center gap-1">
+  <Tag :label="tag" intent="neutral" size="sm" />
+  <Button
+    variant="tertiary"
+    size="xs"
+    icon="fa fa-times"
+    :aria-label="$t('common.action.remove')"
+    @click="removeTag(tag)"
+  />
+</div>
+```
+
+**Pill / rounded shape** — apply `class="rounded-full"`:
+
+```vue
+<Tag intent="accent" :label="$t('settings.team.you')" size="xs" class="rounded-full" />
+```
+
+**Status indicator (dot)** — Vuellar has no `dot` prop. The intent color already conveys the status; if a dot is required, prepend a small inline span:
+
+```vue
+<Tag intent="success" label="Online" />
+<!-- Or with explicit dot: -->
+<Tag intent="success">
+  <span class="bg-success mr-1 h-1.5 w-1.5 rounded-full" />
+  Online
+</Tag>
+```
+
+#### Variant migration reference (legacy → Vuellar)
+
+| Legacy custom variant | Vuellar prop       |
+| --------------------- | ------------------ |
+| `primary` / `sage`    | `color="sage"`     |
+| `almond`              | `color="almond"`   |
+| `success`             | `intent="success"` |
+| `warning`             | `intent="warning"` |
+| `error`               | `intent="danger"`  |
+| `info`                | `intent="info"`    |
+| `accent`              | `intent="accent"`  |
+| `neutral` / `slate`   | `intent="neutral"` |
 
 ### Dropdown (Generic UI Component)
 

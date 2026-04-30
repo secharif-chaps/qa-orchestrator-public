@@ -41,7 +41,7 @@
         :key="permission"
         :label="permission"
         size="sm"
-        variant="slate"
+        intent="neutral"
         class="cursor-pointer"
       />
     </div>
@@ -49,9 +49,8 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
 import type { Role } from '@/types/role'
-import { Icon } from '@owlint/feathers-vue'
+import { Icon, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 
 interface Props {

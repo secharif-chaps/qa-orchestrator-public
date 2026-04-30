@@ -2,7 +2,7 @@
   <div>
     <div class="relative h-140 w-full">
       <div class="absolute top-5 right-5 z-10">
-        <Tag variant="info" size="sm">{{ $t('screen.team.hierarchy.interactive') }}</Tag>
+        <Tag intent="info" size="sm">{{ $t('screen.team.hierarchy.interactive') }}</Tag>
       </div>
       <div class="absolute right-5 bottom-5 z-10 flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -72,10 +72,9 @@
 </template>
 
 <script lang="ts" setup>
-import Tag from '@/components/ui/Tag.vue'
 import { useInitials } from '@/composables/useInitials'
 import type { TeamMember } from '@/types/company'
-import { Avatar, Button } from '@owlint/feathers-vue'
+import { Avatar, Button, Tag } from '@owlint/feathers-vue'
 import { Panel, VueFlow, useVueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'

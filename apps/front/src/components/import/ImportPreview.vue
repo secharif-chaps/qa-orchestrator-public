@@ -105,17 +105,17 @@
             <td class="px-4 py-3">
               <Tag
                 v-if="getRowStatus(idx) === 'error'"
-                variant="error"
+                intent="danger"
                 :label="getRowError(idx)"
                 size="xs"
               />
               <Tag
                 v-else-if="getRowStatus(idx) === 'warning'"
-                variant="warning"
+                intent="warning"
                 :label="$t('admin.import.duplicate')"
                 size="xs"
               />
-              <Tag v-else variant="success" :label="$t('admin.import.ready')" size="xs" />
+              <Tag v-else intent="success" :label="$t('admin.import.ready')" size="xs" />
             </td>
           </tr>
         </tbody>
@@ -130,9 +130,8 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
 import type { DuplicateInfo, UserImportRow, ValidationError } from '@/types/user-import'
-import { Alert, Badge } from '@owlint/feathers-vue'
+import { Alert, Badge, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 

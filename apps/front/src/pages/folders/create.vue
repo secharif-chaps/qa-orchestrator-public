@@ -58,15 +58,16 @@
               :placeholder="$t('common.folder.form.tagsPlaceholder')"
             />
             <div v-if="form.tags && form.tags.length > 0" class="mt-2 flex flex-wrap gap-2">
-              <Tag
-                v-for="tag in form.tags"
-                :key="tag"
-                :label="tag"
-                variant="slate"
-                size="sm"
-                dismissible
-                @dismiss="removeTag(tag)"
-              />
+              <div v-for="tag in form.tags" :key="tag" class="inline-flex items-center gap-1">
+                <Tag :label="tag" intent="neutral" size="sm" />
+                <Button
+                  variant="tertiary"
+                  size="xs"
+                  icon="fa fa-times"
+                  :aria-label="$t('common.action.remove')"
+                  @click="removeTag(tag)"
+                />
+              </div>
             </div>
           </div>
 
@@ -114,10 +115,9 @@ meta:
 <script setup lang="ts">
 import ColorSelector from '@/components/folders/ColorSelector.vue'
 import IconSelector from '@/components/folders/IconSelector.vue'
-import Tag from '@/components/ui/Tag.vue'
 import { useCreateFolder, useToggleFolderFavorite } from '@/mutations/folders'
 import type { FolderCreate } from '@/types/folder'
-import { Button, Input } from '@owlint/feathers-vue'
+import { Button, Input, Tag } from '@owlint/feathers-vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'

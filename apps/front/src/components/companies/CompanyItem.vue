@@ -53,7 +53,7 @@
         <i class="fas fa-tasks text-neutral-black-font w-4 text-sm"></i>
         <div class="flex items-center gap-2">
           <span class="text-neutral-black-font text-sm"> {{ company.tasks.length }} tasks </span>
-          <Tag :variant="getTaskStatusVariant(company.tasks)" size="xs">
+          <Tag :intent="getTaskStatusVariant(company.tasks)" size="xs">
             {{ getTaskStatusText(company.tasks) }}
           </Tag>
         </div>
@@ -122,7 +122,7 @@
       <!-- Column 4: Status (2 cols) -->
       <div class="col-span-2">
         <div class="flex items-center gap-2">
-          <Tag :variant="getTaskStatusVariant(company.tasks || [])" size="sm">
+          <Tag :intent="getTaskStatusVariant(company.tasks || [])" size="sm">
             {{ getTaskStatusText(company.tasks || []) }}
           </Tag>
         </div>
@@ -154,11 +154,10 @@
 
 <script setup lang="ts">
 import Logo from '@/components/ui/Logo.vue'
-import Tag, { type BadgeVariant } from '@/components/ui/Tag.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { useDateTime } from '@/composables/useDateTime'
 import type { Company } from '@/types/company'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Tag, type Intent } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -203,15 +202,15 @@ const getTaskStatusText = (tasks: Array<{ status: string }>) => {
   return t('screen.company.item.tasks.status.partial')
 }
 
-const getTaskStatusVariant = (tasks: Array<{ status: string }>): BadgeVariant => {
-  if (!tasks || tasks.length === 0) return 'primary'
+const getTaskStatusVariant = (tasks: Array<{ status: string }>): Intent => {
+  if (!tasks || tasks.length === 0) return 'accent'
 
   const running = tasks.filter((t) => t.status === 'running' || t.status === 'pending').length
   const failed = tasks.filter((t) => t.status === 'error' || t.status === 'failed').length
   const succeeded = tasks.filter((t) => t.status === 'succeeded').length
 
   if (running > 0) return 'warning'
-  if (failed > 0) return 'error'
+  if (failed > 0) return 'danger'
   if (succeeded === tasks.length) return 'success'
   return 'info'
 }

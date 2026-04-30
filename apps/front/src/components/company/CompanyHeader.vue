@@ -46,7 +46,7 @@
           icon="fa-lock"
           :label="t('common.folder.privacy.private')"
           size="xs"
-          rounded
+          class="rounded-full"
         />
         <Tag
           v-else-if="folder && !folder.is_owner && folder.share_role != null"
@@ -54,7 +54,7 @@
           icon="fa-share-nodes"
           :label="t('common.folder.privacy.shared')"
           size="xs"
-          rounded
+          class="rounded-full"
         />
       </div>
     </div>

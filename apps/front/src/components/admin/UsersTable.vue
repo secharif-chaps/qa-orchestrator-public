@@ -30,10 +30,10 @@
         <Tag
           v-if="item.permission_tier"
           :label="getPermissionTierLabel(item.permission_tier)"
-          :variant="getRoleVariant(item.permission_tier)"
+          :intent="getRoleVariant(item.permission_tier)"
           size="sm"
         />
-        <Tag v-else :label="$t('admin.users.roles.custom')" variant="slate" size="sm" />
+        <Tag v-else :label="$t('admin.users.roles.custom')" intent="neutral" size="sm" />
       </td>
     </template>
 
@@ -53,10 +53,10 @@
         <Tag
           v-if="item.status === 'active'"
           :label="$t('admin.users.status.active')"
-          variant="success"
+          intent="success"
           size="sm"
         />
-        <Tag v-else :label="$t('admin.users.status.revoked')" variant="error" size="sm" />
+        <Tag v-else :label="$t('admin.users.status.revoked')" intent="danger" size="sm" />
       </td>
     </template>
 
@@ -104,9 +104,8 @@
  * Admin users table using Vuellar Table component.
  * Displays users with actions for organization assignment, permissions, etc.
  */
-import Tag from '@/components/ui/Tag.vue'
 import type { AdminUserListItem } from '@/types/admin-user'
-import { Button, Table } from '@owlint/feathers-vue'
+import { Button, Table, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import UserActionsDropdown from './UserActionsDropdown.vue'

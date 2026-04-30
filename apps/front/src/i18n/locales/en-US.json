@@ -543,6 +543,7 @@
       "add": "Add",
       "back": "Back",
       "loading": "Loading...",
+      "remove": "Remove",
       "selectAll": "Select All",
       "selectedCount": "{count, plural, one {(# document)} other {(# documents)}}"
     },

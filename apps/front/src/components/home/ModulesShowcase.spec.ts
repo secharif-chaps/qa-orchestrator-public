@@ -57,14 +57,10 @@ vi.mock('@owlint/feathers-vue', () => ({
     template: '<i :class="icon"></i>',
     props: ['icon'],
   },
-}))
-
-// Mock Tag component
-vi.mock('../ui/Tag.vue', () => ({
-  default: {
+  Tag: {
     name: 'Tag',
     template: '<span class="tag">{{ label }}<slot /></span>',
-    props: ['variant', 'size', 'label', 'icon'],
+    props: ['intent', 'color', 'variant', 'size', 'label', 'icon'],
   },
 }))
 
@@ -79,7 +75,10 @@ vi.mock('../ui/CmdBadge.vue', () => ({
 
 // Mock window.open
 const mockWindowOpen = vi.fn()
-Object.defineProperty(window, 'open', { value: mockWindowOpen, writable: true })
+Object.defineProperty(window, 'open', {
+  value: mockWindowOpen,
+  writable: true,
+})
 
 const globalMocks = {
   global: {
@@ -90,9 +89,24 @@ const globalMocks = {
 }
 
 const enabledModules: ModuleConfig[] = [
-  { name: 'screen', enabled: true, created_at: '2024-01-01T00:00:00Z', updated_at: '' },
-  { name: 'target', enabled: true, created_at: '2024-01-01T00:00:00Z', updated_at: '' },
-  { name: 'explore', enabled: false, created_at: '2024-01-01T00:00:00Z', updated_at: '' },
+  {
+    name: 'screen',
+    enabled: true,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '',
+  },
+  {
+    name: 'target',
+    enabled: true,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '',
+  },
+  {
+    name: 'explore',
+    enabled: false,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '',
+  },
 ]
 
 describe('ModulesShowcase', () => {
@@ -159,7 +173,12 @@ describe('ModulesShowcase', () => {
       props: {
         featureFlags: [],
         modulesData: [
-          { name: 'screen', enabled: true, created_at: '2024-01-01T00:00:00Z', updated_at: '' },
+          {
+            name: 'screen',
+            enabled: true,
+            created_at: '2024-01-01T00:00:00Z',
+            updated_at: '',
+          },
         ],
       },
       ...globalMocks,

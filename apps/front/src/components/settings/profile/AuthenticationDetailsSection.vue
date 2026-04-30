@@ -34,7 +34,7 @@
               $t('settings.profile.fields.sessionState')
             }}</label>
             <Tag
-              :variant="user?.expired ? 'error' : 'success'"
+              :intent="user?.expired ? 'danger' : 'success'"
               :label="
                 user?.expired
                   ? $t('settings.profile.status.expired')
@@ -49,8 +49,8 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
 import { useDateTime } from '@/composables/useDateTime'
+import { Tag } from '@owlint/feathers-vue'
 
 interface User {
   expired?: boolean
