@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Command\Document;
 
-use App\Application\Document\AddDocumentAction;
-use App\Application\Document\AddDocumentHandler;
+use App\Application\Document\IngestDocumentAction;
+use App\Application\Document\IngestDocumentHandler;
 use App\Domain\Collect\CollectTask;
 use App\Domain\Collect\CollectTaskGatewayInterface;
-use App\Domain\Document\Document;
+use App\Domain\Document\DocumentBuilderFromHtmlMetadata;
 use App\Domain\Document\HtmlFetcherInterface;
 use App\Domain\Document\HtmlFetchException;
 use App\Domain\Document\HtmlMetadataExtractor;
-use App\Domain\Shared\TranslatedText;
+use App\Domain\Source\ManualSourceFactory;
 use App\Domain\Source\Source;
 use App\Domain\Source\SourceGatewayInterface;
 use App\Domain\Source\SourceType;
@@ -35,12 +35,14 @@ final class CreateDocumentCommand extends Command
 
     public function __construct(
         private readonly MessageBusInterface $messageBus,
-        private readonly AddDocumentHandler $addDocumentHandler,
+        private readonly IngestDocumentHandler $ingestDocumentHandler,
         private readonly WatchFileGatewayInterface $watchFileGateway,
         private readonly SourceGatewayInterface $sourceGateway,
         private readonly CollectTaskGatewayInterface $collectTaskGateway,
         private readonly HtmlFetcherInterface $htmlFetcher,
         private readonly HtmlMetadataExtractor $metadataExtractor,
+        private readonly DocumentBuilderFromHtmlMetadata $documentBuilder,
+        private readonly ManualSourceFactory $manualSourceFactory,
         private readonly EventDispatcherInterface $eventDispatcher,
     ) {
         parent::__construct();
@@ -110,15 +112,18 @@ final class CreateDocumentCommand extends Command
         $io->info('Extracting metadata...');
         $metadata = $this->metadataExtractor->extract($html, \is_string($url) ? $url : null);
 
-        $title = \is_string($titleOverride) ? $titleOverride : $metadata->title;
-        $excerpt = \is_string($excerptOverride) ? $excerptOverride : $metadata->excerpt;
-        $datePublish = $metadata->datePublish ?? new \DateTimeImmutable();
+        $titleOverrideValue = \is_string($titleOverride) ? $titleOverride : null;
+        $excerptOverrideValue = \is_string($excerptOverride) ? $excerptOverride : null;
+
+        $previewTitle = $titleOverrideValue ?? $metadata->title;
+        $previewExcerpt = $excerptOverrideValue ?? $metadata->excerpt;
+        $previewDate = $metadata->datePublish ?? new \DateTimeImmutable();
 
         $io->table(['Field', 'Value'], [
-            ['Title', $title],
-            ['Excerpt', mb_substr($excerpt, 0, 80) . (mb_strlen($excerpt) > 80 ? '...' : '')],
+            ['Title', $previewTitle],
+            ['Excerpt', mb_substr($previewExcerpt, 0, 80) . (mb_strlen($previewExcerpt) > 80 ? '...' : '')],
             ['Language', $metadata->language],
-            ['Date', $datePublish->format('Y-m-d H:i:s')],
+            ['Date', $previewDate->format('Y-m-d H:i:s')],
             ['Author', $metadata->author ?? '-'],
             ['Site', $metadata->siteName ?? '-'],
             ['Image', $metadata->imageUrl ? 'yes' : '-'],
@@ -142,38 +147,26 @@ final class CreateDocumentCommand extends Command
         $collectTask->complete($this->eventDispatcher);
         $this->collectTaskGateway->save($collectTask);
 
-        // Build Document
-        $document = new Document(
-            id: null,
-            title: $title,
-            excerpt: $excerpt,
-            type: 'html',
-            datePublish: $datePublish,
-            dateCollect: new \DateTimeImmutable(),
-            content: $metadata->content,
-            cfcRestricted: false,
-            url: $metadata->canonicalUrl ?? $url,
+        $document = $this->documentBuilder->build(
+            metadata: $metadata,
+            rawHtml: $html,
+            sourceUrl: $url,
+            titleOverride: $titleOverrideValue,
+            excerptOverride: $excerptOverrideValue,
         );
-        $document->setLanguage($metadata->language);
-
-        $dedupUrl = $metadata->canonicalUrl ?? $url;
-        $providerId = null !== $dedupUrl
-            ? hash('sha256', $dedupUrl)
-            : hash('sha256', mb_substr($html, 0, 10000));
-        $document->setProviderId($providerId);
 
         $collectTaskId = $collectTask->getId();
         \assert(\is_string($collectTaskId));
 
-        $action = new AddDocumentAction($collectTaskId, $document);
+        $action = new IngestDocumentAction($collectTaskId, $document);
         $sync = $input->getOption('sync');
 
         if ($sync) {
-            $result = ($this->addDocumentHandler)($action);
+            $result = ($this->ingestDocumentHandler)($action);
             $io->success(\sprintf('Document created: %s (ID: %s)', $result->getTitle(), $result->getId()));
         } else {
             $this->messageBus->dispatch($action);
-            $io->success(\sprintf('Document dispatched for creation: %s', $title));
+            $io->success(\sprintf('Document dispatched for creation: %s', $document->getTitle()));
         }
 
         return Command::SUCCESS;
@@ -200,16 +193,7 @@ final class CreateDocumentCommand extends Command
             }
         }
 
-        $source = new Source(
-            name: 'Manual',
-            description: new TranslatedText('Source manuelle', 'Manual source'),
-            type: SourceType::MANUAL,
-            url: \sprintf('manual://%s', $watchFile->getId()),
-            primaryDomain: 'manual',
-            relevance: new TranslatedText('Ajout manuel par l\'utilisateur', 'Manually added by user'),
-            actor: null,
-            watchFile: $watchFile,
-        );
+        $source = $this->manualSourceFactory->buildFor($watchFile);
         $this->sourceGateway->save($source);
         $io->info('Created new manual source.');
 

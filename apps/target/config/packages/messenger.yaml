@@ -77,7 +77,7 @@ framework:
       'App\Application\WatchFile\Actor\AddActorAction': async_priority_high
       'App\Application\WatchFile\Source\AddSourceAction': async_priority_high
       'Symfony\Component\Mailer\Messenger\SendEmailMessage': async_priority_high
-      'App\Application\DocumentQuality\Message\ProcessDocumentQualityAction': quality_processing
+      'App\Application\Document\Pipeline\RunPostSavePipelineAction': quality_processing
       'App\Application\SyncActionInterface': sync
       '*': async_priority_low
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\DocumentQuality;
 
+use App\Domain\Shared\TranslatedText;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
@@ -44,8 +45,8 @@ class QualityReport
     #[ORM\Column(name: 'computed_at', type: 'datetimetz_immutable')]
     public \DateTimeImmutable $computedAt;
 
-    #[ORM\Column(name: 'decision_reason', type: 'text', nullable: true)]
-    public ?string $decisionReason;
+    #[ORM\Column(name: 'decision_reason', type: 'translated_text', nullable: true)]
+    public ?TranslatedText $decisionReason;
 
     /**
      * @param array<string, float>  $categoryScores
@@ -58,7 +59,7 @@ class QualityReport
         array $signals,
         QualityDecision $decision,
         ?\DateTimeImmutable $computedAt = null,
-        ?string $decisionReason = null,
+        ?TranslatedText $decisionReason = null,
         ?string $id = null,
     ) {
         $this->id = $id ?? Uuid::v4()->toString();

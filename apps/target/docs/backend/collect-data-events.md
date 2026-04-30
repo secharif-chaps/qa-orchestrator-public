@@ -142,7 +142,7 @@ class MergedResultCollectDataHandler implements CollectDataHandler
 
         // Create and save the document
         $document = $this->buildDocument($content, $event);
-        $this->messageBus->dispatch(new AddDocumentAction($event->collectTaskId, $document));
+        $this->messageBus->dispatch(new IngestDocumentAction($event->collectTaskId, $document));
     }
 }
 ```
