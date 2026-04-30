@@ -8,15 +8,19 @@ This follows the same pattern as backend tests - set up test environment
 BEFORE any app modules are imported.
 """
 
+import os
 import uuid as _uuid
 from datetime import UTC, datetime
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 import sqlalchemy as _sa
 from sqlalchemy import event as _sa_event
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.pool import NullPool, StaticPool
 
 from app.core.keycloak import OIDCUser
+from app.database import GlobalBase
 
 # Apply patches at module level BEFORE any app modules are imported
 # This prevents Keycloak initialization during pytest collection phase
@@ -24,9 +28,7 @@ _mock_idp = MagicMock()
 
 # Patch Keycloak at the module level
 _patch_get_idp = patch("app.core.keycloak.get_idp", return_value=_mock_idp)
-_patch_init = patch(
-    "app.core.keycloak._initialize_keycloak_with_retry", return_value=_mock_idp
-)
+_patch_init = patch("app.core.keycloak._initialize_keycloak_with_retry", return_value=_mock_idp)
 _patch_idp = patch("app.core.keycloak.idp", _mock_idp)
 
 _patch_get_idp.start()
@@ -66,6 +68,18 @@ def mock_keycloak_initialization():
     yield _mock_idp
 
 
+@pytest.fixture(autouse=True)
+def mock_module_gate():
+    """
+    Fixture that mocks _check_module_enabled to allow all tests to access modules.
+
+    This prevents the module gate from blocking test requests. Tests that need
+    to verify module gate behavior should explicitly patch this fixture.
+    """
+    with patch("app.proxy.routes._check_module_enabled", new_callable=AsyncMock, return_value=None):
+        yield
+
+
 def pytest_addoption(parser):
     """Add custom command line options."""
     parser.addoption(
@@ -97,9 +111,7 @@ def pytest_collection_modifyitems(config, items):
         # --run-integration given: don't skip integration tests
         return
 
-    skip_integration = pytest.mark.skip(
-        reason="need --run-integration option to run integration tests"
-    )
+    skip_integration = pytest.mark.skip(reason="need --run-integration option to run integration tests")
     for item in items:
         if "integration" in item.keywords:
             item.add_marker(skip_integration)
@@ -108,13 +120,6 @@ def pytest_collection_modifyitems(config, items):
 # Test database fixtures
 
 # Create testing session factory at module level for use in concurrency tests
-import os
-
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.pool import StaticPool
-
-from app.database import GLOBAL_SCHEMA, GlobalBase
-
 # Only switch to Postgres when TEST_DATABASE_URL is explicitly set (CI
 # integration job). Regular DATABASE_URL is ignored — unit tests must always
 # use SQLite in-memory so they stay fast and isolated from the dev database.
@@ -126,8 +131,6 @@ if _RAW_TEST_DB_URL and "postgres" in _RAW_TEST_DB_URL:
     # NullPool gives each operation a fresh asyncpg connection — avoids
     # "another operation is in progress" when sequential fixtures reuse a
     # pooled connection that still has pending protocol state.
-    from sqlalchemy.pool import NullPool
-
     _test_engine = create_async_engine(_TEST_DB_URL, future=True, poolclass=NullPool)
 else:
     _TEST_DB_URL = "sqlite+aiosqlite:///:memory:"
@@ -168,9 +171,9 @@ def _strip_schema_from_metadata(base):
     for table in base.metadata.tables.values():
         table.schema = None
         # Also update table_args if it has schema
-        if hasattr(table, '__table_args__'):
+        if hasattr(table, "__table_args__"):
             if isinstance(table.__table_args__, dict):
-                table.__table_args__.pop('schema', None)
+                table.__table_args__.pop("schema", None)
 
         # Adapt PostgreSQL-specific column types for SQLite
         for column in table.columns:

@@ -1,13 +1,18 @@
-"""Merge Screen backend OpenAPI schema into Global-Service docs.
+"""Merge all backend OpenAPI schemas into Global-Service docs.
 
-Fetches screen's /openapi.json lazily (on first /docs access) and merges
-paths + component schemas into the gateway's own OpenAPI spec. This gives
-a single unified Swagger UI at the gateway level.
+Fetches /openapi.json lazily (on first /docs access) from all backends:
+- Screen (FastAPI)
+- Target (Symfony/API Platform)
+- Stream (FastAPI)
 
-The screen schema is cached with a configurable TTL to avoid hitting
-screen on every /docs page load.
+Merges paths + component schemas into the gateway's own OpenAPI spec.
+This gives a single unified Swagger UI at the gateway level.
+
+Each backend's schema is cached with a configurable TTL to avoid hitting
+backends on every /docs page load.
 """
 
+import asyncio
 import time
 from copy import deepcopy
 
@@ -23,13 +28,25 @@ from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
 
-# Cache for screen's OpenAPI schema
-_screen_schema: dict | None = None
-_cache_timestamp: float = 0
+# Cache for backend OpenAPI schemas
+_backend_schemas: dict[str, dict | None] = {
+    "screen": None,
+    "target": None,
+    "stream": None,
+}
+_cache_timestamps: dict[str, float] = {
+    "screen": 0,
+    "target": 0,
+    "stream": 0,
+}
 _CACHE_TTL_SECONDS = 300  # 5 minutes
 
-# Prefix to avoid schema name collisions between services
-_SCREEN_SCHEMA_PREFIX = "Screen_"
+# Prefixes to avoid schema name collisions between services
+_BACKEND_SCHEMA_PREFIXES: dict[str, str] = {
+    "screen": "Screen_",
+    "target": "Target_",
+    "stream": "Stream_",
+}
 
 # ─── API metadata ─────────────────────────────────────
 
@@ -150,40 +167,62 @@ TAG_GROUPS = [
 # ─── Schema fetching and merging ─────────────────────
 
 
-async def _fetch_screen_schema() -> dict | None:
-    """Fetch screen's OpenAPI schema with TTL cache.
+async def _fetch_backend_schema(backend_name: str, backend_url: str) -> dict | None:
+    """Fetch a backend's OpenAPI schema with TTL cache.
+
+    Args:
+        backend_name: one of "screen", "target", "stream"
+        backend_url: base URL of the backend service
+
+    Returns:
+        The OpenAPI schema dict, or None if fetch failed
+
+    Different backends expose OpenAPI at different endpoints:
+    - FastAPI (screen, stream): /openapi.json
+    - Symfony/API Platform (target): /api/docs with Accept: application/vnd.openapi+json
 
     Uses httpx.AsyncClient to avoid blocking the event loop (called from
     FastAPI's async openapi() handler).
 
-    Note on thread safety: _screen_schema and _cache_timestamp are module-level
-    globals mutated without a lock. With uvicorn multiprocess workers each
-    process has its own copy (safe). With async concurrency the worst case is
-    a harmless double-fetch — acceptable for a /docs endpoint.
+    Note on thread safety: module-level globals are mutated without a lock.
+    With uvicorn multiprocess workers each process has its own copy (safe).
+    With async concurrency the worst case is a harmless double-fetch.
     """
-    global _screen_schema, _cache_timestamp
+    global _backend_schemas, _cache_timestamps
 
     now = time.time()
-    if _screen_schema is not None and (now - _cache_timestamp) < _CACHE_TTL_SECONDS:
-        return _screen_schema
+    cached = _backend_schemas.get(backend_name)
+    timestamp = _cache_timestamps.get(backend_name, 0)
 
-    screen_url = f"{settings.SCREEN_BASE_URL}/openapi.json"
+    if cached is not None and (now - timestamp) < _CACHE_TTL_SECONDS:
+        return cached
+
+    # Determine the correct endpoint and headers for each backend
+    if backend_name == "target":
+        schema_url = f"{backend_url}/api/docs"
+        headers = {"Accept": "application/vnd.openapi+json"}
+    else:
+        # FastAPI backends (screen, stream)
+        schema_url = f"{backend_url}/openapi.json"
+        headers = {}
+
     try:
         async with httpx.AsyncClient(timeout=5) as client:
-            resp = await client.get(screen_url)
+            resp = await client.get(schema_url, headers=headers)
         resp.raise_for_status()
-        _screen_schema = resp.json()
-        _cache_timestamp = now
-        logger.info("Fetched screen OpenAPI schema", extra={"url": screen_url})
+        schema = resp.json()
+        _backend_schemas[backend_name] = schema
+        _cache_timestamps[backend_name] = now
+        logger.info(f"Fetched {backend_name} OpenAPI schema", extra={"url": schema_url})
+        return schema
     except Exception as e:
         logger.warning(
-            "Failed to fetch screen OpenAPI schema, docs will show gateway-only endpoints",
-            extra={"url": screen_url, "error": str(e)},
+            f"Failed to fetch {backend_name} OpenAPI schema",
+            extra={"url": schema_url, "error": str(e)},
         )
-        if _screen_schema is None:
+        if cached is None:
             return None
-
-    return _screen_schema
+        return cached
 
 
 def _prefix_schema_refs(obj: dict, prefix: str) -> dict:
@@ -232,23 +271,44 @@ def _build_security_schemes() -> dict:
     }
 
 
-def _merge_screen_schema(gateway_schema: dict, screen_schema: dict) -> dict:
-    """Merge screen paths and components into the gateway schema."""
-    merged = deepcopy(gateway_schema)
+def _merge_backend_schema(gateway_schema: dict, backend_schema: dict, backend_name: str) -> dict:
+    """Merge backend paths and components into the gateway schema.
 
-    # Merge paths (screen endpoints that aren't already in gateway)
-    screen_paths = screen_schema.get("paths", {})
-    for path, methods in screen_paths.items():
+    Args:
+        gateway_schema: the gateway's base OpenAPI schema
+        backend_schema: the backend's OpenAPI schema to merge
+        backend_name: one of "screen", "target", "stream" (used for prefix)
+
+    Returns:
+        The merged schema
+    """
+    merged = deepcopy(gateway_schema)
+    prefix = _BACKEND_SCHEMA_PREFIXES.get(backend_name, f"{backend_name.capitalize()}_")
+
+    # Merge paths (backend endpoints that aren't already in gateway)
+    backend_paths = backend_schema.get("paths", {})
+    for path, methods in backend_paths.items():
         if path not in merged.get("paths", {}):
-            merged.setdefault("paths", {})[path] = _prefix_schema_refs(methods, _SCREEN_SCHEMA_PREFIX)
+            path_item = _prefix_schema_refs(deepcopy(methods), prefix)
+
+            # Add security requirement to all methods if not already present.
+            # Skip if the backend already set "security": [] (explicitly public)
+            # or if the operation carries x-public: true (gateway convention).
+            for method in ["get", "post", "put", "patch", "delete", "head", "options"]:
+                if method in path_item and isinstance(path_item[method], dict):
+                    operation = path_item[method]
+                    if "security" not in operation and not operation.get("x-public"):
+                        operation["security"] = [{"OAuth2PasswordBearer": []}]
+
+            merged.setdefault("paths", {})[path] = path_item
 
     # Merge component schemas with prefix
-    screen_schemas = screen_schema.get("components", {}).get("schemas", {})
-    for name, definition in screen_schemas.items():
-        prefixed_name = f"{_SCREEN_SCHEMA_PREFIX}{name}"
+    backend_schemas = backend_schema.get("components", {}).get("schemas", {})
+    for name, definition in backend_schemas.items():
+        prefixed_name = f"{prefix}{name}"
         merged.setdefault("components", {}).setdefault("schemas", {})
         if prefixed_name not in merged["components"]["schemas"]:
-            merged["components"]["schemas"][prefixed_name] = _prefix_schema_refs(definition, _SCREEN_SCHEMA_PREFIX)
+            merged["components"]["schemas"][prefixed_name] = _prefix_schema_refs(definition, prefix)
 
     return merged
 
@@ -257,17 +317,22 @@ def _merge_screen_schema(gateway_schema: dict, screen_schema: dict) -> dict:
 
 
 def setup_merged_openapi(app: FastAPI) -> None:
-    """Replace FastAPI's /openapi.json route with an async one that merges screen's schema.
+    """Replace FastAPI's /openapi.json route with an async one that merges all backend schemas.
 
-    Call this once after app creation. The actual fetch happens on first
+    Fetches and merges schemas from:
+    - Screen (FastAPI)
+    - Target (Symfony/API Platform)
+    - Stream (FastAPI)
+
+    Call this once after app creation. The actual fetches happen on first
     access to /docs or /openapi.json.
 
     We use a custom async route instead of overriding app.openapi() because
     FastAPI calls app.openapi() synchronously. Using an async route lets us
-    fetch screen's schema with httpx.AsyncClient without blocking the event loop.
+    fetch backend schemas with httpx.AsyncClient without blocking the event loop.
 
-    The _fetch_screen_schema cache (5-minute TTL) avoids hitting screen on
-    every page load.
+    Each backend schema is cached with a 5-minute TTL to avoid hitting
+    backends on every page load.
     """
 
     async def _build_merged_schema() -> dict:
@@ -287,11 +352,23 @@ def setup_merged_openapi(app: FastAPI) -> None:
         # Override security schemes with public Keycloak URLs
         gateway_schema.setdefault("components", {})["securitySchemes"] = _build_security_schemes()
 
-        screen_schema = await _fetch_screen_schema()
-        if screen_schema:
-            return _merge_screen_schema(gateway_schema, screen_schema)
+        # Merge schemas from all backends
+        backends = [
+            ("screen", settings.SCREEN_BASE_URL),
+            ("target", settings.TARGET_BASE_URL),
+            ("stream", settings.STREAM_BASE_URL),
+        ]
 
-        return gateway_schema
+        results = await asyncio.gather(
+            *[_fetch_backend_schema(name, url) for name, url in backends],
+            return_exceptions=True,
+        )
+        merged = gateway_schema
+        for (backend_name, _), schema in zip(backends, results, strict=False):
+            if isinstance(schema, dict):
+                merged = _merge_backend_schema(merged, schema, backend_name)
+
+        return merged
 
     async def openapi_route(request: Request) -> JSONResponse:
         return JSONResponse(await _build_merged_schema())

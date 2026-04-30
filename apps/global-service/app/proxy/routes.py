@@ -225,8 +225,7 @@ async def _check_module_enabled(module_name: ModuleName, user: object) -> Respon
     """Check if the resolved module is enabled for the user's organization.
 
     Returns a 403 Response if the module is disabled, None if enabled (allow).
-    Skips the check for always-active modules (e.g. stream) and when
-    user has no organization context (e.g., service accounts).
+    Skips the check for always-active modules (e.g. stream).
 
     Uses a TTL cache to avoid querying the DB on every request.
     Fails open on DB errors (logs warning, allows request).
@@ -236,7 +235,15 @@ async def _check_module_enabled(module_name: ModuleName, user: object) -> Respon
 
     org_id, _ = extract_organization_info(user)
     if not org_id:
-        return None
+        logger.warning(
+            "Module gate: access denied (no organization)",
+            extra={"module_name": module_name},
+        )
+        return Response(
+            content=json.dumps({"detail": f"Module '{module_name.value}' not enabled for your organization"}).encode(),
+            status_code=403,
+            media_type="application/json",
+        )
 
     cache_key = (org_id, module_name.value)
     now = time.time()
@@ -276,7 +283,7 @@ async def _check_module_enabled(module_name: ModuleName, user: object) -> Respon
             extra={"module_name": module_name, "org_id": org_id},
         )
         return Response(
-            content=f'{{"detail":"Module \'{module_name.value}\' not enabled for your organization"}}'.encode(),
+            content=json.dumps({"detail": f"Module '{module_name.value}' not enabled for your organization"}).encode(),
             status_code=403,
             media_type="application/json",
         )

@@ -11,6 +11,13 @@ import pytest
 
 from app.proxy.registry import ModuleDefinition, ModuleName, RouteOperation
 
+
+@pytest.fixture(autouse=True)
+def mock_module_gate():
+    """Override the global mock so this file tests the real _check_module_enabled."""
+    yield
+
+
 # ── Helper to build a mock registry resolving to a given module ──
 
 
@@ -265,15 +272,17 @@ class TestCheckModuleEnabled:
         assert result.status_code == 403
 
     @pytest.mark.asyncio
-    async def test_returns_none_when_no_org_id(self):
-        """User without org_id → skip gate (allow request)."""
+    async def test_returns_403_when_no_org_id(self):
+        """User without org_id → access denied with 403 (AC2 fix)."""
         from app.proxy.routes import _check_module_enabled
 
         mock_user = MagicMock()
         mock_user.organization = None
 
         result = await _check_module_enabled(ModuleName.SCREEN, mock_user)
-        assert result is None
+        assert result is not None
+        assert result.status_code == 403
+        assert "not enabled for your organization" in result.body.decode()
 
     @pytest.mark.asyncio
     async def test_queries_db_on_cache_miss(self):
@@ -353,3 +362,21 @@ class TestCheckModuleEnabled:
         target_result = await _check_module_enabled(ModuleName.TARGET, mock_user)
         assert screen_result is not None and screen_result.status_code == 403
         assert target_result is not None and target_result.status_code == 403
+
+    @pytest.mark.asyncio
+    async def test_no_access_user_denied_target_module(self):
+        """AC2: User with no organization (no_access) trying to access target → 403."""
+        from app.proxy.routes import _check_module_enabled
+
+        # no_access user: no roles, no organization
+        mock_user = MagicMock()
+        mock_user.organization = None
+        mock_user.preferred_username = "no_access"
+        mock_user.realm_access = {"roles": []}
+
+        # Should return 403, not allow access
+        result = await _check_module_enabled(ModuleName.TARGET, mock_user)
+        assert result is not None
+        assert result.status_code == 403
+        assert "target" in result.body.decode()
+        assert "not enabled for your organization" in result.body.decode()
