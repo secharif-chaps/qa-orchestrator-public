@@ -38,6 +38,10 @@ parameters:
     social_media:instagram:user: 'apify/instagram-scraper'
     social_media:instagram:hashtag: 'apify/instagram-scraper'
     social_media:instagram:search: 'apify/instagram-scraper'
+    social_media:x:user: 'apidojo/tweet-scraper'
+    social_media:x:search: 'apidojo/tweet-scraper'
+    social_media:x:hashtag: 'apidojo/tweet-scraper'
+    social_media:tiktok: 'clockworks/tiktok-scraper'
     news:newsapi: 'lhotanova/google-news-scraper'
     news:newsapi:headlines: 'lhotanova/google-news-scraper'
     website: 'apify/website-content-crawler'
@@ -86,6 +90,33 @@ parameters:
             - 'RESIDENTIAL'
       required_fields: ['profileUrls']
 
+    # Twitter/X Tweet Scraper (social_media:x:user, social_media:x:search, social_media:x:hashtag)
+    apidojo/tweet-scraper:
+      name: 'Twitter/X Tweet Scraper V2'
+      source_types: ['social_media:x:user', 'social_media:x:search', 'social_media:x:hashtag']
+      defaults:
+        searchTerms:
+          - '{{source.query}}'
+        maxTweets: '{{config.max_tweets|default:100}}'
+        language: '{{config.language|default:fr}}'
+        addUserInfo: true
+        proxyConfiguration:
+          useApifyProxy: true
+      required_fields: ['searchTerms']
+
+    # TikTok Scraper (social_media:tiktok)
+    clockworks/tiktok-scraper:
+      name: 'TikTok Scraper'
+      source_types: ['social_media:tiktok']
+      defaults:
+        profiles:
+          - '{{source.query}}'
+        resultsPerPage: '{{config.max_results|default:50}}'
+        shouldDownloadVideos: false
+        proxyConfiguration:
+          useApifyProxy: true
+      required_fields: ['profiles']
+
   app.collect_task.jwt_secret: '%env(string:COLLECT_TASK_JWT_SECRET)%'
 
   app.collect.provider_routing.default: '%env(string:COLLECT_DEFAULT_PROVIDER)%'
@@ -97,6 +128,10 @@ parameters:
     social_media:instagram:user: 'apify'
     social_media:instagram:hashtag: 'apify'
     social_media:instagram:search: 'apify'
+    social_media:x:user: 'apify'
+    social_media:x:search: 'apify'
+    social_media:x:hashtag: 'apify'
+    social_media:tiktok: 'apify'
     news:newsapi: 'apify'
     news:newsapi:headlines: 'apify'
     website: 'apify'
