@@ -100,6 +100,23 @@ class NullDocumentGateway implements DocumentGatewayInterface
         return null;
     }
 
+    public function findByCanonicalUrl(string $canonicalUrl, ?string $excludeDocumentId = null): ?Document
+    {
+        foreach ($this->documents as $document) {
+            if ($document->getCanonicalUrl() !== $canonicalUrl) {
+                continue;
+            }
+
+            if (null !== $excludeDocumentId && $document->getId() === $excludeDocumentId) {
+                continue;
+            }
+
+            return $document;
+        }
+
+        return null;
+    }
+
     public function findStaleAiValidationDocuments(\DateTimeImmutable $cutoff, int $limit): array
     {
         return [];

@@ -250,6 +250,73 @@ readonly class DocumentOpenSearchGateway implements DocumentGatewayInterface
         return $exceeding;
     }
 
+    public function findByCanonicalUrl(string $canonicalUrl, ?string $excludeDocumentId = null): ?Document
+    {
+        $termQuery = [
+            'term' => [
+                'canonicalUrl' => [
+                    'value' => $canonicalUrl,
+                ],
+            ],
+        ];
+
+        $query = null === $excludeDocumentId
+            ? $termQuery
+            : [
+                'bool' => [
+                    'must' => $termQuery,
+                    'must_not' => [
+                        'ids' => [
+                            'values' => [$excludeDocumentId],
+                        ],
+                    ],
+                ],
+            ];
+
+        try {
+            $response = $this->openSearch->search([
+                'index' => $this->getIndex(),
+                'body' => [
+                    'query' => $query,
+                    'size' => 1,
+                ],
+            ]);
+
+            $hits = $response['hits']['hits'] ?? [];
+            if (empty($hits)) {
+                return null;
+            }
+
+            $source = $hits[0]['_source'] ?? null;
+            if (!\is_array($source)) {
+                return null;
+            }
+
+            if (!isset($source['id'])) {
+                throw new \LogicException('Missing document ID in source');
+            }
+
+            /** @var Document $document */
+            $document = $this->denormalizer->denormalize($source, Document::class);
+
+            return $document;
+        } catch (Missing404Exception $e) {
+            $this->logger?->error('Failed to find document by canonicalUrl in OpenSearch', [
+                'canonical_url' => $canonicalUrl,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            $this->logger?->error('Unexpected error while finding document by canonicalUrl', [
+                'canonical_url' => $canonicalUrl,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
     public function findByProviderId(string $providerId): ?Document
     {
         try {

@@ -51,6 +51,22 @@ interface DocumentGatewayInterface
     public function findByProviderId(string $providerId): ?Document;
 
     /**
+     * Find a document indexed under the given canonical URL.
+     *
+     * Caller is expected to pass an already-normalized canonical URL
+     * (see CanonicalUrlExtractor — TAR-1140). The match is an exact
+     * keyword lookup; no normalization happens here.
+     *
+     * @param string      $canonicalUrl      Pre-normalized canonical URL to search for
+     * @param string|null $excludeDocumentId Optional document id to exclude from results
+     *                                       (used when the lookup is run while indexing
+     *                                       the document itself)
+     *
+     * @return Document|null The first matching document, or null if no match
+     */
+    public function findByCanonicalUrl(string $canonicalUrl, ?string $excludeDocumentId = null): ?Document;
+
+    /**
      * Find documents with AI validation stuck in pending status since before the given cutoff.
      *
      * @return list<array{id: string, title: string, processedAt: string, watchFileId: ?string}>
