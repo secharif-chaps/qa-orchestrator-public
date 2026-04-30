@@ -84,7 +84,7 @@ async def _build_folder_response(
         is_favorite = await FolderService.is_favorite(db, folder.id, user_id)
 
     # Get folder items with full context for company enrichment
-    folder_items = await FolderService._get_folder_items_summary(
+    folder_items, _ = await FolderService._get_folder_items_summary(
         db,
         folder.id,
         user_id=user_id,
@@ -378,11 +378,22 @@ async def list_folders(
 async def get_folder(
     folder_id: UUID,
     archived: bool = Query(False),
+    page: int | None = Query(None, ge=1, description="Page number (1-based). Omit for all items."),
+    size: int | None = Query(None, ge=1, le=100, description="Items per page (max 100)."),
+    sort_by: Literal["name", "added_at", "position"] | None = Query(
+        None, description="Sort field: name, added_at, or position."
+    ),
+    sort_order: Literal["asc", "desc"] = Query("asc", description="Sort direction: asc or desc."),
+    name: str | None = Query(None, max_length=255, description="Filter items by name (case-insensitive contains)."),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: AsyncSession = Depends(get_global_db),
 ):
     """Get a folder with its items.
+
+    Supports optional pagination (`page` + `size`), sorting (`sort_by`, `sort_order`)
+    and name filtering (`name`). Without pagination params, returns all items
+    (backward-compatible behavior).
 
     Requires organization.read role for access.
     Returns 404 if user has no access to the folder (owner or shared).
@@ -390,6 +401,14 @@ async def get_folder(
     logger.info(
         f"GET /folders/{folder_id} - Getting folder", extra={"user": org_context.username, "folder_id": str(folder_id)}
     )
+
+    # size alone is valid: default to page 1. page alone (no size) is ambiguous → reject.
+    if page is not None and size is None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="'page' requires 'size' to be provided."
+        )
+    if size is not None and page is None:
+        page = 1
 
     # Check access - returns 404 for security (not 403)
     # Managers (organization.manage or admin.organizations) can access all folders
@@ -417,6 +436,11 @@ async def get_folder(
         username=org_context.username,
         org_name=getattr(org_context, "organization_name", ""),
         roles=user.realm_access.get("roles", []),
+        page=page,
+        size=size,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        name_filter=name,
     )
 
     if not folder_data:

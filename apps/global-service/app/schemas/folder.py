@@ -211,6 +211,15 @@ class FolderListResponse(BaseModel):
     pagination: dict = Field(..., description="Pagination metadata with total, page, limit, total_pages")
 
 
+class FolderItemsPagination(BaseModel):
+    """Pagination metadata for folder items."""
+
+    total: int = Field(..., description="Total number of items matching the filters")
+    page: int = Field(..., description="Current page number (1-based)")
+    limit: int = Field(..., description="Number of items per page")
+    total_pages: int = Field(..., description="Total number of pages")
+
+
 class FolderWithItemsResponse(BaseModel):
     """Folder response with complete item details and access control fields.
 
@@ -230,6 +239,7 @@ class FolderWithItemsResponse(BaseModel):
         updated_at: Last update timestamp
         organization_id: Organization UUID
         items: List of items with details
+        pagination: Pagination metadata (present when page/size params are used)
     """
 
     id: str
@@ -249,6 +259,9 @@ class FolderWithItemsResponse(BaseModel):
     updated_at: str | None
     organization_id: str
     items: list[FolderItemSummary]
+    pagination: FolderItemsPagination | None = Field(
+        None, description="Pagination metadata, present when page/size params are provided"
+    )
 
 
 # ==============================================================================

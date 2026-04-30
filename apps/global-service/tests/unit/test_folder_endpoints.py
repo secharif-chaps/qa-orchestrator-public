@@ -5,12 +5,14 @@ Tests cover:
 - Folder sharing (create, list, update, delete shares)
 - User favorites (add, remove)
 - Folder items (add, remove, move)
+- Folder items pagination, sorting, and name filtering
 - Access control (owner-only operations, reader/writer permissions)
 
 All tests use SQLite in-memory database and mock external dependencies
 (Keycloak auth, backend_client for company enrichment, keycloak_admin_service).
 """
 
+from datetime import UTC
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
@@ -162,6 +164,153 @@ async def seed_folder_with_item(global_db_session, seed_folder):
     await global_db_session.commit()
     await global_db_session.refresh(item)
     return seed_folder, item
+
+
+@pytest.fixture
+async def seed_folder_with_many_items(global_db_session, seed_folder):
+    """Create a folder with 15 company items for pagination/sort/filter tests.
+
+    Items are named 'Alpha', 'Beta', 'Charlie', … 'test-Alpha', 'test-Beta', …
+    to allow deterministic assertions on name sort and name filter.
+    Company IDs are simple integers 1-15.
+    """
+    from datetime import datetime
+
+    names = [
+        "Alpha",
+        "Beta",
+        "Charlie",
+        "Delta",
+        "Echo",
+        "Foxtrot",
+        "Golf",
+        "Hotel",
+        "India",
+        "Juliet",
+        "test-Kilo",
+        "test-Lima",
+        "test-Mike",
+        "November",
+        "Oscar",
+    ]
+    items = []
+    for i, name in enumerate(names, start=1):
+        item = FolderItem(
+            id=uuid4(),
+            folder_id=seed_folder.id,
+            item_id=str(i),
+            item_type=ItemType.company,
+            owner=OWNER_USERNAME,
+            position=i,
+            added_at=datetime(2024, 1, i, tzinfo=UTC),
+        )
+        global_db_session.add(item)
+        items.append((i, name))
+
+    await global_db_session.commit()
+
+    # Build the CompanyInfo mock map that get_companies_by_ids will return
+    from app.services.backend_client import CompanyInfo
+
+    company_map = {
+        i: CompanyInfo(
+            id=i,
+            name=name,
+            website=f"https://{name.lower()}.example.com",
+            is_deleted=False,
+            owner_username=OWNER_USERNAME,
+            created_at="2024-01-01T00:00:00",
+        )
+        for i, name in items
+    }
+    return seed_folder, company_map
+
+
+@pytest.fixture
+async def seed_folder_with_mixed_positions(global_db_session, seed_folder):
+    """Create a folder with 3 positioned items (positions 1, 2, 3) and 2 null-position items.
+
+    Used to verify nullslast/nullsfirst behaviour on the position sort.
+    """
+    from datetime import datetime
+
+    from app.services.backend_client import CompanyInfo
+
+    # (company_id, name, position)
+    items_data = [
+        (1, "First", 1),
+        (2, "Second", 2),
+        (3, "Third", 3),
+        (4, "NoPos-A", None),
+        (5, "NoPos-B", None),
+    ]
+
+    for company_id, _name, position in items_data:
+        item = FolderItem(
+            id=uuid4(),
+            folder_id=seed_folder.id,
+            item_id=str(company_id),
+            item_type=ItemType.company,
+            owner=OWNER_USERNAME,
+            position=position,
+            added_at=datetime(2024, 1, company_id, tzinfo=UTC),
+        )
+        global_db_session.add(item)
+
+    await global_db_session.commit()
+
+    company_map = {
+        company_id: CompanyInfo(
+            id=company_id,
+            name=name,
+            website=f"https://{name.lower()}.example.com",
+            is_deleted=False,
+            owner_username=OWNER_USERNAME,
+            created_at="2024-01-01T00:00:00",
+        )
+        for company_id, name, _position in items_data
+    }
+    return seed_folder, company_map
+
+
+@pytest.fixture
+async def seed_folder_with_archived_items(global_db_session, seed_folder):
+    """Create a folder with a mix of active and archived company items.
+
+    5 archived items named 'Archived-{n}', 5 active items named 'Active-{n}'.
+    """
+    from datetime import datetime
+
+    from app.services.backend_client import CompanyInfo
+
+    items_data = [(i, f"Archived-{i}", True) for i in range(1, 6)] + [(i, f"Active-{i}", False) for i in range(6, 11)]
+
+    for company_id, _name, _is_deleted in items_data:
+        item = FolderItem(
+            id=uuid4(),
+            folder_id=seed_folder.id,
+            item_id=str(company_id),
+            item_type=ItemType.company,
+            owner=OWNER_USERNAME,
+            position=company_id,
+            added_at=datetime(2024, 1, company_id, tzinfo=UTC),
+        )
+        global_db_session.add(item)
+
+    await global_db_session.commit()
+
+    company_map = {
+        company_id: CompanyInfo(
+            id=company_id,
+            name=name,
+            website=f"https://{name.lower()}.example.com",
+            is_deleted=is_deleted,
+            owner_username=OWNER_USERNAME,
+            created_at="2024-01-01T00:00:00",
+        )
+        for company_id, name, is_deleted in items_data
+    }
+    return seed_folder, company_map
 
 
 # ============================================================================
@@ -1039,6 +1188,387 @@ class TestAccessControl:
         assert len(body["data"]) == 1
         assert body["data"][0]["name"] == "Test Folder"
         assert body["data"][0]["share_role"] == "reader"
+
+
+# ============================================================================
+# Pagination / Sort / Filter Tests (GET /api/folders/{id})
+# ============================================================================
+
+
+class TestGetFolderPaginationSortFilter:
+    """GET /api/folders/{folder_id} — pagination, sorting, and name filtering."""
+
+    # ------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _patch_companies(company_map):
+        """Return a context-manager that patches get_companies_by_ids."""
+        return patch(
+            "app.services.folder.get_companies_by_ids",
+            new_callable=AsyncMock,
+            return_value=company_map,
+        )
+
+    # ------------------------------------------------------------------
+    # Pagination
+    # ------------------------------------------------------------------
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_pagination_first_page(self, mock_get_companies, folder_client, seed_folder_with_many_items):
+        """page=1&size=12 returns 12 items and correct pagination metadata."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(f"/api/folders/{folder.id}", params={"page": 1, "size": 12})
+
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["items"]) == 12
+        assert data["pagination"]["total"] == 15
+        assert data["pagination"]["page"] == 1
+        assert data["pagination"]["limit"] == 12
+        assert data["pagination"]["total_pages"] == 2
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_pagination_second_page(self, mock_get_companies, folder_client, seed_folder_with_many_items):
+        """page=2&size=12 returns the 3 remaining items."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(f"/api/folders/{folder.id}", params={"page": 2, "size": 12})
+
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["items"]) == 3
+        assert data["pagination"]["page"] == 2
+        assert data["pagination"]["total"] == 15
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_pagination_out_of_range_returns_empty(
+        self, mock_get_companies, folder_client, seed_folder_with_many_items
+    ):
+        """Requesting a page beyond total_pages returns empty items list."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(f"/api/folders/{folder.id}", params={"page": 99, "size": 12})
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["items"] == []
+        assert data["pagination"]["total"] == 15
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_pagination_response_includes_metadata(
+        self, mock_get_companies, folder_client, seed_folder_with_many_items
+    ):
+        """Response pagination object contains all required fields."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(f"/api/folders/{folder.id}", params={"page": 1, "size": 5})
+
+        assert response.status_code == 200
+        pagination = response.json()["pagination"]
+        assert set(pagination.keys()) >= {"total", "page", "limit", "total_pages"}
+        assert pagination["total"] == 15
+        assert pagination["page"] == 1
+        assert pagination["limit"] == 5
+        assert pagination["total_pages"] == 3
+
+    async def test_page_without_size_returns_422(self, folder_client, seed_folder):
+        """Providing page without size returns 422 (size is required to interpret the page)."""
+        response = await folder_client.get(f"/api/folders/{seed_folder.id}", params={"page": 1})
+        assert response.status_code == 422
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_size_without_page_defaults_to_page_1(
+        self, mock_get_companies, folder_client, seed_folder_with_many_items
+    ):
+        """size without page is valid and defaults to page=1."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(f"/api/folders/{folder.id}", params={"size": 5})
+
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["items"]) == 5
+        assert data["pagination"]["page"] == 1
+        assert data["pagination"]["total"] == 15
+
+    # ------------------------------------------------------------------
+    # Sorting
+    # ------------------------------------------------------------------
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_sort_by_name_asc(self, mock_get_companies, folder_client, seed_folder_with_many_items):
+        """sort_by=name&sort_order=asc returns items alphabetically."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(
+            f"/api/folders/{folder.id}",
+            params={"sort_by": "name", "sort_order": "asc"},
+        )
+
+        assert response.status_code == 200
+        names = [item["name"] for item in response.json()["items"]]
+        assert names == sorted(names, key=str.lower)
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_sort_by_name_desc(self, mock_get_companies, folder_client, seed_folder_with_many_items):
+        """sort_by=name&sort_order=desc returns items reverse-alphabetically."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(
+            f"/api/folders/{folder.id}",
+            params={"sort_by": "name", "sort_order": "desc"},
+        )
+
+        assert response.status_code == 200
+        names = [item["name"] for item in response.json()["items"]]
+        assert names == sorted(names, key=str.lower, reverse=True)
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_sort_by_added_at_desc(self, mock_get_companies, folder_client, seed_folder_with_many_items):
+        """sort_by=added_at&sort_order=desc returns most-recently-added first."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(
+            f"/api/folders/{folder.id}",
+            params={"sort_by": "added_at", "sort_order": "desc"},
+        )
+
+        assert response.status_code == 200
+        items = response.json()["items"]
+        added_dates = [item["added_at"] for item in items]
+        assert added_dates == sorted(added_dates, reverse=True)
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_sort_by_added_at_asc(self, mock_get_companies, folder_client, seed_folder_with_many_items):
+        """sort_by=added_at&sort_order=asc returns oldest-added first."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(
+            f"/api/folders/{folder.id}",
+            params={"sort_by": "added_at", "sort_order": "asc"},
+        )
+
+        assert response.status_code == 200
+        items = response.json()["items"]
+        added_dates = [item["added_at"] for item in items]
+        assert added_dates == sorted(added_dates)
+
+    async def test_sort_by_invalid_value_returns_422(self, folder_client, seed_folder):
+        """Unknown sort_by value is rejected."""
+        response = await folder_client.get(
+            f"/api/folders/{seed_folder.id}",
+            params={"sort_by": "hacker_field", "sort_order": "asc"},
+        )
+        assert response.status_code == 422
+
+    async def test_sort_order_invalid_value_returns_422(self, folder_client, seed_folder):
+        """Unknown sort_order value is rejected."""
+        response = await folder_client.get(
+            f"/api/folders/{seed_folder.id}",
+            params={"sort_by": "name", "sort_order": "random"},
+        )
+        assert response.status_code == 422
+
+    # ------------------------------------------------------------------
+    # Name filter
+    # ------------------------------------------------------------------
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_name_filter_returns_matching_items(
+        self, mock_get_companies, folder_client, seed_folder_with_many_items
+    ):
+        """name=test filters items whose name contains 'test' (case-insensitive)."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(f"/api/folders/{folder.id}", params={"name": "test"})
+
+        assert response.status_code == 200
+        items = response.json()["items"]
+        # Only 'test-Kilo', 'test-Lima', 'test-Mike' match
+        assert len(items) == 3
+        for item in items:
+            assert "test" in item["name"].lower()
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_name_filter_case_insensitive(self, mock_get_companies, folder_client, seed_folder_with_many_items):
+        """Name filter is case-insensitive."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(f"/api/folders/{folder.id}", params={"name": "ALPHA"})
+
+        assert response.status_code == 200
+        items = response.json()["items"]
+        assert len(items) == 1
+        assert items[0]["name"] == "Alpha"
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_name_filter_no_match_returns_empty(
+        self, mock_get_companies, folder_client, seed_folder_with_many_items
+    ):
+        """Name filter with no match returns empty items list."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(f"/api/folders/{folder.id}", params={"name": "zzz-nonexistent"})
+
+        assert response.status_code == 200
+        assert response.json()["items"] == []
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_name_filter_combined_with_pagination(
+        self, mock_get_companies, folder_client, seed_folder_with_many_items
+    ):
+        """name filter + pagination: pagination total reflects filtered count."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(
+            f"/api/folders/{folder.id}",
+            params={"name": "test", "page": 1, "size": 2},
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        # 3 items match 'test', page size 2 → first page has 2
+        assert len(data["items"]) == 2
+        assert data["pagination"]["total"] == 3
+        assert data["pagination"]["total_pages"] == 2
+
+    # ------------------------------------------------------------------
+    # Backward compatibility (no pagination params)
+    # ------------------------------------------------------------------
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_no_params_returns_all_items(self, mock_get_companies, folder_client, seed_folder_with_many_items):
+        """Without pagination params, all items are returned and pagination is null."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(f"/api/folders/{folder.id}")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["items"]) == 15
+        assert data["pagination"] is None
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_no_params_default_order_position_then_added_at(
+        self, mock_get_companies, folder_client, seed_folder_with_many_items
+    ):
+        """Without sort params, items are ordered by position asc (then added_at)."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(f"/api/folders/{folder.id}")
+
+        assert response.status_code == 200
+        items = response.json()["items"]
+        positions = [item["position"] for item in items]
+        assert positions == sorted(positions)
+
+    # ------------------------------------------------------------------
+    # Enrichment still works with pagination
+    # ------------------------------------------------------------------
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_enrichment_fields_present_with_pagination(
+        self, mock_get_companies, folder_client, seed_folder_with_many_items
+    ):
+        """Company enrichment fields (name, website, owner) are present on paginated items."""
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(f"/api/folders/{folder.id}", params={"page": 1, "size": 5})
+
+        assert response.status_code == 200
+        for item in response.json()["items"]:
+            assert "name" in item
+            assert "website" in item
+            assert "owner" in item
+            assert item["name"]  # non-empty
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_enrichment_called_with_all_ids_not_just_page(
+        self, mock_get_companies, folder_client, seed_folder_with_many_items
+    ):
+        """get_companies_by_ids is called with all folder item IDs, not just the page slice.
+
+        This ensures the name filter and total count are computed on the full set.
+        """
+        folder, company_map = seed_folder_with_many_items
+        mock_get_companies.return_value = company_map
+
+        await folder_client.get(f"/api/folders/{folder.id}", params={"page": 1, "size": 5})
+
+        assert mock_get_companies.called
+        called_ids = mock_get_companies.call_args.kwargs["company_ids"]
+        assert len(called_ids) == 15
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_sort_by_position_desc_nullslast(
+        self, mock_get_companies, folder_client, seed_folder_with_mixed_positions
+    ):
+        """sort_by=position&sort_order=desc uses nullslast(): null-position items come after all positioned items.
+
+        Note: SQLite ignores nullsfirst()/nullslast() clauses, so we only assert the nulls-last
+        invariant (not the descending order of non-null positions, which is a PostgreSQL guarantee).
+        """
+        folder, company_map = seed_folder_with_mixed_positions
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(
+            f"/api/folders/{folder.id}",
+            params={"sort_by": "position", "sort_order": "desc"},
+        )
+
+        assert response.status_code == 200
+        items = response.json()["items"]
+        positions = [item["position"] for item in items]
+
+        # All items with a position must appear before any null-position item
+        first_null_index = next((i for i, p in enumerate(positions) if p is None), None)
+        if first_null_index is not None:
+            assert all(p is None for p in positions[first_null_index:]), (
+                "All null-position items must be grouped at the end (nullslast)"
+            )
+            assert all(p is not None for p in positions[:first_null_index]), (
+                "All positioned items must appear before null-position items"
+            )
+
+    @patch("app.services.folder.get_companies_by_ids", new_callable=AsyncMock)
+    async def test_archived_with_pagination_and_name_filter(
+        self, mock_get_companies, folder_client, seed_folder_with_archived_items
+    ):
+        """archived=true + page + name: all three features work correctly together."""
+        folder, company_map = seed_folder_with_archived_items
+        mock_get_companies.return_value = company_map
+
+        response = await folder_client.get(
+            f"/api/folders/{folder.id}",
+            params={"archived": "true", "page": 1, "size": 5, "name": "archived"},
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        for item in data["items"]:
+            assert item["is_deleted"] is True
+            assert "archived" in item["name"].lower()
+        assert data["pagination"]["page"] == 1
+        assert data["pagination"]["limit"] == 5
 
 
 if __name__ == "__main__":
