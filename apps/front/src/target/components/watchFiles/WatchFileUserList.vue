@@ -83,7 +83,7 @@ import {
   useRemoveWatchFileUser,
   useUpdateWatchFileUserRole,
 } from '@target/api/mutations/watchFileUser'
-import { useConfirmModal } from '@target/composables/useConfirmModal'
+import { useConfirmModal } from '@/composables/useConfirmModal'
 import { useMotionPreference } from '@target/composables/useMotionPreference'
 import { useRole } from '@target/composables/useRole'
 import type { WatchFileUser, WatchFileUserRole } from '@target/types/watchFileUser'

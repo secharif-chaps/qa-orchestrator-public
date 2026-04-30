@@ -106,7 +106,7 @@ import DocumentListHeader from '@target/components/documents/DocumentListHeader.
 import ErrorMessage from '@target/components/global/ErrorMessage.vue'
 import InformationMessage from '@target/components/global/InformationMessage.vue'
 import DocumentListSkeleton from '@target/components/skeletons/DocumentListSkeleton.vue'
-import { useConfirmModal } from '@target/composables/useConfirmModal'
+import { useConfirmModal } from '@/composables/useConfirmModal'
 import { useWatchFileDocumentsStore } from '@target/stores/watchFileDocuments'
 import type { Document } from '@target/types/document'
 import { DocumentValidationAction } from '@target/types/document'

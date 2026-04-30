@@ -19,12 +19,10 @@
     </div>
 
     <ToastContainer />
-    <ConfirmModal />
   </div>
 </template>
 
 <script lang="ts" setup>
-import ConfirmModal from '@target/components/global/ConfirmModal.vue'
 import Sidebar from '@target/components/global/Sidebar.vue'
 import ToastContainer from '@target/components/global/ToastContainer.vue'
 import { config } from '@target/config'

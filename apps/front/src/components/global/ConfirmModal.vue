@@ -11,7 +11,7 @@
         <div class="flex items-center gap-3">
           <div
             v-if="modalState.titleIcon"
-            class="bg-sage-100 flex h-8 w-8 items-center justify-center rounded-full"
+            class="bg-primary-light flex h-8 w-8 items-center justify-center rounded-full"
           >
             <Badge
               :icon="modalState.titleIcon"
@@ -92,7 +92,7 @@
 
 <script setup lang="ts">
 import { Badge, Button, Icon, Modal } from '@owlint/feathers-vue'
-import { useConfirmModal } from '@target/composables/useConfirmModal'
+import { useConfirmModal } from '@/composables/useConfirmModal'
 import { useI18n } from 'vue-i18n'
 
 const { modalState, handleConfirm, handleCancel } = useConfirmModal()
