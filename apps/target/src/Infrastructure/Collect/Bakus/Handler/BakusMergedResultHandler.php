@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Collect\Bakus\Handler;
 
-use App\Application\Document\AddDocumentAction;
+use App\Application\Document\IngestDocumentAction;
 use App\Domain\Collect\CollectDataHandlerInterface;
 use App\Domain\Collect\Stream\Event\CollectDataReceivedEvent;
 use App\Domain\Document\Document;
@@ -210,7 +210,7 @@ class BakusMergedResultHandler implements CollectDataHandlerInterface
                 return;
             }
 
-            $this->messageBus->dispatch(new AddDocumentAction($event->collectTaskId, $document));
+            $this->messageBus->dispatch(new IngestDocumentAction($event->collectTaskId, $document));
 
             $this->logger?->info('Successfully processed document', [
                 'collect_task_id' => $event->collectTaskId,
@@ -307,7 +307,7 @@ class BakusMergedResultHandler implements CollectDataHandlerInterface
                 return;
             }
 
-            $this->messageBus->dispatch(new AddDocumentAction($event->collectTaskId, $document));
+            $this->messageBus->dispatch(new IngestDocumentAction($event->collectTaskId, $document));
 
             $this->logger?->info('Successfully processed refined document', [
                 'collect_task_id' => $event->collectTaskId,

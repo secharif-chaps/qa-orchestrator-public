@@ -6,14 +6,15 @@ namespace App\Infrastructure\Document;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use App\Application\Document\AddDocumentAction;
+use App\Application\Document\IngestDocumentAction;
 use App\Domain\Collect\CollectTask;
 use App\Domain\Collect\CollectTaskGatewayInterface;
 use App\Domain\Document\Document;
+use App\Domain\Document\DocumentBuilderFromHtmlMetadata;
 use App\Domain\Document\HtmlFetcherInterface;
 use App\Domain\Document\HtmlFetchException;
 use App\Domain\Document\HtmlMetadataExtractor;
-use App\Domain\Shared\TranslatedText;
+use App\Domain\Source\ManualSourceFactory;
 use App\Domain\Source\Source;
 use App\Domain\Source\SourceGatewayInterface;
 use App\Domain\Source\SourceType;
@@ -47,6 +48,8 @@ class CreateDocumentProcessor implements ProcessorInterface
         private readonly CollectTaskGatewayInterface $collectTaskGateway,
         private readonly HtmlFetcherInterface $htmlFetcher,
         private readonly HtmlMetadataExtractor $metadataExtractor,
+        private readonly DocumentBuilderFromHtmlMetadata $documentBuilder,
+        private readonly ManualSourceFactory $manualSourceFactory,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly ?LoggerInterface $logger = null,
     ) {
@@ -88,44 +91,25 @@ class CreateDocumentProcessor implements ProcessorInterface
 
         $collectTask = $this->createAndCompleteCollectTask($source, $watchFile, $providerName);
 
-        $title = $inputDto->title ?? $metadata->title;
-        $excerpt = $inputDto->excerpt ?? $metadata->excerpt;
-        $datePublish = $metadata->datePublish ?? new \DateTimeImmutable();
-
-        $document = new Document(
-            id: null,
-            title: $title,
-            excerpt: $excerpt,
-            type: 'html',
-            datePublish: $datePublish,
-            dateCollect: new \DateTimeImmutable(),
-            content: $metadata->content,
-            cfcRestricted: false,
-            url: $metadata->canonicalUrl ?? $inputDto->url,
+        $document = $this->documentBuilder->build(
+            metadata: $metadata,
+            rawHtml: $html,
+            sourceUrl: $inputDto->url,
+            titleOverride: $inputDto->title,
+            excerptOverride: $inputDto->excerpt,
         );
-
-        $document->setLanguage($metadata->language);
-        $htmlLength = mb_strlen($html);
-        $document->setContentRatio($htmlLength > 0 ? mb_strlen($metadata->content) / $htmlLength : null);
-
-        // Use canonical URL for dedup when available (more stable than redirect URLs)
-        $dedupUrl = $metadata->canonicalUrl ?? $inputDto->url;
-        $providerId = null !== $dedupUrl
-            ? hash('sha256', $dedupUrl)
-            : hash('sha256', mb_substr($html, 0, 10000));
-        $document->setProviderId($providerId);
 
         $this->logger?->info('Creating manual document', [
             'watch_file_id' => $watchFileId,
             'provider_name' => $providerName,
             'url' => $inputDto->url,
-            'title' => $title,
+            'title' => $document->getTitle(),
         ]);
 
         $collectTaskId = $collectTask->getId();
         Assert::stringNotEmpty($collectTaskId);
 
-        $this->messageBus->dispatch(new AddDocumentAction($collectTaskId, $document));
+        $this->messageBus->dispatch(new IngestDocumentAction($collectTaskId, $document));
 
         return $document;
     }
@@ -147,17 +131,7 @@ class CreateDocumentProcessor implements ProcessorInterface
             }
         }
 
-        $source = new Source(
-            name: 'Manual',
-            description: new TranslatedText('Source manuelle', 'Manual source'),
-            type: SourceType::MANUAL,
-            url: \sprintf('manual://%s', $watchFile->getId()),
-            primaryDomain: 'manual',
-            relevance: new TranslatedText('Ajout manuel par l\'utilisateur', 'Manually added by user'),
-            actor: null,
-            watchFile: $watchFile,
-        );
-
+        $source = $this->manualSourceFactory->buildFor($watchFile);
         $this->sourceGateway->save($source);
 
         return $source;

@@ -26,8 +26,10 @@ services:
   _instanceof:
     App\Domain\Collect\CollectDataHandlerInterface:
       tags: ['collect_data_handler']
-    App\Domain\DocumentQuality\DocumentProcessorInterface:
-      tags: ['app.document_processor']
+    App\Domain\Document\Pipeline\PreSaveDocumentProcessorInterface:
+      tags: ['app.document_pre_save_processor']
+    App\Domain\Document\Pipeline\PostSaveDocumentProcessorInterface:
+      tags: ['app.document_post_save_processor']
     App\Domain\Collect\ApifyDocumentNormalizerInterface:
       tags: ['apify.normalizer']
 
@@ -46,11 +48,6 @@ services:
 
   App\Domain\DocumentQuality\ScoringStrategyInterface:
     class: App\Domain\DocumentQuality\DefaultScoringStrategy
-
-  # Document Processing Pipeline - processors sorted by #[AsTaggedItem(priority: X)] via Symfony DI
-  App\Infrastructure\DocumentQuality\DocumentProcessingPipeline:
-    arguments:
-      $processors: !tagged_iterator app.document_processor
 
   # Logo Infrastructure Gateways
   App\Infrastructure\Logo\LogoDevGateway:

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Units\Infrastructure\Collect\Bakus\Handler;
 
-use App\Application\Document\AddDocumentAction;
+use App\Application\Document\IngestDocumentAction;
 use App\Domain\Collect\Stream\Event\CollectDataReceivedEvent;
 use App\Domain\Document\Document;
 use App\Domain\Document\DocumentStatus;
@@ -141,7 +141,7 @@ class BakusMergedResultHandlerTest extends TestCase
 
         $this->assertCount(1, $this->messageBus->getDispatchedMessages());
         $action = $this->messageBus->getDispatchedMessages()[0];
-        $this->assertInstanceOf(AddDocumentAction::class, $action);
+        $this->assertInstanceOf(IngestDocumentAction::class, $action);
         $this->assertSame('collect-task-123', $action->collectTaskId);
     }
 

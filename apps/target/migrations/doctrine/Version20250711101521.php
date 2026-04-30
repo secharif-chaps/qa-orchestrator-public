@@ -21,15 +21,15 @@ final class Version20250711101521 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            CREATE INDEX IDX_DD7C964343625D9F ON watch_file (updated_at)
-        SQL);
+                CREATE INDEX IDX_DD7C964343625D9F ON watch_file (updated_at)
+            SQL);
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            DROP INDEX IDX_DD7C964343625D9F
-        SQL);
+                DROP INDEX IDX_DD7C964343625D9F
+            SQL);
     }
 }

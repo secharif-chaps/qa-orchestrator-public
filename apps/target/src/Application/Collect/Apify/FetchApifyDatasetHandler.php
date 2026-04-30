@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Collect\Apify;
 
-use App\Application\Document\AddDocumentAction;
+use App\Application\Document\IngestDocumentAction;
 use App\Domain\Collect\ApifyClientInterface;
 use App\Domain\Collect\ApifyDocumentNormalizerInterface;
 use App\Domain\Collect\ApifyNormalizerResolverInterface;
@@ -151,7 +151,7 @@ readonly class FetchApifyDatasetHandler
     }
 
     /**
-     * Fetch all dataset items in batches, normalize each item, dispatch AddDocumentAction.
+     * Fetch all dataset items in batches, normalize each item, dispatch IngestDocumentAction.
      *
      * @return array{created: int, errors: int}
      */
@@ -192,7 +192,7 @@ readonly class FetchApifyDatasetHandler
                             continue;
                         }
 
-                        $this->messageBus->dispatch(new AddDocumentAction($collectTaskId, $document));
+                        $this->messageBus->dispatch(new IngestDocumentAction($collectTaskId, $document));
                         ++$documentsCreated;
                     } catch (\Throwable $e) {
                         ++$normalizationErrors;

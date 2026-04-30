@@ -691,9 +691,9 @@ public function __invoke(CollectDataReceivedEvent $event): void
     // 2. Build document
     $document = $this->buildDocument($content, $event);
 
-    // 3. Dispatch add action
+    // 3. Dispatch ingest action
     $this->messageBus->dispatch(
-        new AddDocumentAction($event->collectTaskId, $document)
+        new IngestDocumentAction($event->collectTaskId, $document)
     );
 }
 ```

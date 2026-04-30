@@ -6,7 +6,7 @@ namespace App\Tests\Units\Application\Collect\Apify;
 
 use App\Application\Collect\Apify\FetchApifyDatasetAction;
 use App\Application\Collect\Apify\FetchApifyDatasetHandler;
-use App\Application\Document\AddDocumentAction;
+use App\Application\Document\IngestDocumentAction;
 use App\Domain\Collect\ApifyDocumentNormalizerInterface;
 use App\Domain\Collect\ApifyNormalizerResolverInterface;
 use App\Domain\Collect\ApifyRunCost;
@@ -106,7 +106,7 @@ class FetchApifyDatasetHandlerTest extends TestCase
 
         $saved = $this->collectTaskGateway->get(self::TASK_ID);
         $this->assertEquals(CollectTaskStatus::COMPLETED, $saved->getStatus());
-        $this->assertSame(3, $this->messageBus->countDispatched(AddDocumentAction::class));
+        $this->assertSame(3, $this->messageBus->countDispatched(IngestDocumentAction::class));
 
         $configuration = $saved->getConfiguration();
         /** @var array<string, mixed> $result */
@@ -149,7 +149,7 @@ class FetchApifyDatasetHandlerTest extends TestCase
 
         ($this->handler)(new FetchApifyDatasetAction(self::TASK_ID, $datasetId));
 
-        $this->assertSame(250, $this->messageBus->countDispatched(AddDocumentAction::class));
+        $this->assertSame(250, $this->messageBus->countDispatched(IngestDocumentAction::class));
 
         $saved = $this->collectTaskGateway->get(self::TASK_ID);
         $configuration = $saved->getConfiguration();
@@ -291,7 +291,7 @@ class FetchApifyDatasetHandlerTest extends TestCase
 
         ($handler)(new FetchApifyDatasetAction(self::TASK_ID, $datasetId));
 
-        $this->assertSame(0, $this->messageBus->countDispatched(AddDocumentAction::class));
+        $this->assertSame(0, $this->messageBus->countDispatched(IngestDocumentAction::class));
 
         $saved = $this->collectTaskGateway->get(self::TASK_ID);
         $this->assertEquals(CollectTaskStatus::COMPLETED, $saved->getStatus());
@@ -325,7 +325,7 @@ class FetchApifyDatasetHandlerTest extends TestCase
 
         ($this->handler)(new FetchApifyDatasetAction(self::TASK_ID, $datasetId));
 
-        $dispatched = $this->messageBus->getFirstDispatched(AddDocumentAction::class);
+        $dispatched = $this->messageBus->getFirstDispatched(IngestDocumentAction::class);
         $this->assertNotNull($dispatched);
         $this->assertSame($expectedProviderId, $dispatched->document->getProviderId());
     }
@@ -345,7 +345,7 @@ class FetchApifyDatasetHandlerTest extends TestCase
 
         ($this->handler)(new FetchApifyDatasetAction(self::TASK_ID, $datasetId));
 
-        $this->assertSame(0, $this->messageBus->countDispatched(AddDocumentAction::class));
+        $this->assertSame(0, $this->messageBus->countDispatched(IngestDocumentAction::class));
 
         $saved = $this->collectTaskGateway->get(self::TASK_ID);
         $this->assertEquals(CollectTaskStatus::COMPLETED, $saved->getStatus());
