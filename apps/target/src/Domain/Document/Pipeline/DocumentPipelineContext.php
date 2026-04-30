@@ -24,6 +24,12 @@ use App\Domain\WatchFile\WatchFile;
  * - `duplicateOf`: the canonical id of an already-indexed document this one
  *   duplicates. Set by deduplication processors during the pre-save phase to
  *   instruct the ingest handler to skip the save.
+ * - `canonicalUrl`: normalised canonical URL resolved by the enrichment phase
+ *   (Stage 0 of dedup). Stored on the context rather than on the document so
+ *   downstream processors can read it without re-extracting.
+ * - `rawHtml`: optional raw HTML payload provided by collect connectors that
+ *   have it on hand. Kept transient (no DB persistence) — the canonical URL
+ *   enrichment is its main consumer.
  */
 readonly class DocumentPipelineContext
 {
@@ -37,6 +43,8 @@ readonly class DocumentPipelineContext
         public bool $isHalted = false,
         public ?TranslatedText $haltReason = null,
         public ?string $duplicateOf = null,
+        public ?string $canonicalUrl = null,
+        public ?string $rawHtml = null,
     ) {
     }
 
@@ -51,6 +59,8 @@ readonly class DocumentPipelineContext
             isHalted: $this->isHalted,
             haltReason: $this->haltReason,
             duplicateOf: $this->duplicateOf,
+            canonicalUrl: $this->canonicalUrl,
+            rawHtml: $this->rawHtml,
         );
     }
 
@@ -63,6 +73,8 @@ readonly class DocumentPipelineContext
             isHalted: true,
             haltReason: $reason,
             duplicateOf: $this->duplicateOf,
+            canonicalUrl: $this->canonicalUrl,
+            rawHtml: $this->rawHtml,
         );
     }
 
@@ -75,6 +87,22 @@ readonly class DocumentPipelineContext
             isHalted: $this->isHalted,
             haltReason: $this->haltReason,
             duplicateOf: $duplicateOfDocumentId,
+            canonicalUrl: $this->canonicalUrl,
+            rawHtml: $this->rawHtml,
+        );
+    }
+
+    public function withCanonicalUrl(string $canonicalUrl): self
+    {
+        return new self(
+            document: $this->document,
+            watchFile: $this->watchFile,
+            signals: $this->signals,
+            isHalted: $this->isHalted,
+            haltReason: $this->haltReason,
+            duplicateOf: $this->duplicateOf,
+            canonicalUrl: $canonicalUrl,
+            rawHtml: $this->rawHtml,
         );
     }
 }
