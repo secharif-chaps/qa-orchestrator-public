@@ -11,18 +11,17 @@ Covers:
 """
 
 import time
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
 
 from app.core.openapi_merge import (
-    _SCREEN_SCHEMA_PREFIX,
     _build_security_schemes,
-    _fetch_screen_schema,
-    _merge_screen_schema,
+    _fetch_backend_schema,
+    _merge_backend_schema,
     _prefix_schema_refs,
     setup_merged_openapi,
 )
@@ -33,11 +32,13 @@ class TestConfigSettings:
 
     def test_screen_base_url_exists(self):
         from app.core.config import settings
+
         assert hasattr(settings, "SCREEN_BASE_URL")
         assert settings.SCREEN_BASE_URL is not None
 
     def test_keycloak_public_url_exists(self):
         from app.core.config import settings
+
         assert hasattr(settings, "KEYCLOAK_PUBLIC_URL")
         assert settings.KEYCLOAK_PUBLIC_URL is not None
 
@@ -56,18 +57,9 @@ class TestPrefixSchemaRefs:
         assert result["$ref"] == "#/components/parameters/pageSize"
 
     def test_handles_nested_refs(self):
-        obj = {
-            "content": {
-                "application/json": {
-                    "schema": {"$ref": "#/components/schemas/TaskList"}
-                }
-            }
-        }
+        obj = {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/TaskList"}}}}
         result = _prefix_schema_refs(obj, "Screen_")
-        assert (
-            result["content"]["application/json"]["schema"]["$ref"]
-            == "#/components/schemas/Screen_TaskList"
-        )
+        assert result["content"]["application/json"]["schema"]["$ref"] == "#/components/schemas/Screen_TaskList"
 
     def test_handles_array_of_refs(self):
         obj = {
@@ -122,8 +114,9 @@ class TestFetchScreenSchema:
     def setup_method(self):
         """Reset cache before each test."""
         import app.core.openapi_merge as mod
-        mod._screen_schema = None
-        mod._cache_timestamp = 0
+
+        mod._backend_schemas["screen"] = None
+        mod._cache_timestamps["screen"] = 0
 
     @pytest.mark.asyncio
     async def test_fetches_schema_successfully(self):
@@ -138,7 +131,7 @@ class TestFetchScreenSchema:
         mock_client.__aexit__ = AsyncMock(return_value=False)
 
         with patch("app.core.openapi_merge.httpx.AsyncClient", return_value=mock_client):
-            result = await _fetch_screen_schema()
+            result = await _fetch_backend_schema("screen", "http://screen:8000")
 
         assert result is not None
         assert result["openapi"] == "3.0.0"
@@ -152,7 +145,7 @@ class TestFetchScreenSchema:
         mock_client.__aexit__ = AsyncMock(return_value=False)
 
         with patch("app.core.openapi_merge.httpx.AsyncClient", return_value=mock_client):
-            result = await _fetch_screen_schema()
+            result = await _fetch_backend_schema("screen", "http://screen:8000")
 
         assert result is None
 
@@ -169,9 +162,9 @@ class TestFetchScreenSchema:
 
         with patch("app.core.openapi_merge.httpx.AsyncClient", return_value=mock_client):
             # First call fetches
-            await _fetch_screen_schema()
+            await _fetch_backend_schema("screen", "http://screen:8000")
             # Second call should use cache
-            await _fetch_screen_schema()
+            await _fetch_backend_schema("screen", "http://screen:8000")
 
         assert mock_client.get.call_count == 1
 
@@ -190,11 +183,11 @@ class TestFetchScreenSchema:
 
         with patch("app.core.openapi_merge.httpx.AsyncClient", return_value=mock_client):
             # First call
-            await _fetch_screen_schema()
+            await _fetch_backend_schema("screen", "http://screen:8000")
             # Expire cache
-            mod._cache_timestamp = time.time() - 400
+            mod._cache_timestamps["screen"] = time.time() - 400
             # Second call should re-fetch
-            await _fetch_screen_schema()
+            await _fetch_backend_schema("screen", "http://screen:8000")
 
         assert mock_client.get.call_count == 2
 
@@ -215,12 +208,12 @@ class TestFetchScreenSchema:
 
         # First call: fetch succeeds → cache populated
         with patch("app.core.openapi_merge.httpx.AsyncClient", return_value=mock_client_ok):
-            result1 = await _fetch_screen_schema()
+            result1 = await _fetch_backend_schema("screen", "http://screen:8000")
         assert result1 is not None
         assert result1["paths"] == {"/api/cached": {}}
 
         # Expire the cache
-        mod._cache_timestamp = time.time() - 400
+        mod._cache_timestamps["screen"] = time.time() - 400
 
         # Second call: fetch fails → stale cache returned (not None)
         mock_client_fail = AsyncMock()
@@ -229,7 +222,7 @@ class TestFetchScreenSchema:
         mock_client_fail.__aexit__ = AsyncMock(return_value=False)
 
         with patch("app.core.openapi_merge.httpx.AsyncClient", return_value=mock_client_fail):
-            result2 = await _fetch_screen_schema()
+            result2 = await _fetch_backend_schema("screen", "http://screen:8000")
 
         assert result2 is not None
         assert result2["paths"] == {"/api/cached": {}}
@@ -238,14 +231,12 @@ class TestFetchScreenSchema:
     async def test_handles_timeout_exception(self):
         """httpx.TimeoutException is caught gracefully, returns None on empty cache."""
         mock_client = AsyncMock()
-        mock_client.get = AsyncMock(
-            side_effect=httpx.TimeoutException("Connection timed out")
-        )
+        mock_client.get = AsyncMock(side_effect=httpx.TimeoutException("Connection timed out"))
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock(return_value=False)
 
         with patch("app.core.openapi_merge.httpx.AsyncClient", return_value=mock_client):
-            result = await _fetch_screen_schema()
+            result = await _fetch_backend_schema("screen", "http://screen:8000")
 
         assert result is None
 
@@ -253,14 +244,12 @@ class TestFetchScreenSchema:
     async def test_handles_connect_error(self):
         """httpx.ConnectError (Screen not reachable) is caught gracefully."""
         mock_client = AsyncMock()
-        mock_client.get = AsyncMock(
-            side_effect=httpx.ConnectError("Connection refused")
-        )
+        mock_client.get = AsyncMock(side_effect=httpx.ConnectError("Connection refused"))
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock(return_value=False)
 
         with patch("app.core.openapi_merge.httpx.AsyncClient", return_value=mock_client):
-            result = await _fetch_screen_schema()
+            result = await _fetch_backend_schema("screen", "http://screen:8000")
 
         assert result is None
 
@@ -272,7 +261,7 @@ class TestMergeScreenSchema:
         gateway = {"paths": {"/api/tokens": {"get": {}}}, "components": {}}
         screen = {"paths": {"/api/companies": {"get": {}}}, "components": {}}
 
-        result = _merge_screen_schema(gateway, screen)
+        result = _merge_backend_schema(gateway, screen, "screen")
 
         assert "/api/tokens" in result["paths"]
         assert "/api/companies" in result["paths"]
@@ -281,7 +270,7 @@ class TestMergeScreenSchema:
         gateway = {"paths": {"/api/shared": {"get": {"summary": "gateway"}}}, "components": {}}
         screen = {"paths": {"/api/shared": {"get": {"summary": "screen"}}}, "components": {}}
 
-        result = _merge_screen_schema(gateway, screen)
+        result = _merge_backend_schema(gateway, screen, "screen")
 
         assert result["paths"]["/api/shared"]["get"]["summary"] == "gateway"
 
@@ -292,7 +281,7 @@ class TestMergeScreenSchema:
             "components": {"schemas": {"Company": {"type": "object"}}},
         }
 
-        result = _merge_screen_schema(gateway, screen)
+        result = _merge_backend_schema(gateway, screen, "screen")
 
         assert "Screen_Company" in result["components"]["schemas"]
         assert "Company" not in result["components"]["schemas"]
@@ -301,7 +290,7 @@ class TestMergeScreenSchema:
         gateway = {"paths": {"/api/a": {}}, "components": {}}
         screen = {"paths": {"/api/b": {}}, "components": {}}
 
-        _merge_screen_schema(gateway, screen)
+        _merge_backend_schema(gateway, screen, "screen")
 
         assert "/api/b" not in gateway["paths"]
 
@@ -315,16 +304,13 @@ class TestSetupMergedOpenapi:
         app = FastAPI(title="Test")
         setup_merged_openapi(app)
 
-        openapi_routes = [
-            r for r in app.routes
-            if isinstance(r, Route) and r.path == "/openapi.json"
-        ]
+        openapi_routes = [r for r in app.routes if isinstance(r, Route) and r.path == "/openapi.json"]
         assert len(openapi_routes) == 1
         # The route endpoint should be our custom async one, not FastAPI's default
         assert openapi_routes[0].endpoint.__name__ == "openapi_route"
 
     @pytest.mark.asyncio
-    @patch("app.core.openapi_merge._fetch_screen_schema", new_callable=AsyncMock, return_value=None)
+    @patch("app.core.openapi_merge._fetch_backend_schema", new_callable=AsyncMock, return_value=None)
     async def test_returns_gateway_only_when_screen_unavailable(self, mock_fetch):
         app = FastAPI(title="Test")
         app.add_api_route("/api/test", lambda: {"ok": True})
@@ -339,7 +325,7 @@ class TestSetupMergedOpenapi:
         assert "securitySchemes" in schema.get("components", {})
 
     @pytest.mark.asyncio
-    @patch("app.core.openapi_merge._fetch_screen_schema", new_callable=AsyncMock)
+    @patch("app.core.openapi_merge._fetch_backend_schema", new_callable=AsyncMock)
     async def test_merges_screen_when_available(self, mock_fetch):
         mock_fetch.return_value = {
             "paths": {"/api/companies": {"get": {"summary": "List companies"}}},
@@ -376,9 +362,7 @@ class TestOpenAPISchemaValidity:
                             "description": "Successful Response",
                             "content": {
                                 "application/json": {
-                                    "schema": {
-                                        "$ref": "#/components/schemas/PaginatedResponse_CompanyResponse_"
-                                    }
+                                    "schema": {"$ref": "#/components/schemas/PaginatedResponse_CompanyResponse_"}
                                 }
                             },
                         }
@@ -389,19 +373,13 @@ class TestOpenAPISchemaValidity:
                     "operationId": "create_company",
                     "tags": ["companies"],
                     "requestBody": {
-                        "content": {
-                            "application/json": {
-                                "schema": {"$ref": "#/components/schemas/CompanyCreate"}
-                            }
-                        }
+                        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/CompanyCreate"}}}
                     },
                     "responses": {
                         "200": {
                             "description": "Successful Response",
                             "content": {
-                                "application/json": {
-                                    "schema": {"$ref": "#/components/schemas/CompanyResponse"}
-                                }
+                                "application/json": {"schema": {"$ref": "#/components/schemas/CompanyResponse"}}
                             },
                         }
                     },
@@ -424,9 +402,7 @@ class TestOpenAPISchemaValidity:
                         "200": {
                             "description": "Successful Response",
                             "content": {
-                                "application/json": {
-                                    "schema": {"$ref": "#/components/schemas/CompanyResponse"}
-                                }
+                                "application/json": {"schema": {"$ref": "#/components/schemas/CompanyResponse"}}
                             },
                         }
                     },
@@ -472,7 +448,7 @@ class TestOpenAPISchemaValidity:
     }
 
     @pytest.mark.asyncio
-    @patch("app.core.openapi_merge._fetch_screen_schema", new_callable=AsyncMock)
+    @patch("app.core.openapi_merge._fetch_backend_schema", new_callable=AsyncMock)
     async def test_merged_schema_is_valid_openapi(self, mock_fetch):
         """Merged schema has all required OpenAPI 3.x top-level fields."""
         mock_fetch.return_value = self.REALISTIC_SCREEN_SCHEMA
@@ -496,7 +472,7 @@ class TestOpenAPISchemaValidity:
         assert "paths" in schema
 
     @pytest.mark.asyncio
-    @patch("app.core.openapi_merge._fetch_screen_schema", new_callable=AsyncMock)
+    @patch("app.core.openapi_merge._fetch_backend_schema", new_callable=AsyncMock)
     async def test_merged_refs_are_resolvable(self, mock_fetch):
         """All $ref pointers in merged paths point to existing schemas."""
         mock_fetch.return_value = self.REALISTIC_SCREEN_SCHEMA
@@ -518,11 +494,11 @@ class TestOpenAPISchemaValidity:
                 for k, v in obj.items():
                     if k == "$ref" and isinstance(v, str) and v.startswith("#/components/schemas/"):
                         refs.append(v.split("/")[-1])
-                    elif isinstance(v, (dict, list)):
+                    elif isinstance(v, dict | list):
                         refs.extend(collect_refs(v))
             elif isinstance(obj, list):
                 for item in obj:
-                    if isinstance(item, (dict, list)):
+                    if isinstance(item, dict | list):
                         refs.extend(collect_refs(item))
             return refs
 
@@ -534,7 +510,7 @@ class TestOpenAPISchemaValidity:
         assert missing == set(), f"Unresolvable $ref pointers: {missing}"
 
     @pytest.mark.asyncio
-    @patch("app.core.openapi_merge._fetch_screen_schema", new_callable=AsyncMock)
+    @patch("app.core.openapi_merge._fetch_backend_schema", new_callable=AsyncMock)
     async def test_merged_schema_has_security_schemes(self, mock_fetch):
         """Merged schema includes proper security schemes for Swagger UI."""
         mock_fetch.return_value = self.REALISTIC_SCREEN_SCHEMA
@@ -552,7 +528,7 @@ class TestOpenAPISchemaValidity:
         assert "password" in security_schemes["OAuth2PasswordBearer"]["flows"]
 
     @pytest.mark.asyncio
-    @patch("app.core.openapi_merge._fetch_screen_schema", new_callable=AsyncMock)
+    @patch("app.core.openapi_merge._fetch_backend_schema", new_callable=AsyncMock)
     async def test_merged_schema_has_tag_groups(self, mock_fetch):
         """Merged schema includes x-tagGroups for Redoc sidebar."""
         mock_fetch.return_value = self.REALISTIC_SCREEN_SCHEMA

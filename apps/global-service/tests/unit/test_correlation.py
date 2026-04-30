@@ -10,17 +10,17 @@ Covers:
 
 import re
 import uuid
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
 from starlette.requests import Request
 from starlette.testclient import TestClient
 
 from app.core.correlation import (
     CORRELATION_HEADER,
     CorrelationIdMiddleware,
-    get_or_create_correlation_id,
     _is_valid_uuid,
+    get_or_create_correlation_id,
 )
 
 UUID_REGEX = re.compile(
@@ -156,9 +156,7 @@ class TestCorrelationIdMiddleware:
 
     def test_rejects_invalid_header_and_generates_new(self, client):
         """Should ignore non-UUID header and generate a fresh UUID."""
-        response = client.get(
-            "/test", headers={CORRELATION_HEADER: "not-a-valid-uuid"}
-        )
+        response = client.get("/test", headers={CORRELATION_HEADER: "not-a-valid-uuid"})
 
         assert response.status_code == 200
         returned_id = response.headers[CORRELATION_HEADER]
@@ -206,14 +204,14 @@ class TestCorrelationIdInProxy:
 
         mock_user = MagicMock()
         mock_user.preferred_username = "testuser"
+        mock_user.organization = ["TestOrg", {"TestOrg": {"id": "org-test-123"}}]
+        mock_user.realm_access = {"roles": []}
 
         with (
             patch("app.proxy.routes.auth_middleware") as mock_auth,
             patch("app.proxy.routes.get_proxy_client") as mock_client_fn,
         ):
-            mock_auth.validate_request = AsyncMock(
-                return_value=(True, mock_user, {"Authorization": "Internal test"})
-            )
+            mock_auth.validate_request = AsyncMock(return_value=(True, mock_user, {"Authorization": "Internal test"}))
 
             mock_client = AsyncMock()
             mock_client_fn.return_value = mock_client
@@ -221,6 +219,7 @@ class TestCorrelationIdInProxy:
             mock_response = MagicMock()
             mock_response.status_code = 200
             mock_response.headers = {"content-type": "application/json"}
+
             async def mock_aiter_bytes():
                 yield b'{"ok":true}'
 
