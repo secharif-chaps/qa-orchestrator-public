@@ -13,10 +13,10 @@
               {{ getMemberDisplayName(item) }}
               <Tag
                 v-if="item.is_current_user"
-                variant="primary"
+                intent="accent"
                 :label="$t('settings.team.you')"
                 size="xs"
-                rounded
+                class="rounded-full"
               />
             </div>
             <div class="text-neutral-black-font text-sm">@{{ item.username }}</div>
@@ -66,9 +66,8 @@
  * Displays team members with lazy-loaded permissions and actions.
  */
 import AvatarInitials from '@/components/ui/AvatarInitials.vue'
-import Tag from '@/components/ui/Tag.vue'
 import type { PermissionTier, TeamMemberListItem } from '@/types/team'
-import { Button, Table } from '@owlint/feathers-vue'
+import { Button, Table, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import TeamPermissionDropdown from './TeamPermissionDropdown.vue'

@@ -72,7 +72,7 @@
             <div class="flex items-center gap-2">
               <Tag
                 :label="$t('settings.appearance.accent.active')"
-                variant="primary"
+                intent="accent"
                 class="animate-pulse"
               />
             </div>
@@ -101,8 +101,8 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
 import { useAuth } from '@/composables/useAuth'
+import { Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 
 interface Props {

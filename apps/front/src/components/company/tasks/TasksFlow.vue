@@ -121,7 +121,7 @@
               <div class="flex items-center gap-2">
                 <h3 class="text-sm font-semibold">{{ task.name }}</h3>
                 <Tag
-                  :variant="getStatusVariant(task.status)"
+                  :intent="getStatusVariant(task.status)"
                   :label="getStatusLabel(task.status)"
                   size="xs"
                 />
@@ -195,13 +195,12 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { useRestartTask } from '@/mutations/tasks'
 import { companyTasksQuery } from '@/queries/tasks'
 import { useAuthStore } from '@/stores/auth'
 import type { TaskResponse, TaskStatus, TaskType } from '@/types/task'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -401,13 +400,13 @@ const getStatusVariant = (status: TaskStatus | null) => {
     case 'succeeded':
       return 'success'
     case 'error':
-      return 'error'
+      return 'danger'
     case 'running':
       return 'warning'
     case 'pending':
       return 'info'
     default:
-      return 'slate'
+      return 'neutral'
   }
 }
 

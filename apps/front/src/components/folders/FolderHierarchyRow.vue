@@ -35,34 +35,34 @@
             <h3 class="font-medium">{{ folder.name }}</h3>
             <!-- Privacy Tags (Global View Only) -->
             <template v-if="globalView">
-              <UiTag
+              <Tag
                 v-if="folder.is_owner && !hasShares"
-                variant="slate"
+                intent="neutral"
                 :label="$t('common.folder.privacy.private')"
                 size="xs"
-                rounded
+                class="rounded-full"
               />
-              <UiTag
+              <Tag
                 v-else-if="hasShares"
-                variant="info"
+                intent="info"
                 icon="fa fa-share-nodes"
                 :label="$t('common.folder.privacy.shared')"
                 size="xs"
-                rounded
+                class="rounded-full"
               />
             </template>
             <!-- Shared badge (non-global view) -->
-            <UiTag
+            <Tag
               v-else-if="isSharedWithMe"
               :label="$t('common.folder.shared.badge')"
-              variant="info"
+              intent="info"
               size="xs"
             />
             <!-- Role badge -->
-            <UiTag
+            <Tag
               v-if="!globalView && isSharedWithMe && shareRoleLabel"
               :label="shareRoleLabel"
-              variant="slate"
+              intent="neutral"
               size="xs"
             />
           </div>
@@ -82,8 +82,8 @@
 
         <!-- Items count -->
         <div class="col-span-2">
-          <UiTag
-            variant="slate"
+          <Tag
+            intent="neutral"
             :label="$t('common.folder.itemsChip', folder.items?.length || 0)"
             size="sm"
           />
@@ -158,7 +158,7 @@
 
           <!-- Item type -->
           <div class="col-span-2">
-            <UiTag variant="accent" :label="formatItemType(item.type)" size="xs" />
+            <Tag intent="accent" :label="formatItemType(item.type)" size="xs" />
           </div>
 
           <!-- Item owner -->
@@ -201,11 +201,10 @@
 <script setup lang="ts">
 import AvatarInitials from '@/components/ui/AvatarInitials.vue'
 import Logo from '@/components/ui/Logo.vue'
-import UiTag from '@/components/ui/Tag.vue'
 import { useDateTime } from '@/composables/useDateTime'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import type { Folder } from '@/types/folder'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Tag } from '@owlint/feathers-vue'
 import { computed, ref, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 

@@ -219,7 +219,7 @@
                   {{ org.name }}
                   <Tag
                     v-if="org.is_internal"
-                    variant="slate"
+                    intent="neutral"
                     size="xs"
                     :label="$t('admin.tasks.filters.internal')"
                     class="ml-2"
@@ -350,11 +350,11 @@
                   {{ getOrgName(task.organization_id) }}
                 </td>
                 <td class="px-4 py-3">
-                  <Tag variant="sage" size="xs" :label="formatTaskType(task.type)" />
+                  <Tag color="sage" size="xs" :label="formatTaskType(task.type)" />
                 </td>
                 <td class="px-4 py-3">
                   <Tag
-                    :variant="getStatusVariant(task.status)"
+                    :intent="getStatusVariant(task.status)"
                     size="xs"
                     :icon="getStatusIcon(task.status)"
                     :label="task.status"
@@ -470,7 +470,7 @@
               >
                 <span class="truncate">{{ task.company_name }}</span>
                 <Tag
-                  :variant="getStatusVariant(task.status)"
+                  :intent="getStatusVariant(task.status)"
                   size="xs"
                   :label="formatTaskType(task.type)"
                 />
@@ -576,12 +576,11 @@ import Card from '@/components/ui/Card.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownDivider from '@/components/ui/DropdownDivider.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
-import Tag from '@/components/ui/Tag.vue'
 import { useRestartAdminTasks } from '@/mutations/admin'
 import { adminOrganizationsQuery, adminTasksQuery } from '@/queries/admin'
 import type { AdminTaskResponse, AdminTasksFilters, BulkRestartResponse } from '@/types/admin'
 import type { TaskStatus, TaskType } from '@/types/task'
-import { Alert, Badge, Button, OModal } from '@owlint/feathers-vue'
+import { Alert, Badge, Button, OModal, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, defineComponent, h, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -817,14 +816,16 @@ function formatTaskType(type: TaskType): string {
   return t(taskTypeKeys[type]) || type
 }
 
-function getStatusVariant(status: TaskStatus): 'success' | 'warning' | 'error' | 'info' | 'slate' {
-  const variants: Record<TaskStatus, 'success' | 'warning' | 'error' | 'info' | 'slate'> = {
+type StatusIntent = 'success' | 'warning' | 'danger' | 'info' | 'neutral'
+
+function getStatusVariant(status: TaskStatus): StatusIntent {
+  const intents: Record<TaskStatus, StatusIntent> = {
     succeeded: 'success',
     pending: 'warning',
-    error: 'error',
+    error: 'danger',
     running: 'info',
   }
-  return variants[status] || 'slate'
+  return intents[status] || 'neutral'
 }
 
 function getStatusIcon(status: TaskStatus): string {

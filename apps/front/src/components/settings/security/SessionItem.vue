@@ -33,7 +33,7 @@
       </div>
       <Tag
         v-if="isCurrent"
-        variant="success"
+        intent="success"
         :label="$t('settings.security.sessions.current.badge')"
       />
       <Button
@@ -49,10 +49,9 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
 import { useDateTime } from '@/composables/useDateTime'
 import type { Session } from '@/types/account'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Tag } from '@owlint/feathers-vue'
 
 const props = defineProps<{
   session: Session

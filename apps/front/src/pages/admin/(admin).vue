@@ -28,8 +28,7 @@
                   {{ $t(feature.titleKey, feature.titleDefault) }}
                 </h3>
                 <Tag
-                  variant="sage"
-                  appearance="light"
+                  color="sage"
                   size="sm"
                   :label="
                     $t(
@@ -79,9 +78,8 @@ meta:
 
 <script setup lang="ts">
 import Card from '@/components/ui/Card.vue'
-import Tag from '@/components/ui/Tag.vue'
 import { useAuthStore } from '@/stores/auth'
-import { Alert, Badge } from '@owlint/feathers-vue'
+import { Alert, Badge, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 

@@ -23,10 +23,9 @@
       <!-- Enable/Disable Toggle -->
       <div class="flex items-center gap-3">
         <Tag
-          :variant="isEnabled ? 'success' : 'slate'"
+          :intent="isEnabled ? 'success' : 'neutral'"
           :label="isEnabled ? $t('settings.tokens.enabled') : $t('settings.tokens.disabled')"
           size="sm"
-          :dot="true"
         />
 
         <label class="relative inline-flex cursor-pointer items-center">
@@ -47,9 +46,9 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
 import { useToggleModule } from '@/mutations/tokens'
 import type { ModuleName } from '@/types/tokens'
+import { Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 

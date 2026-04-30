@@ -31,7 +31,7 @@
 
     <!-- Sharing tag -->
     <Tag
-      variant="neutral"
+      intent="neutral"
       size="xs"
       :icon="isShared ? 'fa-regular fa-users' : 'fa-regular fa-lock'"
       :label="
@@ -46,8 +46,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Icon } from '@owlint/feathers-vue'
-import Tag from '@/components/ui/Tag.vue'
+import { Icon, Tag } from '@owlint/feathers-vue'
 import { PROJECT_TYPES, type ProjectType } from '@/types/module'
 
 interface Props {

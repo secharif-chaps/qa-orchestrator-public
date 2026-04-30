@@ -48,7 +48,7 @@
                   :key="product"
                   variant="primary"
                   size="sm"
-                  rounded
+                  class="rounded-full"
                 >
                   {{ product }}
                 </Tag>

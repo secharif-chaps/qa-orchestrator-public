@@ -27,14 +27,14 @@
             </p>
           </div>
           <Tag
-            :variant="totalTokens > 0 ? 'success' : 'warning'"
+            :intent="totalTokens > 0 ? 'success' : 'warning'"
             :label="
               totalTokens > 0
                 ? $t('settings.tokens.history.active')
                 : $t('settings.tokens.history.empty')
             "
-            size="lg"
-            rounded
+            size="md"
+            class="rounded-full"
             :icon="totalTokens > 0 ? 'fa fa-check-circle' : 'fa fa-exclamation-circle'"
           />
         </div>
@@ -203,7 +203,7 @@
                 </td>
                 <td class="px-4 py-3">
                   <Tag
-                    :variant="getTransactionTypeVariant(transaction.transaction_type)"
+                    :intent="getTransactionTypeVariant(transaction.transaction_type)"
                     :label="getTransactionTypeLabel(transaction.transaction_type)"
                     size="xs"
                   />
@@ -257,14 +257,12 @@
 
 <script setup lang="ts">
 import Pagination from '@/components/ui/Pagination.vue'
-import type { BadgeVariant } from '@/components/ui/Tag.vue'
-import Tag from '@/components/ui/Tag.vue'
 import { useDateTime } from '@/composables/useDateTime'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { organizationBalanceQuery, tokenHistoryQuery } from '@/queries/tokens'
 import type { ReferenceType, TokenHistoryFilters, TransactionType } from '@/types/tokens'
 import { transformToPaginationMeta } from '@/utils/pagination'
-import { Alert, Button } from '@owlint/feathers-vue'
+import { Alert, Button, Tag, type Intent } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -340,13 +338,13 @@ const currentPage = computed({
 
 const paginationMeta = computed(() => transformToPaginationMeta(historyData.value))
 
-function getTransactionTypeVariant(type: TransactionType): BadgeVariant {
-  const variants: Record<TransactionType, BadgeVariant> = {
+function getTransactionTypeVariant(type: TransactionType): Intent {
+  const intents: Record<TransactionType, Intent> = {
     add: 'success',
-    consume: 'error',
+    consume: 'danger',
     adjustment: 'info',
   }
-  return variants[type] || 'slate'
+  return intents[type] || 'neutral'
 }
 
 function getTransactionTypeLabel(type: TransactionType): string {

@@ -58,7 +58,7 @@
           </div>
           <div class="flex items-center gap-3">
             <Tag
-              variant="slate"
+              intent="neutral"
               :label="`${org.member_count} ${$t('admin.organizations.members')}`"
               size="sm"
             />
@@ -96,9 +96,8 @@ meta:
 <script setup lang="ts">
 import { getAllOrganizations } from '@/api/organization'
 import Pagination from '@/components/ui/Pagination.vue'
-import Tag from '@/components/ui/Tag.vue'
 import { transformToPaginationMeta } from '@/utils/pagination'
-import { Alert, Searchbar } from '@owlint/feathers-vue'
+import { Alert, Searchbar, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'

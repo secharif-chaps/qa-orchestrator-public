@@ -27,7 +27,7 @@
       </span>
       <Tag
         v-else-if="module.type === 'soon'"
-        variant="sage"
+        color="sage"
         size="xs"
         :label="module.comingSoonLabel ?? ''"
       />
@@ -52,9 +52,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Button, Icon } from '@owlint/feathers-vue'
+import { Button, Icon, Tag } from '@owlint/feathers-vue'
 import CmdBadge from '@/components/ui/CmdBadge.vue'
-import Tag from '@/components/ui/Tag.vue'
 
 export type ModuleTheme = 'indigo' | 'cherry' | 'yellow' | 'cyan'
 export type ModuleCardType = 'default' | 'soon' | 'disabled'

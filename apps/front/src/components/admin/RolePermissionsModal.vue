@@ -139,7 +139,7 @@
                     </p>
                   </div>
                 </div>
-                <Tag :label="$t('admin.permissions.alwaysOn')" variant="sage" size="sm" />
+                <Tag :label="$t('admin.permissions.alwaysOn')" color="sage" size="sm" />
               </div>
 
               <!-- organization.write (toggle) -->
@@ -234,7 +234,7 @@
                 :key="permission"
                 :label="permission"
                 size="sm"
-                variant="slate"
+                intent="neutral"
               />
               <span
                 v-if="effectivePermissions.length === 0"
@@ -265,10 +265,9 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
 import { useRoles } from '@/composables/useRoles'
 import { userPermissionsQuery } from '@/queries/admin-users'
-import { Alert, Button } from '@owlint/feathers-vue'
+import { Alert, Button, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, ref, watch } from 'vue'
 import ConfirmAdminRoleModal from './ConfirmAdminRoleModal.vue'
