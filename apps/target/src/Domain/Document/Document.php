@@ -17,6 +17,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model;
 use App\Domain\Actor\Actor;
 use App\Domain\Collect\CollectTask;
+use App\Domain\Document\Fingerprinting\ScriptDetector;
 use App\Domain\Shared\HasWatchFileInterface;
 use App\Domain\Source\Source;
 use App\Domain\User\User;
@@ -788,10 +789,11 @@ class Document implements HasWatchFileInterface
 
         $content = $this->content;
 
-        // Each CJK character is one lexical unit (no spaces between words in Han/Kana/Hangul scripts)
-        $cjkCount = (int) preg_match_all('/[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]/u', $content);
+        // Each CJK character is one lexical unit (no spaces between words in Han/Kana/Hangul scripts).
+        // Pattern is shared with `ScriptDetector` — single source of truth for what counts as CJK.
+        $cjkCount = (int) preg_match_all(ScriptDetector::CJK_PATTERN, $content);
 
-        $withoutCjk = (string) preg_replace('/[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]/u', ' ', $content);
+        $withoutCjk = (string) preg_replace(ScriptDetector::CJK_PATTERN, ' ', $content);
 
         return $cjkCount + str_word_count($withoutCjk);
     }
