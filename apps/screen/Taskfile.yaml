@@ -7,7 +7,7 @@ tasks:
   up:
     desc: Start screen service and run migrations
     cmds:
-      - bash infra/scripts/init-profile.sh screen
+      - bash infra/scripts/profile.sh add screen
 
   lint:
     desc: Lint backend code (ruff)

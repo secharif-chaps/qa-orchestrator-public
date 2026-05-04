@@ -9,7 +9,7 @@ tasks:
   up:
     desc: Start target service
     cmds:
-      - bash infra/scripts/init-profile.sh target
+      - bash infra/scripts/profile.sh add target
 
   # ─── Aggregate tasks ──────────────────────────────────
   lint:
