@@ -77,6 +77,14 @@ else
   warn "glab not installed — CI lint in pre-commit will be skipped (install: https://gitlab.com/gitlab-org/cli)"
 fi
 
+# gum (used by `task profile` for the interactive selector — bash fallback otherwise)
+if command -v gum &> /dev/null; then
+  GUM_V=$(gum --version 2>/dev/null | head -1 | sed 's/gum version //')
+  ok "gum ${GUM_V}"
+else
+  warn "gum not installed — 'task profile' will use bash fallback (install: https://github.com/charmbracelet/gum)"
+fi
+
 # ─── Connectivity ─────────────────────────────────────
 
 echo ""

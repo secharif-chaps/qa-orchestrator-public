@@ -7,7 +7,7 @@ tasks:
   up:
     desc: Start stream service and run migrations
     cmds:
-      - bash infra/scripts/init-profile.sh stream
+      - bash infra/scripts/profile.sh add stream
 
   lint:
     desc: Lint stream backend code (ruff)

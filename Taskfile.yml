@@ -52,6 +52,27 @@ tasks:
     desc: Tail logs for a specific service
     cmd: "{{.COMPOSE}} logs -f {{.CLI_ARGS}}"
 
+  # ─── Profiles ──────────────────────────────────────
+  profile:
+    desc: Interactive selector for active Docker Compose profiles
+    silent: true
+    cmd: bash infra/scripts/profile.sh
+
+  profile:add:
+    desc: "Activate a profile (e.g. task profile:add -- screen)"
+    silent: true
+    cmd: bash infra/scripts/profile.sh add {{.CLI_ARGS}}
+
+  profile:remove:
+    desc: "Deactivate a profile (e.g. task profile:remove -- screen)"
+    silent: true
+    cmd: bash infra/scripts/profile.sh remove {{.CLI_ARGS}}
+
+  profile:list:
+    desc: List active and available Docker Compose profiles
+    silent: true
+    cmd: bash infra/scripts/profile.sh list
+
   # ─── Database ──────────────────────────────────────
   migrate:
     desc: Run Alembic migrations (screen + stream)
