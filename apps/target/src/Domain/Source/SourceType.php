@@ -14,6 +14,7 @@ enum SourceType: string
     case SOCIAL_MEDIA_X_SEARCH = 'social_media:x:search';
     case SOCIAL_MEDIA_X_HASHTAG = 'social_media:x:hashtag';
     case SOCIAL_MEDIA_X_USER = 'social_media:x:user';
+    case SOCIAL_MEDIA_TWITTER = 'social_media:twitter';
 
     // TikTok
     case SOCIAL_MEDIA_TIKTOK = 'social_media:tiktok';

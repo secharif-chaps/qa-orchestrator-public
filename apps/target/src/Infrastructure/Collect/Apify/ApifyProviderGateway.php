@@ -54,7 +54,7 @@ class ApifyProviderGateway implements ProviderGatewayInterface
             /** @var array<string, mixed> $data */
             $data = $this->apifyClient->request(
                 'POST',
-                \sprintf('/v2/acts/%s/runs', $config->apifyActorId),
+                \sprintf('/v2/acts/%s/runs', $this->encodeActorId($config->apifyActorId)),
                 [
                     'json' => $config->input,
                     'query' => $config->queryParams,
@@ -245,5 +245,17 @@ class ApifyProviderGateway implements ProviderGatewayInterface
         ]);
 
         return $collectors;
+    }
+
+    /**
+     * Encodes an Apify actor ID for use in REST API URL paths.
+     *
+     * The human-readable actor ID format uses "/" as owner/name separator
+     * (e.g. "apidojo/tweet-scraper"), but Apify's REST API requires "~"
+     * in URL paths (e.g. "apidojo~tweet-scraper").
+     */
+    private function encodeActorId(string $actorId): string
+    {
+        return str_replace('/', '~', $actorId);
     }
 }
