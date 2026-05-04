@@ -21,6 +21,11 @@ from sqlalchemy.orm import Session
 
 from app.adapters.base import DispatchResult
 from app.adapters.factory import get_adapter
+from app.constants.messages import (
+    TEST_CONNECTION_PAYLOAD_MESSAGE,
+    TEST_CONNECTION_STREAM_NAME,
+    TEST_CONNECTION_SUMMARY,
+)
 from app.core.logging_config import get_logger
 from app.models.delivery import DeliveryStatus, StreamDelivery
 from app.models.event import StreamEvent
@@ -330,16 +335,16 @@ class DispatchService:
             id=0,
             event_type="stream.test.connection",
             source="stream",
-            payload={"test": True, "message": "This is a test event from ChapsMind Stream"},
+            payload={"test": True, "message": TEST_CONNECTION_PAYLOAD_MESSAGE},
             organization_id="test",
-            summary="Test connection from ChapsMind Stream service",
+            summary=TEST_CONNECTION_SUMMARY,
             entity_type="test",
             entity_id="0",
         )
 
         mock_stream = Stream(
             id=0,
-            name="Test Connection",
+            name=TEST_CONNECTION_STREAM_NAME,
             channel_type=channel_type,
             channel_config=channel_config,
             mode=StreamMode.LIVE,
