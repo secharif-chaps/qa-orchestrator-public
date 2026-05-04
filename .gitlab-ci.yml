@@ -301,6 +301,57 @@ main:update-codeowners:
         --data-urlencode "remove_source_branch=true" \
         "https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/merge_requests"
 
+# ─── Renovate — scheduled dependency updates (TAR-1512) ─
+# Runs daily at 2am (Europe/Paris) via GitLab schedule with JOB_TYPE=renovate.
+# Uses RENOVATE_TOKEN (dedicated bot) to create renovate/* branches and MRs.
+# See docs/renovate.md for one-time setup (token, schedule, labels).
+main:renovate:
+  stage: maintenance
+  needs: []
+  image:
+    name: renovate/renovate:41
+    entrypoint: [""]
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $JOB_TYPE == "renovate"
+    - if: $CI_PIPELINE_SOURCE == "web" && $JOB_TYPE == "renovate"
+  variables:
+    RENOVATE_PLATFORM: gitlab
+    RENOVATE_ENDPOINT: ${CI_API_V4_URL}
+    RENOVATE_TOKEN: $RENOVATE_TOKEN
+    RENOVATE_REPOSITORIES: ${CI_PROJECT_PATH}
+    RENOVATE_CONFIG_FILE: renovate.json
+    # Inject secrets referenced in renovate.json via {{ secrets.* }}
+    # OWLINT_*: private @owlint npm registry (Vuellar) — see apps/front/.yarnrc.yml
+    RENOVATE_SECRETS: '{"OWLINT_REGISTRY_URL": "$OWLINT_REGISTRY_URL", "OWLINT_DEPLOY_KEY": "$OWLINT_DEPLOY_KEY"}'
+    # GitHub release-notes lookup (anonymous API is rate-limited and breaks runs randomly)
+    GITHUB_COM_TOKEN: $RENOVATE_GITHUB_COM_TOKEN
+    LOG_LEVEL: info
+    LOG_FILE: renovate-log.json
+    LOG_FILE_LEVEL: debug
+  script:
+    - renovate
+  artifacts:
+    when: always
+    paths:
+      - renovate-log.json
+    expire_in: 30 days
+
+# ─── Renovate config validation on MRs touching renovate.json ─
+# Catches schema/syntax errors before merge, instead of waiting for the
+# next scheduled run at 2am to discover them.
+mr:renovate-config-validate:
+  stage: lint
+  needs: []
+  image:
+    name: renovate/renovate:41
+    entrypoint: [""]
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - renovate.json
+  script:
+    - renovate-config-validator renovate.json
+
 # ─── Daily MR report to Slack ────────────────────────────
 main:daily-mr-report:
   stage: notify
