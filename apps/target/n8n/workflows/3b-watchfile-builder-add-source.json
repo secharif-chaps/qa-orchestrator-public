@@ -1,22 +1,16 @@
 {
-  "updatedAt": "2026-01-15T12:34:05.072Z",
-  "createdAt": "2025-11-16T19:29:03.886Z",
-  "id": "U5xXoj93ilunzZGz",
   "name": "3.b WatchFile Builder - Add Source",
-  "description": null,
-  "active": false,
-  "isArchived": false,
   "nodes": [
     {
       "parameters": {
         "inputSource": "jsonExample",
-        "jsonExample": "{\n  \"watchFile\": {\n    \"id\": \"1f0ba909-4cda-666e-9b4c-497ced82fa8d\",\n    \"name\": \"Market Intelligence IA - Europe\",\n    \"titleManuallySetByUser\": false,\n    \"userObjective\": \"\",\n    \"referenceSubject\": null,\n    \"state\": \"new\",\n    \"monitoringType\": null,\n    \"monitoringTypeConfidence\": null,\n    \"monitoringTypeJustification\": null,\n    \"secondaryMonitoringTypes\": null,\n    \"strategicQuestions\": [],\n    \"analysisResults\": [],\n    \"createdAt\": \"2025-11-05T22:44:18+01:00\",\n    \"createdBy\": {\n      \"id\": \"116f1d59-c72d-486c-bf55-a5e587d88cfc\",\n      \"email\": \"basil@chapsvision.com\",\n      \"firstName\": \"Basil\",\n      \"lastName\": \"Target\",\n      \"displayName\": \"Basil Target\",\n      \"defaultThumbnail\": \"BT\"\n    },\n    \"updatedAt\": \"2025-11-05T22:44:29+01:00\",\n    \"watchFileActors\": [],\n    \"watchFileUsersCount\": 1,\n    \"isFavorite\": false,\n    \"userEditable\": false,\n    \"sources\": [],\n    \"status\": \"draft\"\n  },\n  \"conversationId\": \"1f0ba909-5099-6980-8667-497ced82fa8d\",\n  \"messageId\": \"1f0ba909-5099-6980-6970-497ced82fa8d\",\n  \"language\": \"en\",\n  \"source\": {\n    \"name\": \"Source name - min 2 characters\",\n    \"description_fr\": \"French description of what this source provides\",\n    \"description_en\": \"English description of what this source provides\",\n    \"type\": \"Source type, see bellow\",\n    \"url\": \"Source URL (RSS feed, YouTube channel, etc.) - required\",\n    \"primaryDomain\": \"Main domain for icon display (e.g., 'lemonde.fr') - domain only, no protocol\",\n    \"query\": \"Optional search filter to apply on results from this source (e.g., 'nucléaire OR énergie')\",\n    \"relevance_fr\": \"French explanation of WHY this source is valuable specifically for THIS monitoring objective\",\n    \"relevance_en\": \"English explanation of WHY this source is valuable specifically for THIS monitoring objective\",\n    \"parameters\": null\n  },\n  \"BusNameStamp\": \"[{\\\"busName\\\":\\\"command.bus\\\"}]\",\n  \"RouterContextStamp\": \"[{\\\"baseUrl\\\":\\\"\\\",\\\"method\\\":\\\"POST\\\",\\\"host\\\":\\\"basil.local\\\",\\\"scheme\\\":\\\"https\\\",\\\"httpPort\\\":80,\\\"httpsPort\\\":443,\\\"pathInfo\\\":\\\"/api/conversations/1f0ba909-5099-6980-8667-497ced82fa8d/messages\\\",\\\"queryString\\\":\\\"\\\"}]\",\n  \"collectors\": [],\n  \"sourceTypes\": []\n}"
+        "jsonExample": "{\n  \"watchFile\": {\n    \"id\": \"1f0ba909-4cda-666e-9b4c-497ced82fa8d\",\n    \"name\": \"Market Intelligence IA - Europe\",\n    \"titleManuallySetByUser\": false,\n    \"userObjective\": \"\",\n    \"referenceSubject\": null,\n    \"state\": \"new\",\n    \"monitoringType\": null,\n    \"monitoringTypeConfidence\": null,\n    \"monitoringTypeJustification\": null,\n    \"secondaryMonitoringTypes\": null,\n    \"strategicQuestions\": [],\n    \"analysisResults\": [],\n    \"createdAt\": \"2025-11-05T22:44:18+01:00\",\n    \"createdBy\": {\n      \"id\": \"116f1d59-c72d-486c-bf55-a5e587d88cfc\",\n      \"email\": \"basil@chapsvision.com\",\n      \"firstName\": \"Basil\",\n      \"lastName\": \"Target\",\n      \"displayName\": \"Basil Target\",\n      \"defaultThumbnail\": \"BT\"\n    },\n    \"updatedAt\": \"2025-11-05T22:44:29+01:00\",\n    \"watchFileActors\": [],\n    \"watchFileUsersCount\": 1,\n    \"isFavorite\": false,\n    \"userEditable\": false,\n    \"sources\": [],\n    \"status\": \"draft\"\n  },\n  \"conversationId\": \"1f0ba909-5099-6980-8667-497ced82fa8d\",\n  \"messageId\": \"1f0ba909-5099-6980-6970-497ced82fa8d\",\n  \"language\": \"en\",\n  \"source\": {\n    \"name\": \"Source name - min 2 characters\",\n    \"description_fr\": \"French description of what this source provides\",\n    \"description_en\": \"English description of what this source provides\",\n    \"type\": \"Source type, see bellow\",\n    \"url\": \"Source URL (RSS feed, YouTube channel, etc.) - required\",\n    \"primaryDomain\": \"Main domain for icon display (e.g., 'lemonde.fr') - domain only, no protocol\",\n    \"query\": \"Optional search filter to apply on results from this source (e.g., 'nucléaire OR énergie')\",\n    \"relevance_fr\": \"French explanation of WHY this source is valuable specifically for THIS monitoring objective\",\n    \"relevance_en\": \"English explanation of WHY this source is valuable specifically for THIS monitoring objective\",\n    \"parameters\": null\n  },\n  \"BusNameStamp\": \"[{\\\"busName\\\":\\\"command.bus\\\"}]\",\n  \"RouterContextStamp\": \"[{\\\"baseUrl\\\":\\\"\\\",\\\"method\\\":\\\"POST\\\",\\\"host\\\":\\\"basil.local\\\",\\\"scheme\\\":\\\"https\\\",\\\"httpPort\\\":80,\\\"httpsPort\\\":443,\\\"pathInfo\\\":\\\"/api/conversations/1f0ba909-5099-6980-8667-497ced82fa8d/messages\\\",\\\"queryString\\\":\\\"\\\"}]\",\n  \"TenantContextStamp\": \"[{\\\"organisationId\\\":\\\"019d246b-8175-7dcd-a6f3-3557d0ba5f8e\\\",\\\"effectiveUserId\\\":\\\"116f1d59-c72d-486c-bf55-a5e587d88cfc\\\",\\\"impersonatorId\\\":null}]\",\n  \"collectors\": [],\n  \"sourceTypes\": []\n}"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
         -2144,
-        1088
+        984
       ],
       "id": "72ef28b4-b6bd-4cd8-abfc-d9f413a78f14",
       "name": "Workflow_Trigger_AddSource"
@@ -33,7 +27,7 @@
       "typeVersion": 2.1,
       "position": [
         -2592,
-        896
+        792
       ],
       "id": "f043659f-e32a-4d67-b53a-85006f05a856",
       "name": "Webhook_Trigger_TestInput",
@@ -49,7 +43,7 @@
       "typeVersion": 3.4,
       "position": [
         -2368,
-        896
+        792
       ],
       "id": "64a85a58-bfc4-4dda-ad3f-48d60dd33e64",
       "name": "Set_Format_TestInput"
@@ -81,7 +75,7 @@
       "typeVersion": 1.1,
       "position": [
         -2144,
-        896
+        792
       ],
       "id": "94cb3175-2084-4832-a189-c1440f0e4e23",
       "name": "ExecutionData_Store_TestMetadata"
@@ -96,7 +90,7 @@
       "typeVersion": 1.3,
       "position": [
         -1312,
-        1392
+        1288
       ],
       "id": "64e75b9d-b2df-4c11-9a4d-8617428337b3",
       "name": "LLM_Parser_ValidationOutput"
@@ -122,7 +116,7 @@
       "typeVersion": 1.3,
       "position": [
         -1232,
-        1600
+        1496
       ],
       "id": "edc00793-77b7-4059-806d-437e7d52d120",
       "name": "LLM_Model_ValidationParser",
@@ -149,8 +143,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        -240,
-        1264
+        -16,
+        1504
       ],
       "id": "e7965d23-fc9c-4c5c-8a3d-729e356dcaf2",
       "name": "LLM_Agent_MapSourceBakus",
@@ -183,8 +177,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        -272,
-        1488
+        -48,
+        1728
       ],
       "id": "592439e3-5c81-49e4-98cb-cfb9f167b228",
       "name": "LLM_Model_BakusPrimary",
@@ -204,8 +198,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -16,
-        1488
+        208,
+        1728
       ],
       "id": "951073b1-dfa3-497f-aedf-dafc8f015e8d",
       "name": "LLM_Parser_BakusOutput"
@@ -214,9 +208,9 @@
       "parameters": {
         "model": {
           "__rl": true,
-          "value": "gpt-5-nano-sweden",
+          "value": "gpt-5-mini-sweden",
           "mode": "list",
-          "cachedResultName": "gpt-5-nano-sweden"
+          "cachedResultName": "gpt-5-mini-sweden"
         },
         "builtInTools": {},
         "options": {
@@ -230,8 +224,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        64,
-        1696
+        288,
+        1936
       ],
       "id": "37842b83-32cc-4ef1-9a6d-8278f41bc033",
       "name": "LLM_Model_BakusParser",
@@ -258,7 +252,7 @@
       "typeVersion": 3,
       "position": [
         -1600,
-        1168
+        1064
       ],
       "id": "f0d60715-b68d-4788-96c6-84c75470586c",
       "name": "LLM_Agent_ValidateSourceRelevance",
@@ -294,7 +288,7 @@
       "typeVersion": 2.2,
       "position": [
         -1920,
-        992
+        888
       ],
       "id": "ba66fd5b-ff37-4c3e-92fe-4355ac79fd52",
       "name": "Condition_Check_SourceDuplicate"
@@ -308,7 +302,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1872,
+        2096,
         256
       ],
       "id": "75630212-b433-4c60-b65d-92cf43607e41",
@@ -323,8 +317,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1872,
-        1536
+        2096,
+        1704
       ],
       "id": "f25332cb-822b-4f44-9042-223f70ef3f6e",
       "name": "Feedback_Success"
@@ -338,7 +332,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1872,
+        2096,
         720
       ],
       "id": "9f918a28-d910-49d8-97de-5c51a0fc8886",
@@ -382,7 +376,7 @@
       "typeVersion": 2.2,
       "position": [
         -944,
-        1264
+        1160
       ],
       "id": "87dbee63-b278-44ff-8290-fd9d8e6c0b26",
       "name": "Condition_Validate_SourceRelevance"
@@ -414,8 +408,8 @@
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1.1,
       "position": [
-        1424,
-        1536
+        1648,
+        1704
       ],
       "id": "c2f616a2-b171-4b1e-a411-611bcb65f58f",
       "name": "RabbitMQ_Publish_SourceCreation",
@@ -455,8 +449,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        352,
-        1360
+        576,
+        1528
       ],
       "id": "2428d608-07e8-4c0f-be29-6eedea7b3b3e",
       "name": "Condition_Validate_BakusFormat"
@@ -470,8 +464,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1872,
-        1184
+        2096,
+        1352
       ],
       "id": "c11e08ec-da44-4eae-9826-6a05f609ffae",
       "name": "Feedback_BakusInvalid"
@@ -485,7 +479,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1872,
+        2096,
         528
       ],
       "id": "042a0ddd-7be2-4e89-a771-775b75856d28",
@@ -500,8 +494,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1872,
-        992
+        2096,
+        1160
       ],
       "id": "3d5eb722-309b-402f-b912-e784a0811f4f",
       "name": "Feedback_BakusBuilderError"
@@ -519,7 +513,7 @@
       "typeVersion": 1,
       "position": [
         -720,
-        1440
+        1232
       ],
       "id": "41477edb-89b7-46b2-8946-afed67ddacd8",
       "name": "JinaAI_Fetch_WebpageContent",
@@ -567,8 +561,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -496,
-        1840
+        -272,
+        1456
       ],
       "id": "455c071b-9da8-4e52-a05c-c43674a7e9c4",
       "name": "Condition_Validate_SourceURL"
@@ -600,7 +594,7 @@
       "typeVersion": 1.3,
       "position": [
         -1696,
-        1392
+        1288
       ],
       "id": "b5157e05-7fe4-461b-a3fe-53abb4dc4879",
       "name": "LLM_Model_ValidationPrimary",
@@ -638,7 +632,7 @@
       "typeVersion": 1.3,
       "position": [
         -1568,
-        1392
+        1288
       ],
       "id": "cdacbeb9-4609-4425-8d59-093546adbbad",
       "name": "LLM_Model_ValidationFallback",
@@ -658,8 +652,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2096,
-        992
+        2320,
+        960
       ],
       "id": "2c37a5c9-aa6f-4dae-a41e-a5c8c0c95953",
       "name": "Response_Return_Final"
@@ -690,8 +684,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        -144,
-        1488
+        80,
+        1728
       ],
       "id": "61a81527-62d1-444c-b555-f15bd936706d",
       "name": "LLM_Model_BakusFallback",
@@ -705,14 +699,14 @@
     {
       "parameters": {
         "mode": "raw",
-        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Condition_Check_SourceDuplicate').last().json.language === 'fr' ? `L'URL source n'est pas valide.` : `The source URL is invalid.`).toJsonString() }},\n  \"context\": {\n    \"agentMapSourceBakus\": {{ $('LLM_Agent_MapSourceBakus').last().json?.toJsonString() || 'null' }},\n    \"agentValidateSourceRelevance\": {{ $('LLM_Agent_ValidateSourceRelevance').last().json?.toJsonString() || 'null' }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Condition_Check_SourceDuplicate').last().json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Condition_Check_SourceDuplicate').last().json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Condition_Check_SourceDuplicate').last().json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ (($('Condition_Check_SourceDuplicate').last().json.language === 'fr' ? `L'URL source n'est pas valide.` : `The source URL is invalid.`) + ($('Condition_Validate_SourceURLStatus').isExecuted && $('Condition_Validate_SourceURLStatus').first().json?.warning ? ' (' + $('Condition_Validate_SourceURLStatus').first().json.warning + ')' : '')).toJsonString() }},\n  \"context\": {\n    \"agentMapSourceBakus\": {{ $if($('LLM_Agent_MapSourceBakus').isExecuted, $('LLM_Agent_MapSourceBakus').last().json?.toJsonString(), 'null') }},\n    \"agentValidateSourceRelevance\": {{ $if($('LLM_Agent_ValidateSourceRelevance').isExecuted, $('LLM_Agent_ValidateSourceRelevance').last().json?.toJsonString(), 'null') }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  },\n  \"messageId\": {{ $('Condition_Check_SourceDuplicate').last().json?.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Condition_Check_SourceDuplicate').last().json?.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Condition_Check_SourceDuplicate').last().json?.watchFile?.id?.toJsonString() || 'null' }}\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1872,
-        1888
+        576,
+        888
       ],
       "id": "a9505cd5-dc4e-41ea-8d98-7cbad94dc668",
       "name": "Feedback_InvalidURL"
@@ -723,7 +717,7 @@
       "typeVersion": 1,
       "position": [
         -1440,
-        1392
+        1288
       ],
       "id": "493044b7-2ae0-45cf-88c7-26f98afa49ec",
       "name": "Tool_Check_Wikipedia"
@@ -737,8 +731,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1200,
-        1536
+        1424,
+        1704
       ],
       "id": "266c267b-71d3-43fb-8c49-ccb8f7228c36",
       "name": "Set_Source_ObjectMaker"
@@ -759,7 +753,8 @@
             "message": "={{ $('Condition_Check_SourceDuplicate').last().json.language === 'fr' ? `Cette source est déjà définis dans votre dossier de veille.` : `This source is already define in your WatchFile.` }}",
             "BusNameStamp": "={{ $('Condition_Check_SourceDuplicate').item.json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_Check_SourceDuplicate').item.json.RouterContextStamp }}",
-            "data": "={\n  \"success\": false,\n  \"duplicate\": true,\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"success\": false,\n  \"duplicate\": true,\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.TenantContextStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -811,6 +806,16 @@
               "canBeUsedToMatch": true,
               "type": "string",
               "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": true,
@@ -821,7 +826,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1648,
+        1872,
         256
       ],
       "id": "43cb5775-3b2b-4cde-81c5-76a8ed9ecb68",
@@ -843,7 +848,8 @@
             "message": "=$('Condition_Check_SourceDuplicate').last().json.language === 'fr' ? `L'agent AI rencontre un problème. Veuillez réessayer plus tard.` : `The AI agent is experiencing a problem. Please try again later.`\n\n{{ $('LLM_Agent_MapSourceBakus').item.json.toJsonString() }}",
             "BusNameStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.RouterContextStamp }}",
-            "data": "={\n  \"success\": false,\n  \"mapSourceBakus\": {{ $('LLM_Agent_MapSourceBakus').item.json.toJsonString() }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"success\": false,\n  \"mapSourceBakus\": {{ $('LLM_Agent_MapSourceBakus').item.json.toJsonString() }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.TenantContextStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -895,6 +901,16 @@
               "canBeUsedToMatch": true,
               "type": "string",
               "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": true,
@@ -905,8 +921,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1648,
-        992
+        1872,
+        1160
       ],
       "id": "3ea64067-c2e4-4f68-8316-a69f7bdbaab8",
       "name": "Workflow_SystemMessage_BakusBuilderError"
@@ -927,7 +943,8 @@
             "message": "={{ $('Condition_Check_SourceDuplicate').last().json.language === 'fr' ? `Source ajoutée : ${$('Condition_Check_SourceDuplicate').last().json.source.name}` : `Source added: ${$('Condition_Check_SourceDuplicate').last().json.source.name}` }}\n\n{{ $('LLM_Agent_ValidateSourceRelevance').item.json.output.justification[$('Condition_Check_SourceDuplicate').last().json.language] || $('LLM_Agent_ValidateSourceRelevance').item.json.output.justification.en }}\n\n{{ $('LLM_Agent_MapSourceBakus').item.json.output.reasoning?.typeDetection ? ($('Condition_Check_SourceDuplicate').last().json.language === 'fr' ? $('LLM_Agent_MapSourceBakus').item.json.output.reasoning.typeDetection : $('LLM_Agent_MapSourceBakus').item.json.output.reasoning.typeDetection) : '' }}\n\n{{ $('LLM_Agent_MapSourceBakus').item.json.output.reasoning?.collectorSelection ? ($('Condition_Check_SourceDuplicate').last().json.language === 'fr' ? $('LLM_Agent_MapSourceBakus').item.json.output.reasoning.collectorSelection : $('LLM_Agent_MapSourceBakus').item.json.output.reasoning.collectorSelection) : '' }}",
             "BusNameStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.RouterContextStamp }}",
-            "data": "={\n  \"success\": true,\n  \"deduplication_key\": {{ (($('Condition_Check_SourceDuplicate').last().json.watchFile?.id || '') + '|' + ($('Condition_Check_SourceDuplicate').last().json.source?.url || '') + '|' + ($('Condition_Check_SourceDuplicate').last().json.source?.type || '')).toJsonString() }},\n  \"validateSourceRelevance\": {{ $('LLM_Agent_ValidateSourceRelevance').item.json.toJsonString() }},\n  \"mapSourceBakus\": {{ $('LLM_Agent_MapSourceBakus').item.json.toJsonString() }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"success\": true,\n  \"deduplication_key\": {{ (($('Condition_Check_SourceDuplicate').last().json.watchFile?.id || '') + '|' + ($('Condition_Check_SourceDuplicate').last().json.source?.url || '') + '|' + ($('Condition_Check_SourceDuplicate').last().json.source?.type || '')).toJsonString() }},\n  \"validateSourceRelevance\": {{ $('LLM_Agent_ValidateSourceRelevance').item.json.toJsonString() }},\n  \"mapSourceBakus\": {{ $('LLM_Agent_MapSourceBakus').item.json.toJsonString() }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.TenantContextStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -979,6 +996,16 @@
               "canBeUsedToMatch": true,
               "type": "string",
               "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": true,
@@ -989,8 +1016,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1648,
-        1536
+        1872,
+        1704
       ],
       "id": "88a5f6e6-6cac-4124-91ad-3f2da82707cd",
       "name": "Workflow_SystemMessage_Success"
@@ -1011,7 +1038,8 @@
             "message": "={{ $('Condition_Check_SourceDuplicate').last().json.language === 'fr' ? `L'agent AI rencontre un problème. Veuillez réessayer plus tard.` : `The AI agent is experiencing a problem. Please try again later.` }}",
             "BusNameStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.RouterContextStamp }}",
-            "data": "={\n  \"success\": false,\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"success\": false,\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.TenantContextStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1063,6 +1091,16 @@
               "canBeUsedToMatch": true,
               "type": "string",
               "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": true,
@@ -1073,7 +1111,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1648,
+        1872,
         528
       ],
       "id": "2955f530-e619-405a-b981-f06caacac3bb",
@@ -1095,7 +1133,8 @@
             "message": "={{ $('Condition_Check_SourceDuplicate').last().json.language === 'en' ? `The source \"${$('Condition_Check_SourceDuplicate').last().json.source.name}\" does not seem relevant for this WatchFile.` : `La source \"${$('Condition_Check_SourceDuplicate').last().json.source.name}\" » ne semble pas pertinent pour ce dossier de veille.` }}\n\n{{ $('LLM_Agent_ValidateSourceRelevance').item.json.output.justification[$('Condition_Check_SourceDuplicate').last().json.language] || $('LLM_Agent_ValidateSourceRelevance').item.json.output.justification.en }}",
             "BusNameStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.RouterContextStamp }}",
-            "data": "={\n  \"success\": false,\n  \"agentValidateSourceRelevance\": {{ $('LLM_Agent_ValidateSourceRelevance').item.json?.toJsonString() || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"success\": false,\n  \"agentValidateSourceRelevance\": {{ $('LLM_Agent_ValidateSourceRelevance').item.json?.toJsonString() || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.TenantContextStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1147,6 +1186,16 @@
               "canBeUsedToMatch": true,
               "type": "string",
               "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": true,
@@ -1157,7 +1206,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1648,
+        1872,
         720
       ],
       "id": "ad8df5d5-852f-4d5a-84ee-f473744e7e48",
@@ -1176,10 +1225,11 @@
           "mappingMode": "defineBelow",
           "value": {
             "conversationId": "={{ $('Condition_Check_SourceDuplicate').last().json.conversationId }}",
-            "message": "={{ $('Condition_Check_SourceDuplicate').last().json.language === 'fr' ? `L'URL source \"${$('Condition_Check_SourceDuplicate').item.json.watchFile.name}\" n'est pas valide.` : `The source \"${$('Condition_Check_SourceDuplicate').item.json.watchFile.name}\" URL is invalid.` }}",
+            "message": "={{ ($('Condition_Check_SourceDuplicate').last().json.language === 'fr' ? `L'URL source \"${$('Condition_Check_SourceDuplicate').item.json.watchFile.name}\" n'est pas valide.` : `The source \"${$('Condition_Check_SourceDuplicate').item.json.watchFile.name}\" URL is invalid.`) }}",
             "BusNameStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.RouterContextStamp }}",
-            "data": "={\n  \"success\": false,\n  \"agentMapSourceBakus\": {{ $('LLM_Agent_MapSourceBakus').last().json?.toJsonString() || 'null' }},\n  \"agentValidateSourceRelevance\": {{ $('LLM_Agent_ValidateSourceRelevance').last().json?.toJsonString() || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"success\": false,\n  \"agentMapSourceBakus\": null,\n  \"agentValidateSourceRelevance\": {{ $if($('LLM_Agent_ValidateSourceRelevance').isExecuted, $('LLM_Agent_ValidateSourceRelevance').last().json?.toJsonString(), 'null') }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.TenantContextStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1231,6 +1281,16 @@
               "canBeUsedToMatch": true,
               "type": "string",
               "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": true,
@@ -1241,8 +1301,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1648,
-        1888
+        152,
+        888
       ],
       "id": "81f8eade-b96c-45b8-b818-996ae4e67df7",
       "name": "Workflow_SystemMessage_BakusBuilderError2"
@@ -1263,7 +1323,8 @@
             "message": "={{ $('Condition_Check_SourceDuplicate').last().json.language === 'fr' ? `L'agent AI rencontre un problème. Veuillez réessayer plus tard.` : `The AI agent is experiencing a problem. Please try again later.` }}",
             "BusNameStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.RouterContextStamp }}",
-            "data": "={\n  \"success\": false,\n  \"mapSourceBakus\": {{ $('LLM_Agent_MapSourceBakus').item.json.toJsonString() }},\n  \"validateSourceRelevance\": {{ $('LLM_Agent_ValidateSourceRelevance').item.json.toJsonString() }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"success\": false,\n  \"mapSourceBakus\": {{ $('LLM_Agent_MapSourceBakus').item.json.toJsonString() }},\n  \"validateSourceRelevance\": {{ $('LLM_Agent_ValidateSourceRelevance').item.json.toJsonString() }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_Check_SourceDuplicate').last().json.TenantContextStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1315,6 +1376,16 @@
               "canBeUsedToMatch": true,
               "type": "string",
               "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": true,
@@ -1325,8 +1396,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1648,
-        1184
+        1872,
+        1352
       ],
       "id": "74a7dd93-0794-485d-8f8d-a38a7835f7bb",
       "name": "Workflow_SystemMessage_BakusInvalid"
@@ -1347,8 +1418,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        608,
-        1536
+        832,
+        1704
       ],
       "id": "723131b3-5e55-45d3-b77f-42f80f57f20c",
       "name": "LLM_Agent_MapSourceActor",
@@ -1380,8 +1451,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        576,
-        1760
+        800,
+        1928
       ],
       "id": "e3233305-4a4f-4c1d-b365-4812cbebb0da",
       "name": "LLM_Model_MapSourceActorPrimary",
@@ -1418,8 +1489,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        704,
-        1760
+        928,
+        1928
       ],
       "id": "84d87c16-318e-48ec-b004-d0aee5473381",
       "name": "LLM_Model_MapSourceActorFallback",
@@ -1439,8 +1510,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        832,
-        1760
+        1056,
+        1928
       ],
       "id": "5a45611a-59e0-4cc1-934d-66ac4164790f",
       "name": "LLM_Parser_MapSourceActorOutput"
@@ -1465,8 +1536,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        912,
-        1968
+        1136,
+        2136
       ],
       "id": "39d28369-7258-4026-81a0-5497785db802",
       "name": "LLM_Model_MapSourceActorParser",
@@ -1476,8 +1547,52 @@
           "name": "LLM Gateway - chapsmind-target-env-dev"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ce6593cd-65ac-459d-8e2d-83863d7ef999",
+              "leftValue": "={{ $json.warning }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "e2fc9ea8-e3bf-43c9-a198-030f7d1135da",
+              "leftValue": "={{ $json.warning }}",
+              "rightValue": "Target URL returned error",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        1312
+      ],
+      "id": "845e5be1-9e73-4863-98cb-e48fbd635bf2",
+      "name": "Condition_Validate_SourceURLStatus"
     }
   ],
+  "pinData": {},
   "connections": {
     "Workflow_Trigger_AddSource": {
       "main": [
@@ -1683,7 +1798,7 @@
       "main": [
         [
           {
-            "node": "Condition_Validate_SourceURL",
+            "node": "Condition_Validate_SourceURLStatus",
             "type": "main",
             "index": 0
           }
@@ -1985,8 +2100,27 @@
           }
         ]
       ]
+    },
+    "Condition_Validate_SourceURLStatus": {
+      "main": [
+        [
+          {
+            "node": "Workflow_SystemMessage_BakusBuilderError2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Condition_Validate_SourceURL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
@@ -1995,10 +2129,11 @@
     "executionTimeout": 300,
     "timeSavedPerExecution": 60
   },
-  "versionId": "8dcc4368-fde6-4d8f-a4b1-3b6027686c88",
+  "versionId": "6b8dc67c-644a-4d29-98e4-50a254e86c94",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "05e22d27620d1717ac398bbf3f2dbdaa9098598488c5baaa743d646b60379aaf"
   },
+  "id": "U5xXoj93ilunzZGz",
   "tags": []
 }

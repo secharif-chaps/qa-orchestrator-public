@@ -153,7 +153,8 @@
             "message": "={{ $('Workflow_Trigger_ActivateWatchFile').item.json.language === 'fr' ? `Votre dossier de veille a été activé avec succès` : `Your watchfile has been successfully actived` }}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context?.BusNameStamp || '' }}",
             "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context?.RouterContextStamp || '' }}",
-            "data": "={\n  \"watchFileId\": {{ $('Workflow_Trigger_ActivateWatchFile').item.json.watchFileId?.toJsonString() || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"watchFileId\": {{ $('Workflow_Trigger_ActivateWatchFile').item.json.watchFileId?.toJsonString() || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context?.TenantStamp || '' }}"
           },
           "matchingColumns": [],
           "schema": [

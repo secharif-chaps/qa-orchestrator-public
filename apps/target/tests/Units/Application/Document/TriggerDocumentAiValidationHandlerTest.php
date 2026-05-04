@@ -89,6 +89,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
                     $this->assertEquals($documentId, $data['id']);
                     $this->assertEquals($documentContent, $data['content']);
                     $this->assertEquals($referenceSubject->en, $data['referenceSubject']);
+                    $this->assertEquals('wf-456', $message->watchFileId);
 
                     return true;
                 }
@@ -229,6 +230,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
 
         $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $watchFile->setReferenceSubject($referenceSubject);
+        $this->forcePropertyValue($watchFile, 'wf-456');
 
         $failedValidation = new AIValidation(
             status: AiValidationStatus::FAILED,
@@ -433,6 +435,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
 
         $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $watchFile->setReferenceSubject($referenceSubject);
+        $this->forcePropertyValue($watchFile, 'wf-456');
 
         $document = new Document(
             id: null,
@@ -516,6 +519,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
                     $this->assertEquals($documentContent, $data['content']);
                     // Should use LLM version instead of human-readable version
                     $this->assertEquals($referenceSubjectLlm, $data['referenceSubject']);
+                    $this->assertEquals('wf-456', $message->watchFileId);
 
                     return true;
                 }
@@ -581,6 +585,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
                     $this->assertEquals($documentContent, $data['content']);
                     // Should use English human-readable version as fallback
                     $this->assertEquals($referenceSubject->en, $data['referenceSubject']);
+                    $this->assertEquals('wf-456', $message->watchFileId);
 
                     return true;
                 }

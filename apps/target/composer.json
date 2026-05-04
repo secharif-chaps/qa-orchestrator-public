@@ -16,6 +16,7 @@
     "doctrine/doctrine-bundle": "^3.0",
     "doctrine/doctrine-migrations-bundle": "^4.0",
     "doctrine/orm": "^3.0",
+    "dragonmantank/cron-expression": "^3.6",
     "enshrined/svg-sanitize": "^0.22.0",
     "firebase/php-jwt": "^7.0",
     "league/commonmark": "^2.7",

@@ -367,12 +367,6 @@ parameters:
 			path: src/Domain/Chat/Conversation.php
 
 		-
-			rawMessage: 'Property App\Domain\Chat\Conversation::$title type mapping mismatch: database can contain string|null but property expects string.'
-			identifier: doctrine.columnType
-			count: 1
-			path: src/Domain/Chat/Conversation.php
-
-		-
 			rawMessage: 'Method App\Domain\Chat\Message::getMetadata() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
