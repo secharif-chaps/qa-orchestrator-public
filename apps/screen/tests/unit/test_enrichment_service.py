@@ -7,6 +7,15 @@ import pytest
 from app.services.enrichment_service import MAX_ERROR_LENGTH, EnrichmentService
 
 
+async def _passthrough_to_thread(fn, *args, **kwargs):
+    """Replacement for ``asyncio.to_thread`` that runs the callable inline.
+
+    Preserves the return value so helpers like ``_persist_or_error``
+    keep their contract when the collector is exercised under test.
+    """
+    return fn(*args, **kwargs)
+
+
 def _make_pappers_result():
     mock = MagicMock()
     mock.model_dump.return_value = {"siren": "123456789", "legal_form": "SAS"}
@@ -34,7 +43,11 @@ class TestCollect:
         ):
             mock_pappers.return_value = {"siren": "123"}
             mock_wc.return_value = {"matches": []}
-            mock_epo.return_value = {"applicant_query": "Test*", "total_results": 0, "patents": []}
+            mock_epo.return_value = {
+                "epo_publications": {"applicant_query": "Test*", "total_results": 0, "patents": []},
+                "epo_families": {"families": []},
+                "epo_legal": {"legal_statuses": []},
+            }
 
             result = await EnrichmentService.collect(
                 db,
@@ -48,6 +61,8 @@ class TestCollect:
             "pappers": {"siren": "123"},
             "worldcheck": {"matches": []},
             "epo_publications": {"applicant_query": "Test*", "total_results": 0, "patents": []},
+            "epo_families": {"families": []},
+            "epo_legal": {"legal_statuses": []},
         }
 
     @pytest.mark.asyncio
@@ -62,7 +77,7 @@ class TestCollect:
         ):
             mock_pappers.return_value = None
             mock_wc.return_value = {"matches": []}
-            mock_epo.return_value = None
+            mock_epo.return_value = {}
 
             result = await EnrichmentService.collect(
                 db,
@@ -85,7 +100,7 @@ class TestCollect:
         ):
             mock_pappers.return_value = None
             mock_wc.return_value = None
-            mock_epo.return_value = None
+            mock_epo.return_value = {}
 
             result = await EnrichmentService.collect(
                 db,
@@ -296,7 +311,12 @@ class TestCollectWorldCheck:
 
 
 class TestCollectEpo:
-    """Tests for _collect_epo."""
+    """Tests for _collect_epo with the three-step flow.
+
+    Each test substitutes ``asyncio.to_thread`` with an inline runner so
+    the sync helpers (SessionLocal, _upsert_enrichment, _persist_or_error,
+    session.commit/close) execute their real bodies on a MagicMock session.
+    """
 
     @pytest.mark.asyncio
     async def test_skips_when_feature_disabled(self):
@@ -310,29 +330,43 @@ class TestCollectEpo:
                 organization_id="org-1",
             )
 
-        assert result is None
+        assert result == {}
 
     @pytest.mark.asyncio
-    async def test_returns_data_on_success(self):
+    async def test_collects_publications_families_and_legal_on_success(self):
         db = MagicMock()
-        payload = {
+        local_db = MagicMock()
+        publications = {
             "applicant_query": "Test*",
             "total_results": 2,
             "patents": [
-                {"doc_id": "EP1", "title": "Widget", "abstract": "..."},
+                {"doc_id": "EP1", "title": "Widget"},
+                {"doc_id": "EP2", "title": "Gadget"},
             ],
         }
+        families = {"families": [{"doc_id": "EP1", "family_size": 3}]}
+        legal = {"legal_statuses": [{"doc_id": "EP1", "simplified_status": "active"}]}
 
         with (
             patch("app.services.enrichment_service.has_feature", return_value=True),
+            patch("app.services.enrichment_service.SessionLocal", return_value=local_db),
+            patch("app.services.enrichment_service.asyncio.to_thread", new=_passthrough_to_thread),
             patch(
                 "app.services.enrichment_service.EpoService.enrich_company",
                 new_callable=AsyncMock,
-            ) as mock_enrich,
-            patch("app.services.enrichment_service.asyncio.to_thread", new_callable=AsyncMock),
+                return_value=publications,
+            ),
+            patch(
+                "app.services.enrichment_service.EpoService.get_patent_families",
+                new_callable=AsyncMock,
+                return_value=families,
+            ) as mock_families,
+            patch(
+                "app.services.enrichment_service.EpoService.get_legal_status",
+                new_callable=AsyncMock,
+                return_value=legal,
+            ) as mock_legal,
         ):
-            mock_enrich.return_value = payload
-
             result = await EnrichmentService._collect_epo(
                 db,
                 company_id=1,
@@ -340,24 +374,43 @@ class TestCollectEpo:
                 organization_id="org-1",
             )
 
-        assert result == payload
+        assert result == {
+            "epo_publications": publications,
+            "epo_families": families,
+            "epo_legal": legal,
+        }
+        mock_families.assert_awaited_once_with(local_db, "org-1", ["EP1", "EP2"])
+        mock_legal.assert_awaited_once_with(local_db, "org-1", ["EP1", "EP2"])
+        # Three upserts + one final commit on the local session.
+        assert local_db.execute.call_count == 3
+        local_db.commit.assert_called_once()
+        local_db.close.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_returns_empty_payload_when_no_patents(self):
-        """Empty patent list is still a success — callers persist the record."""
+    async def test_empty_patents_skips_family_and_legal_calls(self):
+        """Publications with empty list persist a success but skip family/legal."""
         db = MagicMock()
-        payload = {"applicant_query": "Ghost*", "total_results": 0, "patents": []}
+        local_db = MagicMock()
+        publications = {"applicant_query": "Ghost*", "total_results": 0, "patents": []}
 
         with (
             patch("app.services.enrichment_service.has_feature", return_value=True),
+            patch("app.services.enrichment_service.SessionLocal", return_value=local_db),
+            patch("app.services.enrichment_service.asyncio.to_thread", new=_passthrough_to_thread),
             patch(
                 "app.services.enrichment_service.EpoService.enrich_company",
                 new_callable=AsyncMock,
-            ) as mock_enrich,
-            patch("app.services.enrichment_service.asyncio.to_thread", new_callable=AsyncMock),
+                return_value=publications,
+            ),
+            patch(
+                "app.services.enrichment_service.EpoService.get_patent_families",
+                new_callable=AsyncMock,
+            ) as mock_families,
+            patch(
+                "app.services.enrichment_service.EpoService.get_legal_status",
+                new_callable=AsyncMock,
+            ) as mock_legal,
         ):
-            mock_enrich.return_value = payload
-
             result = await EnrichmentService._collect_epo(
                 db,
                 company_id=1,
@@ -365,80 +418,226 @@ class TestCollectEpo:
                 organization_id="org-1",
             )
 
-        assert result == payload
+        assert result == {"epo_publications": publications}
+        mock_families.assert_not_awaited()
+        mock_legal.assert_not_awaited()
+        # Only the publications upsert + final commit ran on the local session.
+        assert local_db.execute.call_count == 1
+        local_db.commit.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_handles_epo_error(self):
+    async def test_families_failure_still_persists_publications_and_legal(self):
+        from app.infrastructure.epo.exceptions import EpoQuotaExceededError
+
+        db = MagicMock()
+        local_db = MagicMock()
+        publications = {
+            "applicant_query": "Test*",
+            "total_results": 1,
+            "patents": [{"doc_id": "EP1"}],
+        }
+        legal = {"legal_statuses": [{"doc_id": "EP1", "simplified_status": "active"}]}
+
+        with (
+            patch("app.services.enrichment_service.has_feature", return_value=True),
+            patch("app.services.enrichment_service.SessionLocal", return_value=local_db),
+            patch("app.services.enrichment_service.asyncio.to_thread", new=_passthrough_to_thread),
+            patch(
+                "app.services.enrichment_service.EpoService.enrich_company",
+                new_callable=AsyncMock,
+                return_value=publications,
+            ),
+            patch(
+                "app.services.enrichment_service.EpoService.get_patent_families",
+                new_callable=AsyncMock,
+                side_effect=EpoQuotaExceededError(),
+            ),
+            patch(
+                "app.services.enrichment_service.EpoService.get_legal_status",
+                new_callable=AsyncMock,
+                return_value=legal,
+            ),
+        ):
+            result = await EnrichmentService._collect_epo(
+                db,
+                company_id=1,
+                company_name="Test",
+                organization_id="org-1",
+            )
+
+        # epo_families absent from success dict (Exception was persisted as error record).
+        assert "epo_families" not in result
+        assert result["epo_publications"] == publications
+        assert result["epo_legal"] == legal
+        # Three upserts: publications (success) + families (error) + legal (success).
+        assert local_db.execute.call_count == 3
+        local_db.commit.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_publications_error_returns_empty_and_still_commits_error_record(self):
+        from app.infrastructure.epo.exceptions import EpoAuthError
+
+        db = MagicMock()
+        local_db = MagicMock()
+
+        with (
+            patch("app.services.enrichment_service.has_feature", return_value=True),
+            patch("app.services.enrichment_service.SessionLocal", return_value=local_db),
+            patch("app.services.enrichment_service.asyncio.to_thread", new=_passthrough_to_thread),
+            patch(
+                "app.services.enrichment_service.EpoService.enrich_company",
+                new_callable=AsyncMock,
+                side_effect=EpoAuthError(),
+            ),
+            patch(
+                "app.services.enrichment_service.EpoService.get_patent_families",
+                new_callable=AsyncMock,
+            ) as mock_families,
+            patch(
+                "app.services.enrichment_service.EpoService.get_legal_status",
+                new_callable=AsyncMock,
+            ) as mock_legal,
+        ):
+            result = await EnrichmentService._collect_epo(
+                db,
+                company_id=1,
+                company_name="Test",
+                organization_id="org-1",
+            )
+
+        assert result == {}
+        mock_families.assert_not_awaited()
+        mock_legal.assert_not_awaited()
+        # Only the publications error upsert was staged, followed by the commit.
+        assert local_db.execute.call_count == 1
+        local_db.commit.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_credentials_missing_treated_as_publications_error(self):
+        from app.services.epo import EpoCredentialsMissingError
+
+        db = MagicMock()
+        local_db = MagicMock()
+
+        with (
+            patch("app.services.enrichment_service.has_feature", return_value=True),
+            patch("app.services.enrichment_service.SessionLocal", return_value=local_db),
+            patch("app.services.enrichment_service.asyncio.to_thread", new=_passthrough_to_thread),
+            patch(
+                "app.services.enrichment_service.EpoService.enrich_company",
+                new_callable=AsyncMock,
+                side_effect=EpoCredentialsMissingError("org-1"),
+            ),
+        ):
+            result = await EnrichmentService._collect_epo(
+                db,
+                company_id=1,
+                company_name="Test",
+                organization_id="org-1",
+            )
+
+        assert result == {}
+        local_db.commit.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_unexpected_exception_treated_as_publications_error(self):
+        db = MagicMock()
+        local_db = MagicMock()
+
+        with (
+            patch("app.services.enrichment_service.has_feature", return_value=True),
+            patch("app.services.enrichment_service.SessionLocal", return_value=local_db),
+            patch("app.services.enrichment_service.asyncio.to_thread", new=_passthrough_to_thread),
+            patch(
+                "app.services.enrichment_service.EpoService.enrich_company",
+                new_callable=AsyncMock,
+                side_effect=RuntimeError("unexpected"),
+            ),
+        ):
+            result = await EnrichmentService._collect_epo(
+                db,
+                company_id=1,
+                company_name="Test",
+                organization_id="org-1",
+            )
+
+        assert result == {}
+        local_db.commit.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_legal_failure_still_persists_publications_and_families(self):
+        from app.infrastructure.epo.exceptions import EpoQuotaExceededError
+
+        db = MagicMock()
+        local_db = MagicMock()
+        publications = {
+            "applicant_query": "Test*",
+            "total_results": 1,
+            "patents": [{"doc_id": "EP1"}],
+        }
+        families = {"families": [{"doc_id": "EP1", "family_size": 3}]}
+
+        with (
+            patch("app.services.enrichment_service.has_feature", return_value=True),
+            patch("app.services.enrichment_service.SessionLocal", return_value=local_db),
+            patch("app.services.enrichment_service.asyncio.to_thread", new=_passthrough_to_thread),
+            patch(
+                "app.services.enrichment_service.EpoService.enrich_company",
+                new_callable=AsyncMock,
+                return_value=publications,
+            ),
+            patch(
+                "app.services.enrichment_service.EpoService.get_patent_families",
+                new_callable=AsyncMock,
+                return_value=families,
+            ),
+            patch(
+                "app.services.enrichment_service.EpoService.get_legal_status",
+                new_callable=AsyncMock,
+                side_effect=EpoQuotaExceededError(),
+            ),
+        ):
+            result = await EnrichmentService._collect_epo(
+                db,
+                company_id=1,
+                company_name="Test",
+                organization_id="org-1",
+            )
+
+        assert "epo_legal" not in result
+        assert result["epo_publications"] == publications
+        assert result["epo_families"] == families
+
+
+class TestPersistOrError:
+    """Tests for the _persist_or_error helper."""
+
+    def test_dict_outcome_upserts_success_and_returns_payload(self):
+        db = MagicMock()
+        payload = {"families": []}
+
+        result = EnrichmentService._persist_or_error(db, 1, "epo_families", payload)
+
+        assert result is payload
+        db.execute.assert_called_once()
+
+    def test_exception_outcome_upserts_error_and_returns_none(self):
         from app.infrastructure.epo.exceptions import EpoAuthError
 
         db = MagicMock()
 
-        with (
-            patch("app.services.enrichment_service.has_feature", return_value=True),
-            patch(
-                "app.services.enrichment_service.EpoService.enrich_company",
-                new_callable=AsyncMock,
-            ) as mock_enrich,
-            patch("app.services.enrichment_service.asyncio.to_thread", new_callable=AsyncMock),
-        ):
-            mock_enrich.side_effect = EpoAuthError()
-
-            result = await EnrichmentService._collect_epo(
-                db,
-                company_id=1,
-                company_name="Test",
-                organization_id="org-1",
-            )
+        result = EnrichmentService._persist_or_error(db, 1, "epo_families", EpoAuthError())
 
         assert result is None
+        db.execute.assert_called_once()
 
-    @pytest.mark.asyncio
-    async def test_handles_credentials_missing(self):
-        from app.services.epo import EpoCredentialsMissingError
-
+    def test_unexpected_outcome_type_upserts_error_and_returns_none(self):
         db = MagicMock()
 
-        with (
-            patch("app.services.enrichment_service.has_feature", return_value=True),
-            patch(
-                "app.services.enrichment_service.EpoService.enrich_company",
-                new_callable=AsyncMock,
-            ) as mock_enrich,
-            patch("app.services.enrichment_service.asyncio.to_thread", new_callable=AsyncMock),
-        ):
-            mock_enrich.side_effect = EpoCredentialsMissingError("org-1")
-
-            result = await EnrichmentService._collect_epo(
-                db,
-                company_id=1,
-                company_name="Test",
-                organization_id="org-1",
-            )
+        result = EnrichmentService._persist_or_error(db, 1, "epo_families", "not expected")
 
         assert result is None
-
-    @pytest.mark.asyncio
-    async def test_handles_unexpected_exception(self):
-        db = MagicMock()
-
-        with (
-            patch("app.services.enrichment_service.has_feature", return_value=True),
-            patch(
-                "app.services.enrichment_service.EpoService.enrich_company",
-                new_callable=AsyncMock,
-            ) as mock_enrich,
-            patch("app.services.enrichment_service.asyncio.to_thread", new_callable=AsyncMock),
-        ):
-            mock_enrich.side_effect = RuntimeError("unexpected")
-
-            result = await EnrichmentService._collect_epo(
-                db,
-                company_id=1,
-                company_name="Test",
-                organization_id="org-1",
-            )
-
-        assert result is None
+        db.execute.assert_called_once()
 
 
 class TestUpsertEnrichment:

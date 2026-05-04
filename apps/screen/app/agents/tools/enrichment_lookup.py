@@ -23,14 +23,18 @@ ENRICHMENT_TOOL_DEFINITION: dict = {
         "Available sources: pappers (French business registry: SIREN, legal form, capital, "
         "officers, financials), worldcheck (due diligence screening: sanctions, PEP matches), "
         "epo_publications (European Patent Office patents: title, inventors, applicants, "
-        "publication date, patent number, and abstract for the company's most recent patents)."
+        "publication date, patent number, and abstract for the company's most recent patents), "
+        "epo_families (international patent portfolio per publication: family members with "
+        "country/office/number, family size, and CPC classifications), "
+        "epo_legal (legal status of each publication: simplified status — active, expired, "
+        "pending or unknown — with the raw event history)."
     ),
     "parameters": {
         "type": "object",
         "properties": {
             "source": {
                 "type": "string",
-                "enum": ["pappers", "worldcheck", "epo_publications"],
+                "enum": ["pappers", "worldcheck", "epo_publications", "epo_families", "epo_legal"],
                 "description": "The data source to query",
             }
         },
