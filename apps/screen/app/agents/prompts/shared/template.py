@@ -12,7 +12,22 @@ You MUST respond with ONLY a valid JSON object. No prose, no markdown, no explan
 {targets}
 
 ## Output Format
-Return a JSON object matching this exact structure:
-{output_format}
+You MUST return ONLY a valid JSON object.
 
-CRITICAL: Your entire response must be a single valid JSON object. Do not wrap it in markdown code blocks. Do not include any text outside the JSON."""
+Requirements:
+- Must strictly follow the JSON schema below
+- No additional keys
+- No missing required fields
+- No explanations or text outside the JSON
+- Do not wrap it in markdown code blocks
+- Must be valid JSON
+
+If the output is invalid, you must correct it before returning.
+
+JSON Schema:
+<<<
+{output_format}
+>>>
+
+Return ONLY the JSON object.
+"""
