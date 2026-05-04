@@ -10,6 +10,7 @@ well-formed.
 from __future__ import annotations
 
 from datetime import date, datetime
+from typing import Literal
 
 from lxml import etree
 from pydantic import BaseModel, Field
@@ -21,6 +22,8 @@ EPO_NS = {
     "ex": "http://www.epo.org/exchange",
     "ftxt": "http://www.epo.org/fulltext",
 }
+
+SimplifiedLegalStatus = Literal["active", "expired", "pending", "unknown"]
 
 
 class PatentSearchEntry(BaseModel):
@@ -58,11 +61,28 @@ class PatentAbstract(BaseModel):
     lang: str | None = None
 
 
-class PatentFamily(BaseModel):
-    """Simple patent-family summary: the seed doc and its family members."""
+class PatentFamilyMember(BaseModel):
+    """A single publication inside a patent family."""
 
     doc_id: str
-    family_members: list[str] = Field(default_factory=list)
+    country: str
+    doc_number: str
+    kind: str | None = None
+    publication_date: date | None = None
+
+
+class PatentFamily(BaseModel):
+    """Patent-family summary built from the `family/.../biblio` endpoint.
+
+    Carries the full docdb identity of each family member so that
+    consumers can count geographic coverage, plus the CPC classifications
+    collected across all members (deduplicated).
+    """
+
+    doc_id: str
+    family_size: int = 0
+    family_members: list[PatentFamilyMember] = Field(default_factory=list)
+    cpc_classifications: list[str] = Field(default_factory=list)
 
 
 class PatentLegalEvent(BaseModel):
@@ -74,9 +94,15 @@ class PatentLegalEvent(BaseModel):
 
 
 class PatentLegalStatus(BaseModel):
-    """Legal-status history of a single patent publication."""
+    """Legal-status history of a single patent publication.
+
+    ``simplified_status`` collapses the raw event codes into a coarse
+    bucket (active / expired / pending / unknown) for downstream agents
+    that should not have to know about EPO code semantics.
+    """
 
     doc_id: str
+    simplified_status: SimplifiedLegalStatus = "unknown"
     events: list[PatentLegalEvent] = Field(default_factory=list)
 
 
@@ -119,6 +145,75 @@ def _build_doc_id(doc_ref: etree._Element | None) -> str | None:
     if not country or not number:
         return None
     return f"{country}.{number}.{kind}" if kind else f"{country}.{number}"
+
+
+def _build_family_member(doc_ref: etree._Element | None) -> PatentFamilyMember | None:
+    """Build a `PatentFamilyMember` from a `<document-id>` element."""
+    if doc_ref is None:
+        return None
+    country = doc_ref.findtext("ex:country", namespaces=EPO_NS)
+    number = doc_ref.findtext("ex:doc-number", namespaces=EPO_NS)
+    kind = doc_ref.findtext("ex:kind", namespaces=EPO_NS)
+    date_raw = doc_ref.findtext("ex:date", namespaces=EPO_NS)
+    if not country or not number:
+        return None
+    doc_id = f"{country}.{number}.{kind}" if kind else f"{country}.{number}"
+    return PatentFamilyMember(
+        doc_id=doc_id,
+        country=country,
+        doc_number=number,
+        kind=kind or None,
+        publication_date=_parse_epo_date(date_raw),
+    )
+
+
+def _format_cpc_symbol(cpc: etree._Element) -> str | None:
+    """Compose a CPC classification symbol like ``A01B 3/00`` from its parts.
+
+    EPO payloads split the symbol across child elements; some codes omit
+    main-group / subgroup when only the subclass matters.
+    """
+    section = cpc.findtext("ex:section", namespaces=EPO_NS)
+    klass = cpc.findtext("ex:class", namespaces=EPO_NS)
+    subclass = cpc.findtext("ex:subclass", namespaces=EPO_NS)
+    main_group = cpc.findtext("ex:main-group", namespaces=EPO_NS)
+    subgroup = cpc.findtext("ex:subgroup", namespaces=EPO_NS)
+    if not section or not klass or not subclass:
+        return None
+    base = f"{section}{klass}{subclass}"
+    if main_group and subgroup:
+        return f"{base} {main_group}/{subgroup}"
+    if main_group:
+        return f"{base} {main_group}"
+    return base
+
+
+def _derive_simplified_status(events: list[PatentLegalEvent]) -> SimplifiedLegalStatus:
+    """Collapse a legal-event history into one of active/expired/pending/unknown.
+
+    Later events override earlier ones: we sort by ``event_date`` (missing
+    dates sort first so dated events win), then scan from most recent to
+    oldest and return the first event whose code OR description matches a
+    known marker. EPO register codes are often cryptic (``PG25`` = lapse
+    in a contracting state), so falling back to the description keeps the
+    mapping robust on real payloads.
+    """
+    if not events:
+        return "unknown"
+
+    ordered = sorted(
+        events,
+        key=lambda e: (e.event_date is not None, e.event_date or date.min),
+    )
+    for event in reversed(ordered):
+        haystack = f"{event.code or ''} {event.description or ''}".upper()
+        if any(marker in haystack for marker in ("LAPS", "CEAS", "EXPIR", "REVOK", "TERM", "WITHDRAW")):
+            return "expired"
+        if any(marker in haystack for marker in ("GRANT", "REGIST")):
+            return "active"
+        if any(marker in haystack for marker in ("EXAM", "PEND", "PUBL", "SEARCH", "APPL")):
+            return "pending"
+    return "unknown"
 
 
 def parse_search_response(xml: bytes) -> PatentSearchResult:
@@ -239,7 +334,14 @@ def parse_abstract_response(xml: bytes) -> PatentAbstract:
 
 
 def parse_family_response(xml: bytes) -> PatentFamily:
-    """Parse `family/publication/docdb/{doc_id}` XML into `PatentFamily`."""
+    """Parse `family/publication/docdb/{doc_id}/biblio` XML into `PatentFamily`.
+
+    The ``/biblio`` variant nests one ``<exchange-document>`` per family
+    member, which exposes both the publication identity (country / number
+    / kind / date) and the CPC classification entries. CPC symbols are
+    collected across all members and deduplicated while preserving
+    insertion order.
+    """
     root = _parse_root(xml)
 
     family = root.find(".//ops:patent-family", namespaces=EPO_NS)
@@ -255,7 +357,7 @@ def parse_family_response(xml: bytes) -> PatentFamily:
     )
     seed_id = _build_doc_id(seed_ref) or ""
 
-    members: list[str] = []
+    members: list[PatentFamilyMember] = []
     for member in family.findall(".//ops:family-member", namespaces=EPO_NS):
         doc_ref = member.find(
             "ex:publication-reference/ex:document-id[@document-id-type='docdb']",
@@ -263,11 +365,29 @@ def parse_family_response(xml: bytes) -> PatentFamily:
         )
         if doc_ref is None:
             doc_ref = member.find("ex:publication-reference/ex:document-id", namespaces=EPO_NS)
-        member_id = _build_doc_id(doc_ref)
-        if member_id:
-            members.append(member_id)
+        parsed = _build_family_member(doc_ref)
+        if parsed is not None:
+            members.append(parsed)
 
-    return PatentFamily(doc_id=seed_id, family_members=members)
+    cpc_symbols: list[str] = []
+    seen: set[str] = set()
+    # lxml's ElementPath dialect rejects nested predicates, so we filter on
+    # the scheme attribute in Python instead of ``[ex:classification-scheme[@scheme='CPCI']]``.
+    for cpc in family.findall(".//ex:patent-classification", namespaces=EPO_NS):
+        scheme_el = cpc.find("ex:classification-scheme", namespaces=EPO_NS)
+        if scheme_el is None or scheme_el.get("scheme") != "CPCI":
+            continue
+        symbol = _format_cpc_symbol(cpc)
+        if symbol and symbol not in seen:
+            seen.add(symbol)
+            cpc_symbols.append(symbol)
+
+    return PatentFamily(
+        doc_id=seed_id,
+        family_size=len(members),
+        family_members=members,
+        cpc_classifications=cpc_symbols,
+    )
 
 
 def parse_legal_response(xml: bytes) -> PatentLegalStatus:
@@ -315,4 +435,8 @@ def parse_legal_response(xml: bytes) -> PatentLegalStatus:
             )
         )
 
-    return PatentLegalStatus(doc_id=doc_id, events=events)
+    return PatentLegalStatus(
+        doc_id=doc_id,
+        simplified_status=_derive_simplified_status(events),
+        events=events,
+    )

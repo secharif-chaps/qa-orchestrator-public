@@ -358,9 +358,14 @@ class EpoClient:
         return parse_abstract_response(response.content)
 
     async def get_family(self, doc_id: str) -> PatentFamily:
-        """Fetch the patent family for a single publication."""
+        """Fetch the patent family (with biblio) for a single publication.
+
+        The ``/biblio`` suffix asks EPO to return bibliographic data for
+        every family member in the same payload, which is required to
+        collect CPC classifications alongside the geographic coverage.
+        """
         self._validate_doc_id(doc_id)
-        path = f"/rest-services/family/publication/docdb/{doc_id}"
+        path = f"/rest-services/family/publication/docdb/{doc_id}/biblio"
         logger.info("EPO get_family", extra={"doc_id": doc_id})
         response = await self._request("GET", path)
         return parse_family_response(response.content)

@@ -18,7 +18,11 @@ from sqlalchemy.orm import Session
 from app.core.logging_config import get_logger
 from app.infrastructure.epo.client import EpoClient
 from app.infrastructure.epo.exceptions import EpoError, EpoNotFoundError
-from app.infrastructure.epo.schemas import PatentSearchEntry
+from app.infrastructure.epo.schemas import (
+    PatentFamily,
+    PatentLegalStatus,
+    PatentSearchEntry,
+)
 from app.models.organization import FeatureFlag
 from app.services.feature_flags import get_feature_config, has_feature
 
@@ -240,6 +244,175 @@ class EpoService:
             "total_results": search_result.total_results,
             "patents": patents,
         }
+
+    @staticmethod
+    async def _fetch_family(
+        client: EpoClient,
+        doc_id: str,
+        semaphore: asyncio.Semaphore,
+    ) -> PatentFamily | None:
+        """Fetch the family/biblio payload for a single ``doc_id``.
+
+        Returns ``None`` on ``EpoNotFoundError`` (EPO has no family record
+        for this publication) or any other ``EpoError``; individual
+        failures never block the rest of the fan-out.
+        """
+        async with semaphore:
+            try:
+                return await client.get_family(doc_id)
+            except EpoNotFoundError as exc:
+                logger.info(
+                    "EPO family not found",
+                    extra={"doc_id": doc_id, "error": str(exc)},
+                )
+                return None
+            except EpoError as exc:
+                logger.warning(
+                    "EPO family fetch failed",
+                    extra={"doc_id": doc_id, "error": str(exc)},
+                )
+                return None
+
+    @staticmethod
+    async def _fetch_legal(
+        client: EpoClient,
+        doc_id: str,
+        semaphore: asyncio.Semaphore,
+    ) -> PatentLegalStatus | None:
+        """Fetch the legal-status payload for a single ``doc_id``.
+
+        Returns ``None`` on ``EpoNotFoundError`` or any other ``EpoError``.
+        """
+        async with semaphore:
+            try:
+                return await client.get_legal(doc_id)
+            except EpoNotFoundError as exc:
+                logger.info(
+                    "EPO legal not found",
+                    extra={"doc_id": doc_id, "error": str(exc)},
+                )
+                return None
+            except EpoError as exc:
+                logger.warning(
+                    "EPO legal fetch failed",
+                    extra={"doc_id": doc_id, "error": str(exc)},
+                )
+                return None
+
+    @staticmethod
+    async def get_patent_families(
+        db: Session,
+        organization_id: str,
+        doc_ids: list[str],
+    ) -> dict[str, Any]:
+        """Collect patent families (with biblio) for a list of publications.
+
+        Fans out ``client.get_family`` calls under a semaphore bound by
+        ``DEFAULT_PATENT_CONCURRENCY``. A per-``doc_id`` failure drops
+        that entry from the result; the method itself only raises when
+        credentials cannot be resolved or a search-level EPO error
+        escapes the individual fetch.
+
+        Args:
+            db: Database session, used to resolve credentials.
+            organization_id: Keycloak organization UUID.
+            doc_ids: Publications to look up (docdb format).
+
+        Returns:
+            Dict with a ``families`` key: list of dicts, each carrying
+            ``doc_id``, ``family_size``, ``family_members`` and
+            ``cpc_classifications``. Empty input yields
+            ``{"families": []}`` without an EPO call.
+
+        Raises:
+            EpoFeatureNotEnabledError: EPO flag is off.
+            EpoCredentialsMissingError: Consumer Key / Secret missing.
+        """
+        if not doc_ids:
+            return {"families": []}
+
+        client = EpoService._get_client(db, organization_id)
+
+        logger.info(
+            "Starting EPO family collection",
+            extra={
+                "organization_id": organization_id,
+                "doc_ids_count": len(doc_ids),
+            },
+        )
+
+        semaphore = asyncio.Semaphore(DEFAULT_PATENT_CONCURRENCY)
+        tasks = [EpoService._fetch_family(client, doc_id, semaphore) for doc_id in doc_ids]
+        results = await asyncio.gather(*tasks)
+
+        families = [family.model_dump(mode="json") for family in results if family is not None]
+
+        logger.info(
+            "EPO family collection completed",
+            extra={
+                "organization_id": organization_id,
+                "requested": len(doc_ids),
+                "retained": len(families),
+            },
+        )
+
+        return {"families": families}
+
+    @staticmethod
+    async def get_legal_status(
+        db: Session,
+        organization_id: str,
+        doc_ids: list[str],
+    ) -> dict[str, Any]:
+        """Collect legal-status histories for a list of publications.
+
+        Same fan-out / error-isolation strategy as ``get_patent_families``.
+        Each retained entry carries the raw events plus a simplified
+        bucket (``active`` / ``expired`` / ``pending`` / ``unknown``)
+        derived server-side so agents do not need to know EPO event codes.
+
+        Args:
+            db: Database session, used to resolve credentials.
+            organization_id: Keycloak organization UUID.
+            doc_ids: Publications to look up (docdb format).
+
+        Returns:
+            Dict with a ``legal_statuses`` key. Empty input yields
+            ``{"legal_statuses": []}`` without an EPO call.
+
+        Raises:
+            EpoFeatureNotEnabledError: EPO flag is off.
+            EpoCredentialsMissingError: Consumer Key / Secret missing.
+        """
+        if not doc_ids:
+            return {"legal_statuses": []}
+
+        client = EpoService._get_client(db, organization_id)
+
+        logger.info(
+            "Starting EPO legal collection",
+            extra={
+                "organization_id": organization_id,
+                "doc_ids_count": len(doc_ids),
+            },
+        )
+
+        semaphore = asyncio.Semaphore(DEFAULT_PATENT_CONCURRENCY)
+        tasks = [EpoService._fetch_legal(client, doc_id, semaphore) for doc_id in doc_ids]
+        results = await asyncio.gather(*tasks)
+
+        legal_statuses = [status.model_dump(mode="json") for status in results if status is not None]
+
+        logger.info(
+            "EPO legal collection completed",
+            extra={
+                "organization_id": organization_id,
+                "requested": len(doc_ids),
+                "retained": len(legal_statuses),
+            },
+        )
+
+        return {"legal_statuses": legal_statuses}
 
 
 # Re-export EpoError so callers can catch `(EpoFeatureNotEnabledError, EpoCredentialsMissingError, EpoError)` from this module.

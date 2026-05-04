@@ -8,7 +8,7 @@ async def run_profile_agent(state: CompanyAnalysisState) -> dict:
     """Research company identity and profile."""
     # Pass enrichment sources so the agent can use the get_enrichment_data tool
     enrichment = state.get("enrichment_data", {})
-    sources = [s for s in enrichment if s in ("pappers", "worldcheck", "epo_publications")]
+    sources = [s for s in enrichment if s in ("pappers", "worldcheck", "epo_publications", "epo_families", "epo_legal")]
 
     result = await run_agent(
         agent_name="profile",

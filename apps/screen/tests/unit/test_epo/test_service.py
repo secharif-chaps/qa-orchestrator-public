@@ -20,6 +20,10 @@ from app.infrastructure.epo.exceptions import (
 from app.infrastructure.epo.schemas import (
     PatentAbstract,
     PatentBiblio,
+    PatentFamily,
+    PatentFamilyMember,
+    PatentLegalEvent,
+    PatentLegalStatus,
     PatentSearchEntry,
     PatentSearchResult,
 )
@@ -270,3 +274,143 @@ class TestEnrichCompany:
             pytest.raises(EpoFeatureNotEnabledError),
         ):
             await EpoService.enrich_company(mock_db, "org-123", "Acme")
+
+
+def _family(doc_id: str, members: int = 2, cpcs: list[str] | None = None) -> PatentFamily:
+    member_list = [
+        PatentFamilyMember(
+            doc_id=f"{doc_id}.M{i}",
+            country="US" if i == 0 else "JP",
+            doc_number=f"100{i}",
+            kind="A1",
+            publication_date=date(2024, 1, 1),
+        )
+        for i in range(members)
+    ]
+    return PatentFamily(
+        doc_id=doc_id,
+        family_size=len(member_list),
+        family_members=member_list,
+        cpc_classifications=cpcs or ["G06F 17/30"],
+    )
+
+
+def _legal(doc_id: str, status: str = "active") -> PatentLegalStatus:
+    return PatentLegalStatus(
+        doc_id=doc_id,
+        simplified_status=status,  # type: ignore[arg-type]
+        events=[PatentLegalEvent(code="GRANT", event_date=date(2022, 6, 1), description="Granted")],
+    )
+
+
+class TestGetPatentFamilies:
+    """Fan-out family collection for a list of doc_ids."""
+
+    @pytest.mark.asyncio
+    async def test_empty_doc_ids_returns_empty_without_client_call(self, mock_db):
+        with patch.object(EpoService, "_get_client") as get_client:
+            result = await EpoService.get_patent_families(mock_db, "org-1", [])
+
+        assert result == {"families": []}
+        get_client.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_all_succeed_returns_all_families(self, mock_db):
+        mock_client = AsyncMock()
+        mock_client.get_family = AsyncMock(side_effect=lambda doc_id: _family(doc_id))
+
+        with patch.object(EpoService, "_get_client", return_value=mock_client):
+            result = await EpoService.get_patent_families(mock_db, "org-1", ["EP1", "EP2"])
+
+        assert [f["doc_id"] for f in result["families"]] == ["EP1", "EP2"]
+        assert all(f["family_size"] == 2 for f in result["families"])
+        assert all(f["cpc_classifications"] == ["G06F 17/30"] for f in result["families"])
+        assert mock_client.get_family.await_count == 2
+
+    @pytest.mark.asyncio
+    async def test_not_found_drops_single_doc_id(self, mock_db):
+        mock_client = AsyncMock()
+
+        async def _get_family(doc_id: str):
+            if doc_id == "EP_MISS":
+                raise EpoNotFoundError()
+            return _family(doc_id)
+
+        mock_client.get_family = AsyncMock(side_effect=_get_family)
+
+        with patch.object(EpoService, "_get_client", return_value=mock_client):
+            result = await EpoService.get_patent_families(mock_db, "org-1", ["EP1", "EP_MISS", "EP2"])
+
+        assert [f["doc_id"] for f in result["families"]] == ["EP1", "EP2"]
+
+    @pytest.mark.asyncio
+    async def test_generic_epo_error_drops_single_doc_id(self, mock_db):
+        mock_client = AsyncMock()
+
+        async def _get_family(doc_id: str):
+            if doc_id == "EP_QUOTA":
+                raise EpoQuotaExceededError()
+            return _family(doc_id)
+
+        mock_client.get_family = AsyncMock(side_effect=_get_family)
+
+        with patch.object(EpoService, "_get_client", return_value=mock_client):
+            result = await EpoService.get_patent_families(mock_db, "org-1", ["EP1", "EP_QUOTA"])
+
+        # Quota failure on one doc_id does NOT abort the whole collection.
+        assert [f["doc_id"] for f in result["families"]] == ["EP1"]
+
+    @pytest.mark.asyncio
+    async def test_feature_disabled_raises(self, mock_db):
+        with (
+            patch("app.services.epo.has_feature", return_value=False),
+            pytest.raises(EpoFeatureNotEnabledError),
+        ):
+            await EpoService.get_patent_families(mock_db, "org-1", ["EP1"])
+
+
+class TestGetLegalStatus:
+    """Fan-out legal-status collection for a list of doc_ids."""
+
+    @pytest.mark.asyncio
+    async def test_empty_doc_ids_returns_empty_without_client_call(self, mock_db):
+        with patch.object(EpoService, "_get_client") as get_client:
+            result = await EpoService.get_legal_status(mock_db, "org-1", [])
+
+        assert result == {"legal_statuses": []}
+        get_client.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_all_succeed_returns_all_statuses(self, mock_db):
+        mock_client = AsyncMock()
+        mock_client.get_legal = AsyncMock(side_effect=lambda doc_id: _legal(doc_id, status="active"))
+
+        with patch.object(EpoService, "_get_client", return_value=mock_client):
+            result = await EpoService.get_legal_status(mock_db, "org-1", ["EP1", "EP2"])
+
+        assert [s["doc_id"] for s in result["legal_statuses"]] == ["EP1", "EP2"]
+        assert all(s["simplified_status"] == "active" for s in result["legal_statuses"])
+
+    @pytest.mark.asyncio
+    async def test_not_found_drops_single_doc_id(self, mock_db):
+        mock_client = AsyncMock()
+
+        async def _get_legal(doc_id: str):
+            if doc_id == "EP_MISS":
+                raise EpoNotFoundError()
+            return _legal(doc_id)
+
+        mock_client.get_legal = AsyncMock(side_effect=_get_legal)
+
+        with patch.object(EpoService, "_get_client", return_value=mock_client):
+            result = await EpoService.get_legal_status(mock_db, "org-1", ["EP1", "EP_MISS"])
+
+        assert [s["doc_id"] for s in result["legal_statuses"]] == ["EP1"]
+
+    @pytest.mark.asyncio
+    async def test_feature_disabled_raises(self, mock_db):
+        with (
+            patch("app.services.epo.has_feature", return_value=False),
+            pytest.raises(EpoFeatureNotEnabledError),
+        ):
+            await EpoService.get_legal_status(mock_db, "org-1", ["EP1"])

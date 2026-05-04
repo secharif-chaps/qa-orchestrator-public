@@ -13,6 +13,8 @@ import pytest
 
 from app.infrastructure.epo.exceptions import EpoParsingError
 from app.infrastructure.epo.schemas import (
+    PatentLegalEvent,
+    _derive_simplified_status,
     parse_abstract_response,
     parse_biblio_response,
     parse_family_response,
@@ -113,8 +115,37 @@ FAMILY_XML = b"""<?xml version="1.0" encoding="UTF-8"?>
           <ex:country>US</ex:country>
           <ex:doc-number>20200111222</ex:doc-number>
           <ex:kind>A1</ex:kind>
+          <ex:date>20200410</ex:date>
         </ex:document-id>
       </ex:publication-reference>
+      <ex:exchange-document>
+        <ex:bibliographic-data>
+          <ex:patent-classifications>
+            <ex:patent-classification>
+              <ex:classification-scheme office="EP" scheme="CPCI"/>
+              <ex:section>G</ex:section>
+              <ex:class>06</ex:class>
+              <ex:subclass>F</ex:subclass>
+              <ex:main-group>17</ex:main-group>
+              <ex:subgroup>30</ex:subgroup>
+            </ex:patent-classification>
+            <ex:patent-classification>
+              <ex:classification-scheme office="EP" scheme="CPCI"/>
+              <ex:section>G</ex:section>
+              <ex:class>06</ex:class>
+              <ex:subclass>N</ex:subclass>
+              <ex:main-group>3</ex:main-group>
+              <ex:subgroup>08</ex:subgroup>
+            </ex:patent-classification>
+            <ex:patent-classification>
+              <ex:classification-scheme office="EP" scheme="IPC"/>
+              <ex:section>H</ex:section>
+              <ex:class>04</ex:class>
+              <ex:subclass>L</ex:subclass>
+            </ex:patent-classification>
+          </ex:patent-classifications>
+        </ex:bibliographic-data>
+      </ex:exchange-document>
     </ops:family-member>
     <ops:family-member>
       <ex:publication-reference>
@@ -122,8 +153,23 @@ FAMILY_XML = b"""<?xml version="1.0" encoding="UTF-8"?>
           <ex:country>JP</ex:country>
           <ex:doc-number>2020100000</ex:doc-number>
           <ex:kind>A</ex:kind>
+          <ex:date>20201005</ex:date>
         </ex:document-id>
       </ex:publication-reference>
+      <ex:exchange-document>
+        <ex:bibliographic-data>
+          <ex:patent-classifications>
+            <ex:patent-classification>
+              <ex:classification-scheme office="EP" scheme="CPC"/>
+              <ex:section>G</ex:section>
+              <ex:class>06</ex:class>
+              <ex:subclass>F</ex:subclass>
+              <ex:main-group>17</ex:main-group>
+              <ex:subgroup>30</ex:subgroup>
+            </ex:patent-classification>
+          </ex:patent-classifications>
+        </ex:bibliographic-data>
+      </ex:exchange-document>
     </ops:family-member>
   </ops:patent-family>
 </ops:world-patent-data>
@@ -239,10 +285,28 @@ class TestAbstractParser:
 
 
 class TestFamilyParser:
-    def test_parses_family_members(self):
+    def test_parses_family_members_with_biblio(self):
         family = parse_family_response(FAMILY_XML)
         assert family.doc_id == "EP.1000000.A1"
-        assert family.family_members == ["US.20200111222.A1", "JP.2020100000.A"]
+        assert family.family_size == 2
+        assert len(family.family_members) == 2
+
+        us_member = family.family_members[0]
+        assert us_member.doc_id == "US.20200111222.A1"
+        assert us_member.country == "US"
+        assert us_member.doc_number == "20200111222"
+        assert us_member.kind == "A1"
+        assert us_member.publication_date == date(2020, 4, 10)
+
+        jp_member = family.family_members[1]
+        assert jp_member.doc_id == "JP.2020100000.A"
+        assert jp_member.country == "JP"
+        assert jp_member.publication_date == date(2020, 10, 5)
+
+    def test_collects_deduplicated_cpc_classifications_only(self):
+        family = parse_family_response(FAMILY_XML)
+        # The IPC classification must not leak in; CPC duplicates across members collapse.
+        assert family.cpc_classifications == ["G06F 17/30", "G06N 3/08"]
 
     def test_missing_patent_family_raises(self):
         with pytest.raises(EpoParsingError):
@@ -250,7 +314,7 @@ class TestFamilyParser:
 
 
 class TestLegalParser:
-    def test_parses_legal_events(self):
+    def test_parses_legal_events_and_derives_simplified_status(self):
         legal = parse_legal_response(LEGAL_XML)
         assert legal.doc_id == "EP.1000000.A1"
         assert len(legal.events) == 2
@@ -263,6 +327,8 @@ class TestLegalParser:
         assert second.code == "PG25"
         assert second.event_date == date(2021, 1, 15)
         assert second.description == "LAPSED IN A CONTRACTING STATE"
+        # Latest event (PG25 - Lapsed) wins → expired.
+        assert legal.simplified_status == "expired"
 
     def test_falls_back_to_legacy_text_and_date_attrs(self):
         """Older fixtures use <ops:text> + @date — the parser still accepts them."""
@@ -276,3 +342,41 @@ class TestLegalParser:
     def test_missing_patent_family_raises(self):
         with pytest.raises(EpoParsingError):
             parse_legal_response(b"<root/>")
+
+
+class TestDeriveSimplifiedStatus:
+    def test_empty_events_return_unknown(self):
+        assert _derive_simplified_status([]) == "unknown"
+
+    def test_latest_grant_event_wins_over_older_examination(self):
+        events = [
+            PatentLegalEvent(code="EXAM", event_date=date(2019, 1, 1)),
+            PatentLegalEvent(code="GRANT", event_date=date(2020, 6, 15)),
+        ]
+        assert _derive_simplified_status(events) == "active"
+
+    def test_later_lapse_overrides_earlier_grant(self):
+        events = [
+            PatentLegalEvent(code="GRANT", event_date=date(2018, 5, 10)),
+            PatentLegalEvent(code="LAPSED", event_date=date(2023, 1, 1)),
+        ]
+        assert _derive_simplified_status(events) == "expired"
+
+    def test_pending_when_only_examination_events(self):
+        events = [
+            PatentLegalEvent(code="PUBLICATION", event_date=date(2022, 3, 1)),
+            PatentLegalEvent(code="EXAMINATION REQUEST", event_date=date(2022, 9, 1)),
+        ]
+        assert _derive_simplified_status(events) == "pending"
+
+    def test_unknown_code_returns_unknown(self):
+        events = [PatentLegalEvent(code="XYZ", event_date=date(2022, 3, 1))]
+        assert _derive_simplified_status(events) == "unknown"
+
+    def test_undated_events_do_not_override_dated_ones(self):
+        events = [
+            PatentLegalEvent(code="GRANT", event_date=date(2020, 6, 15)),
+            PatentLegalEvent(code="XYZ", event_date=None),  # sorts first (no date)
+        ]
+        # Dated GRANT is the most recent → active, not unknown.
+        assert _derive_simplified_status(events) == "active"
