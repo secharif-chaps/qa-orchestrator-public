@@ -1,0 +1,199 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticPrefixChore",
+    ":semanticCommitTypeAll(chore)",
+    "group:monorepos"
+  ],
+  "timezone": "Europe/Paris",
+  "schedule": ["after 10pm every weekday", "before 5am every weekday", "every weekend"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "minimumReleaseAge": "3 days",
+  "commitMessagePrefix": "📦",
+  "commitMessageAction": "update",
+  "labels": ["dependencies", "renovate"],
+  "assignees": [],
+  "reviewers": [],
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Renovate Dependency Dashboard",
+  "enabledManagers": ["poetry", "npm", "composer", "dockerfile", "docker-compose", "gitlabci"],
+  "hostRules": [
+    {
+      "matchHost": "{{ secrets.OWLINT_REGISTRY_URL }}",
+      "hostType": "npm",
+      "token": "{{ secrets.OWLINT_DEPLOY_KEY }}"
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security", "priority", "dependencies"],
+    "assignees": ["ffayard"],
+    "minimumReleaseAge": null,
+    "schedule": ["at any time"],
+    "prCreation": "immediate"
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 5am on the first day of the month"],
+    "automerge": false
+  },
+  "packageRules": [
+    {
+      "groupName": "Symfony (target)",
+      "matchPackageNames": ["symfony/**"],
+      "labels": ["dependencies", "renovate", "target"],
+      "schedule": ["before 5am on monday"]
+    },
+    {
+      "groupName": "Doctrine (target)",
+      "matchPackageNames": ["doctrine/**"],
+      "labels": ["dependencies", "renovate", "target"]
+    },
+    {
+      "groupName": "API Platform (target)",
+      "matchPackageNames": ["api-platform/**"],
+      "labels": ["dependencies", "renovate", "target"]
+    },
+    {
+      "description": "PHPStan dedicated group with automerge on patch+minor",
+      "groupName": "PHPStan (target)",
+      "matchManagers": ["composer"],
+      "matchPackageNames": ["phpstan/**"],
+      "labels": ["dependencies", "renovate", "target"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "groupName": "Vue ecosystem (front)",
+      "matchPackageNames": ["vue", "@vue/**", "vue-router", "vue-i18n"],
+      "labels": ["dependencies", "renovate", "frontend"]
+    },
+    {
+      "description": "VueUse released much more often than Vue — separate group with automerge",
+      "groupName": "VueUse (front)",
+      "matchPackageNames": ["@vueuse/**"],
+      "labels": ["dependencies", "renovate", "frontend"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "groupName": "Pinia ecosystem (front)",
+      "matchPackageNames": ["pinia", "@pinia/**"],
+      "labels": ["dependencies", "renovate", "frontend"]
+    },
+    {
+      "groupName": "Tailwind (front)",
+      "matchPackageNames": ["tailwindcss", "@tailwindcss/**"],
+      "labels": ["dependencies", "renovate", "frontend"]
+    },
+    {
+      "description": "Vitest dedicated group with automerge on patch+minor",
+      "groupName": "Vitest (front)",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["vitest", "@vitest/**", "@vue/test-utils"],
+      "labels": ["dependencies", "renovate", "frontend"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "groupName": "Vuellar (@owlint, front)",
+      "matchPackageNames": ["@owlint/**"],
+      "labels": ["dependencies", "renovate", "frontend"]
+    },
+    {
+      "groupName": "FastAPI + SQLAlchemy (python)",
+      "matchPackageNames": [
+        "fastapi",
+        "sqlalchemy",
+        "alembic",
+        "pydantic",
+        "pydantic-settings",
+        "asyncpg",
+        "psycopg2-binary",
+        "celery",
+        "langgraph",
+        "langchain-openai"
+      ],
+      "labels": ["dependencies", "renovate", "screen", "global-service", "stream"]
+    },
+    {
+      "description": "Python dev tooling (linters/formatters/tests) dedicated group with automerge",
+      "groupName": "Python dev tooling",
+      "matchManagers": ["poetry"],
+      "matchPackageNames": [
+        "ruff",
+        "mypy",
+        "black",
+        "pytest",
+        "pytest-asyncio",
+        "pytest-cov",
+        "aiosqlite"
+      ],
+      "labels": ["dependencies", "renovate", "screen", "global-service", "stream"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "description": "JavaScript dev tooling dedicated group with automerge",
+      "groupName": "JavaScript dev tooling (front)",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["eslint", "@eslint/**", "prettier", "stylelint", "typescript"],
+      "labels": ["dependencies", "renovate", "frontend"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "description": "PHP dev tooling dedicated group with automerge",
+      "groupName": "PHP dev tooling (target)",
+      "matchManagers": ["composer"],
+      "matchPackageNames": [
+        "phpunit/**",
+        "symplify/easy-coding-standard",
+        "rector/**",
+        "zenstruck/**",
+        "dama/doctrine-test-bundle"
+      ],
+      "labels": ["dependencies", "renovate", "target"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "groupName": "Docker base images",
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "schedule": ["every weekend"]
+    },
+    {
+      "description": "Manual review for critical frameworks (belt and suspenders)",
+      "matchPackageNames": [
+        "symfony/**",
+        "doctrine/**",
+        "api-platform/**",
+        "vue",
+        "@vue/**",
+        "vue-router",
+        "pinia",
+        "fastapi",
+        "sqlalchemy",
+        "alembic",
+        "pydantic",
+        "langgraph"
+      ],
+      "automerge": false
+    },
+    {
+      "description": "Never automerge major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["dependencies", "renovate", "major-update"]
+    }
+  ]
+}
