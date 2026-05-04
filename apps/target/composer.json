@@ -6,6 +6,7 @@
     "ext-bcmath": "*",
     "ext-ctype": "*",
     "ext-curl": "*",
+    "ext-gmp": "*",
     "ext-iconv": "*",
     "ext-pcntl": "*",
     "ext-sodium": "*",
