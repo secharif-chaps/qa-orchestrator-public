@@ -96,11 +96,14 @@ readonly class TriggerDocumentAiValidationHandler
 
         // Dispatch the AI validation trigger agent
         $this->messageBus->dispatch(
-            new ValidateDocumentAITriggerAgent([
-                'id' => $document->getId(),
-                'content' => $document->getContent(),
-                'referenceSubject' => $referenceSubjectForValidation,
-            ]),
+            new ValidateDocumentAITriggerAgent(
+                data: [
+                    'id' => $document->getId(),
+                    'content' => $document->getContent(),
+                    'referenceSubject' => $referenceSubjectForValidation,
+                ],
+                watchFileId: $watchFile?->getId(),
+            ),
             [new DispatchAfterCurrentBusStamp()],
         );
 

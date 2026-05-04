@@ -50,10 +50,12 @@ class ChangeWatchFileStatusHandler
     public function __invoke(ChangeWatchFileStatusAction $action): WatchFile
     {
         $user = $this->resolveUser($action);
-
         $watchFile = $this->getWatchFile($action->watchFileId, $user);
-
         $oldStatus = $watchFile->getStatus();
+
+        if (!$user instanceof User) {
+            $user = $watchFile->getCreatedBy();
+        }
 
         if ($oldStatus === $action->status) {
             $this->logger?->info('WatchFile status unchanged', [
@@ -64,7 +66,7 @@ class ChangeWatchFileStatusHandler
             return $watchFile; // No change needed
         }
 
-        $userId = $user->getId();
+        $userId = $user?->getId();
         if (null === $userId) {
             throw new \RuntimeException('User ID cannot be null');
         }
@@ -159,7 +161,7 @@ class ChangeWatchFileStatusHandler
         return $watchFile;
     }
 
-    private function resolveUser(ChangeWatchFileStatusAction $action): User
+    private function resolveUser(ChangeWatchFileStatusAction $action): ?User
     {
         $user = $this->security->getUser();
         if ($user instanceof User) {
@@ -171,8 +173,11 @@ class ChangeWatchFileStatusHandler
             'messageId' => $action->messageId,
         ]);
 
+        /*
+         * If the message id is null it means it has been triggered by the system
+         */
         if (null === $action->messageId) {
-            throw new \RuntimeException('User not authenticated and messageId is null, unable to resolve user');
+            return null;
         }
 
         try {

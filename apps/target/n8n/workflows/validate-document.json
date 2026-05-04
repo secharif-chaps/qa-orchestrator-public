@@ -52,6 +52,10 @@
               {
                 "key": "X-Message-Stamp-Symfony\\Component\\Messenger\\Stamp\\RouterContextStamp",
                 "value": "={{ $('When Executed by Another Workflow').item.json.RouterContextStamp }}"
+              },
+              {
+                "key": "X-Message-Stamp-App\\Infrastructure\\Organisation\\Messenger\\TenantStamp",
+                "value": "={{ $('When Executed by Another Workflow').item.json.TenantStamp }}"
               }
             ]
           }
@@ -85,6 +89,9 @@
             },
             {
               "name": "RouterContextStamp"
+            },
+            {
+              "name": "TenantStamp"
             }
           ]
         }
@@ -149,6 +156,10 @@
               {
                 "key": "X-Message-Stamp-Symfony\\Component\\Messenger\\Stamp\\RouterContextStamp",
                 "value": "={{ $('Workflow_Trigger_ValidateDocument').item.json.RouterContextStamp }}"
+              },
+              {
+                "key": "X-Message-Stamp-App\\Infrastructure\\Organisation\\Messenger\\TenantStamp",
+                "value": "={{ $('Workflow_Trigger_ValidateDocument').item.json.TenantStamp }}"
               }
             ]
           }

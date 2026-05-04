@@ -26,6 +26,10 @@
               {
                 "key": "X-Message-Stamp-Symfony\\Component\\Messenger\\Stamp\\RouterContextStamp",
                 "value": "={{ $json.RouterContextStamp }}"
+              },
+              {
+                "key": "X-Message-Stamp-App\\Infrastructure\\Organisation\\Messenger\\TenantStamp",
+                "value": "={{ $json.TenantStamp }}"
               }
             ]
           }
@@ -117,6 +121,9 @@
             },
             {
               "name": "RouterContextStamp"
+            },
+            {
+              "name": "TenantStamp"
             },
             {
               "name": "userMessageId"

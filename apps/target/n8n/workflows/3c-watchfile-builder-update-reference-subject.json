@@ -590,7 +590,8 @@
             "message": "={{ $('Condition_IsFirstUpdate').item.json.language == 'fr' ? 'Sujet de référence mis à jour.' : 'Subject reference updated.' }}\n\n{{ $('Agent_Generator_ReferenceSubject').item.json.output.referenceSubject.human[$('Condition_IsFirstUpdate').item.json.language] ?? $('Agent_Generator_ReferenceSubject').item.json.output.referenceSubject.human.en }}",
             "BusNameStamp": "={{ $('Condition_IsFirstUpdate').item.json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_IsFirstUpdate').item.json.RouterContextStamp }}",
-            "data": "={\n  \"success\": true,\n  \"agentValidator\": {{ ($('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() : 'null') || 'null' }},\n  \"agentGenerator\": {{ $('Agent_Generator_ReferenceSubject')?.item?.json?.output?.toJsonString() || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"success\": true,\n  \"agentValidator\": {{ ($('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() : 'null') || 'null' }},\n  \"agentGenerator\": {{ $('Agent_Generator_ReferenceSubject')?.item?.json?.output?.toJsonString() || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_IsFirstUpdate').item.json.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -674,7 +675,8 @@
             "message": "={{ $('Condition_IsFirstUpdate').item.json.language === 'fr' ? `Sujet de référence : L'agent AI rencontre un problème. Veuillez réessayer plus tard.` : `Reference Subject: The AI agent is experiencing a problem. Please try again later.` }}\n\n{{ $('Agent_Generator_ReferenceSubject').item?.json?.error ? ($('Condition_IsFirstUpdate').item.json.language === 'fr' ? `Erreur du modèle : ` : `Error from model: `) + $('Agent_Generator_ReferenceSubject').item?.json?.error : '' }}",
             "BusNameStamp": "={{ $('Condition_IsFirstUpdate').item.json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_IsFirstUpdate').item.json.RouterContextStamp }}",
-            "data": "={\n  \"success\": false,\n  \"agentValidator\": {{ ($('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() : 'null') || 'null' }},\n  \"agentGenerator\": {{ $('Agent_Generator_ReferenceSubject').last()?.json?.toJsonString() || 'null' }}\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"success\": false,\n  \"agentValidator\": {{ ($('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() : 'null') || 'null' }},\n  \"agentGenerator\": {{ $('Agent_Generator_ReferenceSubject').last()?.json?.toJsonString() || 'null' }}\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_IsFirstUpdate').item.json.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -758,7 +760,8 @@
             "message": "={{ $('Condition_IsFirstUpdate').item.json.language == 'fr' ? `Le sujet de référence \"${$(\"Condition_IsFirstUpdate\").item.json.referenceSubject}\" ne semble pas pertinent pour ce WatchFile.` : `The reference subject \"${$('Condition_IsFirstUpdate').item.json.referenceSubject}\" does not seem relevant for this WatchFile.` }}\n{{ $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() }}\n",
             "BusNameStamp": "={{ $('Condition_IsFirstUpdate').item.json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_IsFirstUpdate').item.json.RouterContextStamp }}",
-            "data": "={\n  \"success\": true,\n  \"agentValidator\": {{ ($('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() : 'null') || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"success\": true,\n  \"agentValidator\": {{ ($('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? $('Agent_Validator_ReferenceSubject')?.item?.json?.output?.toJsonString() : 'null') || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_IsFirstUpdate').item.json.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -842,7 +845,8 @@
             "message": "={{ $('Condition_IsFirstUpdate').item.json.language === 'fr' ? `Validation du sujet de référence : L'agent AI rencontre un problème. Veuillez réessayer plus tard.` : `Validation of reference Subject: the AI agent is experiencing a problem. Please try again later.` }}",
             "BusNameStamp": "={{ $('Condition_IsFirstUpdate').item.json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_IsFirstUpdate').item.json.RouterContextStamp }}",
-            "data": "={\n  \"success\": false,\n  \"agentValidator\": {{ $('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? ($('Agent_Validator_ReferenceSubject').item?.json?.output?.toJsonString() || 'null') : 'null' }},\n  \"agentGenerator\": {{ $('Agent_Generator_ReferenceSubject').last()?.json?.toJsonString() || 'null' }}\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"success\": false,\n  \"agentValidator\": {{ $('Condition_IsFirstUpdate').item.json.watchFile.referenceSubject ? ($('Agent_Validator_ReferenceSubject').item?.json?.output?.toJsonString() || 'null') : 'null' }},\n  \"agentGenerator\": {{ $('Agent_Generator_ReferenceSubject').last()?.json?.toJsonString() || 'null' }}\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_IsFirstUpdate').item.json.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [

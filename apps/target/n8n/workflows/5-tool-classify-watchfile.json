@@ -315,7 +315,8 @@
             "message": "={{ $('Code_Initialize_WatchFileData').last().json.userLanguage === 'fr' ? `L'agent AI de classification rencontre un problème. Veuillez réessayer plus tard.` : `The classify AI agent is experiencing a problem. Please try again later.` }}\n{{ $json.error.length > 0 ? ($('Code_Initialize_WatchFileData').last().json.userLanguage === 'fr' ? `Erreur du modèle : ${$json.error}` : `Model error: ${$json.error}`) : '' }}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').item.json.context.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').item.json.context.RouterContextStamp }}",
-            "data": "={\n  \"error\": true,\n  \"modelError\": {{ $json.toJsonString() }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"error\": true,\n  \"modelError\": {{ $json.toJsonString() }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').item.json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -399,7 +400,8 @@
             "message": "={{ $('Code_Parse_Output').item.json.message }}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').item.json.context.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').item.json.context.RouterContextStamp }}",
-            "data": "={\n  \"sucess\": true,\n  \"data\": {{ $('LLM_Agent_ClassifyWatchFile').last().json?.output?.toJsonString() || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"sucess\": true,\n  \"data\": {{ $('LLM_Agent_ClassifyWatchFile').last().json?.output?.toJsonString() || 'null' }},\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').item.json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [

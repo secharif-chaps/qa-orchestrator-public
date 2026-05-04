@@ -125,7 +125,8 @@
             "message": "={{ $('Code_Initialize_WatchFileData').last().json.language === 'fr' ? `Votre dossier de veille a été renommé avec succès : \"${$('Code_Initialize_WatchFileData').last().json.name}\"` : `Your watchfile has been successfully renamed: \"${$('Code_Initialize_WatchFileData').last().json.name}\"` }}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}",
-            "data": "={\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').last().json.watchFileId?.toJsonString() || 'null' }},\n  \"name\": {{ $('Code_Initialize_WatchFileData').last().json.name?.toJsonString() || 'null' }},\n  \"isManualRename\": false,\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"watchFileId\": {{ $('Code_Initialize_WatchFileData').last().json.watchFileId?.toJsonString() || 'null' }},\n  \"name\": {{ $('Code_Initialize_WatchFileData').last().json.name?.toJsonString() || 'null' }},\n  \"isManualRename\": false,\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [

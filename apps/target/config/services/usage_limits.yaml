@@ -12,7 +12,7 @@ parameters:
       max_per_watchfile: 75
     document:
       max_per_watchfile:
-        limit: 10000
+        limit: 1000
         inclusive: true
 
 services:

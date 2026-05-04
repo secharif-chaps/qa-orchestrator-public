@@ -56,7 +56,7 @@
     },
     {
       "parameters": {
-        "jsCode": "for (const item of $input.all()) {\n  // Helper: parse JSON string safely\n  const safeJsonParse = (value) => {\n    if (typeof value === 'string') {\n      try {\n        return JSON.parse(value);\n      } catch (e) {\n        return value; // Not valid JSON, keep original\n      }\n    }\n    return value; // Already parsed or not a string\n  };\n\n  // Parse watchFile\n  if (item.json?.watchFile) {\n    item.json.watchFile = safeJsonParse(item.json.watchFile);\n  }\n\n  // Parse conversation\n  if (item.json?.conversation) {\n    item.json.conversation = safeJsonParse(item.json.conversation);\n  }\n\n  // Parse context\n  if (item.json?.context) {\n    item.json.context = safeJsonParse(item.json.context);\n\n    if (typeof item.json.context.BusNameStamp !== 'string') {\n      item.json.context.BusNameStamp = JSON.stringify(item.json.context.BusNameStamp);\n    }\n\n    if (typeof item.json.context.RouterContextStamp !== 'string') {\n      item.json.context.RouterContextStamp = JSON.stringify(item.json.context.RouterContextStamp);\n    }\n  }\n\n  // Default language\n  item.json.language = item.json?.language || 'en';\n}\n\nreturn $input.all();"
+        "jsCode": "for (const item of $input.all()) {\n  // Helper: parse JSON string safely\n  const safeJsonParse = (value) => {\n    if (typeof value === 'string') {\n      try {\n        return JSON.parse(value);\n      } catch (e) {\n        return value; // Not valid JSON, keep original\n      }\n    }\n    return value; // Already parsed or not a string\n  };\n\n  // Parse watchFile\n  if (item.json?.watchFile) {\n    item.json.watchFile = safeJsonParse(item.json.watchFile);\n  }\n\n  // Parse conversation\n  if (item.json?.conversation) {\n    item.json.conversation = safeJsonParse(item.json.conversation);\n  }\n\n  // Parse context\n  if (item.json?.context) {\n    item.json.context = safeJsonParse(item.json.context);\n\n    if (typeof item.json.context.BusNameStamp !== 'string') {\n      item.json.context.BusNameStamp = JSON.stringify(item.json.context.BusNameStamp);\n    }\n\n    if (typeof item.json.context.RouterContextStamp !== 'string') {\n      item.json.context.RouterContextStamp = JSON.stringify(item.json.context.RouterContextStamp);\n    }\n\n    if (typeof item.json.context.TenantStamp !== 'string') {\n      item.json.context.TenantStamp = JSON.stringify(item.json.context.TenantStamp);\n    }\n  }\n\n  // Default language\n  item.json.language = item.json?.language || 'en';\n}\n\nreturn $input.all();"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1134,7 +1134,8 @@
             "message": "={{ ($('Code_Initialize_WatchFileData').last().json.userLanguage === 'en' ? `🔍 Launching deep search...` : `🔍 Lancement recherche approfondie...`).toJsonString() }}",
             "data": "={{\n  {\n    modelError: $json.toJsonString(),\n    execution: $execution.toJsonString(),\n    prevNode: $prevNode.toJsonString()\n  }\n}}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
-            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1180,6 +1181,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -1219,7 +1230,8 @@
             "message": "={{ $json.message.toJsonString() }}",
             "data": "={{\n  {\n    strategicQuestions: $('Workflow_Execute_GenerateStrategicQuestion').all().toJsonString(),\n    execution: $execution.toJsonString(),\n    prevNode: $prevNode.toJsonString()\n  }\n}}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
-            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1265,6 +1277,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -1306,7 +1328,8 @@
             "message": "={{ ($('Code_Initialize_WatchFileData').last().json.language === 'en' ? `The deep search agent is experiencing a problem. Please try again later.` : `L'agent de recherche approfondie rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }}",
             "data": "={{ {\n    \"modelError\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  } }}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
-            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1352,6 +1375,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -1392,7 +1425,8 @@
             "message": "={{ ($('Code_Initialize_WatchFileData').last().json.language === 'en' ? `The agent is experiencing a problem. Please try again later.` : `L'agent rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }}",
             "data": "={{ {\n    \"modelError\": $json.toJsonString(),\n    \"execution\": $execution.toJsonString(),\n    \"prevNode\": $prevNode.toJsonString()\n  } }}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
-            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1438,6 +1472,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -1478,7 +1522,8 @@
             "message": "={{ $json.message.toJsonString() }}",
             "data": "={{ {\n    \"execution\": $execution.toJsonString(),\n    \"prevNode\": $prevNode.toJsonString()\n  } }}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
-            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1524,6 +1569,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -1565,7 +1620,8 @@
             "message": "={{ ($('Code_Initialize_WatchFileData').last().json.language === 'en' ? `The deep search agent is experiencing a problem. Please try again later.` : `L'agent de recherche approfondie rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }}",
             "data": "={{ {\n    \"modelError\": {{ $json.toJsonString() }},\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  } }}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
-            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1611,6 +1667,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -1651,7 +1717,8 @@
             "message": "={{ $json.message.toJsonString() }}",
             "data": "={{ {\n    \"execution\": $execution.toJsonString(),\n    \"prevNode\": $prevNode.toJsonString()\n  } }}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
-            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1697,6 +1764,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -1738,7 +1815,8 @@
             "message": "={{ ($('Code_Initialize_WatchFileData').last().json.language === 'en' ? `The deep search agent is experiencing a problem. Please try again later.` : `L'agent de recherche approfondie rencontre un problème. Veuillez réessayer plus tard.`).toJsonString() }}",
             "data": "={{ {\n    \"modelError\": $json.toJsonString(),\n    \"execution\": $execution.toJsonString(),\n    \"prevNode\": $prevNode.toJsonString()\n  } }}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
-            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1784,6 +1862,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -1824,7 +1912,8 @@
             "message": "={{ $json.message.toJsonString() }}",
             "data": "={{ {\n    \"execution\": $execution.toJsonString(),\n    \"prevNode\": $prevNode.toJsonString()\n  } }}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
-            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1870,6 +1959,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -1911,7 +2010,8 @@
             "message": "={{ $json.message.toJsonString() }}",
             "data": "={{ {\n    \"execution\": $execution.toJsonString(),\n    \"prevNode\": $prevNode.toJsonString()\n  } }}",
             "BusNameStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.BusNameStamp }}",
-            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}"
+            "RouterContextStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.RouterContextStamp }}",
+            "TenantStamp": "={{ $('Code_Initialize_WatchFileData').last().json.context.TenantStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1957,6 +2057,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,

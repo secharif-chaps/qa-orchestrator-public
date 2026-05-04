@@ -4,13 +4,13 @@
     {
       "parameters": {
         "inputSource": "jsonExample",
-        "jsonExample": "{\n  \"watchFile\": {\n    \"id\": \"1f0ba909-4cda-666e-9b4c-497ced82fa8d\",\n    \"name\": \"Market Intelligence IA - Europe\",\n    \"titleManuallySetByUser\": false,\n    \"userObjective\": \"\",\n    \"referenceSubject\": null,\n    \"state\": \"new\",\n    \"monitoringType\": null,\n    \"monitoringTypeConfidence\": null,\n    \"monitoringTypeJustification\": null,\n    \"secondaryMonitoringTypes\": null,\n    \"strategicQuestions\": [],\n    \"analysisResults\": [],\n    \"createdAt\": \"2025-11-05T22:44:18+01:00\",\n    \"createdBy\": {\n      \"id\": \"116f1d59-c72d-486c-bf55-a5e587d88cfc\",\n      \"email\": \"basil@chapsvision.com\",\n      \"firstName\": \"Basil\",\n      \"lastName\": \"Target\",\n      \"displayName\": \"Basil Target\",\n      \"defaultThumbnail\": \"BT\"\n    },\n    \"updatedAt\": \"2025-11-05T22:44:29+01:00\",\n    \"watchFileActors\": [],\n    \"watchFileUsersCount\": 1,\n    \"isFavorite\": false,\n    \"userEditable\": false,\n    \"sources\": [],\n    \"status\": \"draft\"\n  },\n  \"conversationId\": \"1f0ba909-5099-6980-8667-497ced82fa8d\",\n  \"messageId\": \"1f0ba909-5099-6980-6970-497ced82fa8d\",\n  \"language\": \"en\",\n  \"actor\": {\n    \"label\": \"Actor name\",    \n    \"type\": \"competitor|partner|supplier|customer|regulator|subsidiary|parent|other\",\n    \"primaryDomain\": \"website.com or null\",\n    \"score\": \"0\",\n    \"explanation_fr\": \"French explanation\",\n    \"explanation_en\": \"English explanation\",\n    \"duplicate\": [],\n    \"isDuplicated\": false\n  },\n  \"BusNameStamp\": \"[{\\\"busName\\\":\\\"command.bus\\\"}]\",\n  \"RouterContextStamp\": \"[{\\\"baseUrl\\\":\\\"\\\",\\\"method\\\":\\\"POST\\\",\\\"host\\\":\\\"basil.local\\\",\\\"scheme\\\":\\\"https\\\",\\\"httpPort\\\":80,\\\"httpsPort\\\":443,\\\"pathInfo\\\":\\\"/api/conversations/1f0ba909-5099-6980-8667-497ced82fa8d/messages\\\",\\\"queryString\\\":\\\"\\\"}]\"\n}"
+        "jsonExample": "{\n  \"watchFile\": {\n    \"id\": \"1f0ba909-4cda-666e-9b4c-497ced82fa8d\",\n    \"name\": \"Market Intelligence IA - Europe\",\n    \"titleManuallySetByUser\": false,\n    \"userObjective\": \"\",\n    \"referenceSubject\": null,\n    \"state\": \"new\",\n    \"monitoringType\": null,\n    \"monitoringTypeConfidence\": null,\n    \"monitoringTypeJustification\": null,\n    \"secondaryMonitoringTypes\": null,\n    \"strategicQuestions\": [],\n    \"analysisResults\": [],\n    \"createdAt\": \"2025-11-05T22:44:18+01:00\",\n    \"createdBy\": {\n      \"id\": \"116f1d59-c72d-486c-bf55-a5e587d88cfc\",\n      \"email\": \"basil@chapsvision.com\",\n      \"firstName\": \"Basil\",\n      \"lastName\": \"Target\",\n      \"displayName\": \"Basil Target\",\n      \"defaultThumbnail\": \"BT\"\n    },\n    \"updatedAt\": \"2025-11-05T22:44:29+01:00\",\n    \"watchFileActors\": [],\n    \"watchFileUsersCount\": 1,\n    \"isFavorite\": false,\n    \"userEditable\": false,\n    \"sources\": [],\n    \"status\": \"draft\"\n  },\n  \"conversationId\": \"1f0ba909-5099-6980-8667-497ced82fa8d\",\n  \"messageId\": \"1f0ba909-5099-6980-6970-497ced82fa8d\",\n  \"language\": \"en\",\n  \"actor\": {\n    \"label\": \"Actor name\",    \n    \"type\": \"competitor|partner|supplier|customer|regulator|subsidiary|parent|other\",\n    \"primaryDomain\": \"website.com or null\",\n    \"score\": \"0\",\n    \"explanation_fr\": \"French explanation\",\n    \"explanation_en\": \"English explanation\",\n    \"duplicate\": [],\n    \"isDuplicated\": false\n  },\n  \"BusNameStamp\": \"[{\\\"busName\\\":\\\"command.bus\\\"}]\",\n  \"RouterContextStamp\": \"[{\\\"baseUrl\\\":\\\"\\\",\\\"method\\\":\\\"POST\\\",\\\"host\\\":\\\"basil.local\\\",\\\"scheme\\\":\\\"https\\\",\\\"httpPort\\\":80,\\\"httpsPort\\\":443,\\\"pathInfo\\\":\\\"/api/conversations/1f0ba909-5099-6980-8667-497ced82fa8d/messages\\\",\\\"queryString\\\":\\\"\\\"}]\",\n  \"TenantContextStamp\": \"[{\\\"organisationId\\\":\\\"019d246b-8175-7dcd-a6f3-3557d0ba5f8e\\\",\\\"effectiveUserId\\\":\\\"116f1d59-c72d-486c-bf55-a5e587d88cfc\\\",\\\"impersonatorId\\\":null}]\"\n}"
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
         -2128,
-        -328
+        -336
       ],
       "id": "d6e74df3-290c-4cdf-923f-78889b5d040e",
       "name": "Workflow_Trigger_AddActor"
@@ -27,7 +27,7 @@
       "typeVersion": 2.1,
       "position": [
         -2576,
-        -520
+        -528
       ],
       "id": "2c60a07d-83be-4e6f-b7cc-256e800367d7",
       "name": "Webhook_Trigger_TestInput",
@@ -43,7 +43,7 @@
       "typeVersion": 3.4,
       "position": [
         -2352,
-        -520
+        -528
       ],
       "id": "d41b1fc8-7b68-4a7e-ad24-913410c0ed12",
       "name": "Set_Format_TestInput"
@@ -75,7 +75,7 @@
       "typeVersion": 1.1,
       "position": [
         -2128,
-        -520
+        -528
       ],
       "id": "52b99456-5285-4b1c-aad5-62e14a397fdf",
       "name": "ExecutionData_Store_TestMetadata"
@@ -235,7 +235,7 @@
       "typeVersion": 2.2,
       "position": [
         -1904,
-        -424
+        -432
       ],
       "id": "7c579c4f-b6ca-49d0-9c73-549b0e3b35f1",
       "name": "Condition_Check_ActorDuplicate"
@@ -305,7 +305,7 @@
     {
       "parameters": {
         "mode": "raw",
-        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Condition_Check_ActorDuplicate').item.json.language === 'fr' ? `L'acteur \"${$('Condition_Check_ActorDuplicate').item.json.actor.label}\" est déjà défini dans WatchFile.` : `The actor \"${$('Condition_Check_ActorDuplicate').item.json.actor.label}\" is already defined in the WatchFile.`).toJsonString() }},\n  \"messageId\": {{ $('Condition_Check_ActorDuplicate').item.json.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Condition_Check_ActorDuplicate').item.json.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Condition_Check_ActorDuplicate').item.json.watchFile?.id?.toJsonString() || 'null' }},\n  \"context\": {\n    \"checkActorDuplicate\": {\n      \"duplicate\": {{ $('Condition_Check_ActorDuplicate').item.json.actor.duplicate.toJsonString() }},\n      \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').item.json.actor.isDuplicated }}\n    },\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  }\n}",
+        "jsonOutput": "={\n  \"success\": false,\n  \"message\": {{ ($('Condition_Check_ActorDuplicate').item.json.language === 'fr' ? `L'acteur \"${$('Condition_Check_ActorDuplicate').item.json.actor.label}\" est déjà défini dans WatchFile.` : `The actor \"${$('Condition_Check_ActorDuplicate').item.json.actor.label}\" is already defined in the WatchFile.`).toJsonString() }},\n  \"messageId\": {{ $('Condition_Check_ActorDuplicate').item.json.userMessageId?.toJsonString() || 'null' }},\n  \"conversationId\": {{ $('Condition_Check_ActorDuplicate').item.json.conversationId?.toJsonString() || 'null' }},\n  \"watchFileId\": {{ $('Condition_Check_ActorDuplicate').item.json.watchFile?.id?.toJsonString() || 'null' }},\n  \"context\": {\n    \"checkActorDuplicate\": {\n      \"duplicate\": {{ $('Condition_Check_ActorDuplicate').item.json.actor.duplicate?.toJsonString() || '[]' }},\n      \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').item.json.actor.isDuplicated }}\n    },\n    \"execution\": {{ $execution.toJsonString() }},\n    \"prevNode\": {{ $prevNode.toJsonString() }}\n  }\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.set",
@@ -391,7 +391,7 @@
       "typeVersion": 2.2,
       "position": [
         -1680,
-        -248
+        -256
       ],
       "id": "1e311f72-6f3d-432b-9866-dd8c70701cdd",
       "name": "Check_ActorType_IsValid"
@@ -531,7 +531,8 @@
             "message": "={{ $('Condition_Check_ActorDuplicate').last().json.language === 'fr' ? `L'acteur \"${$(\"Condition_Check_ActorDuplicate\").last().json.actor.label}\" ne semble pas pertinent pour ce dossier de veille.` : `The actor \"${$('Condition_Check_ActorDuplicate').last().json.actor.label}\" does not seem relevant for this WatchFile.` }}\n{{ $('LLM_Agent_ValidateActorRelevance').item.json?.output?.wikipediaValidation?.summary || '' }}\n{{ $('LLM_Agent_ValidateActorRelevance').item.json?.output?.recommendations?.join(\"\\n\") || '' }}",
             "BusNameStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.RouterContextStamp }}",
-            "data": "={\n  \"analyze\": {{ $('LLM_Agent_ValidateActorRelevance').last().json.toJsonString() }},\n  \"duplicate\": {\n    \"duplicates\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.duplicates?.toJsonString() || '[]' }},\n    \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').last().json.actor?.isDuplicated || 'false' }}\n  },\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"analyze\": {{ $('LLM_Agent_ValidateActorRelevance').last().json.toJsonString() }},\n  \"duplicate\": {\n    \"duplicates\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.duplicates?.toJsonString() || '[]' }},\n    \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').last().json.actor?.isDuplicated || 'false' }}\n  },\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.TenantContextStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -583,6 +584,15 @@
               "canBeUsedToMatch": true,
               "type": "string",
               "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
             }
           ],
           "attemptToConvertTypes": true,
@@ -615,7 +625,8 @@
             "message": "={{ $('Condition_Check_ActorDuplicate').last().json.language === 'fr' ?  `Acteur ajouté : ${$('Condition_Check_ActorDuplicate').last().json.actor.label}` : `Actor added: ${$('Condition_Check_ActorDuplicate').last().json.actor.label}` }}\n{{ $('LLM_Agent_ValidateActorRelevance').item.json?.output?.wikipediaValidation?.summary || '' }}\n{{ $('LLM_Agent_ValidateActorRelevance').item.json?.output?.recommendations?.join(\"\\n\") || '' }}",
             "BusNameStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.RouterContextStamp }}",
-            "data": "={\n  \"analyze\": {{ $('LLM_Agent_ValidateActorRelevance').last().json.toJsonString() }},\n  \"duplicate\": {\n    \"duplicates\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.duplicates?.toJsonString() || '[]' }},\n    \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').last().json.actor?.isDuplicated || 'false' }}\n  },\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"analyze\": {{ $('LLM_Agent_ValidateActorRelevance').last().json.toJsonString() }},\n  \"duplicate\": {\n    \"duplicates\": {{ $('Condition_Check_ActorDuplicate').last().json.actor.duplicates?.toJsonString() || '[]' }},\n    \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').last().json.actor?.isDuplicated || 'false' }}\n  },\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.TenantContextStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -667,6 +678,15 @@
               "canBeUsedToMatch": true,
               "type": "string",
               "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
             }
           ],
           "attemptToConvertTypes": true,
@@ -699,7 +719,8 @@
             "message": "={{ ($('Condition_Check_ActorDuplicate').item.json.language === 'en' ? `The actor \"${$json.actor.label}\" is already defined in the WatchFile.` : `L'acteur \"${$json.actor.label}\" est déjà défini dans le dossier de veille.`).toJsonString() }}",
             "BusNameStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.BusNameStamp }}",
             "RouterContextStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.RouterContextStamp }}",
-            "data": "={\n  \"checkActorDuplicate\": {\n    \"duplicate\": {{ $('Condition_Check_ActorDuplicate').item.json.actor.duplicate.toJsonString() }},\n    \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').item.json.actor.isDuplicated }}\n  },\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}"
+            "data": "={\n  \"checkActorDuplicate\": {\n    \"duplicate\": {{ $('Condition_Check_ActorDuplicate').item.json.actor.duplicate?.toJsonString() || '[]' }},\n    \"isDuplicated\": {{ $('Condition_Check_ActorDuplicate').item.json.actor.isDuplicated }}\n  },\n  \"execution\": {{ $execution.toJsonString() }},\n  \"prevNode\": {{ $prevNode.toJsonString() }}\n}",
+            "TenantStamp": "={{ $('Condition_Check_ActorDuplicate').last().json.TenantContextStamp }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -751,6 +772,15 @@
               "canBeUsedToMatch": true,
               "type": "string",
               "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
             }
           ],
           "attemptToConvertTypes": true,
@@ -1207,7 +1237,7 @@
     "executionTimeout": 300,
     "timeSavedPerExecution": 60
   },
-  "versionId": "a14e5b0a-db9d-45a6-a95c-bb7ff4b4bce4",
+  "versionId": "e068a81a-509e-44c0-8834-a54088452474",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "05e22d27620d1717ac398bbf3f2dbdaa9098598488c5baaa743d646b60379aaf"

@@ -160,7 +160,7 @@ class ChangeWatchFileStatusHandlerTest extends TestCase
         ($this->handler)($action);
     }
 
-    public function testUserNotAuthenticatedAndNoMessageIdThrowsException(): void
+    public function testSystemTriggerWithNoUserFallsBackToWatchFileCreator(): void
     {
         $security = $this->createMockWithExpectations(Security::class);
         $this->security = $security;
@@ -172,8 +172,8 @@ class ChangeWatchFileStatusHandlerTest extends TestCase
 
         $action = new ChangeWatchFileStatusAction(watchFileId: 'watch_file_id', status: WatchFileStatus::ENABLED);
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('User not authenticated and messageId is null, unable to resolve user');
+        $this->expectException(UnrecoverableMessageHandlingException::class);
+        $this->expectExceptionMessage('WatchFile not found');
         ($this->handler)($action);
     }
 
@@ -265,7 +265,46 @@ class ChangeWatchFileStatusHandlerTest extends TestCase
         $this->assertEquals(WatchFileStatus::ARCHIVED, $updatedWatchFile->getStatus());
     }
 
-    public function testNonUserAuthenticationObjectThrowsException(): void
+    public function testSystemTriggerFallsBackToCreatorAndChangesStatus(): void
+    {
+        $security = $this->createMockWithExpectations(Security::class);
+        $eventDispatcherMock = $this->createMockWithExpectations(EventDispatcherInterface::class);
+        $this->security = $security;
+        $this->eventDispatcher = $eventDispatcherMock;
+        $this->buildHandler();
+
+        $creator = new User('creator-id');
+        $this->forcePropertyValue($creator, 'creator-id');
+
+        $watchFile = new WatchFile('Test', 'Objective', new Organisation('Test Org', 'test-org-id'), $creator);
+        $watchFile->setStatus(WatchFileStatus::ENABLED);
+        $this->forcePropertyValue($watchFile, 'watch_file_id');
+        $this->watchFileGateway->save($watchFile);
+
+        $this->messageBus->fakeHandler = fn () => [$watchFile];
+
+        $security->expects($this->once())
+            ->method('getUser')
+            ->willReturn(null);
+
+        $eventDispatcherMock->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (WatchFileStatusChangedEvent $event) use ($creator) {
+                return $event->user === $creator
+                    && WatchFileStatus::ARCHIVED === $event->status;
+            }));
+
+        $action = new ChangeWatchFileStatusAction(
+            watchFileId: 'watch_file_id',
+            status: WatchFileStatus::ARCHIVED,
+        );
+
+        $updatedWatchFile = ($this->handler)($action);
+
+        $this->assertEquals(WatchFileStatus::ARCHIVED, $updatedWatchFile->getStatus());
+    }
+
+    public function testNonUserAuthenticationObjectFallsBackToWatchFileCreator(): void
     {
         $security = $this->createMockWithExpectations(Security::class);
         $this->security = $security;
@@ -294,8 +333,8 @@ class ChangeWatchFileStatusHandlerTest extends TestCase
 
         $action = new ChangeWatchFileStatusAction(watchFileId: 'watch_file_id', status: WatchFileStatus::ENABLED);
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('User not authenticated and messageId is null, unable to resolve user');
+        $this->expectException(UnrecoverableMessageHandlingException::class);
+        $this->expectExceptionMessage('WatchFile not found');
         ($this->handler)($action);
     }
 

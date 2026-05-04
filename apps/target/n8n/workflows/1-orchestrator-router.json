@@ -75,6 +75,10 @@
               {
                 "key": "X-Message-Stamp-Symfony\\Component\\Messenger\\Stamp\\RouterContextStamp",
                 "value": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}"
+              },
+              {
+                "key": "X-Message-Stamp-App\\Infrastructure\\Organisation\\Messenger\\TenantStamp",
+                "value": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-App\\\\Infrastructure\\\\Organisation\\\\Messenger\\\\TenantStamp'] }}"
               }
             ]
           }
@@ -232,6 +236,7 @@
             "userMessage": "={{ $('Set_Format_CommandData').item.json.message.data.userMessageContentText }}",
             "BusNameStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp'] }}",
             "RouterContextStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}",
+            "TenantStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-App\\\\Infrastructure\\\\Organisation\\\\Messenger\\\\TenantStamp'] }}",
             "metadata": "={{ $('Set_Format_CommandData').item.json.message.data.metadata }}",
             "conversationId": "={{ $('Set_Format_CommandData').item.json.message.data.conversationId }}",
             "userMessageId": "={{ $('Set_Format_CommandData').item.json.message.data.userMessageId }}",
@@ -319,6 +324,16 @@
               "removed": false
             },
             {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
               "id": "metadata",
               "displayName": "metadata",
               "required": false,
@@ -360,6 +375,7 @@
           "value": {
             "BusNameStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp'] }}",
             "RouterContextStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}",
+            "TenantStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-App\\\\Infrastructure\\\\Organisation\\\\Messenger\\\\TenantStamp'] }}",
             "document": "={{ $('Set_Format_CommandData').item.json.message.data }}"
           },
           "matchingColumns": [],
@@ -387,6 +403,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -426,6 +452,7 @@
           "value": {
             "BusNameStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp'] }}",
             "RouterContextStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}",
+            "TenantStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-App\\\\Infrastructure\\\\Organisation\\\\Messenger\\\\TenantStamp'] }}",
             "document": "={{ $('Set_Format_CommandData').item.json.message.data }}"
           },
           "matchingColumns": [],
@@ -453,6 +480,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -496,7 +533,8 @@
             "referenceSubject": "={{ $('Set_Format_CommandData').item.json.message.data.referenceSubject }}",
             "recentEvents": "={{ $('Set_Format_CommandData').item.json.message.data.recentEvents }}",
             "BusNameStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp'] }}",
-            "RouterContextStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}"
+            "RouterContextStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}",
+            "TenantStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-App\\\\Infrastructure\\\\Organisation\\\\Messenger\\\\TenantStamp'] }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -563,6 +601,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -701,6 +749,7 @@
             "error": "={{ $('Set_Format_CommandData').item.json.message?.data?.conversationLanguage === 'fr' ? `L'agent AI rencontre un problème. Veuillez réessayer plus tard.` : `The AI agent is experiencing a problem. Please try again later.` }}\n{{ $json.error?.toJsonString() || '' }}",
             "BusNameStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp'] }}",
             "RouterContextStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\RouterContextStamp'] }}",
+            "TenantStamp": "={{ $('RabbitMQ_Trigger_AgentCommands').item.json.properties.headers['X-Message-Stamp-App\\\\Infrastructure\\\\Organisation\\\\Messenger\\\\TenantStamp'] }}",
             "data": "={{ $('Set_Format_CommandData').item.json || 'null' }}"
           },
           "matchingColumns": [],
@@ -747,6 +796,16 @@
             {
               "id": "RouterContextStamp",
               "displayName": "RouterContextStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TenantStamp",
+              "displayName": "TenantStamp",
               "required": false,
               "defaultMatch": false,
               "display": true,

@@ -121,7 +121,7 @@ class Conversation implements HasRequiredWatchFileInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['conversation:read', 'conversation:write', 'conversation:llm'])]
-    private string $title;
+    private ?string $title = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -186,7 +186,7 @@ class Conversation implements HasRequiredWatchFileInterface
         return $this->id;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
