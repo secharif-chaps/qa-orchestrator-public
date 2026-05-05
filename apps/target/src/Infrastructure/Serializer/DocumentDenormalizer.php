@@ -272,6 +272,20 @@ class DocumentDenormalizer implements DenormalizerInterface, DenormalizerAwareIn
         $propertyType = $property->getType();
 
         if ($propertyType instanceof \ReflectionNamedType && !$propertyType->isBuiltin()) {
+            // Empty nested object on a nullable field → leave the property
+            // at its default. Covers OS `_source` payloads where a typed
+            // nested object (e.g. `fingerprint`) is present as an empty
+            // `{}` (PHP `[]` after json_decode) — common on legacy documents
+            // indexed before the typed object existed, or when OS strips a
+            // partially-set sub-document. Without this guard, the inner
+            // Symfony serializer raises `MissingConstructorArgumentsException`
+            // because the typed VO (e.g. `Fingerprint`) has required
+            // constructor params. Explicit `null` is filtered earlier by
+            // `isset()` above.
+            if ($propertyType->allowsNull() && \is_array($value) && [] === $value) {
+                return;
+            }
+
             $targetType = $propertyType->getName();
             $value = $this->denormalizer->denormalize($value, $targetType, $format, $context);
         } elseif ('duplicates' === $propertyName && \is_array($value)) {

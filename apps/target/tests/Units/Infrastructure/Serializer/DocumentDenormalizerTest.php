@@ -659,4 +659,40 @@ class DocumentDenormalizerTest extends TestCase
         // Assert
         $this->assertInstanceOf(Document::class, $document);
     }
+
+    public function testDenormalizeWithEmptyFingerprintObjectSkipsConstruction(): void
+    {
+        // OS `_source` may carry `fingerprint: {}` for legacy documents
+        // indexed before the typed object existed (or after a partial
+        // re-index that stripped the sub-fields). Without a guard, the
+        // inner Symfony serializer raises `MissingConstructorArgumentsException`
+        // because `Fingerprint` requires `contentHash, simHash,
+        // minHashSignature, lshBands` to be present.
+        $data = [
+            'id' => 'doc-legacy-empty-fp',
+            'title' => 'Legacy doc',
+            'fingerprint' => [],
+        ];
+
+        $document = $this->denormalizer->denormalize($data, Document::class);
+
+        $this->assertInstanceOf(Document::class, $document);
+        $this->assertNull($document->getFingerprint());
+    }
+
+    public function testDenormalizeWithNullFingerprintSkipsConstruction(): void
+    {
+        // Defensive complement to the empty-array case above:
+        // explicit `null` must not reach the Fingerprint constructor.
+        $data = [
+            'id' => 'doc-legacy-null-fp',
+            'title' => 'Legacy doc',
+            'fingerprint' => null,
+        ];
+
+        $document = $this->denormalizer->denormalize($data, Document::class);
+
+        $this->assertInstanceOf(Document::class, $document);
+        $this->assertNull($document->getFingerprint());
+    }
 }
