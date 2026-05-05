@@ -21,10 +21,7 @@
           <FoldersHeader
             v-model:search-term="searchTerm"
             v-model:view-mode="viewMode"
-            v-model:company-filter="companyFilter"
             :folder="folder"
-            @edit-folder="$router.push(`/folders/${folder?.id}/edit`)"
-            @delete-folder="confirmDelete"
           />
 
           <div>
@@ -42,20 +39,13 @@
                 :folder="folder"
                 v-model:search-term="searchTerm"
                 :view-mode="viewMode"
-                :company-filter="companyFilter"
+                v-model:company-filter="companyFilter"
                 @refetch="refetch"
               />
             </div>
           </div>
         </template>
       </div>
-
-      <!-- Delete Folder Modal -->
-      <FolderDeleteModal
-        v-model="showDeleteModal"
-        :folder-to-delete="folder || null"
-        @delete-folder="$router.push('/folders')"
-      />
     </template>
 
     <!-- Pass-through for nested pages (company detail, create, edit) -->
@@ -70,7 +60,6 @@ meta:
 </route>
 
 <script setup lang="ts">
-import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
 import FolderItemsSkeleton from '@/components/folders/FolderItemsSkeleton.vue'
 import FoldersHeader from '@/components/folders/FoldersHeader.vue'
 import FolderTabBar from '@/components/folders/FolderTabBar.vue'
@@ -86,7 +75,6 @@ const VIEW_MODE_STORAGE_KEY = 'folder-view-mode'
 const route = useRoute('/folders/[folderId]')
 const { isStreamEnabled } = useStreamModule()
 
-const showDeleteModal = ref(false)
 const searchTerm = ref('')
 const viewMode = ref<'table' | 'grid'>('grid')
 const companyFilter = ref<'all' | 'archived'>('all')
@@ -114,10 +102,6 @@ const {
     },
   }),
 )
-
-const confirmDelete = () => {
-  showDeleteModal.value = true
-}
 
 // Load saved view mode from localStorage
 onMounted(() => {

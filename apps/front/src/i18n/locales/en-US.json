@@ -561,6 +561,7 @@
       "aiPreferences": "AI Preferences",
       "aiPreferencesSetup": "AI Preferences Setup",
       "appearance": "Appearance",
+      "ariaLabel": "Breadcrumb",
       "companies": "Companies",
       "company": "Company",
       "companyCsv": "CSV Import",
@@ -667,14 +668,12 @@
     "folder": {
       "actions": {
         "addToFavorites": "Add to favorites",
+        "back": "Back to folders",
         "collapse": "Collapse",
-        "delete": "Delete",
-        "edit": "Edit",
         "expand": "Expand",
-        "favorite": "Favorite",
+        "new": "New",
         "removeFromFavorites": "Remove from favorites",
         "share": "Share",
-        "unfavorite": "Unfavorite",
         "view": "View"
       },
       "addItem": {
@@ -790,8 +789,6 @@
         "shared": "Shared with me"
       },
       "header": {
-        "by": "by",
-        "createdOn": "created on {date}",
         "itemsCount": "{count, plural, one {# item} other {# items}}"
       },
       "item": {
@@ -808,7 +805,6 @@
       "itemCount": "{count, plural, one {# item} other {# items}}",
       "itemName": "folders",
       "items": {
-        "add": "Add Items",
         "empty": "No items in this folder"
       },
       "itemsChip": "{count, plural, one {# item} other {# items}}",
@@ -862,7 +858,7 @@
         }
       },
       "search": {
-        "placeholder": "Search items..."
+        "placeholder": "Search for an object or a stream..."
       },
       "share": {
         "add": "Add",

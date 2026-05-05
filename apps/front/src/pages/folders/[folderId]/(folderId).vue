@@ -1,5 +1,13 @@
 <template>
   <div class="flex flex-col gap-4">
+    <!-- Items info row: count on the left, archive/all toggle on the right -->
+    <div class="flex items-center justify-between gap-4">
+      <p class="text-base">
+        {{ $t('common.folder.header.itemsCount', itemsCount) }}
+      </p>
+      <Toggle v-model="companyFilter" :options="filterOptions" variant="pill" />
+    </div>
+
     <!-- Folder Items -->
     <div v-if="filteredItems && filteredItems.length > 0">
       <!-- Grid View -->
@@ -8,7 +16,7 @@
         class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
       >
         <FolderItemDisplay
-          v-model:company-filter="companyFilterModel"
+          v-model:company-filter="companyFilter"
           v-for="item in filteredItems"
           :key="item.id"
           :item="item"
@@ -208,7 +216,7 @@ import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import { useMoveCompanyToFolder } from '@/mutations/folders'
 import type { Company } from '@/types/company'
 import type { Folder, FolderItem } from '@/types/folder'
-import { Alert, Button, Tag } from '@owlint/feathers-vue'
+import { Alert, Button, Tag, Toggle } from '@owlint/feathers-vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
@@ -217,18 +225,31 @@ import { useRoute, useRouter } from 'vue-router'
 interface Props {
   folder: Folder
   viewMode: 'table' | 'grid'
-  companyFilter: 'all' | 'archived'
 }
 
-const { folder, viewMode, companyFilter } = defineProps<Props>()
+const { folder, viewMode } = defineProps<Props>()
 
 const emit = defineEmits<{
   refetch: []
 }>()
 
 const searchTerm = defineModel<string>('searchTerm', { default: '' })
+const companyFilter = defineModel<'all' | 'archived'>('companyFilter', { required: true })
 
-const companyFilterModel = computed(() => companyFilter)
+const filterOptions = computed(() => [
+  {
+    value: 'all',
+    icon: 'fas fa-building',
+    label: t('common.folder.filter.allLabel'),
+  },
+  {
+    value: 'archived',
+    icon: 'fas fa-archive',
+    label: t('common.folder.filter.archivedLabel'),
+  },
+])
+
+const itemsCount = computed(() => folder?.items?.length || 0)
 
 const route = useRoute('/folders/[folderId]')
 const router = useRouter()
@@ -291,7 +312,7 @@ const confirmArchiveCompany = (item: FolderItem) => {
       created_at: item.created_at,
       owner_username: item.owner,
     } as Company
-    if (companyFilter === 'archived') {
+    if (companyFilter.value === 'archived') {
       showRestoreCompanyModal.value = true
     } else {
       showArchiveCompanyModal.value = true

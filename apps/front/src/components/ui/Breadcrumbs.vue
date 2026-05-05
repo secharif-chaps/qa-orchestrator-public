@@ -1,5 +1,9 @@
 <template>
-  <nav class="relative z-10 flex" aria-label="Breadcrumb" v-if="breadcrumbs.length">
+  <nav
+    class="relative z-10 flex"
+    :aria-label="t('common.breadcrumb.ariaLabel')"
+    v-if="breadcrumbs.length"
+  >
     <ol role="list" class="flex items-center space-x-4">
       <!-- Home icon - always first -->
       <li>
