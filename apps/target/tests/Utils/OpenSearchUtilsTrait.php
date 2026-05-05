@@ -55,9 +55,39 @@ trait OpenSearchUtilsTrait
         $openSearch = self::getContainer()->get(Client::class);
 
         $openSearch->indices()
-->refresh([
-    'index' => Document::INDEX_NAME,
-]);
+            ->refresh([
+                'index' => Document::INDEX_NAME,
+            ]);
+    }
+
+    /**
+     * Targeted cleanup: delete only documents whose id contains the
+     * given tag. Used by tests that namespace their fixtures with a
+     * per-suite tag so concurrent test runs don't wipe each other's
+     * data — preferred over {@see cleanupOpenSearch()} (match_all)
+     * whenever the test owns its own tag.
+     */
+    protected function cleanupOpenSearchByTag(string $tag): void
+    {
+        /** @var Client $openSearch */
+        $openSearch = self::getContainer()->get(Client::class);
+
+        try {
+            $openSearch->deleteByQuery([
+                'index' => Document::INDEX_NAME,
+                'body' => [
+                    'query' => [
+                        'wildcard' => [
+                            'id' => '*' . $tag . '*',
+                        ],
+                    ],
+                ],
+                'refresh' => true,
+                'conflicts' => 'proceed',
+            ]);
+        } catch (\Exception) {
+            // best effort
+        }
     }
 
     /**
@@ -310,8 +340,8 @@ trait OpenSearchUtilsTrait
                 status: $aiStatus,
                 confidenceScore: $confidenceScore,
                 validationReason: new ValidationReason(
+                    fr: \sprintf('Validation IA: %s', $aiStatus->value),
                     en: \sprintf('AI validation: %s', $aiStatus->value),
-                    fr: \sprintf('Validation IA: %s', $aiStatus->value)
                 ),
                 processedAt: new \DateTimeImmutable(),
                 referenceSubject: 'Test Subject'

@@ -1,0 +1,36 @@
+{
+  "account_id": "63",
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-63-master-12905136",
+    "url": "",
+    "title": "Gezinnen verbruiken plots 16% minder gas",
+    "content": "<html><body>(Source : Het Laatste Nieuws)<br/><h1>Gezinnen verbruiken plots 16% minder gas</h1><p>De torenhoge prijzen voor gas doen Vlaamse gezinnen fors beknibbelen op hun verbruik, stelt netbedrijf Fluvius vast. Uit de data-analyse van 100.000 anonieme digitale meters blijkt dat het gemiddelde verbruik in januari 5% lager lag dan in dezelfde maand in 2021, in februari was het verschil zelfs 16%. &apos;&apos;De daling is vast te stellen bij elk type klant: zowel gezinnen die in een nieuwbouw wonen als mensen met een ouder huis of beschermde klanten&quot;&quot;, stelt woordvoerder Björn Verdoodt. Hoe de gezinnen hun gasverbruik precies hebben verlaagd, weet Fluvius niet. (RVL/SSL)</p></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-63-dup-12905216",
+    "url": "",
+    "title": "Gezinnen verbruiken plots 16% minder gas",
+    "content": "<html><body>(Source : Het Laatste Nieuws)<br/><h1>Gezinnen verbruiken plots 16% minder gas</h1><p>De torenhoge prijzen voor gas doen Vlaamse gezinnen fors beknibbelen op hun verbruik, stelt netbedrijf Fluvius vast. Uit de data-analyse van 100.000 anonieme digitale meters blijkt dat het gemiddelde verbruik in januari 5% lager lag dan in dezelfde maand in 2021, in februari was het verschil zelfs 16%. &apos;&apos;De daling is vast te stellen bij elk type klant: zowel gezinnen die in een nieuwbouw wonen als mensen met een ouder huis of beschermde klanten&quot;&quot;, stelt woordvoerder Björn Verdoodt. Hoe de gezinnen hun gasverbruik precies hebben verlaagd, weet Fluvius niet. (RVL/SSL)</p></body></html>"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "content_hash",
+    "similarity": 1
+  },
+  "measurements": {
+    "jaccard": 1,
+    "hamming": 0
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same Het Laatste Nieuws article 'Gezinnen verbruiken plots 16% minder gas' — different excerpts."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}

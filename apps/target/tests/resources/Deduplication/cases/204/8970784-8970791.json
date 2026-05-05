@@ -1,0 +1,36 @@
+{
+    "account_id": 204,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 58,
+    "master": {
+        "id": "legacy-204-master-8970784",
+        "url": "https://www.middleeastmonitor.com/20220214-saudi-led-coalition-calls-for-evacuation-of-government-buildings-in-yemens-capital/",
+        "title": "Saudi-led coalition calls for evacuation of government buildings in Yemen's capital",
+        "content": "<html><head><title>Saudi-led coalition calls for evacuation of government buildings in Yemen&apos;s capital</title></head><body><div>\n\n\n<p>The Saudi-led coalition in Yemen urged civilians in government buildings in Yemen&apos;s capital, Sunday, to immediately evacuate, state media reported and <em>Anadolu News Agency</em> reports.</p>\n<p>The Houthi rebel group used government and ministry buildings in Sana&apos;a for offensive operations, said Saudi Arabia&apos;s official news agency, <em>SPA</em>, citing a statement from the coalition.</p>\n<p>The statement also noted that a ministry building in Sana&apos;a, linked to a drone attack last Thursday on Saudi Arabia&apos;s Abha International Airport, would be bombed.</p>\n<p>The attack left 12 people injured.</p>\n<p>Yemen has been engulfed by violence and instability since 2014, when the Houthis captured much of the country, including Sana&apos;a.</p>\n<p>A Saudi-led coalition aimed at reinstating the Yemeni government has worsened the situation, causing one of the world&apos;s worst man-made humanitarian crises, with nearly 80 per cent, or around 30 million people, needing humanitarian assistance and protection and more than 13 million in danger of starvation, according to UN estimates.</p>\n<p><strong><a href=\"https://www.middleeastmonitor.com/20220213-wfp-rising-food-prices-push-yemenis-into-extreme-poverty/\">WFP: Rising food prices push Yemenis into &apos;extreme poverty&apos;</a></strong></p>\n\n\n\n\n\n\n\n\n</div></body></html>"
+    },
+    "candidate": {
+        "id": "legacy-204-dup-8970791",
+        "url": "https://en.mehrnews.com/news/183892/Saudi-led-coalition-bomb-Yemen-s-Telecommunications-Ministry",
+        "title": "Saudi-led coalition bomb Yemen's Telecommunications Ministry",
+        "content": "<html><head><title>Saudi-led coalition bomb Yemen&apos;s Telecommunications Ministry</title></head><body><div>\n \n \n  <p>Yemen&apos;s al-Masirah television announced Monday morning that the Saudi-led coalition fighter jets had bombed the country&apos;s capital of Sanaa. </p> \n  <p>According to the report, the coalition fighter jets twice targeted the building of the Ministry of Telecommunications &amp; Information Technology. </p> \n  <p>Al-Masirah did not provide further details about the attack.</p> \n  <p>According to the latest reports, the Saudi coalition violated the ceasefire agreement in Al-Hudaidah 233 times in the last 24 hours.</p> \n  <p>Saudi fighter jets also bombed the Harz area in the northwestern Yemeni province of Hajjah 10 times. Saada province has also been targeted several times by Saudi coalition airstrikes.</p> \n  <p>Saudi Arabia, along with the United Arab Emirates (UAE) and with the green light of the United States and Western countries, carried out comprehensive attacks on Yemen since March 26, 2015, to prevent Ansarullah of Yemen from coming to power in the country.</p> \n  <p>Officials of the Yemeni National Salvation Government have repeatedly stressed that the Yemeni army and popular committees will continue to respond to the aggression as long as the Saudi coalition does not stop the war against Yemen and end the siege.</p> \n  <p>Tens of thousands of Yemenis have been injured and martyred in Saudi-led strikes, with the vast majority of them are civilians.</p> \n  <p>The coalition has been also imposing a blockade on the impoverished country’s ports and airports as a part of his aggression which is aimed at restoring power to fugitive former president Abdrabbuh Mansour Hadi.</p> \n  <p>Meanwhile, Yemen is home to the world’s largest humanitarian crisis, with at least 7 million people on the brink of famine and hundreds of thousands suffering from cholera.</p> \n  <p>ZZ/5424557</p> \n \n\n            </div></body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "unique",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "unique",
+        "note": "Different specific airstrikes and details; both about Yemen war but not the same article or event"
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "agreement_unique",
+    "content_source": "hbase_full"
+}

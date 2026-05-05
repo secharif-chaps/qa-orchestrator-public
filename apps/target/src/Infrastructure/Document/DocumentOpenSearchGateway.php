@@ -331,6 +331,50 @@ readonly class DocumentOpenSearchGateway implements DocumentGatewayInterface, Fi
         );
     }
 
+    public function findByTitleShingles(array $titleShingles, ?string $excludeDocumentId = null, int $limit = 50): array
+    {
+        if (empty($titleShingles)) {
+            return [];
+        }
+
+        // Same shape as findByLshBands: a `terms` disjunction is the
+        // cheapest fan-out for "share at least one shingle". Caller
+        // (DuplicateDetector::matchByTitleShingles) re-verifies with an
+        // exact set-Jaccard on the candidates' titleShingles list.
+        $termsClause = [
+            'terms' => [
+                'fingerprint.titleShingles' => $titleShingles,
+            ],
+        ];
+
+        $query = null === $excludeDocumentId
+            ? [
+                'constant_score' => [
+                    'filter' => $termsClause,
+                ],
+            ]
+            : [
+                'bool' => [
+                    'filter' => $termsClause,
+                    'must_not' => [
+                        'ids' => [
+                            'values' => [$excludeDocumentId],
+                        ],
+                    ],
+                ],
+            ];
+
+        return $this->searchAndDenormalize(
+            $query,
+            $limit,
+            'fingerprint titleShingles',
+            [
+                'shingle_count' => \count($titleShingles),
+            ],
+            dedupContext: true,
+        );
+    }
+
     /**
      * Single-hit lookup: term query on a keyword field, optional id exclusion,
      * size=1, returns the first matching `Document` or null.

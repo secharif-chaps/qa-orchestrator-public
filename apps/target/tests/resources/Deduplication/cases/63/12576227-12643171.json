@@ -1,0 +1,36 @@
+{
+  "account_id": "63",
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-63-master-12576227",
+    "url": "https://www.evwind.es/2021/10/05/vestas-receives-an-order-for-65-mw-of-wind-power-in-france/82651",
+    "title": "Vestas receives an order for 65 MW of wind power in France",
+    "content": "<html><head><title>Vestas receives an order for 65 MW of wind power in France</title></head><body>\n\t\n\t\t<div>\n\t\t\t<img/>\t\t</div>\n\n\t\t\n\t\n\t\t\t\t\n\t\t\n\t\t\n\t\n\n\t\t<div>\n\t\t\n<p>Vestas has received a 65 MW order for the Les Moulins du Lohan wind farm, to be located in Morbihan, France.</p>\n\n\n\n<p>The order, placed by Boralex, a pioneer in renewables and the leading independent producer of onshore wind power in France, includes the supply and installation of 17 V126-3.45 MW wind turbines operated at a 3.8 MW Power Optimised Mode as well as a 20-year Active Output Management 5000 (AOM 5000) service agreement.</p>\n\n\n\n<p>Vestas France Country Manager, Hugues Faivre, says: “We are happy to work with Boralex once again. In this occasion, we are particularly glad to work with them in their biggest development project in France. This contract reinforces our leadership position in France, fostered by our world-class technology solutions. With this project, we are also contributing to the sustainable development of the Bretagne region, where this wind park will generate more than a score of jobs”.</p>\n\n\n\n<p>Turbine delivery is planned by the second quarter of 2022 and commissioning is scheduled the first quarter of 2023.</p>\n\n\n\n<p>Vestas installed its first turbine in France in 1991 and has since then led the country’s wind industry with 6 GW of wind capacity installed across more than 2,500 wind turbines. These numbers position the company as the main contributor to the expansion of wind energy in France, with a 30 percent market share.</p>\n\t</div>\n\t\t\t\n\t<a href=\"https://www.evwind.es/tags/eolica\">eólica</a><a href=\"https://www.evwind.es/tags/france\">France</a><a href=\"https://www.evwind.es/tags/vestas\">Vestas</a><a href=\"https://www.evwind.es/tags/wind-energy-2\">wind energy</a><a href=\"https://www.evwind.es/tags/wind-power\">wind power</a></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-63-dup-12643171",
+    "url": "https://www.evwind.es/2021/10/05/vestas-receives-an-order-for-65-mw-of-wind-power-in-france/82651",
+    "title": "Vestas receives an order for 65 MW of wind power in France",
+    "content": "<html><head><title>Vestas receives an order for 65 MW of wind power in France</title></head><body>\n\t\n\t\t<div>\n\t\t\t<img/>\t\t</div>\n\n\t\t\n\t\n\t\t\t\t\n\t\t\n\t\t\n\t\n\n\t\t<div>\n\t\t\n<p>Vestas has received a 65 MW order for the Les Moulins du Lohan wind farm, to be located in Morbihan, France.</p>\n\n\n\n<p>The order, placed by Boralex, a pioneer in renewables and the leading independent producer of onshore wind power in France, includes the supply and installation of 17 V126-3.45 MW wind turbines operated at a 3.8 MW Power Optimised Mode as well as a 20-year Active Output Management 5000 (AOM 5000) service agreement.</p>\n\n\n\n<p>Vestas France Country Manager, Hugues Faivre, says: “We are happy to work with Boralex once again. In this occasion, we are particularly glad to work with them in their biggest development project in France. This contract reinforces our leadership position in France, fostered by our world-class technology solutions. With this project, we are also contributing to the sustainable development of the Bretagne region, where this wind park will generate more than a score of jobs”.</p>\n\n\n\n<p>Turbine delivery is planned by the second quarter of 2022 and commissioning is scheduled the first quarter of 2023.</p>\n\n\n\n<p>Vestas installed its first turbine in France in 1991 and has since then led the country’s wind industry with 6 GW of wind capacity installed across more than 2,500 wind turbines. These numbers position the company as the main contributor to the expansion of wind energy in France, with a 30 percent market share.</p>\n\t</div>\n\t\t\t\n\t<a href=\"https://www.evwind.es/tags/eolica\">eólica</a><a href=\"https://www.evwind.es/tags/france\">France</a><a href=\"https://www.evwind.es/tags/vestas\">Vestas</a><a href=\"https://www.evwind.es/tags/wind-energy-2\">wind energy</a><a href=\"https://www.evwind.es/tags/wind-power\">wind power</a></body></html>"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "measurements": {
+    "jaccard": 1,
+    "hamming": 0
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same evwind article (Vestas / Boralex 65 MW Lohan) — identical URL, master/dup are different excerpts of the same article."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}

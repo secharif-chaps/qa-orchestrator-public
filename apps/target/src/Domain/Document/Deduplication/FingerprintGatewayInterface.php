@@ -47,4 +47,25 @@ interface FingerprintGatewayInterface
      * @return list<Document>
      */
     public function findByLshBands(array $bandHashes, ?string $excludeDocumentId = null, int $limit = 50): array;
+
+    /**
+     * Stage 4 — title-fallback candidate retrieval. Returns documents
+     * whose `fingerprint.titleShingles` shares **at least one** entry
+     * with the provided list. The caller verifies similarity by
+     * computing the exact set-Jaccard on the title shingle sets.
+     *
+     * Bounded by `$limit` because a popular shingle (e.g. a stop-word
+     * triple in Latin titles) could otherwise fan out to hundreds of
+     * candidates per call. The corpus shows ~10 shingles per title, so
+     * the candidate set is typically small.
+     *
+     * @param list<string> $titleShingles
+     *
+     * @return list<Document>
+     */
+    public function findByTitleShingles(
+        array $titleShingles,
+        ?string $excludeDocumentId = null,
+        int $limit = 50,
+    ): array;
 }

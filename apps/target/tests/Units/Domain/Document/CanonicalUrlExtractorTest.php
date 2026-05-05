@@ -596,4 +596,46 @@ class CanonicalUrlExtractorTest extends TestCase
         self::assertStringContainsString('/article', $result);
         self::assertStringStartsWith('https://', $result);
     }
+
+    public function testTrailingSlashIsStrippedOnNonRootPaths(): void
+    {
+        // Two URLs that differ only by a trailing slash on a non-root
+        // path collapse to the same canonical key — every modern HTTP
+        // server treats `/about/` and `/about` as the same resource,
+        // and the legacy AMI corpus has real cases of this collision
+        // (e.g. `weforum.org/join-us` vs `weforum.org/join-us/`).
+        self::assertSame(
+            $this->extractor->extract(null, null, 'https://example.com/about/'),
+            $this->extractor->extract(null, null, 'https://example.com/about'),
+        );
+        self::assertSame(
+            'https://example.com/about',
+            $this->extractor->extract(null, null, 'https://example.com/about/'),
+        );
+    }
+
+    public function testTrailingSlashIsStrippedOnDeepPaths(): void
+    {
+        self::assertSame(
+            'https://example.com/foo/bar',
+            $this->extractor->extract(null, null, 'https://example.com/foo/bar/'),
+        );
+    }
+
+    public function testRootPathPreservesItsSlash(): void
+    {
+        // The root `/` is the path separator itself — dropping it would
+        // strip the boundary between host and path. RFC 3986 §6.2.3
+        // also treats an empty path and `/` as equivalent.
+        self::assertSame('https://example.com/', $this->extractor->extract(null, null, 'https://example.com'));
+        self::assertSame('https://example.com/', $this->extractor->extract(null, null, 'https://example.com/'));
+    }
+
+    public function testTrailingSlashStrippingHappensBeforeQueryString(): void
+    {
+        self::assertSame(
+            'https://example.com/article?id=1',
+            $this->extractor->extract(null, null, 'https://example.com/article/?id=1'),
+        );
+    }
 }

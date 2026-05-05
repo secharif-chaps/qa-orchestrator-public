@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 55,
+    "master": {
+        "id": "legacy-64-master-14064526",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85164925429&origin=inward",
+        "title": "33rd Congress of the International Council of the Aeronautical Sciences, ICAS 2022",
+        "content": "<html><body>The proceedings contain 24 papers. The special focus in this conference is on Aeronautical Sciences. The topics include: CONCEPT DESIGN OF A LOW BOOM SSBJ TO SATISFY SOCIAL ACCEPTANCE; RESEARCH ON THE SELECTION METHOD OF TYPICAL RCS BENCHMARK BASED ON AHP; TWO-PHASE NUMERICAL SIMULATION INVESTIGATION ON THE EFFECTS OF TURBULENCE MODEL AND OPERATING CONDITIONS ON THE CENTRIFUGAL NOZZLE PERFROMANCE; DEVELOPMENT AND VERIFICATION OF OSCILLATING BLADE GUST GENERATOR IN LOW-SPEED WIND TUNNEL; fatigue Crack Propagation in Additively Manufactured Polymer Parts; ELECTROMAGNETIC INTERFERENCE SHIELDING EFFECTIVENESS OF THE THIN CARBON NANOFIBERS/SILICON CARBIDE FABRICS COMPOSITES; some Experimental Results on Dynamic Aeroelasticity of Plates and Shells in Subsonic and Supersonic Flow.; DESIGN OF AERO-ENGINE FADEC POWER SUPPLY CONTROL SYSTEM BASED ON FORWARD DESIGN; DESIGN AND EFFICIENCY ANALYSIS OF EVTOL CONTRA-ROTATING PROPELER; EXPERIMENTAL STUDY OF FLAT BAFFLE INLET TOTAL-PRESSURE DISTORTION IN A THREE-STAGE FAN; EFFECT OF TAILCONE SHAPE ON HOT STREAK PHENOMENA AND INFRARED SIGNATURE OF SERPENTINE NOZZLE WITH AFT DECK; EXPERIMENTAL STUDY ON THE EFFECT OF INTERSTAGE BLEEDING ON THE PERFORMANCE OF FULL-SCALE MULTISTAGE AXIAL COMPRESSOR; MULTIPOINT AERODYNAMIC DESIGN OF A NACELLE FOR AN ELECTRIC FAN; study on the Application of Emulsified Fuel in small Jet Engines; HYDRO ENVIRONMENTAL AND ELECTRICAL ASSETS MAPPING TOOL USING SWARMS AND MACHINE LEARNING, UAV & USV; EFFECTS OF ANISOTROPIC THERMAL CONDUCTIVITY OF COMPOSITE SHIELD ON THE ELECTROTHERMAL ANTI-ICING SYSTEMS; kinetic Energy Recovery from a Landing Aircraft: Energy Analysis, Environmental and Economic Prospects; STRESSING SAFETY ASSESSMENT METHODS BY HIGHER LEVELS OF AUTOMATION. <br/><br/><br/>Authors: . <br/><br/>Affiliations: . <br/><br/>Publication: ICAS Proceedings, 2022. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-14065139",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85164934681&origin=inward",
+        "title": "EFFECTS OF ANISOTROPIC THERMAL CONDUCTIVITY OF COMPOSITE SHIELD ON THE ELECTROTHERMAL ANTI-ICING SYSTEMS",
+        "content": "<html><body>The performance of an electrothermal anti-icing system based on resistance heating elements embedded in CFRP(carbon fibre reinforced polymer) composite is of interest to aerospace. This paper analyzes the steady anti-icing process conjugating the thermal properties of CFRP composite. A coordinate transformation approach that resolves the principal axis in the local coordinate system to the global coordinate system is developed to exert anisotropic thermal conductivity in the irregular shape of the airfoil. Coupling with the antiicing model, we estimated and compared the performance of a different combination of multi-layer structures based on the CFRP composite. For actual CFRP composite used in wing manufacturing, the anisotropic conductivity slightly affects the temperature distribution on the protected surface. It significantly affects the temperature distribution in the multi-layer structure. A temperature gradient that hurts the stability of composite would form along the airfoil surface direction in the structure. <br/><br/><br/>Authors: Guo X., Yang Q., Zheng H., Dong W.. <br/><br/>Affiliations: Shanghai Jiao Tong University. <br/><br/>Publication: ICAS Proceedings, 2022. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "unique",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "unique",
+        "note": "Master is a proceedings overview listing many papers, while candidate is a full individual paper from that proceedings."
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "agreement_unique",
+    "content_source": "hbase_full"
+}

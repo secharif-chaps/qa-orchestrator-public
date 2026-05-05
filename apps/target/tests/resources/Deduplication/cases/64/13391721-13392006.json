@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-64-master-13391721",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135630369&origin=inward",
+        "title": "The study of CoFe2O4/Ba0.85Ca0.15Zr0.1Ti0.9O3-laminated composite ceramic on dielectric, relaxation, ferroelectric, and magnetoelectric coupling properties",
+        "content": "<html><body>In this work, pure Ba0.85Ca0.15Zr0.1Ti0.9O3 (BCZT) and CoFe2O4 (CFO) ceramics were prepared by the sol–gel and co-precipitation method, respectively. Then, the BCZT and CFO were joined to prepare the two-layer CFO/BCZT and three-layer BCZT/CFO/BCZT composite ceramics with the silver epoxy. The influence of the number of layers on the dielectric, relaxation, ferroelectric and magnetoelectric properties of layered composite ceramics was mainly studied. In the dielectric properties test results, both CFO/BCZT and BCZT/CFO/BCZT showed dielectric relaxation properties. Compared with CFO/BCZT, the dielectric constant of BCZT/CFO/BCZT at room temperature can reach about 6000 with lower loss. The Diffusion index (γ) of the composite ceramic samples was fitted by the Curie–Weiss law, indicating that the BCZT/CFO/BCZT diffusion phase transition is more obvious. Next, through complex impedance spectroscopy, an RC equivalent circuit model is set up to analyze the resistance characteristics of the sample. In the Nyquist diagram, the samples exhibit non-Debye relaxation behavior. In addition, the P-E loops indicate that the sample has ferroelectric properties, and the incompletely asymmetrical leakage current curve shows that composites have a built-in electric field. Finally, the dependence of the magnetoelectric coupling coefficient (αME) on the magnetic field and frequency shows that the magnetoelectric coupling performance of the sample has a good frequency tuning ability. <br/><br/><br/>Authors: Li C., Zhou C., Jang Y.G., Wang Q., Huang G., Lin Y.. <br/><br/>Affiliations: Chongqing University of Science and Technology, Yangtze University, Southwest Petroleum University China. <br/><br/>Publication: Journal of Materials Science: Materials in Electronics, 2022. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13392006",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135630369&origin=inward",
+        "title": "The study of CoFe2O4/Ba0.85Ca0.15Zr0.1Ti0.9O3-laminated composite ceramic on dielectric, relaxation, ferroelectric, and magnetoelectric coupling properties",
+        "content": "<html><body>In this work, pure Ba0.85Ca0.15Zr0.1Ti0.9O3 (BCZT) and CoFe2O4 (CFO) ceramics were prepared by the sol–gel and co-precipitation method, respectively. Then, the BCZT and CFO were joined to prepare the two-layer CFO/BCZT and three-layer BCZT/CFO/BCZT composite ceramics with the silver epoxy. The influence of the number of layers on the dielectric, relaxation, ferroelectric and magnetoelectric properties of layered composite ceramics was mainly studied. In the dielectric properties test results, both CFO/BCZT and BCZT/CFO/BCZT showed dielectric relaxation properties. Compared with CFO/BCZT, the dielectric constant of BCZT/CFO/BCZT at room temperature can reach about 6000 with lower loss. The Diffusion index (γ) of the composite ceramic samples was fitted by the Curie–Weiss law, indicating that the BCZT/CFO/BCZT diffusion phase transition is more obvious. Next, through complex impedance spectroscopy, an RC equivalent circuit model is set up to analyze the resistance characteristics of the sample. In the Nyquist diagram, the samples exhibit non-Debye relaxation behavior. In addition, the P-E loops indicate that the sample has ferroelectric properties, and the incompletely asymmetrical leakage current curve shows that composites have a built-in electric field. Finally, the dependence of the magnetoelectric coupling coefficient (αME) on the magnetic field and frequency shows that the magnetoelectric coupling performance of the sample has a good frequency tuning ability. <br/><br/><br/>Authors: Li C., Zhou C., Jang Y.G., Wang Q., Huang G., Lin Y.. <br/><br/>Affiliations: Chongqing University of Science and Technology, Yangtze University, Southwest Petroleum University China. <br/><br/>Publication: Journal of Materials Science: Materials in Electronics, 2022. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "identical"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

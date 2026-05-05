@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-64-master-13538315",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141061642&origin=inward",
+        "title": "Two permanent magnet rotors controlled independently using single stator",
+        "content": "<html><body>Transport sector (passenger cars, off-road vehicles, ships and others) is undergoing rapid electrification, where to traditionally used internal combustion engine (ICE) an electrical power system is added for more effective working cycle and better overall performance characteristics. Since electrical power systems can provide flexible operating characteristics (e.g. maximum torque at zero speed, effective field weakening at higher speed, wide range of loads with high efficiency) it is possible to use two electrical machines together with power split device (e.g. planetary gear) to operate ICE in the most effective load pattern regardless of the vehicle speed. However, in this case (when two separate electrical machines are used) each electrical machine requires its own converter unit and all other non-active elements of the complete structure of the machine (e.g. housing, space for end windings, cooling manifold). In this paper it is proposed to combine two machines together in a way that they use the same stator and the same 6-phase stator winding, while independent control of two rotors (positioned within the single stator) is realised by a single 6-phase converter. It is shown that it is possible to use exactly the same winding and the same converter to control two rotors completely independently from each other, where load applied by one rotor does not affect the performance of the second rotor regardless of using the same stator winding and converter to control those. <br/><br/><br/>Authors: Petrov I.. <br/><br/>Affiliations: LUT University. <br/><br/>Publication: 2022 International Conference on Electrical Machines, ICEM 2022, 2022, pp.1003-1008. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13539270",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141061642&origin=inward",
+        "title": "Two permanent magnet rotors controlled independently using single stator",
+        "content": "<html><body>Transport sector (passenger cars, off-road vehicles, ships and others) is undergoing rapid electrification, where to traditionally used internal combustion engine (ICE) an electrical power system is added for more effective working cycle and better overall performance characteristics. Since electrical power systems can provide flexible operating characteristics (e.g. maximum torque at zero speed, effective field weakening at higher speed, wide range of loads with high efficiency) it is possible to use two electrical machines together with power split device (e.g. planetary gear) to operate ICE in the most effective load pattern regardless of the vehicle speed. However, in this case (when two separate electrical machines are used) each electrical machine requires its own converter unit and all other non-active elements of the complete structure of the machine (e.g. housing, space for end windings, cooling manifold). In this paper it is proposed to combine two machines together in a way that they use the same stator and the same 6-phase stator winding, while independent control of two rotors (positioned within the single stator) is realised by a single 6-phase converter. It is shown that it is possible to use exactly the same winding and the same converter to control two rotors completely independently from each other, where load applied by one rotor does not affect the performance of the second rotor regardless of using the same stator winding and converter to control those. <br/><br/><br/>Authors: Petrov I.. <br/><br/>Affiliations: LUT University. <br/><br/>Publication: 2022 International Conference on Electrical Machines, ICEM 2022, 2022, pp.1003-1008. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article"
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

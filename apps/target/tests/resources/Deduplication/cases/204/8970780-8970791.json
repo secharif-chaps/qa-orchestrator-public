@@ -1,0 +1,36 @@
+{
+    "account_id": 204,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 58,
+    "master": {
+        "id": "legacy-204-master-8970780",
+        "url": "https://en.abna24.com/news//us-backed-saudi-coalition-fighter-jets-bomb-yemeni-capital_1229325.html",
+        "title": "US-backed Saudi coalition fighter jets bomb Yemeni capital",
+        "content": "<html><head><title>US-backed Saudi coalition fighter jets bomb Yemeni capital</title></head><body>\n\n<strong></strong>\n\n<h4></h4>\n\n\nFebruary 14, 2022 - 9:16 AM\n\n\nNews Code : <b>1229325</b>\n\n\nSource : <b>Iran Press</b>\n\n\nLink:\n\n\n\n\n\n\n\n\n\n\n\n\n<figure>\n<img src=\"/upload/image/2022/02/14/c84374ac80c229a3b644ee0bf131b5c4_179.jpg\"/>\n\n\n</figure>\n\n<div>\n<p> Saudi coalition fighter jets again bombed the Yemeni capital, Sanaa, on Monday morning. </p>\n\n<p><strong>AhlulBayt News Agency (ABNA): </strong>In recent weeks, the Saudi coalition has repeatedly bombed residential areas in various Yemeni provinces.<br/>Yemen&apos;s Al-Masira reported that fighter jets from the Saudi coalition targeted the Yemeni Ministry of Communications and Information Technology building in Sanaa at least twice.<br/>No casualties or damage have been reported so far.<br/>The Saudi coalition also bombed the town of Harz in Hajjah province 10 times in the past few hours.<br/>The outbreak of war by Saudi Arabia and its allies in Yemen has so far killed tens of thousands and displaced millions of Yemenis, destroying over 85 percent of the country&apos;s infrastructure. 219<br/>/129</p>  <hr/>\n\n\n\n</div>\n</body></html>"
+    },
+    "candidate": {
+        "id": "legacy-204-dup-8970791",
+        "url": "https://en.mehrnews.com/news/183892/Saudi-led-coalition-bomb-Yemen-s-Telecommunications-Ministry",
+        "title": "Saudi-led coalition bomb Yemen's Telecommunications Ministry",
+        "content": "<html><head><title>Saudi-led coalition bomb Yemen&apos;s Telecommunications Ministry</title></head><body><div>\n \n \n  <p>Yemen&apos;s al-Masirah television announced Monday morning that the Saudi-led coalition fighter jets had bombed the country&apos;s capital of Sanaa. </p> \n  <p>According to the report, the coalition fighter jets twice targeted the building of the Ministry of Telecommunications &amp; Information Technology. </p> \n  <p>Al-Masirah did not provide further details about the attack.</p> \n  <p>According to the latest reports, the Saudi coalition violated the ceasefire agreement in Al-Hudaidah 233 times in the last 24 hours.</p> \n  <p>Saudi fighter jets also bombed the Harz area in the northwestern Yemeni province of Hajjah 10 times. Saada province has also been targeted several times by Saudi coalition airstrikes.</p> \n  <p>Saudi Arabia, along with the United Arab Emirates (UAE) and with the green light of the United States and Western countries, carried out comprehensive attacks on Yemen since March 26, 2015, to prevent Ansarullah of Yemen from coming to power in the country.</p> \n  <p>Officials of the Yemeni National Salvation Government have repeatedly stressed that the Yemeni army and popular committees will continue to respond to the aggression as long as the Saudi coalition does not stop the war against Yemen and end the siege.</p> \n  <p>Tens of thousands of Yemenis have been injured and martyred in Saudi-led strikes, with the vast majority of them are civilians.</p> \n  <p>The coalition has been also imposing a blockade on the impoverished country’s ports and airports as a part of his aggression which is aimed at restoring power to fugitive former president Abdrabbuh Mansour Hadi.</p> \n  <p>Meanwhile, Yemen is home to the world’s largest humanitarian crisis, with at least 7 million people on the brink of famine and hundreds of thousands suffering from cholera.</p> \n  <p>ZZ/5424557</p> \n \n\n            </div></body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "split",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "near_duplicate",
+        "note": "Both describe the same Saudi-led airstrikes on Sanaa’s Telecommunications/Communications Ministry and Harz in Hajjah, but are independently written articles from different outlets."
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "our_misses",
+    "content_source": "hbase_full"
+}

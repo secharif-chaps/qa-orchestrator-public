@@ -1,0 +1,36 @@
+{
+  "account_id": "63",
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-63-master-12649475",
+    "url": "",
+    "title": "Accalmie sur les prix",
+    "content": "<html><body>(Source : Sud Presse)<br/><h1>Accalmie sur les prix</h1><p>La tendance actuelle est à une accalmie sur les prix du gaz, selon la Creg, le régulateur fédéral. En tout cas par rapport aux envolées d’octobre. Mais les prix d’aujourd’hui restent élevés par rapport aux autres années, notamment les années d’avant le Covid. Quant aux prix de l’électricité, ils suivent ceux du gaz.</p><p>Voici quelques semaines, le directeur des prix à la Creg, Laurent Jacquet, estimait qu’une baisse des prix pourrait avoir lieu au printemps et se concrétiser en juillet.</p><p>Entre-temps, il faudra voir à quoi nous aurons droit cet hiver…</p><p>B.J.</p></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-63-dup-12649568",
+    "url": "",
+    "title": "Accalmie sur les prix",
+    "content": "<html><body>(Source : Sud Presse)<br/><h1>Accalmie sur les prix</h1><p>La tendance actuelle est à une accalmie sur les prix du gaz, selon la Creg, le régulateur fédéral. En tout cas par rapport aux envolées d’octobre. Mais les prix d’aujourd’hui restent élevés par rapport aux autres années, notamment les années d’avant le Covid. Quant aux prix de l’électricité, ils suivent ceux du gaz.</p><p>Voici quelques semaines, le directeur des prix à la Creg, Laurent Jacquet, estimait qu’une baisse des prix pourrait avoir lieu au printemps et se concrétiser en juillet.</p><p>Entre-temps, il faudra voir à quoi nous aurons droit cet hiver…</p><p>B.J.</p></body></html>"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "content_hash",
+    "similarity": 1
+  },
+  "measurements": {
+    "jaccard": 1,
+    "hamming": 0
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same Sud Presse article 'Accalmie sur les prix' — different excerpts captured."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}

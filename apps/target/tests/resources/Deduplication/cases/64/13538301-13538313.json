@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 50,
+    "master": {
+        "id": "legacy-64-master-13538301",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141094641&origin=inward",
+        "title": "Magnetic Resonance Coupling Motors with Magnetic Rings for Enhanced Power Generation",
+        "content": "<html><body>We propose a magnetic resonance coupling machine (MRCM) based on an induction machine and magnetic resonance coupling. The MRCM is suitable for the realization of electric aircraft because it can produce power without an iron core. The MRCM can potentially yield high power and torque, but its practical performance is limited by flux leakage into the external space. Here, leakage flux is prevented via a magnetic ring installed in the external space of the windings. In analysis results, the magnetic ring enhanced the torque and power, achieving a torque per weight of 3.90 Nm/kg when the ring was installed on the stator alone, and a power per weight of 29 kW/kg when rings were installed on both the rotor and stator. <br/><br/><br/>Authors: Toda T., Sakai K.. <br/><br/>Affiliations: Toyo University. <br/><br/>Publication: 2022 International Conference on Electrical Machines, ICEM 2022, 2022, pp.880-886. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13538313",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141069771&origin=inward",
+        "title": "Flux Switching Machines-for All-Electric Aircraft Applications",
+        "content": "<html><body>The demand for new and efficient design of electric motors is gaining momentum due to the rapid growth in electric transportation. In particular, all-electric aircraft applications require very high-power density. This paper introduces new motor topologies for a double-rotor flux switching machine with an air-core stator comprising field and armature windings. The field coils are made of yttrium barium copper oxide high temperature superconducting material and aluminum Litz is used for the armature windings. The machine is operated under cryogenic temperatures. The power density obtained with the proposed design is 30.5 kW/kg and an efficiency is 95.2% during take-off is accomplished; satisfying the requirement of electric aviation. <br/><br/><br/>Authors: Saeidabadi S., Kovacs C., Usman A., Haugan T.J., Corzine K., Parsa L.. <br/><br/>Affiliations: University of California, Santa Cruz, Air Force Research Laboratory, Founder Scintillating Solutions LLC,Columbus 3. <br/><br/>Publication: 2022 International Conference on Electrical Machines, ICEM 2022, 2022, pp.1430-1436. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "unique",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "unique",
+        "note": "Different motor topologies, authors, and pages within the same conference; distinct research articles."
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "agreement_unique",
+    "content_source": "hbase_full"
+}

@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-64-master-13728442",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85148877971&origin=inward",
+        "title": "Advanced Ducted Engines Nacelle Aerodynamics and Integration Testing",
+        "content": "<html><body>Future aircraft engine development may lead to Advanced Ducted Engines (ADE) which have a bypass ratio significantly higher than present turbofans. The increases in bypass ratio will dictate larger diameter nacelles and an increasing importance of the nacelle aerodynamics and wing integration aerodynamics. A series of isolated wind tunnel tests was therefore designed and conducted by PWA and MTU to investigate inlet, nozzle and reverser aerodynamics. Additional installed testing was done in cooperation with MBB and BAe. Key features of the tests are noted and significant results are discussed. <br/><br/><br/>Authors: McCall J.E., Tracksdorf P., Heinig K.. <br/><br/>Affiliations: MTU Aero Engines GmbH, Pratt and Whitney. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 1991. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13728594",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85148877971&origin=inward",
+        "title": "Advanced Ducted Engines Nacelle Aerodynamics and Integration Testing",
+        "content": "<html><body>Future aircraft engine development may lead to Advanced Ducted Engines (ADE) which have a bypass ratio significantly higher than present turbofans. The increases in bypass ratio will dictate larger diameter nacelles and an increasing importance of the nacelle aerodynamics and wing integration aerodynamics. A series of isolated wind tunnel tests was therefore designed and conducted by PWA and MTU to investigate inlet, nozzle and reverser aerodynamics. Additional installed testing was done in cooperation with MBB and BAe. Key features of the tests are noted and significant results are discussed. <br/><br/><br/>Authors: McCall J.E., Tracksdorf P., Heinig K.. <br/><br/>Affiliations: MTU Aero Engines GmbH, Pratt and Whitney. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 1991. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "partial_overlap"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

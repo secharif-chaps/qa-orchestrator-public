@@ -1,0 +1,36 @@
+{
+    "account_id": 204,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-204-master-8970807",
+        "url": "https://eng.belta.by/society/view/belarus-ukraine-discuss-confidence-and-security-building-measures-in-the-region-147761-2022/",
+        "title": "Belarus, Ukraine discuss confidence- and security-building measures in the region",
+        "content": "<html><head><title>Belarus, Ukraine discuss confidence- and security-building measures in the region</title></head><body><div>\n\n                                    <div>\n                        <img src=\"https://eng.belta.by/images/storage/news/with_archive/2022/000022_1644842008_147761_big.jpg\"/>\n                                            </div>\n                \n                                \n                \n    \n    \n                                                                      \n                                <div>\n                    <p>MINSK, 14 February (BelTA) – Belarus&apos; Defense Minister, Lieutenant General Viktor Khrenin had a telephone conversation with Ukrainian Defense Minister Aleksei Reznikov at the initiative of the Ukrainian side, BelTA leraned from the Defense Ministry of Belarus. </p><p>The parties discussed the current state of military cooperation, the existing &quot;sore points&quot; and steps to strengthen the atmosphere of trust and security in the region.</p><p>During the conversation, Viktor Khrenin noted that the people of Ukraine have always been a kin people for Belarus. Belarus has not initiated tensions in the relations with Ukraine.</p><p>Ukrainian Defense Minister Aleksei Reznikov spoke in favor of resuming cooperation between the two countries and intensifying cooperation on the issues of security and mutual trust.</p><p>According to Viktor Khrenin, Belarusian President Aleksandr Lukashenko has repeatedly stated: “The important task is not to lose the brotherly nation of Ukraine. All the issues can be solved, including problems in economy, trade, and diplomatic relations. The spiritual ties between our peoples must stay strong. We cannot let the fraternal ties between the two peoples break.” </p><p>The ministers discussed the Armed Forces training events. They expressed confidence that these events do not threaten the security of the brotherly countries.</p><p>The ministers outlined steps to increase transparency and mutual trust.</p><p>The talks were held to restore an atmosphere of dialogue, reduce the degree of public hostile rhetoric and ensure security in the region.</p>\n                    \n                    \n                                        \n                                                                                            </div>\n\n\n                \n                \n            </div></body></html>"
+    },
+    "candidate": {
+        "id": "legacy-204-dup-8973443",
+        "url": "https://eng.belta.by/society/view/belarus-ukraine-discuss-confidence-and-security-building-measures-in-the-region-147761-2022/",
+        "title": "Belarus, Ukraine discuss confidence- and security-building measures in the region",
+        "content": "<html><head><title>Belarus, Ukraine discuss confidence- and security-building measures in the region</title></head><body><div>\n\n                                    <div>\n                        <img src=\"https://eng.belta.by/images/storage/news/with_archive/2022/000022_1644842008_147761_big.jpg\"/>\n                                            </div>\n                \n                                \n                \n    \n    \n                                                                      \n                                <div>\n                    <p>MINSK, 14 February (BelTA) – Belarus&apos; Defense Minister, Lieutenant General Viktor Khrenin had a telephone conversation with Ukrainian Defense Minister Aleksei Reznikov at the initiative of the Ukrainian side, BelTA leraned from the Defense Ministry of Belarus. </p><p>The parties discussed the current state of military cooperation, the existing &quot;sore points&quot; and steps to strengthen the atmosphere of trust and security in the region.</p><p>During the conversation, Viktor Khrenin noted that the people of Ukraine have always been a kin people for Belarus. Belarus has not initiated tensions in the relations with Ukraine.</p><p>Ukrainian Defense Minister Aleksei Reznikov spoke in favor of resuming cooperation between the two countries and intensifying cooperation on the issues of security and mutual trust.</p><p>According to Viktor Khrenin, Belarusian President Aleksandr Lukashenko has repeatedly stated: “The important task is not to lose the brotherly nation of Ukraine. All the issues can be solved, including problems in economy, trade, and diplomatic relations. The spiritual ties between our peoples must stay strong. We cannot let the fraternal ties between the two peoples break.” </p><p>The ministers discussed the Armed Forces training events. They expressed confidence that these events do not threaten the security of the brotherly countries.</p><p>The ministers outlined steps to increase transparency and mutual trust.</p><p>The talks were held to restore an atmosphere of dialogue, reduce the degree of public hostile rhetoric and ensure security in the region.</p>\n                    \n                    \n                                        \n                                                                                            </div>\n\n\n                \n                \n            </div></body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "minimal_overlap"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL and identical article content including text and structure."
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

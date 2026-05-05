@@ -1,0 +1,36 @@
+{
+  "account_id": "54",
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-54-master-2074946",
+    "url": "https://www.tdg.ch/les-cff-misent-sur-les-taxis-pour-ameliorer-laccessibilite-578683289099",
+    "title": "Défaut d'accessibilité des gares : Les CFF misent sur les taxis pour conduire les PMR à une gare accessilble",
+    "content": "<div></div><figure><div><img src=\"data.php?ami_id=b1b9ef00a5bb9ac107e4983c9ec8db9a\" class=\"ami_mm_file ami_mm_image ami_mm_img\" ami_mm_data=\"src=https%3A%2F%2Fcdn.unitycms.io%2Fimages%2F2CmB6OT4qAc8R28xrFdyqO.jpg%3Fop%3Docroped%26val%3D1200%2C1200%2C1000%2C1000%2C0%2C0%26sum%3DVPXvL108_n0&amp;type=image&amp;id=b1b9ef00a5bb9ac107e4983c9ec8db9a&amp;docid=0&amp;title=&amp;alt=\"></div><p>Les gares suisses mettent beaucoup de temps à adapter leurs services pour que tout soit accessible aux personnes à mobilité réduite.</p><p>KEYSTONE/Salvatore Di Nolfi</p></figure><p>Les CFF veulent proposer aux personnes à mobilité réduite un service de taxi vers les gares accessibles. Ces personnes doivent pouvoir y avoir recours si la gare de leur lieu de résidence n’a pas encore été aménagée à leurs besoins.</p><p>Les CFF ont mis le mandat au concours la semaine dernière sur la plateforme internet de marchés publics simap.ch, comme l’ont relevé mercredi les journaux Tamedia. Il ressort de l’appel d’offres que l’ex-régie fédérale recherche un prestataire pour un service de taxis dans toute la Suisse.</p><p>Les entreprises intéressées ont jusqu’à la mi-février pour soumettre leurs offres. Le contrat entre les CFF et le prestataire devrait débuter cet été.</p><p>L’adaptation des gares suisses aux exigences des personnes à mobilité réduite progresse trop lentement. Toutes les gares doivent être adaptées à la fin de cette année, mais plus de 500 d’entre elles ne le sont pas encore, selon le dernier rapport de l’Office fédéral des transports.</p><p>ATS</p><p></p>"
+  },
+  "candidate": {
+    "id": "legacy-54-dup-2076627",
+    "url": "https://www.tdg.ch/les-cff-misent-sur-les-taxis-pour-ameliorer-laccessibilite-578683289099",
+    "title": "Défaut d'accessibilité de la gare à proximité : Les CFF misent sur les taxis pour conduire les PMR à une gare accessilble",
+    "content": "<div>Si la gare à proximité du lieu de domicile de personnes à mobilité réduite n’est pas adaptée à leurs besoins, alors des chauffeurs pourraient venir à elles.</div><div> </div><div>Les gares suisses mettent beaucoup de temps à adapter leurs services pour que tout soit accessible aux personnes à mobilité réduite.</div><p>Les CFF veulent proposer aux personnes à mobilité réduite un service de taxi vers les gares accessibles. Ces personnes doivent pouvoir y avoir recours si la gare de leur lieu de résidence n’a pas encore été aménagée à leurs besoins.</p><p>Les CFF ont mis le mandat au concours la semaine dernière sur la plateforme internet de marchés publics simap.ch, comme l’ont relevé mercredi les journaux Tamedia. Il ressort de l’appel d’offres que l’ex-régie fédérale recherche un prestataire pour un service de taxis dans toute la Suisse.</p><p>Les entreprises intéressées ont jusqu’à la mi-février pour soumettre leurs offres. Le contrat entre les CFF et le prestataire devrait débuter cet été.</p><p>L’adaptation des gares suisses aux exigences des personnes à mobilité réduite progresse trop lentement. Toutes les gares doivent être adaptées à la fin de cette année, mais plus de 500 d’entre elles ne le sont pas encore, selon le dernier rapport de l’Office fédéral des transports.</p><p>ATS</p><p> </p>"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "measurements": {
+    "jaccard": 0.7813,
+    "hamming": 8
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "partial_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same tdg.ch CFF taxis article — same URL, two excerpts of the same article."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}

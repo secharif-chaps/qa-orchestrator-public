@@ -18,5 +18,15 @@ use App\Domain\WatchFile\WatchFile;
  */
 interface DocumentPipelineInterface
 {
-    public function process(Document $document, WatchFile $watchFile): DocumentPipelineContext;
+    /**
+     * @param string|null $collectTaskId identity of the collect task that produced the document — required by the
+     *                                   deduplication processor to record a `DuplicateAttempt` on a matched original
+     * @param string|null $provider      provider name (apify, bakus, manual…) for the same trace
+     */
+    public function process(
+        Document $document,
+        WatchFile $watchFile,
+        ?string $collectTaskId = null,
+        ?string $provider = null,
+    ): DocumentPipelineContext;
 }

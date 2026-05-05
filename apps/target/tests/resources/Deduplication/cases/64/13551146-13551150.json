@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 55,
+    "master": {
+        "id": "legacy-64-master-13551146",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141645993&origin=inward",
+        "title": "A comparison study on AC-DBD plasma and electrical heating for aircraft icing mitigation",
+        "content": "<html><body>A comparison study of utilizing thermal effects of a Dielectric-Barrier-Discharge (DBD) plasma actuator and a conventional electrical film heater for aircraft icing mitigation was performed in an Icing Research Tunnel available at Iowa State University (i.e., ISU -IRT). A NACA0012 airfoil/wing model embedded with an AC-DBD plasma actuator and a conventional electrical film heater over the airfoil surface was tested under a typical aircraft icing condition. While a high-speed imaging system was used to record the dynamic ice accretion and transient surface water transport processes over the airfoil surface, an infrared (IR) thermal imaging system was also utilized to map the corresponding surface temperature distributions over the airfoil surface simultaneously to quantify the unsteady heat transfer and phase changing process over the ice accreting airfoil surface. It was found that, for the same input power, the AC-DBD plasma actuator and the electrical film heater showed almost the equivalent effectiveness in preventing ice accretion over the airfoil surface. With the same total power input, further optimization of the AC-DBD plasma actuator with a duty-cycle modulation was found to have a better anti-/de-icing performance, in comparison to the conventional electrical film heater. The findings derived from the present study demonstrated the potential of a new class of anti-/de-icing strategy by leveraging the thermal effects of DBD plasma actuators for aircraft in-flight icing mitigation. <br/><br/><br/>Authors: Liu Y., Kolbakir C., Hu H.. <br/><br/>Affiliations: Iowa State University. <br/><br/>Publication: AIAA Aerospace Sciences Meeting, 2018, 2018. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13551150",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141640022&origin=inward",
+        "title": "An experimental investigation on the thermal effects of NS-DBD and AC-DBD plasma actuators for aircraft icing mitigation",
+        "content": "<html><body>Ice accretion on airframe surfaces occurs as aircraft come across supercooled water droplets in the cloud, which was found to greatly influence the flight performance and safety. In the present study, the thermal effect induced by DBD plasma actuation was experimentally investigated in order to explore its potential as an alternative strategy to current anti-/de-icing methods for aircraft icing mitigation. A series of experiments were conducted in the Iowa State University Icing Research Tunnel (ISU-IRT) with a NACA0012 airfoil/wing model embedded with DBD plasma actuators. During the experiments, in addition to recording the dynamic ice accretion process by using a high-speed imaging system, the quantitative surface temperature measurements were also obtained using an Infra-Red (IR) thermal imaging system. The thermal effects induced by conventional AC-DBD and nanosecond pulsed DBD (i.e., ns-DBD) plasma actuators were compared under the same power input and icing test conditions. The dynamic icing process was also investigated with the ns-DBD plasma actuation under different pulse repetition frequencies. It was found that the anti-/de-icing performance of ns-DBD plasma actuation would improve with increasing pulse repetition frequency. <br/><br/><br/>Authors: Kolbakir C., Liu Y., Hu H., Starikovskiy A.Y., Miles R.. <br/><br/>Affiliations: Iowa State University, Princeton University. <br/><br/>Publication: AIAA Aerospace Sciences Meeting, 2018, 2018. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "unique",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "unique",
+        "note": "Different but related studies: one compares AC-DBD plasma to electrical film heating, the other compares AC-DBD to ns-DBD plasma actuators with different authors and distinct experimental focus."
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "agreement_unique",
+    "content_source": "hbase_full"
+}

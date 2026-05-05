@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 61,
+    "master": {
+        "id": "legacy-64-master-13628778",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85145437717&origin=inward",
+        "title": "The Effect of Airfoil Clocking on Efficiency and Noise of Low Pressure Turbines",
+        "content": "<html><body>The effect of airfoil clocking (stator-stator interaction) on efficiency and noise of low pressure turbines (LPT) was investigated experimentally in a multistage turbine high-speed rig. The rig consisted of three stages of a state-of-the-art LPT. The stages were characterized by a very high wall-slope angle, reverse cut-off design, very high lift, and very high aspect ratio airfoils. The rig had identical blade count for the second and third stators. The circumferential position of the second stator was individually adjusted with respect to the third stator. Eight different circumferential clocking locations over one pitch were back-to-back tested. The rig was heavily instrumented with miniature five hole probes, hot wires, hot films, total pressure and temperature rakes, pressure tappings on the airfoil surface, two array of Kulites in a rotatory module, etc. Every clocking location was tested with the same instrumentation and at the same operating conditions with the intention of determining the impact of the clocking on the overall efficiency and noise. Due to the large amount of data, the results of this test will be reported in several papers. The present paper contains the impact on the overall efficiency, radial traverses, static pressure fields on the airfoils and averaged sound pressure levels in the duct. The comparison of the results suggests that the efficiency is weakly affected by clocking; however the effect on noise is noticeable for some acoustic tones at certain operating conditions. <br/><br/><br/>Authors: Vázquez R., Torre D., Serrano A.. <br/><br/>Affiliations: Industria de Turbo Propulsores, S. A., Universidad Politécnica de Madrid. <br/><br/>Publication: Journal of Turbomachinery, June 2014. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13628779",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85145440708&origin=inward",
+        "title": "The Effect of Surface Roughness on Efficiency of Low Pressure Turbines",
+        "content": "<html><body>The effect of surface roughness on the efficiency of low pressure turbines (LPTs) was experimentally investigated in a multistage turbine high-speed rig. The rig consisted of three stages of a state-of-the-art LPT. The stages were characterized by a very high wall-slope angle, reverse cut-off design, very high lift, and very high aspect ratio airfoils. Two sets of airfoils (both stators and rotors) were tested. The first set was made of airfoils with a roughness size of 0.7 lm Ra (25–35 × 10-5 ks/Cm), which was representative of LPT polished airfoils. The surface finish for the second set of airfoils was 1.8 lm Ra for blades and 2.5 lm Ra for stators (approximately 90 × 10-5 in terms of ks/Cm for both stators and blades). The resulting roughness of this set was representative of “as-cast” airfoils of low pressure turbines. The airfoil geometries, velocity triangles, leading and trailing edge locations, and flowpath were maintained between both sets. They were tested with the same instrumentation and at the same operating conditions with the intention of determining the isolated impact of the surface roughness on the overall efficiency. The turbine characteristics: sensitivity to speed, specific work, Reynolds number, and purge flows, were obtained for both sets. The comparison of the results suggests that the efficiency and capacity of both types of airfoils exhibit the same behavior. No significant differences in the results can be distinguished for the range of operating conditions in this study. The results agree with previous studies of distributed roughness in turbines: the use of as-cast rough airfoils in some low pressure turbines at high altitude does not introduce additional pressure losses. <br/><br/><br/>Authors: Vázquez R., Torre D.. <br/><br/>Affiliations: Industria de Turbo Propulsores, S. A., Universidad Politécnica de Madrid. <br/><br/>Publication: Journal of Turbomachinery, June 2014. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "unique",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "unique",
+        "note": "Different research articles: one studies airfoil clocking effects on efficiency and noise, the other studies surface roughness effects on efficiency."
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "agreement_unique",
+    "content_source": "hbase_full"
+}

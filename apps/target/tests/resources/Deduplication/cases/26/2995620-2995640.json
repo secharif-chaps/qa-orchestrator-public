@@ -1,0 +1,36 @@
+{
+  "account_id": "26",
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-26-master-2995620",
+    "url": "https://www.weforum.org/join-us/",
+    "title": "Individuals",
+    "content": "<html><head><title>Individuals</title></head><body><div><p>Receive our exclusive weekly newsletter delivered straight to your inbox. Packed with curated content, actionable insights, and thought-provoking perspectives, it will keep you informed, motivated, and engaged. Stay connected with the latest happenings, insider tips, and upcoming opportunities, all conveniently consolidated in one place.</p></div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-26-dup-2995640",
+    "url": "https://www.weforum.org/join-us",
+    "title": "Individuals",
+    "content": "<html><head><title>Individuals</title></head><body><div><p>Receive our exclusive weekly newsletter delivered straight to your inbox. Packed with curated content, actionable insights, and thought-provoking perspectives, it will keep you informed, motivated, and engaged. Stay connected with the latest happenings, insider tips, and upcoming opportunities, all conveniently consolidated in one place.</p></div></body></html>"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "measurements": {
+    "jaccard": 1,
+    "hamming": 0
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same World Economic Forum 'Individuals' page — URLs differ only by trailing slash."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}

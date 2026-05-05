@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 57,
+    "master": {
+        "id": "legacy-64-master-13934910",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85160772962&origin=inward",
+        "title": "Development of Tool Steel on Binder Jetting Technologies: Sintering Overview and Comparison of Material Properties",
+        "content": "<html><body>Cetim has launched further material project development on binder technologies. This work deals with the development of the tool steel X40CrMoV5-1 or H13 on two Metal Binder Jetting technologies namely DM P2500 (Digital Metal) and lab P-1 (Desktop Metal). The whole MBJ H13 has been developed by adjusting the 17-4PH powder printing parameters and by developing a specific sintering recipe by using a vacuum metallic furnace under controlled atmosphere (one step debinding sintering). This paper will be focused on sintering development. Controlling the final carbon content and achieving high density level without excessive component distortion by using SLPS process are the main challenges to overcome. The microstructure and the mechanical properties are compared. For both technologies, as sintered mechanical properties are consistent with data coming from MIM H13 materials and wrought materials. <br/><br/><br/>Authors: Reynaud C., Baulin O., Saby Q., Boulnat X., Reinwalt B.. <br/><br/>Affiliations: Matériaux : Ingénierie et science, CETIM Centre Technique des Industries Mécaniques. <br/><br/>Publication: World PM 2022 Congress Proceedings, 2022. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13934918",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85160774641&origin=inward",
+        "title": "Overview Of Industrial Applications Fabricated By Metal Binder Jetting: Benefits And Challenges",
+        "content": "<html><body>Thanks to its high level of productivity, limited post processing and design freedom, Metal Binder Jetting (MBJ) has a significant potential for cost-effective applications in production [1]. Based on different use cases developed by CETIM over the past several years as part of different support programs, the paper presents several industrial components developed and industrialized for serial production using MBJ. Different applications and requirements are developed throughout the paper: the technical advantages are specified, the ways various process challenges have been resolved to reach a satisfying industrial quality, and the cost efficiency. <br/><br/><br/>Authors: Calves P., Ondet T., Auzenat F., Thoulouze J.C.. <br/><br/>Affiliations: CETIM Centre Technique des Industries Mécaniques, INNOVAPEEK, SECO TOOLS, MANTION. <br/><br/>Publication: World PM 2022 Congress Proceedings, 2022. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "unique",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "unique",
+        "note": "Different papers from same conference: one on H13 tool steel sintering development, the other on industrial MBJ applications and use cases."
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "agreement_unique",
+    "content_source": "hbase_full"
+}

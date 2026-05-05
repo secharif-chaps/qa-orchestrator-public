@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-64-master-13363357",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85134640386&origin=inward",
+        "title": "High-Frequency Modeling and Inter-Turn Voltage Distribution Analysis of a Modular Electric Machine for Electric Aircraft Propulsion",
+        "content": "<html><body>Electric machines for electric aircraft propulsion applications must be designed to deliver high levels of propulsive power under low air pressure conditions with maximum power density. The combination of increased electric field stresses attributable to medium voltage excitation, reduced air pressure at high altitudes, and elevated switching speeds of wide-bandgap power semiconductor switches raise the risk of partial discharge (PD) and insulation breakdown in the machine windings. This paper presents an analytical approach for predicting the inter-turn voltage distribution inside a machine winding based on distributed high-frequency turn models. This technique makes it possible to predict the localized peak turn-to-turn and turn-to-ground voltage stresses in every part of the winding. Analysis of the concentrated stator windings of a 1 MW surface PM machine excited by a SiC-based inverter shows that the peak turn-to-turn and turn-to-ground voltage values can exceed their steady-state peak values by as much as 100% during switching transients, significantly increasing the peak electric field stresses that must be accommodated when designing the winding insulation system. <br/><br/><br/>Authors: Zeng H., Swanke J., Jahns T.M., Sarlioglu B.. <br/><br/>Affiliations: University of Wisconsin-Madison. <br/><br/>Publication: 2022 IEEE Transportation Electrification Conference and Expo, ITEC 2022, 2022, pp.1097-1104. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13363939",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85134640386&origin=inward",
+        "title": "High-Frequency Modeling and Inter-Turn Voltage Distribution Analysis of a Modular Electric Machine for Electric Aircraft Propulsion",
+        "content": "<html><body>Electric machines for electric aircraft propulsion applications must be designed to deliver high levels of propulsive power under low air pressure conditions with maximum power density. The combination of increased electric field stresses attributable to medium voltage excitation, reduced air pressure at high altitudes, and elevated switching speeds of wide-bandgap power semiconductor switches raise the risk of partial discharge (PD) and insulation breakdown in the machine windings. This paper presents an analytical approach for predicting the inter-turn voltage distribution inside a machine winding based on distributed high-frequency turn models. This technique makes it possible to predict the localized peak turn-to-turn and turn-to-ground voltage stresses in every part of the winding. Analysis of the concentrated stator windings of a 1 MW surface PM machine excited by a SiC-based inverter shows that the peak turn-to-turn and turn-to-ground voltage values can exceed their steady-state peak values by as much as 100% during switching transients, significantly increasing the peak electric field stresses that must be accommodated when designing the winding insulation system. <br/><br/><br/>Authors: Zeng H., Swanke J., Jahns T.M., Sarlioglu B.. <br/><br/>Affiliations: University of Wisconsin-Madison. <br/><br/>Publication: 2022 IEEE Transportation Electrification Conference and Expo, ITEC 2022, 2022, pp.1097-1104. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "identical"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article"
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

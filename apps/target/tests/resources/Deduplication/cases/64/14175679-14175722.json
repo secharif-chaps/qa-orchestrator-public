@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-64-master-14175679",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85169163025&origin=inward",
+        "title": "APPLICATION OF COMPOSITES IN AIRCRAFT GAS TURBINE ENGINES - CRITICAL ISSUES",
+        "content": "<html><body>Actual and potential composite applications in commercial and military aircraft gas turbine engines range from low temperature graphite/polymer matrix composite(PMC) components at the front of the engine, such as, fan blades, vanes, struts and cases, to high temperature ceramic matrix composite(CMC) nozzle components. Currently the “building block” approach is primarily used in the development of composite components for gas turbine engines. Critical issues associated with the design of these composite structures for both commercial and military aircraft gas turbine engines are defined. Critical structural components for both commercial and military gas turbine engines are designed to meet strict safety-of-flight requirements established by the FAA and the Air Force/Navy, respectively. Key design requirements established for damage tolerance and durability are defined. Areas in which research and development efforts should be accelerated are identified. There are currently a number of ongoing major funded research and development programs involving industry, academia, and government agencies which are contributing significantly to some of the issues addressed. These programs are: (1) High Speed Research (HSR), (2) Affordable Composites for Propulsion (ACP), and (3) Advanced Composites Technology (ACT). <br/><br/><br/>Authors: Miller R.J.. <br/><br/>Affiliations: Pratt and Whitney - West Palm Beach. <br/><br/>Publication: ASME International Mechanical Engineering Congress and Exposition, Proceedings (IMECE), 1996, pp.79-81. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-14175722",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85169163025&origin=inward",
+        "title": "APPLICATION OF COMPOSITES IN AIRCRAFT GAS TURBINE ENGINES - CRITICAL ISSUES",
+        "content": "<html><body>Actual and potential composite applications in commercial and military aircraft gas turbine engines range from low temperature graphite/polymer matrix composite(PMC) components at the front of the engine, such as, fan blades, vanes, struts and cases, to high temperature ceramic matrix composite(CMC) nozzle components. Currently the “building block” approach is primarily used in the development of composite components for gas turbine engines. Critical issues associated with the design of these composite structures for both commercial and military aircraft gas turbine engines are defined. Critical structural components for both commercial and military gas turbine engines are designed to meet strict safety-of-flight requirements established by the FAA and the Air Force/Navy, respectively. Key design requirements established for damage tolerance and durability are defined. Areas in which research and development efforts should be accelerated are identified. There are currently a number of ongoing major funded research and development programs involving industry, academia, and government agencies which are contributing significantly to some of the issues addressed. These programs are: (1) High Speed Research (HSR), (2) Affordable Composites for Propulsion (ACP), and (3) Advanced Composites Technology (ACT). <br/><br/><br/>Authors: Miller R.J.. <br/><br/>Affiliations: Pratt and Whitney - West Palm Beach. <br/><br/>Publication: ASME International Mechanical Engineering Congress and Exposition, Proceedings (IMECE), 1996, pp.79-81. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "partial_overlap"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL, title, author, and identical article text indicate a literal recrawl of the same record"
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

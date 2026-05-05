@@ -1,0 +1,36 @@
+{
+  "account_id": "63",
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-63-master-12903879",
+    "url": "",
+    "title": "Reste à convaincre Engie-Electrabel…",
+    "content": "<html><body>(Source : Sud Presse)<br/><h1>Reste à convaincre Engie-Electrabel…</h1><p>Il y a un acteur d’importance à ne pas oublier dans ce débat : Engie-Electrabel, l’exploitant des centrales. Décider de prolonger deux réacteurs après 2025, c’est une chose, rendre cela opérationnel en est une autre.</p><p>Engie a souvent indiqué au gouvernement qu’une décision devait être prise en 2020 pour pouvoir être prêt à heure et à temps. Le processus sera long : loi pour prolonger le nucléaire, grande étude internationale d’incidence, négociations avec la Commission européenne qui avait donné son aval au mécanisme de subsidiation de nouvelles centrales au gaz devant suppléer la perte de production nucléaire… À condition que tous les réacteurs ferment en 2025.</p><p>Tu veux ou tu veux pas ?</p><p>Et puis, il y a la mise en conformité des centrales (on parle d’un peu moins d’un milliard d’euros), l’achat de combustible nucléaire (etc.) pour un exploitant qui a déjà dit avoir viré le nucléaire de son business plan, pour se focaliser sur le gaz et l’énergie renouvelable. Bref, il se dit déjà que les deux réacteurs ne seraient pas prêts avant l’hiver 2026-27, ce qui poserait un incontestable problème pour l’hiver précédent.</p><p>D’aucuns insistent sur le fait que le problème est moins technique que financier, Engie-Electrabel souhaitant démarrer dans les meilleures conditions les tractations avec le gouvernement.</p><p>Des négociations qui s’annoncent serrées, aussi sur fond de démantèlement des réacteurs condamnés dans les prochaines années et de gestion de déchets nucléaires. On parle là de chantiers de dizaines de milliards d’euros (plus de 40) à charge de l’exploitant.</p><p>Rappelons aussi que, dans une étude récente, la CREG (la Commission de régulation de l’électricité et du gaz) évoquait une hausse des bénéfices des centrales nucléaires pour les prochaines années, ce qui pourrait permettre au gouvernement de faire contribuer plus généreusement Engie-Electrabel à l’allégement des factures des ménages. Tout cela se discute…</p><p>D.SW.</p></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-63-dup-12904045",
+    "url": "",
+    "title": "Reste à convaincre Engie-Electrabel…",
+    "content": "<html><body>(Source : Sud Presse)<br/><h1>Reste à convaincre Engie-Electrabel…</h1><p>Il y a un acteur d’importance à ne pas oublier dans ce débat : Engie-Electrabel, l’exploitant des centrales. Décider de prolonger deux réacteurs après 2025, c’est une chose, rendre cela opérationnel en est une autre.</p><p>Engie a souvent indiqué au gouvernement qu’une décision devait être prise en 2020 pour pouvoir être prêt à heure et à temps. Le processus sera long : loi pour prolonger le nucléaire, grande étude internationale d’incidence, négociations avec la Commission européenne qui avait donné son aval au mécanisme de subsidiation de nouvelles centrales au gaz devant suppléer la perte de production nucléaire… À condition que tous les réacteurs ferment en 2025.</p><p>Tu veux ou tu veux pas ?</p><p>Et puis, il y a la mise en conformité des centrales (on parle d’un peu moins d’un milliard d’euros), l’achat de combustible nucléaire (etc.) pour un exploitant qui a déjà dit avoir viré le nucléaire de son business plan, pour se focaliser sur le gaz et l’énergie renouvelable. Bref, il se dit déjà que les deux réacteurs ne seraient pas prêts avant l’hiver 2026-27, ce qui poserait un incontestable problème pour l’hiver précédent.</p><p>D’aucuns insistent sur le fait que le problème est moins technique que financier, Engie-Electrabel souhaitant démarrer dans les meilleures conditions les tractations avec le gouvernement.</p><p>Des négociations qui s’annoncent serrées, aussi sur fond de démantèlement des réacteurs condamnés dans les prochaines années et de gestion de déchets nucléaires. On parle là de chantiers de dizaines de milliards d’euros (plus de 40) à charge de l’exploitant.</p><p>Rappelons aussi que, dans une étude récente, la CREG (la Commission de régulation de l’électricité et du gaz) évoquait une hausse des bénéfices des centrales nucléaires pour les prochaines années, ce qui pourrait permettre au gouvernement de faire contribuer plus généreusement Engie-Electrabel à l’allégement des factures des ménages. Tout cela se discute…</p><p>D.SW.</p></body></html>"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "content_hash",
+    "similarity": 1
+  },
+  "measurements": {
+    "jaccard": 1,
+    "hamming": 0
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same op-ed 'Reste à convaincre Engie-Electrabel' — different paragraphs captured (one includes the embedded ad slot HTML)."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}

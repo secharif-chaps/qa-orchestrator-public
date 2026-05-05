@@ -1,0 +1,36 @@
+{
+  "account_id": "63",
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-63-master-12743347",
+    "url": "",
+    "title": "Octa+ remplacé par Engie-Electrabel sur Bruxelles",
+    "content": "<html><body>(Source : L&apos;Avenir)<br/><h1>Octa+ remplacé par Engie-Electrabel sur Bruxelles</h1><p>L’entreprise Octa+ cessera de fournir de l’électricité et du gaz à ses clients de la Région bruxelloise le 1er janvier mais ce retrait n’entraînera aucun arrêt d’approvisionnement pour la clientèle, assure jeudi l’autorité bruxelloise de régulation Brugel. La fourniture sera assurée par Engie Electrabel.</p><p>L’envolée des prix de l’énergie sur les marchés européens crée une forte tension sur les liquidités des fournisseurs, rappelle le régulateur. En Belgique, trois d’entre eux ont stoppé leur activité au cours du dernier trimestre de l’année, dont Octa+ à Bruxelles. L’entreprise familiale ne fournira plus ses clients bruxellois mais reste active en Flandre et en Wallonie.</p><p>Sibelga, le gestionnaire du réseau de distribution bruxellois, a décidé de résilier le contrat d’accès aux réseaux de gaz et d’électricité d’Octa+ car le fournisseur n’était plus en mesure de garantir la fourniture de ses clients et d’honorer ses engagements. Brugel ajoute qu’une concertation entre les parties avait été préalablement organisée mais qu’aucune solution n’a pu être dégagée.</p><p>Les clients d’Octa + seront informés par courrier et la fourniture de gaz et électricité sera assurée par Engie Electrabel, aux conditions du contrat par défaut Easy Indexed (professionnel ou résidentiel selon le cas).</p><p>Brugel rappelle que tous ces clients peuvent également signer un nouveau contrat avec un autre fournisseur.</p><p>En Région de Bruxelles-Capitale, la société Octa+ fournit du gaz et de l’électricité à respectivement 11 000 et 17 000 clients, tant résidentiels que professionnels.</p></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-63-dup-12743478",
+    "url": "",
+    "title": "Octa+ remplacé par Engie-Electrabel sur Bruxelles",
+    "content": "<html><body>(Source : L&apos;Avenir)<br/><h1>Octa+ remplacé par Engie-Electrabel sur Bruxelles</h1><p>L’entreprise Octa+ cessera de fournir de l’électricité et du gaz à ses clients de la Région bruxelloise le 1er janvier mais ce retrait n’entraînera aucun arrêt d’approvisionnement pour la clientèle, assure jeudi l’autorité bruxelloise de régulation Brugel. La fourniture sera assurée par Engie Electrabel.</p><p>L’envolée des prix de l’énergie sur les marchés européens crée une forte tension sur les liquidités des fournisseurs, rappelle le régulateur. En Belgique, trois d’entre eux ont stoppé leur activité au cours du dernier trimestre de l’année, dont Octa+ à Bruxelles. L’entreprise familiale ne fournira plus ses clients bruxellois mais reste active en Flandre et en Wallonie.</p><p>Sibelga, le gestionnaire du réseau de distribution bruxellois, a décidé de résilier le contrat d’accès aux réseaux de gaz et d’électricité d’Octa+ car le fournisseur n’était plus en mesure de garantir la fourniture de ses clients et d’honorer ses engagements. Brugel ajoute qu’une concertation entre les parties avait été préalablement organisée mais qu’aucune solution n’a pu être dégagée.</p><p>Les clients d’Octa + seront informés par courrier et la fourniture de gaz et électricité sera assurée par Engie Electrabel, aux conditions du contrat par défaut Easy Indexed (professionnel ou résidentiel selon le cas).</p><p>Brugel rappelle que tous ces clients peuvent également signer un nouveau contrat avec un autre fournisseur.</p><p>En Région de Bruxelles-Capitale, la société Octa+ fournit du gaz et de l’électricité à respectivement 11 000 et 17 000 clients, tant résidentiels que professionnels.</p></body></html>"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "content_hash",
+    "similarity": 1
+  },
+  "measurements": {
+    "jaccard": 1,
+    "hamming": 0
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same L'Avenir article 'Octa+ remplacé par Engie-Electrabel sur Bruxelles' — same content."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}

@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 60,
+    "master": {
+        "id": "legacy-64-master-13361695",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85134593468&origin=inward",
+        "title": "Numerical Investigation of the EDM Induced Temperature Field in a Composite Ceramic",
+        "content": "<html><body>The combination of high chemical and thermal durability with high hardness and strength is the main reason for the increasing use of ceramics in industry. However, these benefits lead to serious challenges for conventional manufacturing processes, which are often limited due to the mechanical properties of the workpiece material. Because of its working principle, electrical discharge machining (EDM) is almost independent from the mechanical workpiece properties. Nevertheless, the thermal loadings, which are caused by electrical discharges, result in different modifications on the surface and in sub-surface layers. These induced modifications define the surface integrity, which in turn determines the functional properties of a workpiece. Besides the intended rim zone modifications damages also occur. For a more detailed understanding of the occurring damages within the arising heat affected zone (HAZ), a heat transfer simulation for a single discharge on an alumina/zirconia/tungsten carbide ceramic was conducted in this work. <br/><br/><br/>Authors: Hess R., Olivier M., Schneider S., Heidemanns L., Klink A., Herrig T., Bergs T.. <br/><br/>Affiliations: Fraunhofer Institute for Production Technology IPT, Rheinisch-Westfälische Technische Hochschule Aachen. <br/><br/>Publication: Procedia CIRP, 2022, pp.31-36. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13361711",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85134581768&origin=inward",
+        "title": "Procedia CIRP",
+        "content": "<html><body>The proceedings contain 152 papers. The topics discussed include: influence of the kinematic roughness resulting from facing of AMC specimens on preconditioning of friction surfaces; an evaluation of non-destructive methods for detection of thermally-induced metallurgical machining defects; correlation between subsurface properties, the thermo-mechanical process conditions and machining parameters using the CEL simulation method; numerical investigation of the EDM induced temperature field in a composite ceramic; evaluation of the influence of different milling parameters and tool wear on the rim zone of a 5-axis milled large gear; characterization of deformation-induced martensite by cryogenic turning using eddy current testing; machinability of maraging steel multilayered claddings obtained via laser direct energy deposition in micromilling operations; ultrasonic vibration and cryogenic assisted drilling of aluminum-CFRP composite stack – an innovative approach; and correlation between subsurface properties, the thermo-mechanical process conditions and machining parameters using the CEL simulation method. <br/><br/><br/>Authors: . <br/><br/>Affiliations: . <br/><br/>Publication: Procedia CIRP, 2022. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "unique",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "unique",
+        "note": "Master is a specific article; candidate is the conference proceedings overview listing many papers including the master as one item."
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "agreement_unique",
+    "content_source": "hbase_full"
+}

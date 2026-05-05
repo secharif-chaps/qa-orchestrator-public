@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_EXACT",
+    "legacy_level": 110,
+    "master": {
+        "id": "legacy-64-master-13494642",
+        "url": "https://www.goodfellow.com/us/fr/iron",
+        "title": "Acheter Fer",
+        "content": "<html><head><title>Acheter Fer</title></head><body><div>\n                                                        <p>Le fer est connu et utilisé depuis les civilisations anciennes. C&apos;est l&apos;un des métaux les plus abondants (41 000 ppm dans la croûte terrestre) et certainement l&apos;un des plus importants car il est très largement utilisé par rapport à n&apos;importe quel autre métal.  Sa production en haut-fourneaux est largement documentée.  Quand il est pur, ce métal présente un aspect blanc brillant, doux et est facile à travailler. Cependant, il réagit et constitue facilement un revêtement d&apos;oxides hydratés en surface au contact de l&apos;humidité de l&apos;air.  Cette partie est incohérente et se détache facilement en plaques révélant des surfaces neuves pouvant être attaquées. Le fer est soluble dans les acides dilués, où Fe(II) est produit en solution. Des acides plus oxydants produisent des solutions de Fe(III) et les agents acides fortement oxydants (par exemple le dichromate ou bien l&apos;acide nitrique concentré) produisent une forme passive du métal, probablement comme résultat de la formation d&apos;un film de surface d&apos;oxyde cohérent. Selon la température, le fer pur existe sous trois formes appelées fer alpha, fer gamma, fer delta.  Le fer alpha est une forme polymorphe du fer qui est stable en dessous de 906C, il a un réseau cubique centré (BCC) et est magnétique jusqu&apos;à 768C.  Le fer gamma est une forme polymorphe du fer qui est stable entre 906C et 1403C, il a un réseau cubique à faces centrées (CFC) et est non magnétique (N.B. : sa marge de stabilité est réduite par la présence du carbone, du manganèse et du nickel, et est la base des solutions solides austénitiques). Le fer delta est une forme polymorphe du fer qui est stable entre 1403C et le point de fusion, il a un réseau identique au fer alpha.  Le fer est la base de nombreux types d&apos;acier, leurs propriétés étant obtenues par alliage du fer au carbone, nickel, chrome et autres éléments en proportions variables.  On obtient ainsi des matériaux aux propriétés physiques et mécaniques extrémement variées. Le fer est également un élement essentiel pour tout être humain, le corps humain contenant en moyenne 4 g de cet élément.  La majorité du fer dans le corps se trouve dans l&apos;hémoglobine, le pigment respiratoire à la base du mécanisme de transportation de l&apos;oxygène par les globules rouges.</p>\n                                                        <p>\n                                                            \n                                                                En savoir plus\n                                                                \n                                                                    \n                                                                \n                                                            \n                                                        </p>\n                                                    </div></body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13495902",
+        "url": "https://www.goodfellow.com/fr/fr/iron",
+        "title": "Acheter Fer",
+        "content": "<html><head><title>Acheter Fer</title></head><body><div>\n                                                        <p>Le fer est connu et utilisé depuis les civilisations anciennes. C&apos;est l&apos;un des métaux les plus abondants (41 000 ppm dans la croûte terrestre) et certainement l&apos;un des plus importants car il est très largement utilisé par rapport à n&apos;importe quel autre métal.  Sa production en haut-fourneaux est largement documentée.  Quand il est pur, ce métal présente un aspect blanc brillant, doux et est facile à travailler. Cependant, il réagit et constitue facilement un revêtement d&apos;oxides hydratés en surface au contact de l&apos;humidité de l&apos;air.  Cette partie est incohérente et se détache facilement en plaques révélant des surfaces neuves pouvant être attaquées. Le fer est soluble dans les acides dilués, où Fe(II) est produit en solution. Des acides plus oxydants produisent des solutions de Fe(III) et les agents acides fortement oxydants (par exemple le dichromate ou bien l&apos;acide nitrique concentré) produisent une forme passive du métal, probablement comme résultat de la formation d&apos;un film de surface d&apos;oxyde cohérent. Selon la température, le fer pur existe sous trois formes appelées fer alpha, fer gamma, fer delta.  Le fer alpha est une forme polymorphe du fer qui est stable en dessous de 906C, il a un réseau cubique centré (BCC) et est magnétique jusqu&apos;à 768C.  Le fer gamma est une forme polymorphe du fer qui est stable entre 906C et 1403C, il a un réseau cubique à faces centrées (CFC) et est non magnétique (N.B. : sa marge de stabilité est réduite par la présence du carbone, du manganèse et du nickel, et est la base des solutions solides austénitiques). Le fer delta est une forme polymorphe du fer qui est stable entre 1403C et le point de fusion, il a un réseau identique au fer alpha.  Le fer est la base de nombreux types d&apos;acier, leurs propriétés étant obtenues par alliage du fer au carbone, nickel, chrome et autres éléments en proportions variables.  On obtient ainsi des matériaux aux propriétés physiques et mécaniques extrémement variées. Le fer est également un élement essentiel pour tout être humain, le corps humain contenant en moyenne 4 g de cet élément.  La majorité du fer dans le corps se trouve dans l&apos;hémoglobine, le pigment respiratoire à la base du mécanisme de transportation de l&apos;oxygène par les globules rouges.</p>\n                                                        <p>\n                                                            \n                                                                En savoir plus\n                                                                \n                                                                    \n                                                                \n                                                            \n                                                        </p>\n                                                    </div></body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "identical"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same Goodfellow product article on iron with identical French text and structure, just different locale in URL."
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "content_hash",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

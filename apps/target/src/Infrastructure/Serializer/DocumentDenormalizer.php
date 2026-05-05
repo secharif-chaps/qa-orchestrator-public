@@ -278,6 +278,14 @@ class DocumentDenormalizer implements DenormalizerInterface, DenormalizerAwareIn
             // `Document::$duplicates` is typed `array` (builtin), so the
             // generic non-builtin branch above does not fire. Map each
             // entry to a `DuplicateAttempt` value object explicitly.
+            //
+            // Why no symmetric hook on the save side ({@see DocumentNormalizer}):
+            // serialization preserves the live PHP type — the array is
+            // already a `list<DuplicateAttempt>` so the standard
+            // ObjectNormalizer reads each VO's `#[Groups(['document:save'])]`
+            // properties and produces the expected nested array. Type info
+            // is only erased on the load path (raw `array` from OpenSearch
+            // _source) which is why the asymmetry exists.
             $value = array_map(
                 fn (mixed $item): DuplicateAttempt => $this->denormalizer->denormalize(
                     $item,

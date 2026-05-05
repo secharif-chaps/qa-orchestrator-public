@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-64-master-13415370",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85136330116&origin=inward",
+        "title": "Aircraft Engine Surge-Precursor Detection and Antisurge Control Method at Onboard Environment",
+        "content": "<html><body>This paper is concerned with a new detection method to realize the real-time judgment of surge precursor by the low-sampling-rate compressor discharge static pressure at onboard environment, and it provides the possibility for antisurge control. Firstly, an improved Hilbert–Huang transform time-frequency analysis algorithm is proposed to get the Hilbert spectrum of the windowed signals in real time. The surge-precursor intensity (SPI) is characterized by counting the signal amplitude in the low-frequency range. The surge early warning signal is judged according to whether the SPI crosses the threshold. Then, this paper handles the misjudgment problem caused by the endpoint effect phenomenon in the detection algorithm by adding data segments at the beginning and end of the analysis signal. Finally, to prevent the possible real-time jump phenomenon of the surge warning signal during the detection process, a judgment logic module is added. The verification results of multiple sets of experimental data showed that the warning time margin is 0.05 ∼0.3 s. This paper also established an antisurge control system. The results verified that the detection method is effective, and the time margin of the early warning signal judged meets the response time requirements of the control system. <br/><br/><br/>Authors: Sheng H., Chen Q., Zhang T.. <br/><br/>Affiliations: Nanjing University of Aeronautics and Astronautics. <br/><br/>Publication: AIAA Journal, 2022, pp.4855-4867. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13415701",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85136330116&origin=inward",
+        "title": "Aircraft Engine Surge-Precursor Detection and Antisurge Control Method at Onboard Environment",
+        "content": "<html><body>This paper is concerned with a new detection method to realize the real-time judgment of surge precursor by the low-sampling-rate compressor discharge static pressure at onboard environment, and it provides the possibility for antisurge control. Firstly, an improved Hilbert–Huang transform time-frequency analysis algorithm is proposed to get the Hilbert spectrum of the windowed signals in real time. The surge-precursor intensity (SPI) is characterized by counting the signal amplitude in the low-frequency range. The surge early warning signal is judged according to whether the SPI crosses the threshold. Then, this paper handles the misjudgment problem caused by the endpoint effect phenomenon in the detection algorithm by adding data segments at the beginning and end of the analysis signal. Finally, to prevent the possible real-time jump phenomenon of the surge warning signal during the detection process, a judgment logic module is added. The verification results of multiple sets of experimental data showed that the warning time margin is 0.05 ∼0.3 s. This paper also established an antisurge control system. The results verified that the detection method is effective, and the time margin of the early warning signal judged meets the response time requirements of the control system. <br/><br/><br/>Authors: Sheng H., Chen Q., Zhang T.. <br/><br/>Affiliations: Nanjing University of Aeronautics and Astronautics. <br/><br/>Publication: AIAA Journal, 2022, pp.4855-4867. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "minimal_overlap"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

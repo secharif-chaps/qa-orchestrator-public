@@ -57,6 +57,33 @@ class CanonicalUrlExtractor
         return $this->normalize($resolved);
     }
 
+    /**
+     * Normalise an already-absolute URL into the same canonical form
+     * the extractor produces (lowercase scheme/host, IDN→Punycode, drop
+     * default ports, drop tracking params, drop fragment, strip
+     * trailing slash on non-root paths). Returns null when the input
+     * is not a valid absolute http(s) URL.
+     *
+     * Used by callers that already hold a canonical-URL candidate (e.g.
+     * an upstream collector that read it from a `<link rel="canonical">`)
+     * and only want to align it with the index's stored form before
+     * issuing a stage-0 lookup.
+     *
+     * @param string $url an absolute http(s) URL — relative URLs are
+     *                    rejected (returns `null`) because this entry
+     *                    point intentionally has no `$baseUrl` to resolve
+     *                    them against
+     */
+    public function canonicalize(string $url): ?string
+    {
+        // baseUrl=null on purpose: this is the public canonicalize() path
+        // for URLs that callers warrant to be already-absolute. Any
+        // relative URL slipping through is rejected by `makeAbsoluteAndValidate`.
+        $resolved = $this->makeAbsoluteAndValidate(trim($url), null);
+
+        return null !== $resolved ? $this->normalize($resolved) : null;
+    }
+
     private function resolveFromProvider(?string $providerUrl, ?string $sourceUrl): ?string
     {
         if (null === $providerUrl) {
@@ -301,7 +328,18 @@ class CanonicalUrlExtractor
 
         $path = $components['path'] ?? '';
         // Empty path is semantically equivalent to "/" (RFC 3986 §6.2.3).
-        $normalized .= '' === $path ? '/' : $path;
+        if ('' === $path) {
+            $path = '/';
+        }
+        // Strip a trailing slash on non-root paths (`/foo/` ≡ `/foo`)
+        // — Google Search-style canonicalisation. The root `/` is kept
+        // because dropping it would also remove the path separator.
+        // This collapses two URLs that resolve to the same resource on
+        // every modern HTTP server (cf. example.com/about vs about/).
+        if ('/' !== $path && str_ends_with($path, '/')) {
+            $path = rtrim($path, '/');
+        }
+        $normalized .= $path;
 
         $query = $this->normalizeQuery($components['query'] ?? null);
         if (null !== $query) {

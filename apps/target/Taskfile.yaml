@@ -56,19 +56,24 @@ tasks:
       - docker compose exec target php vendor/bin/phpstan clear-result-cache
 
   test:
-    desc: 'Run all PHPUnit tests'
+    desc: 'Run all PHPUnit tests except the @slow group (legacy dedup golden corpus)'
     cmds:
-      - docker compose exec target php -d memory_limit=2G vendor/bin/phpunit
+      - docker compose exec target php -d memory_limit=2G vendor/bin/phpunit --exclude-group slow {{.CLI_ARGS}}
 
   test:unit:
-    desc: 'Run PHPUnit unit tests'
+    desc: 'Run PHPUnit unit tests except the @slow group'
     cmds:
-      - docker compose exec target php vendor/bin/phpunit --testsuite "Unit tests" {{.CLI_ARGS}}
+      - docker compose exec target php vendor/bin/phpunit --testsuite "Unit tests" --exclude-group slow {{.CLI_ARGS}}
 
   test:integration:
     desc: 'Run PHPUnit integration tests'
     cmds:
       - docker compose exec target php -d memory_limit=2G vendor/bin/phpunit --testsuite "Integration tests" {{.CLI_ARGS}}
+
+  test:slow:
+    desc: 'Run only the @slow group (legacy dedup golden corpus, ~1 min on 7 paratest workers)'
+    cmds:
+      - docker compose exec target php vendor/bin/paratest --processes=7 --group slow {{.CLI_ARGS}}
 
   test:integration:setup:
     desc: 'Setup integration tests environment'

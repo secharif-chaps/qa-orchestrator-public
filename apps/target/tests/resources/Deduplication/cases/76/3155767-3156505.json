@@ -1,0 +1,36 @@
+{
+  "account_id": "76",
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-76-master-3155767",
+    "url": "https://news.ppg.com/press-releases/press-release-details/2022/PPG-PITT-CHAR-NX-coating-system-awarded-independent-verification-of-enhanced-durability-/default.aspx",
+    "title": "PPG PITT-CHAR NX coating system awarded independent verification of enhanced durability ",
+    "content": "<html><head><title>PPG PITT-CHAR NX coating system awarded independent verification of enhanced durability</title></head><body><div>\n                    <p><em>UL Verification results far exceed requirements of industry’s test standard</em></p>\n<p>AMSTERDAM, Feb. 21, 2022 – PPG (NYSE: PPG) today announced that it has received independent verification of enhanced durability for its PPG PITT-CHAR® NX passive fire protection (PFP) coating system. The verification was provided by UL Verification, which is an independent assessor that scrutinizes the validity of product performance claims. </p>\n<p>In an industry first, PPG<em> PITT-CHAR</em> NX coating was subjected to double the exposure conditions for the most onerous category in the UL standards* for durability. After exposure, the coating was tested against control samples to verify compliance with the relevant UL fire standard**. </p>\n<p>“This endorsement of double exposure demonstrates that even in the most extreme environmental and fire conditions, PPG<em> PITT-CHAR</em> NX coating can provide performance with the very highest levels of confidence,” said Richard Holliday, PPG global director,  hydrocarbon PFP, protective and marine coatings. </p>\n<p>The latest UL testing results add to several third-party accreditations already awarded to PPG <em>PITT-CHAR</em> NX coating system. These include ASTM, ISO and NORSOK accreditation for the coating’s suitability for industrial, marine and offshore environments without degradation in fire resistance. </p>\n<p>PPG<em> PITT-CHAR</em> NX coating is a flexible epoxy PFP system offering reduced coating thickness, lower weight and faster application while also providing outstanding fire resistance and durability.</p>\n<p>*UL 2431 <em>Standard for Safety for Durability of Fire Resistive Coatings and Materials</em></p>\n<p>**UL 1709 <em>Rapid Rise Fire Tests of Protection Materials for Structural Steel</em></p>\n<p><strong>PPG: WE PROTECT AND BEAUTIFY THE WORLD™</strong></p>\n<p>At PPG (NYSE:PPG), we work every day to develop and deliver the paints, coatings and materials that our customers have trusted for nearly 140 years. Through dedication and creativity, we solve our customers’ biggest challenges, collaborating closely to find the right path forward. With headquarters in Pittsburgh, we operate and innovate in more than 75 countries and reported net sales of $16.8 billion in 2021. We serve customers in construction, consumer products, industrial and transportation markets and aftermarkets. To learn more, visit <a href=\"http://www.ppg.com/\">www.ppg.com</a>.</p>\n<p><em>We protect and beautify the world</em> and <em>PITT-CHAR </em>are trademarks and the <em>PPG Logo </em>is a registered trademark of PPG Industries Ohio, Inc. </p>\n\n <b>Media Contact: \n</b><p>Andrew Wood\n</p><p>Corporate Communications, EMEA\n</p><p>+31 6 5121 6579\n</p><a href=\"mailto:awood@ppg.com\">awood@ppg.com</a><br/>\n                </div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-76-dup-3156505",
+    "url": "https://news.ppg.com/press-releases/press-release-details/2022/PPG-PITT-CHAR-NX-coating-system-awarded-independent-verification-of-enhanced-durability-/default.aspx",
+    "title": "PPG PITT-CHAR NX coating system awarded independent verification of enhanced durability ",
+    "content": "<html><head><title>PPG PITT-CHAR NX coating system awarded independent verification of enhanced durability</title></head><body><div>\n                    <p><em>UL Verification results far exceed requirements of industry’s test standard</em></p>\n<p>AMSTERDAM, Feb. 21, 2022 – PPG (NYSE: PPG) today announced that it has received independent verification of enhanced durability for its PPG PITT-CHAR® NX passive fire protection (PFP) coating system. The verification was provided by UL Verification, which is an independent assessor that scrutinizes the validity of product performance claims. </p>\n<p>In an industry first, PPG<em> PITT-CHAR</em> NX coating was subjected to double the exposure conditions for the most onerous category in the UL standards* for durability. After exposure, the coating was tested against control samples to verify compliance with the relevant UL fire standard**. </p>\n<p>“This endorsement of double exposure demonstrates that even in the most extreme environmental and fire conditions, PPG<em> PITT-CHAR</em> NX coating can provide performance with the very highest levels of confidence,” said Richard Holliday, PPG global director,  hydrocarbon PFP, protective and marine coatings. </p>\n<p>The latest UL testing results add to several third-party accreditations already awarded to PPG <em>PITT-CHAR</em> NX coating system. These include ASTM, ISO and NORSOK accreditation for the coating’s suitability for industrial, marine and offshore environments without degradation in fire resistance. </p>\n<p>PPG<em> PITT-CHAR</em> NX coating is a flexible epoxy PFP system offering reduced coating thickness, lower weight and faster application while also providing outstanding fire resistance and durability.</p>\n<p>*UL 2431 <em>Standard for Safety for Durability of Fire Resistive Coatings and Materials</em></p>\n<p>**UL 1709 <em>Rapid Rise Fire Tests of Protection Materials for Structural Steel</em></p>\n<p><strong>PPG: WE PROTECT AND BEAUTIFY THE WORLD™</strong></p>\n<p>At PPG (NYSE:PPG), we work every day to develop and deliver the paints, coatings and materials that our customers have trusted for nearly 140 years. Through dedication and creativity, we solve our customers’ biggest challenges, collaborating closely to find the right path forward. With headquarters in Pittsburgh, we operate and innovate in more than 75 countries and reported net sales of $16.8 billion in 2021. We serve customers in construction, consumer products, industrial and transportation markets and aftermarkets. To learn more, visit <a href=\"http://www.ppg.com/\">www.ppg.com</a>.</p>\n<p><em>We protect and beautify the world</em> and <em>PITT-CHAR </em>are trademarks and the <em>PPG Logo </em>is a registered trademark of PPG Industries Ohio, Inc. </p>\n\n <b>Media Contact: \n</b><p>Andrew Wood\n</p><p>Corporate Communications, EMEA\n</p><p>+31 6 5121 6579\n</p><a href=\"mailto:awood@ppg.com\">awood@ppg.com</a><br/>\n                </div></body></html>"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "measurements": {
+    "jaccard": 1,
+    "hamming": 0
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same PPG PITT-CHAR NX coating press release — identical URL and content."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}

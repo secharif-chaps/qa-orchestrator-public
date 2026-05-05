@@ -1,0 +1,36 @@
+{
+  "account_id": "63",
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-63-master-12578028",
+    "url": "https://en.mercopress.com/2021/10/06/argentina-now-sells-gas-to-chile-and-brazil?utm_source=feed&utm_medium=rss&utm_content=energy&utm_campaign=rss",
+    "title": "Argentina now sells gas to Chile and Brazil",
+    "content": "<html><head><title>Argentina now sells gas to Chile and Brazil</title></head><body>\n\n\n\n\n\n\n\n\n\n\n\n\n    <div>\n        \n        <div>\n            Wednesday, <a href=\"https://en.mercopress.com/2021/10\">October</a> <a href=\"https://en.mercopress.com/2021/10/06\">6th</a> <a href=\"https://en.mercopress.com/2021\">2021</a>  - 05:15 UTC\n                        \n                    </div>\n\n        \n        \n\n        \n\n        \n        \n        <figure>\n            <a href=\"https://en.mercopress.com/data/cache/noticias/83647/0x0/deargachile.jpeg\"><img src=\"/data/cache/noticias/83647/760x480/deargachile.jpeg\"/></a>\n            Brazil is much in need of energy due to the almost unprecedentes rivers&apos; downspouts.        </figure>\n        \n        \n        <p>Argentina is now in a position to sell gas to neighbouring Chile and Brazil thanks to the Gas Plan and Vaca Muerta&apos;s potential, it was announced.</p>\n\n        <p>It has been going on since last Friday. The new state of things allows Argentina to take advantage of the ongoing energy crisis, which Argentina may now circumvent as prices hit US $ 30 per million BTU in Europe and Asia.</p>\n<p>At the same time, the cost of electricity in Argentina is around US $ 70 per megawatt-hour, while in Europe it has reached US $ 200, “an unattainable level for Argentina, without generating an economic crisis” of unknown proportions, Secretary of Energy, Darío Martínez.</p>\n<p>”Electricity subsidies would skyrocket to reach US $ 18 billion and the cost of energy to the industry would almost quadruple, generating bankruptcies and paralysis of activity. And if it were intended to transfer those costs cost to the people, bills should rise sevenfold,” which would take up a large part of a household&apos;s income, according to the official.</p>\n<p>The state-run company Integración Energética Argentina (Ieasa, formerly Enarsa) has also closed a gas export deal with Brazil, a country very much in need of energy due to the drought and lack of water in hydroelectric dams, which make up for 62% of its electricity output.</p>\n<p>The operation will be complex and will allow the regasification ship installed in the port of Escobar to be valued.</p>\n<p>The former Enarsa will import Liquefied Natural Gas (LNG), regasify it and inject it for consumption by the Ámbar Uruguaiana thermoelectric plant, which the Brazilian group J&amp;F Investimentos bought from Argentina&apos;s Saesa. </p>\n        \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n        \n\n                \n        \n\n        \n\n                \n            </div>\n\n    \n</body></html>"
+  },
+  "candidate": {
+    "id": "legacy-63-dup-12578168",
+    "url": "https://en.mercopress.com/2021/10/06/argentina-now-sells-gas-to-chile-and-brazil?utm_source=feed&utm_medium=rss&utm_content=energy&utm_campaign=rss",
+    "title": "Argentina now sells gas to Chile and Brazil",
+    "content": "<html><head><title>Argentina now sells gas to Chile and Brazil</title></head><body>\n\n\n\n\n\n\n\n\n\n\n\n\n    <div>\n        \n        <div>\n            Wednesday, <a href=\"https://en.mercopress.com/2021/10\">October</a> <a href=\"https://en.mercopress.com/2021/10/06\">6th</a> <a href=\"https://en.mercopress.com/2021\">2021</a>  - 05:15 UTC\n                        \n                    </div>\n\n        \n        \n\n        \n\n        \n        \n        <figure>\n            <a href=\"https://en.mercopress.com/data/cache/noticias/83647/0x0/deargachile.jpeg\"><img src=\"/data/cache/noticias/83647/760x480/deargachile.jpeg\"/></a>\n            Brazil is much in need of energy due to the almost unprecedentes rivers&apos; downspouts.        </figure>\n        \n        \n        <p>Argentina is now in a position to sell gas to neighbouring Chile and Brazil thanks to the Gas Plan and Vaca Muerta&apos;s potential, it was announced.</p>\n\n        <p>It has been going on since last Friday. The new state of things allows Argentina to take advantage of the ongoing energy crisis, which Argentina may now circumvent as prices hit US $ 30 per million BTU in Europe and Asia.</p>\n<p>At the same time, the cost of electricity in Argentina is around US $ 70 per megawatt-hour, while in Europe it has reached US $ 200, “an unattainable level for Argentina, without generating an economic crisis” of unknown proportions, Secretary of Energy, Darío Martínez.</p>\n<p>”Electricity subsidies would skyrocket to reach US $ 18 billion and the cost of energy to the industry would almost quadruple, generating bankruptcies and paralysis of activity. And if it were intended to transfer those costs cost to the people, bills should rise sevenfold,” which would take up a large part of a household&apos;s income, according to the official.</p>\n<p>The state-run company Integración Energética Argentina (Ieasa, formerly Enarsa) has also closed a gas export deal with Brazil, a country very much in need of energy due to the drought and lack of water in hydroelectric dams, which make up for 62% of its electricity output.</p>\n<p>The operation will be complex and will allow the regasification ship installed in the port of Escobar to be valued.</p>\n<p>The former Enarsa will import Liquefied Natural Gas (LNG), regasify it and inject it for consumption by the Ámbar Uruguaiana thermoelectric plant, which the Brazilian group J&amp;F Investimentos bought from Argentina&apos;s Saesa. </p>\n        \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n        \n\n                \n        \n\n        \n\n                \n            </div>\n\n    \n</body></html>"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "measurements": {
+    "jaccard": 1,
+    "hamming": 0
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same mercopress Argentina gas article — identical content."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}

@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 51,
+    "master": {
+        "id": "legacy-64-master-13741302",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85149177769&origin=inward",
+        "title": "Binder Jetting as Complementary Technology to Metal Injection Molding: influence of HIP on microstructure and mechanical properties",
+        "content": "<html><body>Binder jetting (BJT) is a binder-based additive manufacturing technology and is especially suited for the shaping of complex parts in small batch series. Further processing (debinding and sintering) is similar to metal injection molding (MIM). For this reason, BJT can beneficially complement MIM, which is an established technology for large-scale production of small-sized, complex net-shape parts. This study compares the performance of BJT parts made of stainless maraging steel AISI 630 (17-4PH) to standard values of MIM parts. Investigations include light microscopy, scanning electron microscopy, hardness and roughness measurements as well as tensile and impact testing. Special attention is paid to the anisotropic properties of BJT specimen. We show that HIP can improve the mechanical properties of BJT parts while decreasing their anisotropic nature. However, properties fulfilling minimum standard requirements are obtained also without HIP what may be sufficient for many applications. <br/><br/><br/>Authors: Herzog S., Kaletsch A., Riehm S., Andreeva E., Hartwig T., Broeckmann C.. <br/><br/>Affiliations: Rheinisch-Westfälische Technische Hochschule Aachen, Fraunhofer Institute for Manufacturing Technology and Advanced Materials IFAM. <br/><br/>Publication: Euro PM2021 Congress Proceedings, 2021. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13741317",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85149180316&origin=inward",
+        "title": "Binder-Jetting of TiCN-based Cermets",
+        "content": "<html><body>Additive Manufacturing is experiencing an upswing in many sectors of industry for a broad variety of materials. Processes are mainly developed for polymers and metals. For ceramics, hardmetals and especially cermets there are only a few additive processes suitable. The powder-based technique Binder-Jetting is one of these suitable processes with high productivity and relatively low green density. Within this study, TiCN-based cermets are printed by Binder-Jetting for the first time. The complexity of influences of the morphology and composition of cermet powders are discussed with regard to bulk density and material properties of printed and sintered parts. Studied TiCN-based cermet compositions represent different Ni and Mo2C binder contents. Main point of this investigation is further the adjustment of ratio of the raw materials for good sintering behaviour and its influence on the microstructures as a function of varied sintering temperatures. <br/><br/><br/>Authors: Berger C., Pötschke J., Fries M., Moritz T., Michaelis A.. <br/><br/>Affiliations: Fraunhofer Institute for Ceramic Technologies and Systems IKTS. <br/><br/>Publication: Euro PM2021 Congress Proceedings, 2021. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "unique",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "unique",
+        "note": "Different research articles on binder jetting: one on stainless maraging steel vs MIM, the other on TiCN-based cermets, with different authors and content."
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "agreement_unique",
+    "content_source": "hbase_full"
+}

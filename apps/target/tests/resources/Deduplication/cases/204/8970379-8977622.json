@@ -1,0 +1,36 @@
+{
+    "account_id": 204,
+    "legacy_outcome": "NEAR_EXACT",
+    "legacy_level": 110,
+    "master": {
+        "id": "legacy-204-master-8970379",
+        "url": "https://theprint.in/world/germany-deploying-additional-nato-forces-in-lithuania-this-week-vilnius/831508/",
+        "title": "Germany deploying additional NATO forces in Lithuania this week: Vilnius",
+        "content": "<html><head><title>Germany deploying additional NATO forces in Lithuania this week: Vilnius</title></head><body><div>\n<div>\n<p>Vilnius [Lithuania], February 14 (ANI/Sputnik): A NATO reinforcement unit from Germany is arriving in Lithuania on Monday. Besides, additional military forces are expected in the Baltic country later this week, the Lithuanian Defense Ministry said on Monday.</p>\n\n<p>“German reinforcement to the NATO enhances Forward Presence in Lithuania on Monday. The Federal Ministry of Defence of Germany responds to the increasing aggression of the Russian military activity by Ukraine’s borders and the deteriorating security situation in the Baltics by deploying additional military capabilities to Lithuania this week,” the Ministry said in a statement.</p>\n\n<p>Germany will deploy additional military personnel to the NATO unit stationed in the central Lithuanian town of Rukla. About 1,200 soldiers of the alliance are currently serving in the combat group led by Germany, the statement read.</p>\n\n\n<p>Tensions around Ukraine have escalated in recent months as Kiev and the West have accused Russia of intending to attack its neighbour, citing a troop buildup at the common border, claims that Moscow has repeatedly dismissed, pointing to NATO’s military activities in Eastern Europe as a threat to Russia’s security. (ANI/Sputnik)</p>\n\n\n<p><i>This report is auto-generated from ANI news service. ThePrint holds no responsibility for its content.</i></p>\n\n\n</div></div></body></html>"
+    },
+    "candidate": {
+        "id": "legacy-204-dup-8977622",
+        "url": "https://www.aninews.in/news/world/others/germany-deploying-additional-nato-forces-in-lithuania-this-week-vilnius20220214190915/",
+        "title": "Germany deploying additional NATO forces in Lithuania this week: Vilnius",
+        "content": "<html><head><title>Germany deploying additional NATO forces in Lithuania this week: Vilnius</title></head><body><div><p><a href=\"https://www.aninews.in/topic/vilnius\">Vilnius</a> [<a href=\"https://www.aninews.in/topic/lithuania\">Lithuania</a>], February 14 (ANI/Sputnik): A NATO reinforcement unit from <a href=\"https://www.aninews.in/topic/germany\">Germany</a> is arriving in <a href=\"https://www.aninews.in/topic/lithuania\">Lithuania</a> on Monday. Besides, additional military forces are expected in the Baltic country later this week, the <a href=\"https://www.aninews.in/topic/lithuania\">Lithuania</a>n Defense Ministry said on Monday.<br/>&quot;German reinforcement to the NATO enhances Forward Presence in <a href=\"https://www.aninews.in/topic/lithuania\">Lithuania</a> on Monday. The Federal Ministry of Defence of <a href=\"https://www.aninews.in/topic/germany\">Germany</a> responds to the increasing aggression of the Russian military activity by Ukraine&apos;s borders and the deteriorating security situation in the Baltics by deploying additional military capabilities to <a href=\"https://www.aninews.in/topic/lithuania\">Lithuania</a> this week,&quot; the Ministry said in a statement.<br/></p> <p><a href=\"https://www.aninews.in/topic/germany\">Germany</a> will deploy additional military personnel to the NATO unit stationed in the central <a href=\"https://www.aninews.in/topic/lithuania\">Lithuania</a>n town of Rukla. About 1,200 soldiers of the alliance are currently serving in the combat group led by <a href=\"https://www.aninews.in/topic/germany\">Germany</a>, the statement read.<br/>Tensions around Ukraine have escalated in recent months as Kiev and the West have accused Russia of intending to attack its neighbour, citing a troop buildup at the common border, claims that Moscow has repeatedly dismissed, pointing to NATO&apos;s military activities in Eastern Europe as a threat to Russia&apos;s security. (ANI/Sputnik)<br/></p>\n        </div></body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "near_duplicate",
+        "note": "Same ANI/Sputnik news report on German NATO forces in Lithuania but published on different sites with minor formatting and attribution differences"
+    },
+    "pinned": {
+        "outcome": "near_exact",
+        "stage": "min_hash_lsh",
+        "similarity": 0.953125
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

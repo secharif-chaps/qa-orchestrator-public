@@ -31,9 +31,18 @@ readonly class DocumentPipeline implements DocumentPipelineInterface
     ) {
     }
 
-    public function process(Document $document, WatchFile $watchFile): DocumentPipelineContext
-    {
-        $context = new DocumentPipelineContext($document, $watchFile);
+    public function process(
+        Document $document,
+        WatchFile $watchFile,
+        ?string $collectTaskId = null,
+        ?string $provider = null,
+    ): DocumentPipelineContext {
+        $context = new DocumentPipelineContext(
+            document: $document,
+            watchFile: $watchFile,
+            collectTaskId: $collectTaskId,
+            provider: $provider,
+        );
 
         foreach ($this->processors as $processor) {
             if (!$processor->supports($context)) {

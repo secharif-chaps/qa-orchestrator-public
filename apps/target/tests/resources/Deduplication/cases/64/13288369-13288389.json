@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_EXACT",
+    "legacy_level": 110,
+    "master": {
+        "id": "legacy-64-master-13288369",
+        "url": "https://www.lefigaro.fr/flash-eco/easyjet-exerce-une-option-pour-l-achat-de-56-avions-a320neo-20220621",
+        "title": "Easyjet exerce une option pour l'achat de 56 avions A320neo",
+        "content": "<html><prebody></prebody><body><p>La compagnie aérienne Easyjet a annoncé mardi qu&apos;elle allait exercer une option d&apos;achat avec l&apos;avionneur européen Airbus qui va lui fournir 56 avions A320neo, ce qui représente au prix catalogue de 2018 quelque 6,5 milliards de dollars. Le transporteur britannique explique toutefois que le prix payé est «<em>bien moins élevé</em>» grâce à des rabais obtenus auprès d&apos;Airbus dans le cadre d&apos;un contrat de 2013.</p><p>Les 56 A320neo devraient être livrés entre 2026 et 2029, et les 18 A321neo entre 2024 et 2027. L&apos;accord «<em>conditionnel</em>» annoncé mardi prévoit aussi la conversion de 18 appareils A320neo en A321neo, selon le communiqué. «<em>L&apos;achat proposé renforce le carnet de commandes d&apos;Easyjet avec Airbus jusqu&apos;en 2028 et poursuit le rajeunissement de la flotte</em>» de la compagnie «<em>low cost</em>», avec le retrait progressif de A320 plus anciens ou de A319, détaille le communiqué. Easyjet souligne que ces nouveaux avions consomment 15 à 25% de carburant en moins, et permettent de transporter plus de passagers, ce qui offre des avantages tant économiques qu&apos;environnementaux, selon le communiqué. Easyjet avait publié il y a un mois une perte nette réduite au premier semestre de son exercice décalé grâce à la reprise du trafic aérien post-confinements, et se montrait optimiste pour l&apos;été. Le secteur aérien a été l&apos;un des plus durement touchés par la pandémie de Covid-19 qui a paralysé le trafic mondial pendant des mois.</p> <p>Depuis la levée des restrictions sanitaires dans de nombreux pays, notamment le Royaume-Uni, en début d&apos;année, les transporteurs font à présent face à des difficultés pour répondre à la demande en forte hausse, principalement à cause de sévères pénuries de main-d’œuvre. La compagnie a ainsi dû réduire ses prévisions de capacité de vols pour la saison estivale à cause du manque de personnel, ce qui aura un impact financier, a-t-elle prévenu lundi, sans donner d&apos;évaluation chiffrée.</p>  <br/>\n</body><postbody></postbody></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13288389",
+        "url": "https://www.challenges.fr/economie/easyjet-exerce-une-option-pour-l-achat-de-56-avions-a320neo_817948?xtor=RSS-15.amp",
+        "title": "Easyjet exerce une option pour l'achat de 56 avions A320neo",
+        "content": "<html><head><title>Easyjet exerce une option pour l&apos;achat de 56 avions A320neo</title></head><body><div>\n\t<p>La compagnie aérienne Easyjet a annoncé mardi qu&apos;elle allait exercer une option d&apos;achat avec l&apos;avionneur européen Airbus qui va lui fournir 56 avions A320neo, ce qui représente au prix catalogue de 2018 quelque 6,5 milliards de dollars.</p>\n<p>Le transporteur britannique explique toutefois que le prix payé est &quot;bien moins élevé&quot; grâce à des rabais obtenus auprès d&apos;Airbus dans le cadre d&apos;un contrat de 2013. </p>\n<p>Les 56 A320neo devraient être livrés entre 2026 et 2029, et les 18 A321neo entre 2024 et 2027.</p>\n<p>L&apos;accord &quot;conditionnel&quot; annoncé mardi prévoit aussi la conversion de 18 appareils A320neo en A321neo, selon le communiqué.</p>\n<p>&quot;L&apos;achat proposé renforce le carnet de commandes d&apos;Easyjet avec Airbus jusqu&apos;en 2028 et poursuit le rajeunissement de la flotte&quot; de la compagnie &quot;low cost&quot;, avec le retrait progressif de A320 plus anciens ou de A319, détaille le communiqué.</p>\n<p>Easyjet souligne que ces nouveaux avions consomment 15 à 25% de carburant en moins, et permettent de transporter plus de passagers, ce qui offre des avantages tant économiques qu&apos;environnementaux, selon le communiqué.</p>\n<p>Easyjet avait publié il y a un mois une perte nette réduite au premier semestre de son exercice décalé grâce à la reprise du trafic aérien post-confinements, et se montrait optimiste pour l&apos;été.</p>\n<p>Le secteur aérien a été l&apos;un des plus durement touchés par la pandémie de covid-19 qui a paralysé le trafic mondial pendant des mois.</p>\n<p>Depuis la levée des restrictions sanitaires dans de nombreux pays, notamment le Royaume-Uni, en début d&apos;année, les transporteurs font à présent face à des difficultés pour répondre à la demande en forte hausse, principalement à cause de sévères pénuries de main d&apos;œuvre.</p>\n<p>La compagnie a ainsi dû réduire ses prévisions de capacité de vols pour la saison estivale à cause du manque de personnel, ce qui aura un impact financier, a-t-elle prévenu lundi, sans donner d&apos;évaluation chiffrée.</p>\n\n</div></body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "identical"
+    },
+    "llm_judgement": {
+        "verdict": "near_duplicate",
+        "note": "Same news event and nearly identical AFP-style text but published on different outlets as separate articles"
+    },
+    "pinned": {
+        "outcome": "near_exact",
+        "stage": "min_hash_lsh",
+        "similarity": 0.953125
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}
