@@ -106,7 +106,7 @@ class ApifyHttpClient implements ApifyClientInterface
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                'Authorization' => \sprintf('Bearer %s', $this->apiToken),
+                'Authorization' => "Bearer {$this->apiToken}",
             ],
             'timeout' => $this->timeout,
         ], $options);

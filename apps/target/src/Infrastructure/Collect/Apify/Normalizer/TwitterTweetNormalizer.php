@@ -20,21 +20,24 @@ readonly class TwitterTweetNormalizer implements ApifyDocumentNormalizerInterfac
 
     public function normalize(array $item, NormalizerContext $context): ?Document
     {
-        // Validate required fields
-        $tweetUrl = $this->extractString($item, ['url', 'link', 'tweetUrl']);
+        // Validate required fields — actor returns both url (x.com) and twitterUrl (twitter.com)
+        $tweetUrl = $this->extractString($item, ['twitterUrl', 'url', 'link']);
         if (null === $tweetUrl || '' === $tweetUrl) {
             return null;
         }
 
         // Extract tweet text (required)
-        $text = $this->extractString($item, ['text', 'content', 'description']);
+        $text = $this->extractString($item, ['fullText', 'text', 'content', 'description']);
         if (null === $text || '' === $text) {
             return null;
         }
 
-        // Build title: user.name + text excerpt (80 chars) — ticket spec: user.name + text[:80]
-        $user = \is_array($item['user'] ?? null) ? $item['user'] : [];
-        $authorName = $this->extractString($user, ['name', 'fullName']) ?? 'Tweet';
+        // Actor v2 uses "author" object; legacy format used "user"
+        $author = \is_array($item['author'] ?? null) ? $item['author'] : (\is_array(
+            $item['user'] ?? null
+        ) ? $item['user'] : []);
+        $authorName = $this->extractString($author, ['name', 'fullName']) ?? 'Tweet';
+
         $textExcerpt = mb_substr($text, 0, 80);
         $title = trim($authorName . ' — ' . $textExcerpt);
 

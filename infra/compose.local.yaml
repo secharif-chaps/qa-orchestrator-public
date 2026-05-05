@@ -32,7 +32,7 @@ x-target-env: &target-env
   BAKUS_WEBSOCKET_TIMEOUT: ${BAKUS_WEBSOCKET_TIMEOUT:-25}
   # ─── Apify Collection Configuration ────────────
   APIFY_API_TOKEN: ${APIFY_API_TOKEN:-}
-  APIFY_WEBHOOK_URL: ${APIFY_WEBHOOK_URL:-http://localhost/webhook/apify}
+  APIFY_WEBHOOK_URL: ${APIFY_WEBHOOK_URL:-}
   APIFY_MAX_TOTAL_CHARGE_USD: ${APIFY_MAX_TOTAL_CHARGE_USD:-0.10}
   # ─── Mercure (hub embedded in target container) ────────
   MERCURE_URL: http://target:8000/.well-known/mercure
