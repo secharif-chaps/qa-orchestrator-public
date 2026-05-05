@@ -52,7 +52,7 @@ allowed-tools: Bash, Read, Grep
 **Titre** : [MODULE] Titre propose
 **Composant** : [Deduit du module]
 **Severite** : Critique / Majeure / Mineure / Cosmetique
-**Labels** : Claude, Back / Front / Prompt
+**Labels** : Claude, Back / Front / IA / DevOps / Data
 
 ### Reproduction
 **Preconditions** : [Etat initial]

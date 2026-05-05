@@ -48,7 +48,7 @@ allowed-tools: Bash, Read, Grep
 
 **Titre** : [MODULE] Titre propose
 **Composant(s)** : [Deduit(s) du/des module(s)]
-**Labels** : Claude [+ Back / Front / Prompt si applicable]
+**Labels** : Claude [+ Back / Front / IA / DevOps / Data si applicable]
 
 ### Description
 **Vision** : [Objectif et impact]
@@ -84,7 +84,7 @@ Valider cette proposition ? (oui / non / modifications)
 Phase 2 - Back:
   [SCREEN] Modele de donnees et migration WorldCheck (Back, 5pts)
   [SCREEN] Client API WorldCheck avec authentification HMAC-SHA256 (Back, 5pts)
-  [SCREEN] Integration WorldCheck dans le workflow Dify data_collection (Back+Prompt, 8pts)
+  [SCREEN] Integration WorldCheck dans le workflow Dify data_collection (Back+IA, 8pts)
   [SCREEN] Propagation des donnees WorldCheck aux workflows (Back, 5pts)
 
 Phase 3 - Front:
