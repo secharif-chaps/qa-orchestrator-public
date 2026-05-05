@@ -31,31 +31,17 @@
         </p>
       </div>
     </div>
-    <label class="relative inline-flex shrink-0 cursor-pointer items-center">
-      <input
-        type="checkbox"
-        :checked="isChecked"
-        :disabled="disabled"
-        class="peer sr-only"
-        @change="handleChange"
-      />
-      <div
-        class="peer peer-focus:ring-primary/20 h-6 w-11 rounded-full transition-colors peer-focus:ring-2"
-        :class="[
-          isChecked ? (variant === 'danger' ? 'bg-error' : 'bg-primary') : 'bg-primary-lighter',
-          disabled ? 'cursor-not-allowed' : 'cursor-pointer',
-        ]"
-      >
-        <div
-          class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform"
-          :class="[isChecked ? 'translate-x-5' : 'translate-x-0']"
-        ></div>
-      </div>
-    </label>
+    <Switch
+      :id="`permission-${permission}`"
+      :model-value="isChecked"
+      :disabled="disabled"
+      @update:model-value="handleToggle"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { Switch } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -78,13 +64,12 @@ const emit = defineEmits<Emit>()
 
 const isChecked = computed(() => props.modelValue.includes(props.permission))
 
-function handleChange(event: Event) {
+const handleToggle = (checked: boolean) => {
   if (props.disabled) return
 
-  const target = event.target as HTMLInputElement
   const newValue = [...props.modelValue]
 
-  if (target.checked) {
+  if (checked) {
     if (!newValue.includes(props.permission)) {
       newValue.push(props.permission)
     }
@@ -96,6 +81,6 @@ function handleChange(event: Event) {
   }
 
   emit('update:modelValue', newValue)
-  emit('change', target.checked)
+  emit('change', checked)
 }
 </script>

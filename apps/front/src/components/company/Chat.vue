@@ -48,15 +48,16 @@
       class="relative"
       :class="isFloating ? 'border-primary-lighter-stroke border-t p-4' : 'pt-2'"
     >
-      <textarea
-        @keyup.enter="sendMessage"
+      <Textarea
+        id="chat-question"
         v-model="question"
         :placeholder="t('screen.company.chat.placeholder')"
-        class="bg-primary-lighter border-primary-lighter-stroke focus-within:outline-primary w-full rounded-sm border p-2 text-sm dark:border-slate-700 dark:bg-slate-900"
         :class="isFloating ? 'h-20' : 'h-32'"
-        @keydown.enter.ctrl.prevent="sendMessage"
         :disabled="isLoading"
-      ></textarea>
+        class="w-full"
+        @keyup.enter="sendMessage"
+        @keydown.enter.ctrl.prevent="sendMessage"
+      />
       <Button
         variant="primary"
         icon="fa fa-send"
@@ -74,7 +75,7 @@
 <script lang="ts" setup>
 import { apiClient } from '@/api/client'
 import { companyByIdQuery } from '@/queries/companies'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Textarea } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

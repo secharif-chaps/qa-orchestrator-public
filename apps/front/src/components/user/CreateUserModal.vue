@@ -22,92 +22,60 @@
       <!-- Form -->
       <form @submit.prevent="handleSubmit" class="space-y-4 px-6 py-4">
         <!-- Username -->
-        <div>
-          <label class="text-neutral-black-font mb-1 block text-sm font-medium">
-            {{ $t('settings.user.username') }} *
-          </label>
-          <input
-            v-model="form.username"
-            type="text"
-            required
-            :disabled="isLoading"
-            class="w-full rounded-sm border px-3 py-2 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-            :class="
-              touched.username && errors.username
-                ? 'border-error-stroke focus:ring-error'
-                : 'border-primary-lighter-stroke focus:ring-primary'
-            "
-            :placeholder="$t('settings.user.usernamePlaceholder')"
-            @blur="touchField('username')"
-            @input="validateForm()"
-          />
-          <p v-if="touched.username && errors.username" class="text-error mt-1 text-xs">
-            {{ errors.username }}
-          </p>
-        </div>
+        <Input
+          id="create-username"
+          v-model="form.username"
+          type="text"
+          required
+          :disabled="isLoading"
+          :label="`${$t('settings.user.username')} *`"
+          :placeholder="$t('settings.user.usernamePlaceholder')"
+          :error="touched.username && errors.username ? errors.username : undefined"
+          class="w-full"
+          @blur="touchField('username')"
+          @input="validateForm()"
+        />
 
         <!-- Email -->
-        <div>
-          <label class="text-neutral-black-font mb-1 block text-sm font-medium">
-            {{ $t('settings.user.email') }} *
-          </label>
-          <input
-            v-model="form.email"
-            type="email"
-            required
-            :disabled="isLoading"
-            class="w-full rounded-sm border px-3 py-2 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-            :class="
-              touched.email && errors.email
-                ? 'border-error-stroke focus:ring-error'
-                : 'border-primary-lighter-stroke focus:ring-primary'
-            "
-            :placeholder="$t('settings.user.emailPlaceholder')"
-            @blur="touchField('email')"
-            @input="validateForm()"
-          />
-          <p v-if="touched.email && errors.email" class="text-error mt-1 text-xs">
-            {{ errors.email }}
-          </p>
-        </div>
+        <Input
+          id="create-email"
+          v-model="form.email"
+          type="email"
+          required
+          :disabled="isLoading"
+          :label="`${$t('settings.user.email')} *`"
+          :placeholder="$t('settings.user.emailPlaceholder')"
+          :error="touched.email && errors.email ? errors.email : undefined"
+          class="w-full"
+          @blur="touchField('email')"
+          @input="validateForm()"
+        />
 
         <!-- Temporary Password -->
         <div>
-          <label class="text-neutral-black-font mb-1 block text-sm font-medium">
-            {{ $t('settings.user.temporaryPassword') }} *
-          </label>
-          <div class="relative">
-            <input
-              v-model="form.temporaryPassword"
-              :type="showPassword ? 'text' : 'password'"
-              required
-              :disabled="isLoading"
-              class="w-full rounded-sm border px-3 py-2 pr-10 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-              :class="
-                touched.temporaryPassword && errors.temporaryPassword
-                  ? 'border-error-stroke focus:ring-error'
-                  : 'border-primary-lighter-stroke focus:ring-primary'
-              "
-              :placeholder="$t('settings.user.passwordPlaceholder')"
-              @blur="touchField('temporaryPassword')"
-              @input="validateForm()"
-            />
-            <button
-              type="button"
-              @click="showPassword = !showPassword"
-              class="text-neutral-black-font absolute top-1/2 right-3 -translate-y-1/2 transform hover:text-base"
-              :disabled="isLoading"
-            >
-              <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
-            </button>
-          </div>
+          <Input
+            id="create-password"
+            v-model="form.temporaryPassword"
+            :type="showPassword ? 'text' : 'password'"
+            required
+            :disabled="isLoading"
+            :label="`${$t('settings.user.temporaryPassword')} *`"
+            :placeholder="$t('settings.user.passwordPlaceholder')"
+            :error="
+              touched.temporaryPassword && errors.temporaryPassword
+                ? errors.temporaryPassword
+                : undefined
+            "
+            :icon-right="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"
+            class="w-full"
+            @blur="touchField('temporaryPassword')"
+            @input="validateForm()"
+            @click-icon-right="showPassword = !showPassword"
+          />
           <p
-            v-if="touched.temporaryPassword && errors.temporaryPassword"
-            class="text-error mt-1 text-xs"
+            v-if="!(touched.temporaryPassword && errors.temporaryPassword)"
+            class="text-neutral-black-font mt-1 text-xs"
           >
-            {{ errors.temporaryPassword }}
-          </p>
-          <p v-else class="text-neutral-black-font mt-1 text-xs">
             {{ $t('settings.user.passwordHelp') }}
           </p>
         </div>
@@ -144,12 +112,12 @@
                   : 'border-primary-lighter-stroke hover:border-primary/30'
               "
             >
-              <input
-                type="radio"
+              <Radio
+                :id="`role-${role.id}`"
                 :value="role.id"
                 v-model="selectedRoleId"
                 :disabled="isLoading"
-                class="text-primary focus:ring-primary border-primary-lighter-stroke h-4 w-4"
+                name="role"
               />
               <div class="flex flex-1 items-center gap-2">
                 <div class="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-sm">
@@ -157,7 +125,9 @@
                 </div>
                 <div>
                   <p class="text-sm font-medium">{{ role.name }}</p>
-                  <p class="text-neutral-black-font text-xs">{{ role.description }}</p>
+                  <p class="text-neutral-black-font text-xs">
+                    {{ role.description }}
+                  </p>
                 </div>
               </div>
             </label>
@@ -200,6 +170,7 @@
 <script setup lang="ts">
 import { useRoles } from '@/composables/useRoles'
 import type { OrganizationUserCreate } from '@/types/user'
+import { Input, Radio } from '@owlint/feathers-vue'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

@@ -29,16 +29,17 @@
     <!-- Input Area -->
     <div class="p-4">
       <div class="relative">
-        <textarea
-          ref="textareaRef"
+        <Textarea
+          id="chat-input"
+          ref="textareaComponentRef"
           v-model="message"
           :placeholder="placeholder"
           :disabled="disabled"
-          class="bg-sage-50 dark:bg-sage-900 border-sage-300 text-sage-950 dark:text-sage-100 placeholder-sage-500 focus:ring-primary/50 max-h-[200px] min-h-[80px] w-full resize-none rounded-md border p-4 pr-14 text-sm focus:ring-2 focus:outline-none disabled:opacity-50"
+          :rows="3"
+          class="max-h-50 min-h-20 w-full pr-14"
           @keydown.enter.ctrl.prevent="handleSend"
           @keydown.enter.meta.prevent="handleSend"
-          @input="autoResize"
-        ></textarea>
+        />
 
         <!-- Send Button -->
         <Button
@@ -71,8 +72,8 @@
 
 <script setup lang="ts">
 import type { CompanyContext } from '@/stores/chapse'
-import { Button } from '@owlint/feathers-vue'
-import { computed, nextTick, ref, watch } from 'vue'
+import { Button, Textarea } from '@owlint/feathers-vue'
+import { computed, ref, watch } from 'vue'
 import CompanyContextSelector from './CompanyContextSelector.vue'
 import ContextBadge from './ContextBadge.vue'
 
@@ -107,9 +108,6 @@ const emit = defineEmits<{
   'remove-context': [companyId: number]
 }>()
 
-// Refs
-const textareaRef = ref<HTMLTextAreaElement | null>(null)
-
 // Local message state (two-way binding)
 const message = computed({
   get: () => modelValue,
@@ -121,49 +119,32 @@ const canSend = computed(() => {
   return message.value.trim().length > 0 && !loading && !disabled
 })
 
-// Methods
+const textareaComponentRef = ref<InstanceType<typeof Textarea> | null>(null)
+
+const autoResize = () => {
+  const el = textareaComponentRef.value?.textareaRef
+  if (!el) return
+  el.style.height = 'auto'
+  el.style.height = `${Math.min(el.scrollHeight, 200)}px`
+}
+
+watch(message, () => {
+  autoResize()
+})
+
 const handleSend = () => {
   if (!canSend.value) return
   if (loading) return
 
   emit('send', message.value.trim())
   message.value = ''
-
-  // Reset textarea height
-  nextTick(() => {
-    if (textareaRef.value) {
-      textareaRef.value.style.height = 'auto'
-    }
-  })
 }
 
-const autoResize = () => {
-  if (!textareaRef.value) return
-
-  // Reset height to auto to get the correct scrollHeight
-  textareaRef.value.style.height = 'auto'
-  // Set to scrollHeight (capped by max-height in CSS)
-  textareaRef.value.style.height = `${Math.min(textareaRef.value.scrollHeight, 200)}px`
-}
-
-// Focus the textarea
 const focus = () => {
-  textareaRef.value?.focus()
+  textareaComponentRef.value?.focus()
 }
 
-// Expose methods
 defineExpose({
   focus,
 })
-
-// Auto-resize on initial value
-watch(
-  () => modelValue,
-  () => {
-    nextTick(() => {
-      autoResize()
-    })
-  },
-  { immediate: true },
-)
 </script>
