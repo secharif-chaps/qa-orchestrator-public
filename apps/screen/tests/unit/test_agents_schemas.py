@@ -38,8 +38,19 @@ from app.models.company_children import (
 class TestAgentOutputSchemas:
     """Tests for AGENT_OUTPUT_SCHEMAS registry."""
 
-    def test_all_nine_agents_registered(self):
-        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team", "financial"}
+    def test_all_agents_registered(self):
+        expected = {
+            "profile",
+            "digital",
+            "press",
+            "jobs",
+            "products",
+            "timeline",
+            "csr",
+            "team",
+            "financial",
+            "patents",
+        }
         assert set(AGENT_OUTPUT_SCHEMAS.keys()) == expected
 
     def test_all_schemas_are_pydantic_models(self):
@@ -442,7 +453,18 @@ class TestOutputFormatsAutoGeneration:
     def test_all_agents_have_output_formats(self):
         from app.agents.prompts.shared.output_formats import AGENT_OUTPUT_FORMATS
 
-        expected = {"profile", "digital", "press", "jobs", "products", "timeline", "csr", "team", "financial"}
+        expected = {
+            "profile",
+            "digital",
+            "press",
+            "jobs",
+            "products",
+            "timeline",
+            "csr",
+            "team",
+            "financial",
+            "patents",
+        }
         assert set(AGENT_OUTPUT_FORMATS.keys()) == expected
 
     def test_output_formats_are_valid_json(self):

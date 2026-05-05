@@ -211,6 +211,14 @@ class CompanyAnalysisRunner:
                 state = self._build_agent_state(company, agent_name)
                 state_result = await node_fn(state)
                 result = state_result["agent_results"][0]
+            elif agent_name == "patents":
+                # Patents agent reads epo_publications + epo_families from DB and
+                # runs entirely offline (Phase 1 programmatic + Phase 2 LLM).
+                from app.agents.nodes.patents import run_patents_agent
+
+                state = self._build_patents_state(db, company)
+                state_result = await run_patents_agent(state)
+                result = state_result["agent_results"][0]
             else:
                 # Load enrichment sources from DB for agents that support them
                 enrichment_sources = None
@@ -279,7 +287,48 @@ class CompanyAnalysisRunner:
             "owner_id": company.owner_id or "",
             "country_code": None,
             "company_brief": None,
+            "enrichment_data": {},
             "agents_to_run": [agent_name],
+            "agent_results": [],
+            "quality_issues": [],
+            "agents_to_retry": [],
+            "retry_counts": {},
+            "total_tokens": 0,
+            "total_cost": 0.0,
+        }
+
+    @staticmethod
+    def _build_patents_state(db: Session, company: Company) -> CompanyAnalysisState:
+        """Build a state for a single patents restart.
+
+        Loads ``epo_publications`` and ``epo_families`` enrichment rows
+        (status="success") for the company and injects them into
+        ``state["enrichment_data"]`` — the patents node reads from there
+        rather than re-issuing EPO calls.
+        """
+        from app.models.company_enrichment import CompanyEnrichment
+
+        enrichment_rows = (
+            db.query(CompanyEnrichment)
+            .filter(
+                CompanyEnrichment.company_id == company.id,
+                CompanyEnrichment.status == "success",
+                CompanyEnrichment.source.in_(("epo_publications", "epo_families")),
+            )
+            .all()
+        )
+        enrichment_data: dict[str, dict] = {row.source: (row.data or {}) for row in enrichment_rows}
+
+        return {
+            "company_id": company.id,
+            "company_name": company.name,
+            "website": company.website,
+            "organization_id": company.organization_id or "",
+            "owner_id": company.owner_id or "",
+            "country_code": None,
+            "company_brief": None,
+            "enrichment_data": enrichment_data,
+            "agents_to_run": ["patents"],
             "agent_results": [],
             "quality_issues": [],
             "agents_to_retry": [],

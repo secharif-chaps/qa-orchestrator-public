@@ -111,6 +111,9 @@ class Company(Base):
         "CompanyFinancial", back_populates="company", uselist=False, cascade="all, delete-orphan"
     )
 
+    # 1:1 Relationship to patents section
+    patents_data = relationship("CompanyPatents", back_populates="company", uselist=False, cascade="all, delete-orphan")
+
     # 1:N Relationships to child tables
     # cascade="all, delete-orphan" ensures child records are deleted with company
     online_services = relationship("CompanyOnlineService", back_populates="company", cascade="all, delete-orphan")
@@ -133,6 +136,9 @@ class Company(Base):
     # 1:N Relationships to financial child tables
     financial_metrics = relationship("CompanyFinancialMetric", back_populates="company", cascade="all, delete-orphan")
     funding_rounds = relationship("CompanyFundingRound", back_populates="company", cascade="all, delete-orphan")
+
+    # 1:N Relationship to patent items
+    patent_items = relationship("CompanyPatentItem", back_populates="company", cascade="all, delete-orphan")
 
     # Translations relationship (1:N)
     translations = relationship("Translation", back_populates="company", cascade="all, delete-orphan")

@@ -11,6 +11,7 @@ from app.agents.nodes.data_collector import data_collector_node
 from app.agents.nodes.digital import run_digital_agent
 from app.agents.nodes.financial import run_financial_agent
 from app.agents.nodes.jobs import run_jobs_agent
+from app.agents.nodes.patents import run_patents_agent
 from app.agents.nodes.planner import planner_node
 from app.agents.nodes.press import run_press_agent
 from app.agents.nodes.products import run_products_agent
@@ -34,6 +35,7 @@ AGENT_NODE_MAP: dict[str, Callable] = {
     "corporate_structure": run_corporate_structure_agent,
     "sanctions": run_sanctions_agent,
     "financial": run_financial_agent,
+    "patents": run_patents_agent,
 }
 
 

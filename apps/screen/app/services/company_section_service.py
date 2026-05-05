@@ -43,6 +43,7 @@ from app.models.company_children import (
     SanctionType,
 )
 from app.models.company_financial import CompanyFinancial, CompanyFinancialMetric, CompanyFundingRound
+from app.models.company_patents import CompanyPatentItem, CompanyPatents
 from app.models.company_sections import (
     CompanyCsr,
     CompanyDigital,
@@ -1980,6 +1981,135 @@ def get_sanctions_data(db: Session, company_id: int) -> dict[str, Any]:
 
 
 # =============================================================================
+# PATENTS DATA - WRITER AND READER
+# =============================================================================
+
+
+def save_patents_data(db: Session, company_id: int, data: dict) -> None:
+    """Persist the patents section + item rows produced by the patents agent.
+
+    The section row (``CompanyPatents``) is upserted; item rows
+    (``CompanyPatentItem``) are fully replaced (delete-then-insert),
+    consistent with the ``_save_financial_metrics`` pattern. Both
+    operations run inside the caller's transaction — no commit here.
+
+    Args:
+        db: Database session.
+        company_id: Target company.
+        data: Agent output matching the shape emitted by
+            ``run_patents_agent`` (insights, total_patents_count,
+            top_cpc_domains, filing_trend, patents[]).
+    """
+    existing = db.query(CompanyPatents).filter(CompanyPatents.company_id == company_id).first()
+    if existing is None:
+        section = CompanyPatents(company_id=company_id)
+        db.add(section)
+    else:
+        section = existing
+
+    section.insights = _get_string_value(data, "insights")
+    section.total_patents_count = int(data.get("total_patents_count") or 0)
+    section.top_cpc_domains = data.get("top_cpc_domains") or []
+    section.filing_trend = data.get("filing_trend") or {}
+
+    db.flush()
+
+    _save_patent_items(db, company_id, data.get("patents") or [])
+
+    logger.info("Saved patents data for company %s", company_id)
+
+
+def _save_patent_items(db: Session, company_id: int, items: list[dict]) -> None:
+    """Replace the company's patent items with the supplied list."""
+    db.query(CompanyPatentItem).filter(CompanyPatentItem.company_id == company_id).delete()
+
+    seen: set[str] = set()
+    for item in items:
+        patent_number = item.get("patent_number") or item.get("doc_id")
+        if not patent_number or patent_number in seen:
+            # The unique constraint enforces this at the DB level; skipping
+            # here keeps the flush from tripping on an accidental duplicate
+            # in agent output.
+            continue
+        seen.add(patent_number)
+
+        db.add(
+            CompanyPatentItem(
+                company_id=company_id,
+                patent_number=patent_number,
+                title=item.get("title"),
+                abstract=item.get("abstract"),
+                inventors=list(item.get("inventors") or []),
+                applicants=list(item.get("applicants") or []),
+                publication_date=_parse_patent_publication_date(item.get("publication_date")),
+                cpc_codes=list(item.get("cpc_codes") or []),
+                is_key_patent=bool(item.get("is_key_patent")),
+            )
+        )
+
+    db.flush()
+
+
+def _parse_patent_publication_date(raw: Any) -> Any:
+    """Accept ISO strings ("YYYY-MM-DD") and pass-through ``date`` objects."""
+    from datetime import date, datetime
+
+    if raw is None or isinstance(raw, date):
+        return raw
+    if isinstance(raw, str) and raw:
+        try:
+            return datetime.strptime(raw, "%Y-%m-%d").date()
+        except ValueError:
+            return None
+    return None
+
+
+def get_patents_data(db: Session, company_id: int) -> dict[str, Any]:
+    """Read back the patents section + items as a single dict.
+
+    Returns an empty dict when no section row exists. Items are ordered
+    by ``publication_date`` descending with key patents floated to the
+    top of ties so the frontend can render them prominently without
+    extra sorting.
+    """
+    section = db.query(CompanyPatents).filter(CompanyPatents.company_id == company_id).first()
+    if section is None:
+        return {}
+
+    items = (
+        db.query(CompanyPatentItem)
+        .filter(CompanyPatentItem.company_id == company_id)
+        .order_by(
+            CompanyPatentItem.is_key_patent.desc(),
+            CompanyPatentItem.publication_date.desc().nullslast(),
+        )
+        .all()
+    )
+
+    return {
+        "insights": section.insights or "",
+        "total_patents_count": section.total_patents_count or 0,
+        "top_cpc_domains": section.top_cpc_domains or [],
+        "filing_trend": section.filing_trend or {},
+        "patents": [_serialize_patent_item(item) for item in items],
+    }
+
+
+def _serialize_patent_item(item: CompanyPatentItem) -> dict[str, Any]:
+    """Convert a ``CompanyPatentItem`` row into its JSON-ready dict."""
+    return {
+        "patent_number": item.patent_number,
+        "title": item.title,
+        "abstract": item.abstract,
+        "inventors": item.inventors or [],
+        "applicants": item.applicants or [],
+        "publication_date": item.publication_date.isoformat() if item.publication_date else None,
+        "cpc_codes": item.cpc_codes or [],
+        "is_key_patent": bool(item.is_key_patent),
+    }
+
+
+# =============================================================================
 # MAIN DISPATCHER FUNCTION
 # =============================================================================
 
@@ -2014,6 +2144,7 @@ def write_section_data(
         "team": save_team_data,
         "corporate_structure": save_corporate_structure_data,
         "sanctions": save_sanctions_data,
+        "patents": save_patents_data,
     }
 
     # Log child list sizes for diagnostics
