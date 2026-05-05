@@ -2668,10 +2668,12 @@
       },
       "noResults": "Aucun résultat trouvé"
     },
+    "events": "{type, select, screenCompanyCreated {Fiche entreprise créée} screenCompanyUpdated {Fiche entreprise actualisée} targetWatchfileCreated {Dossier de veille créé} targetWatchfileUpdated {Dossier de veille actualisé} targetAlertTriggered {Alerte veille déclenchée} other {Événement inconnu}}",
     "mode": {
       "live": "Temps réel",
       "recurrence": "Récurrence"
     },
+    "sources": "{source, select, screen {Screen} target {Target} explore {Explore} other {Inconnu}}",
     "status": {
       "active": "Actif",
       "archived": "Archivé",
