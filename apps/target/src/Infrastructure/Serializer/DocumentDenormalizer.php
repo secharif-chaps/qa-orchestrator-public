@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\PropertyAccess\Exception\ExceptionInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Exception\MissingConstructorArgumentsException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -275,19 +276,37 @@ class DocumentDenormalizer implements DenormalizerInterface, DenormalizerAwareIn
             // Empty nested object on a nullable field → leave the property
             // at its default. Covers OS `_source` payloads where a typed
             // nested object (e.g. `fingerprint`) is present as an empty
-            // `{}` (PHP `[]` after json_decode) — common on legacy documents
-            // indexed before the typed object existed, or when OS strips a
-            // partially-set sub-document. Without this guard, the inner
-            // Symfony serializer raises `MissingConstructorArgumentsException`
-            // because the typed VO (e.g. `Fingerprint`) has required
-            // constructor params. Explicit `null` is filtered earlier by
-            // `isset()` above.
+            // `{}` (PHP `[]` after json_decode). Explicit `null` is
+            // filtered earlier by `isset()` above.
             if ($propertyType->allowsNull() && \is_array($value) && [] === $value) {
                 return;
             }
 
             $targetType = $propertyType->getName();
-            $value = $this->denormalizer->denormalize($value, $targetType, $format, $context);
+            try {
+                $value = $this->denormalizer->denormalize($value, $targetType, $format, $context);
+            } catch (MissingConstructorArgumentsException $e) {
+                // Partial nested object on a nullable property — typically
+                // a legacy document indexed before the typed VO had its
+                // current shape (e.g. `Fingerprint` got `titleShingles`
+                // added in TAR-1146; older docs may carry a 4-field
+                // sub-object). Without this guard, every read on such a
+                // document throws 500. Hard-fail only if the property is
+                // not nullable (real contract violation).
+                if (!$propertyType->allowsNull()) {
+                    throw $e;
+                }
+                $this->logger?->warning(
+                    'DocumentDenormalizer: skipping partial nested object on nullable property',
+                    [
+                        'property' => $propertyName,
+                        'target_type' => $targetType,
+                        'error' => $e->getMessage(),
+                    ],
+                );
+
+                return;
+            }
         } elseif ('duplicates' === $propertyName && \is_array($value)) {
             // `Document::$duplicates` is typed `array` (builtin), so the
             // generic non-builtin branch above does not fire. Map each

@@ -695,4 +695,56 @@ class DocumentDenormalizerTest extends TestCase
         $this->assertInstanceOf(Document::class, $document);
         $this->assertNull($document->getFingerprint());
     }
+
+    public function testDenormalizeWithPartialFingerprintRecoversFromMissingConstructorArguments(): void
+    {
+        // Real prod symptom (TAR-1146 hotfix): the OS `_source` carries a
+        // partial fingerprint sub-object — typically a legacy doc indexed
+        // before the typed VO had its current shape. The inner Symfony
+        // serializer raises `MissingConstructorArgumentsException`. The
+        // denormalizer must catch and skip on a nullable property rather
+        // than 500-ing the whole document read.
+        $denormalizerWithExceptions = $this->createMock(DenormalizerInterface::class);
+        $denormalizerWithExceptions
+            ->expects($this->any())
+            ->method('denormalize')
+            ->willReturnCallback(function (mixed $data, string $type): mixed {
+                if (\App\Domain\Document\Fingerprinting\Fingerprint::class === $type) {
+                    throw new \Symfony\Component\Serializer\Exception\MissingConstructorArgumentsException(
+                        message: 'Cannot create Fingerprint: missing $simHash, $minHashSignature, $lshBands.',
+                        missingArguments: [
+                        'simHash',
+                        'minHashSignature',
+                        'lshBands',
+                    ],
+                    );
+                }
+                if (\DateTimeImmutable::class === $type && \is_string($data)) {
+                    return new \DateTimeImmutable($data);
+                }
+                if (DocumentStatus::class === $type && (\is_string($data) || \is_int($data))) {
+                    return DocumentStatus::from($data);
+                }
+
+                return $data;
+            });
+
+        $denormalizer = new DocumentDenormalizer($this->entityManager, $this->propertyAccessor);
+        $denormalizer->setDenormalizer($denormalizerWithExceptions);
+
+        $data = [
+            'id' => 'doc-legacy-partial-fp',
+            'title' => 'Legacy doc',
+            'fingerprint' => [
+                // Partial: only the legacy fields are populated, the
+                // post-TAR-1146 fields are missing.
+                'contentHash' => 'sha256-legacy',
+            ],
+        ];
+
+        $document = $denormalizer->denormalize($data, Document::class);
+
+        $this->assertInstanceOf(Document::class, $document);
+        $this->assertNull($document->getFingerprint());
+    }
 }
