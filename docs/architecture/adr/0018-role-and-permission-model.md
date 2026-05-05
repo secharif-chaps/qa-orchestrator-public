@@ -2,7 +2,7 @@
 
 ## Status
 
-**Status:** Proposed
+**Status:** Accepted
 
 **Date:** 2026-04-21
 

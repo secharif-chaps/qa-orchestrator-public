@@ -60,7 +60,7 @@ Pattern:
 
 **Titre** : [MODULE] Titre propose
 **Composant** : [Deduit du module]
-**Labels** : Claude, Back / Front / Prompt
+**Labels** : Claude, Back / Front / IA / DevOps / Data
 **Epic parente** : [Lien ou "Aucune"]
 
 ### User Story
@@ -87,11 +87,11 @@ Valider cette Story ? (oui / non / modifications)
 
 ## Examples
 
-### Example 1 - Back story with Prompt label
+### Example 1 - Back story with IA label
 
 ```
 [TARGET] Ajouter un tool permettant a Chaps-e de demarrer la collecte du WatchFile (TAR-1087)
-Composant: Target | Labels: Back, Prompt | Epic: TAR-1127
+Composant: Target | Labels: Back, IA | Epic: TAR-1127
 
 En tant que utilisateur de Chaps-e
 Je veux que l'assistant puisse demarrer automatiquement la collecte

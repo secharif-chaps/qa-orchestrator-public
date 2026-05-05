@@ -448,13 +448,15 @@ Uses `@messageformat/core` as custom `messageCompiler` (ADR-0012):
 
 ### Skill Labels
 
-| Label    | Usage                                   |
-| -------- | --------------------------------------- |
-| `Back`   | API, services, database, infrastructure |
-| `Front`  | UI, components, UX                      |
-| `Prompt` | AI, LLM, Dify workflows                 |
+| Label    | Usage                                                                  |
+| -------- | ---------------------------------------------------------------------- |
+| `Back`   | API, services, database, infrastructure                                |
+| `Front`  | UI, components, UX                                                     |
+| `IA`     | AI, LLM, LangGraph agents, prompts, workflows n8n/Dify                 |
+| `DevOps` | CI/CD, Docker, Kubernetes, Helm, infrastructure, déploiement           |
+| `Data`   | Pipelines de données, OpenSearch, indexation, enrichissement, collecte |
 
-Combinations: `Back + Prompt`, `Front + Prompt`, `Back + Front` (rare)
+Combinations: `Back + IA`, `Front + IA`, `Back + Front` (rare), `Back + DevOps`, `Back + Data`
 
 ### Epic Phases
 
