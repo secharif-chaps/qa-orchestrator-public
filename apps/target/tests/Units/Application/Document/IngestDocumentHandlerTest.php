@@ -113,10 +113,10 @@ class IngestDocumentHandlerTest extends TestCase
         $result = ($this->handler)($action);
 
         // Assert
-        $this->assertSame($document, $result);
-        $this->assertSame($watchFile, $result->getWatchFile());
-        $this->assertSame($source, $result->getSource());
-        $this->assertSame($actor, $result->getActor());
+        $this->assertSame($document, $result->document);
+        $this->assertSame($watchFile, $result->document->getWatchFile());
+        $this->assertSame($source, $result->document->getSource());
+        $this->assertSame($actor, $result->document->getActor());
     }
 
     public function testInvokeWithValidDocumentAndExistingId(): void
@@ -161,10 +161,10 @@ class IngestDocumentHandlerTest extends TestCase
         $result = ($this->handler)($action);
 
         // Assert
-        $this->assertSame($document, $result);
-        $this->assertSame($watchFile, $result->getWatchFile());
-        $this->assertSame($source, $result->getSource());
-        $this->assertSame($actor, $result->getActor());
+        $this->assertSame($document, $result->document);
+        $this->assertSame($watchFile, $result->document->getWatchFile());
+        $this->assertSame($source, $result->document->getSource());
+        $this->assertSame($actor, $result->document->getActor());
     }
 
     public function testInvokeWithValidationErrors(): void
@@ -332,10 +332,10 @@ class IngestDocumentHandlerTest extends TestCase
         $result = ($this->handler)($action);
 
         // Assert
-        $this->assertSame($document, $result);
-        $this->assertSame($watchFile, $result->getWatchFile());
-        $this->assertSame($source, $result->getSource());
-        $this->assertSame($actor, $result->getActor());
+        $this->assertSame($document, $result->document);
+        $this->assertSame($watchFile, $result->document->getWatchFile());
+        $this->assertSame($source, $result->document->getSource());
+        $this->assertSame($actor, $result->document->getActor());
     }
 
     public function testInvokeDispatchesOnlyQualityAction(): void
@@ -429,14 +429,14 @@ class IngestDocumentHandlerTest extends TestCase
         $result = ($handler)($action);
 
         // Assert
-        $this->assertSame($providerId, $result->getProviderId());
-        $this->assertSame($watchFile, $result->getWatchFile());
-        $this->assertSame($source, $result->getSource());
-        $this->assertSame($actor, $result->getActor());
+        $this->assertSame($providerId, $result->document->getProviderId());
+        $this->assertSame($watchFile, $result->document->getWatchFile());
+        $this->assertSame($source, $result->document->getSource());
+        $this->assertSame($actor, $result->document->getActor());
 
         // Verify document was saved
-        $savedDocument = $nullDocumentGateway->get($result->getId());
-        $this->assertSame($result, $savedDocument);
+        $savedDocument = $nullDocumentGateway->get($result->document->getId());
+        $this->assertSame($result->document, $savedDocument);
         $this->assertEquals($providerId, $savedDocument->getProviderId());
     }
 
@@ -496,13 +496,13 @@ class IngestDocumentHandlerTest extends TestCase
         $result = ($handler)($action);
 
         // Assert
-        $this->assertSame($existingDocument, $result);
-        $this->assertEquals($existingDocumentId, $result->getId());
-        $this->assertEquals($providerId, $result->getProviderId());
-        $this->assertEquals('Refined Title', $result->getTitle());
-        $this->assertEquals('Refined excerpt', $result->getExcerpt());
-        $this->assertEquals('Refined content that is longer', $result->getContent());
-        $this->assertNotNull($result->getUpdatedAt());
+        $this->assertSame($existingDocument, $result->document);
+        $this->assertEquals($existingDocumentId, $result->document->getId());
+        $this->assertEquals($providerId, $result->document->getProviderId());
+        $this->assertEquals('Refined Title', $result->document->getTitle());
+        $this->assertEquals('Refined excerpt', $result->document->getExcerpt());
+        $this->assertEquals('Refined content that is longer', $result->document->getContent());
+        $this->assertNotNull($result->document->getUpdatedAt());
     }
 
     public function testInvokeMergesDataWithRefinedDataTakingPriority(): void
@@ -563,12 +563,15 @@ class IngestDocumentHandlerTest extends TestCase
         $result = ($handler)($action);
 
         // Assert - Refined data should have priority
-        $this->assertSame($existingDocument, $result);
-        $this->assertEquals('Refined Title', $result->getTitle());
-        $this->assertEquals('Longer refined excerpt with more details', $result->getExcerpt());
-        $this->assertEquals('Much longer refined content with comprehensive information', $result->getContent());
-        $this->assertEquals('https://example.com/refined', $result->getUrl());
-        $this->assertTrue($result->isCfcRestricted());
+        $this->assertSame($existingDocument, $result->document);
+        $this->assertEquals('Refined Title', $result->document->getTitle());
+        $this->assertEquals('Longer refined excerpt with more details', $result->document->getExcerpt());
+        $this->assertEquals(
+            'Much longer refined content with comprehensive information',
+            $result->document->getContent()
+        );
+        $this->assertEquals('https://example.com/refined', $result->document->getUrl());
+        $this->assertTrue($result->document->isCfcRestricted());
     }
 
     public function testInvokeDoesNotOverwriteExistingFieldsWhenNewDataIsEmpty(): void
@@ -637,11 +640,11 @@ class IngestDocumentHandlerTest extends TestCase
         $result = ($handler)($action);
 
         // Assert - Existing data should be preserved when new data is empty
-        $this->assertSame($existingDocument, $result);
-        $this->assertEquals('Complete Title', $result->getTitle());
-        $this->assertEquals('Complete excerpt', $result->getExcerpt());
-        $this->assertEquals('Complete content', $result->getContent());
-        $this->assertEquals('https://example.com/existing', $result->getUrl());
+        $this->assertSame($existingDocument, $result->document);
+        $this->assertEquals('Complete Title', $result->document->getTitle());
+        $this->assertEquals('Complete excerpt', $result->document->getExcerpt());
+        $this->assertEquals('Complete content', $result->document->getContent());
+        $this->assertEquals('https://example.com/existing', $result->document->getUrl());
     }
 
     public function testInvokePrefersLongerContentWhenMerging(): void
@@ -696,10 +699,10 @@ class IngestDocumentHandlerTest extends TestCase
         $result = ($handler)($action);
 
         // Assert - Longer content should be preferred
-        $this->assertSame($existingDocument, $result);
+        $this->assertSame($existingDocument, $result->document);
         $this->assertEquals(
             'This is a much longer content that should be preferred because it contains more information and details.',
-            $result->getContent()
+            $result->document->getContent()
         );
     }
 
@@ -742,12 +745,12 @@ class IngestDocumentHandlerTest extends TestCase
         $result = ($handler)($action);
 
         // Assert
-        $this->assertNull($result->getProviderId());
-        $this->assertSame($watchFile, $result->getWatchFile());
+        $this->assertNull($result->document->getProviderId());
+        $this->assertSame($watchFile, $result->document->getWatchFile());
 
         // Verify document was saved as new
-        $savedDocument = $nullDocumentGateway->get($result->getId());
-        $this->assertSame($result, $savedDocument);
+        $savedDocument = $nullDocumentGateway->get($result->document->getId());
+        $this->assertSame($result->document, $savedDocument);
     }
 
     public function testInvokeDoesNotTriggerAiValidationWhenDocumentExistsAndHasAiValidation(): void
@@ -824,8 +827,8 @@ class IngestDocumentHandlerTest extends TestCase
         $result = ($handler)($action);
 
         // Assert
-        $this->assertSame($existingDocument, $result);
-        $this->assertNotNull($result->getAiValidation());
+        $this->assertSame($existingDocument, $result->document);
+        $this->assertNotNull($result->document->getAiValidation());
     }
 
     public function testInvokeDoesNotOverwriteRefinedTitleWithUntitledDocument(): void
@@ -879,10 +882,10 @@ class IngestDocumentHandlerTest extends TestCase
         $result = ($handler)($action);
 
         // Assert - "Untitled Document" must NOT overwrite the real refined title
-        $this->assertSame($existingDocument, $result);
-        $this->assertEquals('Real Refined Title', $result->getTitle());
+        $this->assertSame($existingDocument, $result->document);
+        $this->assertEquals('Real Refined Title', $result->document->getTitle());
         // Shorter excerpt should NOT overwrite longer existing excerpt
-        $this->assertEquals('A proper refined excerpt with meaningful content', $result->getExcerpt());
+        $this->assertEquals('A proper refined excerpt with meaningful content', $result->document->getExcerpt());
     }
 
     public function testInvokeUpdatesTypeAndDatePublishWhenDifferent(): void
@@ -937,9 +940,9 @@ class IngestDocumentHandlerTest extends TestCase
         $result = ($handler)($action);
 
         // Assert
-        $this->assertSame($existingDocument, $result);
-        $this->assertEquals('pdf', $result->getType());
-        $this->assertEquals(new \DateTimeImmutable('2024-01-15 15:30:00'), $result->getDatePublish());
+        $this->assertSame($existingDocument, $result->document);
+        $this->assertEquals('pdf', $result->document->getType());
+        $this->assertEquals(new \DateTimeImmutable('2024-01-15 15:30:00'), $result->document->getDatePublish());
     }
 
     private function createValidDocument(?string $id): Document

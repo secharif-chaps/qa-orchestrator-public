@@ -15,6 +15,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -28,7 +29,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * - skips the save when an exact duplicate is detected (`duplicateOf` set
  *   on the resulting context), or
  * - persists the (potentially enriched) document and dispatches the
- *   asynchronous post-save pipeline via {@see RunPostSavePipelineAction}.
+ *   post-save pipeline via {@see RunPostSavePipelineAction}. Transport
+ *   routing depends on {@see IngestDocumentAction::$sync}: routed to the
+ *   default async `quality_processing` transport in production, or
+ *   forced onto the `sync` transport via `TransportNamesStamp` when the
+ *   caller wants the full pipeline to complete before the ingestion
+ *   returns (CLI `--sync`, integration tests).
  *
  * The handler is the single place that owns the save/no-save decision —
  * pipeline processors are pure transformers of the context, never side
@@ -37,6 +43,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[AsMessageHandler]
 readonly class IngestDocumentHandler
 {
+    /**
+     * Transport name forced when {@see IngestDocumentAction::$sync} is
+     * `true`. Must match the `sync` entry under
+     * `framework.messenger.transports` (see `config/packages/messenger.yaml`).
+     */
+    private const string SYNC_TRANSPORT = 'sync';
+
     public function __construct(
         private CollectTaskGatewayInterface $collectTaskGateway,
         private DocumentGatewayInterface $documentGateway,
@@ -47,7 +60,7 @@ readonly class IngestDocumentHandler
     ) {
     }
 
-    public function __invoke(IngestDocumentAction $action): Document
+    public function __invoke(IngestDocumentAction $action): IngestDocumentResult
     {
         $violations = $this->validator->validate($action->document);
         if (\count($violations) > 0) {
@@ -75,6 +88,7 @@ readonly class IngestDocumentHandler
             $document = $existingDocument;
         }
 
+        $context = null;
         $watchFile = $document->getWatchFile();
         if (null !== $watchFile) {
             $context = $this->preSavePipeline->process(
@@ -91,7 +105,7 @@ readonly class IngestDocumentHandler
                     'collect_task_id' => $action->collectTaskId,
                 ]);
 
-                return $document;
+                return new IngestDocumentResult(document: $document, preSaveContext: $context);
             }
 
             // The pipeline operates on the same Document instance, so any
@@ -101,12 +115,32 @@ readonly class IngestDocumentHandler
 
         $this->documentGateway->save($document);
 
-        $this->messageBus->dispatch(
-            new RunPostSavePipelineAction(documentId: $document->getId()),
-            [new DispatchAfterCurrentBusStamp()],
-        );
+        $stamps = $action->sync
+            // Force the `sync` in-memory transport for this dispatch only —
+            // overrides the default `quality_processing` async routing
+            // declared in `config/packages/messenger.yaml`. The handler
+            // runs inline before `dispatch()` returns, which is exactly
+            // what the `--sync` caller expects (CLI, integration tests).
+            // `DispatchAfterCurrentBusStamp` is unnecessary on the sync
+            // path since there's no enclosing bus transaction to defer
+            // beyond — the save above is already committed.
+            ? [new TransportNamesStamp([self::SYNC_TRANSPORT])]
+            : [new DispatchAfterCurrentBusStamp()];
 
-        return $document;
+        $this->messageBus->dispatch(new RunPostSavePipelineAction(documentId: $document->getId()), $stamps);
+
+        if ($action->sync) {
+            // Reload from the gateway to expose any state the post-save
+            // pipeline persisted (today the scoring processors are pure
+            // signal collectors that don't mutate the document, but
+            // future processors — e.g. fuzzy dedup writing back
+            // `duplicates`, or any `*Processor` that calls
+            // `documentGateway->save()` — will, and the `--sync` caller
+            // expects to observe a coherent post-pipeline document).
+            $document = $this->documentGateway->get($document->getId());
+        }
+
+        return new IngestDocumentResult(document: $document, preSaveContext: $context);
     }
 
     /**

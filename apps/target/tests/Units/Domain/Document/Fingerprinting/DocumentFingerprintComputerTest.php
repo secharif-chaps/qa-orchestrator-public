@@ -57,6 +57,8 @@ class DocumentFingerprintComputerTest extends TestCase
         $first = $this->computer->compute($text);
         $second = $this->computer->compute($text);
 
+        self::assertNotNull($first);
+        self::assertNotNull($second);
         self::assertSame($first->contentHash, $second->contentHash);
         self::assertSame($first->simHash, $second->simHash);
         self::assertSame($first->minHashSignature, $second->minHashSignature);
@@ -72,12 +74,12 @@ class DocumentFingerprintComputerTest extends TestCase
         $raw = "<p>Bonjour <strong>monde</strong>!</p>\n\n";
         $cleaned = 'Bonjour monde !';
 
-        self::assertSame(
-            $this->computer->compute($raw)
-->contentHash,
-            $this->computer->compute($cleaned)
-->contentHash,
-        );
+        $rawFingerprint = $this->computer->compute($raw);
+        $cleanedFingerprint = $this->computer->compute($cleaned);
+
+        self::assertNotNull($rawFingerprint);
+        self::assertNotNull($cleanedFingerprint);
+        self::assertSame($rawFingerprint->contentHash, $cleanedFingerprint->contentHash);
     }
 
     public function testNearDuplicateTextsProduceSimilarSimHash(): void
@@ -100,6 +102,8 @@ class DocumentFingerprintComputerTest extends TestCase
         $a = $this->computer->compute($original);
         $b = $this->computer->compute($nearDup);
 
+        self::assertNotNull($a);
+        self::assertNotNull($b);
         $similarity = new FingerprintSimilarity();
         $hamming = $similarity->hamming($a, $b);
         self::assertLessThan(16, $hamming, "Expected SimHash to track text similarity; got Hamming={$hamming}");
@@ -110,19 +114,27 @@ class DocumentFingerprintComputerTest extends TestCase
         $a = $this->computer->compute('Apples and oranges grow on trees in orchards.');
         $b = $this->computer->compute('Quantum mechanics describes subatomic particles.');
 
+        self::assertNotNull($a);
+        self::assertNotNull($b);
         self::assertNotSame($a->contentHash, $b->contentHash);
         self::assertNotSame($a->simHash, $b->simHash);
     }
 
-    public function testEmptyTextProducesAValidButZeroedFingerprint(): void
+    public function testEmptyTextReturnsNullFingerprint(): void
     {
-        $fingerprint = $this->computer->compute('');
-
-        // Generators agree on a conventional zero output for an empty
-        // shingle set. The Fingerprint constructor only validates shape,
-        // so the all-zero bundle is still a valid VO.
-        self::assertSame(str_repeat('0', 16), $fingerprint->simHash);
-        self::assertSame(array_fill(0, MinHashGenerator::NUM_HASHES, 0), $fingerprint->minHashSignature);
+        // Empty input or chrome-only HTML normalises to no shingles. The
+        // computer must return null rather than a degenerate
+        // all-zero bundle — otherwise every content-free document would
+        // collide on the same `sha256("")`/single-band sentinel keys at
+        // stages 1-3 of the dedup pipeline.
+        self::assertNull($this->computer->compute(''));
+        self::assertNull($this->computer->compute('   '));
+        // HTML chrome (link/img/script) without any real text body —
+        // the same shape as the production document that triggered the
+        // bug fix.
+        self::assertNull(
+            $this->computer->compute('<link rel="stylesheet" href="x"><img src="y"><script>noop()</script>'),
+        );
     }
 
     public function testCjkTextProducesAValidFingerprint(): void
@@ -134,6 +146,7 @@ class DocumentFingerprintComputerTest extends TestCase
             '東京都は日本の首都です。新宿区は東京都の中心地です。'
         );
 
+        self::assertNotNull($fingerprint);
         self::assertSame(64, \strlen($fingerprint->contentHash));
         self::assertSame(16, \strlen($fingerprint->simHash));
         self::assertCount(MinHashGenerator::NUM_HASHES, $fingerprint->minHashSignature);

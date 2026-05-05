@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Units\UserInterface\Command\Document;
 
 use App\Application\Document\IngestDocumentAction;
-use App\Application\Document\IngestDocumentHandler;
+use App\Application\Document\IngestDocumentResult;
 use App\Domain\Collect\CollectTaskGatewayInterface;
 use App\Domain\Document\Document;
 use App\Domain\Document\DocumentBuilderFromHtmlMetadata;
@@ -13,6 +13,8 @@ use App\Domain\Document\HtmlFetcherInterface;
 use App\Domain\Document\HtmlFetchException;
 use App\Domain\Document\HtmlMetadata;
 use App\Domain\Document\HtmlMetadataExtractor;
+use App\Domain\DocumentQuality\Exception\QualityReportNotFoundException;
+use App\Domain\DocumentQuality\QualityReportGatewayInterface;
 use App\Domain\Organisation\Organisation;
 use App\Domain\Shared\TranslatedText;
 use App\Domain\Source\ManualSourceFactory;
@@ -33,16 +35,17 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 #[AllowMockObjectsWithoutExpectations]
 class CreateDocumentCommandTest extends TestCase
 {
     use EntityUtilsTrait;
     private MessageBusInterface&MockObject $messageBus;
-    private IngestDocumentHandler&MockObject $ingestDocumentHandler;
     private WatchFileGatewayInterface&MockObject $watchFileGateway;
     private SourceGatewayInterface&MockObject $sourceGateway;
     private CollectTaskGatewayInterface&MockObject $collectTaskGateway;
+    private QualityReportGatewayInterface&MockObject $qualityReportGateway;
     private HtmlFetcherInterface&MockObject $htmlFetcher;
     private HtmlMetadataExtractor&Stub $metadataExtractor;
     private DocumentBuilderFromHtmlMetadata $documentBuilder;
@@ -51,10 +54,36 @@ class CreateDocumentCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->messageBus = $this->createMock(MessageBusInterface::class);
+        // Mirrors the production sync transport: when the dispatch
+        // arrives with a TransportNamesStamp(['sync']) — i.e. the
+        // `--sync` CLI path — the bus returns an Envelope carrying a
+        // HandledStamp whose result wraps the dispatched document. All
+        // other dispatches (the async path or unrelated messages) get
+        // a plain Envelope, just like an async transport would yield.
         $this->messageBus->method('dispatch')
-            ->willReturnCallback(static fn ($message) => new Envelope($message));
+            ->willReturnCallback(static function (object $message, array $stamps = []): Envelope {
+                $envelope = $message instanceof Envelope ? $message : new Envelope($message);
+                foreach ($stamps as $stamp) {
+                    $envelope = $envelope->with($stamp);
+                }
+                $isSync = false;
+                foreach ($stamps as $stamp) {
+                    if ($stamp instanceof \Symfony\Component\Messenger\Stamp\TransportNamesStamp
+                        && \in_array('sync', $stamp->getTransportNames(), true)) {
+                        $isSync = true;
+                        break;
+                    }
+                }
+                if ($isSync && $message instanceof IngestDocumentAction) {
+                    $envelope = $envelope->with(new HandledStamp(
+                        new IngestDocumentResult(document: $message->document),
+                        'IngestDocumentHandler::__invoke',
+                    ));
+                }
 
-        $this->ingestDocumentHandler = $this->createMock(IngestDocumentHandler::class);
+                return $envelope;
+            });
+
         $this->watchFileGateway = $this->createMock(WatchFileGatewayInterface::class);
         $this->sourceGateway = $this->createMock(SourceGatewayInterface::class);
         $this->collectTaskGateway = $this->createMock(CollectTaskGatewayInterface::class);
@@ -64,16 +93,20 @@ class CreateDocumentCommandTest extends TestCase
             ->willReturnCallback(function ($collectTask): void {
                 $this->forcePropertyValue($collectTask, 'collect-task-' . bin2hex(random_bytes(4)));
             });
+        $this->qualityReportGateway = $this->createMock(QualityReportGatewayInterface::class);
+        $this->qualityReportGateway
+            ->method('findByDocumentId')
+            ->willThrowException(new QualityReportNotFoundException('Test default: no report'));
         $this->htmlFetcher = $this->createMock(HtmlFetcherInterface::class);
         $this->metadataExtractor = $this->createStub(HtmlMetadataExtractor::class);
         $this->documentBuilder = new DocumentBuilderFromHtmlMetadata();
 
         $command = new CreateDocumentCommand(
             messageBus: $this->messageBus,
-            ingestDocumentHandler: $this->ingestDocumentHandler,
             watchFileGateway: $this->watchFileGateway,
             sourceGateway: $this->sourceGateway,
             collectTaskGateway: $this->collectTaskGateway,
+            qualityReportGateway: $this->qualityReportGateway,
             htmlFetcher: $this->htmlFetcher,
             metadataExtractor: $this->metadataExtractor,
             documentBuilder: $this->documentBuilder,
@@ -139,7 +172,7 @@ class CreateDocumentCommandTest extends TestCase
 
         self::assertSame(Command::SUCCESS, $exitCode);
         self::assertStringContainsString(
-            'Document dispatched for creation: Fetched article',
+            'Document dispatched for async ingestion: Fetched article',
             $this->commandTester->getDisplay()
         );
     }
@@ -202,7 +235,7 @@ class CreateDocumentCommandTest extends TestCase
 
             self::assertSame(Command::SUCCESS, $exitCode);
             self::assertStringContainsString(
-                'Document dispatched for creation: From local file',
+                'Document dispatched for async ingestion: From local file',
                 $this->commandTester->getDisplay()
             );
         } finally {
@@ -235,7 +268,7 @@ class CreateDocumentCommandTest extends TestCase
         self::assertStringContainsString('Content rejected', $this->commandTester->getDisplay());
     }
 
-    public function testSyncOptionInvokesHandlerDirectlyWithoutDispatching(): void
+    public function testSyncOptionDispatchesOnSyncTransportAndPrintsRecap(): void
     {
         $watchFile = $this->makeWatchFileWithManualSource();
         $this->watchFileGateway->method('get')
@@ -247,15 +280,11 @@ class CreateDocumentCommandTest extends TestCase
         $this->metadataExtractor->method('extract')
             ->willReturn($this->makeMetadata(title: 'Sync article'));
 
-        $invokedDocument = $this->makeDocument('doc-sync-1', 'Sync article');
-        $this->ingestDocumentHandler
-            ->expects($this->once())
-            ->method('__invoke')
-            ->willReturn($invokedDocument);
-
-        $this->messageBus
-            ->expects($this->never())
-            ->method('dispatch');
+        // The bus default in setUp() recognises the `sync` TransportNamesStamp
+        // and wraps the IngestDocumentAction's document in an
+        // IngestDocumentResult inside a HandledStamp — exactly what the
+        // production `sync` transport does when IngestDocumentHandler
+        // runs inline.
 
         $exitCode = $this->commandTester->execute([
             'watchFileId' => 'wf-1',
@@ -264,7 +293,7 @@ class CreateDocumentCommandTest extends TestCase
         ]);
 
         self::assertSame(Command::SUCCESS, $exitCode);
-        self::assertStringContainsString('Document created: Sync article', $this->commandTester->getDisplay());
+        self::assertStringContainsString('Document persisted: "Sync article"', $this->commandTester->getDisplay());
     }
 
     public function testUsesProvidedSourceIdInsteadOfManualSource(): void
@@ -410,21 +439,5 @@ class CreateDocumentCommandTest extends TestCase
             author: null,
             siteName: 'example.com',
         );
-    }
-
-    private function makeDocument(string $id, string $title): Document
-    {
-        $document = new Document(
-            id: $id,
-            title: $title,
-            excerpt: 'Excerpt',
-            type: 'html',
-            datePublish: new \DateTimeImmutable(),
-            dateCollect: new \DateTimeImmutable(),
-            content: '<p>Body</p>',
-            cfcRestricted: false,
-        );
-
-        return $document;
     }
 }

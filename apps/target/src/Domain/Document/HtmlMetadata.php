@@ -45,6 +45,17 @@ readonly class HtmlMetadata
     }
 
     /**
+     * Absolute floor on the post-strip_tags text length. A page that
+     * produces less than this much real text is considered empty
+     * regardless of metadata signals (covers JS-rendered SPAs, paywalls,
+     * cookie walls and bot-detection chrome whose static HTML is just
+     * `<link>` / `<script>` tags around an empty `<main>`). Distinct
+     * from {@see MIN_CONTENT_LENGTH} which is the threshold for
+     * accepting a short page when no metadata vouches for it.
+     */
+    private const int ABSOLUTE_MIN_CONTENT_LENGTH = 50;
+
+    /**
      * Check if the extracted content looks like a real page (not an error, captcha, or paywall).
      * Returns null if valid, or an error reason string if not.
      */
@@ -58,11 +69,22 @@ readonly class HtmlMetadata
             }
         }
 
-        // Content length check — but skip if we have strong metadata signals (real article)
         $textContent = strip_tags($this->content);
         $textLength = mb_strlen(trim($textContent));
-        $hasStrongMetadata = null !== $this->siteName || null !== $this->author;
 
+        // Hard floor — even strong metadata can't vouch for a page that
+        // has effectively no body. JS-rendered SPAs, paywalls, and
+        // bot-detection chrome end up here.
+        if ($textLength < self::ABSOLUTE_MIN_CONTENT_LENGTH) {
+            return \sprintf(
+                'Content body essentially empty (%d chars after strip_tags) — likely a JS-rendered page, paywall or bot-detection chrome',
+                $textLength,
+            );
+        }
+
+        // Soft floor — allow short pages through when metadata vouches
+        // for them (real articles can be sub-200-chars on launch / TLDR).
+        $hasStrongMetadata = null !== $this->siteName || null !== $this->author;
         if ($textLength < self::MIN_CONTENT_LENGTH && !$hasStrongMetadata) {
             return \sprintf(
                 'Content too short (%d chars, minimum %d) and no metadata to confirm legitimacy',

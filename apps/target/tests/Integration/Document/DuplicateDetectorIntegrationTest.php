@@ -78,13 +78,30 @@ final class DuplicateDetectorIntegrationTest extends KernelTestCase
         parent::tearDown();
     }
 
+    /**
+     * Compute a fingerprint and assert it is non-null. Every test case in
+     * this suite passes real text producing a non-empty shingle set, so a
+     * null return would be a contract violation worth failing on
+     * immediately rather than NPE-ing later in the assertions.
+     */
+    private function computeFingerprint(string $text, string $title = ''): Fingerprint
+    {
+        $fingerprint = $this->computer->compute($text, $title);
+        self::assertNotNull(
+            $fingerprint,
+            \sprintf('Expected non-null fingerprint for text starting with: %s', mb_substr($text, 0, 60)),
+        );
+
+        return $fingerprint;
+    }
+
     #[Test]
     public function stage0CanonicalUrlMatchEvenWhenContentDiffers(): void
     {
         // AFP wire reposted by another outlet: different rendered HTML
         // (different bytes) but the canonical URL points back to AFP.
         $afpText = 'Original AFP wire about a major political event in Europe.';
-        $afpFingerprint = $this->computer->compute($afpText);
+        $afpFingerprint = $this->computeFingerprint($afpText);
         $original = $this->indexDocument(
             id: 'doc-afp-original',
             canonicalUrl: 'https://www.afp.com/wire/article-12345',
@@ -92,7 +109,7 @@ final class DuplicateDetectorIntegrationTest extends KernelTestCase
         );
 
         // Outlet's rewrap: same canonical, different content hash.
-        $repost = $this->computer->compute('Outlet wraps AFP wire with their own commentary added on top.');
+        $repost = $this->computeFingerprint('Outlet wraps AFP wire with their own commentary added on top.');
 
         $result = $this->detector->detect(
             fingerprint: $repost,
@@ -109,10 +126,10 @@ final class DuplicateDetectorIntegrationTest extends KernelTestCase
     public function stage1ContentHashMatchOnExactRecrawl(): void
     {
         $text = 'Identical content recrawled by the cron a few hours later — bytes match.';
-        $fingerprint = $this->computer->compute($text);
+        $fingerprint = $this->computeFingerprint($text);
         $original = $this->indexDocument(id: 'doc-recrawl', canonicalUrl: null, fingerprint: $fingerprint);
 
-        $result = $this->detector->detect(fingerprint: $this->computer->compute($text), canonicalUrl: null);
+        $result = $this->detector->detect(fingerprint: $this->computeFingerprint($text), canonicalUrl: null);
 
         self::assertSame(DuplicateOutcome::DUPLICATE, $result->outcome);
         self::assertSame(DuplicateMatchStage::CONTENT_HASH, $result->stage);
@@ -189,10 +206,10 @@ final class DuplicateDetectorIntegrationTest extends KernelTestCase
             $base,
         );
 
-        $originalFingerprint = $this->computer->compute($base);
+        $originalFingerprint = $this->computeFingerprint($base);
         $original = $this->indexDocument(id: 'doc-eiffel', canonicalUrl: null, fingerprint: $originalFingerprint);
 
-        $result = $this->detector->detect(fingerprint: $this->computer->compute($paraphrased), canonicalUrl: null);
+        $result = $this->detector->detect(fingerprint: $this->computeFingerprint($paraphrased), canonicalUrl: null);
 
         self::assertSame(DuplicateOutcome::NEAR_DUPLICATE, $result->outcome);
         self::assertSame(DuplicateMatchStage::MIN_HASH_LSH, $result->stage);
@@ -207,13 +224,13 @@ final class DuplicateDetectorIntegrationTest extends KernelTestCase
         $this->indexDocument(
             id: 'doc-corpus-noise',
             canonicalUrl: null,
-            fingerprint: $this->computer->compute(
+            fingerprint: $this->computeFingerprint(
                 'Quantum mechanics describes the physical properties of nature at the scale of atoms.',
             ),
         );
 
         $result = $this->detector->detect(
-            fingerprint: $this->computer->compute(
+            fingerprint: $this->computeFingerprint(
                 'Le marché de la baguette parisienne reste stable malgré la hausse du blé.',
             ),
             canonicalUrl: null,
@@ -231,7 +248,7 @@ final class DuplicateDetectorIntegrationTest extends KernelTestCase
         // an existing document (e.g. quality re-scoring) must not flag
         // it as a duplicate of itself.
         $text = 'Self-match guard: this document is in the index already.';
-        $fingerprint = $this->computer->compute($text);
+        $fingerprint = $this->computeFingerprint($text);
         $self = $this->indexDocument(
             id: 'doc-self-match',
             canonicalUrl: 'https://example.com/self',
@@ -263,7 +280,7 @@ final class DuplicateDetectorIntegrationTest extends KernelTestCase
             . 'unit. Industry analysts welcomed the announcement as a sign '
             . 'of continued momentum in the South Asian renewable market.';
 
-        $masterFp = $this->computer->compute($masterBody, $title);
+        $masterFp = $this->computeFingerprint($masterBody, $title);
         $original = $this->indexDocument(
             id: 'doc-stage4-master',
             canonicalUrl: 'https://vestas.com/press/65mw-india',
@@ -271,7 +288,7 @@ final class DuplicateDetectorIntegrationTest extends KernelTestCase
             title: $title,
         );
 
-        $candidateFp = $this->computer->compute($candidateBody, $title);
+        $candidateFp = $this->computeFingerprint($candidateBody, $title);
         $result = $this->detector->detect(
             fingerprint: $candidateFp,
             canonicalUrl: null,
