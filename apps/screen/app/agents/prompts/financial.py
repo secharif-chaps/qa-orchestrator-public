@@ -89,11 +89,26 @@ Rules:
 ## [7] ARRAYS
 - `metrics[]`: Include historical financial metrics with period tracking. Each entry should have:
   - `metricName`: Any descriptive name (backend normalises known ones to canonical keys automatically)
-  - `period`: Reporting period — `"FY2023"`, `"Q3 2024"`, `"TTM"`
+  - `period`: Reporting period — `"FY2023"`, `"Q3 2024"`, `"TTM"` (free-form display label)
+  - `periodNormalized`: ISO date `"YYYY-MM-DD"` anchoring the **start** of the period for sorting.
+    Derive from `period` using these rules (use `fiscalYearEnd` and company country when relevant):
+    - Plain calendar year `"2023"` → `"2023-01-01"` (always January 1)
+    - `"FY2023"` US/EU company (Jan fiscal year start) → `"2023-01-01"`
+    - `"FY2023"` Japan/HK company (Apr fiscal year start) → `"2023-04-01"`
+    - `"FY2023"` Australia company (Jul fiscal year start) → `"2022-07-01"` (FY2023 ends Jun 2023, starts Jul 2022)
+    - `"Q1 YYYY"` → `"YYYY-01-01"` · `"Q2 YYYY"` → `"YYYY-04-01"`
+    - `"Q3 YYYY"` → `"YYYY-07-01"` · `"Q4 YYYY"` → `"YYYY-10-01"`
+    - `"H1 YYYY"` → `"YYYY-01-01"` · `"H2 YYYY"` → `"YYYY-07-01"`
+    - `"early YYYY"` → `"YYYY-01-01"` · `"mid YYYY"` → `"YYYY-06-01"` · `"late YYYY"` → `"YYYY-12-01"`
+    - `"TTM"`, `"LTM"`, rolling windows, truly undateable labels → `null`
   - `value`: Concise value with units — `"$1.2B"`, `"15%"`
   - `context` (optional): Extra context about this specific metric row
 - `fundingRounds[]`: For private companies. Include each financing event with roundType, amount, date,
   leadInvestor, valuation, source.
+  - `dateNormalized`: ISO date `"YYYY-MM-DD"` anchoring the start of the funding event for sorting.
+    Apply the same calendar-year logic to the free-form `date` field.
+    Examples: `"March 2021"` → `"2021-03-01"`, `"Q2 2019"` → `"2019-04-01"`, `"2018"` → `"2018-01-01"`,
+    `"early 2020"` → `"2020-01-01"`, `"late 2022"` → `"2022-12-01"`. null if truly undateable.
 - For public companies: leave `fundingRounds` null.
 
 ## Output Schema

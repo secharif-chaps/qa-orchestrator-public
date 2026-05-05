@@ -380,6 +380,9 @@ class FinancialMetric(BaseModel):
 
     metricName: str | None = None
     period: str | None = None
+    # ISO date (YYYY-MM-DD) representing the START of the reporting period for sorting.
+    # null when the period cannot be anchored (TTM, LTM, undateable labels).
+    periodNormalized: str | None = None
     value: str | None = None
     unit: str | None = None
     source: str | None = None
@@ -398,6 +401,9 @@ class FundingRound(BaseModel):
     roundType: str | None = None
     amount: str | None = None
     date: str | None = None
+    # ISO date (YYYY-MM-DD) representing the start of the funding event for sorting.
+    # null when the date cannot be anchored.
+    dateNormalized: str | None = None
     leadInvestor: str | None = None
     valuation: str | None = None
     source: str | None = None

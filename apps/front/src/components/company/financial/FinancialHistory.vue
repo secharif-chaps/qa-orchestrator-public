@@ -50,13 +50,14 @@ interface MetricCell {
 
 interface HistoryRow {
   period: string
+  periodNormalized: string | null
   revenue: MetricCell | null
   ebitda: MetricCell | null
   netIncome: MetricCell | null
   fcf: MetricCell | null
 }
 
-const METRIC_MAP: Record<string, keyof Omit<HistoryRow, 'period'>> = {
+const METRIC_MAP: Record<string, keyof Omit<HistoryRow, 'period' | 'periodNormalized'>> = {
   revenue: 'revenue',
   ebitda: 'ebitda',
   netIncome: 'netIncome',
@@ -81,6 +82,7 @@ const groupedRows = computed<HistoryRow[]>(() => {
     if (!rowMap.has(metric.period)) {
       rowMap.set(metric.period, {
         period: metric.period,
+        periodNormalized: metric.periodNormalized,
         revenue: null,
         ebitda: null,
         netIncome: null,
@@ -89,6 +91,9 @@ const groupedRows = computed<HistoryRow[]>(() => {
     }
 
     const row = rowMap.get(metric.period)!
+    // Pick up a normalized date from any metric in the group if the first one lacked it
+    if (!row.periodNormalized && metric.periodNormalized)
+      row.periodNormalized = metric.periodNormalized
     row[key] = {
       value: metric.unit ? `${metric.value} ${metric.unit}` : metric.value,
       source: metric.source,
@@ -96,6 +101,11 @@ const groupedRows = computed<HistoryRow[]>(() => {
     }
   }
 
-  return Array.from(rowMap.values()).sort((a, b) => b.period.localeCompare(a.period))
+  return Array.from(rowMap.values()).sort((a, b) => {
+    if (!a.periodNormalized && !b.periodNormalized) return b.period.localeCompare(a.period)
+    if (!a.periodNormalized) return 1
+    if (!b.periodNormalized) return -1
+    return b.periodNormalized.localeCompare(a.periodNormalized)
+  })
 })
 </script>

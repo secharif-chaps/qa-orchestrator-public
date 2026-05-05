@@ -89,6 +89,8 @@ export interface SanctionsData {
 export interface FinancialMetric {
   metricName: string
   period: string
+  /** ISO date (YYYY-MM-DD) anchoring the start of the period for sorting. null for TTM/LTM/undateable. */
+  periodNormalized: string | null
   value: string | null
   unit: string | null
   source: string | null
@@ -100,6 +102,8 @@ export interface FundingRound {
   roundType: string | null
   amount: string | null
   date: string | null
+  /** ISO date (YYYY-MM-DD) anchoring the start of the funding event for sorting. null if undateable. */
+  dateNormalized: string | null
   leadInvestor: string | null
   valuation: string | null
   source: string | null
