@@ -17,6 +17,8 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model;
 use App\Domain\Actor\Actor;
 use App\Domain\Collect\CollectTask;
+use App\Domain\Document\Deduplication\DuplicateAttempt;
+use App\Domain\Document\Fingerprinting\Fingerprint;
 use App\Domain\Document\Fingerprinting\ScriptDetector;
 use App\Domain\Shared\HasWatchFileInterface;
 use App\Domain\Source\Source;
@@ -505,17 +507,27 @@ class Document implements HasWatchFileInterface
 {
     public const string INDEX_NAME = 'document';
 
-    #[ApiProperty(identifier: true)]
+    #[ApiProperty(
+        description: 'Unique identifier (UUID v4) of the document.',
+        identifier: true,
+        example: '550e8400-e29b-41d4-a716-446655440000',
+    )]
     #[Groups(['document:read', 'document:save'])]
     private string $id;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Title of the document, typically extracted from the source page (`<title>`, `og:title`, …).',
+        example: 'ECB raises key interest rates by 25 basis points',
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     #[Assert\NotBlank(message: 'document.title.not_blank')]
     #[Assert\Length(min: 1, max: 500, minMessage: 'document.title.min_length', maxMessage: 'document.title.max_length')]
     private string $title;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Short teaser of the document (first paragraph, meta description, or LLM-generated summary). 10-1000 characters.',
+        example: 'The European Central Bank announced on Thursday a new hike of its key interest rates, bringing the deposit rate to 4%.',
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     #[Assert\NotBlank(message: 'document.excerpt.not_blank')]
     #[Assert\Length(
@@ -526,26 +538,53 @@ class Document implements HasWatchFileInterface
     )]
     private string $excerpt;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Format of the source document. `html` for web articles, `pdf` for binary attachments.',
+        example: 'html',
+        openapiContext: [
+            'type' => 'string',
+            'enum' => ['pdf', 'html'],
+        ],
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     #[Assert\NotBlank(message: 'document.type.not_blank')]
     #[Assert\Choice(choices: ['pdf', 'html'], message: 'document.type.invalid_choice')]
     private string $type;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Original publication date as advertised by the source (article `datePublished`, RSS `pubDate`, …). May be `null` if the source did not expose one.',
+        example: '2026-04-30T14:23:51+00:00',
+        openapiContext: [
+            'type' => 'string',
+            'format' => 'date-time',
+        ],
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     private \DateTimeImmutable $datePublish;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Server-side timestamp at which the collect pipeline fetched the document (UTC).',
+        example: '2026-04-30T14:25:03+00:00',
+        openapiContext: [
+            'type' => 'string',
+            'format' => 'date-time',
+        ],
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     private \DateTimeImmutable $dateCollect;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Full extracted body of the document (cleaned text, no markup). Used for full-text search and dedup signals.',
+        example: 'The European Central Bank raised its three key interest rates by 25 basis points on Thursday, bringing the deposit rate to 4%, the main refinancing rate to 4.5% and the marginal lending facility to 4.75%. The ECB justifies this new round of monetary tightening by persistent core inflation above the 2% target.',
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     #[Assert\NotBlank(message: 'document.content.not_blank')]
     private string $content;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Lifecycle status of the document in the collect pipeline (pending, validated, refused, …).',
+        example: 'pending',
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     #[Assert\NotBlank(message: 'document.status.not_blank')]
     private DocumentStatus $status;
@@ -554,7 +593,14 @@ class Document implements HasWatchFileInterface
     #[Groups(['document:write', 'document:save'])]
     private ?ValidationReason $validationReason = null;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'ISO 639-1 language code detected on the body. Currently constrained to `en` or `fr` until additional NLP pipelines are wired in.',
+        example: 'en',
+        openapiContext: [
+            'type' => 'string',
+            'enum' => ['en', 'fr'],
+        ],
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     #[Assert\NotBlank(message: 'document.language.not_blank')]
     #[Assert\Choice(choices: ['en', 'fr'], message: 'document.language.invalid_choice')]
@@ -564,49 +610,84 @@ class Document implements HasWatchFileInterface
     #[Groups(['document:write', 'document:save'])]
     private bool $isInteresting;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'LLM-generated short insight (≤ 500 chars) explaining why this document is relevant for the watch_file. `null` until the AI validation step has run.',
+        example: 'Direct rate decision affecting funding costs for the watched financial group.',
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     #[Assert\Length(max: 500, maxMessage: 'document.insight.max_length')]
     private ?string $insight;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Public URL where the document was originally published.',
+        example: 'https://www.ft.com/content/example-article',
+        openapiContext: [
+            'type' => 'string',
+            'format' => 'uri',
+            'nullable' => true,
+        ],
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     #[Assert\Url(requireTld: true)]
     private ?string $url = null;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Whether the document is subject to French CFC (Centre Français d\'exploitation du droit de Copie) restrictions. Drives display-only previews in the UI.',
+        example: false,
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     private bool $cfcRestricted;
 
-    #[ApiProperty]
+    #[ApiProperty(description: 'IRI of the watch_file this document was collected for.',)]
     #[Groups(['document:read', 'document:save'])]
     protected ?WatchFile $watchFile = null;
 
-    #[ApiProperty]
+    #[ApiProperty(description: 'Source the document was published on (newspaper, blog, RSS feed, …).',)]
     #[Groups(['document:read', 'document:save'])]
     protected ?Source $source = null;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Actor that authored or is the subject of the document, when one was identified by the collect pipeline.',
+    )]
     #[Groups(['document:read', 'document:save'])]
     protected ?Actor $actor = null;
 
-    #[ApiProperty]
+    #[ApiProperty(description: 'User who last modified the document (manual validation, edit, …).',)]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     protected ?User $updatedBy = null;
 
-    #[ApiProperty]
+    #[ApiProperty(description: 'Multilingual summary of the document, generated by the AI summary pipeline.',)]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     private ?Summary $summary = null;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Lifecycle status of the AI summary generation (`pending`, `processing`, `done`, `failed`).',
+        example: 'done',
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     private ?SummaryStatus $summaryStatus = null;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Timestamp at which the AI summary was generated (UTC). `null` while `summaryStatus` is `pending` or `processing`.',
+        example: '2026-04-30T14:26:18+00:00',
+        openapiContext: [
+            'type' => 'string',
+            'format' => 'date-time',
+            'nullable' => true,
+        ],
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     private ?\DateTimeImmutable $summaryGeneratedAt = null;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Timestamp of the last write to the document (manual validation, AI summary refresh, …). UTC.',
+        example: '2026-04-30T14:35:42+00:00',
+        openapiContext: [
+            'type' => 'string',
+            'format' => 'date-time',
+            'nullable' => true,
+        ],
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
@@ -616,22 +697,41 @@ class Document implements HasWatchFileInterface
     #[ApiProperty]
     private ?array $highlight = null;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Result of the AI relevance-check pipeline (status, confidence score, reasoning). `null` until the pipeline has run.',
+    )]
     #[Groups(['document:read', 'document:write', 'document:save'])]
     private ?AIValidation $aiValidation = null;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Whether the **current authenticated user** has already opened this document. Per-user state — different viewers see different values.',
+        example: false,
+    )]
     #[Groups(['document:read'])]
     private bool $isSeen = false;
 
+    #[ApiProperty(
+        description: 'Manual validation verdict applied by a reviewer (`accept`, `refuse`). `null` if no manual review has happened yet.',
+        example: 'accept',
+    )]
     #[Groups(['document:read', 'document:save'])]
     private ?ManualValidationStatus $manualStatus = null;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'User who applied the manual validation verdict. `null` if `manualStatus` is `null`.',
+    )]
     #[Groups(['document:read', 'document:save'])]
     private ?User $validatedBy = null;
 
-    #[ApiProperty]
+    #[ApiProperty(
+        description: 'Timestamp at which the manual validation was applied (UTC). `null` if no manual review has happened yet.',
+        example: '2026-04-30T14:38:09+00:00',
+        openapiContext: [
+            'type' => 'string',
+            'format' => 'date-time',
+            'nullable' => true,
+        ],
+    )]
     #[Groups(['document:read', 'document:save'])]
     private ?\DateTimeImmutable $validatedAt = null;
 
@@ -655,6 +755,48 @@ class Document implements HasWatchFileInterface
 
     #[Groups(['document:save'])]
     private ?string $canonicalUrl = null;
+
+    /**
+     * Fingerprint bundle computed by the dedup pipeline (TAR-1145, ADR-2026-006).
+     * `null` for legacy documents indexed before the feature shipped.
+     */
+    #[Groups(['document:save'])]
+    private ?Fingerprint $fingerprint = null;
+
+    /**
+     * Replays of the dedup pipeline that matched **this** document. FIFO-bounded
+     * to avoid unbounded growth on viral articles republished by many sources.
+     *
+     * @var list<DuplicateAttempt>
+     */
+    #[ApiProperty(
+        description: <<<'EOT'
+            Audit trail of dedup-pipeline runs that matched this document as the
+            **original** (i.e. the one a freshly-collected candidate was matched
+            against). Each entry exposes the candidate URL, the collect
+            timestamp and the dedup verdict (`outcome`, `matchStage`,
+            `similarity`).
+
+            Bounded **FIFO** at 50 entries to keep the trace usable on viral
+            articles republished by many sources. Same-URL collisions overwrite
+            the existing entry in place — preserves source diversity in the
+            "vu sur AFP, Le Monde, Reuters" UX signal.
+
+            Read-only: this list is populated by the dedup pipeline and is not
+            writable through the API.
+            EOT
+        ,
+        readable: true,
+        writable: false,
+    )]
+    #[Groups(['document:read', 'document:save'])]
+    private array $duplicates = [];
+
+    /**
+     * Maximum number of `DuplicateAttempt` entries kept on a single document.
+     * Older entries are evicted FIFO when this cap is reached.
+     */
+    public const int MAX_DUPLICATE_ATTEMPTS = 50;
 
     public function __construct(
         ?string $id,
@@ -1006,18 +1148,30 @@ class Document implements HasWatchFileInterface
         return $this;
     }
 
+    #[ApiProperty(
+        description: 'Whether the OpenSearch highlighter matched the user query in the title. Drives `<mark>` rendering in the UI.',
+        example: true,
+    )]
     #[Groups(['document:read'])]
     public function isTitleHighlighted(): bool
     {
         return $this->highlight && isset($this->highlight['title']);
     }
 
+    #[ApiProperty(
+        description: 'Whether the OpenSearch highlighter matched the user query in the excerpt.',
+        example: true,
+    )]
     #[Groups(['document:read'])]
     public function isExcerptHighlighted(): bool
     {
         return $this->highlight && isset($this->highlight['excerpt']);
     }
 
+    #[ApiProperty(
+        description: 'Whether the OpenSearch highlighter matched the user query in the content body.',
+        example: false,
+    )]
     #[Groups(['document:read'])]
     public function isContentHighlighted(): bool
     {
@@ -1054,30 +1208,50 @@ class Document implements HasWatchFileInterface
         return $this;
     }
 
+    #[ApiProperty(
+        description: 'Convenience flag — `true` when `aiValidation.status` is `validated`. Mutually exclusive with the other `aiValidation*` booleans.',
+        example: true,
+    )]
     #[Groups(['document:read'])]
     public function isAiValidated(): bool
     {
         return null !== $this->aiValidation && AiValidationStatus::VALIDATED === $this->aiValidation->status;
     }
 
+    #[ApiProperty(
+        description: 'Convenience flag — `true` when `aiValidation.status` is `rejected`.',
+        example: false,
+    )]
     #[Groups(['document:read'])]
     public function isAiRejected(): bool
     {
         return null !== $this->aiValidation && AiValidationStatus::REJECTED === $this->aiValidation->status;
     }
 
+    #[ApiProperty(
+        description: 'Convenience flag — `true` when `aiValidation.status` is `uncertain` (LLM confidence below the auto-decision threshold).',
+        example: false,
+    )]
     #[Groups(['document:read'])]
     public function isAiValidationUncertain(): bool
     {
         return null !== $this->aiValidation && AiValidationStatus::UNCERTAIN === $this->aiValidation->status;
     }
 
+    #[ApiProperty(
+        description: 'Convenience flag — `true` when `aiValidation.status` is `failed` (transient pipeline error, e.g. LLM timeout).',
+        example: false,
+    )]
     #[Groups(['document:read'])]
     public function isAiValidationFailed(): bool
     {
         return null !== $this->aiValidation && AiValidationStatus::FAILED === $this->aiValidation->status;
     }
 
+    #[ApiProperty(
+        description: 'Convenience flag — `true` when `aiValidation.status` is `pending` (queued, not yet processed).',
+        example: false,
+    )]
     #[Groups(['document:read'])]
     public function isAiValidationPending(): bool
     {
@@ -1131,12 +1305,14 @@ class Document implements HasWatchFileInterface
         return $this;
     }
 
+    #[ApiProperty(description: 'Convenience flag — `true` when `manualStatus` is `accept`.', example: true,)]
     #[Groups(['document:read'])]
     public function isManuallyAccepted(): bool
     {
         return ManualValidationStatus::ACCEPTED === $this->manualStatus;
     }
 
+    #[ApiProperty(description: 'Convenience flag — `true` when `manualStatus` is `refuse`.', example: false,)]
     #[Groups(['document:read'])]
     public function isManuallyRefused(): bool
     {
@@ -1228,6 +1404,61 @@ class Document implements HasWatchFileInterface
     public function setCanonicalUrl(?string $canonicalUrl): self
     {
         $this->canonicalUrl = $canonicalUrl;
+
+        return $this;
+    }
+
+    public function getFingerprint(): ?Fingerprint
+    {
+        return $this->fingerprint;
+    }
+
+    public function setFingerprint(?Fingerprint $fingerprint): self
+    {
+        $this->fingerprint = $fingerprint;
+
+        return $this;
+    }
+
+    /**
+     * @return list<DuplicateAttempt>
+     */
+    public function getDuplicates(): array
+    {
+        return $this->duplicates;
+    }
+
+    /**
+     * Record a tentative collect that the dedup pipeline matched against
+     * this document. The list is bounded by {@see self::MAX_DUPLICATE_ATTEMPTS} —
+     * the oldest entry is evicted when the cap is reached, FIFO-style.
+     *
+     * Same-URL collisions overwrite the existing entry rather than appending
+     * a duplicate one. Recurrent retry-style collects on a single URL would
+     * otherwise saturate the bounded list and crowd out the diversity of
+     * sources the trace is meant to capture (the "vu sur AFP, Le Monde,
+     * Reuters" UX signal).
+     *
+     * The semantics are intentionally pipeline-agnostic: the caller decides
+     * the {@see DuplicateAttempt::$outcome} (`DUPLICATE` / `NEAR_EXACT` /
+     * `NEAR_DUPLICATE`) and we record verbatim.
+     */
+    public function recordDuplicate(DuplicateAttempt $attempt): self
+    {
+        foreach ($this->duplicates as $i => $existing) {
+            if ($existing->url === $attempt->url) {
+                $this->duplicates[$i] = $attempt;
+
+                return $this;
+            }
+        }
+
+        $this->duplicates[] = $attempt;
+
+        $overflow = \count($this->duplicates) - self::MAX_DUPLICATE_ATTEMPTS;
+        if ($overflow > 0) {
+            $this->duplicates = \array_slice($this->duplicates, $overflow);
+        }
 
         return $this;
     }

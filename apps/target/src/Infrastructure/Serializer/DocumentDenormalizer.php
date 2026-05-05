@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Serializer;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Domain\Document\Deduplication\DuplicateAttempt;
 use App\Domain\Document\Document;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -26,6 +27,13 @@ class DocumentDenormalizer implements DenormalizerInterface, DenormalizerAwareIn
 {
     use DenormalizerAwareTrait;
     public const string SERIALIZATION_GROUP = 'document:save';
+
+    /**
+     * Context key used by {@see self::denormalizeBatch()} to ferry the
+     * batch-loaded `#[ApiResource]` entities to {@see self::setApiResourceProperty()}.
+     * Shape: `class-string => array<string, object>` (id → entity).
+     */
+    public const string PRELOADED_ENTITIES_KEY = 'document.preloaded_entities';
 
     /** @var array<string, \ReflectionProperty>|null */
     private ?array $cachedProperties = null;
@@ -75,6 +83,117 @@ class DocumentDenormalizer implements DenormalizerInterface, DenormalizerAwareIn
     }
 
     /**
+     * Denormalize many `_source` payloads in one shot, batch-loading every
+     * `#[ApiResource]` related entity (actor, source, watchFile, updatedBy)
+     * with one `findBy(['id' => $ids])` per type instead of N times one
+     * `find()` per document × per property.
+     *
+     * Caller responsibility: pass the array of `_source` arrays (already
+     * extracted from `_source`/highlight wrapping).
+     *
+     * @param list<array<string, mixed>> $sources `_source` payloads
+     * @param array<string, mixed>       $context standard Symfony Serializer context
+     *
+     * @return list<Document>
+     */
+    public function denormalizeBatch(array $sources, ?string $format = null, array $context = []): array
+    {
+        if (empty($sources)) {
+            return [];
+        }
+
+        $idsByClass = $this->collectApiResourceIds($sources);
+
+        $preloaded = [];
+        foreach ($idsByClass as $entityClass => $ids) {
+            if (empty($ids)) {
+                continue;
+            }
+
+            try {
+                /** @var list<object> $entities */
+                $entities = $this->entityManager->getRepository($entityClass)
+                    ->findBy([
+                        'id' => array_values(array_unique($ids)),
+                    ]);
+            } catch (\Exception $e) {
+                $this->logger?->warning(\sprintf(
+                    'Batch hydration failed for %s: %s — falling back to per-id lookups',
+                    $entityClass,
+                    $e->getMessage(),
+                ));
+
+                continue;
+            }
+
+            $byId = [];
+            foreach ($entities as $entity) {
+                $id = $this->propertyAccessor->getValue($entity, 'id');
+                if (\is_string($id) || \is_int($id)) {
+                    $byId[(string) $id] = $entity;
+                }
+            }
+            $preloaded[$entityClass] = $byId;
+        }
+
+        $batchContext = array_merge($context, [
+            self::PRELOADED_ENTITIES_KEY => $preloaded,
+        ]);
+
+        $documents = [];
+        foreach ($sources as $source) {
+            /** @var Document $document */
+            $document = $this->denormalize($source, Document::class, $format, $batchContext);
+            $documents[] = $document;
+        }
+
+        return $documents;
+    }
+
+    /**
+     * Walk every payload and collect entity IDs grouped by `#[ApiResource]`
+     * class — used by {@see self::denormalizeBatch()} to issue one bulk
+     * `findBy()` per type.
+     *
+     * @param list<array<string, mixed>> $sources
+     *
+     * @return array<class-string, list<string>>
+     */
+    private function collectApiResourceIds(array $sources): array
+    {
+        $idsByClass = [];
+
+        foreach ($this->getDocumentOpenSearchProperties() as $property) {
+            $propertyType = $property->getType();
+            if (!$this->isApiResourceProperty($propertyType)) {
+                continue;
+            }
+            \assert($propertyType instanceof \ReflectionNamedType);
+            /** @var class-string $entityClass */
+            $entityClass = $propertyType->getName();
+            $propertyName = $property->getName();
+
+            $ids = [];
+            foreach ($sources as $source) {
+                $entry = $source[$propertyName] ?? null;
+                if (!\is_array($entry)) {
+                    continue;
+                }
+                $candidate = $entry['id'] ?? null;
+                if (\is_string($candidate) && '' !== $candidate) {
+                    $ids[] = $candidate;
+                }
+            }
+
+            if ([] !== $ids) {
+                $idsByClass[$entityClass] = $ids;
+            }
+        }
+
+        return $idsByClass;
+    }
+
+    /**
      * @return array<string, \ReflectionProperty>
      */
     private function getDocumentOpenSearchProperties(): array
@@ -113,7 +232,7 @@ class DocumentDenormalizer implements DenormalizerInterface, DenormalizerAwareIn
         $propertyType = $property->getType();
 
         if ($this->isApiResourceProperty($propertyType)) {
-            $this->setApiResourceProperty($document, $property, $data);
+            $this->setApiResourceProperty($document, $property, $data, $context);
         } else {
             $this->setSimpleProperty($document, $property, $data, $format, $context);
         }
@@ -155,25 +274,46 @@ class DocumentDenormalizer implements DenormalizerInterface, DenormalizerAwareIn
         if ($propertyType instanceof \ReflectionNamedType && !$propertyType->isBuiltin()) {
             $targetType = $propertyType->getName();
             $value = $this->denormalizer->denormalize($value, $targetType, $format, $context);
+        } elseif ('duplicates' === $propertyName && \is_array($value)) {
+            // `Document::$duplicates` is typed `array` (builtin), so the
+            // generic non-builtin branch above does not fire. Map each
+            // entry to a `DuplicateAttempt` value object explicitly.
+            $value = array_map(
+                fn (mixed $item): DuplicateAttempt => $this->denormalizer->denormalize(
+                    $item,
+                    DuplicateAttempt::class,
+                    $format,
+                    $context,
+                ),
+                $value,
+            );
         }
 
         $this->setPropertyValueSafely($document, $property, $value);
     }
 
     /**
-     * TODO: Performance - N+1 queries issue.
+     * Hydrate an`#[ApiResource]`-typed property (actor, source, watchFile,
+     * updatedBy…) from the OpenSearch `_source` payload.
      *
-     * Current implementation: 1 SQL query per ApiResource property (actor, source, watchFile, updatedBy).
-     * Impact: 4+ queries per document during bulk denormalization.
+     * Bulk callers ({@see self::denormalizeBatch()}) seed `$context` with a
+     * `preloaded_entities` map (`class-string => array<id, entity>`) so the
+     * lookup hits an in-memory cache instead of triggering one
+     * `EntityManager::find()` per property per hit (N+1 on bulk reads).
      *
-     * Optimization needed:
-     * - Implement batch loading: group entity IDs by type and use findBy(['id' => $ids])
-     * - Or add entity cache to avoid repeated queries for same entities
+     * Single-document callers omit the context — the fallback to
+     * `EntityManager::find()` keeps the original O(1)-per-property
+     * behaviour intact.
      *
      * @param array<string, mixed> $data
+     * @param array<string, mixed> $context
      */
-    private function setApiResourceProperty(Document $document, \ReflectionProperty $property, array $data): void
-    {
+    private function setApiResourceProperty(
+        Document $document,
+        \ReflectionProperty $property,
+        array $data,
+        array $context = [],
+    ): void {
         $propertyName = $property->getName();
 
         if (!isset($data[$propertyName]) || !\is_array($data[$propertyName]) || !isset($data[$propertyName]['id'])) {
@@ -189,6 +329,23 @@ class DocumentDenormalizer implements DenormalizerInterface, DenormalizerAwareIn
 
         /** @var class-string $entityClass */
         $entityClass = $propertyType->getName();
+
+        $preloaded = $context[self::PRELOADED_ENTITIES_KEY] ?? null;
+        if (
+            (\is_string($entityId) || \is_int($entityId))
+            && \is_array($preloaded)
+            && isset($preloaded[$entityClass])
+            && \is_array($preloaded[$entityClass])
+        ) {
+            $entity = $preloaded[$entityClass][(string) $entityId] ?? null;
+            if (null !== $entity) {
+                $this->setPropertyValueSafely($document, $property, $entity);
+
+                return;
+            }
+            // Fall through to per-id `find()` if the batch loader missed
+            // (e.g. entity created between the bulk fetch and denormalize).
+        }
 
         try {
             $entity = $this->entityManager->find($entityClass, $entityId);
