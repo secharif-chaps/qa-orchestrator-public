@@ -21,6 +21,7 @@ from .company_children import (
 )
 from .company_enrichment import CompanyEnrichment
 from .company_financial import CompanyFinancial, CompanyFinancialMetric, CompanyFundingRound
+from .company_patents import CompanyPatentItem, CompanyPatents
 from .company_sections import (
     CompanyCsr,
     CompanyDigital,
@@ -78,6 +79,8 @@ __all__ = [
     "CompanyFundingRound",
     "CompanyCorporateEntity",
     "CompanySanctionItem",
+    "CompanyPatents",
+    "CompanyPatentItem",
     # Organization models
     "Organization",
     "OrganizationModule",

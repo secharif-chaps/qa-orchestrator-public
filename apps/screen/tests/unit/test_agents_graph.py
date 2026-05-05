@@ -72,6 +72,7 @@ class TestAgentNodeMap:
             "corporate_structure",
             "sanctions",
             "financial",
+            "patents",
         }
         assert set(AGENT_NODE_MAP.keys()) == expected
 

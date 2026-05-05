@@ -16,16 +16,28 @@ class TestAgentConfig:
     """Tests for config.py constants."""
 
     def test_all_agent_types_count(self):
-        assert len(ALL_AGENT_TYPES) == 11
+        assert len(ALL_AGENT_TYPES) == 12
 
     def test_agent_types_are_expected(self):
         expected = {
-            "profile", "digital", "press", "jobs", "products", "timeline",
-            "csr", "team", "corporate_structure", "sanctions", "financial",
+            "profile",
+            "digital",
+            "press",
+            "jobs",
+            "products",
+            "timeline",
+            "csr",
+            "team",
+            "corporate_structure",
+            "sanctions",
+            "financial",
+            "patents",
         }
         assert set(ALL_AGENT_TYPES) == expected
 
     def test_every_standard_agent_has_prompt(self):
+        # financial is excluded because it uses multi-step prompts
+        # (financial_classify / financial_synthesize) instead of a single PROMPT.
         standard_agents = [a for a in ALL_AGENT_TYPES if a != "financial"]
         for agent_name in standard_agents:
             assert agent_name in PROMPTS_REGISTRY, f"Missing prompt for {agent_name}"
@@ -46,9 +58,19 @@ class TestAgentConfig:
 
     def test_registry_contains_expected_keys(self):
         expected = {
-            "profile", "digital", "press", "jobs", "products", "timeline",
-            "csr", "team", "corporate_structure", "sanctions",
-            "financial_classify", "financial_synthesize",
+            "profile",
+            "digital",
+            "press",
+            "jobs",
+            "products",
+            "timeline",
+            "csr",
+            "team",
+            "corporate_structure",
+            "sanctions",
+            "patents",
+            "financial_classify",
+            "financial_synthesize",
             "planner",
         }
         assert set(PROMPTS_REGISTRY.keys()) == expected

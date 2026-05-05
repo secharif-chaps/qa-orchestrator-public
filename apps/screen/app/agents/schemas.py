@@ -449,6 +449,44 @@ class FinancialAgentOutput(BaseModel):
 
 
 # =============================================================================
+# PATENTS AGENT
+# =============================================================================
+
+
+class CpcDomain(BaseModel):
+    """A single CPC / IPC classification domain with a human-readable label."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    code: str = Field(description="Classification code prefix, e.g. 'H04L' or 'B64C'.")
+    label: str = Field(description="Short human-readable label for the code, e.g. 'Aircraft / aeroplanes'.")
+    count: int = Field(description="Number of patents in the portfolio that carry this code.")
+
+
+class PatentsAgentOutput(BaseModel):
+    """Output schema for the patents agent — the Phase 2 LLM response.
+
+    Only carries the fields the LLM produces: the narrative insights, the
+    labelled top classification domains, and the list of key patent
+    numbers. Aggregate counts (``total_patents_count``, ``filing_trend``)
+    are computed programmatically in Phase 1 and merged by the node
+    before persistence.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    insights: str = Field(description="Narrative summary of the company's innovation activity (2-3 paragraphs).")
+    top_cpc_domains: list[CpcDomain] = Field(
+        default_factory=list,
+        description="Top classification domains with human-readable labels, ordered by count desc.",
+    )
+    key_patent_doc_ids: list[str] = Field(
+        default_factory=list,
+        description="Up to 10 doc_ids (exact patent numbers) that the analyst considers key patents.",
+    )
+
+
+# =============================================================================
 # REGISTRY
 # =============================================================================
 
@@ -462,4 +500,5 @@ AGENT_OUTPUT_SCHEMAS: dict[str, type[BaseModel]] = {
     "csr": CsrAgentOutput,
     "team": TeamAgentOutput,
     "financial": FinancialAgentOutput,
+    "patents": PatentsAgentOutput,
 }

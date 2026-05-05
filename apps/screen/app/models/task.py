@@ -27,6 +27,7 @@ class TaskType(StrEnum):
     financial = "financial"
     corporate_structure = "corporate_structure"
     sanctions = "sanctions"
+    patents = "patents"
 
 
 class Task(Base):

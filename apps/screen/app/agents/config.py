@@ -6,6 +6,7 @@ from app.agents.prompts import (
     digital,
     financial,
     jobs,
+    patents,
     planner,
     press,
     products,
@@ -32,25 +33,36 @@ OUTPUT_PRICE_PER_MILLION = 10.00
 
 PROMPTS_REGISTRY: dict[str, str] = {
     # ── Standard agents (single-step, via run_agent() in base.py) ─────────
-    "profile":              profile.PROMPT,
-    "digital":              digital.PROMPT,
-    "press":                press.PROMPT,
-    "jobs":                 jobs.PROMPT,
-    "products":             products.PROMPT,
-    "timeline":             timeline.PROMPT,
-    "csr":                  csr.PROMPT,
-    "team":                 team.PROMPT,
-    "corporate_structure":  corporate_structure.PROMPT,
-    "sanctions":            sanctions.PROMPT,
+    "profile": profile.PROMPT,
+    "digital": digital.PROMPT,
+    "press": press.PROMPT,
+    "jobs": jobs.PROMPT,
+    "products": products.PROMPT,
+    "timeline": timeline.PROMPT,
+    "csr": csr.PROMPT,
+    "team": team.PROMPT,
+    "corporate_structure": corporate_structure.PROMPT,
+    "sanctions": sanctions.PROMPT,
+    # ── Patents agent (offline: works on pre-fetched EPO data, bespoke prompt) ─
+    "patents": patents.PROMPT,
     # ── Financial agent (multi-step: classify → gather → synthesize) ──────
-    "financial_classify":   financial.CLASSIFY_PROMPT,
+    "financial_classify": financial.CLASSIFY_PROMPT,
     "financial_synthesize": financial.SYNTHESIZE_PROMPT,
     # ── Pipeline nodes (not agents, run before the agent graph) ───────────
-    "planner":              planner.PLANNER_SYSTEM_PROMPT,
+    "planner": planner.PLANNER_SYSTEM_PROMPT,
 }
 
 ALL_AGENT_TYPES: list[str] = [
-    "profile", "digital", "press", "jobs", "products",
-    "timeline", "csr", "team", "corporate_structure", "sanctions",
+    "profile",
+    "digital",
+    "press",
+    "jobs",
+    "products",
+    "timeline",
+    "csr",
+    "team",
+    "corporate_structure",
+    "sanctions",
     "financial",
+    "patents",
 ]
