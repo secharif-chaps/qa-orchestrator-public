@@ -9,7 +9,7 @@ CompanyFinancial uses company_id as PK and FK (1:1 relationship).
 CompanyFinancialMetric and CompanyFundingRound use auto-increment PKs (1:N).
 """
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, Text
+from sqlalchemy import Column, Date, DateTime, ForeignKey, Integer, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -205,6 +205,10 @@ class CompanyFinancialMetric(Base):
     # Reporting period (e.g., "FY2023", "Q3 2024", "TTM")
     period = Column(Text, nullable=True)
 
+    # ISO date anchoring the START of the reporting period for chronological ordering.
+    # null when the period cannot be anchored (TTM, LTM, undateable labels).
+    period_normalized = Column(Date, nullable=True)
+
     # Metric value as text for flexibility
     value = Column(Text, nullable=True)
 
@@ -260,6 +264,10 @@ class CompanyFundingRound(Base):
 
     # Date of funding round (as text for flexibility)
     date = Column(Text, nullable=True)
+
+    # ISO date anchoring the start of the funding event for chronological ordering.
+    # null when the date cannot be anchored.
+    date_normalized = Column(Date, nullable=True)
 
     # Lead investor name
     lead_investor = Column(Text, nullable=True)

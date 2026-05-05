@@ -17,6 +17,7 @@ and normalized database tables with SourcedValue pattern.
 
 import json
 import logging
+from datetime import date as _Date
 from typing import Any
 
 from sqlalchemy.exc import SQLAlchemyError
@@ -1678,6 +1679,17 @@ def save_financial_data(db: Session, company_id: int, data: dict) -> None:
     logger.info("Saved financial data for company %s", company_id)
 
 
+def _parse_iso_date(value: str | None) -> _Date | None:
+    """Parse an ISO date string from the LLM, returning None on malformed input."""
+    if not value:
+        return None
+    try:
+        return _Date.fromisoformat(value)
+    except (ValueError, TypeError):
+        logger.warning("LLM returned unparseable date %r — storing null", value)
+        return None
+
+
 def _save_financial_metrics(db: Session, company_id: int, metrics: list[dict]) -> None:
     """Save financial metrics to normalized table (full replace)."""
     db.query(CompanyFinancialMetric).filter(CompanyFinancialMetric.company_id == company_id).delete()
@@ -1699,6 +1711,7 @@ def _save_financial_metrics(db: Session, company_id: int, metrics: list[dict]) -
             company_id=company_id,
             metric_name=metric_name,
             period=metric_data.get("period"),
+            period_normalized=_parse_iso_date(metric_data.get("periodNormalized")),
             value=metric_data.get("value"),
             unit=metric_data.get("unit"),
             source=metric_data.get("source"),
@@ -1719,6 +1732,7 @@ def _save_funding_rounds(db: Session, company_id: int, rounds: list[dict]) -> No
             round_type=round_data.get("roundType") or round_data.get("round_type"),
             amount=round_data.get("amount"),
             date=round_data.get("date"),
+            date_normalized=_parse_iso_date(round_data.get("dateNormalized")),
             lead_investor=round_data.get("leadInvestor") or round_data.get("lead_investor"),
             valuation=round_data.get("valuation"),
             source=round_data.get("source"),
@@ -1758,13 +1772,19 @@ def get_financial_data(db: Session, company_id: int) -> dict[str, Any]:
                 entry["context"] = context
             result[camel_key] = entry
 
-    # Add 1:N: financial metrics
-    metrics = db.query(CompanyFinancialMetric).filter(CompanyFinancialMetric.company_id == company_id).all()
+    # Add 1:N: financial metrics — ordered chronologically, nulls last
+    metrics = (
+        db.query(CompanyFinancialMetric)
+        .filter(CompanyFinancialMetric.company_id == company_id)
+        .order_by(CompanyFinancialMetric.period_normalized.asc().nulls_last())
+        .all()
+    )
     if metrics:
         result["metrics"] = [
             {
                 "metricName": m.metric_name,
                 "period": m.period,
+                "periodNormalized": m.period_normalized.isoformat() if m.period_normalized else None,
                 "value": m.value,
                 "unit": m.unit,
                 "source": m.source,
@@ -1773,14 +1793,20 @@ def get_financial_data(db: Session, company_id: int) -> dict[str, Any]:
             for m in metrics
         ]
 
-    # Add 1:N: funding rounds
-    rounds = db.query(CompanyFundingRound).filter(CompanyFundingRound.company_id == company_id).all()
+    # Add 1:N: funding rounds — ordered chronologically, nulls last
+    rounds = (
+        db.query(CompanyFundingRound)
+        .filter(CompanyFundingRound.company_id == company_id)
+        .order_by(CompanyFundingRound.date_normalized.asc().nulls_last())
+        .all()
+    )
     if rounds:
         result["fundingRounds"] = [
             {
                 "roundType": r.round_type,
                 "amount": r.amount,
                 "date": r.date,
+                "dateNormalized": r.date_normalized.isoformat() if r.date_normalized else None,
                 "leadInvestor": r.lead_investor,
                 "valuation": r.valuation,
                 "source": r.source,
