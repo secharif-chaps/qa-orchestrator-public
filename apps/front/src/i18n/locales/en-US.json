@@ -2668,10 +2668,12 @@
       },
       "noResults": "No results found"
     },
+    "events": "{type, select, screenCompanyCreated {Company created} screenCompanyUpdated {Company updated} targetWatchfileCreated {Watch file created} targetWatchfileUpdated {Watch file updated} targetAlertTriggered {Monitoring alert triggered} other {Unknown event}}",
     "mode": {
       "live": "Real-time",
       "recurrence": "Recurrence"
     },
+    "sources": "{source, select, screen {Screen} target {Target} explore {Explore} other {Unknown}}",
     "status": {
       "active": "Active",
       "archived": "Archived",

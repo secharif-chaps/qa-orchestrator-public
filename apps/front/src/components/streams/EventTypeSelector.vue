@@ -8,7 +8,7 @@
       <div v-for="group in eventGroups" :key="group.source" class="flex flex-col gap-2">
         <!-- Source group header -->
         <div class="flex items-center gap-2">
-          <h4 class="text-sm font-semibold">{{ group.label }}</h4>
+          <h4 class="text-sm font-semibold">{{ t('stream.sources', { source: group.source }) }}</h4>
           <Tag
             v-if="!group.available"
             intent="accent"
@@ -29,7 +29,9 @@
             name="subscribed-events"
             :class="{ 'cursor-not-allowed opacity-50': !group.available }"
           >
-            <label :for="`event-${event.type}`" class="text-sm">{{ event.label }}</label>
+            <label :for="`event-${event.type}`" class="text-sm">{{
+              t('stream.events', { type: toEventCase(event.type) })
+            }}</label>
           </Checkbox>
         </div>
       </div>
@@ -55,4 +57,12 @@ const model = defineModel<string[]>({ required: true })
 const { t } = useI18n()
 
 const { data: eventGroups, isLoading } = useQuery(() => eventTypesQuery())
+
+// Backend event types follow `{source}.{resource}.{action}` (e.g. screen.company.created).
+// Flatten to camelCase for ICU `select` case names — dots are not valid identifiers.
+const toEventCase = (eventType: string): string =>
+  eventType
+    .split('.')
+    .map((part, i) => (i === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)))
+    .join('')
 </script>
