@@ -70,7 +70,11 @@ readonly class ShingleExtractor
             $ngrams[$ngram] = true;
         }
 
-        return array_keys($ngrams);
+        // Numeric-looking shingles (e.g. "2024 2025 2026") are coerced
+        // to int keys by PHP — cast back to string so downstream
+        // consumers (`crc32`, `xxh3`) get the type their signature
+        // promises.
+        return array_map(strval(...), array_keys($ngrams));
     }
 
     /**
@@ -103,6 +107,8 @@ readonly class ShingleExtractor
             $shingles[$shingle] = true;
         }
 
-        return array_keys($shingles);
+        // Same string-cast guard as `extractCharNgrams` — numeric
+        // shingles (years, ids, prices) become int keys via `array_keys`.
+        return array_map(strval(...), array_keys($shingles));
     }
 }

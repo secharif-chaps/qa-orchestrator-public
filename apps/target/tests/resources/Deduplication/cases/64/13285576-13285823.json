@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_EXACT",
+    "legacy_level": 110,
+    "master": {
+        "id": "legacy-64-master-13285576",
+        "url": "https://www.reuters.com/business/aerospace-defense/qatar-airways-warns-industry-2050-net-zero-target-challenging-airlines-meet-2022-06-20/",
+        "title": "Qatar Airways warns industry 2050 net zero target challenging for airlines to meet",
+        "content": "<html><body><div class=\"article-body__content__17yit paywall-article\"><p class=\"text__text__1fzle text__dark-grey__3ml43 text__regular__2n1xr text__large__necco body__base__22dce body__large_body__fv5_x article-body__element__2p5pi\" data-testid=\"paragraph-0\">DOHA, June 20 (Reuters) - Qatar Airways&apos; chief executive said on Monday the industry&apos;s net-zero 2050 target, which was set last year, would be difficult for airlines to achieve.</p><p class=\"text__text__1fzle text__dark-grey__3ml43 text__regular__2n1xr text__large__necco body__base__22dce body__large_body__fv5_x article-body__element__2p5pi\" data-testid=\"paragraph-1\">It is going to be &quot;very challenging&quot;, Akbar Al Baker told a press conference at the International Air Transport Associations (IATA) annual meeting of airline chiefs in Doha.</p><p class=\"text__text__1fzle text__dark-grey__3ml43 text__regular__2n1xr text__large__necco body__base__22dce body__large_body__fv5_x article-body__element__2p5pi\" data-testid=\"paragraph-2\">He said other stakeholders in the industry, including engine makers and oil companies, would need to contribute to the goal.</p><div class=\"registration-prompt__container__2jf5k registration-prompt__inline__2wdu- article-body__element__2p5pi\"><div class=\"registration-prompt__text-content__o0yet\"><h5 class=\"text__text__1fzle text__white__3r45t text__medium__1kboh text__heading_5__2krbj heading__base__2t28j heading__heading_5__2a2g- registration-prompt__heading__3fq-h\" data-testid=\"heading\">Register now for FREE unlimited access to Reuters.com</h5><div class=\"button__container__3sgvk\"><span class=\"text__text__1fzle text__inherit-color__3208f text__bold__2-8kc text__default__upmuu text-button__medium__113uz\" data-testid=\"text\">Register</span></div></div></div><div class=\"article-body__element__2p5pi\"><span class=\"text__text__1fzle text__dark-grey__3ml43 text__regular__2n1xr text__default__upmuu sign-off__text__pu3aj\" data-testid=\"text\">Reporting by Alexander Cornwell; Writing by Lina Najem; Editing by Louise Heavens</span></div><p class=\"text__text__1fzle text__dark-grey__3ml43 text__regular__2n1xr text__large__necco body__base__22dce body__large_body__fv5_x article-body__element__2p5pi\" data-testid=\"body\">Our Standards: <a class=\"text__text__1fzle text__dark-grey__3ml43 text__medium__1kboh text__large__necco link__underline_default__2pre_\" data-testid=\"link\" href=\"https://www.thomsonreuters.com/en/about-us/trust-principles.html\" target=\"_blank\">The Thomson Reuters Trust Principles.</a></p></div></body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13285823",
+        "url": "https://www.zawya.com/en/business/aviation/qatar-airways-warns-industry-2050-net-zero-target-challenging-for-airlines-to-meet-o3lp4ozh",
+        "title": "Qatar Airways warns industry 2050 net zero target challenging for airlines to meet",
+        "content": "<html><head><title>Qatar Airways warns industry 2050 net zero target challenging for airlines to meet</title></head><body><div><p>DOHA: Qatar Airways&apos; chief executive said on Monday the industry&apos;s net-zero 2050 target, which was set last year, would be difficult for airlines to achieve.</p><p>It is going to be &quot;very challenging&quot;, Akbar Al Baker told a press conference at the International Air Transport Associations (IATA) annual meeting of airline chiefs in Doha.</p><p>He said other stakeholders in the industry, including engine makers and oil companies, would need to contribute to the goal.</p><p>(Reporting by Alexander Cornwell; Writing by Lina Najem; Editing by Louise Heavens)</p></div></body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "near_match"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same Reuters story with identical quotes and bylines, republished on another site."
+    },
+    "pinned": {
+        "outcome": "near_duplicate",
+        "stage": "title_fallback",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

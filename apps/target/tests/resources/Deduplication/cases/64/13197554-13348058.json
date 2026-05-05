@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-64-master-13197554",
+        "url": "https://www.avitrader.com/2022/05/04/fatigue-technology-selects-wencor-as-preferred-strategic-partner/",
+        "title": "Fatigue Technology selects Wencor as preferred strategic partner",
+        "content": "<html><body><img alt=\"\" class=\"aligncenter wp-post-image\" height=\"428\" loading=\"lazy\" sizes=\"(max-width: 570px) 100vw, 570px\" src=\"https://www.avitrader.com/wp-content/uploads/2022/05/Wencor_Fatigue-Technology.jpg\" srcset=\"https://www.avitrader.com/wp-content/uploads/2022/05/Wencor_Fatigue-Technology.jpg 640w, https://www.avitrader.com/wp-content/uploads/2022/05/Wencor_Fatigue-Technology-300x225.jpg 300w, https://www.avitrader.com/wp-content/uploads/2022/05/Wencor_Fatigue-Technology-333x250.jpg 333w, https://www.avitrader.com/wp-content/uploads/2022/05/Wencor_Fatigue-Technology-600x450.jpg 600w\" width=\"570\"/><p>Fatigue Technology Inc. (FTI) has selected Wencor as a preferred strategic partner supporting its Cold Working tooling “CB” product line for the commercial maintenance and repair market.</p><p>“We are excited to partner with Fatigue Technology and its market leading products. Its diverse product and engineering capabilities, combined with our extensive technical sales capabilities and value-added services will enhance opportunities to the commercial MRO market. We pride ourselves on being able to provide innovative solutions to our customers that enable reliability, material availability and cost efficiencies,” said Wencor President of Distribution, Hunter Mitchem.</p><p>Wencor has been a trusted partner in aerospace and defense for over 60 years, offering CMM and DER repairs, PMA and an extensive network of distribution solutions to help make flights safer and more cost effective. The company  supports most of the commercial airlines, repair stations and OEMs worldwide through its corporate affiliates Wencor, Soundair Aviation Services, PHS/MWA Aviation Services, Absolute Aviation Services, Aerospace Coatings International, Accessory Technologies Corporation, Fortner Engineering &amp; Manufacturing, Silver Wings Aerospace, ASC International, Inc. and Kitco Defense. Wencor Group is headquartered in the Atlanta, Georgia area with additional offices in Utah, Miami, Seattle, California, Alabama, New York, Amsterdam, Singapore, Shanghai, and Istanbul.</p><p>FTI has been providing engineered solutions to the aerospace community, with expanded fastening solutions for both the production and sustainment arenas. In 2008, PCC, a worldwide, diversified manufacturer of complex metal components and products acquired FTI to add to its portfolio of companies within its Engineered Products Division. PCC is the market leader in manufacturing large, complex structural investment castings, airfoil castings, and forged components used in jet aircraft engines and industrial gas turbines. PCC is also a leading producer of highly engineered, critical fasteners for aerospace, automotive, and other markets, and supplies metal alloys and other materials to the casting and forging industry.</p><p></p></body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13348058",
+        "url": "https://www.avitrader.com/2022/05/04/fatigue-technology-selects-wencor-as-preferred-strategic-partner/",
+        "title": "Fatigue Technology selects Wencor as preferred strategic partner",
+        "content": "<html><body><img alt=\"\" class=\"aligncenter wp-post-image\" height=\"428\" loading=\"lazy\" sizes=\"(max-width: 570px) 100vw, 570px\" src=\"https://www.avitrader.com/wp-content/uploads/2022/05/Wencor_Fatigue-Technology.jpg\" srcset=\"https://www.avitrader.com/wp-content/uploads/2022/05/Wencor_Fatigue-Technology.jpg 640w, https://www.avitrader.com/wp-content/uploads/2022/05/Wencor_Fatigue-Technology-300x225.jpg 300w, https://www.avitrader.com/wp-content/uploads/2022/05/Wencor_Fatigue-Technology-333x250.jpg 333w, https://www.avitrader.com/wp-content/uploads/2022/05/Wencor_Fatigue-Technology-600x450.jpg 600w\" width=\"570\"/><p>Fatigue Technology Inc. (FTI) has selected Wencor as a preferred strategic partner supporting its Cold Working tooling “CB” product line for the commercial maintenance and repair market.</p><p>“We are excited to partner with Fatigue Technology and its market leading products. Its diverse product and engineering capabilities, combined with our extensive technical sales capabilities and value-added services will enhance opportunities to the commercial MRO market. We pride ourselves on being able to provide innovative solutions to our customers that enable reliability, material availability and cost efficiencies,” said Wencor President of Distribution, Hunter Mitchem.</p><p>Wencor has been a trusted partner in aerospace and defense for over 60 years, offering CMM and DER repairs, PMA and an extensive network of distribution solutions to help make flights safer and more cost effective. The company  supports most of the commercial airlines, repair stations and OEMs worldwide through its corporate affiliates Wencor, Soundair Aviation Services, PHS/MWA Aviation Services, Absolute Aviation Services, Aerospace Coatings International, Accessory Technologies Corporation, Fortner Engineering &amp; Manufacturing, Silver Wings Aerospace, ASC International, Inc. and Kitco Defense. Wencor Group is headquartered in the Atlanta, Georgia area with additional offices in Utah, Miami, Seattle, California, Alabama, New York, Amsterdam, Singapore, Shanghai, and Istanbul.</p><p>FTI has been providing engineered solutions to the aerospace community, with expanded fastening solutions for both the production and sustainment arenas. In 2008, PCC, a worldwide, diversified manufacturer of complex metal components and products acquired FTI to add to its portfolio of companies within its Engineered Products Division. PCC is the market leader in manufacturing large, complex structural investment castings, airfoil castings, and forged components used in jet aircraft engines and industrial gas turbines. PCC is also a leading producer of highly engineered, critical fasteners for aerospace, automotive, and other markets, and supplies metal alloys and other materials to the casting and forging industry.</p><p></p></body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "identical"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL, title, and article text indicate an exact recrawl of the same story."
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-64-master-13715701",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85148286498&origin=inward",
+        "title": "STRESS MAPPING OF A LOW PRESSURE COMPRESSOR FOR AN ADVANCED TURBOJET ENGINE",
+        "content": "<html><body>Vibratory stress characteristics of the low pressure compressor in the Pratt & Whitney Aircraft PW1120 turbojet engine recently have been evaluated during full-scale engine testing at the United States Air Force's Arnold Engineering Development Center. A description is presented of the approach used to evaluate the vibratory characteristics of the new three stage low pressure compressor. Results are presented showing the effects of simulated altitude conditions, inlet pressure distortion, and off-schedule variable vane operation. Strain gage data is compared to case-mounted light probe data, and the levels of system damping and mistuning are discussed. Predicted vibratory response is compared to test results showing the new compressor to be free of destructive vibration. <br/><br/><br/>Authors: Bankhead H.R., Meece C.E.. <br/><br/>Affiliations: Air Force Research Laboratory, Pratt and Whitney - West Palm Beach. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 1984. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13716146",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85148286498&origin=inward",
+        "title": "STRESS MAPPING OF A LOW PRESSURE COMPRESSOR FOR AN ADVANCED TURBOJET ENGINE",
+        "content": "<html><body>Vibratory stress characteristics of the low pressure compressor in the Pratt & Whitney Aircraft PW1120 turbojet engine recently have been evaluated during full-scale engine testing at the United States Air Force's Arnold Engineering Development Center. A description is presented of the approach used to evaluate the vibratory characteristics of the new three stage low pressure compressor. Results are presented showing the effects of simulated altitude conditions, inlet pressure distortion, and off-schedule variable vane operation. Strain gage data is compared to case-mounted light probe data, and the levels of system damping and mistuning are discussed. Predicted vibratory response is compared to test results showing the new compressor to be free of destructive vibration. <br/><br/><br/>Authors: Bankhead H.R., Meece C.E.. <br/><br/>Affiliations: Air Force Research Laboratory, Pratt and Whitney - West Palm Beach. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 1984. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "minimal_overlap"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

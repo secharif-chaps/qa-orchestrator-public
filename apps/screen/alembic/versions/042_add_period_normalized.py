@@ -1,7 +1,7 @@
 """Add period_normalized and date_normalized columns for chronological sorting
 
-Revision ID: 041
-Revises: 040
+Revision ID: 042
+Revises: 041
 Create Date: 2026-04-27
 
 Adds:
@@ -22,8 +22,8 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic
-revision = "041"
-down_revision = "040"
+revision = "042"
+down_revision = "041"
 branch_labels = None
 depends_on = None
 

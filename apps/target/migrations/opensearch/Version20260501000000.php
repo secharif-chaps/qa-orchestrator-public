@@ -243,6 +243,13 @@ class Version20260501000000 extends AbstractOpenSearchMigration
                                 'type' => 'keyword',
                                 'doc_values' => true,
                             ],
+                            // Stage 4 (title fallback): raw title shingles
+                            // queried via `terms`. Caller re-verifies with
+                            // an exact set-Jaccard on the candidates.
+                            'titleShingles' => [
+                                'type' => 'keyword',
+                                'doc_values' => true,
+                            ],
                         ],
                     ],
                     // `duplicates` is an audit/UX trace — never filtered or

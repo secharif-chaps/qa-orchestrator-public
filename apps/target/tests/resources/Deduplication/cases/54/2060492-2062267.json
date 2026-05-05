@@ -1,0 +1,36 @@
+{
+  "account_id": "54",
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-54-master-2060492",
+    "url": "https://www.europapress.es/turismo/transportes/noticia-renfe-incorpora-dos-trenes-ave-mas-conectaran-forma-directa-madrid-sevilla-partir-23-enero-20230109140900.html",
+    "title": "Renfe adds two more AVE trains to connect Madrid and Seville directly from 23 January",
+    "content": "SEVILLE, Jan 9 (EUROPA PRESS) - Renfe has announced this Monday that it is extending the schedule between Madrid and Seville with the entry into service of two AVE trains that will run from Monday to Thursday between the two cities from 23 January.   With these new trains, the offer rises to 182 weekly circulations, has highlighted in a statement. The new trains will provide direct service between Madrid and Seville, without intermediate stops, with departures from Santa Justa station at 13.43 hours and from Atocha at 19.30 hours.   Tickets for travel on AVE Madrid-Seville trains are now on sale until December 2023 and are available from all Renfe sales channels, www.renfe.com, the Renfe app, telephone 912 320 320, ticket offices and self-service machines at stations, as well as travel agencies.Renfe creates a new travel option Barcelona-Almería with a connection in Granada Renfe has indicated that in this way it offers its customers the possibility of planning their journeys over the next year and, in addition, by buying tickets in advance, \"travellers can always get better prices\".   The company has also emphasised that \"it promotes the use of the..."
+  },
+  "candidate": {
+    "id": "legacy-54-dup-2062267",
+    "url": "https://www.europapress.es/turismo/transportes/noticia-renfe-incorpora-dos-trenes-ave-mas-conectaran-forma-directa-madrid-sevilla-partir-23-enero-20230109140900.html",
+    "title": "Renfe ajoute deux trains AVE supplémentaires pour relier directement Madrid et Séville à partir du 23 janvier",
+    "content": "<p>Renfe a annoncé ce lundi l'extension de l'horaire entre Madrid et Séville avec la mise en service de deux trains AVE qui circuleront du lundi au jeudi entre les deux villes à partir du 23 janvier. Avec ces nouveaux trains, l'offre passe à 182 circulations hebdomadaires, a souligné la compagnie dans un communiqué. Les nouveaux trains assureront un service direct entre Madrid et Séville, sans arrêts intermédiaires, avec des départs de la gare de Santa Justa à 13h43 et d'Atocha à 19h30. Les billets pour voyager à bord des trains AVE Madrid-Séville sont désormais en vente jusqu'en décembre 2023 et sont disponibles auprès de tous les canaux de vente de Renfe.</p>"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "measurements": {
+    "jaccard": 0,
+    "hamming": 42
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "near_duplicate",
+    "note": "Same europapress Renfe Madrid–Sevilla announcement in English vs French — same URL, translated content."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}

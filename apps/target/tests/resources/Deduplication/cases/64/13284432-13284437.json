@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_EXACT",
+    "legacy_level": 110,
+    "master": {
+        "id": "legacy-64-master-13284432",
+        "url": "http://twitter.com/investinvlc/status/1538892401275805697",
+        "title": "RT @UpvInnovacion: Welcome to València #AVIATAR!\n\n\"The @UPV has exceeded our expectations!\" \nF. Adam, Manager Digital Strategy, Business De…",
+        "content": "RT <a href=\"http://twitter.com/investinvlc\">@UpvInnovacion</a>: Welcome to València <a href=\"http://twitter.com/search?q=AVIATAR\">#AVIATAR</a>!\n\n\"The <a href=\"http://twitter.com/UPV\">@UPV</a> has exceeded our expectations!\" \nF. Adam, Manager Digital Strategy, Business Development &amp; Cooperations. Digital Fleet Solutions,\n<a href=\"http://twitter.com/LHTechnik\">@LHTechnik</a>.\n\nThe <a href=\"http://twitter.com/search?q=UPV\">#UPV</a> innovation ecosyStem and its talent was a key factor to stablish Aviatar at València. <a href=\"https://twitter.com/LHTechnik/status/1538819278455066626\">https://twitter.com/LHTechnik/status/1538819278455066626</a> <img src=\"http://pbs.twimg.com/media/FVsvV4iX0AMiHx3.jpg\" /><img src=\"http://pbs.twimg.com/media/FVsvV4jXwAEk7qI.jpg\" />"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13284437",
+        "url": "http://twitter.com/CPInnovacion/status/1538877995141763073",
+        "title": "RT @UpvInnovacion: Welcome to València #AVIATAR!\n\n\"The @UPV has exceeded our expectations!\" \nF. Adam, Manager Digital Strategy, Business De…",
+        "content": "RT <a href=\"http://twitter.com/CPInnovacion\">@UpvInnovacion</a>: Welcome to València <a href=\"http://twitter.com/search?q=AVIATAR\">#AVIATAR</a>!\n\n\"The <a href=\"http://twitter.com/UPV\">@UPV</a> has exceeded our expectations!\" \nF. Adam, Manager Digital Strategy, Business Development &amp; Cooperations. Digital Fleet Solutions,\n<a href=\"http://twitter.com/LHTechnik\">@LHTechnik</a>.\n\nThe <a href=\"http://twitter.com/search?q=UPV\">#UPV</a> innovation ecosyStem and its talent was a key factor to stablish Aviatar at València. <a href=\"https://twitter.com/LHTechnik/status/1538819278455066626\">https://twitter.com/LHTechnik/status/1538819278455066626</a> <img src=\"http://pbs.twimg.com/media/FVsvV4iX0AMiHx3.jpg\" /><img src=\"http://pbs.twimg.com/media/FVsvV4jXwAEk7qI.jpg\" />"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "identical"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same retweeted tweet content with identical text and media; only retweeter handle differs."
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "content_hash",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

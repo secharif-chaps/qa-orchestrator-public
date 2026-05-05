@@ -1,0 +1,36 @@
+{
+    "account_id": 204,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-204-master-8970051",
+        "url": "http://twitter.com/RALee85/status/1493183892978913282",
+        "title": "@VitalyPavlov2 @1300KWL @GeromanAT No, but if this is just an exercise, there are confidence-building measures the Russian MoD could be taking right now that it isn't. Russia has put into place the military capabilities necessary for a large-scale invasion, which it normally lacks, without much transparency.",
+        "content": "<a href=\"http://twitter.com/VitalyPavlov2\">@VitalyPavlov2</a> <a href=\"http://twitter.com/1300KWL\">@1300KWL</a> <a href=\"http://twitter.com/GeromanAT\">@GeromanAT</a> No, but if this is just an exercise, there are confidence-building measures the Russian MoD could be taking right now that it isn't. Russia has put into place the military capabilities necessary for a large-scale invasion, which it normally lacks, without much transparency."
+    },
+    "candidate": {
+        "id": "legacy-204-dup-8970147",
+        "url": "http://twitter.com/RALee85/status/1493183892978913282",
+        "title": "@VitalyPavlov2 @1300KWL @GeromanAT No, but if this is just an exercise, there are confidence-building measures the Russian MoD could be taking right now that it isn't. Russia has put into place the military capabilities necessary for a large-scale invasion, which it normally lacks, without much transparency.",
+        "content": "<a href=\"http://twitter.com/VitalyPavlov2\">@VitalyPavlov2</a> <a href=\"http://twitter.com/1300KWL\">@1300KWL</a> <a href=\"http://twitter.com/GeromanAT\">@GeromanAT</a> No, but if this is just an exercise, there are confidence-building measures the Russian MoD could be taking right now that it isn't. Russia has put into place the military capabilities necessary for a large-scale invasion, which it normally lacks, without much transparency."
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "identical"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same tweet URL and identical content indicate a literal recrawl of the same post"
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

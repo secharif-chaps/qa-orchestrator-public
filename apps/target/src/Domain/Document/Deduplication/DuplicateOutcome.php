@@ -16,7 +16,7 @@ namespace App\Domain\Document\Deduplication;
  *                      Hamming ≤ 1 is automatically rejected; 2-3 is
  *                      flagged for review.
  * - `NEAR_DUPLICATE` — stage 3 MinHash + LSH detected a candidate with
- *                      Jaccard ≥ 0.85. Flagged for review.
+ *                      Jaccard ≥ 0.70. Flagged for review.
  * - `UNIQUE`         — no match across the four stages. The document is
  *                      indexed normally.
  */

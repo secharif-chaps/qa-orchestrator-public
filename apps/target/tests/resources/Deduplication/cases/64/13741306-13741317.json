@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 51,
+    "master": {
+        "id": "legacy-64-master-13741306",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85149172341&origin=inward",
+        "title": "Deeper process understanding for metal binder jetting by using x-ray CT",
+        "content": "<html><body>Quality control procedures are crucial for final part quality. Additionally, advanced quality inspection tools e.g. X-ray based computed tomography (CT) can deliver important information through various steps of the production process. Especially for multi-step production processes like Metal Binder Jetting (MBJ), different process parameters and process steps can be optimized with a deeper understanding of parameter interactions. Therefore, a detailed CT analysis of test specimen in the green and sintered stage regarding process parameters and powder packing will be discussed. In the investigations, an immediate impact of the process parameters on the overall density as well as the pore structure could be demonstrated. <br/><br/><br/>Authors: Sperling P., Barthel B.. <br/><br/>Affiliations: Volume Graphics GmbH, Fraunhofer Institute for Manufacturing Technology and Advanced Materials IFAM. <br/><br/>Publication: Euro PM2021 Congress Proceedings, 2021. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13741317",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85149180316&origin=inward",
+        "title": "Binder-Jetting of TiCN-based Cermets",
+        "content": "<html><body>Additive Manufacturing is experiencing an upswing in many sectors of industry for a broad variety of materials. Processes are mainly developed for polymers and metals. For ceramics, hardmetals and especially cermets there are only a few additive processes suitable. The powder-based technique Binder-Jetting is one of these suitable processes with high productivity and relatively low green density. Within this study, TiCN-based cermets are printed by Binder-Jetting for the first time. The complexity of influences of the morphology and composition of cermet powders are discussed with regard to bulk density and material properties of printed and sintered parts. Studied TiCN-based cermet compositions represent different Ni and Mo2C binder contents. Main point of this investigation is further the adjustment of ratio of the raw materials for good sintering behaviour and its influence on the microstructures as a function of varied sintering temperatures. <br/><br/><br/>Authors: Berger C., Pötschke J., Fries M., Moritz T., Michaelis A.. <br/><br/>Affiliations: Fraunhofer Institute for Ceramic Technologies and Systems IKTS. <br/><br/>Publication: Euro PM2021 Congress Proceedings, 2021. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "unique",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "unique",
+        "note": "Different research articles with distinct titles, authors, materials, and study focus despite same conference and year"
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "agreement_unique",
+    "content_source": "hbase_full"
+}

@@ -1,0 +1,36 @@
+{
+    "account_id": 204,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-204-master-12264608",
+        "url": "https://icct.nl/people/mustafa-hasan/",
+        "title": "Mustafa Hasan",
+        "content": "<html><head><title>Mustafa Hasan</title></head><body><div>\n\t\t\t\t\t\n\t\t\t\t\t<p>Mustafa Hasan is a geopolitical researcher and journalist focusing on Iraq and northeast Syria. He has engaged in a wide range of projects within international organisations for the last decade, like the International crisis group, Middle East center-London school for economy and politics, Institute for war and peace reporting and others. Driven by his profound motivation to understanding his very own community, national and regional dynamics, Mustafa has devoted his career to conducting research, analyzing violence extremism, Jihadist propaganda, paramilitary groups, sectarian conflicts, mapping/profiling of violent extremist groups and key lead individuals. Mustafa also worked on CVE narratives projects via online platforms and social media.</p>\n\t\t\t\t</div></body></html>"
+    },
+    "candidate": {
+        "id": "legacy-204-dup-12265631",
+        "url": "https://icct.nl/people/mustafa-hasan/",
+        "title": "Mustafa Hasan",
+        "content": "<html><head><title>Mustafa Hasan</title></head><body><div>\n\t\t\t\t\t\n\t\t\t\t\t<p>Mustafa Hasan is a geopolitical researcher and journalist focusing on Iraq and northeast Syria. He has engaged in a wide range of projects within international organisations for the last decade, like the International crisis group, Middle East center-London school for economy and politics, Institute for war and peace reporting and others. Driven by his profound motivation to understanding his very own community, national and regional dynamics, Mustafa has devoted his career to conducting research, analyzing violence extremism, Jihadist propaganda, paramilitary groups, sectarian conflicts, mapping/profiling of violent extremist groups and key lead individuals. Mustafa also worked on CVE narratives projects via online platforms and social media.</p>\n\t\t\t\t</div></body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "identical"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL and identical biographical content indicate a literal recrawl of the same page."
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

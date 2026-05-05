@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 50,
+    "master": {
+        "id": "legacy-64-master-13559039",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85142120301&origin=inward",
+        "title": "Unsteady Investigation of the Effect of Purge Air on the Flow Field Inside a Turbine Vane Frame Using Particle Image Velocimetry",
+        "content": "<html><body>The urgent need to reduce the emission of greenhouse gases, in combination with high fuel expenses, motivates manufacturers to design more efficient civil aircraft engines. In the case of directly driven jet engines, this is possible through the increased by-pass ratios for high propulsive efficiencies. This tendency implies a change in the operating condition of the low-pressure turbine (LPT) towards lower rotational speeds at larger diameters. Turbine vane frames (TVFs) constitute a new generation of inter-turbine ducts that guide the airflow from the high-pressure turbine (HPT) to the LPT in radial and circumferential direction. The TVF setup integrates turning vanes, and thus removes the need for a separate vane blade-row in the first LPT stage. Consequently, the TVF yields a benefit for overall engine weight and length, resulting in overall efficiency gains. This paper offers new insight into airflow through a TVF duct. Experimental measurements have been conducted at the two-spool test rig at the Graz University of Technology, consisting of a single-stage HPT, the TVF, and the first LPT rotor. Engine-relevant flow conditions are achieved at the TVF inlet, including HPT tip clearance and purge air effects. Particle Image Velocimetry (PIV) was used to capture the flow field in between two struts of the TVF. Inside each strutted segment, splitter vanes are located along the second half of the TVF axial length. This paper presents new results for a TVF based on measurements from a PIV test section located upstream of the splitter vanes in the first half of the TVF duct. Flow data in the area of strong transient interactions between the HPT and the TVF is recorded and discussed in terms of aerodynamic performance. To reveal the unsteady behavior of the fluid, the flow field has been recorded at six serial stator-rotor positions. In addition, two data sets of varying HPT purge flows were obtained and discussed in order to characterize the effect of purge air inside the measurement domain. <br/><br/><br/>Authors: Schien M., Hafizovic A., Planck F., Merli F., Jakob , Woisetschläger , Göttlich E.. <br/><br/>Affiliations: Technische Universitat Graz. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 2022. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13559048",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85142078838&origin=inward",
+        "title": "AERODYNAMIC ASSESSMENT OF TURBINE CENTER FRAMES AND TURBINE VANE FRAMES UNDER THE INFLUENCE OF PURGE FLOWS",
+        "content": "<html><body>This paper investigates and compares the aerodynamics of two state-of-the-art configurations for the intermediate turbine duct (ITD) in a turbofan engine: the turbine center frame (TCF), which is typical of conventional dual-spool engines and features symmetric aerodynamic strut fairings, and the turbine vane frame (TVF), which integrates a set of turning struts and splitters directly in the duct, thus enabling length and weight benefits at engine system level. The measurement data utilized for the analysis are a product of almost ten years of research at Graz University of Technology, involving multiple test campaigns with either TCF or TVF setups at consistent inlet conditions. The experimental tests are carried out in the Transonic Test Turbine Facility at the Institute of Thermal Turbomachinery and Machine Dynamics (Graz University of Technology). All test vehicles include not only the ITD (TCF or TVF), but also the last High-Pressure Turbine (HPT) stage and the first Low-Pressure Turbine (LPT) vane or blade row, in order to ensure engine-representative conditions at the duct inlet and outlet sections. For the same purpose, the test facility supplies all the stator-rotor cavities with purge air, with independent control of temperature and mass flows for each cavity. The measurements are performed with pneumatic probes (five-hole probes, Kiel-head rakes) at the inlet and outlet of the ITDs, for three different HPT purge flow rates. The aerodynamic comparison between TCF and TVF setups is based on three key topics: duct inlet and outlet flow fields, duct total pressure losses and duct aerodynamic excitation on the LPT rotor blades. For each one of them, the sensitivity to HPT purge variation in both configurations is evaluated. Due to the presence of turning struts and splitters inside the ITD, the TVF shows a more complex outlet flow field than the TCF, characterized by the interaction of HPT and TVF secondary phenomena. The TVF total pressure loss is less sensitive to purge variation compared to an advanced TCF design with high casing slope. While the weaker TVF loss derivative to HPT purge may provide off-design operating point benefits relative to a TCF-based engine, the increased level of flow nonuniformity at the TVF exit, distributed over a wider range of engine orders, represents a design challenge for the first-stage LPT rotor. <br/><br/><br/>Authors: Merli F., Hafizovic A., Krajnc N., Schien M., Peters A., Heitmeir F., Göttlich E.. <br/><br/>Affiliations: GE Aviation, Technische Universitat Graz. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 2022. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "unique",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "unique",
+        "note": "Different papers: one focuses on unsteady PIV flow field in a turbine vane frame, the other compares overall aerodynamics of turbine center vs vane frames using pneumatic probes."
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "agreement_unique",
+    "content_source": "hbase_full"
+}

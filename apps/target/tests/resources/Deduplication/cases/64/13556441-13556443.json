@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 50,
+    "master": {
+        "id": "legacy-64-master-13556441",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141938450&origin=inward",
+        "title": "Molecular accumulation during JWST's Optical Telescope Cryogenic Thermal Vacuum Testing",
+        "content": "<html><body>Maintaining molecular cleanliness during the JWST's Optical Telescope/Instrument Module (OTIS) Cryogenic Thermal Vacuum (TV) test campaign was critical to the success of its optical mission on orbit. In the thermal vacuum tests leading up to the final cryogenic test to validate the OTIS flight hardware, NASA Johnson Space Center's (JSC's) TV Chamber A was fully characterized for molecular contamination. It was found to contain common volatile condensable materials (VCM), including hydrocarbons, plasticizers, and silicones, all of which absorb in JWST's infrared wavelength region. Due to the risks involved, cleaning molecular contamination from the OTIS mirrors was not an option and heating the Primary Mirror (PM) segments would have also been a risky and expensive endeavor. As a result, a monitoring process was developed and implemented during four different Pathfinder or risk reduction tests that were scheduled to occur prior to the flight hardware test. The goal was to quantify and assess the risk of molecular contamination depositing on the PM resulting from relatively warm chamber shrouds \"leading\"colder PM mirrors during warmup, by a margin of 10-50 Kelvin (K). This was accomplished using Cryogenic Quartz Crystal Microbalances (CQCMs), held at temperatures slightly cooler than the segments to signal the onset of contamination events. Per the JWST Contamination Control Plan (CCP)1, the total Primary Mirror molecular allocation requirement was 50 angstroms. In all tests, the results showed an average accumulated molecular contamination of <10 angstroms. <br/><br/><br/>Authors: Henderson-Nelson K.A., Woronowicz M., Ward J.O., Wooldridge E.M., Reis C., Huguet J., Havey K.. <br/><br/>Affiliations: L3Harris Technologies, Inc., KBR Inc., USA, NASA Goddard Space Flight Center, Kah Consulting. <br/><br/>Publication: Proceedings of SPIE - The International Society for Optical Engineering, 2022. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13556443",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141935344&origin=inward",
+        "title": "Operating and maintaining the JWST Cleanroom attached to JSC's Chamber A during preparations for the OTIS Cryogenic Thermal Vacuum Test",
+        "content": "<html><body>In order to maintain cleanliness during preparations for JWST's OTIS (Optical Telescope Element-Integrated Science Instrument Module) Cryogenic Thermal Vacuum Test, a cleanroom was built that attached directly to the 60-year-old Chamber A. The cleanroom and chamber were outfitted with independent environmental control systems each providing ISO Class 71 air cleanliness. To maintain balanced, positive pressure in both the cleanroom and chamber volumes, a special control protocol was developed and successfully implemented. Dual back-up environmental control units (one each for the chamber and cleanroom) were installed just outside the building to provide environmental control redundancy due to a single source chilled water supply and weather threats. In addition, lack of a dedicated cleanroom airlock facilitating clean ingress and egress made it necessary to perform additional cleaning and packaging, as well as augment the uncontrolled truck lock space with small clean tents for pre-cleaning. Special procedures were developed to allow ingress of extra-large support equipment required for load testing of the cleanroom crane, installation of optical equipment in Chamber A and accommodation of the OTIS shipping container. A thorough bake-out and cleaning of Chamber A was also necessary to reduce volatiles from the shroud's black thermal paint and to reduce particle fallout. Acrylic adhesive fracture discovered during early cryo-testing represented a significant challenge that was successfully mitigated prior to OTIS testing. A dedicated team of Contamination Control (CC) Technicians was specifically trained to clean support equipment and screen materials entering the cleanroom and chamber to ensure cleanliness and vacuum compatibility. <br/><br/><br/>Authors: Henderson-Nelson K.A., Goldman E.W., Ward J.O., Durner J.E., Brandon J., Huang Y., Homan J.L.. <br/><br/>Affiliations: KBR Inc., USA, NASA Johnson Space Center, Science Systems and Applications, Inc. (SSAI). <br/><br/>Publication: Proceedings of SPIE - The International Society for Optical Engineering, 2022. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "unique",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "unique",
+        "note": "Different but related JWST topics with distinct abstracts, authors, and focuses within the same proceedings volume"
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "agreement_unique",
+    "content_source": "hbase_full"
+}

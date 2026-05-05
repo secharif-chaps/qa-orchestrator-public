@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-64-master-13698267",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85147733285&origin=inward",
+        "title": "Bonding Strength of Si/Yb2 Si2 O7 Duplex Coatings on SiCf /SiC Composites",
+        "content": "<html><body>By the means of choosing suitable stretched direction of SiC fiber-reinforced SiC ceramic matrix composites (SiCf/SiC composites) and preparation technology of coatings, this work aims to obtain Si/Yb2Si2O7 duplex coatings of high bonding strength on SiCf/SiC composites. Si coating and Si/Yb2Si2O7 duplex coatings were prepared by vacuum plasma spraying (VPS) on 2.5D woven SiCf/SiC composites. The specimens were investigated by metallographic, XRD, SEM and EDS, and the bonding strength was tested by tensile test. The fracture morphology after the tensile test was observed and possible influence factors of the bonding strength were analyzed. The results show that: by using adhesion-drawing method, the tensile strength of 2.5D woven SiCf/SiC composites is (32.41±3.52) MPa. Porosities of Si coating and Yb2Si2O7 coating are 2.3% and 5.2%. The bonding strength of Si coating on SiCf/SiC is (30.48±4.43) MPa, while that of Si/Yb2Si2O7 duplex coatings (26.23±3.13) MPa. When the Si coating is stretching, parts of Si coating, weft yarn of SiC fibers and SiC ceramic matrix on the surface of SiCf/SiC composites and adhesive film are broken. When the Si/Yb2Si2O7 duplex coating is stretching, a great deal of Si coating, weft yarn of SiC fibers and SiC ceramic matrix on the surface of SiCf/SiC composites and a little of Yb2Si2O7 coating are broken. The main reasons for the high bonding strength of Si/Yb2Si2O7 duplex coatings on SiCf/SiC composites are as follows: the strength of SiCf/SiC along stretched direction is high, and the bonding strength of Si coating and SiCf/SiC is high; the vacuum plasma spraying is beneficial to decrease the defects of coatings; thermal expansion coefficient of Yb2Si2O7 is approximately with that of Si and SiCf/SiC; chemical compatibility between Si coating and Yb2Si2O7 coating is excellent. <br/><br/><br/>Authors: Zhang L., Zhang Y.X., Niu Y.R., Li Q.L., Deng Y.F., Zhou H.B., Yao Y., Luo W.D.. <br/><br/>Affiliations: Shen Yang Liming Aero-Engine Group Corp., Shanghai Institute of Ceramics Chinese Academy of Sciences, Aviation Key Laboratory of Science and Technology on Advanced Surface Engineering, AVIC Manufacturing Technology Institute, PLA, AECC Sichuan Gas Turbine Establishment. <br/><br/>Publication: Surface Technology, 2022, pp.199-207. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13698590",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85147733285&origin=inward",
+        "title": "Bonding Strength of Si/Yb2 Si2 O7 Duplex Coatings on SiCf /SiC Composites",
+        "content": "<html><body>By the means of choosing suitable stretched direction of SiC fiber-reinforced SiC ceramic matrix composites (SiCf/SiC composites) and preparation technology of coatings, this work aims to obtain Si/Yb2Si2O7 duplex coatings of high bonding strength on SiCf/SiC composites. Si coating and Si/Yb2Si2O7 duplex coatings were prepared by vacuum plasma spraying (VPS) on 2.5D woven SiCf/SiC composites. The specimens were investigated by metallographic, XRD, SEM and EDS, and the bonding strength was tested by tensile test. The fracture morphology after the tensile test was observed and possible influence factors of the bonding strength were analyzed. The results show that: by using adhesion-drawing method, the tensile strength of 2.5D woven SiCf/SiC composites is (32.41±3.52) MPa. Porosities of Si coating and Yb2Si2O7 coating are 2.3% and 5.2%. The bonding strength of Si coating on SiCf/SiC is (30.48±4.43) MPa, while that of Si/Yb2Si2O7 duplex coatings (26.23±3.13) MPa. When the Si coating is stretching, parts of Si coating, weft yarn of SiC fibers and SiC ceramic matrix on the surface of SiCf/SiC composites and adhesive film are broken. When the Si/Yb2Si2O7 duplex coating is stretching, a great deal of Si coating, weft yarn of SiC fibers and SiC ceramic matrix on the surface of SiCf/SiC composites and a little of Yb2Si2O7 coating are broken. The main reasons for the high bonding strength of Si/Yb2Si2O7 duplex coatings on SiCf/SiC composites are as follows: the strength of SiCf/SiC along stretched direction is high, and the bonding strength of Si coating and SiCf/SiC is high; the vacuum plasma spraying is beneficial to decrease the defects of coatings; thermal expansion coefficient of Yb2Si2O7 is approximately with that of Si and SiCf/SiC; chemical compatibility between Si coating and Yb2Si2O7 coating is excellent. <br/><br/><br/>Authors: Zhang L., Zhang Y.X., Niu Y.R., Li Q.L., Deng Y.F., Zhou H.B., Yao Y., Luo W.D.. <br/><br/>Affiliations: Shen Yang Liming Aero-Engine Group Corp., Shanghai Institute of Ceramics Chinese Academy of Sciences, Aviation Key Laboratory of Science and Technology on Advanced Surface Engineering, AVIC Manufacturing Technology Institute, PLA, AECC Sichuan Gas Turbine Establishment. <br/><br/>Publication: Surface Technology, 2022, pp.199-207. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

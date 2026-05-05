@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_EXACT",
+    "legacy_level": 110,
+    "master": {
+        "id": "legacy-64-master-14698091",
+        "url": "https://www.aviointeriors.it/products/mya",
+        "title": "Mya - Aviointeriors",
+        "content": "<html><head><title>Mya - Aviointeriors</title></head><body><div>\n\t\t\t\t<p>Simplicity is the ultimate sophistication</p>\n\t\t\t\t<p>Mya is the result of decennial experience in aircraft seat manufacturing and offers the maximum comfort at minimum pitch.</p>\n\t\t\t</div><div>\n\t\t\t\t<p>Less is more</p>\n\t\t\t\t<p>Mya is designed to meet the latest Airlines stringent requirements in terms of light-weighting, reliability, maintenance cost efficiency without compromise on comfort and style.</p>\n\t\t\t</div></body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-14698381",
+        "url": "https://aviointeriors.it/products/mya",
+        "title": "Mya - Aviointeriors",
+        "content": "<html><head><title>Mya - Aviointeriors</title></head><body><div>\n\t\t\t\t<p>Simplicity is the ultimate sophistication</p>\n\t\t\t\t<p>Mya is the result of decennial experience in aircraft seat manufacturing and offers the maximum comfort at minimum pitch.</p>\n\t\t\t</div><div>\n\t\t\t\t<p>Less is more</p>\n\t\t\t\t<p>Mya is designed to meet the latest Airlines stringent requirements in terms of light-weighting, reliability, maintenance cost efficiency without compromise on comfort and style.</p>\n\t\t\t</div></body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "near_match"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL, title, and identical product description HTML indicate a literal recrawl of the same page"
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "content_hash",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

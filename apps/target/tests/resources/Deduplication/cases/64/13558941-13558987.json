@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "DUPLICATE",
+    "legacy_level": 120,
+    "master": {
+        "id": "legacy-64-master-13558941",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85142014758&origin=inward",
+        "title": "DESIGN OPTIMIZATION OF A HIGH-SPEED TWIN-STAGE COMPRESSOR FOR NEXT-GEN AIRCRAFT ENVIRONMENTAL CONTROL SYSTEM",
+        "content": "<html><body>The environmental control system (ECS) is the largest auxiliary power consumer, i.e, around 75% of non-propulsive power, among the aircraft subsystems. The adoption of a novel ECS architecture, based on an electrically-driven vapor compression cycle system, can enable a twofold increase of coefficient of performance (COP), as compared to the conventional air cycle machine (ACM). The core of this technology is a high-speed, miniature centrifugal compressor, consisting of two impellers mounted in back-to-back configuration, and running on gas bearings operating with refrigerant. The fluid dynamic design optimization of the twin-stage compressor, to be installed in the vapor compression cycle test rig under realization at Delft University of Technology, is documented in this paper. First, the scaling analysis for centrifugal compressor is extended to provide guidelines for the design of twin-stage machines. Then, a multi-objective conceptual design optimization is performed by resorting to an in-house reduced-order model (ROM), coupled to a genetic algorithm. The fluid dynamic performance and the structural integrity of the optimal design are assessed by means of a hybrid framework, encompassing CFD and ROMs, and by FEA. The results show that it is possible to design a twin-stage compressor for the target application, featuring an average efficiency higher than 70%, a maximum compression ratio exceeding 9, and an operating range of 0.27 at the design rotational speed, despite the detrimental effects of motor cooling and miniature size. <br/><br/><br/>Authors: Giuffre A., Colonna P., Pini M.. <br/><br/>Affiliations: Faculteit Luchtvaart- en Ruimtevaarttechniek, TU Delft. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 2022. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13558987",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85142014758&origin=inward",
+        "title": "DESIGN OPTIMIZATION OF A HIGH-SPEED TWIN-STAGE COMPRESSOR FOR NEXT-GEN AIRCRAFT ENVIRONMENTAL CONTROL SYSTEM",
+        "content": "<html><body>The environmental control system (ECS) is the largest auxiliary power consumer, i.e, around 75% of non-propulsive power, among the aircraft subsystems. The adoption of a novel ECS architecture, based on an electrically-driven vapor compression cycle system, can enable a twofold increase of coefficient of performance (COP), as compared to the conventional air cycle machine (ACM). The core of this technology is a high-speed, miniature centrifugal compressor, consisting of two impellers mounted in back-to-back configuration, and running on gas bearings operating with refrigerant. The fluid dynamic design optimization of the twin-stage compressor, to be installed in the vapor compression cycle test rig under realization at Delft University of Technology, is documented in this paper. First, the scaling analysis for centrifugal compressor is extended to provide guidelines for the design of twin-stage machines. Then, a multi-objective conceptual design optimization is performed by resorting to an in-house reduced-order model (ROM), coupled to a genetic algorithm. The fluid dynamic performance and the structural integrity of the optimal design are assessed by means of a hybrid framework, encompassing CFD and ROMs, and by FEA. The results show that it is possible to design a twin-stage compressor for the target application, featuring an average efficiency higher than 70%, a maximum compression ratio exceeding 9, and an operating range of 0.27 at the design rotational speed, despite the detrimental effects of motor cooling and miniature size. <br/><br/><br/>Authors: Giuffre A., Colonna P., Pini M.. <br/><br/>Affiliations: Faculteit Luchtvaart- en Ruimtevaarttechniek, TU Delft. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 2022. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "match",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "duplicate",
+        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+    },
+    "pinned": {
+        "outcome": "duplicate",
+        "stage": "canonical_url",
+        "similarity": 1
+    },
+    "concordance_our_vs_llm": "agreement_match",
+    "content_source": "hbase_full"
+}

@@ -67,6 +67,7 @@
   },
   "require-dev": {
     "api-platform/schema-generator": "^5.0",
+    "brianium/paratest": "^7.20",
     "dama/doctrine-test-bundle": "^8.3",
     "dg/bypass-finals": "^1.9",
     "doctrine/doctrine-fixtures-bundle": "^4.1",

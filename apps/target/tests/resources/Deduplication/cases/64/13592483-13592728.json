@@ -1,0 +1,36 @@
+{
+    "account_id": 64,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 63,
+    "master": {
+        "id": "legacy-64-master-13592483",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143565305&origin=inward",
+        "title": "Ceramics Matrix Composites: An Introduction",
+        "content": "<html><body>This volume presents the latest developments in Ceramics matrix composites (CMCs). The most important ceramic matrices, their properties and applications are described, including alumina (Al2O3), zirconia (ZrO2), and silicon carbide (SiC). Also different reinforcements are presented, including novel nanophases like carbon nanotubes (CNTs) and graphene. Different processing routes are shown: traditional processes (sintering, sol-gel, Reactive Melt Infiltration, RMI, Chemical Vapor Infiltration, CVI), and advanced new methods like Additive manufacturing (AM) and Friction Stir Processing (FSP). Characterization techniques for composites, including material modeling approaches are presented. Different application areas and case studies are reviewed, by showing specific properties of CMCs in related components. Nuclear grade SiC composites and radiation effects, radiation damage and property changes of these composites in nuclear energy systems are reviewed. Laser beam interactions with composites are summarized. In automotive industries, advantages of CMCs are shown related to elements of the brake system, engine components, valves, turbine parts, and turbocharged engines. Application examples of ion conducting materials are described, such as sensors, lithium ion batteries, NaS battery, solid oxide fuel cell (SOFC), electrolysis of gaseous molecules, gas separation and atomic switch or nano-ionics circuits. Water and wastewater treatment is another important sector that has been considered. Bioceramics are presented from several aspects of tissue engineering. In ophthalmology, bioceramics, bioactive glasses, orbital floor repair, orbital implants, keratoprosthesis are reviewed. For bone tissue engineering, clinically used ceramic composites are reviewed, as well as the latest research trends, including solutions for hip arthroplasty. Bioactive ceramics, bioactive cements, bioactive glasses, and calcium phosphates, have been analysed related to drug delivery systems. Advanced dental ceramics are presented, including All-ceramic systems, glass ceramic, lithium disilicate, leucite, veneering ceramic and zirconium, especially important in esthetic dentistry. <br/><br/><br/>Authors: Zivic F.. <br/><br/>Affiliations: University of Kragujevac. <br/><br/>Publication: Encyclopedia of Materials: Composites, 1 January 2021, pp.1-2. </body></html>"
+    },
+    "candidate": {
+        "id": "legacy-64-dup-13592728",
+        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143554899&origin=inward",
+        "title": "Processing Routes for Ceramic Matrix Composites (CMCs)",
+        "content": "<html><body>This article presents a short review of processing routes for ceramic matrix composites (CMCs). Solid phase processes accounts for around 50% of all technologies that are used for fabrication of CMCs and comprise dry or wet sintering processes, usually at high temperatures. Novel sintering techniques have been emerging promising significant improvements, as well as lower processing temperatures, including Microwave (MW) sintering, Flash sintering, Spark plasma sintering (SPS), Flash cold sintering, Cold sintering process (CSP) and Cold sintering (CS). Liquid phase processes comprise traditional methods: sol-gel and reactive melt infiltration (RMI), whereas direct melt oxidation (DIMOX) and liquid silicon infiltration (LSI) are the most common RMI techniques. In gas phase processes, Chemical Vapor Infiltration (CVI) is widely used. Processing of powders, particles, platelets and whiskers is presented, including glass fibers, carbon fibers, graphene and different materials that can be used as matrix/fiber interphase, by either coating the fibers or depositing thin layers on the matrix. Additive manufacturing (AM) in production of CMCs has been reviewed, with short list of available technologies and current developments in CMCs. Advanced ceramics in smart materials are presented, including crack arresting and self-healing behavior, Functionally Graded Materials (FGM) and nanostructured surface coatings. Fabrication of surface composites by Friction Stir Processing (FSP) is shown, as one of the low cost technologies for deposition of CMCs in thin surface layers. Future research directions are elaborated, indicating some issues with processing of CMCs and design of hybrid composites as one of the development directions in CMCs. Design of composites inspired by nature materials indicated some less costly solutions of composite processing and fabrication. Nanotechnology in CMCs development showed significant advancements, especially related to addition of carbon nanotubes (CNTs) and graphene platelets as reinforcements. <br/><br/><br/>Authors: Zivic F., Palic N., Jovanovic Z., Grujović N.. <br/><br/>Affiliations: University of Kragujevac. <br/><br/>Publication: Encyclopedia of Materials: Composites, 1 January 2021, pp.20-36. </body></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "unique",
+        "jaccard_bucket": "unrelated"
+    },
+    "llm_judgement": {
+        "verdict": "unique",
+        "note": "Different articles within the same encyclopedia volume, with distinct titles, scopes, authorship, and page ranges."
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "agreement_unique",
+    "content_source": "hbase_full"
+}

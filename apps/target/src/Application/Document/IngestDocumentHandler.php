@@ -77,7 +77,12 @@ readonly class IngestDocumentHandler
 
         $watchFile = $document->getWatchFile();
         if (null !== $watchFile) {
-            $context = $this->preSavePipeline->process($document, $watchFile);
+            $context = $this->preSavePipeline->process(
+                document: $document,
+                watchFile: $watchFile,
+                collectTaskId: $collectTask->getId(),
+                provider: $collectTask->getProviderName(),
+            );
 
             if (null !== $context->duplicateOf) {
                 $this->logger?->info('Pre-save pipeline detected duplicate, skipping save', [

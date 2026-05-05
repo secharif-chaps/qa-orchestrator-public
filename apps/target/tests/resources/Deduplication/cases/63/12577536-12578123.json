@@ -1,0 +1,36 @@
+{
+  "account_id": "63",
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-63-master-12577536",
+    "url": "https://renewablesnow.com/news/miga-provides-guarantee-for-30-mwp-solar-project-in-burkina-faso-756401/",
+    "title": "MIGA provides guarantee for 30-MWp solar project in Burkina Faso",
+    "content": "<html><prebody></prebody><body><p>October 6 (Renewables Now) - The Multilateral Investment Guarantee Agency (MIGA), part of the World Bank Group, has issued a guarantee of EUR 4.5 million (USD 5.2m) to support the construction, operation and maintenance of a 30-MWp solar plant in Burkina Faso.</p> <p>MIGA said that French energy solutions company GreenYellow SAS will use the guarantee to cover its equity and quasi-equity investments in the photovoltaic (PV) project for a period of up to 20 years.</p> <p>Named Societe de Production d’Energie Solaire de Ouagadougou SAS (SPES Ouagadougou), the PV park will sell its output to the local state-owned utility Societe Nationale d’Electricite du Burkina (SONABEL) under a 25-year take-or-pay power purchase agreement (PPA).</p> <p>The country’s Ministry of Energy and the Ministry of Finance will also backstop the PPA through a public-private partnership (PPP) agreement, according to the agency.</p> <p>In addition to SPES Ouagadougou, MIGA approved three other PV projects. These schemes, with a combined capacity of 102 MWp, constitute Burkina Faso’s first round of solar Independent power producers (IPP), MIGA noted.</p> <p>(EUR 1.0 = USD 1.160)</p>  <br/>\n</body><postbody></postbody></html>"
+  },
+  "candidate": {
+    "id": "legacy-63-dup-12578123",
+    "url": "https://renewablesnow.com/news/miga-provides-guarantee-for-30-mwp-solar-project-in-burkina-faso-756401/",
+    "title": "MIGA provides guarantee for 30-MWp solar project in Burkina Faso",
+    "content": "<html><prebody></prebody><body><p>October 6 (Renewables Now) - The Multilateral Investment Guarantee Agency (MIGA), part of the World Bank Group, has issued a guarantee of EUR 4.5 million (USD 5.2m) to support the construction, operation and maintenance of a 30-MWp solar plant in Burkina Faso.</p> <p>MIGA said that French energy solutions company GreenYellow SAS will use the guarantee to cover its equity and quasi-equity investments in the photovoltaic (PV) project for a period of up to 20 years.</p> <p>Named Societe de Production d’Energie Solaire de Ouagadougou SAS (SPES Ouagadougou), the PV park will sell its output to the local state-owned utility Societe Nationale d’Electricite du Burkina (SONABEL) under a 25-year take-or-pay power purchase agreement (PPA).</p> <p>The country’s Ministry of Energy and the Ministry of Finance will also backstop the PPA through a public-private partnership (PPP) agreement, according to the agency.</p> <p>In addition to SPES Ouagadougou, MIGA approved three other PV projects. These schemes, with a combined capacity of 102 MWp, constitute Burkina Faso’s first round of solar Independent power producers (IPP), MIGA noted.</p> <p>(EUR 1.0 = USD 1.160)</p>  <br/>\n</body><postbody></postbody></html>"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "measurements": {
+    "jaccard": 1,
+    "hamming": 0
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same renewablesnow MIGA Burkina Faso article — different excerpts captured."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}

@@ -30,6 +30,12 @@ use App\Domain\WatchFile\WatchFile;
  * - `rawHtml`: optional raw HTML payload provided by collect connectors that
  *   have it on hand. Kept transient (no DB persistence) — the canonical URL
  *   enrichment is its main consumer.
+ * - `collectTaskId` / `provider`: identity of the tentative collect that
+ *   produced this document. Required by the deduplication processor to
+ *   record a {@see \App\Domain\Document\Deduplication\DuplicateAttempt}
+ *   on the matched original (axe A, ADR-2026-006). Stored on the context
+ *   rather than recomputed downstream so the dedup processor stays
+ *   independent of the collect-task gateway.
  */
 readonly class DocumentPipelineContext
 {
@@ -45,64 +51,75 @@ readonly class DocumentPipelineContext
         public ?string $duplicateOf = null,
         public ?string $canonicalUrl = null,
         public ?string $rawHtml = null,
+        public ?string $collectTaskId = null,
+        public ?string $provider = null,
     ) {
     }
 
     public function withSignal(string $name, Signal $signal): self
     {
-        return new self(
-            document: $this->document,
-            watchFile: $this->watchFile,
-            signals: array_merge($this->signals, [
+        return $this->with([
+            'signals' => array_merge($this->signals, [
                 $name => $signal,
             ]),
-            isHalted: $this->isHalted,
-            haltReason: $this->haltReason,
-            duplicateOf: $this->duplicateOf,
-            canonicalUrl: $this->canonicalUrl,
-            rawHtml: $this->rawHtml,
-        );
+        ]);
     }
 
     public function withHalt(TranslatedText $reason): self
     {
-        return new self(
-            document: $this->document,
-            watchFile: $this->watchFile,
-            signals: $this->signals,
-            isHalted: true,
-            haltReason: $reason,
-            duplicateOf: $this->duplicateOf,
-            canonicalUrl: $this->canonicalUrl,
-            rawHtml: $this->rawHtml,
-        );
+        return $this->with([
+            'isHalted' => true,
+            'haltReason' => $reason,
+        ]);
     }
 
     public function withDuplicateOf(string $duplicateOfDocumentId): self
     {
-        return new self(
-            document: $this->document,
-            watchFile: $this->watchFile,
-            signals: $this->signals,
-            isHalted: $this->isHalted,
-            haltReason: $this->haltReason,
-            duplicateOf: $duplicateOfDocumentId,
-            canonicalUrl: $this->canonicalUrl,
-            rawHtml: $this->rawHtml,
-        );
+        return $this->with([
+            'duplicateOf' => $duplicateOfDocumentId,
+        ]);
     }
 
     public function withCanonicalUrl(string $canonicalUrl): self
     {
+        return $this->with([
+            'canonicalUrl' => $canonicalUrl,
+        ]);
+    }
+
+    /**
+     * Apply targeted overrides on top of the current property values.
+     * Public `with*` builders dispatch through here so they only have to
+     * name the field(s) they actually change — the rest is forwarded
+     * verbatim. Adding a new context field only requires touching the
+     * constructor and one line below.
+     *
+     * @param array{
+     *     document?: Document,
+     *     watchFile?: WatchFile,
+     *     signals?: array<string, Signal>,
+     *     isHalted?: bool,
+     *     haltReason?: ?TranslatedText,
+     *     duplicateOf?: ?string,
+     *     canonicalUrl?: ?string,
+     *     rawHtml?: ?string,
+     *     collectTaskId?: ?string,
+     *     provider?: ?string,
+     * } $overrides
+     */
+    private function with(array $overrides): self
+    {
         return new self(
-            document: $this->document,
-            watchFile: $this->watchFile,
-            signals: $this->signals,
-            isHalted: $this->isHalted,
-            haltReason: $this->haltReason,
-            duplicateOf: $this->duplicateOf,
-            canonicalUrl: $canonicalUrl,
-            rawHtml: $this->rawHtml,
+            document: $overrides['document'] ?? $this->document,
+            watchFile: $overrides['watchFile'] ?? $this->watchFile,
+            signals: $overrides['signals'] ?? $this->signals,
+            isHalted: $overrides['isHalted'] ?? $this->isHalted,
+            haltReason: $overrides['haltReason'] ?? $this->haltReason,
+            duplicateOf: $overrides['duplicateOf'] ?? $this->duplicateOf,
+            canonicalUrl: $overrides['canonicalUrl'] ?? $this->canonicalUrl,
+            rawHtml: $overrides['rawHtml'] ?? $this->rawHtml,
+            collectTaskId: $overrides['collectTaskId'] ?? $this->collectTaskId,
+            provider: $overrides['provider'] ?? $this->provider,
         );
     }
 }

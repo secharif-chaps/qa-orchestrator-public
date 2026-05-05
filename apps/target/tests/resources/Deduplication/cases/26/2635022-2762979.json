@@ -1,0 +1,36 @@
+{
+  "account_id": "26",
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-26-master-2635022",
+    "url": "https://www.zonebourse.com/cours/action/ESGL-HOLDINGS-LIMITED-157758967/actualite/ESGL-Holdings-Limited-accroit-sa-capacite-de-transformation-des-dechets-La-capacite-du-systeme-the-44629364/",
+    "title": "ESGL Holdings Limited accroît sa capacité de transformation des ... - Zonebourse.com",
+    "content": "<html><head><title>ESGL Holdings Limited accroît sa capacité de transformation des déchets  :  La capacité du système thermique G-2 est doublée pour répondre à la demande croissante</title></head><body><div><p>ESGL Holdings Limited, par l&apos;intermédiaire de son entité opérationnelle à Singapour, Environmental Solutions (Asia) Pte. Ltd. (ESA), a annoncé une avancée révolutionnaire dans la technologie de gestion des déchets avec le doublement réussi de la capacité de son système thermique G-2. Cette réalisation témoigne de l&apos;engagement inébranlable d&apos;ESGL en faveur de la durabilité environnementale et des pratiques de l&apos;économie circulaire.</p><p>Le système thermique G-2, réputé pour sa conception exclusive, a été amélioré pour répondre à la demande croissante de gestion des boues industrielles non recyclables, en particulier dans les usines de fabrication de plaquettes de silicium et d&apos;autres industries clés. Les caractéristiques notables du système thermique G-2 élargi sont les suivantes : Doublement de la capacité : ESGL a mis à profit sa vaste expérience et son expertise pour doubler la capacité de traitement annuelle du système, qui est passée de 12 000 tonnes par an à 24 000 tonnes par an, ce qui permet de répondre de manière plus efficace aux volumes croissants de boues industrielles. Innovation durable : Le système modernisé continue d&apos;intégrer des technologies durables, y compris l&apos;exploitation de la chaleur provenant de la gazéification des déchets de bois et l&apos;utilisation de l&apos;énergie solaire du toit pour minimiser les besoins en électricité.</p><p>Cette approche holistique souligne l&apos;engagement de l&apos;ESGL en faveur de solutions respectueuses de l&apos;environnement. Diversification des produits : L&apos;expansion du système thermique G-2 améliore sa capacité à transformer les boues non recyclables en une gamme de produits précieux et durables, y compris le spath fluor et les concentrés de métaux de base. Cette diversification renforce la mission de l&apos;ESGL de transformer les déchets en ressources.</p></div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-26-dup-2762979",
+    "url": "https://www.zonebourse.com/cours/action/ESGL-HOLDINGS-LIMITED-157758967/actualite/ESGL-Holdings-Limited-accroit-sa-capacite-de-transformation-des-dechets-La-capacite-du-systeme-the-44629364/",
+    "title": "ESGL Holdings Limited accroît sa capacité de transformation des déchets : La capacité du système thermique G-2 est doublée pour répondre à la demande croissante - Zonebourse.com",
+    "content": "<html><head><title>ESGL Holdings Limited accroît sa capacité de transformation des déchets  :  La capacité du système thermique G-2 est doublée pour répondre à la demande croissante</title></head><body><div><p>ESGL Holdings Limited, par l&apos;intermédiaire de son entité opérationnelle à Singapour, Environmental Solutions (Asia) Pte. Ltd. (ESA), a annoncé une avancée révolutionnaire dans la technologie de gestion des déchets avec le doublement réussi de la capacité de son système thermique G-2. Cette réalisation témoigne de l&apos;engagement inébranlable d&apos;ESGL en faveur de la durabilité environnementale et des pratiques de l&apos;économie circulaire.</p><p>Le système thermique G-2, réputé pour sa conception exclusive, a été amélioré pour répondre à la demande croissante de gestion des boues industrielles non recyclables, en particulier dans les usines de fabrication de plaquettes de silicium et d&apos;autres industries clés. Les caractéristiques notables du système thermique G-2 élargi sont les suivantes : Doublement de la capacité : ESGL a mis à profit sa vaste expérience et son expertise pour doubler la capacité de traitement annuelle du système, qui est passée de 12 000 tonnes par an à 24 000 tonnes par an, ce qui permet de répondre de manière plus efficace aux volumes croissants de boues industrielles. Innovation durable : Le système modernisé continue d&apos;intégrer des technologies durables, y compris l&apos;exploitation de la chaleur provenant de la gazéification des déchets de bois et l&apos;utilisation de l&apos;énergie solaire du toit pour minimiser les besoins en électricité.</p><p>Cette approche holistique souligne l&apos;engagement de l&apos;ESGL en faveur de solutions respectueuses de l&apos;environnement. Diversification des produits : L&apos;expansion du système thermique G-2 améliore sa capacité à transformer les boues non recyclables en une gamme de produits précieux et durables, y compris le spath fluor et les concentrés de métaux de base. Cette diversification renforce la mission de l&apos;ESGL de transformer les déchets en ressources.</p></div></body></html>"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "measurements": {
+    "jaccard": 1,
+    "hamming": 0
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same zonebourse ESGL article — title was extended between revisions, body identical."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}

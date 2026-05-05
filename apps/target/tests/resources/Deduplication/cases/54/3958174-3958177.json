@@ -1,0 +1,36 @@
+{
+  "account_id": "54",
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 60,
+  "master": {
+    "id": "legacy-54-master-3958174",
+    "url": "http://www.rail-transit.com/xinwen/show.php?itemid=32161",
+    "title": "『广州』地铁乘车码微信小程序支持数字人民币支付",
+    "content": "<html><prebody></prebody><body>据“广州地铁”微信公众号消息，10月29日起，广州地铁乘车码微信小程序正式上线数字人民币支付方式，为市民乘客提供更多元、安全的支付选择，这也是国内首个实现数字人民币支付乘车的市域地铁乘车码微信小程序。据了解，广州地铁此前已在线网的自动售票机（TVM）扫码购票、官方APP乘车码过闸，以及经由客服设备处理的补退票乘客事务等地铁出行场景中实现了数字人民币的应用。此次新增乘车码微信小程序数字人民币支付方式，是进一步将“便捷出行”与“智慧支付”结合的有益尝试。据介绍，10月29日起，已下载数字人民币APP的市民乘客需点击APP主页面右下角“我的”，进入“钱包快付管理”，搜索“广州地铁”平台开通钱包快付功能，然后进入广州地铁乘车码微信小程序，点击乘车码页面中部的“微信支付”按钮，进入“支付管理”页面，选择“数字人民币”并开通免密支付签约，即可选择数字人民币支付刷码出行。固定选择数字人民币支付的乘客可将数字人民币设置为默认支付方式，无需每次手动切换。 <br/>\n</body><postbody></postbody></html>"
+  },
+  "candidate": {
+    "id": "legacy-54-dup-3958177",
+    "url": "http://www.rail-transit.com/xinwen/show.php?itemid=32160",
+    "title": "『广州』全线完成热滑试验，地铁十一号线实现“闭环”",
+    "content": "<html><prebody></prebody><body><p>\n\t近日，广州地铁十一号线列车在天河公园至员村段完成低、中、高速运行测试，顺利完成了热滑试验。至此，地铁十一号线全线区间均已完成热滑工作，实现顺利闭环，为全线调试及开通奠定坚实基础。\n</p><p><br/></p><p><img align=\"\" alt=\"\" height=\"337\" src=\"http://www.rail-transit.com/file/upload/202410/30/21530860210.png\" title=\"\" width=\"600\"/></p><p><br/></p><p>\n\t地铁十一号线天河公园至员村段，由原来的二十一号线拆解而来。为确保热滑试验的顺利进行，当日凌晨1时起，地铁建设者们通过工程车进行压道，确认区间人员出清，各路径满足车辆通行条件。9时35分，随着热滑总指挥下达开始热滑指令，列车从琶洲站左线隧道出发开始热滑试验。\n</p> <p><br/></p><p>\n\t试验过程中，广州地铁热滑指挥组和运营列车司机认真确认路径、现场道岔位置及列车运行条件，及时消除相关问题隐患，确保车辆安全运行。接触网试验小组通过视频监控系统仔细观察列车受电弓位置的弓网关系，全程弓网关系平稳，滑行顺畅，没有偏磨、脱弓刮弓、严重拉弧等情况。热滑试验全过程中弓网关系良好，供电系统稳定可靠，符合电客车运行条件。\n</p> <p><br/></p><p>\n\t自10月2日凌晨实施地铁十一号线天河公园至员村段拆解以来，广州地铁联合十一号线总包部及各施工、监理、设计单位在天河公园成立拆解指挥部，组织近500名施工人员进场开展施工作业。经过近1个月的奋战，地铁建设者们已经顺利完成了供电、轨道、通信、信号、屏蔽门等13个专业的区间改造工作，目前正在开展相关设备的综合调试、验收等工作。\n</p> <p><br/></p><p><img align=\"\" alt=\"\" height=\"335\" src=\"http://www.rail-transit.com/file/upload/202410/30/21533541210.png\" title=\"\" width=\"600\"/></p><p><br/></p><p>\n\t截至目前，十一号线（火车站—琶洲—火车站）土建工程累计完成99%。31座车站中，2座进行拆解施工，27座已“三权”移交，剩余2座进行机电施工；全线轨行区和赤沙车辆段已完成“三权”移交。\n</p>  <br/>\n</body><postbody></postbody></html>"
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "measurements": {
+    "jaccard": 0,
+    "hamming": 30
+  },
+  "classification": {
+    "agreement": "split",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "unique",
+    "note": "Two distinct rail-transit.com Chinese articles — Guangzhou digital RMB vs Guangzhou line 11 hot slip test."
+  },
+  "concordance_our_vs_llm": "agreement_unique",
+  "content_source": "hbase_full"
+}

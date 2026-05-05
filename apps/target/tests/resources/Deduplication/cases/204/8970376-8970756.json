@@ -1,0 +1,36 @@
+{
+    "account_id": 204,
+    "legacy_outcome": "NEAR_DUPLICATE",
+    "legacy_level": 56,
+    "master": {
+        "id": "legacy-204-master-8970376",
+        "url": "https://theprint.in/world/protests-held-in-pakistans-larkana-for-arrest-of-blackmailers-in-death-cases-of-two-medical-students/831514/",
+        "title": "Protests held in Pakistan’s Larkana for arrest of ‘blackmailers’ in death cases of two medical students",
+        "content": "<html><head><title>Protests held in Pakistan&apos;s Larkana for arrest of &apos;blackmailers&apos; in death cases of two medical students</title></head><body><div>\n<div>\n<p>Larkana [Pakistan], February 14 (ANI): Hundreds of people including journalists, writers and civil society activists held a sit-in protest outside the Shaheed Mohtarma Benazir Bhutto Medical University (SMBBMU) in Larkana city in Pakistan’s Sindh province over the failure of police in arresting the blackmailers responsible for the death of two medical students.</p>\n\n<p>Two medical students — Nimirta Chandani, a final-year BDS student of the Bibi Aseefa Dental College was found dead in her hostel room in September 2019 and Nosheen Kazmi, a fourth-year MBBS student of the Chandka Medical College (CMC), allegedly committed by hanging herself from the ceiling fan of her hostel room in November last year, Dawn reported on Monday.</p>\n\n<p>According to the family members, the students were blackmailed to the extent that they ended their lives.</p>\n\n\n<p>Protesters on Sunday raised slogans against the SMBBMU vice chancellor for failing to protect students from harassment and blackmailing. They also condemned the Larkana police for not having arrested the suspects in both cases.</p>\n\n<p>Dawn reported that the protesters, led by activists of Jamiat Ulema-i-Islam, Jeay Sindh Student Federation and some civil society organisations, marched through various roads and then assembled outside the SMBBMU Vice Chancellor’s secretariat to hold a sit-in.</p>\n\n<p>They alleged that the SMBBMU administration was hiding the truth, and demanded the removal of the Vice-Chancellor. They also called for an in-depth investigation into both cases to unmask other culprits.</p>\n\n<p>Separate demonstrations were held by activists of the Jeay Sindh Mahaz (JSM), Jeay Sindh Students Federation (JSSF) and Sindh Taraqqi-pasand Party (STP) outside the local press club. (ANI)</p>\n<p><i>This report is auto-generated from ANI news service. ThePrint holds no responsibility for its content.</i></p>\n\n\n</div></div></body></html>"
+    },
+    "candidate": {
+        "id": "legacy-204-dup-8970756",
+        "url": "https://www.dawn.com/news/1674989/rallies-sit-in-held-in-larkana-for-arrest-of-blackmailers-in-women-students-death-case",
+        "title": "Rallies, sit-in held in Larkana for arrest of ‘blackmailers’ in women students’ death case",
+        "content": "<html><prebody></prebody><body><p>LARKANA: A large number of people from different walks of life took out a rally and held a sit-in outside the Shaheed Mohtarma Benazir Bhutto Medical University (SMBBMU) over failure of police in arresting the suspected blackmailers responsible for the death of two medical students, who allegedly committed suicide in their respective hostel rooms.</p><p>Nimirta Chandani, a final-year BDS student of the Bibi Aseefa Dental College was found dead in her hostel room in September 2019 and Nosheen Kazmi, a fourth-year MBBS student of the Chandka Medical College (CMC), allegedly committed suicide by hanging herself from the ceiling fan of her hostel room in November 2021. Their family members say they were blackmailed to the extent that they ended their lives.</p> <p>Journalists, writers and civil society activists along with members of the general public participated in the Sunday rally. They raised slogans against the SMBBMU vice chancellor for failing to protect students from harassment and blackmailing. They also condemned the Larkana police for not having arrested the suspects nominated in both cases.</p> <p>The protesters, led by activists of Jamiat Ulema-i-Islam, Jeay Sindh Student Federation and some civil society organisations, marched through various roads and then assembled outside the SMBBMU VC’s secretariat to hold a sit-in.</p> <p>Speaking to them, Zafar Abro, Athar Soomro, Muhbbat Khuhro, Ashraf Kalhoro, Ahmar Phull and others said that it was quite unfortunate for that the main suspect was still at large even after the DNA report released by Liaquat University of Medical and Health Sciences (LUMHS) lab disclosed that his DNA profile matched with the DNA profiles of both women.</p> <p>They alleged that the SMBBMU administration was hiding the truth, and demanded removal of its VC. They also called for an in-depth investigation into both cases to unmask other culprits.</p> <p>Separate demonstrations were held by activists of the Jeay Sindh Mahaz (JSM), Jeay Sindh Students Federation (JSSF) and Sindh Taraqqi-pasand Party (STP) outside the local press club.</p> <p>Speaking to them, Ashraf Kalhoro, Athar Soomro and Allah Warayo Umrani alleged that the SMBBMU administration was trying to hush up the matter only to cover up its inefficiency.</p> <p>They demanded that the matter be investigated in the light of the LUMHS lab’s findings. They expressed their concern over increasing incidents of harassment of women students at various educational institutions in the province. They called for putting in place an effective security system at colleges and universities to protect women students and teachers.</p> VC’s ‘media trial’ condemned  <br/>\n <p>President of SMBBMU Teachers’ Association Dr Fahad Jibran Siyal, in a statement, condemned what he called a “media trial” of the institution’s vice chancellor.</p> <p>“LUMHS VC and administration leaked the DNA report of Nosheen Kazmi which has cast a negative impact on the institution’s [LUMHS’] reputation,” he alleged, and demanded that the LUMHS VC and members of the its forensic department be included in the ongoing judicial inquiry into the Kazmi case so that justice could be done to her heirs and culprits be handed exemplary punishment.</p> <p>The VIth additional session judge of Larkana, who is holding the judicial inquiry, has issued notices to the SMBBMU hostel provost and CMC principal asking them to appear before him on Feb 16 along with the relevant record.</p> <p><em>Published in Dawn, February 14th, 2022</em></p> <br/>\n</body><postbody></postbody></html>"
+    },
+    "measurements": {
+        "jaccard": null,
+        "hamming": null
+    },
+    "classification": {
+        "agreement": "split",
+        "jaccard_bucket": "partial_overlap"
+    },
+    "llm_judgement": {
+        "verdict": "near_duplicate",
+        "note": "Both articles report on the same Larkana protests over two medical students’ deaths but are independently written versions of the story."
+    },
+    "pinned": {
+        "outcome": "unique",
+        "stage": null,
+        "similarity": null
+    },
+    "concordance_our_vs_llm": "our_misses",
+    "content_source": "hbase_full"
+}

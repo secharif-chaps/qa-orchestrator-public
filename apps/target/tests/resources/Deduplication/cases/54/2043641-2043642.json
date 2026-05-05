@@ -1,0 +1,36 @@
+{
+  "account_id": "54",
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-54-master-2043641",
+    "url": "https://www.lefigaro.fr/flash-eco/portugal-des-centaines-de-trains-supprimes-en-raison-d-une-greve-20221226",
+    "title": "Portugal: des centaines de trains supprimés en raison d'une grève",
+    "content": "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body><p>Des centaines de trains ont été supprimées depuis vendredi au Portugal en raison d&apos;une grève des salariés des chemins de fer qui se poursuivait lundi afin de réclamer une prime de pouvoir d&apos;achat pour <a data-fig-domain=\"lefigaro\" data-fig-type=\"newsflash\" data-gtm-custom-action=\"crossclick\" data-gtm-custom-categorie=\"navigation\" data-gtm-custom-label=\"contextuel\" data-gtm-event=\"customeventspe\" href=\"https://www.lefigaro.fr/flash-eco/portugal-l-inflation-ralentit-en-novembre-a-9-9-sur-un-an-20221214\">faire face à l&apos;envolée des prix</a>, selon les syndicats. Lundi, sur les 427 trains prévus jusqu&apos;à 10 heures (heure locale), 278 ont été supprimés, d&apos;après un bilan des chemins de fer portugais (CP). Un service minimum, correspondant à 25% des trains programmés, a toutefois permis de limiter l&apos;impact de ce mouvement.</p>   <br/>  <br/><p>Les cheminots observaient lundi leur deuxième jour de grève à l&apos;appel des syndicats représentant les salariés de CP du gestionnaire public des réseaux ferroviaires et routiers (IP). Depuis la première journée de débrayage vendredi, cette grève a déjà entraîné la suppression de plus de 1.100 trains, selon CP. Ce mouvement des cheminots aura un impact sur le trafic ferroviaire les «<em>jours qui précèdent et qui suivront les périodes de grève</em>», ainsi que le 1er janvier prochain, a prévenu la société de chemins de fer dans un communiqué.</p> <p>«<em>Nous sommes conscients qu&apos;il est impossible de compenser la perte de pouvoir d&apos;achat</em>», mais «<em>nous réclamons une prime qui puisse nous aider à faire face</em>» à la hausse des prix cette année, a expliqué à la télévision publique RTP Antonio Pereira, responsable du syndicat indépendant des cheminots (SINFB), l&apos;un des huit syndicats à avoir appelé à cette mobilisation. D&apos;après le syndicaliste, qui n&apos;exclut pas de nouveaux mouvements l&apos;année prochaine, le taux de grévistes s&apos;élevait lundi à «<em>près de 80%</em>». Outre les cheminots, d&apos;autres secteurs réclament également des hausses de salaires. Des salariés des centres d&apos;appels ou de la distribution et du commerce ont également observé des journées de grève le week-end de Noël. «<em>L&apos;inflation a atteint des niveaux jamais vus depuis trois décennies</em>», a reconnu dimanche soir le Premier ministre socialiste Antonio Costa, dans son message de Noël retransmis à la télévision. M. Costa s&apos;est engagé à tout mettre en œuvre pour continuer de soutenir les ménages et l&apos;économie.</p><p><strong>À VOIR AUSSI</strong> - Grève à la SNCF: l&apos;ensemble des syndicats signent l&apos;accord, préavis levé pour le Nouvel An</p>   <br/> <br/></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-54-dup-2043642",
+    "url": "https://www.republicain-lorrain.fr/transport/2022/12/26/des-centaines-de-trains-supprimes-en-raison-d-une-greve",
+    "title": "Des centaines de trains supprimés en raison d'une grève",
+    "content": "<div>  <p>Des centaines de trains ont été supprimés depuis vendredi au Portugal en raison d&apos;une grève des salariés des chemins de fer qui se poursuivait lundi afin de réclamer une prime de pouvoir d&apos;achat pour faire face à l&apos;envolée des prix, selon les syndicats.</p><p>Lundi, sur les 427 trains prévus jusqu’à 10 heures (heure locale), 278 ont été supprimés, d&apos;après un bilan des chemins de fer portugais (CP).</p><p>Un service minimum, correspondant à 25 % des trains programmés, a toutefois permis de limiter l&apos;impact de ce mouvement.</p><p>Les cheminots observaient lundi leur deuxième jour de grève à l&apos;appel des syndicats représentant les salariés de CP du gestionnaire public des réseaux ferroviaires et routiers (IP).</p><p>Depuis la première journée de débrayage vendredi, cette grève a déjà entraîné la suppression de plus de 1 100 trains, selon CP. Ce mouvement des cheminots aura un impact sur le trafic ferroviaire les « jours qui précèdent et qui suivront les périodes de grève », ainsi que le 1er janvier prochain, a prévenu la société de chemins de fer dans un communiqué.</p><p>« Nous sommes conscients qu&apos;il est impossible de compenser la perte de pouvoir d&apos;achat », mais « nous réclamons une prime qui puisse nous aider à faire face » à la hausse des prix cette année, a expliqué à la télévision publique RTP Antonio Pereira, responsable du syndicat indépendant des cheminots (SINFB), l&apos;un des huit syndicats à avoir appelé à cette mobilisation.</p><p>D&apos;après le syndicaliste, qui n’exclut pas de nouveaux mouvements l&apos;année prochaine, le taux de grévistes s&apos;élevait lundi à « près de 80 % ».</p><p>Outre les cheminots, d&apos;autres secteurs réclament également des hausses de salaires. Des salariés des centres d&apos;appels ou de la distribution et du commerce ont également observé des journées de grève le week-end de Noël.</p><p>« L&apos;inflation a atteint des niveaux jamais vus depuis trois décennies », a reconnu dimanche soir le Premier ministre socialiste Antonio Costa, dans son message de Noël retransmis à la télévision. M. Costa s&apos;est engagé à tout mettre en œuvre pour continuer de soutenir les ménages et l&apos;économie.</p></div>"
+  },
+  "pinned": {
+    "outcome": "near_duplicate",
+    "stage": "min_hash_lsh",
+    "similarity": 0.8984375
+  },
+  "measurements": {
+    "jaccard": 0.8984,
+    "hamming": 6
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "near_identical"
+  },
+  "llm_judgement": {
+    "verdict": "near_duplicate",
+    "note": "Same AFP wire on Portugal trains strike covered by lefigaro and republicain-lorrain."
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
+}
