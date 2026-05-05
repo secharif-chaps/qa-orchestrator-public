@@ -16,6 +16,7 @@ use App\Domain\Collect\Exception\ApifyDatasetNotFoundException;
 use App\Domain\Collect\Exception\CollectException;
 use App\Domain\Collect\Exception\CollectTaskNotFoundException;
 use App\Domain\Collect\NormalizerContext;
+use App\Domain\SourceActivity\SourceActivityGatewayInterface;
 use App\Domain\SourceActivity\SourceActivityLoggerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -35,6 +36,7 @@ readonly class FetchApifyDatasetHandler
         private CollectTaskGatewayInterface $collectTaskGateway,
         private EventDispatcherInterface $eventDispatcher,
         private SourceActivityLoggerInterface $sourceActivityLogger,
+        private SourceActivityGatewayInterface $sourceActivityGateway,
         private ApifyNormalizerResolverInterface $normalizerResolver,
         private MessageBusInterface $messageBus,
         private LoggerInterface $logger = new NullLogger(),
@@ -111,7 +113,7 @@ readonly class FetchApifyDatasetHandler
             );
 
             if (null !== $action->runCost) {
-                $this->sourceActivityLogger->logSourceCollectCost(
+                $costActivity = $this->sourceActivityLogger->logSourceCollectCost(
                     $source,
                     'apify',
                     $action->runCost,
@@ -123,6 +125,7 @@ readonly class FetchApifyDatasetHandler
                         'dataset_id' => $action->datasetId,
                     ]
                 );
+                $this->sourceActivityGateway->save($costActivity);
 
                 $this->logger->info('Apify run cost logged', [
                     'collect_task_id' => $action->collectTaskId,

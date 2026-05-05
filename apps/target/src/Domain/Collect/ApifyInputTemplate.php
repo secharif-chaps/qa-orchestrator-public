@@ -11,12 +11,14 @@ readonly class ApifyInputTemplate
      * @param array<string, mixed>       $defaults            Default input fields for the actor
      * @param array<string>              $requiredFields      Field names that must exist in the final input
      * @param array<string, string>|null $variableDefinitions Description of {{variable}} placeholders
+     * @param string|null                $maxTotalChargeUsd   Per-actor cost cap override (overrides global default)
      */
     public function __construct(
         public string $apifyActorId,
         public array $defaults,
         private array $requiredFields,
         public ?array $variableDefinitions = null,
+        public ?string $maxTotalChargeUsd = null,
     ) {
     }
 

@@ -25,6 +25,7 @@ use App\Infrastructure\Collect\Apify\Normalizer\ApifyNormalizerResolver;
 use App\Infrastructure\Collect\Apify\Normalizer\GenericApifyNormalizer;
 use App\Tests\Units\Infrastructure\Collect\Apify\NullApifyHttpClient;
 use App\Tests\Units\Infrastructure\Collect\NullCollectTaskGateway;
+use App\Tests\Units\Infrastructure\SourceActivity\NullSourceActivityGateway;
 use App\Tests\Units\Infrastructure\SourceActivity\NullSourceActivityLogger;
 use App\Tests\Utils\EntityUtilsTrait;
 use App\Tests\Utils\Symfony\NullMessageBus;
@@ -45,6 +46,7 @@ class FetchApifyDatasetHandlerTest extends TestCase
     /** @var EventDispatcherInterface&Stub */
     private EventDispatcherInterface $eventDispatcher;
     private NullSourceActivityLogger $sourceActivityLogger;
+    private NullSourceActivityGateway $sourceActivityGateway;
     private NullMessageBus $messageBus;
     private ApifyNormalizerResolverInterface $normalizerResolver;
     private FetchApifyDatasetHandler $handler;
@@ -55,6 +57,7 @@ class FetchApifyDatasetHandlerTest extends TestCase
         $this->collectTaskGateway = new NullCollectTaskGateway();
         $this->eventDispatcher = $this->createStub(EventDispatcherInterface::class);
         $this->sourceActivityLogger = new NullSourceActivityLogger();
+        $this->sourceActivityGateway = new NullSourceActivityGateway();
         $this->messageBus = new NullMessageBus();
         $this->normalizerResolver = new ApifyNormalizerResolver(new \ArrayObject([]), new GenericApifyNormalizer());
 
@@ -63,6 +66,7 @@ class FetchApifyDatasetHandlerTest extends TestCase
             $this->collectTaskGateway,
             $this->eventDispatcher,
             $this->sourceActivityLogger,
+            $this->sourceActivityGateway,
             $this->normalizerResolver,
             $this->messageBus,
             new NullLogger()
@@ -275,6 +279,7 @@ class FetchApifyDatasetHandlerTest extends TestCase
             $this->collectTaskGateway,
             $this->eventDispatcher,
             $this->sourceActivityLogger,
+            $this->sourceActivityGateway,
             $resolver,
             $this->messageBus,
             new NullLogger()

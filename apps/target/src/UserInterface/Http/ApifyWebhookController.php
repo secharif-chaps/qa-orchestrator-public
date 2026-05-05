@@ -146,18 +146,30 @@ class ApifyWebhookController extends AbstractController
             return null;
         }
 
-        if (!isset($resource['usage']) && !isset($resource['usageUsd'])) {
+        // COMPUTE_UNITS actors send usage/usageUsd; PAY_PER_EVENT actors send usageTotalUsd.
+        // stats.computeUnits is always present for both models.
+        $hasLegacyUsage = isset($resource['usage']) || isset($resource['usageUsd']);
+        $stats = $resource['stats'] ?? null;
+        $hasNewUsage = isset($resource['usageTotalUsd']) || \is_array($stats) && isset($stats['computeUnits']);
+
+        if (!$hasLegacyUsage && !$hasNewUsage) {
             return null;
         }
 
+        /** @var array<string, mixed> $stats */
+        $stats = \is_array($resource['stats'] ?? null) ? $resource['stats'] : [];
+
+        // computeUnits: prefer stats.computeUnits (both models), fallback to legacy usage field
         /** @var array<string, mixed> $usage */
         $usage = \is_array($resource['usage'] ?? null) ? $resource['usage'] : [];
+        $rawCu = $stats['computeUnits'] ?? $usage['ACTOR_COMPUTE_UNITS'] ?? 0.0;
+        $computeUnits = \is_float($rawCu) || \is_int($rawCu) ? (float) $rawCu : 0.0;
 
+        // costUsd: prefer usageTotalUsd (PAY_PER_EVENT), fallback to legacy usageUsd field
         /** @var array<string, mixed> $usageUsd */
         $usageUsd = \is_array($resource['usageUsd'] ?? null) ? $resource['usageUsd'] : [];
-
-        $computeUnits = $usage['ACTOR_COMPUTE_UNITS'] ?? 0.0;
-        $costUsd = $usageUsd['ACTOR_COMPUTE_UNITS'] ?? 0.0;
+        $rawCost = $resource['usageTotalUsd'] ?? $usageUsd['ACTOR_COMPUTE_UNITS'] ?? 0.0;
+        $costUsd = \is_float($rawCost) || \is_int($rawCost) ? (float) $rawCost : 0.0;
 
         $durationSeconds = null;
         $startedAt = $resource['startedAt'] ?? null;
@@ -174,8 +186,8 @@ class ApifyWebhookController extends AbstractController
         }
 
         return new ApifyRunCost(
-            computeUnits: \is_float($computeUnits) || \is_int($computeUnits) ? (float) $computeUnits : 0.0,
-            costUsd: \is_float($costUsd) || \is_int($costUsd) ? (float) $costUsd : 0.0,
+            computeUnits: $computeUnits,
+            costUsd: $costUsd,
             durationSeconds: $durationSeconds,
         );
     }

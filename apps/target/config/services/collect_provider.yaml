@@ -108,6 +108,7 @@ parameters:
     clockworks/tiktok-scraper:
       name: 'TikTok Scraper'
       source_types: ['social_media:tiktok']
+      max_total_charge_usd: '0.50'   # actor minimum is $0.50 (pay-per-event pricing)
       defaults:
         profiles:
           - '{{source.query}}'

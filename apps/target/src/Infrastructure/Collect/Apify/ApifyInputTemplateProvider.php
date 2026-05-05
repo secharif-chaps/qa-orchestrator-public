@@ -93,11 +93,15 @@ readonly class ApifyInputTemplateProvider
         /** @var array<string, string>|null */
         $variableDefinitions = $config['variable_definitions'] ?? null;
 
+        $rawCharge = $config['max_total_charge_usd'] ?? null;
+        $maxTotalChargeUsd = \is_string($rawCharge) ? $rawCharge : null;
+
         return new ApifyInputTemplate(
             apifyActorId: $apifyActorId,
             defaults: $defaults,
             requiredFields: $requiredFields,
             variableDefinitions: $variableDefinitions,
+            maxTotalChargeUsd: $maxTotalChargeUsd,
         );
     }
 }
