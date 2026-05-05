@@ -24,17 +24,11 @@
       <div class="flex items-center justify-between gap-4 rounded-sm">
         <!-- Search Input -->
         <div class="max-w-112 flex-1">
-          <div class="relative">
-            <i
-              class="fa fa-search text-neutral-black-font absolute top-1/2 left-3 -translate-y-1/2 transform"
-            ></i>
-            <input
-              v-model="companiesStore.filterName"
-              type="text"
-              :placeholder="$t('screen.company.search.placeholder')"
-              class="border-primary-lighter-stroke focus:ring-primary/20 focus:border-primary w-full rounded-sm border bg-white py-2 pr-4 pl-10 focus:ring-2"
-            />
-          </div>
+          <Searchbar
+            id="companies-search"
+            v-model="companiesStore.filterName"
+            :placeholder="$t('screen.company.search.placeholder')"
+          />
         </div>
 
         <!-- View Mode Toggle -->
@@ -47,7 +41,7 @@
 <script setup lang="ts">
 import ButtonGroup from '@/components/ui/ButtonGroup.vue'
 import { useCompaniesStore } from '@/stores/companies'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Searchbar } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 

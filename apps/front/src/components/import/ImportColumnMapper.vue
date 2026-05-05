@@ -30,35 +30,18 @@
               </div>
             </td>
             <td class="px-4 py-3">
-              <select
-                :value="mapping.targetField || 'ignore'"
-                class="border-primary-lighter-stroke text-sage-700 dark:text-sage-200 focus:ring-primary focus:border-primary w-full max-w-80 rounded-sm border bg-white px-3 py-2 text-sm focus:ring-2 focus:outline-none"
-                @change="
-                  handleMappingChange(mapping.csvColumn, ($event.target as HTMLSelectElement).value)
-                "
+              <Select
+                :model-value="mapping.targetField || 'ignore'"
+                :options="getFieldOptions(mapping.csvColumn)"
+                class="w-full max-w-80"
+                @update:model-value="(val: string) => handleMappingChange(mapping.csvColumn, val)"
               >
-                <option value="ignore">— {{ $t('admin.import.ignore') }}</option>
-                <option value="username">
-                  {{ $t('admin.import.fields.username') }}
-                  {{ isFieldUsed('username', mapping.csvColumn) ? '✓' : '' }}
-                </option>
-                <option value="email">
-                  {{ $t('admin.import.fields.email') }}
-                  {{ isFieldUsed('email', mapping.csvColumn) ? '✓' : '' }}
-                </option>
-                <option value="firstname">
-                  {{ $t('admin.import.fields.firstname') }}
-                  {{ isFieldUsed('firstname', mapping.csvColumn) ? '✓' : '' }}
-                </option>
-                <option value="lastname">
-                  {{ $t('admin.import.fields.lastname') }}
-                  {{ isFieldUsed('lastname', mapping.csvColumn) ? '✓' : '' }}
-                </option>
-                <option value="password">
-                  {{ $t('admin.import.fields.password') }}
-                  {{ isFieldUsed('password', mapping.csvColumn) ? '✓' : '' }}
-                </option>
-              </select>
+                <template #items="{ options }">
+                  <SelectItem v-for="opt in options" :key="opt.value" :value="opt.value">
+                    {{ opt.label }}
+                  </SelectItem>
+                </template>
+              </Select>
             </td>
           </tr>
         </tbody>
@@ -147,7 +130,7 @@
 <script setup lang="ts">
 import type { TargetField } from '@/composables/useColumnMapper'
 import type { ColumnMapping } from '@/types/user-import'
-import { Alert } from '@owlint/feathers-vue'
+import { Alert, Select, SelectItem } from '@owlint/feathers-vue'
 import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -167,7 +150,7 @@ const emit = defineEmits<{
   'update:generatePasswords': [value: boolean]
 }>()
 
-useI18n()
+const { t } = useI18n()
 
 /**
  * Check if all required fields are mapped
@@ -193,16 +176,22 @@ const unmappedColumns = computed(() => {
   return props.mappings.filter((m) => m.targetField === null).map((m) => m.csvColumn)
 })
 
-/**
- * Check if a field is already used by another column
- */
 function isFieldUsed(field: TargetField, excludeColumn: string): boolean {
   return props.mappings.some((m) => m.targetField === field && m.csvColumn !== excludeColumn)
 }
 
-/**
- * Handle mapping change from dropdown
- */
+function getFieldOptions(csvColumn: string) {
+  const used = (field: TargetField) => (isFieldUsed(field, csvColumn) ? ' ✓' : '')
+  return [
+    { value: 'ignore', label: `— ${t('admin.import.ignore')}` },
+    { value: 'username', label: `${t('admin.import.fields.username')}${used('username')}` },
+    { value: 'email', label: `${t('admin.import.fields.email')}${used('email')}` },
+    { value: 'firstname', label: `${t('admin.import.fields.firstname')}${used('firstname')}` },
+    { value: 'lastname', label: `${t('admin.import.fields.lastname')}${used('lastname')}` },
+    { value: 'password', label: `${t('admin.import.fields.password')}${used('password')}` },
+  ]
+}
+
 function handleMappingChange(csvColumn: string, value: string): void {
   const targetField: TargetField = value === 'ignore' ? null : (value as TargetField)
 

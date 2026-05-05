@@ -54,28 +54,19 @@
 
       <!-- Mobile Navigation -->
       <div class="mb-6 lg:hidden">
-        <select
+        <Select
           v-model="selectedSectionPermission"
-          @change="onMobileSelectChange"
-          class="border-primary-lighter-stroke text-neutral-black-font focus:ring-primary w-full rounded-sm border bg-white px-3 py-2 focus:ring-2 focus:outline-none"
+          :options="mobileSectionOptions"
+          :placeholder="$t('settings.help.selectTopic.placeholder')"
+          class="w-full"
+          @update:model-value="onMobileSelectChange"
         >
-          <option value="">
-            {{ $t('settings.help.selectTopic.placeholder') }}
-          </option>
-          <optgroup
-            v-for="category in helpCategories"
-            :key="category"
-            :label="getCategoryTitle(category)"
-          >
-            <option
-              v-for="section in helpSectionsByCategory[category]"
-              :key="section.permission"
-              :value="section.permission"
-            >
-              {{ section.title }}
-            </option>
-          </optgroup>
-        </select>
+          <template #items="{ options }">
+            <SelectItem v-for="opt in options" :key="opt.value" :value="opt.value">
+              {{ opt.label }}
+            </SelectItem>
+          </template>
+        </Select>
       </div>
 
       <!-- Main Content -->
@@ -125,8 +116,9 @@
 
 <script lang="ts" setup>
 import { usePermissionBasedHelp } from '@/composables/usePermissionBasedHelp'
+import { Select, SelectItem } from '@owlint/feathers-vue'
 import { marked } from 'marked'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -153,7 +145,17 @@ const getCategoryTitle = (category: string) => {
   return titles[category] || category
 }
 
-// Handle mobile select change
+const mobileSectionOptions = computed(() =>
+  helpCategories.value.flatMap((category) =>
+    (helpSectionsByCategory.value[category] ?? []).map(
+      (section: { permission: string; title: string }) => ({
+        value: section.permission,
+        label: `${getCategoryTitle(category)} — ${section.title}`,
+      }),
+    ),
+  ),
+)
+
 const onMobileSelectChange = () => {
   if (selectedSectionPermission.value) {
     const section = availableHelpSections.value.find(

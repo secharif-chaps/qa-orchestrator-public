@@ -52,19 +52,18 @@
             <label class="text-neutral-black-font text-sm font-medium">
               {{ $t('settings.tokens.history.transactionType') }}
             </label>
-            <select
+            <Select
               v-model="filters.transaction_type"
-              class="bg-primary-lightest border-primary-lighter-stroke focus:ring-primary/20 focus:border-primary min-w-40 rounded-sm border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+              :options="transactionTypeOptions"
+              :placeholder="$t('settings.tokens.history.allTypes')"
+              class="min-w-40"
             >
-              <option value="">{{ $t('settings.tokens.history.allTypes') }}</option>
-              <option value="add">{{ $t('settings.tokens.history.type.add') }}</option>
-              <option value="consume">
-                {{ $t('settings.tokens.history.type.consume') }}
-              </option>
-              <option value="adjustment">
-                {{ $t('settings.tokens.history.type.adjustment') }}
-              </option>
-            </select>
+              <template #items="{ options }">
+                <SelectItem v-for="opt in options" :key="opt.value" :value="opt.value">
+                  {{ opt.label }}
+                </SelectItem>
+              </template>
+            </Select>
           </div>
 
           <!-- Reference Type Filter -->
@@ -72,26 +71,18 @@
             <label class="text-neutral-black-font text-sm font-medium">
               {{ $t('settings.tokens.history.referenceType') }}
             </label>
-            <select
+            <Select
               v-model="filters.reference_type"
-              class="bg-primary-lightest border-primary-lighter-stroke focus:ring-primary/20 focus:border-primary min-w-40 rounded-sm border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+              :options="referenceTypeOptions"
+              :placeholder="$t('settings.tokens.history.allReferences')"
+              class="min-w-40"
             >
-              <option value="">
-                {{ $t('settings.tokens.history.allReferences') }}
-              </option>
-              <option value="company">
-                {{ $t('settings.tokens.history.ref.company') }}
-              </option>
-              <option value="manual">
-                {{ $t('settings.tokens.history.ref.manual') }}
-              </option>
-              <option value="csv_import">
-                {{ $t('settings.tokens.history.ref.csv_import') }}
-              </option>
-              <option value="system">
-                {{ $t('settings.tokens.history.ref.system') }}
-              </option>
-            </select>
+              <template #items="{ options }">
+                <SelectItem v-for="opt in options" :key="opt.value" :value="opt.value">
+                  {{ opt.label }}
+                </SelectItem>
+              </template>
+            </Select>
           </div>
 
           <!-- Date Range (simplified) -->
@@ -262,13 +253,28 @@ import { currentOrganizationQuery } from '@/queries/organization'
 import { organizationBalanceQuery, tokenHistoryQuery } from '@/queries/tokens'
 import type { ReferenceType, TokenHistoryFilters, TransactionType } from '@/types/tokens'
 import { transformToPaginationMeta } from '@/utils/pagination'
-import { Alert, Button, Tag, type Intent } from '@owlint/feathers-vue'
+import { Alert, Button, Select, SelectItem, Tag, type Intent } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const { formatDate } = useDateTime()
+
+const transactionTypeOptions = computed(() => [
+  { value: '', label: t('settings.tokens.history.allTypes') },
+  { value: 'add', label: t('settings.tokens.history.type.add') },
+  { value: 'consume', label: t('settings.tokens.history.type.consume') },
+  { value: 'adjustment', label: t('settings.tokens.history.type.adjustment') },
+])
+
+const referenceTypeOptions = computed(() => [
+  { value: '', label: t('settings.tokens.history.allReferences') },
+  { value: 'company', label: t('settings.tokens.history.ref.company') },
+  { value: 'manual', label: t('settings.tokens.history.ref.manual') },
+  { value: 'csv_import', label: t('settings.tokens.history.ref.csv_import') },
+  { value: 'system', label: t('settings.tokens.history.ref.system') },
+])
 
 // Filter state
 const filters = reactive<TokenHistoryFilters>({
@@ -289,7 +295,9 @@ const { data: currentOrganization, isLoading: isLoadingOrg } = useQuery(() =>
 
 // Fetch global token balance
 const { data: balanceData, isLoading: isLoadingBalance } = useQuery(() =>
-  organizationBalanceQuery({ organizationId: currentOrganization.value?.id ?? '' }),
+  organizationBalanceQuery({
+    organizationId: currentOrganization.value?.id ?? '',
+  }),
 )
 
 // Fetch token history with filters using the spread pattern
