@@ -1,6 +1,6 @@
 <template>
   <div
-    class="shadow-shadow-2 bg-base-100 border-base-300 cursor-pointer overflow-hidden rounded-2xl border p-5 transition-all duration-300"
+    class="shadow-shadow-2 bg-base-100 border-primary-lighter-stroke cursor-pointer overflow-hidden rounded-2xl border p-5 transition-all duration-300"
     @click="navigateToEdit"
   >
     <div class="flex flex-col gap-3">

@@ -18,21 +18,18 @@
         </div>
 
         <!-- Event checkboxes -->
-        <div class="flex flex-col gap-2 pl-1">
+        <div class="flex flex-col items-start gap-2 pl-1">
           <Checkbox
             v-for="event in group.events"
             :id="`event-${event.type}`"
             :key="event.type"
             v-model="model"
             :value="event.type"
+            :label="t('stream.events', { type: toEventCase(event.type) })"
             :disabled="!group.available"
             name="subscribed-events"
             :class="{ 'cursor-not-allowed opacity-50': !group.available }"
-          >
-            <label :for="`event-${event.type}`" class="text-sm">{{
-              t('stream.events', { type: toEventCase(event.type) })
-            }}</label>
-          </Checkbox>
+          />
         </div>
       </div>
     </div>
