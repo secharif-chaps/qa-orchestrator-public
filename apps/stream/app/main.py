@@ -4,38 +4,17 @@ import json
 from contextlib import asynccontextmanager
 
 import httpx
-import jwt as pyjwt
 from fastapi import FastAPI
 
 from app.api.endpoints.health import router as health_router
 from app.api.endpoints.internal import router as internal_router
 from app.api.router import api_router
 from app.core.config import settings
+from app.core.internal_jwt import create_internal_token
 from app.core.logging_config import get_logger, setup_logging
 
 setup_logging(level=getattr(settings, "LOG_LEVEL", "INFO"))
 logger = get_logger(__name__)
-
-ALGORITHM = "HS256"
-ISSUER = "global-gateway"
-
-
-def _create_internal_token() -> str:
-    """Create a short-lived internal JWT for service-to-service auth."""
-    from datetime import UTC, datetime, timedelta
-
-    now = datetime.now(UTC)
-    payload = {
-        "sub": "stream-service",
-        "username": "stream",
-        "org_id": "system",
-        "org_name": "system",
-        "roles": ["service"],
-        "iss": ISSUER,
-        "iat": int(now.timestamp()),
-        "exp": int((now + timedelta(seconds=60)).timestamp()),
-    }
-    return pyjwt.encode(payload, settings.INTERNAL_JWT_SECRET, algorithm=ALGORITHM)
 
 
 async def _announce_to_gateway(app: FastAPI) -> None:
@@ -53,7 +32,13 @@ async def _announce_to_gateway(app: FastAPI) -> None:
         schema = app.openapi()
         schema_hash = hashlib.sha256(json.dumps(schema, sort_keys=True).encode()).hexdigest()
 
-        token = _create_internal_token()
+        token = create_internal_token(
+            user_id="stream-service",
+            username="stream",
+            org_id="system",
+            org_name="system",
+            roles=["service"],
+        )
 
         async with httpx.AsyncClient(timeout=5) as client:
             resp = await client.post(
@@ -77,6 +62,11 @@ async def _announce_to_gateway(app: FastAPI) -> None:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage async resource lifecycle."""
+    # Startup: validate security-critical config before opening the port
+    from app.core.internal_jwt import validate_internal_auth_config
+
+    validate_internal_auth_config()
+
     logger.info("Stream service started")
 
     # Announce to global-service registry (fire-and-forget, non-blocking)

@@ -228,8 +228,13 @@ def test_client(db_session):
 
     app.dependency_overrides[get_db] = _override_get_db
 
-    with patch("app.core.auth.settings") as mock_settings:
+    with patch("app.core.internal_jwt.settings") as mock_settings:
         mock_settings.INTERNAL_JWT_SECRET = _JWT_SECRET
+        mock_settings.INTERNAL_ALLOWED_IPS = ""
+        # Clear any IP-allowlist memoization between tests
+        from app.core.internal_jwt import _get_allowed_networks
+
+        _get_allowed_networks.cache_clear()
         with TestClient(app) as client:
             yield client
 

@@ -1,4 +1,4 @@
-"""Internal JWT verification for Stream service.
+"""Authentication and authorization for Stream backend.
 
 All requests come through the global-service gateway which:
 1. Validates the Keycloak JWT
@@ -9,160 +9,258 @@ This module verifies those Internal JWTs and extracts user context.
 No Keycloak SDK needed — only shared-secret JWT verification.
 """
 
-import jwt
+from collections.abc import Awaitable, Callable
+from typing import Any
+
 from fastapi import Depends, HTTPException, Request, status
 from pydantic import BaseModel
 
-from app.core.config import settings
+from app.core.internal_jwt import (
+    InternalJWTError,
+    IPNotAllowedError,
+    TokenExpiredError,
+    TokenInvalidError,
+    is_internal_request,
+    verify_internal_request,
+)
 from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
 
-ALGORITHM = "HS256"
-ISSUER = "global-gateway"
-INTERNAL_AUTH_PREFIX = "Internal "
+
+class AuthorizationError(Exception):
+    """Raised when an authenticated user lacks the required role."""
+
+    def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
+        super().__init__(message)
+        self.details = details or {}
 
 
-class InternalTokenPayload(BaseModel):
-    """Payload structure for internal JWT tokens."""
+class AuthenticatedUser(BaseModel):
+    """Authenticated user extracted from Internal JWT.
 
-    sub: str  # User ID (Keycloak sub)
-    username: str  # Preferred username
+    Fields are flat (mirroring the gateway's InternalTokenPayload):
+    no Keycloak-shaped ``organization`` claim reconstruction.
+    """
+
+    sub: str
+    preferred_username: str
     email: str | None = None
-    org_id: str  # Organization UUID
-    org_name: str  # Organization name
-    roles: list[str]  # User roles from realm_access
-    iss: str = ISSUER
+    given_name: str | None = None
+    roles: list[str] = []
+    org_id: str | None = None
+    org_name: str | None = None
     iat: int = 0
     exp: int = 0
+    iss: str = ""
 
 
-class OrganizationContext(BaseModel):
-    """Organization context extracted from Internal JWT."""
+def verify_internal_jwt(request: Request) -> AuthenticatedUser:
+    """Verify the Internal JWT from the gateway and build an AuthenticatedUser.
 
-    org_id: str
-    org_name: str
-    user_id: str
-    username: str
-
-
-def verify_internal_jwt(request: Request) -> InternalTokenPayload:
-    """Verify the Internal JWT from the gateway and extract payload.
+    Designed to be wired in as a FastAPI dependency:
+    ``user: AuthenticatedUser = Depends(verify_internal_jwt)``. FastAPI caches
+    dependency results by callable identity within a single request, so any
+    number of dependents (``get_current_user`` factory output,
+    ``get_user_organization``, …) trigger a single verification per request.
 
     Args:
         request: FastAPI request object
 
     Returns:
-        InternalTokenPayload with user context
+        AuthenticatedUser with user context
 
     Raises:
         HTTPException 401: If token is missing, expired, or invalid
-        HTTPException 500: If INTERNAL_JWT_SECRET is not configured
+        HTTPException 403: If source IP is not allowed
+        HTTPException 500: If internal auth is misconfigured
     """
-    if not settings.INTERNAL_JWT_SECRET:
-        logger.error("INTERNAL_JWT_SECRET not configured")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal auth not configured",
-        )
-
-    auth = request.headers.get("Authorization", "")
-    if not auth.startswith(INTERNAL_AUTH_PREFIX):
+    if not is_internal_request(request):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing Internal authorization header",
         )
 
-    token = auth[len(INTERNAL_AUTH_PREFIX) :]
-
     try:
-        payload = jwt.decode(
-            token,
-            settings.INTERNAL_JWT_SECRET,
-            algorithms=[ALGORITHM],
-            issuer=ISSUER,
-            options={
-                "require": ["sub", "username", "org_id", "org_name", "roles", "exp", "iat", "iss"],
-            },
+        payload = verify_internal_request(request)
+    except IPNotAllowedError as e:
+        logger.warning(f"Internal request rejected: IP not allowed - {e}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: IP not in allowed range",
         )
-        logger.debug(
-            "Verified internal token",
-            extra={"user_id": payload.get("sub"), "org_id": payload.get("org_id")},
-        )
-        return InternalTokenPayload(**payload)
-
-    except jwt.ExpiredSignatureError:
-        logger.warning("Internal token expired")
+    except TokenExpiredError as e:
+        logger.warning(f"Internal request rejected: token expired - {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Internal token has expired",
         )
-    except jwt.InvalidIssuerError:
-        logger.warning("Internal token has invalid issuer")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token issuer",
-        )
-    except jwt.InvalidTokenError as e:
-        logger.warning(f"Internal token invalid: {e}")
+    except TokenInvalidError as e:
+        logger.warning(f"Internal request rejected: invalid token - {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid internal token",
         )
-    except Exception as e:
-        logger.warning(f"Internal token payload malformed: {e}")
+    except InternalJWTError as e:
+        logger.error(f"Internal JWT error: {e}")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid internal token",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal authentication error",
         )
+
+    return AuthenticatedUser(
+        sub=payload.sub,
+        preferred_username=payload.username,
+        email=payload.email,
+        roles=payload.roles,
+        org_id=payload.org_id,
+        org_name=payload.org_name,
+        iat=payload.iat,
+        exp=payload.exp,
+        iss=payload.iss,
+    )
 
 
 def get_current_user(
     required_roles: list[str] | None = None,
-):
+) -> Callable[[AuthenticatedUser], Awaitable[AuthenticatedUser]]:
     """FastAPI dependency factory that verifies Internal JWT and optionally checks roles.
 
     Args:
-        required_roles: If provided, user must have at least one of these roles (OR logic)
+        required_roles: If provided, user must have at least one of these roles (OR logic).
+            Pass ``None`` to skip role checking. An empty list is rejected to
+            prevent accidentally permissive routes when the list is computed
+            dynamically and happens to be empty.
 
     Returns:
-        FastAPI dependency function returning InternalTokenPayload
-    """
+        FastAPI dependency function returning AuthenticatedUser
 
-    def _dependency(
-        payload: InternalTokenPayload = Depends(verify_internal_jwt),
-    ) -> InternalTokenPayload:
+    Raises:
+        ValueError: If ``required_roles`` is an empty list (use ``None`` instead).
+
+    Example:
+        @router.get("/admin/users")
+        def list_users(
+            user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin"]))
+        ):
+            return {"users": [...]}
+    """
+    if required_roles is not None and not required_roles:
+        raise ValueError(
+            "required_roles must be None (skip role check) or a non-empty list. "
+            "An empty list would silently allow any authenticated user."
+        )
+
+    async def _dependency(
+        user: AuthenticatedUser = Depends(verify_internal_jwt),
+    ) -> AuthenticatedUser:
         if required_roles:
-            user_roles = set(payload.roles)
+            user_roles = set(user.roles)
             if not user_roles.intersection(required_roles):
                 logger.warning(
                     "Insufficient permissions",
                     extra={
-                        "user_id": payload.sub,
+                        "user_id": user.sub,
+                        "username": user.preferred_username,
                         "required": required_roles,
-                        "actual": payload.roles,
+                        "actual": user.roles,
                     },
                 )
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Insufficient permissions",
                 )
-        return payload
+
+        logger.debug(f"Internal JWT auth OK: user={user.preferred_username}")
+        return user
 
     return _dependency
 
 
-def get_user_organization(
-    payload: InternalTokenPayload = Depends(verify_internal_jwt),
-) -> OrganizationContext:
-    """FastAPI dependency that extracts organization context from Internal JWT.
+# --- Role verification helpers ---
+# For conditional role checks within endpoint logic when dependency injection
+# alone is not sufficient. For most use cases, prefer:
+#     user: AuthenticatedUser = Depends(get_current_user(required_roles=["admin"]))
+
+
+def verify_role_access(user: AuthenticatedUser, required_role: str) -> AuthenticatedUser:
+    """Verify user has required role.
+
+    Args:
+        user: Authenticated user from Internal JWT
+        required_role: Role string (e.g., "admin", "admin.organizations")
 
     Returns:
-        OrganizationContext with org_id, org_name, user_id, username
+        AuthenticatedUser if authorized
+
+    Raises:
+        AuthorizationError: If user lacks role
+
+    Example:
+        user = Depends(get_current_user())
+        verify_role_access(user, "admin")  # Raises if not admin
     """
-    return OrganizationContext(
-        org_id=payload.org_id,
-        org_name=payload.org_name,
-        user_id=payload.sub,
-        username=payload.username,
+    if not user.roles or required_role not in user.roles:
+        logger.warning(
+            "Role access denied",
+            extra={
+                "user": user.preferred_username,
+                "required_role": required_role,
+                "user_roles": user.roles,
+            },
+        )
+        raise AuthorizationError(
+            f"Access denied: requires {required_role} role",
+            details={"required_role": required_role, "user_roles": user.roles},
+        )
+
+    logger.debug(
+        "Role access granted",
+        extra={
+            "user": user.preferred_username,
+            "required_role": required_role,
+        },
     )
+    return user
+
+
+def verify_any_role_access(user: AuthenticatedUser, required_roles: list[str]) -> AuthenticatedUser:
+    """Verify user has at least one of the required roles.
+
+    Args:
+        user: Authenticated user from Internal JWT
+        required_roles: List of role strings (user needs ANY one)
+
+    Returns:
+        AuthenticatedUser if authorized
+
+    Raises:
+        AuthorizationError: If user has none of the required roles
+
+    Example:
+        user = Depends(get_current_user())
+        verify_any_role_access(user, ["admin", "admin.organizations"])
+    """
+    if not user.roles or not any(role in user.roles for role in required_roles):
+        logger.warning(
+            "Role access denied (any)",
+            extra={
+                "user": user.preferred_username,
+                "required_roles": required_roles,
+                "user_roles": user.roles,
+            },
+        )
+        raise AuthorizationError(
+            f"Access denied: requires one of {required_roles}",
+            details={"required_roles": required_roles, "user_roles": user.roles},
+        )
+
+    matched_roles = [role for role in required_roles if role in user.roles]
+    logger.debug(
+        "Role access granted (any)",
+        extra={
+            "user": user.preferred_username,
+            "matched_roles": matched_roles,
+        },
+    )
+    return user

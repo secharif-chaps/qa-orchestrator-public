@@ -5,16 +5,17 @@ Tests verify:
 2. Automatic 401/403 responses for unauthorized/forbidden access
 3. Proper access control for all admin endpoints
 
-These are integration tests that use monkeypatch to replace verify_internal_jwt
-and test the complete request/response cycle with different user roles.
+These are integration tests that override verify_internal_jwt via FastAPI's
+``app.dependency_overrides`` and exercise the full request/response cycle with
+different user roles.
 """
 
-from unittest.mock import patch
+from contextlib import contextmanager
 
 import pytest
 from fastapi.testclient import TestClient
 
-from app.core.auth import AuthenticatedUser
+from app.core.auth import AuthenticatedUser, verify_internal_jwt
 from app.main import app
 
 pytestmark = pytest.mark.integration
@@ -41,19 +42,27 @@ def _make_user(roles: list[str]) -> AuthenticatedUser:
     )
 
 
+@contextmanager
 def _patch_auth(roles: list[str]):
-    """Patch verify_internal_jwt to return an AuthenticatedUser with specified roles.
+    """Override verify_internal_jwt via FastAPI's dependency_overrides.
 
-    The get_current_user() dependency calls verify_internal_jwt() internally.
-    By patching verify_internal_jwt at the module level, all dependency instances
-    (regardless of required_roles) will use the mocked user. Role checking
-    still happens in get_current_user's closure, so RBAC is properly tested.
+    ``get_current_user`` resolves ``Depends(verify_internal_jwt)`` and FastAPI
+    caches the reference at import time, so monkeypatching the module-level
+    name no longer reaches the closure. ``app.dependency_overrides`` is the
+    supported override hook — it's keyed by the same callable identity that
+    ``Depends`` captured. Role checking still happens in get_current_user's
+    closure, so RBAC is properly tested.
 
-    Requests must include `Authorization: Internal ...` header so that
-    is_internal_request() returns True before verify_internal_jwt is called.
+    Requests must include ``Authorization: Internal ...`` so that
+    ``is_internal_request()`` returns True before verify_internal_jwt is
+    called.
     """
     user = _make_user(roles)
-    return patch("app.core.auth.verify_internal_jwt", return_value=user)
+    app.dependency_overrides[verify_internal_jwt] = lambda: user
+    try:
+        yield
+    finally:
+        app.dependency_overrides.pop(verify_internal_jwt, None)
 
 
 class TestOrganizationAdminEndpointsAccess:

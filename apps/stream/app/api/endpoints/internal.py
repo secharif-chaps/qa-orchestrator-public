@@ -8,7 +8,7 @@ from datetime import datetime
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
 
-from app.core.auth import InternalTokenPayload, verify_internal_jwt
+from app.core.auth import AuthenticatedUser, verify_internal_jwt
 from app.core.dependencies import get_dispatch_service, get_event_service
 from app.core.logging_config import get_logger
 from app.schemas.event import EventIngest, EventRead
@@ -47,7 +47,7 @@ def ingest_event(
     data: EventIngest,
     background_tasks: BackgroundTasks,
     organization_id: str = Query(..., description="Organization ID for the event"),
-    payload: InternalTokenPayload = Depends(verify_internal_jwt),
+    payload: AuthenticatedUser = Depends(verify_internal_jwt),
     service: EventService = Depends(get_event_service),
     dispatch_service: DispatchService = Depends(get_dispatch_service),
 ):
@@ -80,7 +80,7 @@ def ingest_event(
 def cleanup_events(
     before: datetime = Query(..., description="Soft-delete events created before this ISO datetime"),
     organization_id: str = Query(..., description="Organization ID to scope cleanup"),
-    payload: InternalTokenPayload = Depends(verify_internal_jwt),
+    payload: AuthenticatedUser = Depends(verify_internal_jwt),
     service: EventService = Depends(get_event_service),
 ):
     """Soft-delete old events.
