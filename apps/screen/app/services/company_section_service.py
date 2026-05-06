@@ -544,9 +544,16 @@ def save_timeline_data(db: Session, company_id: int, data: dict) -> None:
 
 
 def _save_timeline_events(db: Session, company_id: int, events: list[dict]) -> None:
-    """Save timeline events to normalized table."""
+    """Save timeline events to normalized table.
+
+    Events without any meaningful content (no title, description, or impact)
+    are dropped: the LangGraph timeline agent occasionally emits events with
+    only a date, which would render as empty cards in the UI (TAR-1625).
+    """
     # Delete existing events
     db.query(CompanyTimelineEvent).filter(CompanyTimelineEvent.company_id == company_id).delete()
+
+    skipped = 0
 
     for event_data in events:
         if not isinstance(event_data, dict):
@@ -558,6 +565,10 @@ def _save_timeline_events(db: Session, company_id: int, events: list[dict]) -> N
         category, category_source = _get_sourced_value(event_data, "category")
         location, location_source = _get_sourced_value(event_data, "location")
         impact, impact_source = _get_sourced_value(event_data, "impact")
+
+        if not (title or desc or impact):
+            skipped += 1
+            continue
 
         event = CompanyTimelineEvent(
             company_id=company_id,
@@ -575,6 +586,9 @@ def _save_timeline_events(db: Session, company_id: int, events: list[dict]) -> N
             impact_source=impact_source,
         )
         db.add(event)
+
+    if skipped:
+        logger.info(f"Filtered {skipped} empty timeline event(s) for company {company_id}")
 
     db.flush()
 
@@ -605,6 +619,10 @@ def get_timeline_data(db: Session, company_id: int) -> dict[str, Any]:
     if events:
         events_list = []
         for e in events:
+            # Skip events with no meaningful content; protects against legacy
+            # rows persisted before TAR-1625's write-side filter was in place.
+            if not (e.title or e.description or e.impact):
+                continue
             event_dict = {}
             if e.date:
                 event_dict["date"] = {"value": e.date, "source": e.date_source}
@@ -619,7 +637,8 @@ def get_timeline_data(db: Session, company_id: int) -> dict[str, Any]:
             if e.impact:
                 event_dict["impact"] = {"value": e.impact, "source": e.impact_source}
             events_list.append(event_dict)
-        result["events"] = events_list
+        if events_list:
+            result["events"] = events_list
 
     return result
 
