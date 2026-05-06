@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app import __version__
 from app.api import api_router
 from app.api.routes.target_mercure_proxy import router as mercure_router
 from app.core.config import settings
@@ -72,7 +73,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Global Service",
     description="Centralized organization-scoped resources service",
-    version="0.1.0",
+    version=__version__,
     lifespan=lifespan,
     **({"docs_url": None, "redoc_url": None, "openapi_url": None} if not settings.ENABLE_DOCS else {}),
 )
@@ -114,7 +115,11 @@ async def health_ready():
         include_keycloak=settings.HEALTH_CHECK_KEYCLOAK_ENABLED,
     )
     return JSONResponse(
-        content={"status": "ready" if all_ready else "not_ready", "checks": checks},
+        content={
+            "status": "ready" if all_ready else "not_ready",
+            "checks": checks,
+            "version": __version__,
+        },
         status_code=200 if all_ready else 503,
     )
 
