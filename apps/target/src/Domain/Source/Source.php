@@ -54,9 +54,9 @@ use Symfony\Component\Validator\Constraints as Assert;
                 ),
             ],
             openapi: new Operation(
-                summary: 'Get sources for a specific watch file',
+                summary: 'Get sources for a specific watchfile',
                 description: <<<'EOT'
-                    Retrieve all sources associated with a watch file. Sources can be filtered by name, type, domain, and status.
+                    Retrieve all sources associated with a watchfile. Sources can be filtered by name, type, domain, and status.
 
                     Available filters:
                     - name: Partial case-insensitive search on source name
@@ -85,9 +85,9 @@ use Symfony\Component\Validator\Constraints as Assert;
                 ),
             ],
             openapi: new Operation(
-                summary: 'Get sources for a specific watch file grouped by type',
+                summary: 'Get sources for a specific watchfile grouped by type',
                 description: <<<'EOT'
-                    Retrieve all active sources associated with a watch file grouped by type.
+                    Retrieve all active sources associated with a watchfile grouped by type.
                     Only sources with ACTIVE status are returned. Sources with INACTIVE or AUTO_DISABLED status are hidden.
 
                     Search functionality:
@@ -123,7 +123,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             openapi: new Operation(
                 summary: 'Change source status',
                 description: <<<'EOT'
-                    Changes the activation status of a source within a watch file.
+                    Changes the activation status of a source within a watchfile.
 
                     Request body structure:
                     {
@@ -134,7 +134,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                     Returns the updated source object with the new status.
                     - 200: Source status successfully changed
                     - 400: Invalid status value or missing required fields
-                    - 404: Source or watch file not found
+                    - 404: Source or watchfile not found
                     - 403: Insufficient permissions to modify source
 
                     Example:
@@ -148,7 +148,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                     new Parameter(
                         'watchFileId',
                         'path',
-                        description: 'The ID of the watch file containing the source',
+                        description: 'The ID of the watchfile containing the source',
                         required: true,
                         schema: [
                             'type' => 'string',

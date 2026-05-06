@@ -26,7 +26,7 @@ readonly class ActivateWatchFileTasksHandler
         $watchFile = $this->getWatchFile($action->watchFileId);
         if (!$watchFile->isActive()) {
             $this->logger?->warning(
-                'Attempted to activate collect tasks for an inactive watch file',
+                'Attempted to activate collect tasks for an inactive watchfile',
                 [
                     'watch_file_id' => $watchFile->getId(),
                 ],

@@ -254,7 +254,7 @@
         "roles": "Quick Roles"
       },
       "targetCreate": {
-        "description": "Create new watch files (Target module)",
+        "description": "Create new watchfiles (Target module)",
         "label": "Create Targets"
       },
       "title": "Manage Permissions"
@@ -608,7 +608,7 @@
     "dialog": {
       "info_item_ai_validation": "Automatic validation by AI",
       "info_item_archive_always_accessible": "It will remain accessible at all times",
-      "info_item_archive_default_hidden": "The watch file will be hidden by default",
+      "info_item_archive_default_hidden": "The watchfile will be hidden by default",
       "info_item_archive_restore_possible": "You can restore it at any time",
       "info_item_collect_stop": "Information collect will stop",
       "info_item_configuration_unlocked": "Configuration unlocked for modification",
@@ -689,7 +689,7 @@
         "graphragDescription": "Explore connections and relationships",
         "stream": "Stream",
         "streamDescription": "Distribute events to external channels",
-        "watchfile": "Watch file",
+        "watchfile": "Watchfile",
         "watchfileDescription": "Set up monitoring for specific topics"
       },
       "clearSearch": "Clear Search",
@@ -966,7 +966,7 @@
       "discover": "Discover",
       "explore": "Knowledge Graph",
       "screen": "Company Card",
-      "target": "Watch file",
+      "target": "Watchfile",
       "unknown": "Unknown module"
     },
     "na": "N/A",
@@ -1126,10 +1126,10 @@
           "comingSoon": "Coming Soon"
         },
         "target": {
-          "cardAction": "New watch file",
+          "cardAction": "New watchfile",
           "cardDescription": "Master your strategic issues",
-          "cardStat": "{count, plural, one {# active watch file} other {# active watch files}}",
-          "cardTitle": "Watch file"
+          "cardStat": "{count, plural, one {# active watchfile} other {# active watchfiles}}",
+          "cardTitle": "Watchfile"
         }
       },
       "recentActivities": {
@@ -2190,8 +2190,8 @@
           "label": "Screen"
         },
         "target": {
-          "item": "watch file",
-          "itemPlural": "watch files",
+          "item": "watchfile",
+          "itemPlural": "watchfiles",
           "label": "Target"
         }
       },
@@ -2668,7 +2668,7 @@
       },
       "noResults": "No results found"
     },
-    "events": "{type, select, screenCompanyCreated {Company created} screenCompanyUpdated {Company updated} targetWatchfileCreated {Watch file created} targetWatchfileUpdated {Watch file updated} targetAlertTriggered {Monitoring alert triggered} other {Unknown event}}",
+    "events": "{type, select, screenCompanyCreated {Company created} screenCompanyUpdated {Company updated} targetWatchfileCreated {Watchfile created} targetWatchfileUpdated {Watchfile updated} targetAlertTriggered {Monitoring alert triggered} other {Unknown event}}",
     "mode": {
       "live": "Real-time",
       "recurrence": "Recurrence"
@@ -2735,7 +2735,7 @@
         "title": "No documents found"
       },
       "inactive": {
-        "subtitle": "Start your watch file in the <b>Configuration</b> tab to launch the first document collection.",
+        "subtitle": "Start your watchfile in the <b>Configuration</b> tab to launch the first document collection.",
         "title": "No documents collected yet"
       },
       "loading": {
@@ -2847,15 +2847,15 @@
           "monitoring_type_detected": "The monitoring type has been updated.",
           "reference_subject_detected": "The reference subject has been updated.",
           "see_more_actions": "See more actions",
-          "shared_mode_changed": "{userName} shared the watch file with the address {userEmail} ({role}).",
-          "shared_mode_owner": "{userName} is the owner of the watch file.",
+          "shared_mode_changed": "{userName} shared the watchfile with the address {userEmail} ({role}).",
+          "shared_mode_owner": "{userName} is the owner of the watchfile.",
           "shared_mode_removed": "{userName} removed the access rights for the address {userEmail}.",
           "source_added": "{userName} added a source.",
           "source_status_changed_active": "{userName} activated the source {sourceName}.",
           "source_status_changed_auto_disabled": "The source {sourceName} has been automatically disabled.",
           "source_status_changed_inactive": "{userName} deactivated the source {sourceName}.",
-          "status_changed": "{userName} changed the status of the watch file from {oldStatus} to {newStatus}.",
-          "title": "Watch file actions history",
+          "status_changed": "{userName} changed the status of the watchfile from {oldStatus} to {newStatus}.",
+          "title": "Watchfile actions history",
           "unknown_action": "Unknown action",
           "view_actors_added": "View actor details",
           "view_actors_added_drawer_title": "Actors added",
@@ -2864,8 +2864,8 @@
           "view_sources_added": "View source details",
           "view_sources_added_drawer_title": "Sources added",
           "view_sources_removed_drawer_title": "Sources removed",
-          "watch_file_created": "{userName} created the watch file.",
-          "watch_file_updated": "{userName} updated the watch file configuration."
+          "watch_file_created": "{userName} created the watchfile.",
+          "watch_file_updated": "{userName} updated the watchfile configuration."
         },
         "sources": {
           "action": {
@@ -2881,7 +2881,7 @@
           },
           "history": {
             "drawer_title": "Monitoring",
-            "source_added_to_watchfile": "{userName} has added the source to the watch file.",
+            "source_added_to_watchfile": "{userName} has added the source to the watchfile.",
             "source_collect_status_changed": "The collector status of the source has changed.",
             "source_config_updated": "{userName} has updated the configuration of the source.",
             "source_connected": "The collect has been activated.",
@@ -2901,7 +2901,7 @@
             "running": "Running",
             "stopped": "Paused"
           },
-          "title": "Your sources for this watch file"
+          "title": "Your sources for this watchfile"
         }
       },
       "actors": {
@@ -2944,7 +2944,7 @@
         "filters": {
           "type": "Filter by type"
         },
-        "forbidden": "You do not have permission to view the actors of this watch file",
+        "forbidden": "You do not have permission to view the actors of this watchfile",
         "link_label": "Actor link",
         "no_sources_found": "No sources found for this actor.",
         "pagination": {
@@ -3009,7 +3009,7 @@
         "timeline": {
           "allEventsLoaded": "All events are displayed",
           "empty": {
-            "description": "No timeline events are available for this watch file yet.",
+            "description": "No timeline events are available for this watchfile yet.",
             "title": "No events found"
           },
           "event": {
@@ -3028,9 +3028,9 @@
       },
       "assistant": {
         "empty_view": {
-          "description": "Describe what you want to monitor and Chaps-e will help you structure your watch file.",
+          "description": "Describe what you want to monitor and Chaps-e will help you structure your watchfile.",
           "list": "Chaps-e will guide you to:<ul><li>✓ Define the objectives of your watch<li/><li>✓ Identify the key players to be monitored<li/><li>✓ Configure the relevant information sources<li/><li>✓ Set the collect criteria</li/><li>✓ Schedule the collection of information<li/></ul>",
-          "title": "How do I use the watch files?"
+          "title": "How do I use the watchfiles?"
         }
       },
       "chat": {
@@ -3118,7 +3118,7 @@
         }
       },
       "delete": {
-        "success": "Watch file deleted successfully"
+        "success": "Watchfile deleted successfully"
       },
       "documents": {
         "aiValidationStatus": {
@@ -3185,7 +3185,7 @@
           }
         }
       },
-      "empty": "No watch files yet",
+      "empty": "No watchfiles yet",
       "filters": {
         "button": {
           "confirm": "See results",
@@ -3249,12 +3249,12 @@
       "header_section": {
         "activation_modal": {
           "confirm": "Activate collect",
-          "description": "You are about to put the watch file <b>\"{name}\"</b> in active mode.",
+          "description": "You are about to put the watchfile <b>\"{name}\"</b> in active mode.",
           "title": "Put the collect in active mode"
         },
         "deactivation_modal": {
           "confirm": "Put in draft mode",
-          "description": "You are about to put the watch file <b>\"{name}\"</b> back in draft mode.",
+          "description": "You are about to put the watchfile <b>\"{name}\"</b> back in draft mode.",
           "title": "Put the collect in draft mode"
         },
         "status": {
@@ -3265,7 +3265,7 @@
           },
           "draft": "Draft",
           "enabled": "Active",
-          "label": "Change the status of this watch file"
+          "label": "Change the status of this watchfile"
         }
       },
       "last_update": {
@@ -3274,15 +3274,15 @@
       "list": {
         "columns": {
           "access": "Access",
-          "name": "Watch file name",
+          "name": "Watchfile name",
           "new_content": "New Content",
           "status": "Status",
           "updated_at": "Last modified"
         },
-        "search_placeholder": "Search watch files...",
-        "title": "My Watch files"
+        "search_placeholder": "Search watchfiles...",
+        "title": "My Watchfiles"
       },
-      "new": "New Watch file",
+      "new": "New Watchfile",
       "new_content": {
         "documents": "documents"
       },
@@ -3293,27 +3293,27 @@
       },
       "reference_subject": {
         "loading": "No reference subject yet",
-        "loading_subtitle": "The reference subject will be generated automatically once the need for this watch file is sufficiently defined.",
-        "sub_title": "This automatic rephrasing allows you to identify the relevant documents for your watch file",
-        "title": "Reference subject for this watch file"
+        "loading_subtitle": "The reference subject will be generated automatically once the need for this watchfile is sufficiently defined.",
+        "sub_title": "This automatic rephrasing allows you to identify the relevant documents for your watchfile",
+        "title": "Reference subject for this watchfile"
       },
       "shareDialog": {
-        "accessListTitle": "People with access to the watch file",
+        "accessListTitle": "People with access to the watchfile",
         "changeRoleMessage": "Are you sure you want to change the role of <b>\"{user}\"</b> to <b>\"{role}\"</b>?",
         "changeRoleTitle": "Change role",
         "invite": "Invite",
         "invitePlaceholder": "Email, pseudo...",
         "owner": "Owner",
-        "removeUserMessage": "Are you sure you want to remove <b>\"{user}\"</b> from this watch file?",
+        "removeUserMessage": "Are you sure you want to remove <b>\"{user}\"</b> from this watchfile?",
         "removeUserTitle": "Remove user",
         "role": {
           "editor": "Editor",
-          "editorDescription": "Can view and edit the contents of the watch file. Can update sharing settings, but not change the owner.",
+          "editorDescription": "Can view and edit the contents of the watchfile. Can update sharing settings, but not change the owner.",
           "owner": "Owner",
           "viewer": "Viewer",
-          "viewerDescription": "Read-only access to the watch file. Cannot modify configuration or sharing settings."
+          "viewerDescription": "Read-only access to the watchfile. Cannot modify configuration or sharing settings."
         },
-        "title": "Share watch file \"{name}\""
+        "title": "Share watchfile \"{name}\""
       },
       "sort": {
         "access_count": "Access count",
@@ -3321,7 +3321,7 @@
         "favorites": "Show only favorites",
         "filter": "Filter",
         "sort_by": "Sort by",
-        "status": "Watch file status"
+        "status": "Watchfile status"
       },
       "sources": {
         "actor": "Actor: {label}",
@@ -3359,12 +3359,12 @@
       "status_change": {
         "archive": {
           "confirm_button": "Archive",
-          "confirm_message": "You are about to archive the watch file <b>\"{name}\"</b>.",
-          "confirm_title": "Archive watch file"
+          "confirm_message": "You are about to archive the watchfile <b>\"{name}\"</b>.",
+          "confirm_title": "Archive watchfile"
         },
         "enabled": {
           "disabled_tooltip": {
-            "reference_subject": "You cannot do this action:<ul><li>The reference subject has not been generated for this watch file yet</li></ul>Please try again in a few moments.",
+            "reference_subject": "You cannot do this action:<ul><li>The reference subject has not been generated for this watchfile yet</li></ul>Please try again in a few moments.",
             "sources": "You cannot do this action:<ul><li>No sources configured</li></ul>Add at least one source in the Scope tab to activate the collection."
           }
         },
@@ -3372,7 +3372,7 @@
         "error_true": "An error occurred while adding \"{name}\" to your favorites",
         "restore": {
           "confirm_button": "Restore",
-          "confirm_title": "Restore watch file"
+          "confirm_title": "Restore watchfile"
         },
         "success_false": "\"{name}\" has been removed from your favorites",
         "success_true": "\"{name}\" has been added to your favorites"
@@ -3385,7 +3385,7 @@
       },
       "title": {
         "aria_label_confirm_button": "Save title modifications",
-        "aria_label_edit_button": "Edit the title of this watch file",
+        "aria_label_edit_button": "Edit the title of this watchfile",
         "edit_helper": "The field must contain between 3 and 255 characters.",
         "error": {
           "empty": "Title cannot be empty",
@@ -3393,22 +3393,22 @@
           "invalid_length": "Title must be between 3 and 255 characters",
           "toast_title": "Update Error"
         },
-        "placeholder": "Name your watch file",
+        "placeholder": "Name your watchfile",
         "success": {
           "updated": "Title updated successfully"
         }
       },
       "toast": {
         "error": {
-          "addUsers": "Error adding users to the watch file",
-          "changeRole": "Error changing user role in the watch file",
-          "load": "Error loading watch files",
-          "removeUser": "Error removing user from the watch file"
+          "addUsers": "Error adding users to the watchfile",
+          "changeRole": "Error changing user role in the watchfile",
+          "load": "Error loading watchfiles",
+          "removeUser": "Error removing user from the watchfile"
         },
         "success": {
-          "addUsers": "{count, plural, one {# user successfully added to the watch file} other {# users successfully added to the watch file}}",
+          "addUsers": "{count, plural, one {# user successfully added to the watchfile} other {# users successfully added to the watchfile}}",
           "changeRole": "Role changed for {user}",
-          "removeUser": "User {user} removed from the watch file"
+          "removeUser": "User {user} removed from the watchfile"
         }
       },
       "user": {

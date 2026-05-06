@@ -55,7 +55,7 @@ class MessageCollectionProviderTest extends TestCase
         $context = [];
         $expectedMessages = [new Message()];
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $conversation = new Conversation($watchFile);
         $this->conversationGateway->addConversation($conversation);
 
@@ -122,7 +122,7 @@ class MessageCollectionProviderTest extends TestCase
         ];
         $context = [];
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $conversation = new Conversation($watchFile);
         $this->conversationGateway->addConversation($conversation);
 

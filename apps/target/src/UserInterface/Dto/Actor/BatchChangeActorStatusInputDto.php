@@ -51,7 +51,7 @@ class BatchChangeActorStatusInputDto
                         'watchFileId' => [
                             'type' => 'string',
                             'format' => 'uuid',
-                            'description' => 'The watch file ID (optional, for context)',
+                            'description' => 'The watchfile ID (optional, for context)',
                         ],
                         'sourceIds' => [
                             'type' => 'array',

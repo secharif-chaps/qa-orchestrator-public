@@ -48,7 +48,7 @@ class WatchFileActivityProvider implements ProviderInterface
         }
 
         if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
-            throw new AccessDeniedHttpException('You do not have access to this watch file.');
+            throw new AccessDeniedHttpException('You do not have access to this watchfile.');
         }
         [$page, $offset, $limit] = $this->pagination->getPagination($operation, $context);
 

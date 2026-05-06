@@ -150,7 +150,7 @@ class ShareWatchFileBatchHandler
             Assert::lessThanEq(
                 $count,
                 WatchFile::MAX_WATCHFILE_USERS,
-                \sprintf('The watch file "%s" has reached the maximum number of shares (%d).',
+                \sprintf('The watchfile "%s" has reached the maximum number of shares (%d).',
                     $watchFile->getId(),
                     WatchFile::MAX_WATCHFILE_USERS,
                 ),

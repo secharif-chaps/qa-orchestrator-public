@@ -49,10 +49,10 @@ class ActorSourceProvider implements ProviderInterface
             throw new NotFoundHttpException('Actor ID is required');
         }
 
-        // Check if the watch file exists and user has access
+        // Check if the watchfile exists and user has access
         $watchFile = $this->watchFileGateway->get($uriVariables['watchFileId']);
         if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
-            throw new AccessDeniedHttpException('You do not have access to this watch file.');
+            throw new AccessDeniedHttpException('You do not have access to this watchfile.');
         }
 
         // Check if the actor exists

@@ -42,7 +42,7 @@ class AddMultipleSourcesHandlerTest extends TestCase
 
     public function testInvokeWithMultipleSources(): void
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->watchFileGateway->save($watchFile);
 
         $sources = [
@@ -94,7 +94,7 @@ class AddMultipleSourcesHandlerTest extends TestCase
 
     public function testInvokeWithEmptySources(): void
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->watchFileGateway->save($watchFile);
 
         $action = new AddMultipleSourcesAction(watchFileId: $watchFile->getId(), sources: []);
@@ -114,7 +114,7 @@ class AddMultipleSourcesHandlerTest extends TestCase
 
     public function testInvokeWithSingleSource(): void
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->watchFileGateway->save($watchFile);
 
         $sources = [

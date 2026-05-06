@@ -14,7 +14,7 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute('/target/(watch_files)/[id]/')
 const router = useRouter()
 
-// Fetch watch file data
+// Fetch watchfile data
 const { data: watchFile, isLoading } = useQuery(() =>
   getItemWatchFileQuery({
     id: route.params.id,

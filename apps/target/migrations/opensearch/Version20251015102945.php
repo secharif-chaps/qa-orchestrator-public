@@ -11,7 +11,7 @@ class Version20251015102945 extends AbstractOpenSearchMigration
 {
     public function getDescription(): string
     {
-        return 'Change an event to be associated with a watch file';
+        return 'Change an event to be associated with a watchfile';
     }
 
     public function up(): void

@@ -25,7 +25,7 @@ class UserFavoriteWatchFileDoctrineGateway implements UserFavoriteWatchFileGatew
 
         if (!$userFavoriteWatchFile instanceof UserFavoriteWatchFile) {
             throw new UserFavoriteWatchFileNotFoundException(\sprintf(
-                'User favorite watch file not found for user %s and watch file %s',
+                'User favorite watchfile not found for user %s and watchfile %s',
                 $user->getId(),
                 $watchFile->getId()
             ));

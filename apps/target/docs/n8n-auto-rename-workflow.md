@@ -53,9 +53,9 @@ RabbitMQ Trigger → Unserialize Data → Filter Conversation Monitor → Check 
     - "Market Trends: Renewable Energy Sector"
     - "Technology Innovation: AI in Healthcare"
 
-### 6. **Execute Rename Watch File**
+### 6. **Execute Rename Watchfile**
 
-- **Workflow** : `Rename Watch File automaticly`
+- **Workflow** : `Rename Watchfile automaticly`
 - **Paramètres** : `watchFileId`, `newTitle`, `BusNameStamp`, `RouterContextStamp`
 
 ### 7. **Send Auto Rename Notification**
@@ -195,7 +195,7 @@ Le workflow `direct-messageNew.json` envoie déjà des messages de monitoring :
     - Contrôler le format des données de conversation
 
 3. **Renommage ne s'exécute pas**
-    - Vérifier le workflow `Rename Watch File automaticly`
+    - Vérifier le workflow `Rename Watchfile automaticly`
     - Contrôler les paramètres d'entrée
 
 ### Tests

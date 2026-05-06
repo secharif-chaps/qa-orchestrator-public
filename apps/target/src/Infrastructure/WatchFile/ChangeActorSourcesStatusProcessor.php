@@ -72,7 +72,7 @@ class ChangeActorSourcesStatusProcessor implements ProcessorInterface
 
         $watchFile = $this->watchFileGateway->get($watchFileId);
         if (!$this->security->isGranted(WatchFileVoter::EDIT, $watchFile)) {
-            throw new AccessDeniedHttpException('User must have right edit on the watch file.');
+            throw new AccessDeniedHttpException('User must have right edit on the watchfile.');
         }
 
         $action = new ChangeActorStatusAction(

@@ -39,7 +39,7 @@ interface ActorGatewayInterface
      * Get an actor by ID and WatchFile ID, only if the actor is linked to the WatchFile.
      *
      * @param string $actorId     The actor ID
-     * @param string $watchFileId The watch file ID
+     * @param string $watchFileId The watchfile ID
      *
      * @return Actor|null The actor if found and linked to the WatchFile, null otherwise
      */

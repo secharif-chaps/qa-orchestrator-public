@@ -212,7 +212,7 @@ class WatchFileEventItemProviderTest extends TestCase
             ->method('isGranted');
 
         $this->expectException(NotFoundHttpException::class);
-        $this->expectExceptionMessage('The associated watch file was not found.');
+        $this->expectExceptionMessage('The associated watchfile was not found.');
 
         $this->provider->provide($this->operation, [
             'id' => 'event-id-123',

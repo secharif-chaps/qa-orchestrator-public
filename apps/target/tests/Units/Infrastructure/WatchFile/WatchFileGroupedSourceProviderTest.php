@@ -218,7 +218,7 @@ class WatchFileGroupedSourceProviderTest extends TestCase
 
         // Act & Assert
         $this->expectException(AccessDeniedException::class);
-        $this->expectExceptionMessage('You do not have access to this watch file.');
+        $this->expectExceptionMessage('You do not have access to this watchfile.');
 
         $this->provider->provide($operation, $uriVariables, $context);
     }

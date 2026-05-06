@@ -81,12 +81,12 @@ class MercureTokenApiTest extends AbstractApiTestCase
 
         $userId = $user->getId();
 
-        // Create watch files owned by the user (to verify token still works with resources)
+        // Create watchfiles owned by the user (to verify token still works with resources)
         WatchFileFactory::new()->withOwnedBy($user)->create();
         WatchFileFactory::new()->withOwnedBy($user)->create();
         WatchFileFactory::new()->withOwnedBy($user)->create();
 
-        // Create conversations for each watch file
+        // Create conversations for each watchfile
         $watchFile1 = WatchFileFactory::new()->withOwnedBy($user)->create();
         ConversationFactory::new()->with([
             'watchFile' => $watchFile1,
@@ -165,7 +165,7 @@ class MercureTokenApiTest extends AbstractApiTestCase
         // Token should have 3 URI Templates even with no resources
         $this->assertCount(3, $decoded1->mercure->subscribe);
 
-        // Now create 10 watch files with conversations
+        // Now create 10 watchfiles with conversations
         for ($i = 0; $i < 10; ++$i) {
             $watchFile = WatchFileFactory::new()->withOwnedBy($user)->create();
             ConversationFactory::new()->with([

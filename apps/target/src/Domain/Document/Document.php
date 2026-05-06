@@ -186,13 +186,13 @@ use Symfony\Component\Validator\Constraints as Assert;
                         ]),
                     ),
                 ],
-                summary: 'Retrieves documents from a watch file with facets',
-                description: 'Returns a paginated list of documents collected from the specified watch file, along with aggregated facets for filtering. Facets include counts for actors, sources, domains, and document statuses across all matching documents (not just the current page). Documents can be sorted by various date fields and filtered by watch file ID, status, actor, source, domain, and search terms.',
+                summary: 'Retrieves documents from a watchfile with facets',
+                description: 'Returns a paginated list of documents collected from the specified watchfile, along with aggregated facets for filtering. Facets include counts for actors, sources, domains, and document statuses across all matching documents (not just the current page). Documents can be sorted by various date fields and filtered by watchfile ID, status, actor, source, domain, and search terms.',
                 parameters: [
                     new Model\Parameter(
                         name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier (UUID) of the watch file to retrieve documents from',
+                        description: 'The unique identifier (UUID) of the watchfile to retrieve documents from',
                         required: true,
                         schema: [
                             'type' => 'string',
@@ -207,7 +207,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(
             openapi: new Model\Operation(
                 summary: 'Retrieves a specific document',
-                description: 'Returns detailed information about a single document including its content, metadata, processing status, and associated watch file information.',
+                description: 'Returns detailed information about a single document including its content, metadata, processing status, and associated watchfile information.',
                 parameters: [
                     new Model\Parameter(
                         name: 'id',
@@ -243,7 +243,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
                     Errors:
                     - 401: Authentication required
-                    - 403: User does not have access to this document's watch file
+                    - 403: User does not have access to this document's watchfile
                     - 404: Document not found
                     EOT
                 ,
@@ -303,7 +303,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                     '404' => new Model\Response(description: 'Document not found'),
                 ],
                 summary: 'Manually validate or refuse a document',
-                description: 'Allows a user with edit permissions on the watch file to manually accept, refuse, or mark as uncertain (reset) a document.',
+                description: 'Allows a user with edit permissions on the watchfile to manually accept, refuse, or mark as uncertain (reset) a document.',
                 parameters: [
                     new Model\Parameter(
                         name: 'id',
@@ -413,7 +413,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                     '422' => new Model\Response(description: 'Validation error.'),
                 ],
                 summary: 'Manually validate or refuse multiple documents',
-                description: 'Allows a user with edit permissions on the watch files to manually accept or refuse multiple documents in a single operation.',
+                description: 'Allows a user with edit permissions on the watchfiles to manually accept or refuse multiple documents in a single operation.',
                 requestBody: new Model\RequestBody(
                     description: 'Batch validation action',
                     content: new \ArrayObject([
@@ -467,7 +467,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             status: 201,
             openapi: new Model\Operation(
                 summary: 'Create a document manually from a URL or HTML content',
-                description: 'Fetches and parses content from a URL or provided HTML, extracts metadata, and creates a document in the watch file.',
+                description: 'Fetches and parses content from a URL or provided HTML, extracts metadata, and creates a document in the watchfile.',
             ),
             normalizationContext: [
                 'groups' => ['document:read'],

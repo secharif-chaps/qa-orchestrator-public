@@ -42,11 +42,11 @@ readonly class EventsGraphProvider implements ProviderInterface
         $watchFileId = trim((string) $uriVariables['watchFileId']);
         Assert::uuid($watchFileId, 'Watch file ID must be a valid UUID.');
 
-        // Verify watch file exists and user has access
+        // Verify watchfile exists and user has access
         $watchFile = $this->watchFileGateway->get($watchFileId);
 
         if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
-            throw new AccessDeniedException('You do not have permission to view events for this watch file.');
+            throw new AccessDeniedException('You do not have permission to view events for this watchfile.');
         }
 
         // Get interval from query parameters (default to '1d' for daily)

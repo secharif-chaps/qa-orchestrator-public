@@ -31,7 +31,7 @@ class TriggerEventExtractionHandler
 
         $watchFile = $document->getWatchFile();
         if (null === $watchFile) {
-            $this->logger?->error('Cannot trigger event extraction - document has no watch file', [
+            $this->logger?->error('Cannot trigger event extraction - document has no watchfile', [
                 'document_id' => $document->getId(),
             ]);
 

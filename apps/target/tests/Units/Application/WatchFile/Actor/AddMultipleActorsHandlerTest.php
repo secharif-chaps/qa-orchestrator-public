@@ -408,7 +408,7 @@ class AddMultipleActorsHandlerTest extends TestCase
         $loggerMock->expects($this->once())
             ->method('error')
             ->willReturnCallback(function ($message, $context) {
-                $this->assertEquals('Failed to retrieve watch file "invalid-watch-file-id" (anonymous user)', $message);
+                $this->assertEquals('Failed to retrieve watchfile "invalid-watch-file-id" (anonymous user)', $message);
                 $this->assertEquals('invalid-watch-file-id', $context['watch_file_id']);
                 $this->assertStringContainsString('WatchFile', $context['exception']);
             });

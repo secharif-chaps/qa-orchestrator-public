@@ -100,7 +100,7 @@ readonly class MercureDiscoverySubscriber
         $patterns = [
             // GET /api/conversations/{id}/messages - messages collection
             'conversation_messages' => "#^/api/conversations/({$uuid})/messages$#",
-            // GET /api/watch_files/{id} - single watch file
+            // GET /api/watch_files/{id} - single watchfile
             'watch_file' => "#^/api/watch_files/({$uuid})$#",
             // GET /api/watch_files/{uuid}/conversations/last - last conversation (ID extracted from response body)
             'conversation_last' => "#^/api/watch_files/{$uuid}/conversations/last$#",

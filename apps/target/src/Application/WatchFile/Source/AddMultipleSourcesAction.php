@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Application\WatchFile\Source;
 
 /**
- * Action to add multiple sources to a watch file.
+ * Action to add multiple sources to a watchfile.
  * Common fields are kept separate, while individual source data is in an array.
  */
 readonly class AddMultipleSourcesAction
 {
     /**
-     * @param string                 $watchFileId      The ID of the watch file to add sources to
+     * @param string                 $watchFileId      The ID of the watchfile to add sources to
      * @param array<AddSourceAction> $sources          Array of individual source actions
      * @param string|null            $messageContentId Optional message content ID (common for all sources)
      */

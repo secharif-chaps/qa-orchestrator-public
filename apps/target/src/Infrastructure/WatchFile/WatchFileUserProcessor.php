@@ -71,13 +71,13 @@ class WatchFileUserProcessor implements ProcessorInterface, ProviderInterface
             $watchFile = $this->watchFileGateway->getForUser($watchFileId, $user);
         } catch (WatchFileNotFoundException $e) {
             throw new NotFoundHttpException(\sprintf(
-                'The watch file with ID %s was not found for the user.',
+                'The watchfile with ID %s was not found for the user.',
                 $watchFileId
             ), $e, );
         }
 
         if (!$this->security->isGranted(WatchFileVoter::EDIT, $watchFile)) {
-            throw new AccessDeniedHttpException('The user must be granted access to the watch file.');
+            throw new AccessDeniedHttpException('The user must be granted access to the watchfile.');
         }
 
         $userId = $user->getId();
@@ -142,12 +142,12 @@ class WatchFileUserProcessor implements ProcessorInterface, ProviderInterface
         }
 
         if (!$this->security->isGranted(WatchFileVoter::EDIT, $watchFileUser->getWatchFile())) {
-            throw new AccessDeniedHttpException('You do not have permission to remove users from this watch file.');
+            throw new AccessDeniedHttpException('You do not have permission to remove users from this watchfile.');
         }
 
         if (WatchFileUserRole::OWNER === $watchFileUser->getRole()) {
             throw new UnprocessableEntityHttpException(\sprintf(
-                'The watch file user "%s" is the owner and cannot be removed.',
+                'The watchfile user "%s" is the owner and cannot be removed.',
                 $watchFileUser->getId()
             ));
         }

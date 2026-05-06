@@ -31,11 +31,11 @@ interface WatchFileUserGatewayInterface
     public function countByWatchFiles(iterable $watchFiles): array;
 
     /**
-     * Check if users have edit access to multiple watch files.
+     * Check if users have edit access to multiple watchfiles.
      *
      * @param iterable<WatchFile> $watchFiles
      *
-     * @return array<string, bool> Array with watch file IDs as keys and edit access as values
+     * @return array<string, bool> Array with watchfile IDs as keys and edit access as values
      */
     public function hasEditAccessForWatchFiles(User $user, iterable $watchFiles): array;
 

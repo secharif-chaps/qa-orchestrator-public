@@ -19,7 +19,7 @@ use function Zenstruck\Foundry\Persistence\save;
  * Integration test for TAR-208: watchFileUsersCount not updating after share operations.
  *
  * Bug Description:
- * When applying sort on "Access" column, then sharing a watch file with a new user,
+ * When applying sort on "Access" column, then sharing a watchfile with a new user,
  * the watchFileUsersCount value is not updated and remains at 1.
  * Grid order doesn't update until manually re-sorting.
  *
@@ -124,13 +124,13 @@ class WatchFileUsersCountApiTest extends AbstractApiTestCase
     {
         $owner = UserFactory::createOne();
 
-        // Create watch file with 1 shared user (total: 2)
-        ['watchFile' => $watchFile1] = $this->createWatchFile($owner, 'Watch File 1');
+        // Create watchfile with 1 shared user (total: 2)
+        ['watchFile' => $watchFile1] = $this->createWatchFile($owner, 'Watchfile 1');
         $watchFile1Id = $watchFile1->getId();
         $this->addSharedUser($watchFile1, WatchFileUserRole::EDITOR);
 
-        // Create watch file with no shared users (total: 1)
-        ['watchFile' => $watchFile2] = $this->createWatchFile($owner, 'Watch File 2');
+        // Create watchfile with no shared users (total: 1)
+        ['watchFile' => $watchFile2] = $this->createWatchFile($owner, 'Watchfile 2');
         $watchFile2Id = $watchFile2->getId();
 
         $client = $this->createAuthenticatedClient($owner);
@@ -142,23 +142,23 @@ class WatchFileUsersCountApiTest extends AbstractApiTestCase
         $this->assertArrayHasKey('member', $data);
         $this->assertCount(2, $data['member']);
 
-        // Find watch files in response
+        // Find watchfiles in response
         $watchFile1Data = $this->findItemInCollection($data['member'], $watchFile1Id);
         $watchFile2Data = $this->findItemInCollection($data['member'], $watchFile2Id);
 
-        $this->assertNotNull($watchFile1Data, 'Watch File 1 should be in collection');
-        $this->assertNotNull($watchFile2Data, 'Watch File 2 should be in collection');
+        $this->assertNotNull($watchFile1Data, 'Watchfile 1 should be in collection');
+        $this->assertNotNull($watchFile2Data, 'Watchfile 2 should be in collection');
 
         $this->assertEquals(
             2,
             $watchFile1Data['watchFileUsersCount'],
-            'Watch File 1 should have count of 2 (owner + 1 shared user)'
+            'Watchfile 1 should have count of 2 (owner + 1 shared user)'
         );
 
         $this->assertEquals(
             1,
             $watchFile2Data['watchFileUsersCount'],
-            'Watch File 2 should have count of 1 (owner only)'
+            'Watchfile 2 should have count of 1 (owner only)'
         );
     }
 
@@ -185,39 +185,39 @@ class WatchFileUsersCountApiTest extends AbstractApiTestCase
         $owner = UserFactory::createOne();
         $sharedUser = UserFactory::createOne();
 
-        // Create first watch file with 1 shared user
-        ['watchFile' => $watchFile1] = $this->createWatchFile($owner, 'Watch File 1');
+        // Create first watchfile with 1 shared user
+        ['watchFile' => $watchFile1] = $this->createWatchFile($owner, 'Watchfile 1');
         $watchFile1Id = $watchFile1->getId();
         $this->addSharedUser($watchFile1, WatchFileUserRole::EDITOR, $sharedUser);
 
-        // Create second watch file with NO shared users
-        ['watchFile' => $watchFile2] = $this->createWatchFile($owner, 'Watch File 2');
+        // Create second watchfile with NO shared users
+        ['watchFile' => $watchFile2] = $this->createWatchFile($owner, 'Watchfile 2');
         $watchFile2Id = $watchFile2->getId();
 
-        // Create third watch file with same shared user
-        ['watchFile' => $watchFile3] = $this->createWatchFile($owner, 'Watch File 3');
+        // Create third watchfile with same shared user
+        ['watchFile' => $watchFile3] = $this->createWatchFile($owner, 'Watchfile 3');
         $watchFile3Id = $watchFile3->getId();
         $this->addSharedUser($watchFile3, WatchFileUserRole::VIEWER, $sharedUser);
 
         $client = $this->createAuthenticatedClient($owner);
 
-        // Verify watch file 1 count is not affected by others
+        // Verify watchfile 1 count is not affected by others
         $response = $client->request('GET', '/api/watch_files/' . $watchFile1Id);
         $this->assertResponseIsSuccessful();
         $data = $response->toArray();
-        $this->assertEquals(2, $data['watchFileUsersCount'], 'Watch File 1 should have count of 2');
+        $this->assertEquals(2, $data['watchFileUsersCount'], 'Watchfile 1 should have count of 2');
 
-        // Verify watch file 2 count is not affected by others
+        // Verify watchfile 2 count is not affected by others
         $response = $client->request('GET', '/api/watch_files/' . $watchFile2Id);
         $this->assertResponseIsSuccessful();
         $data = $response->toArray();
-        $this->assertEquals(1, $data['watchFileUsersCount'], 'Watch File 2 should have count of 1');
+        $this->assertEquals(1, $data['watchFileUsersCount'], 'Watchfile 2 should have count of 1');
 
-        // Verify watch file 3 count is not affected by others
+        // Verify watchfile 3 count is not affected by others
         $response = $client->request('GET', '/api/watch_files/' . $watchFile3Id);
         $this->assertResponseIsSuccessful();
         $data = $response->toArray();
-        $this->assertEquals(2, $data['watchFileUsersCount'], 'Watch File 3 should have count of 2');
+        $this->assertEquals(2, $data['watchFileUsersCount'], 'Watchfile 3 should have count of 2');
     }
 
     public function testWatchFileUsersCountAfterDuplicateShareAttempt(): void
@@ -260,9 +260,9 @@ class WatchFileUsersCountApiTest extends AbstractApiTestCase
     {
         $owner = UserFactory::createOne();
 
-        // Create 5 watch files with varying user counts
+        // Create 5 watchfiles with varying user counts
         for ($i = 1; $i <= 5; ++$i) {
-            ['watchFile' => $watchFile] = $this->createWatchFile($owner, 'Watch File ' . $i);
+            ['watchFile' => $watchFile] = $this->createWatchFile($owner, 'Watchfile ' . $i);
 
             // Add shared users (0 to 4 additional users)
             for ($j = 0; $j < $i - 1; ++$j) {
@@ -279,19 +279,19 @@ class WatchFileUsersCountApiTest extends AbstractApiTestCase
         $data = $response->toArray();
 
         $this->assertArrayHasKey('member', $data);
-        $this->assertGreaterThanOrEqual(5, \count($data['member']), 'Should have at least 5 watch files');
+        $this->assertGreaterThanOrEqual(5, \count($data['member']), 'Should have at least 5 watchfiles');
 
-        // Verify each watch file has correct count
+        // Verify each watchfile has correct count
         $countsFound = [];
         foreach ($data['member'] as $item) {
             $countsFound[] = $item['watchFileUsersCount'];
         }
 
-        $this->assertContains(1, $countsFound, 'Should have watch file with count 1');
-        $this->assertContains(2, $countsFound, 'Should have watch file with count 2');
-        $this->assertContains(3, $countsFound, 'Should have watch file with count 3');
-        $this->assertContains(4, $countsFound, 'Should have watch file with count 4');
-        $this->assertContains(5, $countsFound, 'Should have watch file with count 5');
+        $this->assertContains(1, $countsFound, 'Should have watchfile with count 1');
+        $this->assertContains(2, $countsFound, 'Should have watchfile with count 2');
+        $this->assertContains(3, $countsFound, 'Should have watchfile with count 3');
+        $this->assertContains(4, $countsFound, 'Should have watchfile with count 4');
+        $this->assertContains(5, $countsFound, 'Should have watchfile with count 5');
     }
 
     public function testWatchFileUsersCountAfterRoleChange(): void
@@ -321,7 +321,7 @@ class WatchFileUsersCountApiTest extends AbstractApiTestCase
     /**
      * @return array{owner: User, watchFile: WatchFile}
      */
-    private function createWatchFile(?User $owner = null, string $name = 'Test Watch File'): array
+    private function createWatchFile(?User $owner = null, string $name = 'Test Watchfile'): array
     {
         if (null === $owner) {
             $owner = UserFactory::createOne();

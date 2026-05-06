@@ -74,7 +74,7 @@ class CreateDocumentProcessor implements ProcessorInterface
         $watchFile = $this->watchFileGateway->get($watchFileId);
 
         if (!$this->security->isGranted(WatchFileVoter::EDIT, $watchFile)) {
-            throw new AccessDeniedHttpException('You do not have permission to create documents in this watch file.');
+            throw new AccessDeniedHttpException('You do not have permission to create documents in this watchfile.');
         }
 
         $source = $this->resolveSource($inputDto, $watchFile);
@@ -119,7 +119,7 @@ class CreateDocumentProcessor implements ProcessorInterface
         if (null !== $inputDto->sourceId) {
             $source = $this->sourceGateway->get($inputDto->sourceId);
             if ($source->getWatchFile()->getId() !== $watchFile->getId()) {
-                throw new AccessDeniedHttpException('Source does not belong to this watch file.');
+                throw new AccessDeniedHttpException('Source does not belong to this watchfile.');
             }
 
             return $source;

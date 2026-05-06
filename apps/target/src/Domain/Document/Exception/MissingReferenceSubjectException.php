@@ -18,6 +18,6 @@ class MissingReferenceSubjectException extends DomainException
 
     public static function forDocumentId(string $documentId): self
     {
-        return new self(\sprintf('Document with ID "%s" has no reference subject from watch file', $documentId));
+        return new self(\sprintf('Document with ID "%s" has no reference subject from watchfile', $documentId));
     }
 }

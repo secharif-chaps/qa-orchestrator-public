@@ -34,12 +34,12 @@ use Symfony\Component\String\UnicodeString;
             openapi: new Operation(
                 summary: 'Get a list of users',
                 description: <<<'EOT'
-                    Retrieve a paginated list of users. This endpoint is typically used for user search and selection features, such as sharing watch files with other users.
+                    Retrieve a paginated list of users. This endpoint is typically used for user search and selection features, such as sharing watchfiles with other users.
 
                     Available filters:
                     - search (string): Search users by email, first name, last name, or display name. Minimum 2 characters required.
                     - excludeCurrentUser (boolean): When true, excludes the currently authenticated user from results. Default: false.
-                    - excludeWatchFileSharedUsers (UUID): Excludes users who already have access to the specified watch file.
+                    - excludeWatchFileSharedUsers (UUID): Excludes users who already have access to the specified watchfile.
 
                     Response:
                     - Returns a paginated list of user objects with basic profile information
@@ -71,7 +71,7 @@ use Symfony\Component\String\UnicodeString;
                     new Parameter(
                         name: 'excludeWatchFileSharedUsers',
                         in: 'query',
-                        description: 'Exclude users who already have access to the specified watch file (provide watch file UUID)',
+                        description: 'Exclude users who already have access to the specified watchfile (provide watchfile UUID)',
                         required: false,
                         schema: [
                             'type' => 'string',

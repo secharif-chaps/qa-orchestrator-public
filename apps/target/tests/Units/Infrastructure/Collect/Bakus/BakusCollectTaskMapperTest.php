@@ -326,7 +326,7 @@ class BakusCollectTaskMapperTest extends TestCase
      */
     private function createCollectTaskWithSource(SourceType $type, string $url, array $parameters): CollectTask
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch-file-id');
 
         $source = new Source(

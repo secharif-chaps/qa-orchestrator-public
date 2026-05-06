@@ -175,7 +175,7 @@ class FavoriteWatchFileProcessorTest extends TestCase
             ->willReturn(null);
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('User must be authenticated to favorite a watch file.');
+        $this->expectExceptionMessage('User must be authenticated to favorite a watchfile.');
 
         $this->processor->process($watchFile, $operation, $uriVariables, $context);
     }
@@ -277,7 +277,7 @@ class FavoriteWatchFileProcessorTest extends TestCase
             ->willReturn(false);
 
         $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage('User must have right access to favorite a watch file.');
+        $this->expectExceptionMessage('User must have right access to favorite a watchfile.');
 
         $this->processor->process($watchFile, $operation, $uriVariables, $context);
     }

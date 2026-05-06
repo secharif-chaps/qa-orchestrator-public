@@ -35,10 +35,10 @@ readonly class ChangeActorStatusHandler
 
     public function __invoke(ChangeActorStatusAction $action): ChangeActorStatusOutputDto
     {
-        // Get the watch file to check its status
+        // Get the watchfile to check its status
         $watchFile = $this->watchFileGateway->get($action->watchFileId);
 
-        // Check if the watch file is in active status
+        // Check if the watchfile is in active status
         if (WatchFileStatus::ENABLED === $watchFile->getStatus()) {
             throw new WatchFileActiveException($action->watchFileId, 'change actor status');
         }
@@ -57,7 +57,7 @@ readonly class ChangeActorStatusHandler
                 return \in_array($source->getId(), $action->sourceIds, true);
             });
             if (\count($sources) < \count($action->sourceIds)) {
-                $this->logger->warning('Some given sources do not belong to watch file or do not exist', [
+                $this->logger->warning('Some given sources do not belong to watchfile or do not exist', [
                     'watchFileId' => $action->watchFileId,
                     'actorId' => $action->actorId,
                     'requested_sources' => $action->sourceIds,

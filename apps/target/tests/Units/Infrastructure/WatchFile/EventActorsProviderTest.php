@@ -83,7 +83,7 @@ class EventActorsProviderTest extends TestCase
             ->method('getUser')
             ->willReturn($this->user);
 
-        // Mock watch file access
+        // Mock watchfile access
         $watchFileGatewayMock->expects($this->once())
             ->method('getForUser')
             ->with($watchFileId, $this->user)
@@ -284,7 +284,7 @@ class EventActorsProviderTest extends TestCase
             ->willReturn(false);
 
         $this->expectException(AccessDeniedException::class);
-        $this->expectExceptionMessage('You do not have permission to access this watch file');
+        $this->expectExceptionMessage('You do not have permission to access this watchfile');
 
         $operation = new Get();
         $this->provider->provide($operation, [

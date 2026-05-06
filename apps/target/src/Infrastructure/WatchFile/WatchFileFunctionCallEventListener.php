@@ -48,7 +48,7 @@ readonly class WatchFileFunctionCallEventListener
         $watchFile = $event->conversation->getWatchFile();
         if (null === $watchFile) {
             $this->logger->debug(
-                'No watch file found for the conversation.',
+                'No watchfile found for the conversation.',
                 [
                     'messageId' => $event->message->getId(),
                 ],
@@ -60,7 +60,7 @@ readonly class WatchFileFunctionCallEventListener
         foreach ($parts as $part) {
             if (!str_starts_with($part->getFunctionName(), 'watchfile.')) {
                 $this->logger->debug(
-                    \sprintf('Function call is not related to watch file: %s', $part->getFunctionName()),
+                    \sprintf('Function call is not related to watchfile: %s', $part->getFunctionName()),
                     [
                         'functionName' => $part->getFunctionName(),
                         'watchFileId' => $watchFile->getId(),

@@ -16,7 +16,7 @@ readonly class CalculateWatchFileChangesHandler
     }
 
     /**
-     * Calculates changes between original and updated watch file data arrays.
+     * Calculates changes between original and updated watchfile data arrays.
      *
      * @return array<string,array{old:mixed,new:mixed}> Array of changes with old and new values
      */

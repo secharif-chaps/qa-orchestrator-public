@@ -437,23 +437,23 @@ class ChangeWatchFileStatusHandlerTest extends TestCase
         $user = new User('id-1');
         $this->forcePropertyValue($user, 'id-1');
 
-        // Create watch file to be activated
+        // Create watchfile to be activated
         $watchFile = new WatchFile('Test', 'Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
 
-        // Associate user with this watch file as OWNER
+        // Associate user with this watchfile as OWNER
         $watchFileUser1 = new WatchFileUser($watchFile, $user, WatchFileUserRole::OWNER);
         $this->forcePropertyValue($watchFileUser1, 'wfu-1');
         $watchFile->addWatchFileUser($watchFileUser1);
 
         $this->watchFileGateway->save($watchFile);
 
-        // Create another active watch file owned by the same user to reach the quota
+        // Create another active watchfile owned by the same user to reach the quota
         $activeWatchFile = new WatchFile('Active', 'Another objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($activeWatchFile, 'active_watch_file_id');
         $activeWatchFile->setStatus(WatchFileStatus::ENABLED);
 
-        // Associate user with this watch file as OWNER
+        // Associate user with this watchfile as OWNER
         $watchFileUser2 = new WatchFileUser($activeWatchFile, $user, WatchFileUserRole::OWNER);
         $this->forcePropertyValue($watchFileUser2, 'wfu-2');
         $activeWatchFile->addWatchFileUser($watchFileUser2);
@@ -488,14 +488,14 @@ class ChangeWatchFileStatusHandlerTest extends TestCase
         $watchFile->setReferenceSubject(new TranslatedText('Sujet de test', 'Test subject'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
 
-        // Associate user with this watch file as OWNER
+        // Associate user with this watchfile as OWNER
         $watchFileUser = new WatchFileUser($watchFile, $user, WatchFileUserRole::OWNER);
         $this->forcePropertyValue($watchFileUser, 'wfu-1');
         $watchFile->addWatchFileUser($watchFileUser);
 
         $this->watchFileGateway->save($watchFile);
 
-        // Create 2 active sources for this watch file
+        // Create 2 active sources for this watchfile
         $source1 = new Source(
             name: 'Test Source 1',
             description: new TranslatedText('Description FR 1', 'Description EN 1'),
@@ -552,7 +552,7 @@ class ChangeWatchFileStatusHandlerTest extends TestCase
         $this->forcePropertyValue($watchFile, 'watch_file_id');
         $watchFile->setStatus(WatchFileStatus::ARCHIVED);
 
-        // Associate owner with this watch file as OWNER
+        // Associate owner with this watchfile as OWNER
         $watchFileUser = new WatchFileUser($watchFile, $owner, WatchFileUserRole::OWNER);
         $this->forcePropertyValue($watchFileUser, 'wfu-1');
         $watchFile->addWatchFileUser($watchFileUser);

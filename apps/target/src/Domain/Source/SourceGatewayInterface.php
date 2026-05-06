@@ -37,7 +37,7 @@ interface SourceGatewayInterface
     public function findByActorAndWatchFile(Actor|string $actor, WatchFile $watchFile): array;
 
     /**
-     * Count sources grouped by actor for a specific watch file.
+     * Count sources grouped by actor for a specific watchfile.
      * Returns an array where keys are actor IDs and values are source counts.
      *
      * @return array<string, int>
@@ -62,16 +62,16 @@ interface SourceGatewayInterface
     public function getPrimaryDomains(array $sourceIds = []): array;
 
     /**
-     * Count the number of active Sources for a given watch file.
+     * Count the number of active Sources for a given watchfile.
      *
-     * @param WatchFile $watchFile The watch file to count active sources for
+     * @param WatchFile $watchFile The watchfile to count active sources for
      */
     public function countActiveByWatchFile(WatchFile $watchFile): ResourceCount;
 
     /**
-     * Count sources by type for a watch file, optionally filtered by status and/or name.
+     * Count sources by type for a watchfile, optionally filtered by status and/or name.
      *
-     * @param string            $watchFileId The watch file ID
+     * @param string            $watchFileId The watchfile ID
      * @param SourceStatus|null $status      Optional status filter
      * @param string|null       $name        Optional name filter (case-insensitive partial match on name or primary domain)
      *
@@ -84,9 +84,9 @@ interface SourceGatewayInterface
     ): array;
 
     /**
-     * Find orphaned sources (sources without actor) for a watch file that match a given domain.
+     * Find orphaned sources (sources without actor) for a watchfile that match a given domain.
      *
-     * @param WatchFile|string $watchFile The watch file or its ID
+     * @param WatchFile|string $watchFile The watchfile or its ID
      * @param string           $domain    The domain to match (without www prefix)
      *
      * @return Source[] Array of matching orphaned sources

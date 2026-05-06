@@ -43,9 +43,9 @@ use Webmozart\Assert\Assert as WebmozartAssert;
         'groups' => ['actor:read'],
     ],
     openapi: new Model\Operation(
-        summary: 'Get actors associated with a watch file',
+        summary: 'Get actors associated with a watchfile',
         description: <<<'EOT'
-            Returns the list of actors associated with a specific watch file.
+            Returns the list of actors associated with a specific watchfile.
 
             Available filters:
             - type: Filter by actor type (e.g. type=competitor)

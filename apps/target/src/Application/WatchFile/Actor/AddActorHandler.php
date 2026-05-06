@@ -72,7 +72,7 @@ readonly class AddActorHandler
         $this->realTimeUpdatePublisher->publishWatchFileUpdate($watchFile);
 
         if ($actorWasAdded) {
-            $this->logger?->info('Actor added to watch file', [
+            $this->logger?->info('Actor added to watchfile', [
                 'watch_file_id' => $watchFile->getId(),
                 'actor_name' => $actor->getLabel(),
                 'actor_type' => $action->type->value,
@@ -229,7 +229,7 @@ readonly class AddActorHandler
     }
 
     /**
-     * Add an actor to a watch file if no relationship already exists.
+     * Add an actor to a watchfile if no relationship already exists.
      *
      * Business rule: an actor can only be linked once to a watchfile, regardless of type.
      * Uses a direct database query to check existence instead of loading
@@ -252,7 +252,7 @@ readonly class AddActorHandler
             null !== $actorId
             && $this->watchFileGateway->hasActorRelation($watchFileId, $actorId)
         ) {
-            $this->logger?->debug('Actor already linked to watch file, skipping', [
+            $this->logger?->debug('Actor already linked to watchfile, skipping', [
                 'watchfile' => $watchFileId,
                 'actor' => $actor->getLabel(),
             ]);
@@ -260,7 +260,7 @@ readonly class AddActorHandler
             return false;
         }
 
-        $this->logger?->debug('Adding actor to watch file', [
+        $this->logger?->debug('Adding actor to watchfile', [
             'watchfile' => $watchFileId,
             'actor' => $actor->getLabel(),
             'type' => $actorType->value,
@@ -294,7 +294,7 @@ readonly class AddActorHandler
         if ($limit->requiresLimitEnforcement($resourceCount)) {
             $limitValue = $limit->value();
             Assert::notNull($limitValue, 'Limit cannot be null when enforcement is required');
-            $this->logger?->warning('Actor quota exceeded for watch file', [
+            $this->logger?->warning('Actor quota exceeded for watchfile', [
                 'watch_file_id' => $watchFileId,
                 'current_count' => $currentCount,
                 'limit' => $limitValue,

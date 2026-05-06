@@ -87,7 +87,7 @@ class WatchFileActivityProviderTest extends TestCase
             ->willReturn(false);
 
         $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage('You do not have access to this watch file.');
+        $this->expectExceptionMessage('You do not have access to this watchfile.');
 
         $this->provider->provide($this->createStub(Operation::class), [
             'watchFileId' => $watchFile->getId(),

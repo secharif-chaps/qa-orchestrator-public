@@ -202,7 +202,7 @@ class ChangeWatchFileStatusProcessorTest extends TestCase
 
         $this->expectException(AccessDeniedHttpException::class);
         $this->expectExceptionMessage(
-            'You do not have permission to change the status of watch file with ID watch_file_id.'
+            'You do not have permission to change the status of watchfile with ID watch_file_id.'
         );
 
         $this->processor->process(

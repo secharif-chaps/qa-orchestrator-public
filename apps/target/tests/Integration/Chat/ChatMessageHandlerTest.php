@@ -371,7 +371,7 @@ class ChatMessageHandlerTest extends AbstractApiTestCase
 
         $watchFileId = $watchFile->getId();
 
-        // Create a conversation for this watch file
+        // Create a conversation for this watchfile
         $conversation = ConversationFactory::new()
             ->with([
                 'watchFile' => $watchFile,

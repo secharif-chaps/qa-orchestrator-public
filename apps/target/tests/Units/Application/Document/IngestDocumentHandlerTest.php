@@ -966,7 +966,7 @@ class IngestDocumentHandlerTest extends TestCase
 
     private function createWatchFile(): WatchFile
     {
-        return new WatchFile('Test Watch File', 'Test user objective for monitoring', new Organisation(
+        return new WatchFile('Test Watchfile', 'Test user objective for monitoring', new Organisation(
             'Test Org',
             'test-org-id'
         ));

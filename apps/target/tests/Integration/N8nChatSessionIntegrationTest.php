@@ -19,7 +19,7 @@ class N8nChatSessionIntegrationTest extends AbstractApiTestCase
     public function testConversationSerializationWithLlmGroups(): void
     {
         // Arrange
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'test-watch-file-id');
 
         $conversation = new Conversation($watchFile);
@@ -61,7 +61,7 @@ class N8nChatSessionIntegrationTest extends AbstractApiTestCase
     public function testN8nChatSessionDataStructure(): void
     {
         // Arrange
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'test-watch-file-id');
 
         $conversation = new Conversation($watchFile);

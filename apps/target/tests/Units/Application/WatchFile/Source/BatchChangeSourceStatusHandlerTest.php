@@ -282,7 +282,7 @@ class BatchChangeSourceStatusHandlerTest extends TestCase
 
         $this->assertIsString($result['errors'][1]['error']);
         $this->assertStringContainsString(
-            'All sources must belong to the same watch file',
+            'All sources must belong to the same watchfile',
             (string) $result['errors'][1]['error']
         );
     }

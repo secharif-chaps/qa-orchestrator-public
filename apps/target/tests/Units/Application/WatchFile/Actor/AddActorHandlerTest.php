@@ -87,7 +87,7 @@ class AddActorHandlerTest extends TestCase
         $this->assertEquals('Test Actor', $actor->getLabel());
         $this->assertEquals('test.com', $actor->getPrimaryDomain());
 
-        // Verify the actor was added to the watch file
+        // Verify the actor was added to the watchfile
         $updatedWatchFile = $this->watchFileGateway->get('watch_file_id');
         $watchFileActors = $updatedWatchFile->getWatchFileActors();
 
@@ -134,7 +134,7 @@ class AddActorHandlerTest extends TestCase
         $this->assertEquals('Test Actor', $actor->getLabel());
         $this->assertEquals('new-domain.com', $actor->getPrimaryDomain());
 
-        // Verify the actor was added to the watch file
+        // Verify the actor was added to the watchfile
         $updatedWatchFile = $this->watchFileGateway->get('watch_file_id');
         $watchFileActors = $updatedWatchFile->getWatchFileActors();
 
@@ -175,7 +175,7 @@ class AddActorHandlerTest extends TestCase
         $this->assertInstanceOf(Actor::class, $actor);
         $this->assertEquals('Test Actor', $actor->getLabel());
 
-        // Verify the actor was added to the watch file with message
+        // Verify the actor was added to the watchfile with message
         $updatedWatchFile = $this->watchFileGateway->get('watch_file_id');
         $watchFileActors = $updatedWatchFile->getWatchFileActors();
 
@@ -428,7 +428,7 @@ class AddActorHandlerTest extends TestCase
         $this->assertEquals('Existing Actor Name', $actor->getLabel());
         $this->assertEquals('example.com', $actor->getPrimaryDomain());
 
-        // Verify the existing actor was linked to the watch file
+        // Verify the existing actor was linked to the watchfile
         $updatedWatchFile = $this->watchFileGateway->get('watch_file_id');
         $watchFileActors = $updatedWatchFile->getWatchFileActors();
         $this->assertCount(1, $watchFileActors);

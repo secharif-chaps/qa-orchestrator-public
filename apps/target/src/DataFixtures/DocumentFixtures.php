@@ -53,7 +53,7 @@ class DocumentFixtures extends Fixture implements DependentFixtureInterface
 
         $documents = [];
 
-        // Generate 50 documents for each watch file except the last one
+        // Generate 50 documents for each watchfile except the last one
         for ($watchFileIndex = 0; $watchFileIndex < \count($watchFiles) - 1; ++$watchFileIndex) {
             $watchFile = $watchFiles[$watchFileIndex];
 
@@ -63,8 +63,8 @@ class DocumentFixtures extends Fixture implements DependentFixtureInterface
             }
         }
 
-        // Generate 10 specific documents for Pharmacy & Cosmetics watch file
-        $pharmacyWatchFile = $watchFiles[4]; // Index 4 is the Pharmacy & Cosmetics watch file
+        // Generate 10 specific documents for Pharmacy & Cosmetics watchfile
+        $pharmacyWatchFile = $watchFiles[4]; // Index 4 is the Pharmacy & Cosmetics watchfile
         $pharmacyDocuments = $this->createPharmacyCosmeticsDocuments($pharmacyWatchFile, $actors, $sources);
         $documents = array_merge($documents, $pharmacyDocuments);
 
@@ -114,7 +114,7 @@ class DocumentFixtures extends Fixture implements DependentFixtureInterface
     {
         $watchFileRepository = $manager->getRepository(WatchFile::class);
 
-        // Get watch files by name since we know they exist from WatchFileFixtures
+        // Get watchfiles by name since we know they exist from WatchFileFixtures
         $watchFile1 = $watchFileRepository->findOneBy([
             'name' => 'News gouvernementales - Nucléaire',
         ]);
@@ -133,7 +133,7 @@ class DocumentFixtures extends Fixture implements DependentFixtureInterface
 
         if (null === $watchFile1 || null === $watchFile2 || null === $watchFile3 || null === $watchFile4 || null === $watchFile5) {
             throw new \RuntimeException(
-                'Required watch files not found in database. Please run WatchFileFixtures first.'
+                'Required watchfiles not found in database. Please run WatchFileFixtures first.'
             );
         }
 
@@ -381,7 +381,7 @@ Monitoring employer labels is therefore a valuable competitive intelligence acti
     }
 
     /**
-     * Create 10 specific documents for Pharmacy & Cosmetics watch file
+     * Create 10 specific documents for Pharmacy & Cosmetics watchfile
      * 7 validated, 3 refused, all from active sources (Le Monde and Forbes).
      *
      * @param array<int, Actor>  $actors
@@ -393,7 +393,7 @@ Monitoring employer labels is therefore a valuable competitive intelligence acti
     {
         $documents = [];
 
-        // Find the two active sources for this watch file
+        // Find the two active sources for this watchfile
         $activeSources = array_filter($sources, function ($source) use ($watchFile) {
             return $source->getWatchFile()
                     ->getId() === $watchFile->getId()
@@ -966,7 +966,7 @@ Monitoring employer labels is therefore a valuable competitive intelligence acti
 
     /**
      * Create DocumentSeenStatus entries for the main user (basil@chapsvision.com).
-     * The first 3 documents per watch file are marked as unread (no DocumentSeenStatus entry).
+     * The first 3 documents per watchfile are marked as unread (no DocumentSeenStatus entry).
      * All other documents are marked as read (DocumentSeenStatus entry with seenAt date).
      *
      * @param list<array<string, mixed>> $documents
@@ -976,7 +976,7 @@ Monitoring employer labels is therefore a valuable competitive intelligence acti
         // Get the main user using reference
         $basilUser = $this->getReference(UserFixtures::BASIL_USER_REFERENCE, User::class);
 
-        // Group documents by watch file
+        // Group documents by watchfile
         /** @var array<string, list<array{id: string, datePublish: string, watchFile: array{id: string}}>> $documentsByWatchFile */
         $documentsByWatchFile = [];
         foreach ($documents as $document) {
@@ -988,7 +988,7 @@ Monitoring employer labels is therefore a valuable competitive intelligence acti
             $documentsByWatchFile[$watchFileId][] = $document;
         }
 
-        // Get watch files using references
+        // Get watchfiles using references
         $watchFileMap = [];
         for ($i = 0; $i < 5; ++$i) {
             /** @var WatchFile $watchFile */

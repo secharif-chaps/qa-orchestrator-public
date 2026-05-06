@@ -45,7 +45,7 @@ class WatchFileUser implements CreatedByInterface, UpdatedByInterface, HasWatchF
     #[ApiProperty(
         example: WatchFileUserRole::EDITOR->value,
         openapiContext: [
-            'description' => 'The role of the user in the watch file. This defines the permissions the user has within the watch file.',
+            'description' => 'The role of the user in the watchfile. This defines the permissions the user has within the watchfile.',
             'type' => 'string',
             'enum' => ['editor', 'viewer', 'owner'],
         ],

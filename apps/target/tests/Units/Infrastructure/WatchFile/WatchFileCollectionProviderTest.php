@@ -68,7 +68,7 @@ class WatchFileCollectionProviderTest extends TestCase
         ), $user);
         $this->forcePropertyValue($watchFile2, 'watchfile2');
 
-        // Add favorite for the first watch file
+        // Add favorite for the first watchfile
         $userFavorite = new UserFavoriteWatchFile($user, $watchFile1);
         $watchFile1->addUserFavorite($userFavorite);
 

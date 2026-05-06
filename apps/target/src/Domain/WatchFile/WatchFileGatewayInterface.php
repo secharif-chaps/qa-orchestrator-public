@@ -27,7 +27,7 @@ interface WatchFileGatewayInterface
     /**
      * Count the number of active WatchFiles for a given user.
      *
-     * @param string $userId The user ID to count active watch files for
+     * @param string $userId The user ID to count active watchfiles for
      */
     public function countActiveByUserId(string $userId): ResourceCount;
 

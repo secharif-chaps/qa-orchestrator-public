@@ -36,19 +36,19 @@ trait GetWatchFileTrait
     private function getWatchFile(string $watchFileId, ?User $userForEnrich = null): WatchFile
     {
         if (empty($watchFileId)) {
-            $this->logger?->error('Invalid watch file ID provided', [
+            $this->logger?->error('Invalid watchfile ID provided', [
                 'watch_file_id' => $watchFileId,
             ]);
 
-            throw new UnrecoverableMessageHandlingException('Invalid watch file ID provided.');
+            throw new UnrecoverableMessageHandlingException('Invalid watchfile ID provided.');
         }
 
         try {
             $watchFile = $this->watchFileGateway->get($watchFileId, $userForEnrich);
         } catch (WatchFileNotFoundException $e) {
-            $message = 'Failed to retrieve watch file "%1$s" for user "%2$s"';
+            $message = 'Failed to retrieve watchfile "%1$s" for user "%2$s"';
             if (null === $userForEnrich) {
-                $message = 'Failed to retrieve watch file "%1$s" (anonymous user)';
+                $message = 'Failed to retrieve watchfile "%1$s" (anonymous user)';
             }
 
             $this->logger?->error(

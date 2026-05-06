@@ -62,7 +62,7 @@ class GetWatchFileTraitTest extends TestCase
     public function testGetWatchFileWithEmptyIdThrowsException(): void
     {
         $this->expectException(UnrecoverableMessageHandlingException::class);
-        $this->expectExceptionMessage('Invalid watch file ID provided.');
+        $this->expectExceptionMessage('Invalid watchfile ID provided.');
 
         $this->traitObject->getWatchFile('');
     }

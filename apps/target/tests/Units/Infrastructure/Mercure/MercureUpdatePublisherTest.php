@@ -77,7 +77,7 @@ class MercureUpdatePublisherTest extends TestCase
         $owner = new User('owner-id', 'owner@example.com');
         $sharedUser = new User('shared-user-id', 'shared@example.com');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watchfile-id');
 
         // Add owner and shared user via WatchFileUser relationships
@@ -93,7 +93,7 @@ class MercureUpdatePublisherTest extends TestCase
             ->with($watchFile)
             ->willReturn([$owner, $sharedUser]);
 
-        $serializedData = '{"id":"watchfile-id","name":"Test Watch File"}';
+        $serializedData = '{"id":"watchfile-id","name":"Test Watchfile"}';
 
         // Serialization happens per-user due to per-user enrichment
         $this->serializer
@@ -139,7 +139,7 @@ class MercureUpdatePublisherTest extends TestCase
     {
         // Arrange
         $owner = new User('owner-id', 'owner@example.com');
-        $watchFile = new WatchFile('Test Watch File', 'Test objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watchfile-id');
 
         $ownerWatchFileUser = new WatchFileUser($watchFile, $owner, WatchFileUserRole::OWNER);
@@ -180,7 +180,7 @@ class MercureUpdatePublisherTest extends TestCase
         $owner = new User('owner-id', 'owner@example.com');
         $sharedUser = new User('shared-user-id', 'shared@example.com');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watchfile-id');
 
         // Add users via WatchFileUser relationships
@@ -239,7 +239,7 @@ class MercureUpdatePublisherTest extends TestCase
     {
         // Arrange
         $owner = new User('owner-id', 'owner@example.com');
-        $watchFile = new WatchFile('Test Watch File', 'Test objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watchfile-id');
 
         $ownerWatchFileUser = new WatchFileUser($watchFile, $owner, WatchFileUserRole::OWNER);
@@ -284,7 +284,7 @@ class MercureUpdatePublisherTest extends TestCase
     {
         // Arrange
         $owner = new User('owner-id', 'owner@example.com');
-        $watchFile = new WatchFile('Test Watch File', 'Test objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watchfile-id');
 
         $ownerWatchFileUser = new WatchFileUser($watchFile, $owner, WatchFileUserRole::OWNER);
@@ -337,7 +337,7 @@ class MercureUpdatePublisherTest extends TestCase
     public function testNoWatchFileUsersResultsInNoPublications(): void
     {
         // Arrange
-        $watchFile = new WatchFile('Test Watch File', 'Test objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watchfile-id');
         // No WatchFileUsers added
 
@@ -404,7 +404,7 @@ class MercureUpdatePublisherTest extends TestCase
         $editor = new User('editor-id', 'editor@example.com');
         $viewer = new User('viewer-id', 'viewer@example.com');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watchfile-id');
 
         // Add owner (should receive), editor (should receive), and viewer (should NOT receive)
@@ -422,7 +422,7 @@ class MercureUpdatePublisherTest extends TestCase
             ->with($watchFile)
             ->willReturn([$owner, $editor]);
 
-        $serializedData = '{"id":"watchfile-id","name":"Test Watch File"}';
+        $serializedData = '{"id":"watchfile-id","name":"Test Watchfile"}';
 
         // Serialization happens per-user due to per-user enrichment
         $this->serializer
@@ -467,7 +467,7 @@ class MercureUpdatePublisherTest extends TestCase
         $owner = new User('owner-id', 'owner@example.com');
         $viewer = new User('viewer-id', 'viewer@example.com');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watchfile-id');
 
         // Add owner (should receive) and viewer (should NOT receive)

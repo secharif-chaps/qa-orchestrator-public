@@ -47,7 +47,7 @@ class UserAccessibleWatchFileFilter extends AbstractFilter
             return;
         }
 
-        // Admin users have unrestricted access to all watch files
+        // Admin users have unrestricted access to all watchfiles
         $roles = $loggedUser->getRoles();
         if (\in_array('ROLE_ADMIN', $roles, true) || \in_array('admin', $roles, true)) {
             return;

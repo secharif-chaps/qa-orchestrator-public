@@ -31,7 +31,7 @@ class RemoveFavoriteWatchFileHandler
 
             $this->userFavoriteWatchFileGateway->remove($favoriteWatchFile);
             $this->logger?->info(
-                'User favorite watch file removed for user {userId} and watch file {watchFileId}',
+                'User favorite watchfile removed for user {userId} and watchfile {watchFileId}',
                 [
                     'userId' => $action->userId,
                     'watchFileId' => $action->watchFileId,
@@ -41,7 +41,7 @@ class RemoveFavoriteWatchFileHandler
             return true;
         } catch (UserFavoriteWatchFileNotFoundException) {
             $this->logger?->debug(
-                'User favorite watch file not found for user {userId} and watch file {watchFileId}',
+                'User favorite watchfile not found for user {userId} and watchfile {watchFileId}',
                 [
                     'userId' => $action->userId,
                     'watchFileId' => $action->watchFileId,

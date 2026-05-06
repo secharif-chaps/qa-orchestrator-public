@@ -40,7 +40,7 @@ class NullWatchFileUserGateway implements WatchFileUserGatewayInterface
         }
 
         throw new WatchFileUserNotFoundException(\sprintf(
-            'WatchFileUser not found for watch file %s and user %s',
+            'WatchFileUser not found for watchfile %s and user %s',
             $watchFile->getId(),
             $user->getId()
         ));

@@ -70,7 +70,7 @@ class SourceFixtures extends Fixture implements DependentFixtureInterface
 
         if (null === $watchFile1 || null === $watchFile2 || null === $watchFile3 || null === $watchFile4 || null === $watchFile5) {
             throw new \RuntimeException(
-                'Required watch files not found in database. Please run WatchFileFixtures first.'
+                'Required watchfiles not found in database. Please run WatchFileFixtures first.'
             );
         }
 
@@ -352,7 +352,7 @@ class SourceFixtures extends Fixture implements DependentFixtureInterface
      */
     private function createHealthTechSources(WatchFile $watchFile, array $actors, ObjectManager $manager): void
     {
-        // Get actors that belong to this watch file
+        // Get actors that belong to this watchfile
         $watchFileActors = $watchFile->getWatchFileActors();
         $watchFileActorIds = [];
         foreach ($watchFileActors as $watchFileActor) {
@@ -553,14 +553,14 @@ class SourceFixtures extends Fixture implements DependentFixtureInterface
      */
     private function createElectricVehicleSources(WatchFile $watchFile, array $actors, ObjectManager $manager): void
     {
-        // Get actors that belong to this watch file
+        // Get actors that belong to this watchfile
         $watchFileActors = $watchFile->getWatchFileActors();
         $watchFileActorIds = [];
         foreach ($watchFileActors as $watchFileActor) {
             $watchFileActorIds[] = $watchFileActor->getActor()->getId();
         }
 
-        // If no actors in  watch file, skip creating sources
+        // If no actors in  watchfile, skip creating sources
         if (empty($watchFileActorIds)) {
             return;
         }
@@ -742,7 +742,7 @@ class SourceFixtures extends Fixture implements DependentFixtureInterface
         array $actors,
         ObjectManager $manager,
     ): void {
-        // Get actors that belong to this watch file
+        // Get actors that belong to this watchfile
         $watchFileActors = $watchFile->getWatchFileActors();
         $watchFileActorIds = [];
         foreach ($watchFileActors as $watchFileActor) {
@@ -944,14 +944,14 @@ class SourceFixtures extends Fixture implements DependentFixtureInterface
      */
     private function createPharmacyCosmeticsSources(WatchFile $watchFile, array $actors, ObjectManager $manager): void
     {
-        // Get actors that belong to this watch file
+        // Get actors that belong to this watchfile
         $watchFileActors = $watchFile->getWatchFileActors();
         $watchFileActorIds = [];
         foreach ($watchFileActors as $watchFileActor) {
             $watchFileActorIds[] = $watchFileActor->getActor()->getId();
         }
 
-        // If no actors in watch file, skip creating sources
+        // If no actors in watchfile, skip creating sources
         if (empty($watchFileActorIds)) {
             return;
         }
@@ -1064,7 +1064,7 @@ class SourceFixtures extends Fixture implements DependentFixtureInterface
         ];
 
         foreach ($sources as $index => $sourceData) {
-            // Select a random actor that belongs to this watch file
+            // Select a random actor that belongs to this watchfile
             $randomActorId = $watchFileActorIds[array_rand($watchFileActorIds)];
             $selectedActor = null;
             foreach ($actors as $actor) {

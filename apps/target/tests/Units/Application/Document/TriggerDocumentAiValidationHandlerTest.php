@@ -60,7 +60,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
         $documentContent = 'Test document content for AI validation';
         $referenceSubject = new TranslatedText('Climate Change', 'Changement climatique');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $watchFile->setReferenceSubject($referenceSubject);
         $this->forcePropertyValue($watchFile, 'wf-456');
 
@@ -124,7 +124,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
         $documentId = 'doc-123';
         $referenceSubject = new TranslatedText('Climate Change', 'Changement climatique');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $watchFile->setReferenceSubject($referenceSubject);
 
         $existingValidation = new AIValidation(
@@ -176,7 +176,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
         $documentId = 'doc-123';
         $referenceSubject = new TranslatedText('Climate Change', 'Changement climatique');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $watchFile->setReferenceSubject($referenceSubject);
 
         $existingValidation = new AIValidation(
@@ -228,7 +228,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
         $documentContent = 'Test document content for retry';
         $referenceSubject = new TranslatedText('Climate Change', 'Changement climatique');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $watchFile->setReferenceSubject($referenceSubject);
         $this->forcePropertyValue($watchFile, 'wf-456');
 
@@ -286,7 +286,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
         $documentId = 'doc-123';
         $referenceSubject = new TranslatedText('Climate Change', 'Changement climatique');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $watchFile->setReferenceSubject($referenceSubject);
 
         $user = new User(null, 'test@example.com', [], 'testuser');
@@ -331,7 +331,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
         $documentId = 'doc-123';
         $referenceSubject = new TranslatedText('Climate Change', 'Changement climatique');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $watchFile->setReferenceSubject($referenceSubject);
 
         $user = new User(null, 'test@example.com', [], 'testuser');
@@ -390,7 +390,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
         $documentId = 'doc-123';
         $watchFileId = 'wf-456';
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
         // No reference subject set
 
@@ -417,7 +417,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
 
         // Assert
         $this->expectException(MissingReferenceSubjectException::class);
-        $this->expectExceptionMessage('Document with ID "doc-123" has no reference subject from watch file');
+        $this->expectExceptionMessage('Document with ID "doc-123" has no reference subject from watchfile');
 
         // Act
         ($this->handler)($action);
@@ -433,7 +433,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
         $documentContent = 'Test document content for AI validation';
         $referenceSubject = new TranslatedText('Climate Change', 'Changement climatique');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $watchFile->setReferenceSubject($referenceSubject);
         $this->forcePropertyValue($watchFile, 'wf-456');
 
@@ -488,7 +488,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
         $referenceSubject = new TranslatedText('Climate Change', 'Changement climatique');
         $referenceSubjectLlm = 'LLM optimized version for document filtering about climate change impacts';
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $watchFile->setReferenceSubject($referenceSubject);
         $watchFile->setReferenceSubjectLlm($referenceSubjectLlm);
         $this->forcePropertyValue($watchFile, 'wf-456');
@@ -554,7 +554,7 @@ class TriggerDocumentAiValidationHandlerTest extends TestCase
         $documentContent = 'Test document content for AI validation';
         $referenceSubject = new TranslatedText('Climate Change', 'Changement climatique');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $watchFile->setReferenceSubject($referenceSubject);
         // No LLM version set - should fallback to English version
         $this->forcePropertyValue($watchFile, 'wf-456');

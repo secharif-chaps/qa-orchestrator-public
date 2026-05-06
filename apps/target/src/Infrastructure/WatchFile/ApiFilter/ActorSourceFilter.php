@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
  * Filter that filters Source collections by actor and watchFile
  * when these values are provided in the context filters.
  * This filter is used by ActorSourceProvider to filter sources
- * for a specific actor within a watch file.
+ * for a specific actor within a watchfile.
  */
 class ActorSourceFilter extends AbstractFilter
 {

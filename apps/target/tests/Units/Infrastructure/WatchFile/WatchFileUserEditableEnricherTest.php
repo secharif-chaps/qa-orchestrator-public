@@ -82,7 +82,7 @@ class WatchFileUserEditableEnricherTest extends TestCase
         ), $otherUser);
         $this->forcePropertyValue($watchFile, 'watchfile1');
 
-        // Add user as owner of the watch file
+        // Add user as owner of the watchfile
         $this->watchFileUserGateway->addWatchFileUser($watchFile, $user, WatchFileUserRole::OWNER);
 
         $context = [
@@ -109,7 +109,7 @@ class WatchFileUserEditableEnricherTest extends TestCase
         ), $otherUser);
         $this->forcePropertyValue($watchFile, 'watchfile1');
 
-        // Add user as editor of the watch file
+        // Add user as editor of the watchfile
         $this->watchFileUserGateway->addWatchFileUser($watchFile, $user, WatchFileUserRole::EDITOR);
 
         $context = [
@@ -136,7 +136,7 @@ class WatchFileUserEditableEnricherTest extends TestCase
         ), $otherUser);
         $this->forcePropertyValue($watchFile, 'watchfile1');
 
-        // Add user as viewer of the watch file (no edit access)
+        // Add user as viewer of the watchfile (no edit access)
         $this->watchFileUserGateway->addWatchFileUser($watchFile, $user, WatchFileUserRole::VIEWER);
 
         $context = [

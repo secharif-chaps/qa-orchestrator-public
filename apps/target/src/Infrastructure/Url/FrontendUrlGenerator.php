@@ -21,7 +21,7 @@ class FrontendUrlGenerator implements FrontendUrlGeneratorInterface
     }
 
     /**
-     * Generate the URL for a watch file detail page.
+     * Generate the URL for a watchfile detail page.
      */
     public function generateWatchFileUrl(string $watchFileId): string
     {

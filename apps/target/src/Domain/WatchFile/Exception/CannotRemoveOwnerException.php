@@ -10,7 +10,7 @@ class CannotRemoveOwnerException extends DomainException
     public function __construct(WatchFileUser $watchFileUser)
     {
         parent::__construct(\sprintf(
-            'The watch file user "%s" is the owner and cannot be removed.',
+            'The watchfile user "%s" is the owner and cannot be removed.',
             $watchFileUser->getId()
         ));
     }

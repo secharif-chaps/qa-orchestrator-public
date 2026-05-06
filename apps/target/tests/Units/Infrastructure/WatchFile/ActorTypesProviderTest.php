@@ -56,7 +56,7 @@ class ActorTypesProviderTest extends TestCase
         $idProperty->setAccessible(true);
         $idProperty->setValue($watchFile, $watchFileId);
 
-        // Store the watch file in our null gateway
+        // Store the watchfile in our null gateway
         $this->watchFileGateway->save($watchFile);
     }
 

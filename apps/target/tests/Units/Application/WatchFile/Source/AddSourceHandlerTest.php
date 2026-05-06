@@ -99,7 +99,7 @@ class AddSourceHandlerTest extends TestCase
         $this->forcePropertyValue($actor, 'actor_id');
         $this->actorGateway->save($actor);
 
-        // Link the actor to the watch file so the source can get the actor set
+        // Link the actor to the watchfile so the source can get the actor set
         $watchFile->addActor($actor, ActorType::SUPPLIER, null, 0.5, null);
 
         $action = new AddSourceAction(
@@ -156,7 +156,7 @@ class AddSourceHandlerTest extends TestCase
         $this->forcePropertyValue($actor, 'actor_id');
         $this->actorGateway->save($actor);
 
-        // Link the actor to the watch file so the source can get the actor set
+        // Link the actor to the watchfile so the source can get the actor set
         $watchFile->addActor($actor, ActorType::SUPPLIER, null, 0.5, null);
 
         $message = new Message();
@@ -209,7 +209,7 @@ class AddSourceHandlerTest extends TestCase
         $this->forcePropertyValue($actor, 'actor_id');
         $this->actorGateway->save($actor);
 
-        // Link the actor to the watch file so the source can get the actor set
+        // Link the actor to the watchfile so the source can get the actor set
         $watchFile->addActor($actor, ActorType::SUPPLIER, null, 0.5, null);
 
         $action = new AddSourceAction(
@@ -312,7 +312,7 @@ class AddSourceHandlerTest extends TestCase
         $this->forcePropertyValue($actor, 'actor_id');
         $this->actorGateway->save($actor);
 
-        // Actor exists but is not linked to watch file, so source should not have actor set
+        // Actor exists but is not linked to watchfile, so source should not have actor set
 
         $action = new AddSourceAction(
             watchFileId: 'watch_file_id',
@@ -329,7 +329,7 @@ class AddSourceHandlerTest extends TestCase
             actorId: 'actor_id'
         );
 
-        // Actor exists but is not linked to watch file, so source should not have actor set
+        // Actor exists but is not linked to watchfile, so source should not have actor set
         $updatedWatchFile = ($this->handler)($action);
         $sources = $updatedWatchFile->getSources();
 
@@ -353,7 +353,7 @@ class AddSourceHandlerTest extends TestCase
         $this->forcePropertyValue($actor, 'actor_id');
         $this->actorGateway->save($actor);
 
-        // Create a watch file actor link using the correct method
+        // Create a watchfile actor link using the correct method
         $watchFile->addActor($actor, ActorType::SUPPLIER, null, 0.5, null);
 
         $action = new AddSourceAction(
@@ -371,7 +371,7 @@ class AddSourceHandlerTest extends TestCase
             actorId: 'actor_id'
         );
 
-        // Actor is linked to watch file, so source should have actor set
+        // Actor is linked to watchfile, so source should have actor set
         $updatedWatchFile = ($this->handler)($action);
         $sources = $updatedWatchFile->getSources();
 
@@ -395,7 +395,7 @@ class AddSourceHandlerTest extends TestCase
         $this->forcePropertyValue($actor, 'actor_id');
         $this->actorGateway->save($actor);
 
-        // Link the actor to the watch file
+        // Link the actor to the watchfile
         $watchFile->addActor($actor, ActorType::SUPPLIER, null, 0.5, null);
 
         // Manually create and save a source to the NullSourceGateway to simulate an existing source
@@ -431,7 +431,7 @@ class AddSourceHandlerTest extends TestCase
             actorId: 'actor_id'
         );
 
-        // Source already exists, should return watch file without adding new source
+        // Source already exists, should return watchfile without adding new source
         $updatedWatchFile = ($this->handler)($action);
         $sources = $updatedWatchFile->getSources();
 
@@ -485,7 +485,7 @@ class AddSourceHandlerTest extends TestCase
         $this->forcePropertyValue($watchFile, 'watch_file_id');
         $this->watchFileGateway->save($watchFile);
 
-        // Add 2 existing sources to the watch file
+        // Add 2 existing sources to the watchfile
         $existingSource1 = new Source(
             name: 'Existing Source 1',
             description: new TranslatedText('Description en français', 'Description in English'),

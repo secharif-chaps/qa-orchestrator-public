@@ -985,7 +985,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-06-15T09:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -1007,7 +1007,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-07-20T13:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -1029,7 +1029,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-08-10T08:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
         ];
@@ -1068,7 +1068,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-06-15T09:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -1096,7 +1096,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-07-20T13:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -1129,7 +1129,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-08-10T08:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
         ];
@@ -1160,7 +1160,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-06-15T09:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -1182,7 +1182,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-07-20T13:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -1204,7 +1204,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-08-10T08:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -1226,7 +1226,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-09-05T10:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
         ];
@@ -1265,7 +1265,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-06-15T09:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -1293,7 +1293,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-07-20T13:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -1321,7 +1321,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-08-10T08:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
         ];
@@ -1359,7 +1359,7 @@ class WatchFileEventApiTest extends AbstractApiTestCase
 ->format('Y-m-d\TH:i:s\Z'),
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ];
         }

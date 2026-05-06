@@ -291,7 +291,7 @@ class ChangeActorSourcesStatusProcessorTest extends TestCase
 
         // Act & Assert
         $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage('User must have right edit on the watch file.');
+        $this->expectExceptionMessage('User must have right edit on the watchfile.');
 
         $this->processor->process(
             $inputDto,

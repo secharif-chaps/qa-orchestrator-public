@@ -88,7 +88,7 @@ class WatchFile implements CreatedByInterface
     public function enable(): void
     {
         if ($this->status === WatchFileStatus::ARCHIVED) {
-            throw new \DomainException('Cannot enable an archived watch file');
+            throw new \DomainException('Cannot enable an archived watchfile');
         }
         $this->status = WatchFileStatus::ENABLED;
     }

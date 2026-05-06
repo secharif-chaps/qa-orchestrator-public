@@ -50,10 +50,10 @@ readonly class EventActorsProvider implements ProviderInterface
             throw new AccessDeniedException('User must be authenticated');
         }
 
-        // Find the watch file and verify access
+        // Find the watchfile and verify access
         try {
             $watchFile = $this->watchFileGateway->getForUser($watchFileId, $user);
-            // Refresh the watch file entity to ensure we have the latest data from database
+            // Refresh the watchfile entity to ensure we have the latest data from database
             $this->entityManager->refresh($watchFile);
         } catch (WatchFileNotFoundException $e) {
             throw new NotFoundHttpException(\sprintf(
@@ -62,9 +62,9 @@ readonly class EventActorsProvider implements ProviderInterface
             ), $e);
         }
 
-        // Verify user has at least read access to the watch file
+        // Verify user has at least read access to the watchfile
         if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
-            throw new AccessDeniedException('You do not have permission to access this watch file');
+            throw new AccessDeniedException('You do not have permission to access this watchfile');
         }
 
         // Find the specific event
@@ -74,7 +74,7 @@ readonly class EventActorsProvider implements ProviderInterface
         ]);
 
         if (!$event) {
-            throw new NotFoundHttpException(\sprintf('Event with ID "%s" not found for this watch file', $eventId));
+            throw new NotFoundHttpException(\sprintf('Event with ID "%s" not found for this watchfile', $eventId));
         }
 
         // Extract actor IDs from event metadata

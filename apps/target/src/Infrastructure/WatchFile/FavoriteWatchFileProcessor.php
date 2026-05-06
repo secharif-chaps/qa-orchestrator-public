@@ -32,7 +32,7 @@ class FavoriteWatchFileProcessor implements ProcessorInterface
     {
         $user = $this->security->getUser();
         if (!$user instanceof User) {
-            throw new \RuntimeException('User must be authenticated to favorite a watch file.');
+            throw new \RuntimeException('User must be authenticated to favorite a watchfile.');
         }
 
         $watchFileId = $uriVariables['watchFileId'] ?? null;
@@ -42,7 +42,7 @@ class FavoriteWatchFileProcessor implements ProcessorInterface
         $watchFile = $this->watchFileGateway->get($watchFileId);
 
         if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
-            throw new AccessDeniedHttpException('User must have right access to favorite a watch file.');
+            throw new AccessDeniedHttpException('User must have right access to favorite a watchfile.');
         }
 
         $userId = $user->getId();

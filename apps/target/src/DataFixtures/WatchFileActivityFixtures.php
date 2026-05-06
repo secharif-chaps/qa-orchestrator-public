@@ -30,7 +30,7 @@ class WatchFileActivityFixtures extends Fixture implements DependentFixtureInter
         $basilUser = $this->getReference(UserFixtures::BASIL_USER_REFERENCE, User::class);
         $activityIndex = 0;
 
-        // Get all watch files
+        // Get all watchfiles
         $watchFiles = [];
         for ($i = 0; $i < 5; ++$i) {
             /** @var WatchFile $watchFile */
@@ -52,7 +52,7 @@ class WatchFileActivityFixtures extends Fixture implements DependentFixtureInter
         }
 
         foreach ($watchFiles as $watchFileIndex => $watchFile) {
-            // 1. Create activity for watch file creation
+            // 1. Create activity for watchfile creation
             $createdAt = new \DateTime();
             $createdAt->modify('-' . (30 - $watchFileIndex * 5) . ' days');
 
@@ -172,7 +172,7 @@ class WatchFileActivityFixtures extends Fixture implements DependentFixtureInter
                 $this->addReference(self::WATCHFILE_ACTIVITY_REFERENCE . $activityIndex++, $statusActivity);
             }
 
-            // 4. Add source status change activities for sources belonging to this watch file
+            // 4. Add source status change activities for sources belonging to this watchfile
             foreach ($sources as $sourceIndex => $source) {
                 if ($source->getWatchFile()->getId() === $watchFile->getId()) {
                     $sourceStatusChanges = [
@@ -224,7 +224,7 @@ class WatchFileActivityFixtures extends Fixture implements DependentFixtureInter
                 }
             }
 
-            // 5. Add actor added activities for actors in this watch file
+            // 5. Add actor added activities for actors in this watchfile
             $watchFileActors = $watchFile->getWatchFileActors();
             foreach ($watchFileActors as $actorIndex => $watchFileActor) {
                 $actorAddedAt = new \DateTime();
@@ -256,7 +256,7 @@ class WatchFileActivityFixtures extends Fixture implements DependentFixtureInter
                 $this->addReference(self::WATCHFILE_ACTIVITY_REFERENCE . $activityIndex++, $actorAddedActivity);
             }
 
-            // 6. Add source added activities for sources in this watch file
+            // 6. Add source added activities for sources in this watchfile
             foreach ($sources as $sourceIndex => $source) {
                 if ($source->getWatchFile()->getId() === $watchFile->getId()) {
                     $sourceAddedAt = new \DateTime();
@@ -294,7 +294,7 @@ class WatchFileActivityFixtures extends Fixture implements DependentFixtureInter
             }
         }
 
-        // Add specific activities for Pharmacy & Cosmetics watch file (index 4)
+        // Add specific activities for Pharmacy & Cosmetics watchfile (index 4)
         $pharmacyWatchFile = $watchFiles[4];
         $this->createPharmacyCosmeticsActivities($pharmacyWatchFile, $basilUser, $manager, $activityIndex);
 

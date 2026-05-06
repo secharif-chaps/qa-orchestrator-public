@@ -337,7 +337,7 @@ class ChangeSourceStatusHandlerTest extends TestCase
 
         $this->expectException(\App\Domain\WatchFile\WatchFileActiveException::class);
         $this->expectExceptionMessage(
-            'Cannot change source status on watch file test-watch-file-id because it is in active status. Please set the watch file to draft mode first.'
+            'Cannot change source status on watchfile test-watch-file-id because it is in active status. Please set the watchfile to draft mode first.'
         );
 
         ($this->handler)($action);

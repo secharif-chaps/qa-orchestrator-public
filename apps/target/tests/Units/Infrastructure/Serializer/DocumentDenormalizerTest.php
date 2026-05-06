@@ -212,7 +212,7 @@ class DocumentDenormalizerTest extends TestCase
     public function testDenormalizeWithNestedSource(): void
     {
         // Arrange
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $source = new Source(
             'Test Source',
             new TranslatedText(fr: 'Test source description', en: 'Test source description'),
@@ -256,7 +256,7 @@ class DocumentDenormalizerTest extends TestCase
     public function testDenormalizeWithNestedWatchFile(): void
     {
         // Arrange
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'test-watchfile-id');
         $watchFileId = $watchFile->getId();
 
@@ -327,7 +327,7 @@ class DocumentDenormalizerTest extends TestCase
         $actor = new Actor('Test Actor Label', new Organisation('Test Org', 'test-org-id'));
         $actorId = $actor->getId();
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'test-watchfile-id');
         $watchFileId = $watchFile->getId();
 

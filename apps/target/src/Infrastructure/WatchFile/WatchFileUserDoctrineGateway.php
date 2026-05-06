@@ -59,7 +59,7 @@ class WatchFileUserDoctrineGateway implements WatchFileUserGatewayInterface
 
         if (!$watchFileUser instanceof WatchFileUser) {
             throw new WatchFileUserNotFoundException(
-                'WatchFileUser not found for watch file: ' . $watchFile->getId() . ' and user: ' . $user->getId()
+                'WatchFileUser not found for watchfile: ' . $watchFile->getId() . ' and user: ' . $user->getId()
             );
         }
 

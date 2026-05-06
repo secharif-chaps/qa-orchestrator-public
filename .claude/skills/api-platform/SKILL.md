@@ -75,13 +75,13 @@ use App\UserInterface\Dto\Chat\UserMessageDto;
     operations: [
         new Get(
             openapi: new Operation(
-                summary: 'Get a watch file by ID',
-                description: 'Retrieves a specific watch file by its unique identifier.',
+                summary: 'Get a watchfile by ID',
+                description: 'Retrieves a specific watchfile by its unique identifier.',
                 parameters: [
                     new Parameter(
                         name: 'id',
                         in: 'path',
-                        description: 'The UUID of the watch file',
+                        description: 'The UUID of the watchfile',
                         required: true,
                         schema: ['type' => 'string', 'format' => 'uuid'],
                     ),
@@ -111,7 +111,7 @@ use App\UserInterface\Dto\Chat\UserMessageDto;
         // Custom sub-resource operation
         new Post(
             uriTemplate: '/watch_files/{id}/status/{status}',
-            openapi: new Operation(summary: 'Change watch file status'),
+            openapi: new Operation(summary: 'Change watchfile status'),
             read: false,
             processor: ChangeWatchFileStatusProcessor::class,
         ),

@@ -34,7 +34,7 @@ class UpdateDocumentSeenActionHandler
 
         $watchFile = $document->getWatchFile();
         if (null === $watchFile) {
-            $this->logger?->error('UpdateDocumentSeenActionHandler: Document has no watch file', [
+            $this->logger?->error('UpdateDocumentSeenActionHandler: Document has no watchfile', [
                 'documentId' => $documentIdString,
             ]);
 

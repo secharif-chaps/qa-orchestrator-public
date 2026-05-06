@@ -32,7 +32,7 @@ class AddFavoriteWatchFileHandler
         try {
             $this->userFavoriteWatchFileGateway->getByUserAndWatchFile($user, $watchFile);
 
-            // If we reach this point, the watch file is already a favorite, so we do nothing.
+            // If we reach this point, the watchfile is already a favorite, so we do nothing.
             $this->logger?->debug(
                 'WatchFile {watchFileId} is already a favorite for user {userId}.',
                 [
@@ -47,7 +47,7 @@ class AddFavoriteWatchFileHandler
 
             $this->userFavoriteWatchFileGateway->save($watchFileFavorite);
             $this->logger?->info(
-                'Added watch file {watchFileId} to favorites for user {userId}.',
+                'Added watchfile {watchFileId} to favorites for user {userId}.',
                 [
                     'watchFileId' => $action->watchFileId,
                     'userId' => $action->userId,
