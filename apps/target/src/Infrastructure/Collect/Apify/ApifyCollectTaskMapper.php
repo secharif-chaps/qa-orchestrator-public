@@ -43,8 +43,9 @@ class ApifyCollectTaskMapper
         $sourceType = $source->getType();
         $apifyActorId = $this->resolveApifyActorId($sourceType);
 
-        $input = $this->buildInput($collectTask, $apifyActorId);
-        $queryParams = $this->buildQueryParams($collectTask);
+        $template = $this->templateProvider->getTemplateForActor($apifyActorId);
+        $input = $this->buildInput($collectTask, $apifyActorId, $template);
+        $queryParams = $this->buildQueryParams($collectTask, $template);
 
         return new ApifyActorRunConfig(apifyActorId: $apifyActorId, input: $input, queryParams: $queryParams);
     }
@@ -86,12 +87,9 @@ class ApifyCollectTaskMapper
      *
      * @return array<string, mixed>
      */
-    private function buildInput(CollectTask $collectTask, string $apifyActorId): array
+    private function buildInput(CollectTask $collectTask, string $apifyActorId, ?ApifyInputTemplate $template): array
     {
         $source = $collectTask->getSource();
-
-        // Try to get template for this actor
-        $template = $this->templateProvider->getTemplateForActor($apifyActorId);
 
         if (null === $template) {
             // Fallback for actors without templates (backward compat)
@@ -149,14 +147,18 @@ class ApifyCollectTaskMapper
     /**
      * Build query parameters including webhook configuration and cost limit.
      *
+     * Per-actor max_total_charge_usd from the template takes precedence over the global default.
+     *
      * @return array<string, string>
      */
-    private function buildQueryParams(CollectTask $collectTask): array
+    private function buildQueryParams(CollectTask $collectTask, ?ApifyInputTemplate $template = null): array
     {
         $params = [];
 
-        if ('' !== $this->maxTotalChargeUsd) {
-            $params['maxTotalChargeUsd'] = $this->maxTotalChargeUsd;
+        $perActorCharge = null !== $template ? $template->maxTotalChargeUsd : null;
+        $effectiveMaxCharge = $perActorCharge ?? $this->maxTotalChargeUsd;
+        if ('' !== $effectiveMaxCharge) {
+            $params['maxTotalChargeUsd'] = $effectiveMaxCharge;
         }
 
         if ('' !== $this->webhookBaseUrl) {

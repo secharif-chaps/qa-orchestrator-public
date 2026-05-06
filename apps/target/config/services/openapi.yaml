@@ -29,3 +29,9 @@ services:
     decoration_priority: 20
     arguments:
       $decorated: '@.inner'
+
+  App\Infrastructure\OpenApi\ApifyWebhookOpenApiFactory:
+    decorates: 'api_platform.openapi.factory'
+    decoration_priority: 25
+    arguments:
+      $decorated: '@.inner'
