@@ -11,10 +11,9 @@ import json
 
 from fastapi import APIRouter, Request
 
-router = APIRouter(tags=["health"])
+from app import __version__
 
-# TODO: read from pyproject.toml when migrating to uv
-APP_VERSION = "0.1.0"
+router = APIRouter(tags=["health"])
 
 # Cache: store the last computed hash to avoid re-serializing the schema
 # on every call. We compare both id() (fast path) and the hash itself
@@ -69,5 +68,5 @@ def health_ready(request: Request):
     return {
         "status": "ready",
         "openapi_hash": _get_openapi_hash(request.app),
-        "version": APP_VERSION,
+        "version": __version__,
     }

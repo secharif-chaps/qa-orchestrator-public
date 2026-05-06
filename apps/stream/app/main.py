@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI
 
+from app import __version__
 from app.api.endpoints.health import router as health_router
 from app.api.endpoints.internal import router as internal_router
 from app.api.router import api_router
@@ -80,7 +81,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Stream Service API",
     description="Multi-channel event distribution service",
-    version="0.1.0",
+    version=__version__,
     lifespan=lifespan,
 )
 

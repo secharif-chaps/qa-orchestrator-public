@@ -7,6 +7,7 @@ import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app import __version__
 from app.api.endpoints.health import router as health_router
 from app.api.router import api_router
 from app.core.config import settings
@@ -178,7 +179,7 @@ app = FastAPI(
         "- Multi-language translation of company content\n"
         "- Organization-based multi-tenancy via Keycloak\n"
     ),
-    version="1.0.0",
+    version=__version__,
     lifespan=lifespan,
     openapi_tags=openapi_tags,
 )
