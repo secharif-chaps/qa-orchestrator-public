@@ -61,7 +61,7 @@
 <route lang="yaml">
 meta:
   permissions:
-    - company.view
+    - organization.read
 </route>
 
 <script lang="ts" setup>
