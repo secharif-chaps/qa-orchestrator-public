@@ -14,7 +14,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create watch files with different statuses
+        // Create watchfiles with different statuses
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -62,7 +62,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create watch files with different statuses
+        // Create watchfiles with different statuses
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -98,7 +98,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create watch files with different statuses
+        // Create watchfiles with different statuses
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -146,7 +146,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create watch files with different statuses
+        // Create watchfiles with different statuses
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -240,7 +240,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create regular watch file
+        // Create regular watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -250,7 +250,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
             ])
             ->create();
 
-        // Create favorite watch file
+        // Create favorite watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -280,7 +280,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create regular watch file
+        // Create regular watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -290,7 +290,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
             ])
             ->create();
 
-        // Create favorite watch file
+        // Create favorite watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -319,7 +319,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create regular watch file
+        // Create regular watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -329,7 +329,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
             ])
             ->create();
 
-        // Create favorite watch file
+        // Create favorite watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -359,7 +359,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create regular watch file
+        // Create regular watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -369,7 +369,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
             ])
             ->create();
 
-        // Create favorite watch file
+        // Create favorite watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -423,7 +423,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create regular watch file
+        // Create regular watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -433,7 +433,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
             ])
             ->create();
 
-        // Create favorite watch file
+        // Create favorite watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -457,7 +457,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create regular watch file
+        // Create regular watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -466,7 +466,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
             ])
             ->create();
 
-        // Create favorite watch file
+        // Create favorite watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -486,7 +486,7 @@ class WatchFileFilterApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create only regular watch files (no favorites)
+        // Create only regular watchfiles (no favorites)
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)

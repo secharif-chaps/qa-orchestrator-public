@@ -1,14 +1,14 @@
-# Watch File Type Classification Workflow 🤖
+# Watchfile Type Classification Workflow 🤖
 
 ## Overview
 
-The Watch File Type Classification Workflow is an AI-powered system that automatically determines the monitoring type of watch files using advanced natural language processing. This workflow integrates N8N automation with OpenAI's language models to analyze user objectives and classify them into appropriate monitoring categories.
+The Watchfile Type Classification Workflow is an AI-powered system that automatically determines the monitoring type of watchfiles using advanced natural language processing. This workflow integrates N8N automation with OpenAI's language models to analyze user objectives and classify them into appropriate monitoring categories.
 
 ## 🎯 Objectives
 
-- **Automatic Classification**: Intelligently classify watch files into monitoring types (Competitive, Technological, Legal, Commercial, Strategic)
+- **Automatic Classification**: Intelligently classify watchfiles into monitoring types (Competitive, Technological, Legal, Commercial, Strategic)
 - **High Accuracy**: Leverage AI models to achieve reliable classification with confidence scoring
-- **Seamless Integration**: Integrate classification results into the existing watch file workflow
+- **Seamless Integration**: Integrate classification results into the existing watchfile workflow
 - **Activity Logging**: Track all classification activities for audit and improvement purposes
 
 ## 🏗️ Architecture
@@ -16,7 +16,7 @@ The Watch File Type Classification Workflow is an AI-powered system that automat
 ```mermaid
 graph TB
     subgraph "🔄 Classification Workflow"
-        A1[User Creates Watch File]
+        A1[User Creates Watchfile]
         A2[Trigger Classification Command]
         A3[N8N Workflow Processing]
         A4[AI Analysis & Classification]
@@ -37,7 +37,7 @@ graph TB
     end
 
     subgraph "📊 Data Flow"
-        C1[Watch File Data]
+        C1[Watchfile Data]
         C2[Classification Request]
         C3[AI Response]
         C4[Structured Result]
@@ -139,7 +139,7 @@ ORDER BY created_at DESC LIMIT 10;"
 
 **Initial Classification:**
 
-- Use when a watch file is first created
+- Use when a watchfile is first created
 - Analyzes the original user objective and context
 - Provides baseline monitoring type assignment
 
@@ -180,7 +180,7 @@ docker compose exec api php bin/console doctrine:migrations:status
 
 ## 🔍 Monitoring Types
 
-The system classifies watch files into the following monitoring types:
+The system classifies watchfiles into the following monitoring types:
 
 ### Primary Types
 
@@ -218,7 +218,7 @@ The workflow integrates with the existing message bus system to process classifi
 
 The workflow integrates with the existing event system to:
 
-- Trigger classification when watch files are created
+- Trigger classification when watchfiles are created
 - Update related entities when monitoring type is determined
 - Send notifications for high-confidence classifications
 

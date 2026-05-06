@@ -14,12 +14,12 @@ use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
 use Symfony\Component\Mime\Email;
 
 /**
- * Integration tests for watch file share email notifications.
+ * Integration tests for watchfile share email notifications.
  *
  * These tests verify that emails are correctly sent when:
- * - A user is added to a watch file (share added)
- * - A user's role is updated on a watch file (share updated)
- * - A user is removed from a watch file (share removed)
+ * - A user is added to a watchfile (share added)
+ * - A user's role is updated on a watchfile (share updated)
+ * - A user is removed from a watchfile (share removed)
  */
 class ShareWatchFileNotificationTest extends AbstractApiTestCase
 {
@@ -36,7 +36,7 @@ class ShareWatchFileNotificationTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Test Watch File for Email',
+                'name' => 'Test Watchfile for Email',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -65,7 +65,7 @@ class ShareWatchFileNotificationTest extends AbstractApiTestCase
         // Verify recipient
         $this->assertEmailAddressContains($email, 'to', 'shared-user@example.com');
 
-        // Verify email contains the watch file URL
+        // Verify email contains the watchfile URL
         $emailContent = $email->getHtmlBody() ?? $email->getTextBody() ?? '';
         $this->assertStringContainsString('/watch_files/' . $watchFile->getId(), (string) $emailContent);
     }
@@ -81,7 +81,7 @@ class ShareWatchFileNotificationTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Test Watch File for Update',
+                'name' => 'Test Watchfile for Update',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -119,7 +119,7 @@ class ShareWatchFileNotificationTest extends AbstractApiTestCase
 
         $this->assertEmailAddressContains($email, 'to', 'updated-user@example.com');
 
-        // Verify email contains the watch file URL
+        // Verify email contains the watchfile URL
         $emailContent = $email->getHtmlBody() ?? $email->getTextBody() ?? '';
         $this->assertStringContainsString('/watch_files/' . $watchFile->getId(), (string) $emailContent);
     }
@@ -135,7 +135,7 @@ class ShareWatchFileNotificationTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Test Watch File for Removal',
+                'name' => 'Test Watchfile for Removal',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -179,7 +179,7 @@ class ShareWatchFileNotificationTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Test Watch File Owner',
+                'name' => 'Test Watchfile Owner',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -215,7 +215,7 @@ class ShareWatchFileNotificationTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'URL Test Watch File',
+                'name' => 'URL Test Watchfile',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();

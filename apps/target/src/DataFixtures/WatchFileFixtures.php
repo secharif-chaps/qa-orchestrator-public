@@ -129,11 +129,11 @@ class WatchFileFixtures extends Fixture implements DependentFixtureInterface
 
         $watchFiles = [$case1, $case2, $case3, $case4, $case5];
 
-        // Add WatchFileActor relations (only for the first 4 watch files, not Pharmacy & Cosmetics)
+        // Add WatchFileActor relations (only for the first 4 watchfiles, not Pharmacy & Cosmetics)
         for ($i = 0; $i < 15; ++$i) {
             /** @var Actor $actor */
             $actor = $this->getReference(ActorFixtures::ACTOR_REFERENCE . $i, Actor::class);
-            $watchFile = $watchFiles[$i % 4]; // Only use first 4 watch files (indices 0-3)
+            $watchFile = $watchFiles[$i % 4]; // Only use first 4 watchfiles (indices 0-3)
             $watchFileActor = new WatchFileActor($actor, $watchFile);
 
             // Randomly select a type
@@ -182,7 +182,7 @@ class WatchFileFixtures extends Fixture implements DependentFixtureInterface
             $manager->persist($watchFileActor);
         }
 
-        // Add specific actors for Pharmacy & Cosmetics watch file
+        // Add specific actors for Pharmacy & Cosmetics watchfile
         $pharmacyActors = [
             [
                 'actor_index' => 15,

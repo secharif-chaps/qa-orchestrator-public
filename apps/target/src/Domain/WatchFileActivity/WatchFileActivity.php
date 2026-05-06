@@ -32,13 +32,13 @@ use Symfony\Component\Uid\Uuid;
                 ],
             ],
             openapi: new Model\Operation(
-                summary: 'Retrieves the activities of a watch file',
-                description: 'Returns a chronological list of activities (file additions, deletions, modifications, permission changes) that occurred within the specified watch file. Requires the user to have at least read permissions on the watch file.',
+                summary: 'Retrieves the activities of a watchfile',
+                description: 'Returns a chronological list of activities (file additions, deletions, modifications, permission changes) that occurred within the specified watchfile. Requires the user to have at least read permissions on the watchfile.',
                 parameters: [
                     new Model\Parameter(
                         name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier (UUID) of the watch file to retrieve activities for',
+                        description: 'The unique identifier (UUID) of the watchfile to retrieve activities for',
                         required: true,
                         schema: [
                             'type' => 'string',
@@ -63,7 +63,7 @@ use Symfony\Component\Uid\Uuid;
             ],
             openapi: new Model\Operation(
                 summary: 'Retrieves the activities of a user',
-                description: 'Gets all watch file-impacting actions performed by the authenticated user: watch file creation, deletion, moves, sharing changes, and permission modifications.',
+                description: 'Gets all watchfile-impacting actions performed by the authenticated user: watchfile creation, deletion, moves, sharing changes, and permission modifications.',
                 parameters: [
                     new Model\Parameter(
                         name: 'userId',

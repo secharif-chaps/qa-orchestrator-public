@@ -349,7 +349,7 @@ const {
 
 watch(error, () => {
   if (error.value) {
-    console.error('Error fetching watch files:', error)
+    console.error('Error fetching watchfiles:', error)
     toast.error(t('target.watchFiles.toast.error.load'))
   }
 })

@@ -34,13 +34,13 @@ use App\UserInterface\Dto\Chat\UserMessageDto;
         // GET single item
         new Get(
             openapi: new Operation(
-                summary: 'Get a watch file by ID',
-                description: 'Retrieves a specific watch file by its unique identifier.',
+                summary: 'Get a watchfile by ID',
+                description: 'Retrieves a specific watchfile by its unique identifier.',
                 parameters: [
                     new Parameter(
                         name: 'id',
                         in: 'path',
-                        description: 'The UUID of the watch file',
+                        description: 'The UUID of the watchfile',
                         required: true,
                         schema: ['type' => 'string', 'format' => 'uuid'],
                         example: '550e8400-e29b-41d4-a716-446655440000',
@@ -54,8 +54,8 @@ use App\UserInterface\Dto\Chat\UserMessageDto;
         // GET collection with pagination and filters
         new GetCollection(
             openapi: new Operation(
-                summary: 'Get collection of watch files',
-                description: 'Retrieves a paginated list of watch files accessible to the authenticated user.',
+                summary: 'Get collection of watchfiles',
+                description: 'Retrieves a paginated list of watchfiles accessible to the authenticated user.',
             ),
             paginationEnabled: true,
             filters: [
@@ -70,8 +70,8 @@ use App\UserInterface\Dto\Chat\UserMessageDto;
         // POST with input DTO
         new Post(
             openapi: new Operation(
-                summary: 'Create a new watch file with conversation',
-                description: 'Creates a new watch file and starts a conversation.',
+                summary: 'Create a new watchfile with conversation',
+                description: 'Creates a new watchfile and starts a conversation.',
             ),
             denormalizationContext: ['groups' => ['message:write']],
             input: UserMessageDto::class,
@@ -80,7 +80,7 @@ use App\UserInterface\Dto\Chat\UserMessageDto;
 
         // PATCH for updates
         new Patch(
-            openapi: new Operation(summary: 'Update a watch file'),
+            openapi: new Operation(summary: 'Update a watchfile'),
             processor: UpdateWatchFileProcessor::class,
         ),
 
@@ -88,8 +88,8 @@ use App\UserInterface\Dto\Chat\UserMessageDto;
         new Post(
             uriTemplate: '/watch_files/{id}/status/{status}',
             openapi: new Operation(
-                summary: 'Change watch file status',
-                description: 'Updates the status of a watch file.',
+                summary: 'Change watchfile status',
+                description: 'Updates the status of a watchfile.',
                 parameters: [
                     new Parameter(name: 'id', in: 'path', required: true),
                     new Parameter(name: 'status', in: 'path', required: true),

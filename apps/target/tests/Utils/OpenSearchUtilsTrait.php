@@ -91,7 +91,7 @@ trait OpenSearchUtilsTrait
     }
 
     /**
-     * Create test documents for a watch file with specific status distribution.
+     * Create test documents for a watchfile with specific status distribution.
      *
      * @return array{watchFile: WatchFile, actor1: Actor, actor2: Actor, source1: Source, source2: Source}
      */

@@ -152,7 +152,7 @@ class AddSourceHandlerTest extends AbstractApiTestCase
             ->withOwnedBy($user)
             ->create();
 
-        // Link actor to watch file first (required for source-actor linking)
+        // Link actor to watchfile first (required for source-actor linking)
         WatchFileActorFactory::createOne([
             'watchFile' => $watchFile,
             'actor' => $actor,
@@ -388,7 +388,7 @@ class AddSourceHandlerTest extends AbstractApiTestCase
             ->withOwnedBy($user)
             ->create();
 
-        // Actor is NOT linked to watch file
+        // Actor is NOT linked to watchfile
 
         $watchFileId = $watchFile->getId();
         $actorId = $actor->getId();
@@ -572,7 +572,7 @@ class AddSourceHandlerTest extends AbstractApiTestCase
             ->withOwnedBy($user)
             ->create();
 
-        // Link actor to watch file
+        // Link actor to watchfile
         WatchFileActorFactory::createOne([
             'watchFile' => $watchFile,
             'actor' => $actor,
@@ -935,7 +935,7 @@ class AddSourceHandlerTest extends AbstractApiTestCase
 
         $watchFileId = $watchFile->getId();
 
-        // No actors in watch file - should create source without linking
+        // No actors in watchfile - should create source without linking
         $action = new AddSourceAction(
             watchFileId: $watchFileId,
             name: 'Acme News',

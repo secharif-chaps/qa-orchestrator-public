@@ -407,7 +407,7 @@ class SourceDoctrineGateway implements SourceGatewayInterface
     }
 
     /**
-     * Find orphaned sources (sources without actor) for a watch file that match a given domain.
+     * Find orphaned sources (sources without actor) for a watchfile that match a given domain.
      */
     public function findOrphanedSourcesByDomain(WatchFile|string $watchFile, string $domain): array
     {

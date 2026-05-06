@@ -47,7 +47,7 @@ readonly class WatchFileEventCollectionProvider implements ProviderInterface
         $watchFile = $this->watchFileGateway->get($watchFileId);
 
         if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
-            throw new AccessDeniedException('You do not have permission to view events for this watch file.');
+            throw new AccessDeniedException('You do not have permission to view events for this watchfile.');
         }
 
         if (!isset($context['filters'])) {

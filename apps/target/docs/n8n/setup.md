@@ -228,7 +228,7 @@ The API sends commands to n8n via the `agent_commands` RabbitMQ queue:
     - `name`: The action name (e.g., "ExtractActorsFromWatchFile")
     - `data`: Action-specific data payload
     - `responseType`: Expected response type class
-    - `watchFileId`: Associated watch file identifier
+    - `watchFileId`: Associated watchfile identifier
     - `userId`: User identifier (optional)
     - `triggeredAt`: Timestamp
 
@@ -247,7 +247,7 @@ n8n sends responses back to the API via the `agent_responses` RabbitMQ queue:
 
 1. **Response Structure**: Responses include:
     - `data`: The processed result data
-    - `watchFileId`: Original watch file identifier
+    - `watchFileId`: Original watchfile identifier
     - Headers: Message type and Symfony Messenger stamps for proper routing
 
 2. **Message Headers**: Responses include specific headers:
@@ -532,7 +532,7 @@ The Workflow Router uses a switch mechanism to route commands:
 // Main tools in the prompt
 - AddSource: Add new sources
 - AddActor: Add actors
-- RenameWatchFile: Rename watch files
+- RenameWatchFile: Rename watchfiles
 - UpdateReferenceSubject: Update reference subject
 // ... other tools as needed
 ```
@@ -607,7 +607,7 @@ docker compose exec rabbitmq rabbitmqctl purge_queue agent_responses
 
 #### Scenario: Adding an Actor via Chat
 
-1. **User**: "Add EDF as an actor in this watch file"
+1. **User**: "Add EDF as an actor in this watchfile"
 2. **Backend**: Creates a `ChatSessionMessageAgent`
 3. **RabbitMQ**: Transmits message to n8n
 4. **Orchestrator**: Routes to ChatSessionMessage workflow

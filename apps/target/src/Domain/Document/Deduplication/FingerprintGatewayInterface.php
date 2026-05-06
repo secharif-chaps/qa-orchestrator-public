@@ -22,7 +22,7 @@ interface FingerprintGatewayInterface
     /**
      * Stage 1 — exact content match via SHA256 of the normalised text.
      * Returns the first matching document (any) or null. Scoping by
-     * watch file is the caller's responsibility.
+     * watchfile is the caller's responsibility.
      */
     public function findByContentHash(string $contentHash, ?string $excludeDocumentId = null): ?Document;
 

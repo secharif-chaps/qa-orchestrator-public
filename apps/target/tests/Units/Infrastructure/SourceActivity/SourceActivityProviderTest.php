@@ -129,7 +129,7 @@ class SourceActivityProviderTest extends TestCase
         );
 
         $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage('You do not have access to this watch file.');
+        $this->expectExceptionMessage('You do not have access to this watchfile.');
 
         $provider->provide($this->createStub(Operation::class), [
             'sourceId' => $source->getId(),

@@ -37,7 +37,7 @@ readonly class DocumentProvider implements ProviderInterface
             return null;
         }
 
-        // Check if user has permission to view the watch file that this document belongs to
+        // Check if user has permission to view the watchfile that this document belongs to
         if (null === $result->getWatchFile() || !$this->security->isGranted(
             WatchFileVoter::VIEW,
             $result->getWatchFile()

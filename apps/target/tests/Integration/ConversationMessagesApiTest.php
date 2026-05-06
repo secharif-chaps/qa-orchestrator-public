@@ -468,7 +468,7 @@ class ConversationMessagesApiTest extends AbstractApiTestCase
      * @param int         $messageCount  Number of messages to create
      * @param MessageRole $role          Role for all messages (default: User)
      * @param string      $messagePrefix Prefix for message content (default: 'Test message')
-     * @param User        $owner         User who owns the watch file
+     * @param User        $owner         User who owns the watchfile
      */
     private function createConversationWithMessages(
         int $messageCount,
@@ -476,7 +476,7 @@ class ConversationMessagesApiTest extends AbstractApiTestCase
         MessageRole $role = MessageRole::User,
         string $messagePrefix = 'Test message',
     ): Conversation {
-        // Create a watch file with the specified owner
+        // Create a watchfile with the specified owner
         $watchFile = WatchFileFactory::new()
             ->withOwnedBy($owner)
             ->create();

@@ -28,9 +28,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(
             uriTemplate: '/watch_files/{watchFileId}/actors/{actorId}/sources',
             openapi: new Operation(
-                summary: 'Get sources for a specific actor in a watch file',
+                summary: 'Get sources for a specific actor in a watchfile',
                 description: <<<'EOT'
-                    Retrieve all sources associated with a specific actor within a watch file. This endpoint returns all sources that are linked to the actor in the specified watch file.
+                    Retrieve all sources associated with a specific actor within a watchfile. This endpoint returns all sources that are linked to the actor in the specified watchfile.
 
                     Available ordering:
                     - name: Order by source name

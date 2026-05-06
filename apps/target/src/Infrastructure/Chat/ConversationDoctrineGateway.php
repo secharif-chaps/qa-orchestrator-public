@@ -54,7 +54,7 @@ class ConversationDoctrineGateway implements ConversationGatewayInterface
 
         if (null === $conversation) {
             throw new ConversationNotFoundException(\sprintf(
-                'Conversation not found for watch file ID %d',
+                'Conversation not found for watchfile ID %d',
                 $watchFileId
             ));
         }

@@ -61,7 +61,7 @@ class TriggerEventExtractionHandlerTest extends TestCase
         $documentContent = 'Test document content';
         $referenceSubject = new TranslatedText('Test subject', 'Test subject');
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
         $watchFile->setReferenceSubject($referenceSubject);
 
@@ -198,7 +198,7 @@ class TriggerEventExtractionHandlerTest extends TestCase
         $watchFileId = 'wf-456';
         $documentContent = 'Test document content';
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
 
         // Document has no AI validation, but check is disabled
@@ -281,7 +281,7 @@ class TriggerEventExtractionHandlerTest extends TestCase
             ->with($documentId)
             ->willReturn($document);
 
-        // Message bus should never be called because document has no watch file
+        // Message bus should never be called because document has no watchfile
         $messageBusMock->expects($this->never())
             ->method('dispatch');
 
@@ -321,7 +321,7 @@ class TriggerEventExtractionHandlerTest extends TestCase
         $watchFileId = 'wf-456';
         $documentContent = 'Test document content';
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
 
         $aiValidation = new AIValidation(
@@ -374,7 +374,7 @@ class TriggerEventExtractionHandlerTest extends TestCase
         $watchFileId = 'wf-456';
         $documentContent = 'Test document content';
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
 
         $aiValidation = new AIValidation(
@@ -440,7 +440,7 @@ class TriggerEventExtractionHandlerTest extends TestCase
         $watchFileId = 'wf-456';
         $documentContent = 'Test document content';
 
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
 
         // Document has NO AI validation

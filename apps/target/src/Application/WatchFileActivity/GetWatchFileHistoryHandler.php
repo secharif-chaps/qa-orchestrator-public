@@ -56,7 +56,7 @@ readonly class GetWatchFileHistoryHandler
     private function validateAccess(WatchFile $watchFile): void
     {
         if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
-            throw new AccessDeniedHttpException('You do not have access to this watch file.');
+            throw new AccessDeniedHttpException('You do not have access to this watchfile.');
         }
     }
 }

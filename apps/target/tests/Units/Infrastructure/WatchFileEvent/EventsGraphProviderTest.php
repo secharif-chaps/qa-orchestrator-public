@@ -94,7 +94,7 @@ final class EventsGraphProviderTest extends TestCase
             ->willReturn(false);
 
         $this->expectException(AccessDeniedException::class);
-        $this->expectExceptionMessage('You do not have permission to view events for this watch file');
+        $this->expectExceptionMessage('You do not have permission to view events for this watchfile');
 
         $this->provider->provide($this->operation, [
             'watchFileId' => $watchFileId,
@@ -630,7 +630,7 @@ final class EventsGraphProviderTest extends TestCase
 
     private function createWatchFile(string $watchFileId): WatchFile
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
 
         // Use reflection to set the ID
         $reflection = new \ReflectionClass($watchFile);

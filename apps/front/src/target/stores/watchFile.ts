@@ -15,7 +15,7 @@ export const useWatchFileStore = defineStore('watchFile', () => {
   const hideArchived = ref<boolean>(true)
   const isUserEditable = ref<boolean>(false)
 
-  // Current watch file ID - used for silent navigation after creation
+  // Current watchfile ID - used for silent navigation after creation
   const currentWatchFileId = ref<string | null>(null)
 
   const filters = computed(

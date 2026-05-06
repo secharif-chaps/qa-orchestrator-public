@@ -93,7 +93,7 @@ class WatchFileUserProviderTest extends TestCase
         $operation = $this->createStub(Operation::class);
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The watch file ID "not-a-uuid" is not a valid UUID.');
+        $this->expectExceptionMessage('The watchfile ID "not-a-uuid" is not a valid UUID.');
 
         $this->provider->provide($operation, [
             'watchFileId' => 'not-a-uuid',
@@ -168,7 +168,7 @@ class WatchFileUserProviderTest extends TestCase
         $operation = $this->createStub(Operation::class);
 
         $this->expectException(AccessDeniedException::class);
-        $this->expectExceptionMessage('The user must be granted access to the watch file.');
+        $this->expectExceptionMessage('The user must be granted access to the watchfile.');
 
         $this->provider->provide($operation, [
             'watchFileId' => $watchFileId,

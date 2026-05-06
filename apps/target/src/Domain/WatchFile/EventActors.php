@@ -27,7 +27,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                     new Parameter(
                         name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier (UUID) of the watch file',
+                        description: 'The unique identifier (UUID) of the watchfile',
                         required: true,
                         schema: [
                             'type' => 'string',

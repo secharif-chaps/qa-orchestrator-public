@@ -37,7 +37,7 @@ readonly class MessageCollectionProvider implements ProviderInterface
 
         $conversation = $this->conversationGateway->get($uriVariables['id']);
 
-        // Check if the user has WATCH_FILE_EDIT permission on the conversation's watch file
+        // Check if the user has WATCH_FILE_EDIT permission on the conversation's watchfile
         if (!$this->security->isGranted(WatchFileVoter::EDIT, $conversation)) {
             throw new AccessDeniedHttpException('You do not have permission to view messages for this conversation.');
         }

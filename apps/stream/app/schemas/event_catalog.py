@@ -35,14 +35,14 @@ EVENT_CATALOG: tuple[EventCatalogEntry, ...] = (
     EventCatalogEntry(
         event_type="target.watchfile.created",
         source="target",
-        description="A new watch file has been created",
+        description="A new watchfile has been created",
         label="Dossier de veille cr\u00e9\u00e9",
         available=False,
     ),
     EventCatalogEntry(
         event_type="target.watchfile.updated",
         source="target",
-        description="A watch file has been updated",
+        description="A watchfile has been updated",
         label="Dossier de veille actualis\u00e9",
         available=False,
     ),

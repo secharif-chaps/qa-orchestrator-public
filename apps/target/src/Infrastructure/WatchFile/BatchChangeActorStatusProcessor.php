@@ -61,10 +61,10 @@ class BatchChangeActorStatusProcessor implements ProcessorInterface
             throw new BadRequestHttpException('WatchFile ID must be a valid UUID');
         }
 
-        // Check access to the watch file
+        // Check access to the watchfile
         $watchFile = $this->watchFileGateway->get($watchFileId);
         if (!$this->security->isGranted(WatchFileVoter::EDIT, $watchFile)) {
-            throw new AccessDeniedHttpException('You do not have access to modify this watch file.');
+            throw new AccessDeniedHttpException('You do not have access to modify this watchfile.');
         }
 
         $actors = array_map(function ($actor) use ($watchFileId) {

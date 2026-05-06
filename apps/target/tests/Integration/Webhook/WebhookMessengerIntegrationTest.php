@@ -595,7 +595,7 @@ class WebhookMessengerIntegrationTest extends AbstractApiTestCase
             ->withOwnedBy($user)
             ->create();
 
-        // Link actor to watch file
+        // Link actor to watchfile
         WatchFileActorFactory::createOne([
             'watchFile' => $watchFile,
             'actor' => $actor,
@@ -1109,7 +1109,7 @@ class WebhookMessengerIntegrationTest extends AbstractApiTestCase
             ->queue()
             ->assertCount(1);
 
-        // Processing should fail (watch file not found)
+        // Processing should fail (watchfile not found)
         $this->expectException(\Exception::class);
         $this->transport('async_priority_high')
             ->throwExceptions()

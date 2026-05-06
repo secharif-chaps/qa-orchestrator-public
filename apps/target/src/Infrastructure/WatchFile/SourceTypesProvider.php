@@ -47,10 +47,10 @@ class SourceTypesProvider implements ProviderInterface
             throw new BadRequestHttpException('WatchFile ID must be a valid UUID');
         }
 
-        // Check access to the watch file
+        // Check access to the watchfile
         $watchFile = $this->watchFileGateway->get($watchFileId);
         if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
-            throw new AccessDeniedHttpException('You do not have access to this watch file.');
+            throw new AccessDeniedHttpException('You do not have access to this watchfile.');
         }
 
         /** @var array<string, mixed> $filters */

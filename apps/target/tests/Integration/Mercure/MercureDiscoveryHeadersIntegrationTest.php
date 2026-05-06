@@ -141,7 +141,7 @@ class MercureDiscoveryHeadersIntegrationTest extends AbstractApiTestCase
         $linkHeaders = $response->getHeaders()['link'] ?? [];
         $this->assertGreaterThanOrEqual(2, \count($linkHeaders), 'Should have at least 2 Link headers (hub + topic)');
 
-        // Check topic link uses the conversation ID from the response body (not the watch file ID)
+        // Check topic link uses the conversation ID from the response body (not the watchfile ID)
         $topicLinks = array_filter($linkHeaders, fn ($h) => str_contains($h, 'rel="topic"'));
         $this->assertCount(1, $topicLinks, 'Should have exactly one topic link');
         $topicLink = reset($topicLinks);

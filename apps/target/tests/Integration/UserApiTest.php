@@ -194,7 +194,7 @@ class UserApiTest extends AbstractApiTestCase
             ])
             ->create();
 
-        // Create a watch file with shared users
+        // Create a watchfile with shared users
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($watchFileOwner)
             ->create();
@@ -233,8 +233,8 @@ class UserApiTest extends AbstractApiTestCase
             ])
             ->create();
 
-        // Add shared users to watch file (this would normally be done through WatchFileUser entities)
-        // For this test, we'll use the watch file parameter to exclude users
+        // Add shared users to watchfile (this would normally be done through WatchFileUser entities)
+        // For this test, we'll use the watchfile parameter to exclude users
 
         $client = $this->createAuthenticatedClient($watchFileOwner);
         $response = $client->request(
@@ -245,7 +245,7 @@ class UserApiTest extends AbstractApiTestCase
         $this->assertResponseIsSuccessful();
         $data = $response->toArray();
 
-        // All users should be present since we haven't actually shared the watch file yet
+        // All users should be present since we haven't actually shared the watchfile yet
         // This tests the filter is working, even if no exclusions are made
         $this->assertCount(1, $data['member']);
         $this->assertEquals('notshared@example.com', $data['member'][0]['email']);

@@ -26,7 +26,7 @@ class WatchFileEventFactory
     }
 
     /**
-     * @param WatchFile|string                                   $watchFile WatchFile object or watch file ID
+     * @param WatchFile|string                                   $watchFile WatchFile object or watchfile ID
      * @param array<int, Actor|array{id: string, name?: string}> $actors
      *
      * @return array{
@@ -60,7 +60,7 @@ class WatchFileEventFactory
             ExtractionStatus::FAILED, // 10% failed
         ];
 
-        // Extract watch file ID and name
+        // Extract watchfile ID and name
         if ($watchFile instanceof WatchFile) {
             $watchFileId = $watchFile->getId();
             $watchFileName = $watchFile->getName();

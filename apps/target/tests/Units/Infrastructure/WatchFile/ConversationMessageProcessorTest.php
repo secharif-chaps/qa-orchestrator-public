@@ -56,7 +56,7 @@ class ConversationMessageProcessorTest extends TestCase
         $this->security = $securityMock;
         $this->buildProcessor();
         // Arrange
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
 
         $conversation = new Conversation($watchFile);
@@ -127,7 +127,7 @@ class ConversationMessageProcessorTest extends TestCase
         $this->security = $securityMock;
         $this->buildProcessor();
         // Arrange
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
 
         $conversation = new Conversation($watchFile);
@@ -161,7 +161,7 @@ class ConversationMessageProcessorTest extends TestCase
         $this->security = $securityMock;
         $this->buildProcessor();
         // Arrange
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
 
         $conversation = new Conversation($watchFile);
@@ -202,7 +202,7 @@ class ConversationMessageProcessorTest extends TestCase
         $this->security = $securityMock;
         $this->buildProcessor();
         // Arrange
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
 
         $conversation = new Conversation($watchFile);
@@ -244,7 +244,7 @@ class ConversationMessageProcessorTest extends TestCase
         $this->security = $securityMock;
         $this->buildProcessor();
         // Arrange
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
 
         $conversation = new Conversation($watchFile);

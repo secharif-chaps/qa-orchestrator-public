@@ -143,7 +143,7 @@ class WatchFileApiTest extends AbstractApiTestCase
 
         $this->assertResponseStatusCodeSame(204);
 
-        // Verify the watch file is still not favorited
+        // Verify the watchfile is still not favorited
         $this->assertFalse($this->isWatchFileFavoritedByUser($watchFile, $user));
     }
 
@@ -230,7 +230,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Private Watch File',
+                'name' => 'Private Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -242,7 +242,7 @@ class WatchFileApiTest extends AbstractApiTestCase
     }
 
     /**
-     * Test that GET /api/watch_files/{id} returns 404 for non-existent watch file.
+     * Test that GET /api/watch_files/{id} returns 404 for non-existent watchfile.
      */
     public function testGetWatchFileNotFound(): void
     {
@@ -268,7 +268,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Private Watch File',
+                'name' => 'Private Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -287,7 +287,7 @@ class WatchFileApiTest extends AbstractApiTestCase
     }
 
     /**
-     * Test that viewers cannot PATCH a watch file (only editors and owners can).
+     * Test that viewers cannot PATCH a watchfile (only editors and owners can).
      */
     public function testPatchWatchFileViewerForbidden(): void
     {
@@ -299,7 +299,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withOwnedBy($owner)
             ->withUser($viewer, WatchFileUserRole::VIEWER)
             ->with([
-                'name' => 'Shared Watch File',
+                'name' => 'Shared Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -318,7 +318,7 @@ class WatchFileApiTest extends AbstractApiTestCase
     }
 
     /**
-     * Test that editors can PATCH a watch file.
+     * Test that editors can PATCH a watchfile.
      */
     public function testPatchWatchFileEditorAllowed(): void
     {
@@ -351,7 +351,7 @@ class WatchFileApiTest extends AbstractApiTestCase
     }
 
     /**
-     * Test that viewers can view a watch file (WATCH_FILE_VIEW permission).
+     * Test that viewers can view a watchfile (WATCH_FILE_VIEW permission).
      */
     public function testGetWatchFileViewerAllowed(): void
     {
@@ -363,7 +363,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withOwnedBy($owner)
             ->withUser($viewer, WatchFileUserRole::VIEWER)
             ->with([
-                'name' => 'Shared Watch File',
+                'name' => 'Shared Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -373,7 +373,7 @@ class WatchFileApiTest extends AbstractApiTestCase
 
         $this->assertResponseIsSuccessful();
         $data = $response->toArray();
-        $this->assertEquals('Shared Watch File', $data['name']);
+        $this->assertEquals('Shared Watchfile', $data['name']);
     }
 
     private function isWatchFileFavoritedByUser(WatchFile $watchFile, User $user): bool
@@ -406,13 +406,13 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withOwnedBy($user)
             ->sequence([
                 [
-                    'name' => 'Alpha Watch File',
+                    'name' => 'Alpha Watchfile',
                 ],
                 [
-                    'name' => 'Beta Watch File',
+                    'name' => 'Beta Watchfile',
                 ],
                 [
-                    'name' => 'Charlie Watch File',
+                    'name' => 'Charlie Watchfile',
                 ],
             ])
             ->create()
@@ -429,9 +429,9 @@ class WatchFileApiTest extends AbstractApiTestCase
         $this->assertCount(3, $watchFiles);
 
         // Verify ascending order by name
-        $this->assertSame('Alpha Watch File', $watchFiles[0]['name']);
-        $this->assertSame('Beta Watch File', $watchFiles[1]['name']);
-        $this->assertSame('Charlie Watch File', $watchFiles[2]['name']);
+        $this->assertSame('Alpha Watchfile', $watchFiles[0]['name']);
+        $this->assertSame('Beta Watchfile', $watchFiles[1]['name']);
+        $this->assertSame('Charlie Watchfile', $watchFiles[2]['name']);
     }
 
     public function testGetCollectionSortByNameDesc(): void
@@ -443,13 +443,13 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withOwnedBy($user)
             ->sequence([
                 [
-                    'name' => 'Alpha Watch File',
+                    'name' => 'Alpha Watchfile',
                 ],
                 [
-                    'name' => 'Beta Watch File',
+                    'name' => 'Beta Watchfile',
                 ],
                 [
-                    'name' => 'Charlie Watch File',
+                    'name' => 'Charlie Watchfile',
                 ],
             ])
             ->create()
@@ -466,9 +466,9 @@ class WatchFileApiTest extends AbstractApiTestCase
         $this->assertCount(3, $watchFiles);
 
         // Verify descending order by name
-        $this->assertSame('Charlie Watch File', $watchFiles[0]['name']);
-        $this->assertSame('Beta Watch File', $watchFiles[1]['name']);
-        $this->assertSame('Alpha Watch File', $watchFiles[2]['name']);
+        $this->assertSame('Charlie Watchfile', $watchFiles[0]['name']);
+        $this->assertSame('Beta Watchfile', $watchFiles[1]['name']);
+        $this->assertSame('Alpha Watchfile', $watchFiles[2]['name']);
     }
 
     public function testGetCollectionSortByNameWithAccentsAsc(): void
@@ -480,13 +480,13 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withOwnedBy($user)
             ->sequence([
                 [
-                    'name' => 'Andre Watch File',
+                    'name' => 'Andre Watchfile',
                 ],
                 [
-                    'name' => 'Émile Watch File',
+                    'name' => 'Émile Watchfile',
                 ],
                 [
-                    'name' => 'Zoe Watch File',
+                    'name' => 'Zoe Watchfile',
                 ],
             ])
             ->create();
@@ -499,7 +499,7 @@ class WatchFileApiTest extends AbstractApiTestCase
         $this->assertCount(3, $watchFiles);
 
         $names = array_column($watchFiles, 'name');
-        $this->assertEquals(['Andre Watch File', 'Émile Watch File', 'Zoe Watch File'], $names);
+        $this->assertEquals(['Andre Watchfile', 'Émile Watchfile', 'Zoe Watchfile'], $names);
     }
 
     public function testGetCollectionSortByNameWithAccentsDesc(): void
@@ -511,13 +511,13 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withOwnedBy($user)
             ->sequence([
                 [
-                    'name' => 'Andre Watch File',
+                    'name' => 'Andre Watchfile',
                 ],
                 [
-                    'name' => 'Émile Watch File',
+                    'name' => 'Émile Watchfile',
                 ],
                 [
-                    'name' => 'Zoe Watch File',
+                    'name' => 'Zoe Watchfile',
                 ],
             ])
             ->create();
@@ -530,14 +530,14 @@ class WatchFileApiTest extends AbstractApiTestCase
         $this->assertCount(3, $watchFiles);
 
         $names = array_column($watchFiles, 'name');
-        $this->assertEquals(['Zoe Watch File', 'Émile Watch File', 'Andre Watch File'], $names);
+        $this->assertEquals(['Zoe Watchfile', 'Émile Watchfile', 'Andre Watchfile'], $names);
     }
 
     public function testGetCollectionSortByStatus(): void
     {
         $user = UserFactory::createOne();
 
-        // Create watch files with different statuses
+        // Create watchfiles with different statuses
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -761,7 +761,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Test Watch File',
+                'name' => 'Test Watchfile',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
@@ -798,7 +798,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Test Watch File',
+                'name' => 'Test Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -822,7 +822,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Test Watch File',
+                'name' => 'Test Watchfile',
                 'status' => WatchFileStatus::ARCHIVED,
             ])
             ->create();
@@ -846,7 +846,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Test Watch File',
+                'name' => 'Test Watchfile',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -870,7 +870,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Test Watch File',
+                'name' => 'Test Watchfile',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -890,7 +890,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Private Watch File',
+                'name' => 'Private Watchfile',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -924,7 +924,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withUser($viewer, WatchFileUserRole::VIEWER)
             ->withUser($editor, WatchFileUserRole::EDITOR)
             ->with([
-                'name' => 'Shared Watch File',
+                'name' => 'Shared Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -956,7 +956,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Private Watch File',
+                'name' => 'Private Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -988,7 +988,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Watch File to Share',
+                'name' => 'Watchfile to Share',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1033,7 +1033,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withOwnedBy($owner)
             ->withUser($userToShare, WatchFileUserRole::VIEWER)
             ->with([
-                'name' => 'Already Shared Watch File',
+                'name' => 'Already Shared Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1070,7 +1070,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Watch File',
+                'name' => 'Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1096,7 +1096,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Watch File',
+                'name' => 'Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1128,7 +1128,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Private Watch File',
+                'name' => 'Private Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1222,7 +1222,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withOwnedBy($owner)
             ->withUser($sharedUser, WatchFileUserRole::VIEWER)
             ->with([
-                'name' => 'Shared Watch File',
+                'name' => 'Shared Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1275,7 +1275,7 @@ class WatchFileApiTest extends AbstractApiTestCase
         $sharedUserRelationId = $sharedUserRelation->getId();
 
         $watchFile->with([
-            'name' => 'Shared Watch File',
+            'name' => 'Shared Watchfile',
             'status' => WatchFileStatus::ENABLED,
             'watchFileUsers' => [$ownerRelation, $sharedUserRelation],
         ]);
@@ -1285,7 +1285,7 @@ class WatchFileApiTest extends AbstractApiTestCase
         $watchFile = $watchFile
             ->withCreatedBy($owner)
             ->with([
-                'name' => 'Shared Watch File',
+                'name' => 'Shared Watchfile',
                 'status' => WatchFileStatus::ENABLED,
                 'watchFileUsers' => [$ownerRelation, $sharedUserRelation],
             ])
@@ -1323,7 +1323,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Test Watch File',
+                'name' => 'Test Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1347,7 +1347,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Owner Watch File',
+                'name' => 'Owner Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1383,7 +1383,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withUser($viewer1, WatchFileUserRole::VIEWER)
             ->withUser($viewer2, WatchFileUserRole::VIEWER)
             ->with([
-                'name' => 'Multi-user Watch File',
+                'name' => 'Multi-user Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1416,7 +1416,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withUser($editor, WatchFileUserRole::EDITOR)
             ->withUser($viewer, WatchFileUserRole::VIEWER)
             ->with([
-                'name' => 'Editor Permissions Test Watch File',
+                'name' => 'Editor Permissions Test Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1440,7 +1440,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Test Watch File',
+                'name' => 'Test Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1457,28 +1457,28 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create 2 active watch files (reaching the limit of 2 per user)
+        // Create 2 active watchfiles (reaching the limit of 2 per user)
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->sequence([
                 [
-                    'name' => 'Active Watch File 1',
+                    'name' => 'Active Watchfile 1',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Active Watch File 2',
+                    'name' => 'Active Watchfile 2',
                     'status' => WatchFileStatus::ENABLED,
                 ],
             ])
             ->create();
 
-        // Create a third watch file in DRAFT status
+        // Create a third watchfile in DRAFT status
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File To Activate',
+                'name' => 'Watchfile To Activate',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -1504,12 +1504,12 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create a watch file in DRAFT status
+        // Create a watchfile in DRAFT status
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File With Many Sources',
+                'name' => 'Watchfile With Many Sources',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -1549,12 +1549,12 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create a watch file in DRAFT status
+        // Create a watchfile in DRAFT status
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File With Few Sources',
+                'name' => 'Watchfile With Few Sources',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
@@ -1588,12 +1588,12 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create a watch file in DRAFT status
+        // Create a watchfile in DRAFT status
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File At Source Limit',
+                'name' => 'Watchfile At Source Limit',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
@@ -1627,12 +1627,12 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create a watch file in DRAFT status
+        // Create a watchfile in DRAFT status
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File With Mixed Sources',
+                'name' => 'Watchfile With Mixed Sources',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
@@ -1679,12 +1679,12 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create an ENABLED watch file with 25 active sources (exceeding quota)
+        // Create an ENABLED watchfile with 25 active sources (exceeding quota)
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Corrupted Watch File With Too Many Sources',
+                'name' => 'Corrupted Watchfile With Too Many Sources',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1717,12 +1717,12 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create a DRAFT watch file with 25 active sources (exceeding quota)
+        // Create a DRAFT watchfile with 25 active sources (exceeding quota)
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Draft Watch File With Too Many Sources',
+                'name' => 'Draft Watchfile With Too Many Sources',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -1760,7 +1760,7 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create an ENABLED watch file with 25 active sources (exceeding quota)
+        // Create an ENABLED watchfile with 25 active sources (exceeding quota)
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
@@ -1798,28 +1798,28 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create 2 active watch files (reaching user quota)
+        // Create 2 active watchfiles (reaching user quota)
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->sequence([
                 [
-                    'name' => 'Active Watch File 1',
+                    'name' => 'Active Watchfile 1',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Active Watch File 2',
+                    'name' => 'Active Watchfile 2',
                     'status' => WatchFileStatus::ENABLED,
                 ],
             ])
             ->create();
 
-        // Create a draft watch file with 25 active sources (exceeding sources quota)
+        // Create a draft watchfile with 25 active sources (exceeding sources quota)
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Draft Watch File With Too Many Sources',
+                'name' => 'Draft Watchfile With Too Many Sources',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -1856,12 +1856,12 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create 2 active watch files (reaching the quota limit)
+        // Create 2 active watchfiles (reaching the quota limit)
         $activeWatchFile1 = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Active Watch File 1',
+                'name' => 'Active Watchfile 1',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1870,23 +1870,23 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Active Watch File 2',
+                'name' => 'Active Watchfile 2',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
 
-        // Create a third watch file in DRAFT status with referenceSubject
+        // Create a third watchfile in DRAFT status with referenceSubject
         $draftWatchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Draft Watch File',
+                'name' => 'Draft Watchfile',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
             ->create();
 
-        // Create an active source for the draft watch file (required for activation)
+        // Create an active source for the draft watchfile (required for activation)
         SourceFactory::new()
             ->with([
                 'name' => 'Active Source',
@@ -1900,14 +1900,14 @@ class WatchFileApiTest extends AbstractApiTestCase
 
         $client = $this->createAuthenticatedClient($user);
 
-        // Step 1: Change one active watch file to DRAFT
+        // Step 1: Change one active watchfile to DRAFT
         $response = $client->request('POST', "/api/watch_files/{$activeWatchFile1->getId()}/status/draft");
         $this->assertResponseStatusCodeSame(201);
         $data = json_decode($response->getContent(), true);
         $this->assertIsArray($data);
         $this->assertEquals('draft', $data['status']);
 
-        // Step 2: Now we should be able to enable the third watch file
+        // Step 2: Now we should be able to enable the third watchfile
         $response = $client->request('POST', "/api/watch_files/{$draftWatchFile->getId()}/status/enabled");
         $this->assertResponseStatusCodeSame(201);
         $data = json_decode($response->getContent(), true);
@@ -1919,12 +1919,12 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create 2 active watch files (reaching the quota limit)
+        // Create 2 active watchfiles (reaching the quota limit)
         $activeWatchFile1 = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Active Watch File 1',
+                'name' => 'Active Watchfile 1',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -1933,23 +1933,23 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Active Watch File 2',
+                'name' => 'Active Watchfile 2',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
 
-        // Create a third watch file in DRAFT status with referenceSubject
+        // Create a third watchfile in DRAFT status with referenceSubject
         $draftWatchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Draft Watch File',
+                'name' => 'Draft Watchfile',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
             ->create();
 
-        // Create an active source for the draft watch file (required for activation)
+        // Create an active source for the draft watchfile (required for activation)
         SourceFactory::new()
             ->with([
                 'name' => 'Active Source',
@@ -1963,14 +1963,14 @@ class WatchFileApiTest extends AbstractApiTestCase
 
         $client = $this->createAuthenticatedClient($user);
 
-        // Step 1: Archive one active watch file
+        // Step 1: Archive one active watchfile
         $response = $client->request('POST', "/api/watch_files/{$activeWatchFile1->getId()}/status/archived");
         $this->assertResponseStatusCodeSame(201);
         $data = json_decode($response->getContent(), true);
         $this->assertIsArray($data);
         $this->assertEquals('archived', $data['status']);
 
-        // Step 2: Now we should be able to enable the draft watch file
+        // Step 2: Now we should be able to enable the draft watchfile
         $response = $client->request('POST', "/api/watch_files/{$draftWatchFile->getId()}/status/enabled");
         $this->assertResponseStatusCodeSame(201);
         $data = json_decode($response->getContent(), true);
@@ -1982,28 +1982,28 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create only 1 active watch file
+        // Create only 1 active watchfile
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Active Watch File',
+                'name' => 'Active Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
 
-        // Create a draft watch file with referenceSubject
+        // Create a draft watchfile with referenceSubject
         $draftWatchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Draft Watch File',
+                'name' => 'Draft Watchfile',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
             ->create();
 
-        // Create an active source for the draft watch file (required for activation)
+        // Create an active source for the draft watchfile (required for activation)
         SourceFactory::new()
             ->with([
                 'name' => 'Active Source',
@@ -2029,28 +2029,28 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create exactly 2 active watch files (the quota limit)
+        // Create exactly 2 active watchfiles (the quota limit)
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->sequence([
                 [
-                    'name' => 'Active Watch File 1',
+                    'name' => 'Active Watchfile 1',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Active Watch File 2',
+                    'name' => 'Active Watchfile 2',
                     'status' => WatchFileStatus::ENABLED,
                 ],
             ])
             ->create();
 
-        // Try to enable a draft watch file while at quota limit
+        // Try to enable a draft watchfile while at quota limit
         $draftWatchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Draft Watch File',
+                'name' => 'Draft Watchfile',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -2074,40 +2074,40 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create 2 active watch files and 3 archived ones
+        // Create 2 active watchfiles and 3 archived ones
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->sequence([
                 [
-                    'name' => 'Active Watch File 1',
+                    'name' => 'Active Watchfile 1',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Active Watch File 2',
+                    'name' => 'Active Watchfile 2',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Archived Watch File 1',
+                    'name' => 'Archived Watchfile 1',
                     'status' => WatchFileStatus::ARCHIVED,
                 ],
                 [
-                    'name' => 'Archived Watch File 2',
+                    'name' => 'Archived Watchfile 2',
                     'status' => WatchFileStatus::ARCHIVED,
                 ],
                 [
-                    'name' => 'Archived Watch File 3',
+                    'name' => 'Archived Watchfile 3',
                     'status' => WatchFileStatus::ARCHIVED,
                 ],
             ])
             ->create();
 
-        // Create a draft watch file
+        // Create a draft watchfile
         $draftWatchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Draft Watch File',
+                'name' => 'Draft Watchfile',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -2131,28 +2131,28 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create 2 active watch files
+        // Create 2 active watchfiles
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->sequence([
                 [
-                    'name' => 'Active Watch File 1',
+                    'name' => 'Active Watchfile 1',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Active Watch File 2',
+                    'name' => 'Active Watchfile 2',
                     'status' => WatchFileStatus::ENABLED,
                 ],
             ])
             ->create();
 
-        // Create an archived watch file
+        // Create an archived watchfile
         $archivedWatchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Archived Watch File',
+                'name' => 'Archived Watchfile',
                 'status' => WatchFileStatus::ARCHIVED,
             ])
             ->create();
@@ -2178,12 +2178,12 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create 2 active watch files
+        // Create 2 active watchfiles
         $activeWatchFile1 = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Active Watch File 1',
+                'name' => 'Active Watchfile 1',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -2192,7 +2192,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Active Watch File 2',
+                'name' => 'Active Watchfile 2',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -2206,12 +2206,12 @@ class WatchFileApiTest extends AbstractApiTestCase
         $client->request('POST', "/api/watch_files/{$activeWatchFile2->getId()}/status/archived");
         $this->assertResponseStatusCodeSame(201);
 
-        // Now enable two new watch files (with referenceSubject and active sources)
+        // Now enable two new watchfiles (with referenceSubject and active sources)
         $draftWatchFile1 = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'New Draft Watch File 1',
+                'name' => 'New Draft Watchfile 1',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test 1', 'Test subject 1'),
             ])
@@ -2232,7 +2232,7 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'New Draft Watch File 2',
+                'name' => 'New Draft Watchfile 2',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test 2', 'Test subject 2'),
             ])
@@ -2261,29 +2261,29 @@ class WatchFileApiTest extends AbstractApiTestCase
         $owner = UserFactory::createOne();
         $viewer = UserFactory::createOne();
 
-        // Create 2 active watch files owned by owner
+        // Create 2 active watchfiles owned by owner
         WatchFileFactory::new()
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->sequence([
                 [
-                    'name' => 'Owner Active Watch File 1',
+                    'name' => 'Owner Active Watchfile 1',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Owner Active Watch File 2',
+                    'name' => 'Owner Active Watchfile 2',
                     'status' => WatchFileStatus::ENABLED,
                 ],
             ])
             ->create();
 
-        // Create a draft watch file shared with viewer
+        // Create a draft watchfile shared with viewer
         $draftWatchFile = WatchFileFactory::new()
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->withUser($viewer, WatchFileUserRole::VIEWER)
             ->with([
-                'name' => 'Shared Draft Watch File',
+                'name' => 'Shared Draft Watchfile',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -2291,7 +2291,7 @@ class WatchFileApiTest extends AbstractApiTestCase
         $client = $this->createAuthenticatedClient($owner);
         $client->request('POST', "/api/watch_files/{$draftWatchFile->getId()}/status/enabled");
 
-        // Should fail - owner already has 2 active watch files
+        // Should fail - owner already has 2 active watchfiles
         $this->assertResponseStatusCodeSame(429);
         $expectedMessage = $this->getTranslatedQuotaMessage('quota.watchfile_max_active_per_user', [
             'limit' => 2,
@@ -2308,35 +2308,35 @@ class WatchFileApiTest extends AbstractApiTestCase
         $owner = UserFactory::createOne();
         $viewer = UserFactory::createOne();
 
-        // Create 2 active watch files owned by owner and shared with viewer
+        // Create 2 active watchfiles owned by owner and shared with viewer
         WatchFileFactory::new()
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->withUser($viewer, WatchFileUserRole::VIEWER)
             ->sequence([
                 [
-                    'name' => 'Shared Active Watch File 1',
+                    'name' => 'Shared Active Watchfile 1',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Shared Active Watch File 2',
+                    'name' => 'Shared Active Watchfile 2',
                     'status' => WatchFileStatus::ENABLED,
                 ],
             ])
             ->create();
 
-        // Create a draft watch file owned by viewer (with referenceSubject)
+        // Create a draft watchfile owned by viewer (with referenceSubject)
         $viewerDraftWatchFile1 = WatchFileFactory::new()
             ->withCreatedBy($viewer)
             ->withOwnedBy($viewer)
             ->with([
-                'name' => 'Viewer Draft Watch File 1',
+                'name' => 'Viewer Draft Watchfile 1',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test 1', 'Test subject 1'),
             ])
             ->create();
 
-        // Create an active source for the first draft watch file (required for activation)
+        // Create an active source for the first draft watchfile (required for activation)
         SourceFactory::new()
             ->with([
                 'name' => 'Active Source 1',
@@ -2352,13 +2352,13 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withCreatedBy($viewer)
             ->withOwnedBy($viewer)
             ->with([
-                'name' => 'Viewer Draft Watch File 2',
+                'name' => 'Viewer Draft Watchfile 2',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test 2', 'Test subject 2'),
             ])
             ->create();
 
-        // Create an active source for the second draft watch file (required for activation)
+        // Create an active source for the second draft watchfile (required for activation)
         SourceFactory::new()
             ->with([
                 'name' => 'Active Source 2',
@@ -2372,8 +2372,8 @@ class WatchFileApiTest extends AbstractApiTestCase
 
         $client = $this->createAuthenticatedClient($viewer);
 
-        // Viewer should be able to enable both their own watch files
-        // Shared watch files don't count towards viewer's quota
+        // Viewer should be able to enable both their own watchfiles
+        // Shared watchfiles don't count towards viewer's quota
         $client->request('POST', "/api/watch_files/{$viewerDraftWatchFile1->getId()}/status/enabled");
         $this->assertResponseStatusCodeSame(201);
 
@@ -2385,26 +2385,26 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Simulate corrupted state: 4 active watch files (exceeding quota of 2)
+        // Simulate corrupted state: 4 active watchfiles (exceeding quota of 2)
         // This could happen if quota was reduced, or data was corrupted
         $activeWatchFiles = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->sequence([
                 [
-                    'name' => 'Corrupted Active Watch File 1',
+                    'name' => 'Corrupted Active Watchfile 1',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Corrupted Active Watch File 2',
+                    'name' => 'Corrupted Active Watchfile 2',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Corrupted Active Watch File 3',
+                    'name' => 'Corrupted Active Watchfile 3',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Corrupted Active Watch File 4',
+                    'name' => 'Corrupted Active Watchfile 4',
                     'status' => WatchFileStatus::ENABLED,
                 ],
             ])
@@ -2433,32 +2433,32 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Simulate corrupted state: 3 active watch files (exceeding quota of 2)
+        // Simulate corrupted state: 3 active watchfiles (exceeding quota of 2)
         WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->sequence([
                 [
-                    'name' => 'Corrupted Active Watch File 1',
+                    'name' => 'Corrupted Active Watchfile 1',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Corrupted Active Watch File 2',
+                    'name' => 'Corrupted Active Watchfile 2',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Corrupted Active Watch File 3',
+                    'name' => 'Corrupted Active Watchfile 3',
                     'status' => WatchFileStatus::ENABLED,
                 ],
             ])
             ->create();
 
-        // Create a draft watch file
+        // Create a draft watchfile
         $draftWatchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Draft Watch File',
+                'name' => 'Draft Watchfile',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();
@@ -2482,12 +2482,12 @@ class WatchFileApiTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create 3 active watch files (exceeding quota)
+        // Create 3 active watchfiles (exceeding quota)
         $activeWatchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Already Active Watch File',
+                'name' => 'Already Active Watchfile',
                 'status' => WatchFileStatus::ENABLED,
             ])
             ->create();
@@ -2497,11 +2497,11 @@ class WatchFileApiTest extends AbstractApiTestCase
             ->withOwnedBy($user)
             ->sequence([
                 [
-                    'name' => 'Corrupted Active Watch File 1',
+                    'name' => 'Corrupted Active Watchfile 1',
                     'status' => WatchFileStatus::ENABLED,
                 ],
                 [
-                    'name' => 'Corrupted Active Watch File 2',
+                    'name' => 'Corrupted Active Watchfile 2',
                     'status' => WatchFileStatus::ENABLED,
                 ],
             ])

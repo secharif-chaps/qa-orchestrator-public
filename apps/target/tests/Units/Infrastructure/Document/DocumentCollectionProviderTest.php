@@ -105,7 +105,7 @@ class DocumentCollectionProviderTest extends TestCase
     public function testProvideWithValidWatchFileId(): void
     {
         $watchFileId = '550e8400-e29b-41d4-a716-446655440002';
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
         $this->watchFileGateway->save($watchFile);
 
@@ -148,7 +148,7 @@ class DocumentCollectionProviderTest extends TestCase
     public function testProvideWithWatchFileIdAndNoExistingFilters(): void
     {
         $watchFileId = '550e8400-e29b-41d4-a716-446655440003';
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
         $this->watchFileGateway->save($watchFile);
 
@@ -238,7 +238,7 @@ class DocumentCollectionProviderTest extends TestCase
     public function testProvideWithWatchFileIdAndNonArrayFilters(): void
     {
         $watchFileId = '550e8400-e29b-41d4-a716-446655440001';
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
         $this->watchFileGateway->save($watchFile);
 
@@ -291,7 +291,7 @@ class DocumentCollectionProviderTest extends TestCase
     public function testProvideWithWatchFileIdAndExistingWatchFileIdFilter(): void
     {
         $watchFileId = '550e8400-e29b-41d4-a716-446655440004';
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
         $this->watchFileGateway->save($watchFile);
 
@@ -334,7 +334,7 @@ class DocumentCollectionProviderTest extends TestCase
     public function testProvideWithAccessDenied(): void
     {
         $watchFileId = '550e8400-e29b-41d4-a716-446655440005';
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
         $this->watchFileGateway->save($watchFile);
 

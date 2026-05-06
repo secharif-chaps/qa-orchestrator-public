@@ -39,7 +39,7 @@ class WatchFileUserProvider implements ProviderInterface
 
         Assert::true(
             Uuid::isValid($watchFileId),
-            \sprintf('The watch file ID "%s" is not a valid UUID.', $watchFileId)
+            \sprintf('The watchfile ID "%s" is not a valid UUID.', $watchFileId)
         );
 
         $user = $this->security->getUser();
@@ -50,7 +50,7 @@ class WatchFileUserProvider implements ProviderInterface
         $watchFile = $this->watchFileGateway->getForUser($watchFileId, $user);
 
         if (!$this->security->isGranted(WatchFileVoter::EDIT, $watchFile)) {
-            throw new AccessDeniedException('The user must be granted access to the watch file.');
+            throw new AccessDeniedException('The user must be granted access to the watchfile.');
         }
 
         return $this->watchFileUserGateway->getByWatchFile($watchFile);

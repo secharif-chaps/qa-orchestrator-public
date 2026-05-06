@@ -37,7 +37,7 @@ class WatchFileSourceProvider implements ProviderInterface
         if (isset($uriVariables['watchFileId']) && \is_string($uriVariables['watchFileId'])) {
             $watchFile = $this->watchFileGateway->get($uriVariables['watchFileId']);
             if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
-                throw new AccessDeniedException('You do not have access to this watch file.');
+                throw new AccessDeniedException('You do not have access to this watchfile.');
             }
         }
 

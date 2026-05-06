@@ -188,7 +188,7 @@ class UpdateDocumentSeenActionHandlerTest extends TestCase
 
         $this->expectException(DocumentWithoutWatchFileException::class);
         $this->expectExceptionMessage(
-            'Document with ID "' . $documentId->toString() . '" has no associated watch file'
+            'Document with ID "' . $documentId->toString() . '" has no associated watchfile'
         );
         ($this->handler)($action);
     }

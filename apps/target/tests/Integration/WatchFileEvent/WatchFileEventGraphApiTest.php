@@ -737,7 +737,7 @@ class WatchFileEventGraphApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-06-15T09:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -755,7 +755,7 @@ class WatchFileEventGraphApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-07-20T13:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -773,7 +773,7 @@ class WatchFileEventGraphApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-08-10T08:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
         ];
@@ -808,7 +808,7 @@ class WatchFileEventGraphApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-06-15T09:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -832,7 +832,7 @@ class WatchFileEventGraphApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-07-20T13:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
             [
@@ -856,7 +856,7 @@ class WatchFileEventGraphApiTest extends AbstractApiTestCase
                 'createdAt' => '2024-08-10T08:00:00Z',
                 'watchFile' => [
                     'id' => $watchFileId,
-                    'name' => 'Test Watch File',
+                    'name' => 'Test Watchfile',
                 ],
             ],
         ];

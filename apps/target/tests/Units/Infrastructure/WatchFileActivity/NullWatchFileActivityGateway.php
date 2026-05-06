@@ -76,7 +76,7 @@ class NullWatchFileActivityGateway implements WatchFileActivityGatewayInterface
     }
 
     /**
-     * Get activities for a watch file grouped by day, with each day's activities sorted by createdAt descending.
+     * Get activities for a watchfile grouped by day, with each day's activities sorted by createdAt descending.
      *
      * @return array{activitiesByDay: array<string, array<WatchFileActivity>>, hasNextPage: bool}
      */

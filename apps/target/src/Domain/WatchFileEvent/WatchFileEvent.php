@@ -38,13 +38,13 @@ use Symfony\Component\Uid\Uuid;
             ],
             name: 'get_watch_file_events',
             openapi: new Model\Operation(
-                summary: 'Retrieves watch file events',
-                description: 'Returns a paginated list of watch file events. Each event contains metadata, actors, document links, and processing status information. Events can be filtered by date range to find all events that overlap with the specified timeframe.',
+                summary: 'Retrieves watchfile events',
+                description: 'Returns a paginated list of watchfile events. Each event contains metadata, actors, document links, and processing status information. Events can be filtered by date range to find all events that overlap with the specified timeframe.',
                 parameters: [
                     new Model\Parameter(
                         name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier of the watch file',
+                        description: 'The unique identifier of the watchfile',
                         required: true,
                         schema: [
                             'type' => 'string',
@@ -97,13 +97,13 @@ use Symfony\Component\Uid\Uuid;
         ),
         new Get(
             openapi: new Model\Operation(
-                summary: 'Retrieves a specific watch file event',
-                description: 'Returns detailed information about a single watch file event including its metadata, actors, document links, and processing status.',
+                summary: 'Retrieves a specific watchfile event',
+                description: 'Returns detailed information about a single watchfile event including its metadata, actors, document links, and processing status.',
                 parameters: [
                     new Model\Parameter(
                         name: 'id',
                         in: 'path',
-                        description: 'The unique identifier of the watch file event to retrieve',
+                        description: 'The unique identifier of the watchfile event to retrieve',
                         required: true,
                         schema: [
                             'type' => 'string',
@@ -120,13 +120,13 @@ use Symfony\Component\Uid\Uuid;
                 'watchFileId' => new Link(fromClass: WatchFile::class, identifiers: ['id']),
             ],
             openapi: new Model\Operation(
-                summary: 'Retrieves watch file events graph data',
+                summary: 'Retrieves watchfile events graph data',
                 description: 'Returns aggregated data about events and documents per time period. Each entry contains the number of documents (based on dateCollect), events (counted for each period they span), and whether the period has events, along with the start and end dates of the period. Events are counted in all time periods they overlap with, based on their startDate and endDate (or ongoing if endDate is null).',
                 parameters: [
                     new Model\Parameter(
                         name: 'watchFileId',
                         in: 'path',
-                        description: 'The unique identifier of the watch file',
+                        description: 'The unique identifier of the watchfile',
                         required: true,
                         schema: [
                             'type' => 'string',

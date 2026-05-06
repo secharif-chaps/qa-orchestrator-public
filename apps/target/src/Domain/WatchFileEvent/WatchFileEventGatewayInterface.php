@@ -11,7 +11,7 @@ interface WatchFileEventGatewayInterface
     /**
      * Get graph data aggregated by time period.
      *
-     * @param string                  $watchFileId The watch file ID to filter events
+     * @param string                  $watchFileId The watchfile ID to filter events
      * @param string                  $interval    The time interval for aggregation (e.g., '1d', '1w', '1M')
      * @param \DateTimeImmutable|null $start       Start date for filtering (null = no start limit)
      * @param \DateTimeImmutable|null $end         End date for filtering (null = no end limit)
@@ -30,9 +30,9 @@ interface WatchFileEventGatewayInterface
     ): array;
 
     /**
-     * Get facets for events in a watch file.
+     * Get facets for events in a watchfile.
      *
-     * @param string                  $watchFileId The watch file ID to filter events
+     * @param string                  $watchFileId The watchfile ID to filter events
      * @param \DateTimeImmutable|null $start       Start date for filtering (null = no start limit)
      * @param \DateTimeImmutable|null $end         End date for filtering (null = no end limit)
      * @param array<int, string>      $actorIds    List of actor IDs currently filtered (empty = no filter)
@@ -49,9 +49,9 @@ interface WatchFileEventGatewayInterface
     ): array;
 
     /**
-     * Get recent events for a watch file.
+     * Get recent events for a watchfile.
      *
-     * @param string $watchFileId The watch file ID to retrieve events for
+     * @param string $watchFileId The watchfile ID to retrieve events for
      * @param int    $days        Number of days to look back
      *
      * @return array<int, WatchFileEvent>
@@ -59,10 +59,10 @@ interface WatchFileEventGatewayInterface
     public function getRecentEvents(string $watchFileId, int $days): array;
 
     /**
-     * Save events to the watch file event store.
+     * Save events to the watchfile event store.
      *
      * @param string                           $documentId  The document ID that contains the events
-     * @param string                           $watchFileId The watch file ID these events belong to
+     * @param string                           $watchFileId The watchfile ID these events belong to
      * @param array<int, array<string, mixed>> $events      Each event should contain 'extraction_status' (ExtractionStatus) and 'created_at' (\DateTimeImmutable)
      */
     public function saveEvents(string $documentId, string $watchFileId, array $events): void;
@@ -71,7 +71,7 @@ interface WatchFileEventGatewayInterface
      * Mark an extraction as failed for a document.
      *
      * @param string             $documentId  The document ID
-     * @param string             $watchFileId The watch file ID
+     * @param string             $watchFileId The watchfile ID
      * @param ExtractionStatus   $status      The extraction status (should be a failure status)
      * @param string             $error       The error message
      * @param \DateTimeImmutable $createdAt   The timestamp of the failure

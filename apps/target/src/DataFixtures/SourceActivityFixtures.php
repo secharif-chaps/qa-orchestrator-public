@@ -123,7 +123,7 @@ class SourceActivityFixtures extends Fixture implements DependentFixtureInterfac
             'actionType' => SourceActivityActionType::SOURCE_ADDED_TO_WATCHFILE,
             'actionData' => [
                 'source_name' => $source->getName(),
-                'watch_file_name' => 'Watch File ' . ($sourceIndex + 1),
+                'watch_file_name' => 'Watchfile ' . ($sourceIndex + 1),
                 'added_by' => 'user',
             ],
             'createdAt' => $addAt,

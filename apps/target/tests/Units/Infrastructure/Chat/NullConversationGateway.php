@@ -65,7 +65,7 @@ class NullConversationGateway implements ConversationGatewayInterface
                 return $conv;
             }
         }
-        throw new \Exception('No conversation for watch file');
+        throw new \Exception('No conversation for watchfile');
     }
 
     public function getLastConversationIdsForWatchFiles(array $watchFileIds): array

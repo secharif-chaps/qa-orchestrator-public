@@ -9,7 +9,7 @@ use App\Domain\Shared\DomainException;
 class WatchFileActivityRetrievalFailedException extends DomainException
 {
     public function __construct(
-        string $message = 'Failed to retrieve watch file activities',
+        string $message = 'Failed to retrieve watchfile activities',
         int $code = 0,
         ?\Throwable $previous = null,
     ) {

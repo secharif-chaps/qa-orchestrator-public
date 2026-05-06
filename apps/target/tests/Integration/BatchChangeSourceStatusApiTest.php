@@ -510,7 +510,7 @@ class BatchChangeSourceStatusApiTest extends AbstractApiTestCase
         $this->assertCount(2, $data['errors']);
 
         foreach ($data['errors'] as $error) {
-            $this->assertStringContainsString('All sources must belong to the same watch file', $error['error']);
+            $this->assertStringContainsString('All sources must belong to the same watchfile', $error['error']);
         }
     }
 

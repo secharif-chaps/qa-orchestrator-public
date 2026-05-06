@@ -18,7 +18,7 @@ class ShareWatchFileInputDto
         #[Assert\Count(min: 1, max: WatchFile::MAX_WATCHFILE_USERS)]
         #[Assert\All([new Assert\Type(ShareUserInputDto::class)])]
         #[ApiProperty(
-            description: 'List of users to share the watch file with',
+            description: 'List of users to share the watchfile with',
             openapiContext: [
                 'type' => 'array',
                 'items' => [
@@ -26,14 +26,14 @@ class ShareWatchFileInputDto
                     'properties' => [
                         'userId' => [
                             'type' => 'string',
-                            'description' => 'The ID of the user to share the watch file with',
+                            'description' => 'The ID of the user to share the watchfile with',
                             'example' => '550e8400-e29b-41d4-a716-446655440000',
                         ],
                         'role' => [
                             'type' => 'string',
-                            'description' => 'Role of the user in the watch file sharing context. ' .
-                                '`viewer`: Can view the watch file contents but cannot make changes. ' .
-                                '`editor`: Can view and edit the watch file contents.',
+                            'description' => 'Role of the user in the watchfile sharing context. ' .
+                                '`viewer`: Can view the watchfile contents but cannot make changes. ' .
+                                '`editor`: Can view and edit the watchfile contents.',
                             'example' => 'viewer',
                             'enum' => ['editor', 'viewer'],
                         ],

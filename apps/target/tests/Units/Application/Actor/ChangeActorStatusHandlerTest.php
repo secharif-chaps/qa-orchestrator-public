@@ -195,7 +195,7 @@ class ChangeActorStatusHandlerTest extends TestCase
         $loggerMock->expects($this->once())
             ->method('warning')
             ->with(
-                'Some given sources do not belong to watch file or do not exist',
+                'Some given sources do not belong to watchfile or do not exist',
                 $this->callback(function (array $context) {
                     return 'test-watch-file-id' === $context['watchFileId']
                         && 'actor-id' === $context['actorId']
@@ -457,7 +457,7 @@ class ChangeActorStatusHandlerTest extends TestCase
 
         $this->expectException(WatchFileActiveException::class);
         $this->expectExceptionMessage(
-            'Cannot change actor status on watch file test-watch-file-id because it is in active status. Please set the watch file to draft mode first.'
+            'Cannot change actor status on watchfile test-watch-file-id because it is in active status. Please set the watchfile to draft mode first.'
         );
 
         ($this->handler)($action);

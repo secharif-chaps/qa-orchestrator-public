@@ -145,7 +145,7 @@ class NullSourceGateway implements SourceGatewayInterface
     {
         $watchFileId = $watchFile instanceof WatchFile ? $watchFile->getId() : $watchFile;
         $sources = array_filter($this->sources, function (Source $source) use ($watchFileId, $searchQuery) {
-            // Filter by watch file
+            // Filter by watchfile
             if ($source->getWatchFile()->getId() !== $watchFileId) {
                 return false;
             }
@@ -267,7 +267,7 @@ class NullSourceGateway implements SourceGatewayInterface
     }
 
     /**
-     * Find orphaned sources (sources without actor) for a watch file that match a given domain.
+     * Find orphaned sources (sources without actor) for a watchfile that match a given domain.
      */
     public function findOrphanedSourcesByDomain(WatchFile|string $watchFile, string $domain): array
     {
@@ -279,7 +279,7 @@ class NullSourceGateway implements SourceGatewayInterface
 
         $result = [];
         foreach ($this->sources as $source) {
-            // Filter by watch file
+            // Filter by watchfile
             if ($source->getWatchFile()->getId() !== $watchFileId) {
                 continue;
             }

@@ -45,7 +45,7 @@ readonly class UpdateWatchFileReferenceSubjectHandler
         // Publish real-time update to all authorized users
         $this->realTimeUpdatePublisher->publishWatchFileUpdate($watchFile);
 
-        // Dispatch event for activity logging using the watch file creator
+        // Dispatch event for activity logging using the watchfile creator
         $user = $watchFile->getCreatedBy();
         if ($user instanceof User) {
             $this->eventDispatcher->dispatch($action->toEvent($watchFile, $user, $oldReferenceSubject));

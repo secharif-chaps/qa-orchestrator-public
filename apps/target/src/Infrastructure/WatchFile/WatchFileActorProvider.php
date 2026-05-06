@@ -40,10 +40,10 @@ readonly class WatchFileActorProvider implements ProviderInterface
 
         if (isset($uriVariables['watchFileId']) && \is_string($uriVariables['watchFileId'])) {
             $watchFileId = $uriVariables['watchFileId'];
-            // Check if the watch file exists, throws an exception otherwise
+            // Check if the watchfile exists, throws an exception otherwise
             $watchFile = $this->watchFileGateway->get($watchFileId);
             if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
-                throw new AccessDeniedHttpException('You do not have access to this watch file.');
+                throw new AccessDeniedHttpException('You do not have access to this watchfile.');
             }
         }
 

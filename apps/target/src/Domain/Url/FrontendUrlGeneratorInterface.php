@@ -10,7 +10,7 @@ namespace App\Domain\Url;
 interface FrontendUrlGeneratorInterface
 {
     /**
-     * Generate the URL for a watch file detail page.
+     * Generate the URL for a watchfile detail page.
      */
     public function generateWatchFileUrl(string $watchFileId): string;
 

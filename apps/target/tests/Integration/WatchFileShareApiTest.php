@@ -21,7 +21,7 @@ class WatchFileShareApiTest extends AbstractApiTestCase
             ->withCreatedBy($owner)
             ->withOwnedBy($owner)
             ->with([
-                'name' => 'Test Watch File',
+                'name' => 'Test Watchfile',
                 'status' => WatchFileStatus::DRAFT,
             ])
             ->create();

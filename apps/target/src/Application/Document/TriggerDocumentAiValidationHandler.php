@@ -60,7 +60,7 @@ readonly class TriggerDocumentAiValidationHandler
             return;
         }
 
-        // Get reference subject from watch file
+        // Get reference subject from watchfile
         $watchFile = $document->getWatchFile();
         $referenceSubject = $watchFile?->getReferenceSubject();
 

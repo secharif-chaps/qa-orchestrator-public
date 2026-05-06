@@ -76,7 +76,7 @@ class ChangeWatchFileStatusProcessor implements ProcessorInterface
 
         if (!$this->security->isGranted(WatchFileVoter::EDIT, $watchFile)) {
             throw new AccessDeniedHttpException(\sprintf(
-                'You do not have permission to change the status of watch file with ID %s.',
+                'You do not have permission to change the status of watchfile with ID %s.',
                 $watchFileId
             ), );
         }

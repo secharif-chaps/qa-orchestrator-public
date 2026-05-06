@@ -237,7 +237,7 @@ The token contains exactly 3 URI Template entries regardless of whether the user
 
 ```php
 'subscribe' => [
-    "/users/{$userId}/watch-files/{id}",             // Covers ALL user's watch files
+    "/users/{$userId}/watch-files/{id}",             // Covers ALL user's watchfiles
     "/users/{$userId}/conversations/{id}",           // Covers ALL user's conversations
     "/users/{$userId}/conversations/{id}/messages",  // Covers ALL user's conversation messages
 ]

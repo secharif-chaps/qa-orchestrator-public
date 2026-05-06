@@ -113,7 +113,7 @@ class AddMessageHandlerTest extends TestCase
     {
         $this->expectException(WatchFileActiveException::class);
         $this->expectExceptionMessage(
-            'Cannot add messages to conversation on watch file watchfile_id because it is in active status. Please set the watch file to draft mode first.'
+            'Cannot add messages to conversation on watchfile watchfile_id because it is in active status. Please set the watchfile to draft mode first.'
         );
 
         $watchFile = new WatchFile('watchfile-name', 'watchfile-objective', new Organisation(

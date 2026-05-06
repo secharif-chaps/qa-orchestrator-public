@@ -470,7 +470,10 @@ Phase 3: Front (interface, final UX)
 ### Terminology
 
 ```
-Dossier de veille -> WatchFile
-Acteur -> Actor
-Source -> Source
+Dossier de veille -> Watchfile (English term, ALWAYS one word — preserves case/number:
+                                watchfile / Watchfile / watchfiles / Watchfiles —
+                                NEVER "watch file" / "Watch File")
+                     WatchFile / watchFile only as code identifier (PascalCase / camelCase)
+Acteur            -> Actor
+Source            -> Source
 ```

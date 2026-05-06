@@ -41,15 +41,15 @@ class ChangeSourceStatusHandler
 
         $watchFile = $this->getWatchFile($watchFileId);
 
-        // Check if the watch file is in active status
+        // Check if the watchfile is in active status
         if (WatchFileStatus::ENABLED === $watchFile->getStatus()) {
             throw new WatchFileActiveException($watchFileId, 'change source status');
         }
 
-        // Verify that the source belongs to the specified watch file
+        // Verify that the source belongs to the specified watchfile
         if ($source->getWatchFile()->getId() !== $watchFile->getId()) {
             throw new AccessDeniedException(\sprintf(
-                'Source belongs to watch file %s but accessed from watch file %s. Cross-WatchFile access not allowed.',
+                'Source belongs to watchfile %s but accessed from watchfile %s. Cross-watchfile access not allowed.',
                 $source->getWatchFile()->getId(),
                 $watchFile->getId()
             ), );

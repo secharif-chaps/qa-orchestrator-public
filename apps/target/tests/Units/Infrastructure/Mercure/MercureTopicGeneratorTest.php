@@ -37,7 +37,7 @@ class MercureTopicGeneratorTest extends TestCase
         $watchFileId = '7c9e6679-7425-40de-944b-e07fc1f90ae7';
 
         $user = new User($userId, 'test@example.com');
-        $watchFile = new WatchFile('Test Watch File', 'Test objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
 
         // Act
@@ -55,7 +55,7 @@ class MercureTopicGeneratorTest extends TestCase
         $conversationId = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
         $user = new User($userId, 'test@example.com');
-        $watchFile = new WatchFile('Test Watch File', 'Test objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test objective', new Organisation('Test Org', 'test-org-id'));
         $conversation = new Conversation($watchFile);
         $this->forcePropertyValue($conversation, $conversationId);
 
@@ -109,7 +109,7 @@ class MercureTopicGeneratorTest extends TestCase
         $watchFileId = '11111111-2222-3333-4444-555555555555';
 
         $user = new User($userId, 'test@example.com');
-        $watchFile = new WatchFile('Test Watch File', 'Test objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
 
         // Act

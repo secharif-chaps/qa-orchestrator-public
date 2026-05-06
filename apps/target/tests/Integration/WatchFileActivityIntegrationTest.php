@@ -321,7 +321,7 @@ class WatchFileActivityIntegrationTest extends AbstractApiTestCase
             ->withOwnedBy($owner)
             ->create();
 
-        // First share the watch file
+        // First share the watchfile
         $watchFileUser = WatchFileUserFactory::new()
             ->with([
                 'watchFile' => $watchFile,

@@ -48,7 +48,7 @@ readonly class WatchFileEventItemProvider implements ProviderInterface
         try {
             $watchFile = $this->watchFileGateway->get($esWatchFile->getId());
         } catch (WatchFileNotFoundException) {
-            throw new NotFoundHttpException('The associated watch file was not found.');
+            throw new NotFoundHttpException('The associated watchfile was not found.');
         }
 
         if (!$this->security->isGranted(WatchFileSecurity::VIEW, $watchFile)) {

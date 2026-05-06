@@ -44,7 +44,7 @@ readonly class EventSourcesProvider implements ProviderInterface
             throw new AccessDeniedException('User must be authenticated');
         }
 
-        // Find the watch file (permissions checked by API Platform filters)
+        // Find the watchfile (permissions checked by API Platform filters)
         $watchFile = $this->watchFileGateway->get($watchFileId);
 
         // Find the specific event
@@ -54,7 +54,7 @@ readonly class EventSourcesProvider implements ProviderInterface
         ]);
 
         if (!$event) {
-            throw new NotFoundHttpException(\sprintf('Event with ID "%s" not found for this watch file', $eventId));
+            throw new NotFoundHttpException(\sprintf('Event with ID "%s" not found for this watchfile', $eventId));
         }
 
         // Extract source IDs from the event

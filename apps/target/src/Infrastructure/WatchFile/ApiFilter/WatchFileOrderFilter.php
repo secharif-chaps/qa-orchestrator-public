@@ -247,7 +247,7 @@ class WatchFileOrderFilter extends AbstractFilter implements OrderFilterInterfac
         /** @var OrderBy[] $currentOrder */
         $currentOrder = $queryBuilder->getDQLPart('orderBy');
 
-        // Favorite watch files first
+        // Favorite watchfiles first
         $queryBuilder
             ->addSelect('(CASE WHEN uf.id IS NOT NULL THEN 1 ELSE 0 END) AS HIDDEN is_favorite')
             ->leftJoin($alias . '.userFavorites', 'uf', Join::WITH, 'uf.user = :user')

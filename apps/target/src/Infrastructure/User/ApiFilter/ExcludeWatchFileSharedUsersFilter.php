@@ -65,7 +65,7 @@ class ExcludeWatchFileSharedUsersFilter extends AbstractFilter
                 'openapi' => new Parameter(
                     'excludeWatchFileSharedUsers',
                     'query',
-                    'Exclude users who have access to the watch file from the results.',
+                    'Exclude users who have access to the watchfile from the results.',
                     schema: [
                         'type' => 'string',
                         'format' => 'uuid',

@@ -45,7 +45,7 @@ class CreateConversationHandlerTest extends TestCase
 
     public function testCreateConversationWithEnglishMessage(): void
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
         $this->watchFileGateway->save($watchFile);
 
@@ -118,7 +118,7 @@ class CreateConversationHandlerTest extends TestCase
         $action = new CreateConversationAction('', 'Hello world');
 
         $this->expectException(UnrecoverableMessageHandlingException::class);
-        $this->expectExceptionMessage('Invalid watch file ID provided.');
+        $this->expectExceptionMessage('Invalid watchfile ID provided.');
 
         ($this->handler)($action);
     }
@@ -135,7 +135,7 @@ class CreateConversationHandlerTest extends TestCase
 
     public function testCreateConversationWithoutLogger(): void
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
         $this->watchFileGateway->save($watchFile);
 
@@ -164,7 +164,7 @@ class CreateConversationHandlerTest extends TestCase
 
     public function testLanguageMappingEnglishToEnglish(): void
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
         $this->watchFileGateway->save($watchFile);
 
@@ -178,7 +178,7 @@ class CreateConversationHandlerTest extends TestCase
 
     public function testLanguageMappingFrenchToFrench(): void
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
         $this->watchFileGateway->save($watchFile);
 
@@ -192,7 +192,7 @@ class CreateConversationHandlerTest extends TestCase
 
     public function testLanguageMappingGermanToEnglish(): void
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
         $this->watchFileGateway->save($watchFile);
 
@@ -208,7 +208,7 @@ class CreateConversationHandlerTest extends TestCase
 
     public function testLanguageMappingSpanishToEnglish(): void
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
         $this->watchFileGateway->save($watchFile);
 
@@ -224,7 +224,7 @@ class CreateConversationHandlerTest extends TestCase
 
     public function testZeroConfidenceDefaultsToEnglish(): void
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
         $this->watchFileGateway->save($watchFile);
 
@@ -240,7 +240,7 @@ class CreateConversationHandlerTest extends TestCase
 
     public function testLogsDetectedAndMappedLanguage(): void
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch_file_id');
         $this->watchFileGateway->save($watchFile);
 

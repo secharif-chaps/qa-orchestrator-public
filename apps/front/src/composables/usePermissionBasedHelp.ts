@@ -57,8 +57,8 @@ export function usePermissionBasedHelp() {
     },
     {
       permission: 'target.create',
-      title: 'Creating Target Watch Files',
-      description: 'Set up and manage target monitoring watch files.',
+      title: 'Creating Target Watchfiles',
+      description: 'Set up and manage target monitoring watchfiles.',
       content: '',
     },
   ]

@@ -58,7 +58,7 @@ readonly class AddSourceHandler
                     $user = $messageCreator;
                 }
             } catch (\Exception $e) {
-                $this->logger?->warning('Failed to get message, using watch file creator as fallback', [
+                $this->logger?->warning('Failed to get message, using watchfile creator as fallback', [
                     'message_id' => $action->messageId,
                     'exception' => $e->getMessage(),
                 ]);
@@ -75,7 +75,7 @@ readonly class AddSourceHandler
                 } else {
                     $this->logger?->warning(
                         \sprintf(
-                            'Actor "%s" not found or not linked to watch file "%s"',
+                            'Actor "%s" not found or not linked to watchfile "%s"',
                             $action->actorId,
                             $watchFile->getId()
                         )
@@ -96,7 +96,7 @@ readonly class AddSourceHandler
             if ($alreadyExist) {
                 $this->logger?->info(
                     \sprintf(
-                        'One source "%s" (%s) already exist fot the watch file "%s"',
+                        'One source "%s" (%s) already exist fot the watchfile "%s"',
                         $source
                             ->getType()
                             ->value,
@@ -117,7 +117,7 @@ readonly class AddSourceHandler
             $quotaLimit = $this->usageLimitConfig->sourceMaxPerWatchFile();
 
             if ($resourceCount->exceeds($quotaLimit)) {
-                $this->logger?->warning('Source quota exceeded for watch file', [
+                $this->logger?->warning('Source quota exceeded for watchfile', [
                     'watch_file_id' => $watchFile->getId(),
                     'current_count' => $resourceCount->value(),
                     'limit' => $quotaLimit->value(),
@@ -141,14 +141,14 @@ readonly class AddSourceHandler
                 ));
             }
 
-            $this->logger?->info('Source successfully added to watch file', [
+            $this->logger?->info('Source successfully added to watchfile', [
                 'watch_file_id' => $action->watchFileId,
                 'source' => $source,
             ]);
 
             return $watchFile;
         } catch (\Exception $e) {
-            $this->logger?->error('Failed to add source to watch file', [
+            $this->logger?->error('Failed to add source to watchfile', [
                 'watch_file_id' => $action->watchFileId,
                 'exception' => $e->getMessage(),
             ]);
@@ -185,7 +185,7 @@ readonly class AddSourceHandler
      * - Never throws exceptions that would prevent source creation
      *
      * @param Source    $source    The source to link an actor to
-     * @param WatchFile $watchFile The watch file containing the actors to match against
+     * @param WatchFile $watchFile The watchfile containing the actors to match against
      */
     private function tryAutomaticActorLinking(Source $source, WatchFile $watchFile): void
     {
@@ -217,7 +217,7 @@ readonly class AddSourceHandler
         }
 
         // Query database directly for matching actor by normalized domain
-        // This is much more efficient than loading all actors into memory, especially for large watch files
+        // This is much more efficient than loading all actors into memory, especially for large watchfiles
         $matchedActor = $this->watchFileActorGateway->findActorByNormalizedDomain(
             $watchFile->getId(),
             $normalizedSourceDomain

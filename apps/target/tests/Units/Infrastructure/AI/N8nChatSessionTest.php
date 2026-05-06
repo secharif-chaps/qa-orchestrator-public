@@ -51,7 +51,7 @@ class N8nChatSessionTest extends TestCase
 
     private function createWatchFile(string $id = self::WATCHFILE_ID): WatchFile
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $id);
 
         return $watchFile;
@@ -121,7 +121,7 @@ class N8nChatSessionTest extends TestCase
 
         $normalizedWatchFile = [
             'id' => self::WATCHFILE_ID,
-            'name' => 'Test Watch File',
+            'name' => 'Test Watchfile',
         ];
 
         $this->security->expects($this->once())
@@ -166,7 +166,7 @@ class N8nChatSessionTest extends TestCase
 
         $this->setupNormalizerWithWatchFile($watchFile, [
             'id' => self::WATCHFILE_ID,
-            'name' => 'Test Watch File',
+            'name' => 'Test Watchfile',
         ]);
 
         $result = $this->chatSession->sendMessage($conversation, $message);
@@ -191,7 +191,7 @@ class N8nChatSessionTest extends TestCase
 
         $this->setupNormalizerWithWatchFile($watchFile, [
             'id' => self::WATCHFILE_ID,
-            'name' => 'Test Watch File',
+            'name' => 'Test Watchfile',
         ]);
 
         $result = $this->chatSession->sendMessage($conversation, $message);

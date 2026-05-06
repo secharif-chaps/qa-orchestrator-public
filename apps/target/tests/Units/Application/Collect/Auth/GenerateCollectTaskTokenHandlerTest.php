@@ -140,7 +140,7 @@ class GenerateCollectTaskTokenHandlerTest extends TestCase
 
     public function testGenerateTokenWithNullSourceIdThrowsError(): void
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watch-file-id');
 
         $source = new Source(
@@ -174,7 +174,7 @@ class GenerateCollectTaskTokenHandlerTest extends TestCase
 
     private function createCollectTask(string $collectTaskId, string $sourceId, string $watchFileId): CollectTask
     {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, $watchFileId);
 
         $source = new Source(

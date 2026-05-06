@@ -75,7 +75,7 @@ class SourceActivityProvider implements ProviderInterface
         $watchFile = $source->getWatchFile();
 
         if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
-            throw new AccessDeniedHttpException('You do not have access to this watch file.');
+            throw new AccessDeniedHttpException('You do not have access to this watchfile.');
         }
     }
 }

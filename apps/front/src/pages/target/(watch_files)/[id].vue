@@ -1,6 +1,6 @@
 <template>
   <div id="watchfile-layout" class="relative flex h-full flex-col gap-4 overflow-hidden">
-    <!-- Watch File Header - fixed at top, never scrolls -->
+    <!-- Watchfile Header - fixed at top, never scrolls -->
     <div class="shrink-0 px-6 pt-4">
       <WatchFileHeader :watch-file-id="watchFileId" />
     </div>

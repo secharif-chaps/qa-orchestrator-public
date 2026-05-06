@@ -34,7 +34,7 @@ class ActorTypesApiTest extends AbstractApiTestCase
             'label' => 'Supplier 1',
         ]);
 
-        // Associate actors with watch file with different types
+        // Associate actors with watchfile with different types
         WatchFileActorFactory::createOne([
             'watchFile' => $watchFile,
             'actor' => $competitorActor1,
@@ -126,14 +126,14 @@ class ActorTypesApiTest extends AbstractApiTestCase
             ->withOwnedBy($owner)
             ->create();
 
-        // Share watch file with another user
+        // Share watchfile with another user
         WatchFileUserFactory::createOne([
             'watchFile' => $watchFile,
             'user' => $sharedUser,
             'role' => WatchFileUserRole::EDITOR,
         ]);
 
-        // Create an actor for the watch file
+        // Create an actor for the watchfile
         $actor = ActorFactory::createOne([
             'label' => 'Test Actor',
         ]);

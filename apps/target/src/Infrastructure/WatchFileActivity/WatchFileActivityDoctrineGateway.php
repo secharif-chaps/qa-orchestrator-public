@@ -32,13 +32,13 @@ class WatchFileActivityDoctrineGateway implements WatchFileActivityGatewayInterf
             $this->entityManager->persist($watchFileActivity);
             $this->entityManager->flush();
         } catch (\Exception $e) {
-            $this->logger?->error('Failed to save watch file activity', [
+            $this->logger?->error('Failed to save watchfile activity', [
                 'watch_file_id' => $watchFileActivity->getWatchFile()
 ->getId(),
                 'action_type' => $watchFileActivity->getActionType()
 ->value,
             ]);
-            throw new WatchFileActivitySaveFailedException('Failed to save watch file activity', 0, $e);
+            throw new WatchFileActivitySaveFailedException('Failed to save watchfile activity', 0, $e);
         }
     }
 
@@ -92,7 +92,7 @@ class WatchFileActivityDoctrineGateway implements WatchFileActivityGatewayInterf
     }
 
     /**
-     * Get activities for a watch file grouped by day, with each day's activities sorted by createdAt descending.
+     * Get activities for a watchfile grouped by day, with each day's activities sorted by createdAt descending.
      *
      * @return array{activitiesByDay: array<string, list<WatchFileActivity>>, hasNextPage: bool}
      */
@@ -168,14 +168,14 @@ class WatchFileActivityDoctrineGateway implements WatchFileActivityGatewayInterf
                 'hasNextPage' => $hasNextPage,
             ];
         } catch (\Exception $e) {
-            $this->logger?->error('Failed to get watch file activities grouped by day', [
+            $this->logger?->error('Failed to get watchfile activities grouped by day', [
                 'watch_file_id' => $watchFile->getId(),
                 'page' => $page,
                 'items_per_page' => $itemsPerPage,
                 'error' => $e->getMessage(),
             ]);
             throw new WatchFileActivityRetrievalFailedException(
-                'Failed to get watch file activities grouped by day',
+                'Failed to get watchfile activities grouped by day',
                 0,
                 $e
             );

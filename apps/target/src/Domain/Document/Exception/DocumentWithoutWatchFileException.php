@@ -9,7 +9,7 @@ use App\Domain\Shared\DomainException;
 class DocumentWithoutWatchFileException extends DomainException
 {
     public function __construct(
-        string $message = 'Document has no associated watch file',
+        string $message = 'Document has no associated watchfile',
         int $code = 0,
         ?\Throwable $previous = null,
     ) {
@@ -18,6 +18,6 @@ class DocumentWithoutWatchFileException extends DomainException
 
     public static function forDocumentId(string $documentId): self
     {
-        return new self(\sprintf('Document with ID "%s" has no associated watch file', $documentId));
+        return new self(\sprintf('Document with ID "%s" has no associated watchfile', $documentId));
     }
 }

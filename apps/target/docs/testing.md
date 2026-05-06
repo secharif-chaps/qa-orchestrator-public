@@ -2098,11 +2098,11 @@ use ApiPlatform\Metadata\GetCollection;
     operations: [
         new GetCollection(
             summary: 'Retrieves the collection of WatchFile resources',
-            description: 'Returns a paginated list of watch files accessible to the current user. Supports filtering by status, search terms, and user access permissions.',
+            description: 'Returns a paginated list of watchfiles accessible to the current user. Supports filtering by status, search terms, and user access permissions.',
         ),
         new Get(
             summary: 'Retrieves a WatchFile resource',
-            description: 'Returns detailed information about a specific watch file, including its current state, analysis results, and associated metadata.',
+            description: 'Returns detailed information about a specific watchfile, including its current state, analysis results, and associated metadata.',
         ),
     ]
 )]
@@ -2110,19 +2110,19 @@ use ApiPlatform\Metadata\GetCollection;
 class WatchFile
 {
     #[OA\Property(
-        description: 'The unique identifier of the watch file',
+        description: 'The unique identifier of the watchfile',
         example: '550e8400-e29b-41d4-a716-446655440000'
     )]
     private string $id;
 
     #[OA\Property(
-        description: 'The user-friendly name of the watch file',
+        description: 'The user-friendly name of the watchfile',
         example: 'Competitor Analysis - Q4 2024'
     )]
     private string $name;
 
     #[OA\Property(
-        description: 'Current processing state of the watch file',
+        description: 'Current processing state of the watchfile',
         example: 'NEEDS_ANALYZED'
     )]
     private WatchFileState $state;

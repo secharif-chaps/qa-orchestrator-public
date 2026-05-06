@@ -384,7 +384,7 @@ class CollectTaskAuthorizationMiddlewareTest extends TestCase
         CollectTaskStatus $status,
         string $providerName = 'bakus',
     ): CollectTask {
-        $watchFile = new WatchFile('Test Watch File', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
+        $watchFile = new WatchFile('Test Watchfile', 'Test Objective', new Organisation('Test Org', 'test-org-id'));
         $this->forcePropertyValue($watchFile, 'watchfile-id');
 
         $source = new Source(

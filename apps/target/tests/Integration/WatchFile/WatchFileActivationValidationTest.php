@@ -39,7 +39,7 @@ class WatchFileActivationValidationTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File Without Sources',
+                'name' => 'Watchfile Without Sources',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
@@ -62,7 +62,7 @@ class WatchFileActivationValidationTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File With Inactive Sources',
+                'name' => 'Watchfile With Inactive Sources',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
@@ -97,7 +97,7 @@ class WatchFileActivationValidationTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File Without Reference Subject',
+                'name' => 'Watchfile Without Reference Subject',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => null,
             ])
@@ -132,7 +132,7 @@ class WatchFileActivationValidationTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Valid Watch File',
+                'name' => 'Valid Watchfile',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
@@ -167,7 +167,7 @@ class WatchFileActivationValidationTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File With Mixed Sources',
+                'name' => 'Watchfile With Mixed Sources',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
@@ -209,12 +209,12 @@ class WatchFileActivationValidationTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create an ENABLED watch file (simulating corrupted/legacy state)
+        // Create an ENABLED watchfile (simulating corrupted/legacy state)
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Enabled Watch File Without Requirements',
+                'name' => 'Enabled Watchfile Without Requirements',
                 'status' => WatchFileStatus::ENABLED,
                 'referenceSubject' => null,
             ])
@@ -235,12 +235,12 @@ class WatchFileActivationValidationTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create an ENABLED watch file (simulating corrupted/legacy state)
+        // Create an ENABLED watchfile (simulating corrupted/legacy state)
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Enabled Watch File Without Requirements',
+                'name' => 'Enabled Watchfile Without Requirements',
                 'status' => WatchFileStatus::ENABLED,
                 'referenceSubject' => null,
             ])
@@ -261,12 +261,12 @@ class WatchFileActivationValidationTest extends AbstractApiTestCase
     {
         $user = UserFactory::createOne();
 
-        // Create an ENABLED watch file (simulating corrupted/legacy state)
+        // Create an ENABLED watchfile (simulating corrupted/legacy state)
         $watchFile = WatchFileFactory::new()
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Already Enabled Watch File',
+                'name' => 'Already Enabled Watchfile',
                 'status' => WatchFileStatus::ENABLED,
                 'referenceSubject' => null,
             ])
@@ -291,7 +291,7 @@ class WatchFileActivationValidationTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File Without Sources',
+                'name' => 'Watchfile Without Sources',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
@@ -320,7 +320,7 @@ class WatchFileActivationValidationTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File Without Sources',
+                'name' => 'Watchfile Without Sources',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => new TranslatedText('Sujet de test', 'Test subject'),
             ])
@@ -349,7 +349,7 @@ class WatchFileActivationValidationTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File Without Reference Subject',
+                'name' => 'Watchfile Without Reference Subject',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => null,
             ])
@@ -390,7 +390,7 @@ class WatchFileActivationValidationTest extends AbstractApiTestCase
             ->withCreatedBy($user)
             ->withOwnedBy($user)
             ->with([
-                'name' => 'Watch File Without Reference Subject',
+                'name' => 'Watchfile Without Reference Subject',
                 'status' => WatchFileStatus::DRAFT,
                 'referenceSubject' => null,
             ])

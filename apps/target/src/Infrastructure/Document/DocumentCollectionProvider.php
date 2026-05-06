@@ -46,7 +46,7 @@ readonly class DocumentCollectionProvider implements ProviderInterface
         $watchFile = $this->watchFileGateway->get($watchFileId);
 
         if (!$this->security->isGranted(WatchFileVoter::VIEW, $watchFile)) {
-            throw new AccessDeniedException('You do not have permission to view documents for this watch file.');
+            throw new AccessDeniedException('You do not have permission to view documents for this watchfile.');
         }
 
         if (!isset($context['filters'])) {

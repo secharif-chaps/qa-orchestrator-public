@@ -38,7 +38,7 @@ readonly class RemoveShareWatchFileHandler
 
         if ($watchFile->getId() !== $watchFileUser->getWatchFile()?->getId()) {
             throw new \InvalidArgumentException(\sprintf(
-                'The watch file ID "%s" does not match the watch file user ID "%s".',
+                'The watchfile ID "%s" does not match the watchfile user ID "%s".',
                 $action->watchFileId,
                 $action->watchFileUserId
             ));

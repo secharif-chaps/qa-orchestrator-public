@@ -38,7 +38,7 @@ export const useAddWatchFileUsers = (options?: CallbackMutations<WatchFileUser[]
 
     onError(error) {
       options?.onError?.(error)
-      console.error('Failed to add watch file users:', error)
+      console.error('Failed to add watchfile users:', error)
     },
     onSuccess(data, { watchFileId }) {
       options?.onSuccess?.(data.member)
@@ -89,7 +89,7 @@ export const useRemoveWatchFileUser = defineMutation(() => {
       })
     },
     onError(error) {
-      console.error('Failed to remove watch file user:', error)
+      console.error('Failed to remove watchfile user:', error)
     },
   })
 
@@ -123,7 +123,7 @@ export const useUpdateWatchFileUserRole = (options?: CallbackMutations<WatchFile
 
     onError(error) {
       options?.onError?.(error)
-      console.error('Failed to update watch file user role:', error)
+      console.error('Failed to update watchfile user role:', error)
     },
     onSuccess(data, { watchFileId, user, role }) {
       options?.onSuccess?.(data.member)

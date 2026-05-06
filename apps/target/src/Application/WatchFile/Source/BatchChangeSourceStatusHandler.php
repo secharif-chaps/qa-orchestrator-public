@@ -72,7 +72,7 @@ class BatchChangeSourceStatusHandler
                 $errors[] = [
                     'id' => $sourceData->id,
                     'watchFileId' => $sourceData->watchFileId,
-                    'error' => 'All sources must belong to the same watch file',
+                    'error' => 'All sources must belong to the same watchfile',
                 ];
             }
             $errorCount = \count($errors);
@@ -143,7 +143,7 @@ class BatchChangeSourceStatusHandler
             $missingSourceIds = array_diff($sourceIds, $foundSourceIds);
 
             if (!empty($missingSourceIds)) {
-                $this->logger?->warning('Some given sources do not belong to watch file or do not exist', [
+                $this->logger?->warning('Some given sources do not belong to watchfile or do not exist', [
                     'watchFileId' => $watchFileId,
                     'requested_sources' => $sourceIds,
                     'found_sources' => $foundSourceIds,
@@ -158,7 +158,7 @@ class BatchChangeSourceStatusHandler
                 }
             }
 
-            // Verify that all found sources belong to the specified watch file
+            // Verify that all found sources belong to the specified watchfile
             $sourcesNotInWatchFile = [];
             foreach ($sources as $source) {
                 if ($source->getWatchFile()->getId() !== $watchFileId) {
@@ -166,14 +166,14 @@ class BatchChangeSourceStatusHandler
                 }
             }
 
-            // If any source doesn't belong to the watch file, fail all sources
+            // If any source doesn't belong to the watchfile, fail all sources
             if (!empty($sourcesNotInWatchFile)) {
                 $errors = [];
                 foreach ($action->sources as $sourceData) {
                     $errors[] = [
                         'id' => $sourceData->id,
                         'watchFileId' => $sourceData->watchFileId,
-                        'error' => 'All sources must belong to the same watch file',
+                        'error' => 'All sources must belong to the same watchfile',
                     ];
                 }
                 $errorCount = \count($errors);

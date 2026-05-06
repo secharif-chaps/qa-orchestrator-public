@@ -64,7 +64,7 @@ class WatchFileVoter extends Voter
             return false;
         }
 
-        // Admin users have full access to all watch files
+        // Admin users have full access to all watchfiles
         $roles = $user->getRoles();
         if (\in_array('ROLE_ADMIN', $roles, true) || \in_array('admin', $roles, true)) {
             return true;
@@ -79,7 +79,7 @@ class WatchFileVoter extends Voter
                 default => throw new \LogicException('Unknown attribute: ' . $attribute),
             };
         } catch (WatchFileUserNotFoundException) {
-            $vote?->addReason('The user does not have access to this watch file.');
+            $vote?->addReason('The user does not have access to this watchfile.');
 
             return false;
         }
@@ -95,7 +95,7 @@ class WatchFileVoter extends Voter
             $watchFile = $subject->getWatchFile();
 
             if (null === $watchFile) {
-                $vote?->addReason('The subject does not have an associated watch file.');
+                $vote?->addReason('The subject does not have an associated watchfile.');
 
                 return null;
             }
@@ -117,7 +117,7 @@ class WatchFileVoter extends Voter
             return true;
         }
 
-        $vote?->addReason('The user does not have edit permissions for this watch file.');
+        $vote?->addReason('The user does not have edit permissions for this watchfile.');
 
         return false;
     }

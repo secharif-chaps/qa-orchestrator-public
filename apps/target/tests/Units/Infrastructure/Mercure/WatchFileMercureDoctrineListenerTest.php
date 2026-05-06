@@ -151,7 +151,7 @@ class WatchFileMercureDoctrineListenerTest extends TestCase
     {
         $watchFile = new WatchFile(
             'Test WatchFile',
-            'A watch file for testing', new Organisation('Test Org', 'test-org-id'),
+            'A watchfile for testing', new Organisation('Test Org', 'test-org-id'),
             new User(Uuid::v4()->toRfc4122()),
         );
 

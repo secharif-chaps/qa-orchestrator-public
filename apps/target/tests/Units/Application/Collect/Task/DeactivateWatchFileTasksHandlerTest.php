@@ -47,7 +47,7 @@ final class DeactivateWatchFileTasksHandlerTest extends TestCase
 
     public function testInvokeCancelsActiveTasks(): void
     {
-        $watchFile = new WatchFile('Test Watch File Name', 'Test User Objective', new Organisation(
+        $watchFile = new WatchFile('Test Watchfile Name', 'Test User Objective', new Organisation(
             'Test Org',
             'test-org-id'
         ));
@@ -110,7 +110,7 @@ final class DeactivateWatchFileTasksHandlerTest extends TestCase
 
     public function testInvokeSkipsNonCancellableTasks(): void
     {
-        $watchFile = new WatchFile('Test Watch File Name', 'Test User Objective', new Organisation(
+        $watchFile = new WatchFile('Test Watchfile Name', 'Test User Objective', new Organisation(
             'Test Org',
             'test-org-id'
         ));
@@ -146,7 +146,7 @@ final class DeactivateWatchFileTasksHandlerTest extends TestCase
 
     public function testInvokeSkipsTasksWithoutProviderId(): void
     {
-        $watchFile = new WatchFile('Test Watch File Name', 'Test User Objective', new Organisation(
+        $watchFile = new WatchFile('Test Watchfile Name', 'Test User Objective', new Organisation(
             'Test Org',
             'test-org-id'
         ));
@@ -188,7 +188,7 @@ final class DeactivateWatchFileTasksHandlerTest extends TestCase
 
     public function testInvokeHandles404ErrorGracefully(): void
     {
-        $watchFile = new WatchFile('Test Watch File Name', 'Test User Objective', new Organisation(
+        $watchFile = new WatchFile('Test Watchfile Name', 'Test User Objective', new Organisation(
             'Test Org',
             'test-org-id'
         ));
@@ -240,7 +240,7 @@ final class DeactivateWatchFileTasksHandlerTest extends TestCase
 
     public function testInvokeContinuesWithOtherTasksOnPartialFailure(): void
     {
-        $watchFile = new WatchFile('Test Watch File Name', 'Test User Objective', new Organisation(
+        $watchFile = new WatchFile('Test Watchfile Name', 'Test User Objective', new Organisation(
             'Test Org',
             'test-org-id'
         ));
