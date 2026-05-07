@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Units\Infrastructure\Document;
 
+use App\Domain\Document\Deduplication\FingerprintGatewayInterface;
 use App\Domain\Document\Document;
 use App\Domain\Document\DocumentGatewayInterface;
 use App\Domain\Document\Exception\DocumentNotFoundException;
 use App\Tests\Utils\EntityUtilsTrait;
 
-class NullDocumentGateway implements DocumentGatewayInterface
+class NullDocumentGateway implements DocumentGatewayInterface, FingerprintGatewayInterface
 {
     use EntityUtilsTrait;
 
@@ -106,6 +107,80 @@ class NullDocumentGateway implements DocumentGatewayInterface
             $this->documents,
             static fn (Document $document): bool => $document->getCollectTaskId() === $collectTaskId,
         ));
+    }
+
+    public function findByContentHash(string $contentHash, ?string $excludeDocumentId = null): ?Document
+    {
+        foreach ($this->documents as $document) {
+            $fingerprint = $document->getFingerprint();
+            if (null === $fingerprint || $fingerprint->contentHash !== $contentHash) {
+                continue;
+            }
+            if (null !== $excludeDocumentId && $document->getId() === $excludeDocumentId) {
+                continue;
+            }
+
+            return $document;
+        }
+
+        return null;
+    }
+
+    public function findBySimHash(string $simHash, ?string $excludeDocumentId = null): array
+    {
+        return array_values(array_filter(
+            $this->documents,
+            static fn (Document $document): bool => null !== $document->getFingerprint()
+                && $document->getFingerprint()
+->simHash === $simHash
+                && (null === $excludeDocumentId || $document->getId() !== $excludeDocumentId),
+        ));
+    }
+
+    public function findByLshBands(array $bandHashes, ?string $excludeDocumentId = null, int $limit = 50): array
+    {
+        $matches = [];
+        foreach ($this->documents as $document) {
+            $fingerprint = $document->getFingerprint();
+            if (null === $fingerprint) {
+                continue;
+            }
+            if (null !== $excludeDocumentId && $document->getId() === $excludeDocumentId) {
+                continue;
+            }
+            if ([] === array_intersect($fingerprint->lshBands, $bandHashes)) {
+                continue;
+            }
+            $matches[] = $document;
+            if (\count($matches) >= $limit) {
+                break;
+            }
+        }
+
+        return $matches;
+    }
+
+    public function findByTitleShingles(array $titleShingles, ?string $excludeDocumentId = null, int $limit = 50): array
+    {
+        $matches = [];
+        foreach ($this->documents as $document) {
+            $fingerprint = $document->getFingerprint();
+            if (null === $fingerprint) {
+                continue;
+            }
+            if (null !== $excludeDocumentId && $document->getId() === $excludeDocumentId) {
+                continue;
+            }
+            if ([] === array_intersect($fingerprint->titleShingles, $titleShingles)) {
+                continue;
+            }
+            $matches[] = $document;
+            if (\count($matches) >= $limit) {
+                break;
+            }
+        }
+
+        return $matches;
     }
 
     public function findByCanonicalUrl(string $canonicalUrl, ?string $excludeDocumentId = null): ?Document
