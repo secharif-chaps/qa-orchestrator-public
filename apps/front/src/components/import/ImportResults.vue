@@ -39,18 +39,14 @@
 
       <!-- Expandable Error Details -->
       <div class="space-y-2">
-        <button
-          class="text-error-light-content flex items-center gap-2 text-sm hover:underline"
+        <Button
+          variant="tertiary"
+          size="sm"
+          :icon="showErrors ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-right'"
+          :label="showErrors ? $t('admin.import.hideDetails') : $t('admin.import.showDetails')"
+          class="text-error-light-content hover:text-error"
           @click="showErrors = !showErrors"
-        >
-          <i
-            :class="[
-              'fa-solid transition-transform',
-              showErrors ? 'fa-chevron-down' : 'fa-chevron-right',
-            ]"
-          />
-          {{ showErrors ? $t('admin.import.hideDetails') : $t('admin.import.showDetails') }}
-        </button>
+        />
 
         <div v-if="showErrors" class="max-h-48 space-y-2 overflow-y-auto">
           <div

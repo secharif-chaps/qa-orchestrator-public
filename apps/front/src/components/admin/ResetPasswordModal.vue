@@ -11,7 +11,7 @@
         <h3 class="text-base text-lg font-semibold">
           {{ $t('settings.user.resetPassword.title') }}
         </h3>
-        <Button variant="tertiary" icon="fa fa-times" @click="handleClose" />
+        <Button variant="tertiary" icon="fa-times" @click="handleClose" />
       </div>
 
       <!-- Success State -->
@@ -30,14 +30,12 @@
             <Input
               id="reset-new-password"
               :model-value="newPassword"
-              :type="showPassword ? 'text' : 'password'"
+              type="password"
               :label="$t('settings.user.resetPassword.newPassword')"
-              :icon-right="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"
               readonly
               class="flex-1 font-mono"
-              @click-icon-right="showPassword = !showPassword"
             />
-            <Button variant="secondary" icon="fa fa-copy" class="self-end" @click="copyPassword" />
+            <Button variant="secondary" icon="fa-copy" class="self-end" @click="copyPassword" />
           </div>
           <p v-if="copied" class="text-success mt-1 text-xs">
             <i class="fa fa-check mr-1"></i>
@@ -66,28 +64,25 @@
           <Input
             id="reset-password"
             v-model="password"
-            :type="showPassword ? 'text' : 'password'"
+            type="password"
             :disabled="isLoading"
             :label="`${$t('settings.user.resetPassword.temporaryPassword')} *`"
             :placeholder="$t('settings.user.resetPassword.placeholder')"
             :error="error || undefined"
-            :icon-right="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"
             class="w-full"
-            @click-icon-right="showPassword = !showPassword"
           />
         </div>
 
         <!-- Generate Password Button -->
         <div class="mb-6">
-          <button
-            type="button"
+          <Button
+            variant="tertiary"
+            size="sm"
+            icon="fa-rotate-right"
+            :label="$t('settings.user.generatePassword')"
             :disabled="isLoading"
-            class="text-neutral-black-font hover:text-primary text-sm font-medium disabled:opacity-50"
             @click="generatePassword"
-          >
-            <i class="fa fa-refresh mr-1"></i>
-            {{ $t('settings.user.generatePassword') }}
-          </button>
+          />
         </div>
 
         <!-- Info Alert -->
@@ -140,7 +135,6 @@ const emit = defineEmits<{
 // State
 const password = ref('')
 const newPassword = ref('')
-const showPassword = ref(false)
 const copied = ref(false)
 const error = ref('')
 const isSuccess = ref(false)

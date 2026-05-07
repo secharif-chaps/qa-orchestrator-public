@@ -5,12 +5,12 @@
         <span class="text-lg text-gray-900">
           {{ $t('target.watchFiles.actors.selection_modal.title') }}
         </span>
-        <button
-          class="flex cursor-pointer items-center p-1 text-gray-500 transition-colors hover:text-gray-700"
+        <Button
+          variant="tertiary"
+          icon="fa-xmark"
+          :title="$t('common.button.close')"
           @click="closeModal"
-        >
-          <Icon icon="fa-xmark" class="h-5 w-5" />
-        </button>
+        />
       </div>
     </template>
 
@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Icon, Modal } from '@owlint/feathers-vue'
+import { Button, Modal } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { useBatchChangeActorStatus } from '@target/api/mutations/actor'
 import { getCollectionActorQuery } from '@target/api/queries/actor'

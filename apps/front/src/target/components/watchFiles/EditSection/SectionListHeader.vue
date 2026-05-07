@@ -5,19 +5,16 @@
         <h3 class="font-chaps font-small leading-6 font-bold text-black">
           {{ title }}
         </h3>
-        <button
+        <Button
           v-if="!readonly"
-          class="flex cursor-pointer items-center justify-center focus:outline-none"
+          variant="tertiary"
+          size="sm"
+          :icon="refreshIcon"
           :title="$t(refreshButtonTitle)"
           :disabled="loading"
+          :loading="loading"
           @click="$emit('refresh')"
-        >
-          <Icon
-            :icon="refreshIcon"
-            class="hover:text-primary-500 text-lg transition-colors"
-            :spin="loading"
-          />
-        </button>
+        />
         <!-- Info Badge -->
       </div>
       <div v-if="lastUpdate" class="text-xs">
@@ -48,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Icon, Tag } from '@owlint/feathers-vue'
+import { Button, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 

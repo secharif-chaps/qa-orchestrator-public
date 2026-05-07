@@ -19,13 +19,14 @@
           :placeholder="$t('target.watchFiles.list.search_placeholder')"
           class="w-64"
         >
-          <button
+          <Button
             v-if="searchQuery"
-            class="flex items-center justify-between"
+            variant="tertiary"
+            size="sm"
+            icon="fa-xmark"
+            :title="$t('common.search.clear')"
             @click="searchQuery = ''"
-          >
-            <Icon icon="fa-xmark" />
-          </button>
+          />
         </Searchbar>
         <Button
           ref="sortBtn"

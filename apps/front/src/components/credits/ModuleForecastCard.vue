@@ -26,12 +26,13 @@
           <h4 class="text-base font-semibold">{{ moduleLabel }}</h4>
         </div>
         <!-- Refresh icon for enabled, disabled badge for disabled -->
-        <button
+        <Button
           v-if="forecast.enabled"
-          class="text-neutral-black-font hover:text-primary transition-colors"
-        >
-          <i class="fa fa-rotate-right"></i>
-        </button>
+          variant="tertiary"
+          size="sm"
+          icon="fa-rotate-right"
+          :title="$t('settings.credits.refresh')"
+        />
         <Tag v-else variant="secondary" size="sm" :label="$t('settings.credits.module.disabled')" />
       </div>
 
@@ -72,7 +73,7 @@
  * Displays how many more items can be created with remaining credits.
  */
 import type { ModuleForecast, ModuleName } from '@/types/credits'
-import { Tag } from '@owlint/feathers-vue'
+import { Button, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 

@@ -71,22 +71,20 @@
             :placeholder="t('stream.form.webhookHeaderValue')"
             class="flex-1"
           />
-          <button
-            type="button"
-            class="text-secondary hover:text-error flex h-8 w-8 items-center justify-center rounded transition-colors"
+          <Button
+            variant="tertiary"
+            icon="fa-times"
+            :title="t('stream.form.webhookRemoveHeader')"
             @click="removeHeader(index)"
-          >
-            <Icon icon="fa-times" />
-          </button>
+          />
         </div>
-        <button
-          type="button"
-          class="text-primary hover:text-primary/80 flex items-center gap-1 text-sm"
+        <Button
+          variant="tertiary"
+          size="sm"
+          icon="fa-plus"
+          :label="t('stream.form.webhookAddHeader')"
           @click="addHeader"
-        >
-          <Icon icon="fa-plus" class="text-xs" />
-          {{ t('stream.form.webhookAddHeader') }}
-        </button>
+        />
       </div>
 
       <Input

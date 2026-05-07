@@ -61,18 +61,20 @@
         v-if="availablePageContext && !isPageContextActive && canAddMoreCompanies"
         class="border-sage-300 dark:border-sage-700 border-b px-4 py-2"
       >
-        <button
-          class="bg-sage-800 hover:bg-sage-700 flex w-full items-center gap-2 rounded-sm px-3 py-2 text-left transition-colors"
+        <Button
+          variant="primary"
+          size="sm"
+          icon="fa-building"
+          icon-right="fa-plus"
+          class="w-full"
           @click="handleAddPageContext"
         >
-          <i class="fa fa-building text-sage-400 text-sm"></i>
-          <span class="text-sage-200 text-sm">
-            {{ $t('common.sidebar.chapse.addThisCompany') }}
-            <strong>{{ availablePageContext.name }}</strong>
-            {{ $t('common.sidebar.chapse.toContext') }}
-          </span>
-          <i class="fa fa-plus text-sage-400 ml-auto text-xs"></i>
-        </button>
+          <i18n-t scope="global" keypath="common.sidebar.chapse.addThisCompanyToContext" tag="span">
+            <template #name>
+              <strong>{{ availablePageContext.name }}</strong>
+            </template>
+          </i18n-t>
+        </Button>
       </div>
 
       <!-- Messages Container -->
