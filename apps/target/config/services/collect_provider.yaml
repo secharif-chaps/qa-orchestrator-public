@@ -329,6 +329,9 @@ services:
   App\Domain\Collect\ProviderResolverInterface:
     class: App\Infrastructure\Collect\SourceTypeProviderResolver
 
+  App\Domain\Collect\Url\UrlSourceTypeClassifierInterface:
+    class: App\Infrastructure\Collect\Url\HostBasedUrlSourceTypeClassifier
+
   app.collect_provider.websocket_server_ssl_context:
     class: Phrity\Net\Context
     calls:
