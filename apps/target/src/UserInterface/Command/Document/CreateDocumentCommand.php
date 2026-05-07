@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Command\Document;
 
-use App\Application\Document\IngestDocumentAction;
-use App\Application\Document\IngestDocumentResult;
+use App\Application\Collect\Task\CreateCollectTaskAction;
 use App\Domain\Collect\CollectTask;
 use App\Domain\Collect\CollectTaskGatewayInterface;
+use App\Domain\Collect\CollectTaskStatus;
+use App\Domain\Collect\Url\UrlSourceTypeClassifierInterface;
 use App\Domain\Document\Document;
-use App\Domain\Document\DocumentBuilderFromHtmlMetadata;
-use App\Domain\Document\HtmlFetcherInterface;
-use App\Domain\Document\HtmlFetchException;
-use App\Domain\Document\HtmlMetadataExtractor;
+use App\Domain\Document\DocumentGatewayInterface;
 use App\Domain\DocumentQuality\Exception\QualityReportNotFoundException;
 use App\Domain\DocumentQuality\QualityReportGatewayInterface;
 use App\Domain\Source\ManualSourceFactory;
@@ -32,40 +30,39 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
 /**
- * Manual document creation from the CLI — fetches a URL (or reads a local
- * HTML file), extracts metadata, builds a {@see Document}, persists a
- * synthetic {@see CollectTask} and dispatches the document through the
- * standard {@see IngestDocumentAction} flow.
+ * Manual document creation from the CLI — provider-agnostic.
+ *
+ * Builds a {@see CreateCollectTaskAction} carrying URL/HTML overrides in
+ * its `configuration` payload and dispatches it through the standard
+ * collect orchestrator. The actual fetch/extract/build work happens
+ * downstream in the resolved provider's handler — `web` for MANUAL
+ * sources, `apify`/`bakus` for everything else.
  *
  * Operational uses:
  * - On-call ingestion of a single URL when a provider misses it.
  * - Reproducing a flaky pipeline run from a saved HTML file.
  * - Smoke-testing a watch_file's pre/post-save processors end-to-end.
  *
- * `--sync` forces the entire pipeline (pre-save + persistence + post-save)
- * to complete before the command returns, so the caller can inspect the
- * resulting document immediately. Without `--sync` only the pre-save
- * pipeline runs inline; the post-save pipeline is dispatched async.
+ * `--sync` forces the entire chain (CreateCollectTask + provider fetch +
+ * IngestDocument + post-save pipeline) onto the in-memory `sync` transport
+ * so the caller can inspect the resulting document immediately. Async API
+ * paths (no flag) return as soon as the bus accepts the message.
+ *
+ * URL classification: when `--url` is supplied without an explicit
+ * `--source-id`, the URL is classified by host. Only `MANUAL` (generic
+ * web) is accepted in one-shot mode for now — recognised social/video
+ * platforms (Twitter, LinkedIn, YouTube, TikTok, …) are rejected with a
+ * clear error message until dedicated one-shot Apify/Bakus actors land.
  */
 #[AsCommand(name: 'document:create', description: 'Create a document manually from a URL or HTML file')]
 class CreateDocumentCommand extends Command
 {
-    private const string PROVIDER_CLOUDFLARE = 'cloudflare';
-    private const string PROVIDER_MANUAL = 'manual';
-
-    /**
-     * Hard ceiling for excerpt previews printed in the recap table —
-     * keeps the terminal output readable on long teasers.
-     */
-    private const int EXCERPT_PREVIEW_MAX_LENGTH = 80;
-
     /**
      * Built in {@see initialize()} from the active output verbosity so
      * informational tracing (URL fetched, source resolved, etc.) routes
@@ -81,12 +78,10 @@ class CreateDocumentCommand extends Command
         private readonly WatchFileGatewayInterface $watchFileGateway,
         private readonly SourceGatewayInterface $sourceGateway,
         private readonly CollectTaskGatewayInterface $collectTaskGateway,
+        private readonly DocumentGatewayInterface $documentGateway,
         private readonly QualityReportGatewayInterface $qualityReportGateway,
-        private readonly HtmlFetcherInterface $htmlFetcher,
-        private readonly HtmlMetadataExtractor $metadataExtractor,
-        private readonly DocumentBuilderFromHtmlMetadata $documentBuilder,
         private readonly ManualSourceFactory $manualSourceFactory,
-        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly UrlSourceTypeClassifierInterface $urlClassifier,
     ) {
         parent::__construct();
         $this->logger = new NullLogger();
@@ -112,18 +107,17 @@ class CreateDocumentCommand extends Command
         $this
             ->setHelp(<<<'HELP'
                 Build a Document from a URL or local HTML file and dispatch
-                it through the standard ingestion pipeline.
+                it through the standard collect orchestrator.
 
-                <info>Async (default)</info>: dispatches the message to the
-                bus and returns immediately. Pre-save and post-save
-                pipelines run on workers.
+                <info>Async (default)</info>: dispatches CreateCollectTaskAction
+                to the bus and returns immediately. Provider fetch +
+                ingestion + post-save pipeline run on workers.
 
-                <info>--sync</info>: forces both the ingestion and the
-                post-save pipeline onto the in-memory <comment>sync</comment>
-                transport. The command waits for everything to complete
-                and prints a recap (pipeline signals, dedup verdict,
-                quality report) before exiting. Useful for one-off
-                ingests, debug, and integration tests.
+                <info>--sync</info>: forces the entire chain onto the in-memory
+                <comment>sync</comment> transport. The command waits for everything
+                to complete and prints a recap (resulting Documents, quality
+                report) before exiting. Useful for one-off ingests, debug,
+                and integration tests.
 
                 Examples:
                   <info>document:create</info> WATCH_FILE_UUID --url=https://example.com/article
@@ -145,7 +139,7 @@ class CreateDocumentCommand extends Command
                 'sync',
                 null,
                 InputOption::VALUE_NONE,
-                'Run the full pipeline (pre-save + post-save) on the sync transport and print a recap'
+                'Run the full chain (CreateCollectTask + provider + ingestion + post-save) on the sync transport and print a recap'
             );
     }
 
@@ -160,7 +154,7 @@ class CreateDocumentCommand extends Command
         $htmlFile = $input->getOption('html-file');
         $titleOverride = $input->getOption('title');
         $excerptOverride = $input->getOption('excerpt');
-        $sourceId = $input->getOption('source-id');
+        $sourceIdOption = $input->getOption('source-id');
 
         if (null === $url && null === $htmlFile) {
             $io->error('You must provide either --url or --html-file.');
@@ -181,104 +175,110 @@ class CreateDocumentCommand extends Command
             'id' => $watchFileId,
         ]);
 
-        // Resolve source
-        $source = $this->resolveSource($sourceId, $url, $watchFile, $io);
+        $sourceIdValue = \is_string($sourceIdOption) ? $sourceIdOption : null;
+        $source = $this->resolveSource($sourceIdValue, $watchFile, $io);
 
-        // Resolve HTML content
-        $providerName = null !== $url ? self::PROVIDER_CLOUDFLARE : self::PROVIDER_MANUAL;
-        $html = $this->resolveHtml($url, $htmlFile, $io);
-        if (null === $html) {
-            return Command::FAILURE;
+        // URL classification: only enforced when the user did NOT pass an
+        // explicit --source-id. With an explicit source, the operator
+        // already knows what they're doing and bypasses the classifier
+        // (e.g. a Twitter Source with its own provider routing).
+        if (null === $sourceIdValue && \is_string($url) && SourceType::MANUAL === $source->getType()) {
+            $detected = $this->urlClassifier->classify($url);
+            if (null !== $detected && SourceType::MANUAL !== $detected) {
+                $io->error(\sprintf(
+                    'URL detected as %s. One-shot ingestion is not yet supported for this type — create a dedicated Source on the WatchFile and re-run with --source-id.',
+                    $detected->value,
+                ));
+
+                return Command::FAILURE;
+            }
         }
 
-        $this->logger->info('Extracting metadata from HTML payload...');
-        $metadata = $this->metadataExtractor->extract($html, \is_string($url) ? $url : null);
+        // Read raw HTML once on the CLI side so the file IO error stays a
+        // CLI concern (clear local error message) rather than bubbling
+        // through the FetchWebUrlHandler. URL fetching is provider-side.
+        $rawHtml = null;
+        if (\is_string($htmlFile)) {
+            if (!file_exists($htmlFile)) {
+                $io->error(\sprintf('File not found: %s', $htmlFile));
 
-        $titleOverrideValue = \is_string($titleOverride) ? $titleOverride : null;
-        $excerptOverrideValue = \is_string($excerptOverride) ? $excerptOverride : null;
+                return Command::FAILURE;
+            }
+            $rawHtml = file_get_contents($htmlFile);
+            if (false === $rawHtml || '' === $rawHtml) {
+                $io->error(\sprintf('Failed to read or empty file: %s', $htmlFile));
 
-        $previewTitle = $titleOverrideValue ?? $metadata->title;
-        $previewExcerpt = $excerptOverrideValue ?? $metadata->excerpt;
-        $previewDate = $metadata->datePublish ?? new \DateTimeImmutable();
-
-        $io->table(['Field', 'Value'], [
-            ['Title', $previewTitle],
-            ['Excerpt', $this->truncate($previewExcerpt, self::EXCERPT_PREVIEW_MAX_LENGTH)],
-            ['Language', $metadata->language],
-            ['Date', $previewDate->format('Y-m-d H:i:s')],
-            ['Author', $metadata->author ?? '-'],
-            ['Site', $metadata->siteName ?? '-'],
-            ['Image', null !== $metadata->imageUrl ? 'yes' : '-'],
-            ['Canonical', $metadata->canonicalUrl ?? '-'],
-            ['Content length', number_format(\strlen($metadata->content)) . ' chars'],
-            ['Provider', $providerName],
-        ]);
-
-        // Validate content quality
-        $contentIssue = $metadata->getContentIssue();
-        if (null !== $contentIssue) {
-            $io->error(\sprintf('Content rejected: %s', $contentIssue));
-
-            return Command::FAILURE;
+                return Command::FAILURE;
+            }
+            $this->logger->info('Read HTML file: {path} ({bytes} bytes)', [
+                'path' => $htmlFile,
+                'bytes' => number_format(\strlen($rawHtml)),
+            ]);
         }
-
-        $collectTask = $this->buildCollectTask($source, $watchFile, $providerName);
-        $document = $this->documentBuilder->build(
-            metadata: $metadata,
-            rawHtml: $html,
-            sourceUrl: $url,
-            titleOverride: $titleOverrideValue,
-            excerptOverride: $excerptOverrideValue,
-        );
-
-        $collectTaskId = $collectTask->getId();
-        \assert(\is_string($collectTaskId));
 
         $sync = true === $input->getOption('sync');
 
+        $configuration = array_filter(
+            [
+                'url' => \is_string($url) ? $url : null,
+                'raw_html' => $rawHtml,
+                'title' => \is_string($titleOverride) ? $titleOverride : null,
+                'excerpt' => \is_string($excerptOverride) ? $excerptOverride : null,
+                '_sync_chain' => $sync ? true : null,
+            ],
+            static fn (mixed $value): bool => null !== $value,
+        );
+
+        $sourceId = $source->getId();
+
+        $stamps = $sync ? [new TransportNamesStamp(['sync'])] : [];
+        $envelope = $this->messageBus->dispatch(
+            new CreateCollectTaskAction(
+                sourceId: $sourceId,
+                watchFileId: $watchFileId,
+                start: true,
+                configuration: $configuration,
+            ),
+            $stamps,
+        );
+
         if (!$sync) {
-            $this->messageBus->dispatch(new IngestDocumentAction($collectTaskId, $document));
-            $io->success(\sprintf('Document dispatched for async ingestion: %s', $document->getTitle()));
+            $io->success('Collect task dispatched for async ingestion.');
 
             return Command::SUCCESS;
         }
 
-        $envelope = $this->messageBus->dispatch(
-            new IngestDocumentAction(collectTaskId: $collectTaskId, document: $document, sync: true),
-            [new TransportNamesStamp(['sync'])],
-        );
-        $result = $this->extractIngestResult($envelope);
-        $this->renderSyncRecap($io, $result);
+        $collectTask = $this->extractCollectTask($envelope);
+        // The CollectTask returned by CreateCollectTaskHandler reflects its
+        // own state machine post-start (QUEUED). Reload through the gateway
+        // to observe transitions made by downstream sync handlers
+        // (FetchWebUrlHandler bumps to RUNNING then COMPLETED inline).
+        $collectTaskId = $collectTask->getId();
+        \assert(\is_string($collectTaskId));
+        try {
+            $collectTask = $this->collectTaskGateway->get($collectTaskId);
+        } catch (\Throwable) {
+            // Stay with the in-memory snapshot if the reload fails (test
+            // doubles, transient gateway issue) — the recap below still
+            // prints something meaningful.
+        }
 
-        return Command::SUCCESS;
+        return $this->renderSyncRecap($io, $collectTask);
     }
 
-    private function buildCollectTask(Source $source, WatchFile $watchFile, string $providerName): CollectTask
-    {
-        $task = new CollectTask(source: $source, watchFile: $watchFile, providerName: $providerName);
-        // CLI ingestion has no real provider job id — synthesise a tagged
-        // identifier so the task is greppable in audit logs.
-        $task->start('cli-' . bin2hex(random_bytes(8)), $this->eventDispatcher);
-        $task->resume($this->eventDispatcher);
-        $task->complete($this->eventDispatcher);
-        $this->collectTaskGateway->save($task);
-
-        return $task;
-    }
-
-    private function extractIngestResult(Envelope $envelope): IngestDocumentResult
+    private function extractCollectTask(Envelope $envelope): CollectTask
     {
         $stamp = $envelope->last(HandledStamp::class);
         if (!$stamp instanceof HandledStamp) {
             throw new \LogicException(
-                'IngestDocumentAction was dispatched on the sync transport but no HandledStamp came back — check that IngestDocumentHandler is registered as a handler for this message.',
+                'CreateCollectTaskAction was dispatched on the sync transport but no HandledStamp came back — check that CreateCollectTaskHandler is registered.',
             );
         }
 
         $result = $stamp->getResult();
-        if (!$result instanceof IngestDocumentResult) {
+        if (!$result instanceof CollectTask) {
             throw new \LogicException(\sprintf(
-                'IngestDocumentHandler must return an IngestDocumentResult; got "%s".',
+                'CreateCollectTaskHandler must return a CollectTask; got "%s".',
                 get_debug_type($result),
             ));
         }
@@ -286,70 +286,51 @@ class CreateDocumentCommand extends Command
         return $result;
     }
 
-    private function renderSyncRecap(SymfonyStyle $io, IngestDocumentResult $result): void
+    private function renderSyncRecap(SymfonyStyle $io, CollectTask $collectTask): int
     {
-        $document = $result->document;
+        $collectTaskId = $collectTask->getId();
+        \assert(\is_string($collectTaskId));
 
-        if ($result->isDuplicate()) {
-            $io->warning(\sprintf(
-                'Document REJECTED as duplicate of "%s" (no save performed).',
-                $result->duplicateOf() ?? 'unknown',
+        $status = $collectTask->getStatus();
+        $providerName = $collectTask->getProviderName();
+        $providerTaskId = $collectTask->getProviderTaskId();
+
+        if (CollectTaskStatus::FAILED === $status) {
+            $io->error(\sprintf(
+                'Collect task FAILED (provider=%s, providerTaskId=%s).',
+                $providerName,
+                $providerTaskId ?? '-',
             ));
-        } else {
-            $io->success(\sprintf(
-                'Document persisted: "%s" (ID: %s).',
-                $document->getTitle(),
-                $document->getId(),
+
+            return Command::FAILURE;
+        }
+
+        if (CollectTaskStatus::COMPLETED !== $status) {
+            $io->note(\sprintf(
+                'Collect task scheduled async (provider=%s, providerTaskId=%s, status=%s). Documents will arrive when the provider completes — re-run document:read on this watch file later, or check the worker logs.',
+                $providerName,
+                $providerTaskId ?? '-',
+                $status->value,
             ));
-        }
-        // Provider-id merge events are emitted by IngestDocumentHandler as a
-        // structured `info` log — the ConsoleLogger built in initialize()
-        // will print them inline before this recap, so the operator can
-        // tell "merged into existing entry" from "persisted as new"
-        // without us tracking that signal on IngestDocumentResult.
 
-        $this->renderPipelineSignals($io, $result);
-        $this->renderQualityReport($io, $document);
-    }
-
-    private function renderPipelineSignals(SymfonyStyle $io, IngestDocumentResult $result): void
-    {
-        $context = $result->preSaveContext;
-        if (null === $context) {
-            $io->note('Pre-save pipeline was skipped (document had no associated WatchFile).');
-
-            return;
+            return Command::SUCCESS;
         }
 
-        $io->section('Pre-save pipeline');
+        $documents = $this->documentGateway->findByCollectTaskId($collectTaskId);
+        if ([] === $documents) {
+            $io->warning(
+                'Collect task COMPLETED with no persisted Document — pipeline likely halted (duplicate detection, content quality gate). See the inline log lines above for the halt reason.'
+            );
 
-        $haltReason = $context->haltReason;
-        $rows = [
-            ['Halted', $context->isHalted ? 'yes' : 'no'],
-            ['Halt reason', null !== $haltReason ? $haltReason->en : '-'],
-            ['Duplicate of', $context->duplicateOf ?? '-'],
-            ['Canonical URL', $context->canonicalUrl ?? '-'],
-        ];
-
-        if ([] === $context->signals) {
-            $rows[] = ['Signals', '(none)'];
+            return Command::SUCCESS;
         }
 
-        $io->table(['Field', 'Value'], $rows);
-
-        if ([] !== $context->signals) {
-            $signalRows = [];
-            foreach ($context->signals as $name => $signal) {
-                $signalRows[] = [
-                    $name,
-                    \sprintf('%.3f', $signal->value),
-                    \sprintf('%.2f', $signal->weight),
-                    \sprintf('%.3f', $signal->contribution()),
-                    $signal->category->value,
-                ];
-            }
-            $io->table(['Signal', 'Value', 'Weight', 'Contribution', 'Category'], $signalRows);
+        foreach ($documents as $document) {
+            $io->success(\sprintf('Document persisted: "%s" (ID: %s).', $document->getTitle(), $document->getId()));
+            $this->renderQualityReport($io, $document);
         }
+
+        return Command::SUCCESS;
     }
 
     private function renderQualityReport(SymfonyStyle $io, Document $document): void
@@ -372,21 +353,8 @@ class CreateDocumentCommand extends Command
         ]);
     }
 
-    private function truncate(string $value, int $max): string
+    private function resolveSource(?string $sourceId, WatchFile $watchFile, SymfonyStyle $io): Source
     {
-        if (mb_strlen($value) <= $max) {
-            return $value;
-        }
-
-        return mb_substr($value, 0, $max) . '...';
-    }
-
-    private function resolveSource(
-        ?string $sourceId,
-        ?string $url,
-        WatchFile $watchFile,
-        SymfonyStyle $io,
-    ): Source {
         if (\is_string($sourceId)) {
             $source = $this->sourceGateway->get($sourceId);
             // Echo via $io->writeln (not logger) so `--source-id` callers
@@ -411,42 +379,5 @@ class CreateDocumentCommand extends Command
         $io->writeln('<info>Created new manual source.</info>');
 
         return $source;
-    }
-
-    private function resolveHtml(?string $url, ?string $htmlFile, SymfonyStyle $io): ?string
-    {
-        if (null !== $url) {
-            $this->logger->info('Fetching URL: {url}', [
-                'url' => $url,
-            ]);
-
-            try {
-                return $this->htmlFetcher->fetch($url);
-            } catch (HtmlFetchException $e) {
-                $io->error(\sprintf('Failed to fetch URL: %s', $e->getMessage()));
-
-                return null;
-            }
-        }
-
-        if (!\is_string($htmlFile) || !file_exists($htmlFile)) {
-            $io->error(\sprintf('File not found: %s', $htmlFile));
-
-            return null;
-        }
-
-        $html = file_get_contents($htmlFile);
-        if (false === $html || '' === $html) {
-            $io->error(\sprintf('Failed to read or empty file: %s', $htmlFile));
-
-            return null;
-        }
-
-        $this->logger->info('Read HTML file: {path} ({bytes} bytes)', [
-            'path' => $htmlFile,
-            'bytes' => number_format(\strlen($html)),
-        ]);
-
-        return $html;
     }
 }

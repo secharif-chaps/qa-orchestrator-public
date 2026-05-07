@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Units\UserInterface\Command\Document;
 
-use App\Application\Document\IngestDocumentAction;
-use App\Application\Document\IngestDocumentResult;
+use App\Application\Collect\Task\CreateCollectTaskAction;
+use App\Domain\Collect\CollectTask;
 use App\Domain\Collect\CollectTaskGatewayInterface;
+use App\Domain\Collect\CollectTaskStatus;
+use App\Domain\Collect\Url\UrlSourceTypeClassifierInterface;
 use App\Domain\Document\Document;
-use App\Domain\Document\DocumentBuilderFromHtmlMetadata;
-use App\Domain\Document\HtmlFetcherInterface;
-use App\Domain\Document\HtmlFetchException;
-use App\Domain\Document\HtmlMetadata;
-use App\Domain\Document\HtmlMetadataExtractor;
+use App\Domain\Document\DocumentGatewayInterface;
 use App\Domain\DocumentQuality\Exception\QualityReportNotFoundException;
 use App\Domain\DocumentQuality\QualityReportGatewayInterface;
 use App\Domain\Organisation\Organisation;
@@ -32,10 +30,10 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
 #[AllowMockObjectsWithoutExpectations]
 class CreateDocumentCommandTest extends TestCase
@@ -45,76 +43,55 @@ class CreateDocumentCommandTest extends TestCase
     private WatchFileGatewayInterface&MockObject $watchFileGateway;
     private SourceGatewayInterface&MockObject $sourceGateway;
     private CollectTaskGatewayInterface&MockObject $collectTaskGateway;
+    private DocumentGatewayInterface&MockObject $documentGateway;
     private QualityReportGatewayInterface&MockObject $qualityReportGateway;
-    private HtmlFetcherInterface&MockObject $htmlFetcher;
-    private HtmlMetadataExtractor&Stub $metadataExtractor;
-    private DocumentBuilderFromHtmlMetadata $documentBuilder;
+    private UrlSourceTypeClassifierInterface&Stub $urlClassifier;
+    private CreateDocumentCommand $command;
     private CommandTester $commandTester;
+
+    /** @var \Closure(object, array<int, mixed>): Envelope */
+    private \Closure $dispatchHandler;
 
     protected function setUp(): void
     {
+        // Mutable bus dispatch handler — tests rebind `$this->dispatchHandler`
+        // when they need to inject a HandledStamp on the envelope. The mock
+        // itself proxies to whichever closure is bound at call time, so we
+        // can avoid the PHPUnit method-double ordering trap on the
+        // `dispatch()` matcher.
+        $this->dispatchHandler = static fn (object $message, array $stamps = []): Envelope => new Envelope($message);
         $this->messageBus = $this->createMock(MessageBusInterface::class);
-        // Mirrors the production sync transport: when the dispatch
-        // arrives with a TransportNamesStamp(['sync']) — i.e. the
-        // `--sync` CLI path — the bus returns an Envelope carrying a
-        // HandledStamp whose result wraps the dispatched document. All
-        // other dispatches (the async path or unrelated messages) get
-        // a plain Envelope, just like an async transport would yield.
-        $this->messageBus->method('dispatch')
-            ->willReturnCallback(static function (object $message, array $stamps = []): Envelope {
-                $envelope = $message instanceof Envelope ? $message : new Envelope($message);
-                foreach ($stamps as $stamp) {
-                    $envelope = $envelope->with($stamp);
-                }
-                $isSync = false;
-                foreach ($stamps as $stamp) {
-                    if ($stamp instanceof \Symfony\Component\Messenger\Stamp\TransportNamesStamp
-                        && \in_array('sync', $stamp->getTransportNames(), true)) {
-                        $isSync = true;
-                        break;
-                    }
-                }
-                if ($isSync && $message instanceof IngestDocumentAction) {
-                    $envelope = $envelope->with(new HandledStamp(
-                        new IngestDocumentResult(document: $message->document),
-                        'IngestDocumentHandler::__invoke',
-                    ));
-                }
-
-                return $envelope;
-            });
-
+        $this->messageBus
+            ->method('dispatch')
+            ->willReturnCallback(
+                fn (object $message, array $stamps = []): Envelope => ($this->dispatchHandler)($message, $stamps),
+            );
         $this->watchFileGateway = $this->createMock(WatchFileGatewayInterface::class);
         $this->sourceGateway = $this->createMock(SourceGatewayInterface::class);
-        $this->collectTaskGateway = $this->createMock(CollectTaskGatewayInterface::class);
-        // Real Doctrine gateway assigns an id on save via lifecycle callbacks; mimic that here.
-        $this->collectTaskGateway
+        // The auto-created MANUAL source assigned through ManualSourceFactory
+        // has no id until persisted; mimic the real Doctrine listener which
+        // generates one on save.
+        $this->sourceGateway
             ->method('save')
-            ->willReturnCallback(function ($collectTask): void {
-                $this->forcePropertyValue($collectTask, 'collect-task-' . bin2hex(random_bytes(4)));
+            ->willReturnCallback(function (Source $source): void {
+                try {
+                    $source->getId();
+                } catch (\LogicException) {
+                    $this->forcePropertyValue($source, 'src-' . bin2hex(random_bytes(4)));
+                }
             });
+        $this->collectTaskGateway = $this->createMock(CollectTaskGatewayInterface::class);
+        $this->documentGateway = $this->createMock(DocumentGatewayInterface::class);
         $this->qualityReportGateway = $this->createMock(QualityReportGatewayInterface::class);
         $this->qualityReportGateway
             ->method('findByDocumentId')
-            ->willThrowException(new QualityReportNotFoundException('Test default: no report'));
-        $this->htmlFetcher = $this->createMock(HtmlFetcherInterface::class);
-        $this->metadataExtractor = $this->createStub(HtmlMetadataExtractor::class);
-        $this->documentBuilder = new DocumentBuilderFromHtmlMetadata();
+            ->willThrowException(new QualityReportNotFoundException('No report'));
+        $this->urlClassifier = $this->createStub(UrlSourceTypeClassifierInterface::class);
+        // Default: any URL classifies as MANUAL → CLI accepts it.
+        $this->urlClassifier->method('classify')
+->willReturn(SourceType::MANUAL);
 
-        $command = new CreateDocumentCommand(
-            messageBus: $this->messageBus,
-            watchFileGateway: $this->watchFileGateway,
-            sourceGateway: $this->sourceGateway,
-            collectTaskGateway: $this->collectTaskGateway,
-            qualityReportGateway: $this->qualityReportGateway,
-            htmlFetcher: $this->htmlFetcher,
-            metadataExtractor: $this->metadataExtractor,
-            documentBuilder: $this->documentBuilder,
-            manualSourceFactory: new ManualSourceFactory(),
-            eventDispatcher: $this->createStub(EventDispatcherInterface::class),
-        );
-
-        $this->commandTester = new CommandTester($command);
+        $this->rebuildCommand();
     }
 
     public function testFailsWhenNeitherUrlNorHtmlFileProvided(): void
@@ -126,7 +103,7 @@ class CreateDocumentCommandTest extends TestCase
         self::assertSame(Command::FAILURE, $exitCode);
         self::assertStringContainsString(
             'You must provide either --url or --html-file',
-            $this->commandTester->getDisplay()
+            $this->commandTester->getDisplay(),
         );
     }
 
@@ -144,26 +121,21 @@ class CreateDocumentCommandTest extends TestCase
         self::assertStringContainsString('not found', $this->commandTester->getDisplay());
     }
 
-    public function testFetchUrlAndDispatchAction(): void
+    public function testDispatchesCreateCollectTaskActionAsynchronouslyByDefault(): void
     {
         $watchFile = $this->makeWatchFileWithManualSource();
         $this->watchFileGateway->method('get')
-            ->willReturn($watchFile);
+->willReturn($watchFile);
 
-        $this->htmlFetcher
-            ->expects($this->once())
-            ->method('fetch')
-            ->with('https://example.com/article')
-            ->willReturn('<html><body>article body</body></html>');
+        $captured = null;
+        $this->dispatchHandler = static function (object $message, array $stamps = []) use (&$captured): Envelope {
+            $captured = [
+                'message' => $message,
+                'stamps' => $stamps,
+            ];
 
-        $this->metadataExtractor->method('extract')
-            ->willReturn($this->makeMetadata(title: 'Fetched article'));
-
-        $this->messageBus
-            ->expects($this->once())
-            ->method('dispatch')
-            ->with($this->isInstanceOf(IngestDocumentAction::class))
-            ->willReturnCallback(static fn ($message) => new Envelope($message));
+            return new Envelope($message);
+        };
 
         $exitCode = $this->commandTester->execute([
             'watchFileId' => 'wf-1',
@@ -171,34 +143,87 @@ class CreateDocumentCommandTest extends TestCase
         ]);
 
         self::assertSame(Command::SUCCESS, $exitCode);
+        self::assertNotNull($captured);
+        $message = $captured['message'];
+        self::assertInstanceOf(CreateCollectTaskAction::class, $message);
+        self::assertSame('wf-1', $message->watchFileId);
+        self::assertSame('src-existing', $message->sourceId);
+        self::assertNotNull($message->configuration);
+        self::assertSame('https://example.com/article', $message->configuration['url']);
+        self::assertArrayNotHasKey('_sync_chain', $message->configuration);
+        // Async path: no TransportNamesStamp.
+        self::assertSame([], $captured['stamps']);
         self::assertStringContainsString(
-            'Document dispatched for async ingestion: Fetched article',
-            $this->commandTester->getDisplay()
+            'Collect task dispatched for async ingestion',
+            $this->commandTester->getDisplay(),
         );
     }
 
-    public function testFailsWhenUrlFetchThrowsHtmlFetchException(): void
+    public function testRejectsSocialUrlOnManualSourceWhenClassifierDetectsKnownPlatform(): void
     {
-        $this->watchFileGateway->method('get')
-            ->willReturn($this->makeWatchFileWithManualSource());
+        $this->urlClassifier = $this->createStub(UrlSourceTypeClassifierInterface::class);
+        $this->urlClassifier->method('classify')
+->willReturn(SourceType::SOCIAL_MEDIA_TWITTER);
+        $this->rebuildCommand();
 
-        $this->htmlFetcher
-            ->method('fetch')
-            ->willThrowException(HtmlFetchException::fetchFailed('https://example.com/x', 'connection refused'));
+        $this->watchFileGateway->method('get')
+->willReturn($this->makeWatchFileWithManualSource());
+
+        $dispatched = false;
+        $this->dispatchHandler = static function (object $message) use (&$dispatched): Envelope {
+            $dispatched = true;
+
+            return new Envelope($message);
+        };
 
         $exitCode = $this->commandTester->execute([
             'watchFileId' => 'wf-1',
-            '--url' => 'https://example.com/x',
+            '--url' => 'https://twitter.com/user/status/123',
         ]);
 
+        self::assertFalse($dispatched, 'Bus must not be hit when classifier rejects the URL');
+
         self::assertSame(Command::FAILURE, $exitCode);
-        self::assertStringContainsString('Failed to fetch URL', $this->commandTester->getDisplay());
+        // SymfonyStyle::error wraps long messages onto multiple lines; flatten
+        // newlines + collapse repeated whitespace before asserting so we are
+        // resilient to terminal width.
+        $flattened = preg_replace('/\s+/', ' ', $this->commandTester->getDisplay()) ?? '';
+        self::assertStringContainsString('not yet supported', $flattened);
+        self::assertStringContainsString('social_media:twitter', $flattened);
+    }
+
+    public function testBypassesClassifierWhenSourceIdIsExplicit(): void
+    {
+        $watchFile = $this->makeWatchFile();
+        $this->watchFileGateway->method('get')
+->willReturn($watchFile);
+
+        $explicitSource = $this->makeManualSource(
+            $watchFile,
+            name: 'Pinned Twitter',
+            id: 'src-twitter',
+            type: SourceType::SOCIAL_MEDIA_TWITTER,
+        );
+        $this->sourceGateway->method('get')
+->with('src-twitter')
+->willReturn($explicitSource);
+
+        // Even though the URL is twitter.com, --source-id was set, so the
+        // classifier check is skipped: we trust the operator.
+        $exitCode = $this->commandTester->execute([
+            'watchFileId' => 'wf-1',
+            '--url' => 'https://twitter.com/user/status/123',
+            '--source-id' => 'src-twitter',
+        ]);
+
+        self::assertSame(Command::SUCCESS, $exitCode);
+        self::assertStringContainsString('Using source: Pinned Twitter', $this->commandTester->getDisplay());
     }
 
     public function testFailsWhenHtmlFileDoesNotExist(): void
     {
         $this->watchFileGateway->method('get')
-            ->willReturn($this->makeWatchFileWithManualSource());
+->willReturn($this->makeWatchFileWithManualSource());
 
         $exitCode = $this->commandTester->execute([
             'watchFileId' => 'wf-1',
@@ -209,82 +234,77 @@ class CreateDocumentCommandTest extends TestCase
         self::assertStringContainsString('File not found', $this->commandTester->getDisplay());
     }
 
-    public function testReadsLocalHtmlFileAndDispatches(): void
+    public function testReadsLocalHtmlFileAndPropagatesToConfiguration(): void
     {
         $watchFile = $this->makeWatchFileWithManualSource();
         $this->watchFileGateway->method('get')
-            ->willReturn($watchFile);
+->willReturn($watchFile);
 
-        $this->metadataExtractor->method('extract')
-            ->willReturn($this->makeMetadata(title: 'From local file'));
+        $captured = null;
+        $this->dispatchHandler = static function (object $message) use (&$captured): Envelope {
+            $captured = $message;
+
+            return new Envelope($message);
+        };
 
         $tmpFile = tempnam(sys_get_temp_dir(), 'create-doc-test-');
         self::assertNotFalse($tmpFile);
         file_put_contents($tmpFile, '<html><body>local content</body></html>');
 
         try {
-            $this->messageBus
-                ->expects($this->once())
-                ->method('dispatch')
-                ->willReturnCallback(static fn ($message) => new Envelope($message));
-
             $exitCode = $this->commandTester->execute([
                 'watchFileId' => 'wf-1',
                 '--html-file' => $tmpFile,
             ]);
 
             self::assertSame(Command::SUCCESS, $exitCode);
-            self::assertStringContainsString(
-                'Document dispatched for async ingestion: From local file',
-                $this->commandTester->getDisplay()
-            );
+            self::assertInstanceOf(CreateCollectTaskAction::class, $captured);
+            self::assertNotNull($captured->configuration);
+            self::assertArrayHasKey('raw_html', $captured->configuration);
+            self::assertSame('<html><body>local content</body></html>', $captured->configuration['raw_html']);
         } finally {
             @unlink($tmpFile);
         }
     }
 
-    public function testFailsWhenContentHasIssue(): void
-    {
-        $this->watchFileGateway->method('get')
-            ->willReturn($this->makeWatchFileWithManualSource());
-
-        $this->htmlFetcher->method('fetch')
-            ->willReturn('<html><title>403 Forbidden</title></html>');
-
-        // A title that triggers HtmlMetadata::getContentIssue() (matches ERROR_TITLE_PATTERNS).
-        $this->metadataExtractor->method('extract')
-            ->willReturn($this->makeMetadata(title: '403 Forbidden', content: ''));
-
-        $this->messageBus
-            ->expects($this->never())
-            ->method('dispatch');
-
-        $exitCode = $this->commandTester->execute([
-            'watchFileId' => 'wf-1',
-            '--url' => 'https://example.com/blocked',
-        ]);
-
-        self::assertSame(Command::FAILURE, $exitCode);
-        self::assertStringContainsString('Content rejected', $this->commandTester->getDisplay());
-    }
-
-    public function testSyncOptionDispatchesOnSyncTransportAndPrintsRecap(): void
+    public function testSyncOptionPropagatesSyncChainAndPrintsRecapWhenCollectCompleted(): void
     {
         $watchFile = $this->makeWatchFileWithManualSource();
         $this->watchFileGateway->method('get')
-            ->willReturn($watchFile);
+->willReturn($watchFile);
 
-        $this->htmlFetcher->method('fetch')
-            ->willReturn('<html><body>article body</body></html>');
+        $completedTask = $this->makeCollectTask(CollectTaskStatus::COMPLETED);
+        $this->collectTaskGateway->method('get')
+->willReturn($completedTask);
 
-        $this->metadataExtractor->method('extract')
-            ->willReturn($this->makeMetadata(title: 'Sync article'));
+        $persistedDocument = new Document(
+            id: 'doc-sync',
+            title: 'Sync article',
+            excerpt: 'excerpt',
+            type: 'html',
+            datePublish: new \DateTimeImmutable(),
+            dateCollect: new \DateTimeImmutable(),
+            content: 'Content body that is long enough.',
+        );
+        $this->documentGateway->method('findByCollectTaskId')
+->willReturn([$persistedDocument]);
 
-        // The bus default in setUp() recognises the `sync` TransportNamesStamp
-        // and wraps the IngestDocumentAction's document in an
-        // IngestDocumentResult inside a HandledStamp — exactly what the
-        // production `sync` transport does when IngestDocumentHandler
-        // runs inline.
+        $captured = null;
+        $this->dispatchHandler = static function (object $message, array $stamps) use (
+            &$captured,
+            $completedTask,
+        ): Envelope {
+            $captured = [
+                'message' => $message,
+                'stamps' => $stamps,
+            ];
+            $envelope = new Envelope($message);
+            if ($message instanceof CreateCollectTaskAction) {
+                $envelope = $envelope->with(new HandledStamp($completedTask, 'CreateCollectTaskHandler'));
+            }
+
+            return $envelope;
+        };
 
         $exitCode = $this->commandTester->execute([
             'watchFileId' => 'wf-1',
@@ -293,57 +313,82 @@ class CreateDocumentCommandTest extends TestCase
         ]);
 
         self::assertSame(Command::SUCCESS, $exitCode);
+        self::assertNotNull($captured);
+        $message = $captured['message'];
+        self::assertInstanceOf(CreateCollectTaskAction::class, $message);
+        self::assertNotNull($message->configuration);
+        self::assertTrue($message->configuration['_sync_chain']);
+        $hasSyncStamp = false;
+        foreach ($captured['stamps'] as $stamp) {
+            if ($stamp instanceof TransportNamesStamp && \in_array('sync', $stamp->getTransportNames(), true)) {
+                $hasSyncStamp = true;
+            }
+        }
+        self::assertTrue(
+            $hasSyncStamp,
+            'CreateCollectTaskAction must carry TransportNamesStamp([sync]) when --sync is set',
+        );
         self::assertStringContainsString('Document persisted: "Sync article"', $this->commandTester->getDisplay());
     }
 
-    public function testUsesProvidedSourceIdInsteadOfManualSource(): void
+    public function testSyncOptionReportsAsyncProviderWhenCollectIsStillRunning(): void
     {
         $watchFile = $this->makeWatchFileWithManualSource();
         $this->watchFileGateway->method('get')
-            ->willReturn($watchFile);
+->willReturn($watchFile);
 
-        $explicitSource = $this->makeManualSource($watchFile, name: 'Pinned source', id: 'src-explicit');
-        $this->sourceGateway
-            ->expects($this->once())
-            ->method('get')
-            ->with('src-explicit')
-            ->willReturn($explicitSource);
+        $runningTask = $this->makeCollectTask(CollectTaskStatus::QUEUED);
+        $this->collectTaskGateway->method('get')
+->willReturn($runningTask);
 
-        $this->htmlFetcher->method('fetch')
-            ->willReturn('<html><body>article body</body></html>');
-        $this->metadataExtractor->method('extract')
-            ->willReturn($this->makeMetadata());
-
-        $this->messageBus
-            ->expects($this->once())
-            ->method('dispatch')
-            ->willReturnCallback(static fn ($message) => new Envelope($message));
+        $this->dispatchHandler = static fn (object $message): Envelope => new Envelope($message)
+            ->with(new HandledStamp($runningTask, 'CreateCollectTaskHandler'));
 
         $exitCode = $this->commandTester->execute([
             'watchFileId' => 'wf-1',
             '--url' => 'https://example.com/article',
-            '--source-id' => 'src-explicit',
+            '--sync' => true,
         ]);
 
         self::assertSame(Command::SUCCESS, $exitCode);
-        self::assertStringContainsString('Using source: Pinned source', $this->commandTester->getDisplay());
+        self::assertStringContainsString('scheduled async', $this->commandTester->getDisplay());
+    }
+
+    public function testSyncOptionWarnsWhenCollectCompletedButNoDocumentsPersisted(): void
+    {
+        $watchFile = $this->makeWatchFileWithManualSource();
+        $this->watchFileGateway->method('get')
+->willReturn($watchFile);
+
+        $completedTask = $this->makeCollectTask(CollectTaskStatus::COMPLETED);
+        $this->collectTaskGateway->method('get')
+->willReturn($completedTask);
+        $this->documentGateway->method('findByCollectTaskId')
+->willReturn([]);
+
+        $this->dispatchHandler = static fn (object $message): Envelope => new Envelope($message)
+            ->with(new HandledStamp($completedTask, 'CreateCollectTaskHandler'));
+
+        $exitCode = $this->commandTester->execute([
+            'watchFileId' => 'wf-1',
+            '--url' => 'https://example.com/article',
+            '--sync' => true,
+        ]);
+
+        self::assertSame(Command::SUCCESS, $exitCode);
+        self::assertStringContainsString('halted', $this->commandTester->getDisplay());
     }
 
     public function testCreatesNewManualSourceWhenWatchFileHasNone(): void
     {
-        $watchFile = $this->makeWatchFile(); // no manual source attached
+        $watchFile = $this->makeWatchFile();
         $this->watchFileGateway->method('get')
-            ->willReturn($watchFile);
+->willReturn($watchFile);
 
         $this->sourceGateway
             ->expects($this->once())
             ->method('save')
             ->with($this->callback(static fn (Source $s): bool => SourceType::MANUAL === $s->getType()));
-
-        $this->htmlFetcher->method('fetch')
-            ->willReturn('<html><body>article body</body></html>');
-        $this->metadataExtractor->method('extract')
-            ->willReturn($this->makeMetadata());
 
         $exitCode = $this->commandTester->execute([
             'watchFileId' => 'wf-1',
@@ -354,26 +399,18 @@ class CreateDocumentCommandTest extends TestCase
         self::assertStringContainsString('Created new manual source', $this->commandTester->getDisplay());
     }
 
-    public function testTitleAndExcerptOverridesArePropagatedToDispatchedDocument(): void
+    public function testTitleAndExcerptOverridesArePropagatedToConfiguration(): void
     {
         $watchFile = $this->makeWatchFileWithManualSource();
         $this->watchFileGateway->method('get')
-            ->willReturn($watchFile);
-
-        $this->htmlFetcher->method('fetch')
-            ->willReturn('<html><body>article body</body></html>');
-        $this->metadataExtractor->method('extract')
-            ->willReturn($this->makeMetadata(title: 'Default', excerpt: 'Default excerpt'));
+->willReturn($watchFile);
 
         $captured = null;
-        $this->messageBus
-            ->expects($this->once())
-            ->method('dispatch')
-            ->willReturnCallback(static function ($message) use (&$captured): Envelope {
-                $captured = $message;
+        $this->dispatchHandler = static function (object $message) use (&$captured): Envelope {
+            $captured = $message;
 
-                return new Envelope($message);
-            });
+            return new Envelope($message);
+        };
 
         $exitCode = $this->commandTester->execute([
             'watchFileId' => 'wf-1',
@@ -383,9 +420,25 @@ class CreateDocumentCommandTest extends TestCase
         ]);
 
         self::assertSame(Command::SUCCESS, $exitCode);
-        self::assertInstanceOf(IngestDocumentAction::class, $captured);
-        self::assertSame('CLI Title', $captured->document->getTitle());
-        self::assertSame('CLI Excerpt', $captured->document->getExcerpt());
+        self::assertInstanceOf(CreateCollectTaskAction::class, $captured);
+        self::assertNotNull($captured->configuration);
+        self::assertSame('CLI Title', $captured->configuration['title']);
+        self::assertSame('CLI Excerpt', $captured->configuration['excerpt']);
+    }
+
+    private function rebuildCommand(): void
+    {
+        $this->command = new CreateDocumentCommand(
+            messageBus: $this->messageBus,
+            watchFileGateway: $this->watchFileGateway,
+            sourceGateway: $this->sourceGateway,
+            collectTaskGateway: $this->collectTaskGateway,
+            documentGateway: $this->documentGateway,
+            qualityReportGateway: $this->qualityReportGateway,
+            manualSourceFactory: new ManualSourceFactory(),
+            urlClassifier: $this->urlClassifier,
+        );
+        $this->commandTester = new CommandTester($this->command);
     }
 
     private function makeWatchFile(string $id = 'wf-1', string $name = 'Test WatchFile'): WatchFile
@@ -405,12 +458,16 @@ class CreateDocumentCommandTest extends TestCase
         return $watchFile;
     }
 
-    private function makeManualSource(WatchFile $watchFile, string $name, string $id): Source
-    {
+    private function makeManualSource(
+        WatchFile $watchFile,
+        string $name,
+        string $id,
+        SourceType $type = SourceType::MANUAL,
+    ): Source {
         $source = new Source(
             name: $name,
             description: new TranslatedText('Source manuelle', 'Manual source'),
-            type: SourceType::MANUAL,
+            type: $type,
             url: 'manual://' . $watchFile->getId(),
             primaryDomain: 'manual',
             relevance: new TranslatedText('Ajout manuel', 'Manual add'),
@@ -422,22 +479,19 @@ class CreateDocumentCommandTest extends TestCase
         return $source;
     }
 
-    private function makeMetadata(
-        string $title = 'Test article',
-        string $excerpt = 'Test article excerpt that is long enough to pass validation',
-        string $content = '<p>Test article content body, long enough to pass the minimum length check on quality validation.</p>',
-        string $language = 'en',
-    ): HtmlMetadata {
-        return new HtmlMetadata(
-            title: $title,
-            excerpt: $excerpt,
-            content: $content,
-            language: $language,
-            datePublish: new \DateTimeImmutable(),
-            imageUrl: null,
-            canonicalUrl: null,
-            author: null,
-            siteName: 'example.com',
+    private function makeCollectTask(CollectTaskStatus $status): CollectTask
+    {
+        $watchFile = $this->makeWatchFile();
+        $source = $this->makeManualSource($watchFile, name: 'Manual', id: 'src-existing');
+        $task = new CollectTask(
+            source: $source,
+            watchFile: $watchFile,
+            providerName: 'web',
+            providerTaskId: 'web-test-123',
+            status: $status,
         );
+        $this->forcePropertyValue($task, 'collect-task-test');
+
+        return $task;
     }
 }
