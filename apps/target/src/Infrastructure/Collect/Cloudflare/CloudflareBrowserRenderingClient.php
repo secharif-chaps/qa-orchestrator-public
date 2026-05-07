@@ -6,6 +6,8 @@ namespace App\Infrastructure\Collect\Cloudflare;
 
 use App\Domain\Document\HtmlFetcherInterface;
 use App\Domain\Document\HtmlFetchException;
+use App\Domain\Url\Exception\UnsafeUrlException;
+use App\Domain\Url\UrlSanitizerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -20,6 +22,7 @@ readonly class CloudflareBrowserRenderingClient implements HtmlFetcherInterface
         #[Autowire('%env(string:CLOUDFLARE_BR_API_TOKEN)%')]
         private string $apiToken,
         private HttpClientInterface $httpClient,
+        private UrlSanitizerInterface $urlSanitizer,
         private ?LoggerInterface $logger = null,
     ) {
     }
@@ -46,10 +49,20 @@ readonly class CloudflareBrowserRenderingClient implements HtmlFetcherInterface
             );
         }
 
+        // SSRF guard: reject URLs targeting the local network or unsupported
+        // schemes BEFORE we hand the value to the HTTP client. Cloudflare
+        // would happily relay `http://10.0.0.1/admin` if asked.
+        try {
+            $this->urlSanitizer->assertSafePublicUrl($url);
+        } catch (UnsafeUrlException $e) {
+            throw HtmlFetchException::fetchFailed($url, $e->getMessage());
+        }
+
         $endpoint = \sprintf('%s/%s/browser-rendering/content', self::BASE_URL, $this->accountId);
+        $redactedUrl = $this->urlSanitizer->redactCredentials($url);
 
         $this->logger?->info('Fetching URL via Cloudflare Browser Rendering', [
-            'url' => $url,
+            'url' => $redactedUrl,
             'provider_name' => 'cloudflare',
         ]);
 
@@ -87,7 +100,7 @@ readonly class CloudflareBrowserRenderingClient implements HtmlFetcherInterface
             }
 
             $this->logger?->info('Successfully fetched URL via Cloudflare Browser Rendering', [
-                'url' => $url,
+                'url' => $redactedUrl,
                 'provider_name' => 'cloudflare',
                 'content_length' => \strlen($html),
             ]);
@@ -97,7 +110,7 @@ readonly class CloudflareBrowserRenderingClient implements HtmlFetcherInterface
             throw new HtmlFetchException($e->getMessage(), 0, $e);
         } catch (\Throwable $e) {
             $this->logger?->error('Cloudflare Browser Rendering fetch failed', [
-                'url' => $url,
+                'url' => $redactedUrl,
                 'provider_name' => 'cloudflare',
                 'error' => $e->getMessage(),
             ]);

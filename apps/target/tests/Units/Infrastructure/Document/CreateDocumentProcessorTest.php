@@ -246,6 +246,7 @@ class CreateDocumentProcessorTest extends TestCase
             documentGateway: $this->documentGateway,
             manualSourceFactory: new ManualSourceFactory(),
             urlClassifier: $this->urlClassifier,
+            urlSanitizer: new \App\Infrastructure\Url\PhpUrlSanitizer(),
             logger: new NullLogger(),
         );
     }

@@ -62,6 +62,7 @@ class FetchWebUrlHandlerTest extends TestCase
             $this->documentBuilder,
             $this->messageBus,
             $this->eventDispatcher,
+            new \App\Infrastructure\Url\PhpUrlSanitizer(),
             new NullLogger(),
         );
     }
@@ -142,6 +143,7 @@ class FetchWebUrlHandlerTest extends TestCase
             $this->documentBuilder,
             $this->messageBus,
             $this->eventDispatcher,
+            new \App\Infrastructure\Url\PhpUrlSanitizer(),
             new NullLogger(),
         );
 

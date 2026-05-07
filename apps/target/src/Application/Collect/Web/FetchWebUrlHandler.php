@@ -13,6 +13,7 @@ use App\Domain\Document\DocumentBuilderFromHtmlMetadata;
 use App\Domain\Document\HtmlFetcherInterface;
 use App\Domain\Document\HtmlFetchException;
 use App\Domain\Document\HtmlMetadataExtractor;
+use App\Domain\Url\UrlSanitizerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -50,6 +51,7 @@ readonly class FetchWebUrlHandler
         private DocumentBuilderFromHtmlMetadata $documentBuilder,
         private MessageBusInterface $messageBus,
         private EventDispatcherInterface $eventDispatcher,
+        private UrlSanitizerInterface $urlSanitizer,
         private ?LoggerInterface $logger = null,
     ) {
     }
@@ -86,9 +88,11 @@ readonly class FetchWebUrlHandler
         try {
             $html = null !== $config->url ? $this->htmlFetcher->fetch($config->url) : (string) $config->rawHtml;
         } catch (HtmlFetchException $e) {
+            // Reachable only when fetching a URL — the raw_html branch
+            // never throws HtmlFetchException — so $config->url is non-null.
             $this->logger?->error('FetchWebUrlHandler: failed to fetch URL', [
                 'collect_task_id' => $action->collectTaskId,
-                'url' => $config->url,
+                'url' => $this->urlSanitizer->redactCredentials((string) $config->url),
                 'error' => $e->getMessage(),
             ]);
             $collectTask->fail($this->eventDispatcher);

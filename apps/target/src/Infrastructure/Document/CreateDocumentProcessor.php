@@ -16,6 +16,7 @@ use App\Domain\Source\ManualSourceFactory;
 use App\Domain\Source\Source;
 use App\Domain\Source\SourceGatewayInterface;
 use App\Domain\Source\SourceType;
+use App\Domain\Url\UrlSanitizerInterface;
 use App\Domain\User\User;
 use App\Domain\WatchFile\WatchFile;
 use App\Domain\WatchFile\WatchFileGatewayInterface;
@@ -58,6 +59,7 @@ class CreateDocumentProcessor implements ProcessorInterface
         private readonly DocumentGatewayInterface $documentGateway,
         private readonly ManualSourceFactory $manualSourceFactory,
         private readonly UrlSourceTypeClassifierInterface $urlClassifier,
+        private readonly UrlSanitizerInterface $urlSanitizer,
         private readonly ?LoggerInterface $logger = null,
     ) {
     }
@@ -119,7 +121,7 @@ class CreateDocumentProcessor implements ProcessorInterface
         $this->logger?->info('Dispatching CreateCollectTaskAction from API', [
             'watch_file_id' => $watchFileId,
             'source_id' => $sourceId,
-            'url' => $inputDto->url,
+            'url' => null !== $inputDto->url ? $this->urlSanitizer->redactCredentials($inputDto->url) : null,
             'has_html' => null !== $inputDto->html,
         ]);
 
