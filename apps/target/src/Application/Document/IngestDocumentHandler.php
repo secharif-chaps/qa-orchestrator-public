@@ -113,6 +113,19 @@ readonly class IngestDocumentHandler
                 return new IngestDocumentResult(document: $document, preSaveContext: $context);
             }
 
+            if ($context->isHalted) {
+                // Non-duplicate halt — content quality gate, future
+                // additional gates. Skip the save (and the post-save
+                // pipeline) since the document was rejected.
+                $this->logger?->info('Pre-save pipeline halted, skipping save', [
+                    'document_id' => $document->getId(),
+                    'halt_reason' => $context->haltReason?->en,
+                    'collect_task_id' => $action->collectTaskId,
+                ]);
+
+                return new IngestDocumentResult(document: $document, preSaveContext: $context);
+            }
+
             // The pipeline operates on the same Document instance, so any
             // enrichments performed by pre-save processors are already
             // reflected on $document by reference.

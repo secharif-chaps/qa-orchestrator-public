@@ -505,6 +505,68 @@ class IngestDocumentHandlerTest extends TestCase
         $this->assertNotNull($result->document->getUpdatedAt());
     }
 
+    public function testInvokeLogsInfoWhenMergingByProviderId(): void
+    {
+        $collectTaskGatewayMock = $this->createMock(CollectTaskGatewayInterface::class);
+        $this->collectTaskGateway = $collectTaskGatewayMock;
+        $this->buildHandler();
+
+        $collectTaskId = 'collect-task-merge-log';
+        $providerId = 'raw-id-merge';
+        $existingDocumentId = 'existing-doc-merge';
+
+        $existingDocument = $this->createValidDocument($existingDocumentId);
+        $existingDocument->setProviderId($providerId);
+
+        $newDocument = $this->createValidDocument(null);
+        $newDocument->setProviderId($providerId);
+
+        $watchFile = $this->createWatchFile();
+        $actor = $this->createActor();
+        $source = $this->createSource($actor, $watchFile);
+        $collectTask = $this->createCollectTask($source, $watchFile);
+
+        $nullDocumentGateway = new NullDocumentGateway();
+        $nullDocumentGateway->save($existingDocument);
+
+        $this->validator->expects($this->once())
+            ->method('validate')
+            ->willReturn(new ConstraintViolationList());
+
+        $collectTaskGatewayMock->expects($this->once())
+            ->method('get')
+            ->willReturn($collectTask);
+
+        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
+        $logger->expects($this->atLeastOnce())
+            ->method('info')
+            ->with(
+                $this->equalTo('Document merged into existing entry by providerId'),
+                $this->callback(static function (array $context) use (
+                    $existingDocumentId,
+                    $providerId,
+                    $collectTaskId
+                ): bool {
+                    return ($context['document_id'] ?? null) === $existingDocumentId
+                        && ($context['provider_id'] ?? null) === $providerId
+                        && ($context['collect_task_id'] ?? null) === $collectTaskId;
+                }),
+            );
+
+        $handler = new IngestDocumentHandler(
+            $this->collectTaskGateway,
+            $nullDocumentGateway,
+            $this->validator,
+            $this->messageBus,
+            $this->preSavePipeline,
+            $logger,
+        );
+
+        $action = new IngestDocumentAction($collectTaskId, $newDocument);
+
+        ($handler)($action);
+    }
+
     public function testInvokeMergesDataWithRefinedDataTakingPriority(): void
     {
         $collectTaskGatewayMock = $this->createMock(CollectTaskGatewayInterface::class);
