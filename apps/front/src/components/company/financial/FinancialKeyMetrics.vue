@@ -10,7 +10,7 @@
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       <FinancialMetricCard
         v-if="revenue?.value"
-        icon="fa fa-money-bill"
+        icon="fa-money-bill"
         :label="t('screen.profile.sections.financial.keyMetrics.revenue')"
         :sourced-value="revenue"
         :growth-tag="revenueGrowth?.value ?? undefined"
@@ -18,31 +18,31 @@
       />
       <FinancialMetricCard
         v-if="grossMargin?.value"
-        icon="fa fa-chart-pie"
+        icon="fa-chart-pie"
         :label="t('screen.profile.sections.financial.keyMetrics.grossMargin')"
         :sourced-value="grossMargin"
       />
       <FinancialMetricCard
         v-if="ebitdaMargin?.value"
-        icon="fa fa-chart-bar"
+        icon="fa-chart-bar"
         :label="t('screen.profile.sections.financial.keyMetrics.ebitdaMargin')"
         :sourced-value="ebitdaMargin"
       />
       <FinancialMetricCard
         v-if="netMargin?.value"
-        icon="fa fa-percent"
+        icon="fa-percent"
         :label="t('screen.profile.sections.financial.keyMetrics.netMargin')"
         :sourced-value="netMargin"
       />
       <FinancialMetricCard
         v-if="debtToEquity?.value"
-        icon="fa fa-balance-scale"
+        icon="fa-balance-scale"
         :label="t('screen.profile.sections.financial.keyMetrics.debtToEquity')"
         :sourced-value="debtToEquity"
       />
       <FinancialMetricCard
         v-if="freeCashFlow?.value"
-        icon="fa fa-coins"
+        icon="fa-coins"
         :label="t('screen.profile.sections.financial.keyMetrics.freeCashFlow')"
         :sourced-value="freeCashFlow"
       />

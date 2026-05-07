@@ -10,31 +10,31 @@
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       <FinancialMetricCard
         v-if="marketCap?.value"
-        icon="fa fa-landmark"
+        icon="fa-landmark"
         :label="t('screen.profile.sections.financial.valuation.marketCap')"
         :sourced-value="marketCap"
       />
       <FinancialMetricCard
         v-if="enterpriseValue?.value"
-        icon="fa fa-building"
+        icon="fa-building"
         :label="t('screen.profile.sections.financial.valuation.enterpriseValue')"
         :sourced-value="enterpriseValue"
       />
       <FinancialMetricCard
         v-if="peRatio?.value"
-        icon="fa fa-calculator"
+        icon="fa-calculator"
         :label="t('screen.profile.sections.financial.valuation.peRatio')"
         :sourced-value="peRatio"
       />
       <FinancialMetricCard
         v-if="evEbitda?.value"
-        icon="fa fa-chart-line"
+        icon="fa-chart-line"
         :label="t('screen.profile.sections.financial.valuation.evEbitda')"
         :sourced-value="evEbitda"
       />
       <FinancialMetricCard
         v-if="evRevenue?.value"
-        icon="fa fa-chart-area"
+        icon="fa-chart-area"
         :label="t('screen.profile.sections.financial.valuation.evRevenue')"
         :sourced-value="evRevenue"
       />

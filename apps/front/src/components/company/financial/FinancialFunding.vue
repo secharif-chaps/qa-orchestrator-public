@@ -17,7 +17,7 @@
       />
       <FinancialMetricCard
         v-if="lastValuation?.value"
-        icon="fa fa-gem"
+        icon="fa-gem"
         :label="t('screen.profile.sections.financial.funding.lastValuation')"
         :sourced-value="lastValuation"
       />

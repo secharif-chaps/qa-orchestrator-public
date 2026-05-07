@@ -5,7 +5,7 @@
   >
     <div class="relative flex items-center gap-4">
       <div class="bg-base-300 flex size-10 shrink-0 items-center justify-center rounded-lg">
-        <Icon :icon="icon" class="text-neutral-black-font text-lg" />
+        <Icon :icon class="text-neutral-black-font text-lg" />
       </div>
 
       <div class="min-w-0 flex-1">
@@ -47,5 +47,5 @@ interface Props {
   growthPositive?: boolean
 }
 
-const { icon, label, sourcedValue, growthTag, growthPositive } = defineProps<Props>()
+defineProps<Props>()
 </script>
