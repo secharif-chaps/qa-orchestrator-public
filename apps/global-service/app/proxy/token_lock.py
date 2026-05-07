@@ -109,6 +109,9 @@ class TokenLockManager:
             user_id=user_id,
             correlation_id=correlation_id,
             status=TokenLockStatus.locked,
+            # Proxy flow already debited token_balance above; flag the lock so
+            # service-side _sum_active_locks does not subtract it again.
+            debit_on_lock=True,
             locked_at=now,
             expires_at=now + timedelta(seconds=expiry_seconds),
         )

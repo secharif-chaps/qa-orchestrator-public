@@ -32,6 +32,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import false as sa_false
 from sqlalchemy.sql import func
 
 from app.database import GLOBAL_SCHEMA, GlobalBase
@@ -352,6 +353,13 @@ class TokenLock(GlobalBase):
         correlation_id: Unique ID for tracing the lock lifecycle
         reference_id: Optional reference filled by backend (e.g. company_id)
         status: Current lock status (locked, confirmed, released, expired)
+        debit_on_lock: True when the lock's amount has already been deducted from
+            the org's ``token_balance`` at lock-acquisition time (proxy
+            ``TokenLockManager.lock`` flow — refund-on-fail semantic). False when
+            the lock is reservation-only and the balance is debited at confirm
+            time (service ``TokenManager.lock_tokens`` flow). Used by
+            ``_sum_active_locks`` so that already-debited locks are not
+            double-counted against the available balance.
         locked_at: When the lock was created
         expires_at: When the lock will auto-expire
         settled_at: When the lock was confirmed, released, or expired
@@ -403,6 +411,13 @@ class TokenLock(GlobalBase):
         ),
         nullable=False,
         server_default=TokenLockStatus.locked.value,
+    )
+
+    debit_on_lock = Column(
+        Boolean,
+        nullable=False,
+        server_default=sa_false(),
+        default=False,
     )
 
     locked_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
