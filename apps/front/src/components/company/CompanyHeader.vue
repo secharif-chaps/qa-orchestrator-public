@@ -66,15 +66,19 @@
     <div class="gap-xl pt-3xs flex items-center">
       <div class="gap-2xs flex min-w-0 shrink items-center">
         <!-- Loading ring around the logo when a task is running -->
-        <SquareProgressRing :segments="progressSegments" :show-progress="showProgressRing">
-          <div class="relative size-12 shrink-0 overflow-hidden rounded-md bg-white">
+        <SquareProgressRing
+          :size="36"
+          :segments="progressSegments"
+          :show-progress="showProgressRing"
+        >
+          <div class="relative size-9 shrink-0 overflow-hidden rounded-md bg-white">
             <div :class="{ 'opacity-30': showProgressRing }">
               <Logo
                 :website="company?.website"
                 :name="company?.name"
                 :alt="company?.name"
-                :width="48"
-                :height="48"
+                :width="36"
+                :height="36"
               />
             </div>
           </div>
