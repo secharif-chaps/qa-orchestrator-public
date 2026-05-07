@@ -8,7 +8,19 @@ interface DocumentGatewayInterface
 {
     public function get(string $id): Document;
 
-    public function save(Document $document): void;
+    /**
+     * Persist the document.
+     *
+     * @param bool $waitForRefresh When `true`, the underlying store waits for
+     *                             the document to become searchable before
+     *                             returning. Synchronous callers (CLI
+     *                             `--sync`, sync API) need this so an
+     *                             immediately-following `findByCollectTaskId`
+     *                             actually sees the doc instead of hitting
+     *                             the OpenSearch refresh interval window
+     *                             and returning an empty hit list.
+     */
+    public function save(Document $document, bool $waitForRefresh = false): void;
 
     /**
      * Save multiple documents using bulk operation for better performance.

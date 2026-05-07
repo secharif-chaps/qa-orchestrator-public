@@ -27,7 +27,7 @@ class NullDocumentGateway implements DocumentGatewayInterface
         return $this->documents[$id];
     }
 
-    public function save(Document $document): void
+    public function save(Document $document, bool $waitForRefresh = false): void
     {
         $this->documents[$document->getId()] = $document;
     }

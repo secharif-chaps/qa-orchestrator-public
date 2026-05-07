@@ -118,7 +118,11 @@ readonly class IngestDocumentHandler
             // reflected on $document by reference.
         }
 
-        $this->documentGateway->save($document);
+        // Wait for the document to become searchable when the caller is
+        // running the chain inline (CLI `--sync`, sync API path) — they
+        // call `findByCollectTaskId` immediately after dispatch and would
+        // otherwise hit the OpenSearch refresh interval window.
+        $this->documentGateway->save($document, waitForRefresh: $action->sync);
 
         $stamps = $action->sync
             // Force the `sync` in-memory transport for this dispatch only —

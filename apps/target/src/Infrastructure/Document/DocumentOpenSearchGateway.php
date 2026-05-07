@@ -73,7 +73,7 @@ readonly class DocumentOpenSearchGateway implements DocumentGatewayInterface, Fi
         return $document;
     }
 
-    public function save(Document $document): void
+    public function save(Document $document, bool $waitForRefresh = false): void
     {
         /** @var array<string, mixed> $body */
         $body = $this->normalizer->normalize($document);
@@ -86,6 +86,14 @@ readonly class DocumentOpenSearchGateway implements DocumentGatewayInterface, Fi
         $organisationId = $document->getOrganisationId();
         if (null !== $organisationId && '' !== $organisationId) {
             $params['routing'] = $organisationId;
+        }
+
+        if ($waitForRefresh) {
+            // OpenSearch's `wait_for` makes the index call block until the
+            // next refresh tick, guaranteeing the document is searchable
+            // when we return. Default `false` keeps Apify/Bakus async paths
+            // free of the latency penalty.
+            $params['refresh'] = 'wait_for';
         }
 
         $this->openSearch->index($params);
