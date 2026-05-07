@@ -3,6 +3,17 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel
 
+from app.constants.messages import (
+    EVENT_LABEL_ALERT_TRIGGERED,
+    EVENT_LABEL_COMPANY_CREATED,
+    EVENT_LABEL_COMPANY_UPDATED,
+    EVENT_LABEL_WATCHFILE_CREATED,
+    EVENT_LABEL_WATCHFILE_UPDATED,
+    SOURCE_LABEL_EXPLORE,
+    SOURCE_LABEL_SCREEN,
+    SOURCE_LABEL_TARGET,
+)
+
 
 @dataclass(frozen=True)
 class EventCatalogEntry:
@@ -21,14 +32,14 @@ EVENT_CATALOG: tuple[EventCatalogEntry, ...] = (
         event_type="screen.company.created",
         source="screen",
         description="A new company card has been created",
-        label="Fiche entreprise cr\u00e9\u00e9e",
+        label=EVENT_LABEL_COMPANY_CREATED,
         available=True,
     ),
     EventCatalogEntry(
         event_type="screen.company.updated",
         source="screen",
         description="A company card has been updated",
-        label="Fiche entreprise actualis\u00e9e",
+        label=EVENT_LABEL_COMPANY_UPDATED,
         available=True,
     ),
     # Target module events (not yet available)
@@ -36,21 +47,21 @@ EVENT_CATALOG: tuple[EventCatalogEntry, ...] = (
         event_type="target.watchfile.created",
         source="target",
         description="A new watchfile has been created",
-        label="Dossier de veille cr\u00e9\u00e9",
+        label=EVENT_LABEL_WATCHFILE_CREATED,
         available=False,
     ),
     EventCatalogEntry(
         event_type="target.watchfile.updated",
         source="target",
         description="A watchfile has been updated",
-        label="Dossier de veille actualis\u00e9",
+        label=EVENT_LABEL_WATCHFILE_UPDATED,
         available=False,
     ),
     EventCatalogEntry(
         event_type="target.alert.triggered",
         source="target",
         description="A monitoring alert has been triggered",
-        label="Alerte veille d\u00e9clench\u00e9e",
+        label=EVENT_LABEL_ALERT_TRIGGERED,
         available=False,
     ),
 )
@@ -95,9 +106,9 @@ class EventSourceGroup(BaseModel):
 
 # Source label mapping
 SOURCE_LABELS: dict[str, str] = {
-    "screen": "Screen",
-    "target": "Target",
-    "explore": "Explore",
+    "screen": SOURCE_LABEL_SCREEN,
+    "target": SOURCE_LABEL_TARGET,
+    "explore": SOURCE_LABEL_EXPLORE,
 }
 
 

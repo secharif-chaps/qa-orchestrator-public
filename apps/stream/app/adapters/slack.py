@@ -2,6 +2,7 @@
 
 import httpx
 
+from app.constants.messages import BUTTON_VIEW_COMPANY
 from app.core.logging_config import get_logger
 from app.models.event import StreamEvent
 from app.models.stream import Stream
@@ -49,7 +50,7 @@ class SlackWebhookAdapter(ChannelAdapter):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f":point_right: <{url}|Voir la fiche entreprise>",
+                        "text": f":point_right: <{url}|{BUTTON_VIEW_COMPANY}>",
                     },
                 }
             )
