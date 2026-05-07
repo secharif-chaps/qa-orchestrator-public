@@ -55,13 +55,21 @@ const formattedDate = computed(() => {
   const dateStr = round.date
   if (!dateStr) return '—'
 
-  if (dateStr.length === 4) return dateStr
-  if (dateStr.length === 7) {
+  if (/^\d{4}$/.test(dateStr)) return dateStr
+
+  if (/^\d{4}-\d{2}$/.test(dateStr)) {
     const [year, month] = dateStr.split('-')
     return formatDate(new Date(parseInt(year), parseInt(month) - 1), 'short')
   }
 
-  const [year, month, day] = dateStr.split('-').map(Number)
-  return formatDate(new Date(year, month - 1, day), 'eventDate')
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const [year, month, day] = dateStr.split('-').map(Number)
+    return formatDate(new Date(year, month - 1, day), 'eventDate')
+  }
+
+  // Fallback for non-ISO formats (e.g. "March 2024", "Q1 2024", "May 5, 2024"):
+  // try native Date parsing, otherwise display the raw string instead of "Invalid Date".
+  const parsed = new Date(dateStr)
+  return isNaN(parsed.getTime()) ? dateStr : formatDate(parsed, 'eventDate')
 })
 </script>

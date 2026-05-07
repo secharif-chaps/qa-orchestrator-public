@@ -10,7 +10,7 @@
       {{ $t('target.watchFiles.assistant.empty_view.title') }}
     </h3>
 
-    <div class="text-neutral-black-font-font mb-12 text-sm">
+    <div class="text-neutral-black-font mb-12 text-sm">
       <p>{{ $t('target.watchFiles.assistant.empty_view.description') }}</p>
       <div v-sanitize-html="$t('target.watchFiles.assistant.empty_view.list')" class="mt-4"></div>
     </div>
