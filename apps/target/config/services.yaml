@@ -6,6 +6,8 @@
 parameters:
   default_app_name: 'Target'
   default_app_version: '0.0.1'
+  default_cloudflare_connect_timeout: 5
+  default_cloudflare_request_timeout: 30
   mercure.jwt.secret: '%env(string:MERCURE_JWT_SECRET)%'
   env(APP_ENCRYPT_KEY): ''
   env(OPENSEARCH_NUM_SHARDS): 1

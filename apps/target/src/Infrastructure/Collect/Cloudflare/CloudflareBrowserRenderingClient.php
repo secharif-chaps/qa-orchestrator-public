@@ -23,6 +23,12 @@ readonly class CloudflareBrowserRenderingClient implements HtmlFetcherInterface
         private string $apiToken,
         private HttpClientInterface $httpClient,
         private UrlSanitizerInterface $urlSanitizer,
+        #[Autowire(
+            '%env(default:default_cloudflare_connect_timeout:int:CLOUDFLARE_BROWSER_RENDER_CONNECT_TIMEOUT_SECONDS)%'
+        )]
+        private int $connectTimeoutSeconds = 5,
+        #[Autowire('%env(default:default_cloudflare_request_timeout:int:CLOUDFLARE_BROWSER_RENDER_TIMEOUT_SECONDS)%')]
+        private int $requestTimeoutSeconds = 30,
         private ?LoggerInterface $logger = null,
     ) {
     }
@@ -78,7 +84,13 @@ readonly class CloudflareBrowserRenderingClient implements HtmlFetcherInterface
                         'waitUntil' => 'networkidle0',
                     ],
                 ],
-                'timeout' => 30,
+                'timeout' => $this->requestTimeoutSeconds,
+                // Independent connect timeout: a TCP/TLS hang to the
+                // Cloudflare endpoint should fail in seconds, not block
+                // the worker (or the sync HTTP request) for the full
+                // request budget. Tunable via env for the rare case
+                // where Cloudflare is reachable only via a slow proxy.
+                'max_duration' => $this->connectTimeoutSeconds + $this->requestTimeoutSeconds,
             ]);
 
             $statusCode = $response->getStatusCode();

@@ -70,6 +70,14 @@ class CreateDocumentProcessor implements ProcessorInterface
         array $uriVariables = [],
         array $context = [],
     ): Document {
+        // The sync chain blocks on a Cloudflare HTTP fetch + the full
+        // pre/post-save pipeline. Bound the PHP-side execution at 60s
+        // (Cloudflare connect+request defaults to 35s, plus margin for
+        // OpenSearch refresh + post-save scoring) so a stuck dependency
+        // fails fast instead of leaving the request open for the
+        // platform-default 30+ minutes.
+        @set_time_limit(60);
+
         $inputDto = $this->extractInputDto($data, $context);
 
         $watchFileId = $uriVariables['watchFileId'] ?? null;
