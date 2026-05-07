@@ -18,9 +18,7 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="isLoading" class="flex items-center justify-center py-8">
-      <Icon icon="fa-spinner" class="fa-spin text-primary text-2xl" />
-    </div>
+    <RecentProjectsListSkeleton v-if="isLoading" />
 
     <!-- Error State -->
     <div v-else-if="error" class="py-6">
@@ -69,6 +67,7 @@
 import { useRouter } from 'vue-router'
 import { Alert, Button, Icon } from '@owlint/feathers-vue'
 import RecentProjectItem from './RecentProjectItem.vue'
+import RecentProjectsListSkeleton from './RecentProjectsListSkeleton.vue'
 import type { ProjectType } from '@/types/module'
 
 interface Project {

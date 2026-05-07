@@ -121,9 +121,7 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="isLoading" class="flex items-center justify-center py-16">
-      <i class="fa fa-spinner fa-spin text-sage-500 text-4xl"></i>
-    </div>
+    <TokensHistorySkeleton v-if="isLoading" />
 
     <!-- Error State -->
     <div v-else-if="error" class="mx-auto max-w-5xl">
@@ -247,6 +245,7 @@
 </template>
 
 <script setup lang="ts">
+import TokensHistorySkeleton from '@/components/tokens/TokensHistorySkeleton.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import { useDateTime } from '@/composables/useDateTime'
 import { currentOrganizationQuery } from '@/queries/organization'

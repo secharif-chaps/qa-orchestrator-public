@@ -45,10 +45,7 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="isLoading" class="flex flex-col items-center justify-center gap-4 py-16">
-      <i class="fa fa-spinner text-primary animate-spin text-4xl"></i>
-      <p class="text-neutral-black-font">{{ $t('admin.tasks.loading') }}</p>
-    </div>
+    <TasksPageSkeleton v-if="isLoading" />
 
     <!-- Error State -->
     <div v-else-if="tasksError" class="flex flex-col gap-4">
@@ -145,7 +142,8 @@
                 {{ $t('admin.tasks.status.running') }}
               </DropdownItem>
               <DropdownItem @click="filters.status = 'pending'">
-                <i class="fa fa-clock text-warning mr-2"></i> {{ $t('admin.tasks.status.pending') }}
+                <i class="fa fa-clock text-warning mr-2"></i>
+                {{ $t('admin.tasks.status.pending') }}
               </DropdownItem>
               <DropdownItem @click="filters.status = 'succeeded'">
                 <i class="fa fa-check-circle text-success mr-2"></i>
@@ -245,7 +243,11 @@
           <!-- Bulk Actions -->
           <div v-if="selectedTaskIds.length > 0" class="flex items-center gap-3">
             <span class="text-neutral-black-font text-sm">
-              {{ $t('admin.tasks.selection.selected', { count: selectedTaskIds.length }) }}
+              {{
+                $t('admin.tasks.selection.selected', {
+                  count: selectedTaskIds.length,
+                })
+              }}
             </span>
             <Button
               variant="primary"
@@ -345,7 +347,9 @@
                   />
                 </td>
                 <td class="px-4 py-3 font-mono text-sm">{{ task.id }}</td>
-                <td class="px-4 py-3 text-sm font-medium">{{ task.company_name }}</td>
+                <td class="px-4 py-3 text-sm font-medium">
+                  {{ task.company_name }}
+                </td>
                 <td class="text-neutral-black-font px-4 py-3 text-sm">
                   {{ getOrgName(task.organization_id) }}
                 </td>
@@ -416,7 +420,12 @@
                 @click="filters.page!--"
               />
               <span class="px-3 py-1 text-sm">
-                {{ $t('admin.tasks.pagination.page', { page: filters.page, pages: tasks.pages }) }}
+                {{
+                  $t('admin.tasks.pagination.page', {
+                    page: filters.page,
+                    pages: tasks.pages,
+                  })
+                }}
               </span>
               <Button
                 variant="secondary"
@@ -482,7 +491,11 @@
           <Alert
             v-if="selectedStuckCount > 0"
             variant="warning"
-            :message="$t('admin.tasks.modal.stuckWarning', { count: selectedStuckCount })"
+            :message="
+              $t('admin.tasks.modal.stuckWarning', {
+                count: selectedStuckCount,
+              })
+            "
             icon="fa fa-exclamation-triangle"
           />
 
@@ -522,10 +535,17 @@
                 v-if="Object.keys(lastRestartResult.skipped_reasons).length > 0"
                 class="text-neutral-black-font mt-2 text-xs"
               >
-                <p class="font-semibold">{{ $t('admin.tasks.modal.result.skippedReasons') }}</p>
+                <p class="font-semibold">
+                  {{ $t('admin.tasks.modal.result.skippedReasons') }}
+                </p>
                 <ul class="list-inside list-disc">
                   <li v-for="(reason, taskId) in lastRestartResult.skipped_reasons" :key="taskId">
-                    {{ $t('admin.tasks.modal.result.taskReason', { id: taskId, reason: reason }) }}
+                    {{
+                      $t('admin.tasks.modal.result.taskReason', {
+                        id: taskId,
+                        reason: reason,
+                      })
+                    }}
                   </li>
                 </ul>
               </div>
@@ -572,6 +592,7 @@ meta:
 </route>
 
 <script setup lang="ts">
+import TasksPageSkeleton from '@/components/admin/TasksPageSkeleton.vue'
 import Card from '@/components/ui/Card.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownDivider from '@/components/ui/DropdownDivider.vue'

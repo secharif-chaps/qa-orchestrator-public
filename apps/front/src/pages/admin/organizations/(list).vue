@@ -23,9 +23,7 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="isLoading" class="flex items-center justify-center py-12">
-      <i class="fa fa-spinner fa-spin text-primary text-2xl"></i>
-    </div>
+    <OrganizationsListSkeleton v-if="isLoading" />
 
     <!-- Error State -->
     <Alert
@@ -97,6 +95,7 @@ meta:
 import { getAllOrganizations } from '@/api/organization'
 import Pagination from '@/components/ui/Pagination.vue'
 import { transformToPaginationMeta } from '@/utils/pagination'
+import OrganizationsListSkeleton from '@/components/admin/OrganizationsListSkeleton.vue'
 import { Alert, Searchbar, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, ref, watch } from 'vue'

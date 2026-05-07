@@ -39,15 +39,7 @@
     />
 
     <!-- Loading State -->
-    <div
-      v-if="isLoading"
-      class="border-primary-lighter-stroke rounded-sm border bg-white p-8 text-center shadow-sm"
-    >
-      <div class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
-      <p class="text-neutral-black-font">
-        {{ $t('admin.users.loading') }}
-      </p>
-    </div>
+    <UsersTableSkeleton v-if="isLoading" />
 
     <!-- Users Table -->
     <UsersTable
@@ -122,6 +114,7 @@ meta:
 <script setup lang="ts">
 import UserFilters from '@/components/admin/UserFilters.vue'
 import UsersTable from '@/components/admin/UsersTable.vue'
+import UsersTableSkeleton from '@/components/admin/UsersTableSkeleton.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import { Alert, Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
@@ -247,7 +240,11 @@ const clearFilters = () => {
 
 // Actions
 const showAssignModal = (user: AdminUserListItem) => {
-  userToAssign.value = { userId: user.user_id, username: user.username, email: user.email }
+  userToAssign.value = {
+    userId: user.user_id,
+    username: user.username,
+    email: user.email,
+  }
 }
 
 const showPermissionsModal = (user: AdminUserListItem) => {
@@ -259,18 +256,29 @@ const showPermissionsModal = (user: AdminUserListItem) => {
 }
 
 const showDisableModal = (user: AdminUserListItem) => {
-  userToDisable.value = { userId: user.user_id, username: user.username, email: user.email }
+  userToDisable.value = {
+    userId: user.user_id,
+    username: user.username,
+    email: user.email,
+  }
 }
 
 const showResetPasswordModal = (user: AdminUserListItem) => {
-  userToResetPassword.value = { userId: user.user_id, username: user.username, email: user.email }
+  userToResetPassword.value = {
+    userId: user.user_id,
+    username: user.username,
+    email: user.email,
+  }
 }
 
 const handleAssignOrganization = async (organizationId: string) => {
   if (!userToAssign.value) return
 
   try {
-    await assignOrganization({ userId: userToAssign.value.userId, organizationId })
+    await assignOrganization({
+      userId: userToAssign.value.userId,
+      organizationId,
+    })
     userToAssign.value = null
   } catch (error) {
     console.error('Failed to assign organization:', error)
@@ -281,7 +289,10 @@ const handleUpdatePermissions = async (permissions: string[]) => {
   if (!userToManagePermissions.value) return
 
   try {
-    await updatePermissions({ userId: userToManagePermissions.value.userId, permissions })
+    await updatePermissions({
+      userId: userToManagePermissions.value.userId,
+      permissions,
+    })
     userToManagePermissions.value = null
   } catch (error) {
     console.error('Failed to update permissions:', error)

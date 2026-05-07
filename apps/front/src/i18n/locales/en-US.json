@@ -141,7 +141,6 @@
         "members": "Members"
       },
       "id": "ID",
-      "loading": "Loading organizations...",
       "membersDescription": "Manage users in this organization",
       "name": "organization Name",
       "noDescription": "No description",
@@ -281,7 +280,6 @@
         "minutes": "Updated {minutes}m ago",
         "seconds": "Updated {seconds}s ago"
       },
-      "loading": "Loading task data...",
       "modal": {
         "actions": {
           "cancel": "Cancel the currently running tasks",
@@ -471,7 +469,6 @@
         "success": "User enabled successfully!"
       },
       "itemName": "users",
-      "loading": "Loading users...",
       "modal": {
         "assigning": "Assigning...",
         "assignOrganization": "Assign User to Organization",
@@ -2611,6 +2608,7 @@
       },
       "title": "Delivery history"
     },
+    "events": "{type, select, screenCompanyCreated {Company created} screenCompanyUpdated {Company updated} targetWatchfileCreated {Watchfile created} targetWatchfileUpdated {Watchfile updated} targetAlertTriggered {Monitoring alert triggered} other {Unknown event}}",
     "filter": {
       "all": "All streams",
       "slack": "Slack",
@@ -2668,7 +2666,6 @@
       },
       "noResults": "No results found"
     },
-    "events": "{type, select, screenCompanyCreated {Company created} screenCompanyUpdated {Company updated} targetWatchfileCreated {Watchfile created} targetWatchfileUpdated {Watchfile updated} targetAlertTriggered {Monitoring alert triggered} other {Unknown event}}",
     "mode": {
       "live": "Real-time",
       "recurrence": "Recurrence"
