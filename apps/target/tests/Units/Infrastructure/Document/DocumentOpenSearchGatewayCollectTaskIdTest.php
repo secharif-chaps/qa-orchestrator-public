@@ -26,7 +26,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 #[AllowMockObjectsWithoutExpectations]
 #[CoversClass(DocumentOpenSearchGateway::class)]
-final class DocumentOpenSearchGatewayCollectTaskIdTest extends TestCase
+class DocumentOpenSearchGatewayCollectTaskIdTest extends TestCase
 {
     private Client&MockObject $openSearch;
     private DenormalizerInterface&Stub $denormalizer;

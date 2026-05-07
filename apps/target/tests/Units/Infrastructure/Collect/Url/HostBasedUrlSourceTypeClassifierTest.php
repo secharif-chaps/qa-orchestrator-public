@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(HostBasedUrlSourceTypeClassifier::class)]
-final class HostBasedUrlSourceTypeClassifierTest extends TestCase
+class HostBasedUrlSourceTypeClassifierTest extends TestCase
 {
     private HostBasedUrlSourceTypeClassifier $classifier;
 

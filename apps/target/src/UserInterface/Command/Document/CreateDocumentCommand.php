@@ -35,6 +35,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
+use Webmozart\Assert\Assert;
 
 /**
  * Manual document creation from the CLI — provider-agnostic.
@@ -252,7 +253,7 @@ class CreateDocumentCommand extends Command
         // to observe transitions made by downstream sync handlers
         // (FetchWebUrlHandler bumps to RUNNING then COMPLETED inline).
         $collectTaskId = $collectTask->getId();
-        \assert(\is_string($collectTaskId));
+        Assert::stringNotEmpty($collectTaskId);
         try {
             $collectTask = $this->collectTaskGateway->get($collectTaskId);
         } catch (\Throwable) {
@@ -287,7 +288,7 @@ class CreateDocumentCommand extends Command
     private function renderSyncRecap(SymfonyStyle $io, CollectTask $collectTask): int
     {
         $collectTaskId = $collectTask->getId();
-        \assert(\is_string($collectTaskId));
+        Assert::stringNotEmpty($collectTaskId);
 
         $status = $collectTask->getStatus();
         $providerName = $collectTask->getProviderName();

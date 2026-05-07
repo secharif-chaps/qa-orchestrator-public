@@ -19,6 +19,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
+use Webmozart\Assert\Assert;
 
 /**
  * Inline web ingestion handler — single point of HTML parsing/normalisation
@@ -111,7 +112,7 @@ readonly class FetchWebUrlHandler
         );
 
         $collectTaskId = $collectTask->getId();
-        \assert(\is_string($collectTaskId));
+        Assert::stringNotEmpty($collectTaskId);
 
         // Forward the sync chain when the action carries `sync = true` (CLI
         // `--sync`): pin IngestDocumentAction onto the in-memory `sync`

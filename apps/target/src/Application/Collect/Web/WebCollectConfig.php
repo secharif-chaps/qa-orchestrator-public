@@ -31,7 +31,7 @@ use App\Application\Collect\Web\Exception\InvalidWebCollectConfigException;
  * "transport metadata, not user data" — providers and tooling should
  * never persist it back as part of any user-facing payload.
  */
-final readonly class WebCollectConfig
+readonly class WebCollectConfig
 {
     public const string KEY_URL = 'url';
     public const string KEY_RAW_HTML = 'raw_html';

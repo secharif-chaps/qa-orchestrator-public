@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(WebCollectConfig::class)]
-final class WebCollectConfigTest extends TestCase
+class WebCollectConfigTest extends TestCase
 {
     #[Test]
     public function fromCollectTaskConfigurationParsesAllFields(): void
@@ -72,7 +72,8 @@ final class WebCollectConfigTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        new WebCollectConfig(url: 'https://example.com/article')->validate();
+        new WebCollectConfig(url: 'https://example.com/article')
+->validate();
     }
 
     #[Test]
@@ -80,7 +81,8 @@ final class WebCollectConfigTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        new WebCollectConfig(rawHtml: '<html>some content</html>')->validate();
+        new WebCollectConfig(rawHtml: '<html>some content</html>')
+->validate();
     }
 
     #[Test]

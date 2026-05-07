@@ -15,7 +15,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ContentQualityProcessor::class)]
-final class ContentQualityProcessorTest extends TestCase
+class ContentQualityProcessorTest extends TestCase
 {
     private ContentQualityProcessor $processor;
 

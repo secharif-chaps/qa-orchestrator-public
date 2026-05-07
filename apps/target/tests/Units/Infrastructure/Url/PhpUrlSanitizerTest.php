@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(PhpUrlSanitizer::class)]
-final class PhpUrlSanitizerTest extends TestCase
+class PhpUrlSanitizerTest extends TestCase
 {
     private PhpUrlSanitizer $sanitizer;
 

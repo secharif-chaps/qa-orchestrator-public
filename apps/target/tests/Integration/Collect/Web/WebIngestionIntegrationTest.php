@@ -244,7 +244,7 @@ class WebIngestionIntegrationTest extends AbstractApiTestCase
  * {@see HtmlFetcherInterface::fetch()} returns without going through a
  * real Cloudflare client.
  */
-final class FakeHtmlFetcher implements HtmlFetcherInterface
+class FakeHtmlFetcher implements HtmlFetcherInterface
 {
     /** @var array<string, string> */
     private array $replies = [];
@@ -269,7 +269,7 @@ final class FakeHtmlFetcher implements HtmlFetcherInterface
  * so fixtures using `example.com`-style hostnames don't need outbound DNS
  * at test time.
  */
-final class AlwaysSafeUrlSanitizer implements UrlSanitizerInterface
+class AlwaysSafeUrlSanitizer implements UrlSanitizerInterface
 {
     public function assertSafePublicUrl(string $url): void
     {
