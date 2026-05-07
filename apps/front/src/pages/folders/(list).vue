@@ -44,14 +44,7 @@
       />
 
       <!-- Loading State -->
-      <div v-if="currentIsLoading" class="rounded-sm bg-white p-8 text-center shadow-sm">
-        <div
-          class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
-        ></div>
-        <p class="text-neutral-black-font">
-          {{ $t('common.folder.loading') }}
-        </p>
-      </div>
+      <FolderListSkeleton v-if="currentIsLoading" :view-mode="viewMode" />
 
       <!-- Folders Content -->
       <div v-else-if="currentStatus === 'success'">
@@ -134,8 +127,12 @@
               <div v-if="isGlobalView" class="col-span-2">
                 {{ $t('common.folder.table.owner') }}
               </div>
-              <div class="col-span-2">{{ $t('common.folder.table.items') }}</div>
-              <div class="col-span-1">{{ $t('common.folder.table.created') }}</div>
+              <div class="col-span-2">
+                {{ $t('common.folder.table.items') }}
+              </div>
+              <div class="col-span-1">
+                {{ $t('common.folder.table.created') }}
+              </div>
               <div class="col-span-2 text-right">
                 {{ $t('common.folder.table.actions') }}
               </div>
@@ -230,6 +227,7 @@ meta:
 
 <script setup lang="ts">
 import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
+import FolderListSkeleton from '@/components/folders/FolderListSkeleton.vue'
 import FolderHierarchyRow from '@/components/folders/FolderHierarchyRow.vue'
 import FolderItem from '@/components/folders/FolderItem.vue'
 import FolderRestoreModal from '@/components/folders/FolderRestoreModal.vue'

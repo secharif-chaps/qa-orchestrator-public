@@ -141,7 +141,6 @@
         "members": "Membres"
       },
       "id": "ID",
-      "loading": "Chargement des espaces de travail...",
       "membersDescription": "Gérer les utilisateurs dans cette organisation",
       "name": "Nom",
       "noDescription": "Aucune description",
@@ -281,7 +280,6 @@
         "minutes": "Mis à jour il y a {minutes}m",
         "seconds": "Mis à jour il y a {seconds}s"
       },
-      "loading": "Chargement des tâches...",
       "modal": {
         "actions": {
           "cancel": "Annuler les tâches en cours",
@@ -471,7 +469,6 @@
         "success": "Utilisateur activé avec succès !"
       },
       "itemName": "utilisateurs",
-      "loading": "Chargement des utilisateurs...",
       "modal": {
         "assigning": "Assignation en cours...",
         "assignOrganization": "Assigner un Utilisateur à une Organisation",
@@ -2611,6 +2608,7 @@
       },
       "title": "Historique des livraisons"
     },
+    "events": "{type, select, screenCompanyCreated {Fiche entreprise créée} screenCompanyUpdated {Fiche entreprise actualisée} targetWatchfileCreated {Dossier de veille créé} targetWatchfileUpdated {Dossier de veille actualisé} targetAlertTriggered {Alerte veille déclenchée} other {Événement inconnu}}",
     "filter": {
       "all": "Tous les stream",
       "slack": "Slack",
@@ -2668,7 +2666,6 @@
       },
       "noResults": "Aucun résultat trouvé"
     },
-    "events": "{type, select, screenCompanyCreated {Fiche entreprise créée} screenCompanyUpdated {Fiche entreprise actualisée} targetWatchfileCreated {Dossier de veille créé} targetWatchfileUpdated {Dossier de veille actualisé} targetAlertTriggered {Alerte veille déclenchée} other {Événement inconnu}}",
     "mode": {
       "live": "Temps réel",
       "recurrence": "Récurrence"

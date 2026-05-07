@@ -4,14 +4,7 @@
     <template v-if="isFolderContentRoute">
       <div class="flex flex-col gap-4">
         <!-- Loading State -->
-        <div v-if="isLoading" class="bg-base-100 rounded-lg p-8 text-center shadow-sm">
-          <div
-            class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
-          ></div>
-          <p class="text-secondary">
-            {{ $t('common.folder.loading', 'Loading folder...') }}
-          </p>
-        </div>
+        <FolderItemsSkeleton v-if="isLoading" :view-mode="viewMode" />
 
         <!-- Error State -->
         <Alert
@@ -78,6 +71,7 @@ meta:
 
 <script setup lang="ts">
 import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
+import FolderItemsSkeleton from '@/components/folders/FolderItemsSkeleton.vue'
 import FoldersHeader from '@/components/folders/FoldersHeader.vue'
 import FolderTabBar from '@/components/folders/FolderTabBar.vue'
 import { useStreamModule } from '@/composables/useStreamModule'

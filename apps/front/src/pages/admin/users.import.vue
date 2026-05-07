@@ -17,12 +17,7 @@
     </div>
 
     <!-- Loading Organizations (only on initial load, not refetches) -->
-    <div
-      v-if="isLoadingOrganizations && !organizationsData"
-      class="flex items-center justify-center py-16"
-    >
-      <i class="fa-solid fa-spinner text-primary animate-spin text-2xl" />
-    </div>
+    <UserImportSkeleton v-if="isLoadingOrganizations && !organizationsData" />
 
     <!-- Error Loading Organizations -->
     <Alert
@@ -56,6 +51,7 @@ meta:
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
+import UserImportSkeleton from '@/components/admin/UserImportSkeleton.vue'
 import { Alert } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
 import UserImportWizard from '@/components/import/UserImportWizard.vue'

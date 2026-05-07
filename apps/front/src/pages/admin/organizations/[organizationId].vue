@@ -1,12 +1,7 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Loading State -->
-    <div v-if="isLoading" class="rounded-sm bg-white p-8 text-center shadow-sm">
-      <div class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
-      <p class="text-neutral-black-font">
-        {{ $t('admin.organization.loading') }}
-      </p>
-    </div>
+    <OrganizationDetailSkeleton v-if="isLoading" />
 
     <!-- Error State -->
     <Alert
@@ -46,6 +41,7 @@ meta:
 </route>
 
 <script setup lang="ts">
+import OrganizationDetailSkeleton from '@/components/admin/OrganizationDetailSkeleton.vue'
 import { Alert, Toggle } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, provide } from 'vue'
