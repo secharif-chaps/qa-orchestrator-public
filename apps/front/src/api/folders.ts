@@ -31,68 +31,56 @@ export const getFolderById = async (folderId: string, filters?: { archived?: boo
   return response
 }
 
-export const getFolders = async (filters: {
+export interface FolderListApiFilters {
   page: number
   size: number
   name: string
   archived?: boolean
   favorites?: boolean
   include_all?: boolean
-}) => {
+  sort_by?: 'name' | 'created_at' | 'updated_at'
+  sort_order?: 'asc' | 'desc'
+}
+
+const appendListFilters = (params: URLSearchParams, filters: FolderListApiFilters) => {
+  if (filters.name) {
+    params.append('name', filters.name)
+  }
+  if (filters.archived) {
+    params.append('archived', 'true')
+  }
+  if (filters.favorites) {
+    params.append('favorites', 'true')
+  }
+  if (filters.include_all) {
+    params.append('include_all', 'true')
+  }
+  if (filters.sort_by) {
+    params.append('sort_by', filters.sort_by)
+  }
+  if (filters.sort_order) {
+    params.append('sort_order', filters.sort_order)
+  }
+}
+
+export const getFolders = async (filters: FolderListApiFilters) => {
   const params = new URLSearchParams({
     page: filters.page.toString(),
     size: filters.size.toString(),
   })
-
-  if (filters.name) {
-    params.append('name', filters.name)
-  }
-
-  if (filters.archived) {
-    params.append('archived', 'true')
-  }
-
-  if (filters.favorites) {
-    params.append('favorites', 'true')
-  }
-
-  if (filters.include_all) {
-    params.append('include_all', 'true')
-  }
+  appendListFilters(params, filters)
 
   const response = await apiClient.get<FolderListResponse>(`/folders/?${params.toString()}`)
   return response
 }
 
-export const getFoldersWithItems = async (filters: {
-  page: number
-  size: number
-  name: string
-  archived?: boolean
-  favorites?: boolean
-  include_all?: boolean
-}) => {
+export const getFoldersWithItems = async (filters: FolderListApiFilters) => {
   const params = new URLSearchParams({
     page: filters.page.toString(),
     size: filters.size.toString(),
     include_items: 'true', // Request items to be included
   })
-
-  if (filters.name) {
-    params.append('name', filters.name)
-  }
-
-  if (filters.archived) {
-    params.append('archived', 'true')
-  }
-
-  if (filters.favorites) {
-    params.append('favorites', 'true')
-  }
-
-  if (filters.include_all) {
-    params.append('include_all', 'true')
-  }
+  appendListFilters(params, filters)
 
   const response = await apiClient.get<FolderListResponse>(`/folders/?${params.toString()}`)
   return response

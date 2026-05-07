@@ -1,5 +1,5 @@
 <template>
-  <FiltersPanel
+  <FiltersSidePanel
     v-if="facets"
     v-model="displayDrawer"
     :facets="facets"
@@ -84,7 +84,7 @@
         :event-types="facetEventTypes"
       />
     </template>
-  </FiltersPanel>
+  </FiltersSidePanel>
 </template>
 
 <script lang="ts" setup>
@@ -95,7 +95,7 @@ import FilterPanelDatesChips from '@target/components/filters/FilterPanelDatesCh
 import FilterPanelSourcesChips from '@target/components/filters/FilterPanelSourcesChips.vue'
 import FilterPanelValidationsChips from '@target/components/filters/FilterPanelValidationsChips.vue'
 import FilterSources from '@target/components/filters/FilterSources.vue'
-import FiltersPanel from '@target/components/filters/FiltersPanel.vue'
+import FiltersSidePanel from '@target/components/filters/FiltersSidePanel.vue'
 import FilterValidations from '@target/components/filters/FilterValidations.vue'
 import type { FilterType } from '@target/stores/watchFileFilters'
 import { useWatchFileFiltersStore } from '@target/stores/watchFileFilters'

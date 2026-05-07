@@ -7,7 +7,8 @@
 
     <div class="relative z-10 flex h-screen min-h-screen w-screen overflow-hidden">
       <div
-        class="mt-[68px] max-h-[calc(100vh-68px)] overflow-y-auto rounded-t-lg transition-all duration-300"
+        id="main-content"
+        class="relative mt-[68px] max-h-[calc(100vh-68px)] overflow-y-auto rounded-t-lg transition-all duration-300"
         :class="[isFullscreen ? 'w-0' : 'w-full']"
       >
         <div class="dark:bg-sage-900 min-h-[calc(100vh-68px)] w-full bg-white">

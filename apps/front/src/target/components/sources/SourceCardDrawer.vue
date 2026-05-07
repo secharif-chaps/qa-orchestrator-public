@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import Drawer from '@target/components/global/Drawer.vue'
+import Drawer from '@/components/ui/Drawer.vue'
 import SourceCard from '@target/components/sources/SourceCard.vue'
 import SourceMonitoring from '@target/components/watchFiles/ActivitySection/SourceMonitoring/SourceMonitoring.vue'
 import type { Source } from '@target/types/source'

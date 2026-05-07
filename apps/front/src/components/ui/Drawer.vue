@@ -8,7 +8,7 @@
     >
       <div
         v-if="isOpen"
-        class="bg-sage-950/40 absolute inset-0 z-[19] backdrop-blur-xs"
+        class="absolute inset-0 z-[19] bg-black/40 backdrop-blur-xs"
         @click="handleOverlayClick"
       ></div>
     </Transition>
@@ -75,7 +75,8 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'open' | 'close'): void
+  open: []
+  close: []
 }
 
 const {

@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="shouldShowFallback"
-    class="flex items-center justify-center rounded bg-gray-800 object-contain text-lg font-bold text-white"
+    class="flex items-center justify-center rounded-sm bg-gray-800 object-contain text-lg font-bold text-white"
     :style="{
       width: `${width}px`,
       height: `${height}px`,

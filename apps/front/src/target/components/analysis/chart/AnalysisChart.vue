@@ -70,7 +70,7 @@
 <script lang="ts" setup>
 import { Button, Icon } from '@owlint/feathers-vue'
 import AnalysisEventViewer from '@target/components/analysis/AnalysisEventViewer.vue'
-import Drawer from '@target/components/global/Drawer.vue'
+import Drawer from '@/components/ui/Drawer.vue'
 import { useCssVar } from '@target/composables/useCssVar'
 import type { WatchFileGraphEvent } from '@target/types/watchFileEvent'
 import { Chart, registerables, type ChartData, type ChartOptions } from 'chart.js'
