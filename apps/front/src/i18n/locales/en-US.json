@@ -665,6 +665,15 @@
       "unauthorized": "Unauthorized",
       "unexpected": "An unexpected error occurred"
     },
+    "filters": {
+      "button": {
+        "label": "Filters"
+      },
+      "confirm": "Show results",
+      "errorTitle": "Filter loading error",
+      "loading": "Loading filters…",
+      "reset": "Reset filters"
+    },
     "folder": {
       "actions": {
         "addToFavorites": "Add to favorites",
@@ -708,8 +717,6 @@
           "title": "Items will not be deleted"
         }
       },
-      "description": "Organize your companies into folders",
-      "descriptionGlobal": "All folders in your organization",
       "detail": {
         "error": {
           "description": "Failed to load folder",
@@ -743,8 +750,15 @@
       },
       "filter": {
         "allLabel": "All",
-        "archivedLabel": "Archived",
-        "favoritesLabel": "Favorites"
+        "archivedLabel": "Archived"
+      },
+      "filters": {
+        "status": {
+          "all": "Show all folders ({count})",
+          "favorites": "Show only favorite folders",
+          "title": "Folder status"
+        },
+        "title": "Search filters"
       },
       "form": {
         "cancel": "Cancel",
@@ -815,7 +829,10 @@
         "error": {
           "description": "Failed to load folders",
           "title": "Error"
-        }
+        },
+        "newButton": "New",
+        "newCompany": "Company card",
+        "newWatchFile": "Target watch"
       },
       "loading": "Loading folders...",
       "moveCompany": {
@@ -860,6 +877,9 @@
       "search": {
         "placeholder": "Search for an object or a stream..."
       },
+      "searchByName": {
+        "placeholder": "Search a folder…"
+      },
       "share": {
         "add": "Add",
         "added": "User added to folder",
@@ -903,7 +923,7 @@
         "broadcasts": "Broadcasts",
         "items": "Items"
       },
-      "title": "Folders",
+      "title": "{count, plural, =0 {Your folders} one {Your folder} other {All your folders (#)}}",
       "tooltip": {
         "createdBy": "Created by {username} on {date} at {time}"
       },
@@ -915,10 +935,6 @@
       "viewMode": {
         "grid": "Grid",
         "table": "Table"
-      },
-      "viewScope": {
-        "allFolders": "All Folders",
-        "myFolders": "My Folders"
       }
     },
     "genericError": "An error occurred",
@@ -1071,6 +1087,14 @@
       }
     },
     "soon": "Soon",
+    "sort": {
+      "asc": "Ascending",
+      "byCreatedAt": "Creation date",
+      "byName": "Name",
+      "byUpdatedAt": "Last update",
+      "desc": "Descending",
+      "label": "Sort by"
+    },
     "time": {
       "hoursAgo": "{count}h ago",
       "minutesAgo": "{count} min ago"

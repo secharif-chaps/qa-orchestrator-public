@@ -132,7 +132,7 @@
           <!-- Item name with indentation -->
           <div class="col-span-5 flex items-center gap-3 pl-8">
             <div
-              class="ring-primary-stroke flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white ring-1"
+              class="ring-primary-stroke flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white ring-1"
             >
               <Logo
                 v-if="item.type === 'company'"

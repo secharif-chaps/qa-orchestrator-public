@@ -1,39 +1,11 @@
 <template>
   <div class="min-h-screen">
     <div class="flex flex-col gap-4">
-      <!-- Header -->
-      <div>
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 class="text-2xl font-bold">{{ $t('common.folder.title') }}</h1>
-            <p class="text-neutral-black-font mt-1">
-              {{
-                isGlobalView
-                  ? $t('common.folder.descriptionGlobal')
-                  : $t('common.folder.description')
-              }}
-            </p>
-          </div>
-
-          <!-- Filters and Search -->
-          <div class="flex items-center gap-4">
-            <!-- Global View Toggle (Managers Only) -->
-            <Toggle
-              v-if="canManageTeam"
-              v-model="globalViewToggle"
-              :options="viewScopeOptions"
-              variant="pill"
-            />
-
-            <!-- Filter Buttons -->
-            <Toggle v-model="folderFilter" :options="filterOptions" variant="pill" />
-
-            <!-- View Mode Toggle -->
-            <Toggle v-model="viewMode" :options="viewModeOptions" variant="pill" />
-          </div>
-        </div>
-      </div>
-
+      <FolderListHeader
+        v-model:filters-open="filtersOpen"
+        v-model:view-mode="viewMode"
+        :total-count="totalCount"
+      />
       <!-- Error Alert -->
       <Alert
         v-if="currentStatus === 'error'"
@@ -57,7 +29,7 @@
           <div
             v-if="canCreateFolder"
             class="rounded-card border-primary-lighter-stroke hover:border-primary/50 hover:bg-primary-lightest/50 group flex min-h-[280px] cursor-pointer flex-col items-center justify-center border-2 border-dashed p-6 transition-all duration-200"
-            @click="$router.push('/folders/create')"
+            @click="goToCreate"
           >
             <div
               class="bg-primary/10 dark:bg-primary/20 group-hover:bg-primary/20 mb-4 flex h-16 w-16 items-center justify-center rounded-sm transition-colors"
@@ -94,7 +66,7 @@
           <div
             v-if="canCreateFolder"
             class="border-primary-lighter-stroke bg-primary-lightest/50 hover:bg-primary-lightest cursor-pointer border-b px-6 py-4 transition-colors"
-            @click="$router.push('/folders/create')"
+            @click="goToCreate"
           >
             <div class="flex items-center gap-3">
               <div
@@ -118,13 +90,13 @@
           <div class="border-primary-lighter-stroke bg-primary-lightest border-b px-6 py-4">
             <div
               :class="
-                isGlobalView
+                foldersStore.includeAll
                   ? 'text-neutral-black-font grid grid-cols-14 gap-4 text-sm font-medium'
                   : 'text-neutral-black-font grid grid-cols-12 gap-4 text-sm font-medium'
               "
             >
               <div class="col-span-5">{{ $t('common.folder.table.name') }}</div>
-              <div v-if="isGlobalView" class="col-span-2">
+              <div v-if="foldersStore.includeAll" class="col-span-2">
                 {{ $t('common.folder.table.owner') }}
               </div>
               <div class="col-span-2">
@@ -145,7 +117,7 @@
               v-for="folder in foldersWithItems"
               :key="folder.id"
               :folder="folder"
-              :global-view="isGlobalView"
+              :global-view="foldersStore.includeAll"
               @view-folder="$router.push(`/folders/${$event}`)"
               @delete-folder="confirmDelete"
               @restore-folder="confirmRestore"
@@ -189,19 +161,22 @@
         </p>
         <Button
           v-if="!foldersStore.filterName && canCreateFolder"
-          @click="$router.push('/folders/create')"
-          :label="$t('common.folder.create.button')"
           variant="primary"
           icon="fa fa-plus"
+          :label="$t('common.folder.create.button')"
+          @click="goToCreate"
         />
         <Button
           v-else-if="foldersStore.filterName"
-          @click="foldersStore.filterName = ''"
-          :label="$t('common.folder.clearSearch')"
           variant="secondary"
+          :label="$t('common.folder.clearSearch')"
+          @click="foldersStore.filterName = ''"
         />
       </div>
     </div>
+
+    <!-- Filters Drawer -->
+    <FolderFiltersDrawer v-model="filtersOpen" :total-count="totalCount" />
 
     <!-- Delete Confirmation Modal -->
     <FolderDeleteModal
@@ -227,129 +202,63 @@ meta:
 
 <script setup lang="ts">
 import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
-import FolderListSkeleton from '@/components/folders/FolderListSkeleton.vue'
+import FolderFiltersDrawer from '@/components/folders/FolderFiltersDrawer.vue'
 import FolderHierarchyRow from '@/components/folders/FolderHierarchyRow.vue'
 import FolderItem from '@/components/folders/FolderItem.vue'
+import FolderListHeader from '@/components/folders/FolderListHeader.vue'
+import FolderListSkeleton from '@/components/folders/FolderListSkeleton.vue'
 import FolderRestoreModal from '@/components/folders/FolderRestoreModal.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
-import { useTeamPermissions } from '@/composables/useTeamPermissions'
 import { foldersWithItemsQuery } from '@/queries/folders'
 import { useFoldersStore } from '@/stores/folders'
 import type { Folder } from '@/types/folder'
 import { transformToPaginationMeta } from '@/utils/pagination'
-import { Alert, Button, Toggle } from '@owlint/feathers-vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, onMounted, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
-// Constants
 const VIEW_MODE_STORAGE_KEY = 'folders-view-mode'
-
-// Grid-friendly page size options (multiples of 3)
 const pageSizeOptions = [6, 12, 21, 30]
 
-const { t: $t } = useI18n()
+const router = useRouter()
 const foldersStore = useFoldersStore()
-
-// Get folder creation permission (no folder context needed for this)
 const { canCreateFolder } = useFolderPermissions()
 
-// Get team management permission for global view toggle
-const { canManageTeam } = useTeamPermissions()
-
-// Filter and view state
-const folderFilter = ref<'all' | 'favorites' | 'archived'>('all')
 const viewMode = ref<'grid' | 'table'>('grid')
-// Using 'my' and 'all' strings instead of boolean values to match AcceptableValue type
-const globalViewToggle = ref<'my' | 'all'>('my')
+const filtersOpen = ref(false)
 
-// Computed to convert toggle value to boolean for API and template usage
-const isGlobalView = computed(() => globalViewToggle.value === 'all')
-
-// Filter options for Toggle
-const filterOptions = computed(() => [
-  {
-    value: 'all',
-    icon: 'fas fa-folder',
-    label: $t('common.folder.filter.allLabel'),
-  },
-  {
-    value: 'favorites',
-    icon: 'fas fa-star',
-    label: $t('common.folder.filter.favoritesLabel'),
-  },
-  {
-    value: 'archived',
-    icon: 'fas fa-archive',
-    label: $t('common.folder.filter.archivedLabel'),
-  },
-])
-
-// View mode options for Toggle
-const viewModeOptions = computed(() => [
-  {
-    value: 'table',
-    label: $t('common.folder.viewMode.table'),
-    icon: 'fa fa-list',
-  },
-  {
-    value: 'grid',
-    label: $t('common.folder.viewMode.grid'),
-    icon: 'fa fa-th-large',
-  },
-])
-
-// View scope options for global toggle (managers only)
-const viewScopeOptions = computed(() => [
-  {
-    value: 'my',
-    label: $t('common.folder.viewScope.myFolders'),
-    icon: 'fa fa-user',
-  },
-  {
-    value: 'all',
-    label: $t('common.folder.viewScope.allFolders'),
-    icon: 'fa fa-users',
-  },
-])
-
-// Query for grid view (uses same query as table for unified caching)
-const { data, status, isLoading, refetch } = useQuery({
-  ...foldersWithItemsQuery({
-    filters: {
-      page: foldersStore.page,
-      size: foldersStore.size,
-      name: foldersStore.debouncedName,
-      archived: folderFilter.value === 'archived',
-      favorites: folderFilter.value === 'favorites',
-      include_all: isGlobalView.value,
-    },
-  }),
-  enabled: () => viewMode.value === 'grid',
+// Filters live in the store; the getter form below ensures Pinia Colada
+// re-runs the query whenever any of these refs change (search, sort, drawer).
+// TODO(TAR-1446): when the API ships a dedicated "include archived" flag,
+// stop reusing the archived-only param to model hideArchived=false.
+const buildQueryFilters = () => ({
+  page: foldersStore.page,
+  size: foldersStore.size,
+  name: foldersStore.debouncedName,
+  archived: !foldersStore.hideArchived,
+  favorites: foldersStore.favoritesOnly,
+  include_all: foldersStore.includeAll,
+  sort_by: foldersStore.sortBy,
+  sort_order: foldersStore.sortOrder,
 })
 
-// Query for table view (folders with items)
+const { data, status, isLoading, refetch } = useQuery(() => ({
+  ...foldersWithItemsQuery({ filters: buildQueryFilters() }),
+  enabled: viewMode.value === 'grid',
+}))
+
 const {
   data: dataWithItems,
   status: statusWithItems,
   isLoading: isLoadingWithItems,
   refetch: refetchWithItems,
-} = useQuery({
-  ...foldersWithItemsQuery({
-    filters: {
-      page: foldersStore.page,
-      size: foldersStore.size,
-      name: foldersStore.debouncedName,
-      archived: folderFilter.value === 'archived',
-      favorites: folderFilter.value === 'favorites',
-      include_all: isGlobalView.value,
-    },
-  }),
-  enabled: () => viewMode.value === 'table',
-})
+} = useQuery(() => ({
+  ...foldersWithItemsQuery({ filters: buildQueryFilters() }),
+  enabled: viewMode.value === 'table',
+}))
 
-// Combined computed properties for different view modes
 const currentData = computed(() => (viewMode.value === 'grid' ? data.value : dataWithItems.value))
 const currentStatus = computed(() =>
   viewMode.value === 'grid' ? status.value : statusWithItems.value,
@@ -358,22 +267,17 @@ const currentIsLoading = computed(() =>
   viewMode.value === 'grid' ? isLoading.value : isLoadingWithItems.value,
 )
 
-// Folders are now filtered server-side (both archived and favorites)
-// Access the .data property from PaginatedResponse
 const folders = computed<Folder[]>(() => currentData.value?.data || [])
-
 const foldersWithItems = computed<Folder[]>(() => folders.value)
-
 const paginationMeta = computed(() => transformToPaginationMeta(currentData.value?.pagination))
+const totalCount = computed(() => currentData.value?.pagination?.total ?? 0)
 
 const showDeleteModal = ref(false)
 const folderToDelete = ref<Folder | null>(null)
-
 const showRestoreModal = ref(false)
 const folderToRestore = ref<Folder | null>(null)
 
-function handleDeleteFolder() {
-  // Refresh the folders list after successful deletion
+const refetchCurrent = () => {
   if (viewMode.value === 'grid') {
     refetch()
   } else {
@@ -381,32 +285,33 @@ function handleDeleteFolder() {
   }
 }
 
-function confirmDelete(folder: Folder) {
+const handleDeleteFolder = () => {
+  refetchCurrent()
+}
+
+const confirmDelete = (folder: Folder) => {
   folderToDelete.value = folder
   showDeleteModal.value = true
 }
 
-function handleRestoreFolder() {
-  // Refresh the folders list after successful deletion
-  if (viewMode.value === 'grid') {
-    refetch()
-  } else {
-    refetchWithItems()
-  }
+const handleRestoreFolder = () => {
+  refetchCurrent()
 }
 
-function confirmRestore(folder: Folder) {
+const confirmRestore = (folder: Folder) => {
   folderToRestore.value = folder
   showRestoreModal.value = true
 }
 
-function updatePerPage(newSize: number) {
+const updatePerPage = (newSize: number) => {
   foldersStore.size = newSize
-  // Reset to first page when changing page size
   foldersStore.page = 1
 }
 
-// Load saved view mode from localStorage
+const goToCreate = () => {
+  router.push('/folders/create')
+}
+
 onMounted(() => {
   const savedViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY)
   if (savedViewMode === 'grid' || savedViewMode === 'table') {
@@ -414,7 +319,6 @@ onMounted(() => {
   }
 })
 
-// Watch for view mode changes and save to localStorage
 watch(viewMode, (newMode) => {
   localStorage.setItem(VIEW_MODE_STORAGE_KEY, newMode)
 })

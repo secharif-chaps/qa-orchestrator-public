@@ -665,6 +665,15 @@
       "unauthorized": "Non autorisé",
       "unexpected": "Une erreur inattendue s'est produite"
     },
+    "filters": {
+      "button": {
+        "label": "Filtres"
+      },
+      "confirm": "Voir les résultats",
+      "errorTitle": "Erreur de chargement des filtres",
+      "loading": "Chargement des filtres…",
+      "reset": "Réinitialiser les filtres"
+    },
     "folder": {
       "actions": {
         "addToFavorites": "Ajouter aux favoris",
@@ -708,8 +717,6 @@
           "title": "Les éléments ne seront pas supprimés"
         }
       },
-      "description": "Organisez vos entreprises en dossiers",
-      "descriptionGlobal": "Tous les dossiers de votre organisation",
       "detail": {
         "error": {
           "description": "Échec du chargement du dossier",
@@ -743,8 +750,15 @@
       },
       "filter": {
         "allLabel": "Tous",
-        "archivedLabel": "Archivés",
-        "favoritesLabel": "Favoris"
+        "archivedLabel": "Archivés"
+      },
+      "filters": {
+        "status": {
+          "all": "Voir tous les dossiers ({count})",
+          "favorites": "Voir uniquement les dossiers favoris",
+          "title": "Statuts des dossiers"
+        },
+        "title": "Filtres de recherche"
       },
       "form": {
         "cancel": "Annuler",
@@ -815,7 +829,10 @@
         "error": {
           "description": "Échec du chargement des dossiers",
           "title": "Erreur"
-        }
+        },
+        "newButton": "Nouveau",
+        "newCompany": "Fiche entreprise",
+        "newWatchFile": "Veille target"
       },
       "loading": "Chargement des dossiers...",
       "moveCompany": {
@@ -860,6 +877,9 @@
       "search": {
         "placeholder": "Rechercher un objet ou un stream..."
       },
+      "searchByName": {
+        "placeholder": "Rechercher un dossier…"
+      },
       "share": {
         "add": "Ajouter",
         "added": "Utilisateur ajouté au dossier",
@@ -903,7 +923,7 @@
         "broadcasts": "Diffusions",
         "items": "Éléments"
       },
-      "title": "Dossiers",
+      "title": "{count, plural, =0 {Vos dossiers} one {Votre dossier} other {Tous vos dossiers (#)}}",
       "tooltip": {
         "createdBy": "Créé par {username} le {date} à {time}"
       },
@@ -915,10 +935,6 @@
       "viewMode": {
         "grid": "Grille",
         "table": "Tableau"
-      },
-      "viewScope": {
-        "allFolders": "Tous les dossiers",
-        "myFolders": "Mes dossiers"
       }
     },
     "genericError": "Une erreur s'est produite",
@@ -1071,6 +1087,14 @@
       }
     },
     "soon": "Bientôt",
+    "sort": {
+      "asc": "Croissant",
+      "byCreatedAt": "Date de création",
+      "byName": "Nom",
+      "byUpdatedAt": "Dernière mise à jour",
+      "desc": "Décroissant",
+      "label": "Trier par"
+    },
     "time": {
       "hoursAgo": "il y a {count}h",
       "minutesAgo": "il y a {count} min"

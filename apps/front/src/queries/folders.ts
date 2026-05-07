@@ -1,5 +1,17 @@
 import { defineQueryOptions } from '@pinia/colada'
 import { getFolders, getFolderById, getFoldersWithItems } from '@/api/folders'
+import type { FolderSortField, FolderSortOrder } from '@/stores/folders'
+
+export interface FolderListFilters {
+  page: number
+  size: number
+  name: string
+  archived?: boolean
+  favorites?: boolean
+  include_all?: boolean
+  sort_by?: FolderSortField
+  sort_order?: FolderSortOrder
+}
 
 export const FOLDER_QUERY_KEYS = {
   root: ['folders'] as const,
@@ -8,9 +20,8 @@ export const FOLDER_QUERY_KEYS = {
       ? ([...FOLDER_QUERY_KEYS.root, id, { filters }] as const)
       : ([...FOLDER_QUERY_KEYS.root, id] as const)
   },
-  withFilters: (filters: { page: number; size: number; name: string }) =>
-    [...FOLDER_QUERY_KEYS.root, { filters }] as const,
-  withItems: (filters: { page: number; size: number; name: string }) =>
+  withFilters: (filters: FolderListFilters) => [...FOLDER_QUERY_KEYS.root, { filters }] as const,
+  withItems: (filters: FolderListFilters) =>
     [...FOLDER_QUERY_KEYS.root, 'with-items', { filters }] as const,
   favorites: () => [...FOLDER_QUERY_KEYS.root, 'favorites'] as const,
 }
@@ -24,31 +35,14 @@ export const folderByIdQuery = defineQueryOptions(
   }),
 )
 
-export const foldersQuery = defineQueryOptions(
-  ({
-    filters,
-  }: {
-    filters: { page: number; size: number; name: string; archived?: boolean; favorites?: boolean }
-  }) => ({
-    key: FOLDER_QUERY_KEYS.withFilters(filters),
-    query: () => getFolders(filters),
-    staleTime: 1000 * 60 * 2, // 2 minutes
-  }),
-)
+export const foldersQuery = defineQueryOptions(({ filters }: { filters: FolderListFilters }) => ({
+  key: FOLDER_QUERY_KEYS.withFilters(filters),
+  query: () => getFolders(filters),
+  staleTime: 1000 * 60 * 2, // 2 minutes
+}))
 
 export const foldersWithItemsQuery = defineQueryOptions(
-  ({
-    filters,
-  }: {
-    filters: {
-      page: number
-      size: number
-      name: string
-      archived?: boolean
-      favorites?: boolean
-      include_all?: boolean
-    }
-  }) => ({
+  ({ filters }: { filters: FolderListFilters }) => ({
     key: FOLDER_QUERY_KEYS.withItems(filters),
     query: () => getFoldersWithItems(filters),
     staleTime: 1000 * 60 * 2, // 2 minutes
@@ -63,7 +57,7 @@ export const favoriteFoldersQuery = defineQueryOptions(() => ({
       page: 1,
       size: 4, // Only need first 4 favorites for home page
       name: '',
-      favorites: true, // Use the favorites parameter to get only favorite folders
+      favorites: true,
     })
 
     return response

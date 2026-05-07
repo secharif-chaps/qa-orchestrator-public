@@ -1,14 +1,14 @@
 import { onMounted, onUnmounted, type Ref } from 'vue'
 
-export function useFilterPanel(elementRef: Ref<HTMLDivElement | null>, cssVar: string) {
+export const useFilterPanel = (elementRef: Ref<HTMLDivElement | null>, cssVar: string) => {
   let resizeObserver: ResizeObserver | null = null
 
   const setGlobalWidth = (width: number) => {
     document.documentElement.style.setProperty(cssVar, `${width}px`)
   }
 
-  const observeElement = (elementRef: Ref<HTMLElement | null>) => {
-    if (!elementRef.value) return
+  const observeElement = (target: Ref<HTMLElement | null>) => {
+    if (!target.value) return
 
     if (resizeObserver) {
       resizeObserver.disconnect()
@@ -21,9 +21,9 @@ export function useFilterPanel(elementRef: Ref<HTMLDivElement | null>, cssVar: s
       }
     })
 
-    resizeObserver.observe(elementRef.value)
+    resizeObserver.observe(target.value)
 
-    const initialWidth = elementRef.value.offsetWidth
+    const initialWidth = target.value.offsetWidth
     setGlobalWidth(initialWidth)
   }
 
@@ -41,6 +41,4 @@ export function useFilterPanel(elementRef: Ref<HTMLDivElement | null>, cssVar: s
   onUnmounted(() => {
     stopObserving()
   })
-
-  return {}
 }

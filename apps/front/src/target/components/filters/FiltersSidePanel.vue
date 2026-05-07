@@ -42,29 +42,41 @@
   </div>
   <FilterDrawer
     v-model="displayDrawer"
-    :facets="facets"
     :is-loading="isLoading"
     :error="error"
-    :accordion-filters="accordionFilters"
-    :open-edit="openEdit"
-    :default-value-open="defaultValueOpen"
-    :filters-counts="filtersCounts"
+    :filters-count="filtersCounts"
     :title="$t('target.watchFiles.filters.title')"
-    :confirm-button-label="t('target.watchFiles.filters.button.confirm')"
-    :reset-button-label="t('target.watchFiles.filters.button.reset')"
+    :confirm-label="t('target.watchFiles.filters.button.confirm')"
+    :reset-label="t('target.watchFiles.filters.button.reset')"
+    to="#watchfile-layout"
     @confirm="handleConfirmFilters"
     @reset="handleResetFilters"
   >
-    <template v-for="(_, name) in $slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData" />
+    <template #loading>
+      <FiltersPanelSkeleton />
     </template>
+    <template #error>
+      <ErrorMessage :title="$t('common.error.title.filter')" vertical-align="center" />
+    </template>
+    <FiltersAccordion
+      v-if="facets"
+      :items="accordionFilters"
+      :default-value="openEdit ? [openEdit] : defaultValueOpen"
+    >
+      <template v-for="(_, name) in $slots" #[name]="slotData">
+        <slot :name="name" v-bind="slotData" />
+      </template>
+    </FiltersAccordion>
   </FilterDrawer>
 </template>
 
 <script lang="ts" setup>
 import { Button } from '@owlint/feathers-vue'
-import FilterDrawer from '@target/components/filters/FilterDrawer.vue'
-import { useFilterPanel } from '@target/composables/useFilterPanel'
+import FilterDrawer from '@/components/ui/filters/FilterDrawer.vue'
+import { useFilterPanel } from '@/composables/useFilterPanel'
+import FiltersAccordion from '@target/components/filterPanel/FiltersAccordion.vue'
+import FiltersPanelSkeleton from '@target/components/filterPanel/FiltersPanelSkeleton.vue'
+import ErrorMessage from '@target/components/global/ErrorMessage.vue'
 import type { DocumentFacets } from '@target/types/document'
 import type { AnalysisFacets } from '@target/types/facet'
 import type { DocumentFilter } from '@target/types/filter'
@@ -108,13 +120,11 @@ useFilterPanel(filterPanelRef, cssVariableName)
 const openEdit = ref('')
 
 // displayFiltersPanel can be a Ref or a boolean
-// Vue unwraps refs in templates, so we need to create a local ref that syncs
+// Vue unwraps refs in templates, so we need a local ref that syncs both ways via the callback
 const displayFiltersPanelRef = ref(unref(displayFiltersPanel))
 
-// Flag to prevent watch loops
 let isUpdatingFromProp = false
 
-// Sync prop -> local ref
 watch(
   () => unref(displayFiltersPanel),
   (newValue) => {
@@ -125,10 +135,8 @@ watch(
   { immediate: true },
 )
 
-// Sync local ref -> prop via callback
 watch(displayFiltersPanelRef, (newValue) => {
   isUpdatingFromProp = true
-  // Use callback if provided
   if (onUpdateDisplayFiltersPanel) {
     onUpdateDisplayFiltersPanel(newValue)
   }
@@ -137,10 +145,7 @@ watch(displayFiltersPanelRef, (newValue) => {
   })
 })
 
-// Use unref to get the value and track changes
-const displayFiltersPanelValue = computed(() => {
-  return displayFiltersPanelRef.value
-})
+const displayFiltersPanelValue = computed(() => displayFiltersPanelRef.value)
 
 const filterTitle = computed(() => {
   if (displayFiltersPanelValue.value) {
@@ -176,12 +181,10 @@ const handleResetFilters = async () => {
   await onResetFilters()
 }
 
-// Reset openEdit on close and sync formFilters when opening
 watch(displayDrawer, (newValue) => {
   if (!newValue) {
     openEdit.value = ''
   } else if (onSyncFormFilters) {
-    // When opening the drawer, sync formFilters with current store values
     onSyncFormFilters()
   }
 })
