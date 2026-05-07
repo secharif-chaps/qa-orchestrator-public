@@ -137,6 +137,9 @@ parameters:
     news:newsapi:headlines: 'apify'
     website: 'apify'
     blog: 'apify'
+    # Manual single-URL / pasted-content ingestion goes through the inline
+    # web provider (HtmlFetcher + HtmlMetadataExtractor + DocumentBuilder).
+    manual: 'web'
 
   app.bakus.callback_type: '%env(string:BAKUS_CALLBACK_TYPE)%'
   app.bakus.callback_url: '%env(string:BAKUS_CALLBACK_URL)%'
@@ -306,6 +309,10 @@ services:
   App\Infrastructure\Collect\Apify\ApifyProviderGateway:
     tags:
       - { name: 'app.collect.provider', key: 'apify' }
+
+  App\Infrastructure\Collect\Web\WebProviderGateway:
+    tags:
+      - { name: 'app.collect.provider', key: 'web' }
 
   # Default autowire targets for the Collect interfaces. Services that need
   # a specific provider must use ProviderGatewayLocator instead.
