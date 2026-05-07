@@ -126,7 +126,7 @@ export const useAuthStore = defineStore(
         silent_redirect_uri: `${endpoints.value.baseUrl}/auth/silent-callback`,
         post_logout_redirect_uri: `${endpoints.value.baseUrl}/login`,
         response_type: 'code',
-        scope: 'openid profile email',
+        scope: 'openid profile email organization',
         automaticSilentRenew: true,
         silentRequestTimeoutInSeconds: 10,
         filterProtocolClaims: true,
