@@ -13,13 +13,14 @@
             class="w-74"
             size="sm"
           >
-            <button
+            <Button
               v-if="searchQuery"
-              class="flex items-center justify-between"
+              variant="tertiary"
+              size="sm"
+              icon="fa-xmark"
+              :title="$t('common.search.clear')"
               @click="resetSearchbar"
-            >
-              <Icon icon="fa-xmark" />
-            </button>
+            />
           </Searchbar>
           <Button
             :variant="displayMenuSorting ? 'accent' : 'tertiary'"

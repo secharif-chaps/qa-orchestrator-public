@@ -28,13 +28,14 @@
           class="h-full"
           size="sm"
         >
-          <button
+          <Button
             v-if="debouncedSearchTerm.trim().length"
-            class="flex items-center justify-between"
+            variant="tertiary"
+            size="sm"
+            icon="fa-xmark"
+            :title="$t('common.search.clear')"
             @click="searchTerm = ''"
-          >
-            <Icon icon="fa-xmark" />
-          </button>
+          />
         </Searchbar>
       </div>
 
@@ -172,7 +173,6 @@
 import {
   Checkbox,
   HeaderCell,
-  Icon,
   Searchbar,
   Select,
   SelectItem,

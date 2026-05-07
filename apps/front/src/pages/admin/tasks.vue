@@ -16,27 +16,21 @@
         <span class="text-neutral-black-font text-sm">
           {{ lastRefreshText }}
         </span>
-        <button
-          @click="toggleAutoRefresh"
-          :class="[
-            'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-            autoRefreshEnabled
-              ? 'bg-success-light text-success-light-content'
-              : 'bg-primary-lightest text-neutral-black-font hover:bg-primary-lighter',
-          ]"
-        >
-          <i
-            :class="['fa fa-sync-alt', { 'animate-spin': autoRefreshEnabled && isRefreshing }]"
-          ></i>
-          {{
+        <Button
+          :variant="autoRefreshEnabled ? 'primary' : 'secondary'"
+          size="sm"
+          icon="fa-sync-alt"
+          :loading="autoRefreshEnabled && isRefreshing"
+          :label="
             autoRefreshEnabled
               ? $t('admin.tasks.autoRefresh.on')
               : $t('admin.tasks.autoRefresh.off')
-          }}
-        </button>
+          "
+          @click="toggleAutoRefresh"
+        />
         <Button
           variant="secondary"
-          icon="fa fa-refresh"
+          icon="fa-rotate-right"
           :label="$t('admin.tasks.refresh')"
           @click="refreshAll"
           :loading="isRefreshing"
@@ -234,7 +228,7 @@
             v-if="hasActiveFilters"
             variant="tertiary"
             size="sm"
-            icon="fa fa-times"
+            icon="fa-times"
             :label="$t('admin.tasks.filters.clearFilters')"
             @click="clearFilters"
           />
@@ -250,7 +244,7 @@
             <Button
               variant="primary"
               size="sm"
-              icon="fa fa-redo"
+              icon="fa-redo"
               :label="
                 $t(
                   'admin.tasks.selection.restart',
@@ -371,8 +365,7 @@
                       v-if="task.status === 'running' || task.status === 'error'"
                       variant="tertiary"
                       size="sm"
-                      icon="fa fa-redo"
-                      icon-only
+                      icon="fa-redo"
                       :title="$t('admin.tasks.table.restartTask')"
                       @click="handleRestartSingle(task.id)"
                     />
@@ -380,8 +373,7 @@
                       v-if="task.error"
                       variant="tertiary"
                       size="sm"
-                      icon="fa fa-eye"
-                      icon-only
+                      icon="fa-eye"
                       :title="$t('admin.tasks.table.viewError')"
                       @click="showError(task)"
                     />
@@ -411,7 +403,7 @@
               <Button
                 variant="secondary"
                 size="sm"
-                icon="fa fa-chevron-left"
+                icon="fa-chevron-left"
                 :disabled="filters.page === 1"
                 @click="filters.page!--"
               />
@@ -421,7 +413,7 @@
               <Button
                 variant="secondary"
                 size="sm"
-                icon="fa fa-chevron-right"
+                icon="fa-chevron-right"
                 :disabled="filters.page === tasks.pages"
                 @click="filters.page!++"
               />
@@ -553,7 +545,7 @@
                     selectedTaskIds.length,
                   )
             "
-            icon="fa fa-redo"
+            icon="fa-redo"
             @click="confirmBulkRestart"
             :loading="isRestarting"
             :disabled="lastRestartResult !== null"

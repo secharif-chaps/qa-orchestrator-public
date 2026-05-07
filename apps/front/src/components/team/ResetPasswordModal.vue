@@ -11,7 +11,7 @@
         <h3 class="text-base text-lg font-semibold">
           {{ $t('settings.user.resetPassword.title') }}
         </h3>
-        <Button variant="tertiary" icon="fa fa-times" @click="handleClose" />
+        <Button variant="tertiary" icon="fa-times" @click="handleClose" />
       </div>
 
       <!-- Success State -->
@@ -26,26 +26,16 @@
 
         <!-- New Password Display -->
         <div class="mb-6">
-          <label class="text-neutral-black-font mb-2 block text-sm font-medium">
-            {{ $t('settings.user.resetPassword.newPassword') }}
-          </label>
           <div class="flex gap-2">
-            <div class="relative flex-1">
-              <input
-                :type="showPassword ? 'text' : 'password'"
-                :value="newPassword"
-                readonly
-                class="border-primary-lighter-stroke bg-primary-lightest w-full rounded-sm border px-3 py-2 pr-10 font-mono text-sm"
-              />
-              <button
-                type="button"
-                class="text-neutral-black-font absolute top-1/2 right-3 -translate-y-1/2 transform hover:text-base"
-                @click="showPassword = !showPassword"
-              >
-                <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
-              </button>
-            </div>
-            <Button variant="secondary" icon="fa fa-copy" @click="copyPassword" />
+            <Input
+              id="reset-new-password"
+              :model-value="newPassword"
+              type="password"
+              :label="$t('settings.user.resetPassword.newPassword')"
+              readonly
+              class="flex-1 font-mono"
+            />
+            <Button variant="secondary" icon="fa-copy" class="self-end" @click="copyPassword" />
           </div>
           <p v-if="copied" class="text-success mt-1 text-xs">
             <i class="fa fa-check mr-1"></i>
@@ -71,40 +61,28 @@
 
         <!-- Password Input -->
         <div class="mb-4">
-          <label class="text-neutral-black-font mb-2 block text-sm font-medium">
-            {{ $t('settings.user.resetPassword.temporaryPassword') }} *
-          </label>
-          <div class="relative">
-            <input
-              v-model="password"
-              :type="showPassword ? 'text' : 'password'"
-              :disabled="isLoading"
-              class="border-primary-lighter-stroke focus:ring-primary w-full rounded-sm border px-3 py-2 pr-10 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-              :placeholder="$t('settings.user.resetPassword.placeholder')"
-            />
-            <button
-              type="button"
-              class="text-neutral-black-font absolute top-1/2 right-3 -translate-y-1/2 transform hover:text-base"
-              :disabled="isLoading"
-              @click="showPassword = !showPassword"
-            >
-              <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
-            </button>
-          </div>
-          <p v-if="error" class="text-error mt-1 text-xs">{{ error }}</p>
+          <Input
+            id="reset-password"
+            v-model="password"
+            type="password"
+            :disabled="isLoading"
+            :label="`${$t('settings.user.resetPassword.temporaryPassword')} *`"
+            :placeholder="$t('settings.user.resetPassword.placeholder')"
+            :error="error || undefined"
+            class="w-full"
+          />
         </div>
 
         <!-- Generate Password Button -->
         <div class="mb-6">
-          <button
-            type="button"
+          <Button
+            variant="tertiary"
+            size="sm"
+            icon="fa-rotate-right"
+            :label="$t('settings.user.generatePassword')"
             :disabled="isLoading"
-            class="text-neutral-black-font hover:text-primary text-sm font-medium disabled:opacity-50"
             @click="generatePassword"
-          >
-            <i class="fa fa-refresh mr-1"></i>
-            {{ $t('settings.user.generatePassword') }}
-          </button>
+          />
         </div>
 
         <!-- Info Alert -->
@@ -140,7 +118,7 @@
 <script setup lang="ts">
 import { useResetMemberPassword } from '@/mutations/team'
 import type { TeamMemberListItem } from '@/types/team'
-import { Alert, Button } from '@owlint/feathers-vue'
+import { Alert, Button, Input } from '@owlint/feathers-vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -157,7 +135,6 @@ const emit = defineEmits<{
 // State
 const password = ref('')
 const newPassword = ref('')
-const showPassword = ref(false)
 const copied = ref(false)
 const error = ref('')
 const isSuccess = ref(false)

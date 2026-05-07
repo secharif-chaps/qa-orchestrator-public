@@ -24,9 +24,14 @@
           :disabled="isLoading"
           @keydown.escape="clearSearch"
         >
-          <button v-if="searchQuery" class="flex items-center justify-between" @click="clearSearch">
-            <Icon icon="fa-xmark" />
-          </button>
+          <Button
+            v-if="searchQuery"
+            variant="tertiary"
+            size="sm"
+            icon="fa-xmark"
+            :title="t('common.search.clear')"
+            @click="clearSearch"
+          />
         </Searchbar>
       </div>
 
@@ -65,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { Badge, Button, Icon, Searchbar } from '@owlint/feathers-vue'
+import { Badge, Button, Searchbar } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { getWatchFileSourcesGroupedQuery } from '@target/api/queries/sources'
 import ErrorMessage from '@target/components/global/ErrorMessage.vue'

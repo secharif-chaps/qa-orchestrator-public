@@ -14,15 +14,15 @@
       >
         <!-- Name with expand/collapse icon -->
         <div class="col-span-5 flex items-center gap-3">
-          <button
-            class="text-neutral-black-font hover:text-neutral-black-font flex h-6 w-6 items-center justify-center transition-colors"
+          <Button
+            variant="tertiary"
+            size="xs"
+            :icon="isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'"
+            :title="
+              isExpanded ? $t('common.folder.actions.collapse') : $t('common.folder.actions.expand')
+            "
             @click.stop="toggleExpanded"
-          >
-            <i
-              :class="isExpanded ? 'fas fa-chevron-down' : 'fas fa-chevron-right'"
-              class="text-xs"
-            ></i>
-          </button>
+          />
 
           <div
             class="border-primary-lighter-stroke flex h-10 w-10 items-center justify-center rounded-sm border"
@@ -100,7 +100,7 @@
             <Button
               variant="tertiary"
               size="sm"
-              icon="fa fa-external-link-alt"
+              icon="fa-external-link-alt"
               :label="$t('common.folder.actions.view')"
               @click.stop="$emit('view-folder', folder.id)"
             />
@@ -109,9 +109,7 @@
               v-if="canDeleteFolder"
               variant="tertiary"
               size="sm"
-              color="danger"
-              icon="fa fa-trash"
-              icon-only
+              icon="fa-trash"
               @click.stop="$emit('delete-folder', folder)"
             />
           </div>
@@ -176,8 +174,7 @@
             <Button
               variant="tertiary"
               size="sm"
-              icon="fa fa-external-link-alt"
-              icon-only
+              icon="fa-external-link-alt"
               @click.stop="$emit('view-item', { itemId: item.id, folderId: folder.id })"
             />
           </div>

@@ -670,8 +670,10 @@
     "folder": {
       "actions": {
         "addToFavorites": "Ajouter aux favoris",
+        "collapse": "Replier",
         "delete": "Supprimer",
         "edit": "Modifier",
+        "expand": "Déplier",
         "favorite": "Favori",
         "removeFromFavorites": "Retirer des favoris",
         "share": "Partager",
@@ -993,12 +995,13 @@
     },
     "publishedOn": "Publié le {date}",
     "search": {
+      "clear": "Effacer la recherche",
       "placeholder": "Rechercher"
     },
     "sidebar": {
       "chapse": {
         "addCompany": "Ajouter une entreprise",
-        "addThisCompany": "Ajouter",
+        "addThisCompanyToContext": "Ajouter {name} au contexte",
         "clearHistory": "Effacer l'historique",
         "confirmClearMessages": "Êtes-vous sûr de vouloir effacer tous les messages ?",
         "confirmDeleteConversation": "Êtes-vous sûr de vouloir supprimer cette conversation ?",
@@ -1033,7 +1036,6 @@
         },
         "thinking": "Réflexion en cours...",
         "title": "Chaps-e",
-        "toContext": "au contexte",
         "toSend": "Envoyer",
         "typeToSearch": "Tapez pour rechercher des entreprises",
         "welcomeMessage": "Bonjour ! Je suis Chaps-e, votre assistant IA. Comment puis-je vous aider aujourd'hui ?"
@@ -2207,6 +2209,7 @@
         "90d": "90 jours",
         "all": "Tout"
       },
+      "refresh": "Actualiser",
       "topUsers": {
         "credits": "Crédits",
         "itemName": "utilisateurs",
@@ -2580,6 +2583,7 @@
       "delete": "Supprimer",
       "dispatch": "Envoyer maintenant",
       "edit": "Modifier",
+      "menu": "Actions",
       "pause": "Mettre en pause"
     },
     "card": {
@@ -2611,6 +2615,7 @@
       },
       "title": "Historique des livraisons"
     },
+    "events": "{type, select, screenCompanyCreated {Fiche entreprise créée} screenCompanyUpdated {Fiche entreprise actualisée} targetWatchfileCreated {Dossier de veille créé} targetWatchfileUpdated {Dossier de veille actualisé} targetAlertTriggered {Alerte veille déclenchée} other {Événement inconnu}}",
     "filter": {
       "all": "Tous les stream",
       "slack": "Slack",
@@ -2647,6 +2652,7 @@
       "webhookHeaders": "En-têtes personnalisés",
       "webhookHeaderValue": "Valeur",
       "webhookMethod": "Méthode HTTP",
+      "webhookRemoveHeader": "Supprimer l'en-tête",
       "webhookSecret": "Secret HMAC",
       "webhookSecretPlaceholder": "Secret partagé (optionnel)",
       "webhookUrl": "URL",
@@ -2668,7 +2674,6 @@
       },
       "noResults": "Aucun résultat trouvé"
     },
-    "events": "{type, select, screenCompanyCreated {Fiche entreprise créée} screenCompanyUpdated {Fiche entreprise actualisée} targetWatchfileCreated {Dossier de veille créé} targetWatchfileUpdated {Dossier de veille actualisé} targetAlertTriggered {Alerte veille déclenchée} other {Événement inconnu}}",
     "mode": {
       "live": "Temps réel",
       "recurrence": "Récurrence"

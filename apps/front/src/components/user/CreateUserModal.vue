@@ -56,7 +56,7 @@
           <Input
             id="create-password"
             v-model="form.temporaryPassword"
-            :type="showPassword ? 'text' : 'password'"
+            type="password"
             required
             :disabled="isLoading"
             :label="`${$t('settings.user.temporaryPassword')} *`"
@@ -66,11 +66,9 @@
                 ? errors.temporaryPassword
                 : undefined
             "
-            :icon-right="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"
             class="w-full"
             @blur="touchField('temporaryPassword')"
             @input="validateForm()"
-            @click-icon-right="showPassword = !showPassword"
           />
           <p
             v-if="!(touched.temporaryPassword && errors.temporaryPassword)"
@@ -82,15 +80,14 @@
 
         <!-- Auto-generate password button -->
         <div>
-          <button
-            type="button"
-            @click="generatePassword"
+          <Button
+            variant="tertiary"
+            size="sm"
+            icon="fa-rotate-right"
+            :label="$t('settings.user.generatePassword')"
             :disabled="isLoading"
-            class="text-neutral-black-font hover:text-sage-content/80 text-sm font-medium disabled:opacity-50"
-          >
-            <i class="fa fa-refresh mr-1"></i>
-            {{ $t('settings.user.generatePassword') }}
-          </button>
+            @click="generatePassword"
+          />
         </div>
 
         <!-- Initial Role Selection -->
@@ -170,7 +167,7 @@
 <script setup lang="ts">
 import { useRoles } from '@/composables/useRoles'
 import type { OrganizationUserCreate } from '@/types/user'
-import { Input, Radio } from '@owlint/feathers-vue'
+import { Button, Input, Radio } from '@owlint/feathers-vue'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -206,7 +203,6 @@ const form = reactive<OrganizationUserCreate>({
   temporaryPassword: '',
 })
 
-const showPassword = ref(false)
 const errors = reactive<Record<string, string>>({})
 const touched = reactive({
   username: false,

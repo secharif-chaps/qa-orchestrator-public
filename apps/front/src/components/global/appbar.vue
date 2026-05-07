@@ -19,13 +19,14 @@
           <ModuleBadges v-if="organization && !isOrgLoading" :organization-id="organization.id" />
 
           <!-- Dev mode only theme toggle -->
-          <button
+          <Button
             v-if="isDebugUser"
-            class="text-sage-500 hover:text-sage-800 dark:text-sage-400 dark:hover:text-sage-200 cursor-pointer transition-colors"
+            variant="tertiary"
+            size="sm"
+            :icon="isDark ? 'fa-sun' : 'fa-moon'"
+            :title="$t('settings.appearance.theme.title')"
             @click="toggleTheme"
-          >
-            <i :class="isDark ? 'fa fa-sun' : 'fa fa-moon'" />
-          </button>
+          />
 
           <UserMenu />
           <div class="bg-sage-300 h-4.5 w-px rounded-full" />
@@ -46,6 +47,7 @@ import { useTheme } from '@/composables/useTheme'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { useAuthStore } from '@/stores/auth'
 import { useQuery } from '@pinia/colada'
+import { Button } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import Breadcrumbs from '../ui/Breadcrumbs.vue'
 

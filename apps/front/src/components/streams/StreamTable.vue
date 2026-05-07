@@ -36,11 +36,12 @@
       <td class="px-4 py-3 text-right" @click.stop>
         <Dropdown align="right">
           <template #trigger>
-            <button
-              class="text-secondary hover:bg-base-200 hover:text-primary flex h-8 w-8 items-center justify-center rounded-full transition-colors"
-            >
-              <Icon icon="fa-ellipsis-v" class="text-sm" />
-            </button>
+            <Button
+              variant="tertiary"
+              size="sm"
+              icon="fa-ellipsis-v"
+              :title="t('stream.actions.menu')"
+            />
           </template>
           <template #content>
             <DropdownItem @click="navigateToEdit(item)">
@@ -72,7 +73,7 @@ import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
 import type { ChannelType, StreamRead } from '@/types/stream'
 import { useDateTime } from '@/composables/useDateTime'
-import { Badge, Icon, Table, Tag } from '@owlint/feathers-vue'
+import { Badge, Button, Icon, Table, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'

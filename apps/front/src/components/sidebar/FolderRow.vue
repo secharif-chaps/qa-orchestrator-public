@@ -6,16 +6,16 @@
     >
       <div class="flex min-w-0 flex-1 items-center gap-2">
         <!-- Expand/Collapse Arrow -->
-        <button
+        <Button
           v-if="folder.items && folder.items.length > 0"
-          class="flex w-3 shrink-0 cursor-pointer items-center justify-center"
+          variant="tertiary"
+          size="xs"
+          :icon="isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'"
+          :title="
+            isExpanded ? $t('common.folder.actions.collapse') : $t('common.folder.actions.expand')
+          "
           @click.stop="$emit('toggle')"
-        >
-          <Icon
-            :icon="isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'"
-            class="dark:text-sage-300 text-xs transition-transform"
-          />
-        </button>
+        />
         <div v-else class="w-3 shrink-0"></div>
 
         <!-- Folder Name -->

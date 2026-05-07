@@ -32,33 +32,25 @@
                 size="xs"
               />
               <!-- Favorite Toggle Button / Indicator -->
-              <button
-                @click.stop="toggleFavorite"
-                class="z-10 flex size-8 items-center justify-center rounded-full transition-all duration-200"
-                :class="[
-                  folder.is_favorite
-                    ? 'bg-yellow-100 dark:bg-yellow-900/30'
-                    : 'hover:bg-primary-lightest',
-                  isSharedWithMe ? 'ml-0' : 'ml-auto',
-                ]"
+              <Button
+                variant="tertiary"
+                size="sm"
+                icon="fa-star"
+                :lib="folder.is_favorite ? 'fa-solid' : 'fa-regular'"
                 :title="
                   folder.is_favorite
                     ? $t('common.folder.actions.removeFromFavorites')
                     : $t('common.folder.actions.addToFavorites')
                 "
+                :loading="isTogglingFavorite"
                 :disabled="isTogglingFavorite"
-              >
-                <i
-                  v-if="!isTogglingFavorite"
-                  :class="[
-                    folder.is_favorite
-                      ? 'fas fa-star text-yellow-500'
-                      : 'far fa-star text-neutral-black-font hover:text-yellow-500',
-                  ]"
-                  class="text-sm"
-                ></i>
-                <i v-else class="fas fa-spinner fa-spin text-neutral-black-font text-sm"></i>
-              </button>
+                :class="[
+                  'z-10',
+                  folder.is_favorite ? 'bg-yellow-100 text-yellow-500 dark:bg-yellow-900/30' : '',
+                  isSharedWithMe ? 'ml-0' : 'ml-auto',
+                ]"
+                @click.stop="toggleFavorite"
+              />
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <span class="text-neutral-black-font text-sm">
@@ -173,7 +165,7 @@ import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import { useDateTime } from '@/composables/useDateTime'
 import { useToggleFolderFavorite } from '@/mutations/folders'
 import type { Folder } from '@/types/folder'
-import { Tag } from '@owlint/feathers-vue'
+import { Button, Tag } from '@owlint/feathers-vue'
 import { computed, ref, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
