@@ -20,6 +20,10 @@ use App\Domain\Document\Pipeline\DocumentPipelineContext;
  *   collected, plus the dedup verdict (`duplicateOf`, `isHalted`,
  *   `haltReason`). `null` only when the pipeline was skipped (legacy
  *   pre-save path: document arrived without a watch_file).
+ * - `$mergedFromProviderId` is `true` when an existing entity was
+ *   matched by `providerId` upstream of the pipeline and the incoming
+ *   data was merged into it (raw vs refined apify variants); `false`
+ *   when the document was persisted as a brand-new entry.
  *
  * Bus callers that do not consume the return value are unaffected — the
  * messenger envelope discards it.
@@ -29,6 +33,7 @@ readonly class IngestDocumentResult
     public function __construct(
         public Document $document,
         public ?DocumentPipelineContext $preSaveContext = null,
+        public bool $mergedFromProviderId = false,
     ) {
     }
 

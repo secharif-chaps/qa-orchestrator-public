@@ -293,7 +293,70 @@ class CreateDocumentCommandTest extends TestCase
         ]);
 
         self::assertSame(Command::SUCCESS, $exitCode);
-        self::assertStringContainsString('Document persisted: "Sync article"', $this->commandTester->getDisplay());
+        self::assertStringContainsString(
+            'Document persisted as new: "Sync article"',
+            $this->commandTester->getDisplay()
+        );
+    }
+
+    public function testSyncOptionSurfacesMergedFromProviderIdInRecap(): void
+    {
+        $watchFile = $this->makeWatchFileWithManualSource();
+        $this->watchFileGateway->method('get')
+            ->willReturn($watchFile);
+
+        $this->htmlFetcher->method('fetch')
+            ->willReturn('<html><body>article body</body></html>');
+
+        $this->metadataExtractor->method('extract')
+            ->willReturn($this->makeMetadata(title: 'Merged article'));
+
+        // Override the default bus stub so the IngestDocumentResult
+        // returned by the handler reports a providerId-merge — that is
+        // what the production handler emits when findByProviderId hits.
+        $this->messageBus = $this->createMock(MessageBusInterface::class);
+        $this->messageBus->method('dispatch')
+            ->willReturnCallback(static function (object $message, array $stamps = []): Envelope {
+                $envelope = $message instanceof Envelope ? $message : new Envelope($message);
+                foreach ($stamps as $stamp) {
+                    $envelope = $envelope->with($stamp);
+                }
+                if ($message instanceof IngestDocumentAction) {
+                    $envelope = $envelope->with(new HandledStamp(
+                        new IngestDocumentResult(document: $message->document, mergedFromProviderId: true),
+                        'IngestDocumentHandler::__invoke',
+                    ));
+                }
+
+                return $envelope;
+            });
+
+        $command = new CreateDocumentCommand(
+            messageBus: $this->messageBus,
+            watchFileGateway: $this->watchFileGateway,
+            sourceGateway: $this->sourceGateway,
+            collectTaskGateway: $this->collectTaskGateway,
+            qualityReportGateway: $this->qualityReportGateway,
+            htmlFetcher: $this->htmlFetcher,
+            metadataExtractor: $this->metadataExtractor,
+            documentBuilder: $this->documentBuilder,
+            manualSourceFactory: new ManualSourceFactory(),
+            eventDispatcher: $this->createStub(EventDispatcherInterface::class),
+        );
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute([
+            'watchFileId' => 'wf-1',
+            '--url' => 'https://example.com/article',
+            '--sync' => true,
+        ]);
+
+        self::assertSame(Command::SUCCESS, $exitCode);
+        self::assertStringContainsString(
+            'Document MERGED into existing entry (matched by providerId)',
+            $tester->getDisplay(),
+        );
+        self::assertStringNotContainsString('Document persisted as new', $tester->getDisplay());
     }
 
     public function testUsesProvidedSourceIdInsteadOfManualSource(): void

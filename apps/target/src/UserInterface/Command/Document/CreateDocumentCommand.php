@@ -21,11 +21,15 @@ use App\Domain\Source\SourceGatewayInterface;
 use App\Domain\Source\SourceType;
 use App\Domain\WatchFile\WatchFile;
 use App\Domain\WatchFile\WatchFileGatewayInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+use Psr\Log\NullLogger;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -62,6 +66,16 @@ class CreateDocumentCommand extends Command
      */
     private const int EXCERPT_PREVIEW_MAX_LENGTH = 80;
 
+    /**
+     * Built in {@see initialize()} from the active output verbosity so
+     * informational tracing (URL fetched, source resolved, etc.) routes
+     * through PSR-3 instead of {@see SymfonyStyle::info()} blocks. The
+     * command keeps {@see SymfonyStyle} for *user-facing* presentation
+     * (success/error frames, tables, sections) — we just stop using it
+     * for log-style chatter.
+     */
+    private LoggerInterface $logger;
+
     public function __construct(
         private readonly MessageBusInterface $messageBus,
         private readonly WatchFileGatewayInterface $watchFileGateway,
@@ -75,6 +89,22 @@ class CreateDocumentCommand extends Command
         private readonly EventDispatcherInterface $eventDispatcher,
     ) {
         parent::__construct();
+        $this->logger = new NullLogger();
+    }
+
+    protected function initialize(InputInterface $input, OutputInterface $output): void
+    {
+        // ConsoleLogger pipes through the active OutputInterface. The
+        // default verbosity map hides INFO/NOTICE behind `-vv`/`-v`,
+        // which would silence the operational tracing we expect to see
+        // by default — override the map so INFO and NOTICE are emitted
+        // at VERBOSITY_NORMAL while DEBUG still requires `-vv`.
+        $verbosityLevelMap = [
+            LogLevel::NOTICE => OutputInterface::VERBOSITY_NORMAL,
+            LogLevel::INFO => OutputInterface::VERBOSITY_NORMAL,
+            LogLevel::DEBUG => OutputInterface::VERBOSITY_VERY_VERBOSE,
+        ];
+        $this->logger = new ConsoleLogger($output, $verbosityLevelMap);
     }
 
     protected function configure(): void
@@ -146,7 +176,10 @@ class CreateDocumentCommand extends Command
             return Command::FAILURE;
         }
 
-        $io->info(\sprintf('WatchFile: %s (%s)', $watchFile->getName(), $watchFileId));
+        $this->logger->info('WatchFile resolved: {name} ({id})', [
+            'name' => $watchFile->getName(),
+            'id' => $watchFileId,
+        ]);
 
         // Resolve source
         $source = $this->resolveSource($sourceId, $url, $watchFile, $io);
@@ -158,7 +191,7 @@ class CreateDocumentCommand extends Command
             return Command::FAILURE;
         }
 
-        $io->info('Extracting metadata...');
+        $this->logger->info('Extracting metadata from HTML payload...');
         $metadata = $this->metadataExtractor->extract($html, \is_string($url) ? $url : null);
 
         $titleOverrideValue = \is_string($titleOverride) ? $titleOverride : null;
@@ -262,9 +295,19 @@ class CreateDocumentCommand extends Command
                 'Document REJECTED as duplicate of "%s" (no save performed).',
                 $result->duplicateOf() ?? 'unknown',
             ));
+        } elseif ($result->mergedFromProviderId) {
+            // The handler matched an existing entity by providerId before
+            // the dedup pipeline ran and merged the incoming payload into
+            // it — surface that explicitly so the operator does not
+            // mistake the operation for a fresh insert.
+            $io->note(\sprintf(
+                'Document MERGED into existing entry (matched by providerId): "%s" (ID: %s).',
+                $document->getTitle(),
+                $document->getId(),
+            ));
         } else {
             $io->success(\sprintf(
-                'Document persisted: "%s" (ID: %s).',
+                'Document persisted as new: "%s" (ID: %s).',
                 $document->getTitle(),
                 $document->getId(),
             ));
@@ -351,14 +394,18 @@ class CreateDocumentCommand extends Command
     ): Source {
         if (\is_string($sourceId)) {
             $source = $this->sourceGateway->get($sourceId);
-            $io->info(\sprintf('Using source: %s', $source->getName()));
+            // Echo via $io->writeln (not logger) so `--source-id` callers
+            // and tests still see this confirmation regardless of -v level.
+            $io->writeln(\sprintf('<info>Using source:</info> %s', $source->getName()));
 
             return $source;
         }
 
         foreach ($watchFile->getSources() as $source) {
             if (SourceType::MANUAL === $source->getType()) {
-                $io->info(\sprintf('Using existing manual source: %s', $source->getName()));
+                $this->logger->info('Using existing manual source: {name}', [
+                    'name' => $source->getName(),
+                ]);
 
                 return $source;
             }
@@ -366,7 +413,7 @@ class CreateDocumentCommand extends Command
 
         $source = $this->manualSourceFactory->buildFor($watchFile);
         $this->sourceGateway->save($source);
-        $io->info('Created new manual source.');
+        $io->writeln('<info>Created new manual source.</info>');
 
         return $source;
     }
@@ -374,7 +421,9 @@ class CreateDocumentCommand extends Command
     private function resolveHtml(?string $url, ?string $htmlFile, SymfonyStyle $io): ?string
     {
         if (null !== $url) {
-            $io->info(\sprintf('Fetching URL: %s', $url));
+            $this->logger->info('Fetching URL: {url}', [
+                'url' => $url,
+            ]);
 
             try {
                 return $this->htmlFetcher->fetch($url);
@@ -398,7 +447,10 @@ class CreateDocumentCommand extends Command
             return null;
         }
 
-        $io->info(\sprintf('Read HTML file: %s (%s bytes)', $htmlFile, number_format(\strlen($html))));
+        $this->logger->info('Read HTML file: {path} ({bytes} bytes)', [
+            'path' => $htmlFile,
+            'bytes' => number_format(\strlen($html)),
+        ]);
 
         return $html;
     }

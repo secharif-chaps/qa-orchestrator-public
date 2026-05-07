@@ -83,9 +83,11 @@ readonly class IngestDocumentHandler
             $existingDocument = $this->documentGateway->findByProviderId($document->getProviderId());
         }
 
+        $mergedFromProviderId = false;
         if (null !== $existingDocument) {
             $this->mergeDocumentData($existingDocument, $document);
             $document = $existingDocument;
+            $mergedFromProviderId = true;
         }
 
         $context = null;
@@ -105,7 +107,11 @@ readonly class IngestDocumentHandler
                     'collect_task_id' => $action->collectTaskId,
                 ]);
 
-                return new IngestDocumentResult(document: $document, preSaveContext: $context);
+                return new IngestDocumentResult(
+                    document: $document,
+                    preSaveContext: $context,
+                    mergedFromProviderId: $mergedFromProviderId,
+                );
             }
 
             // The pipeline operates on the same Document instance, so any
@@ -140,7 +146,11 @@ readonly class IngestDocumentHandler
             $document = $this->documentGateway->get($document->getId());
         }
 
-        return new IngestDocumentResult(document: $document, preSaveContext: $context);
+        return new IngestDocumentResult(
+            document: $document,
+            preSaveContext: $context,
+            mergedFromProviderId: $mergedFromProviderId,
+        );
     }
 
     /**
