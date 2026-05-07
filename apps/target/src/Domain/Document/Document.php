@@ -750,6 +750,14 @@ class Document implements HasWatchFileInterface
     #[Groups(['document:save'])]
     private ?string $providerId = null;
 
+    /**
+     * Backlink to the {@see CollectTask} that produced this document.
+     * Set once via {@see self::capitalizeFrom()} and never mutated afterwards.
+     * Powers `findByCollectTaskId` lookups (CLI sync recap, audit trails).
+     */
+    #[Groups(['document:save'])]
+    private ?string $collectTaskId = null;
+
     #[Groups(['document:save'])]
     private ?float $contentRatio = null;
 
@@ -1204,6 +1212,7 @@ class Document implements HasWatchFileInterface
         $this->setWatchFile($collectTask->getWatchFile());
         $this->setSource($collectTask->getSource());
         $this->setActor($collectTask->getSource()->getActor());
+        $this->collectTaskId = $collectTask->getId();
 
         return $this;
     }
@@ -1380,6 +1389,18 @@ class Document implements HasWatchFileInterface
     public function setProviderId(?string $providerId): self
     {
         $this->providerId = $providerId;
+
+        return $this;
+    }
+
+    public function getCollectTaskId(): ?string
+    {
+        return $this->collectTaskId;
+    }
+
+    public function setCollectTaskId(?string $collectTaskId): self
+    {
+        $this->collectTaskId = $collectTaskId;
 
         return $this;
     }

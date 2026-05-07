@@ -100,6 +100,14 @@ class NullDocumentGateway implements DocumentGatewayInterface
         return null;
     }
 
+    public function findByCollectTaskId(string $collectTaskId): array
+    {
+        return array_values(array_filter(
+            $this->documents,
+            static fn (Document $document): bool => $document->getCollectTaskId() === $collectTaskId,
+        ));
+    }
+
     public function findByCanonicalUrl(string $canonicalUrl, ?string $excludeDocumentId = null): ?Document
     {
         foreach ($this->documents as $document) {

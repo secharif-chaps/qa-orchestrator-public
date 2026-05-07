@@ -51,6 +51,18 @@ interface DocumentGatewayInterface
     public function findByProviderId(string $providerId): ?Document;
 
     /**
+     * Find every document linked to the given CollectTask.
+     *
+     * Most providers produce a single Document per task (web, manual). Apify
+     * datasets can yield N — the contract returns a list to keep callers
+     * agnostic. Empty list when the task has no linked Document yet (e.g. the
+     * pipeline halted in pre-save before persisting anything).
+     *
+     * @return list<Document>
+     */
+    public function findByCollectTaskId(string $collectTaskId): array;
+
+    /**
      * Find a document indexed under the given canonical URL.
      *
      * Caller is expected to pass an already-normalized canonical URL

@@ -556,6 +556,14 @@ readonly class DocumentOpenSearchGateway implements DocumentGatewayInterface, Fi
         return $this->findOneByTerm('providerId', $providerId, null, 'providerId');
     }
 
+    public function findByCollectTaskId(string $collectTaskId): array
+    {
+        // 100 hits is generous: web/manual yield 1 doc per task; an Apify
+        // dataset rarely tops a few dozen items per task in practice. If
+        // a caller needs more, they should paginate via _search/_scroll.
+        return $this->findManyByTerm('collectTaskId', $collectTaskId, null, limit: 100, logLabel: 'collectTaskId');
+    }
+
     public function findStaleAiValidationDocuments(\DateTimeImmutable $cutoff, int $limit): array
     {
         $response = $this->openSearch->search([
