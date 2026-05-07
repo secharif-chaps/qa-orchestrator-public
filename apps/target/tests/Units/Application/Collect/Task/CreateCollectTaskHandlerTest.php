@@ -540,4 +540,52 @@ class CreateCollectTaskHandlerTest extends TestCase
         $this->assertCount(1, $savedTasks);
         $this->assertEquals(CollectTaskStatus::QUEUED, $savedTasks[0]->getStatus());
     }
+
+    public function testActionConfigurationIsPropagatedToCollectTask(): void
+    {
+        $watchFile = new WatchFile('Test WatchFile', 'Test objective', new Organisation('Test Org', 'test-org-id'));
+        $this->forcePropertyValue($watchFile, 'watchfile-id');
+        $watchFile->setStatus(WatchFileStatus::ENABLED);
+        $this->watchFileGateway->save($watchFile);
+
+        $actor = new Actor('Test Actor', new Organisation('Test Org', 'test-org-id'));
+        $source = new Source(
+            'Test Source',
+            TranslatedText::fromArray([
+                'fr' => 'desc fr',
+                'en' => 'desc en',
+            ]),
+            SourceType::MANUAL,
+            'manual://wf-1',
+            'manual',
+            TranslatedText::fromArray([
+                'fr' => 'rel fr',
+                'en' => 'rel en',
+            ]),
+            $actor,
+            $watchFile,
+        );
+        $this->forcePropertyValue($source, 'source-id');
+        $this->sourceGateway->save($source);
+
+        $action = new CreateCollectTaskAction(
+            sourceId: 'source-id',
+            watchFileId: 'watchfile-id',
+            start: false,
+            configuration: [
+                'url' => 'https://example.com/article',
+                '_sync_chain' => true,
+            ],
+        );
+
+        $result = $this->handler->__invoke($action);
+
+        $this->assertSame(
+            [
+                'url' => 'https://example.com/article',
+                '_sync_chain' => true,
+            ],
+            $result->getConfiguration(),
+        );
+    }
 }

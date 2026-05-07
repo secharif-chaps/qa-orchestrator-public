@@ -57,7 +57,12 @@ readonly class CreateCollectTaskHandler
 
         // created CollectTask
         $providerName = $this->providerResolver->resolve($source);
-        $collectTask = new CollectTask(source: $source, watchFile: $watchFile, providerName: $providerName);
+        $collectTask = new CollectTask(
+            source: $source,
+            watchFile: $watchFile,
+            providerName: $providerName,
+            configuration: $action->configuration ?? [],
+        );
 
         $this->collectTaskGateway->save($collectTask);
 
