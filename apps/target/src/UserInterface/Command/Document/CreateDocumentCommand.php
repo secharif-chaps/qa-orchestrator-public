@@ -295,23 +295,18 @@ class CreateDocumentCommand extends Command
                 'Document REJECTED as duplicate of "%s" (no save performed).',
                 $result->duplicateOf() ?? 'unknown',
             ));
-        } elseif ($result->mergedFromProviderId) {
-            // The handler matched an existing entity by providerId before
-            // the dedup pipeline ran and merged the incoming payload into
-            // it — surface that explicitly so the operator does not
-            // mistake the operation for a fresh insert.
-            $io->note(\sprintf(
-                'Document MERGED into existing entry (matched by providerId): "%s" (ID: %s).',
-                $document->getTitle(),
-                $document->getId(),
-            ));
         } else {
             $io->success(\sprintf(
-                'Document persisted as new: "%s" (ID: %s).',
+                'Document persisted: "%s" (ID: %s).',
                 $document->getTitle(),
                 $document->getId(),
             ));
         }
+        // Provider-id merge events are emitted by IngestDocumentHandler as a
+        // structured `info` log — the ConsoleLogger built in initialize()
+        // will print them inline before this recap, so the operator can
+        // tell "merged into existing entry" from "persisted as new"
+        // without us tracking that signal on IngestDocumentResult.
 
         $this->renderPipelineSignals($io, $result);
         $this->renderQualityReport($io, $document);

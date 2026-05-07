@@ -438,7 +438,6 @@ class IngestDocumentHandlerTest extends TestCase
         $savedDocument = $nullDocumentGateway->get($result->document->getId());
         $this->assertSame($result->document, $savedDocument);
         $this->assertEquals($providerId, $savedDocument->getProviderId());
-        $this->assertFalse($result->mergedFromProviderId);
     }
 
     public function testInvokeUpdatesExistingDocumentWhenFoundByProviderId(): void
@@ -504,7 +503,6 @@ class IngestDocumentHandlerTest extends TestCase
         $this->assertEquals('Refined excerpt', $result->document->getExcerpt());
         $this->assertEquals('Refined content that is longer', $result->document->getContent());
         $this->assertNotNull($result->document->getUpdatedAt());
-        $this->assertTrue($result->mergedFromProviderId);
     }
 
     public function testInvokeMergesDataWithRefinedDataTakingPriority(): void
