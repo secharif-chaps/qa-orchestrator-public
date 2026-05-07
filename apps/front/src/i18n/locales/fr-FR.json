@@ -561,6 +561,7 @@
       "aiPreferences": "Préférences IA",
       "aiPreferencesSetup": "Configuration des préférences IA",
       "appearance": "Apparence",
+      "ariaLabel": "Fil d'Ariane",
       "companies": "Entreprises",
       "company": "Entreprise",
       "companyCsv": "Import CSV",
@@ -667,14 +668,12 @@
     "folder": {
       "actions": {
         "addToFavorites": "Ajouter aux favoris",
+        "back": "Retour aux dossiers",
         "collapse": "Replier",
-        "delete": "Supprimer",
-        "edit": "Modifier",
         "expand": "Déplier",
-        "favorite": "Favori",
+        "new": "Nouveau",
         "removeFromFavorites": "Retirer des favoris",
         "share": "Partager",
-        "unfavorite": "Retirer des favoris",
         "view": "Voir"
       },
       "addItem": {
@@ -790,8 +789,6 @@
         "shared": "Partagés avec moi"
       },
       "header": {
-        "by": "par",
-        "createdOn": "créé le {date}",
         "itemsCount": "{count, plural, one {# élément} other {# éléments}}"
       },
       "item": {
@@ -808,7 +805,6 @@
       "itemCount": "{count, plural, one {# élément} other {# éléments}}",
       "itemName": "dossiers",
       "items": {
-        "add": "Ajouter des éléments",
         "empty": "Aucun élément dans ce dossier"
       },
       "itemsChip": "{count, plural, one {# élément} other {# éléments}}",
@@ -862,7 +858,7 @@
         }
       },
       "search": {
-        "placeholder": "Rechercher des éléments..."
+        "placeholder": "Rechercher un objet ou un stream..."
       },
       "share": {
         "add": "Ajouter",
