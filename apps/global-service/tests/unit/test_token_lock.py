@@ -69,6 +69,9 @@ class TestLock:
         assert lock.user_id == "user-1"
         assert lock.correlation_id == "corr-1"
         assert lock.id is not None
+        # Proxy locks deduct the balance up-front — flag them so service-side
+        # _sum_active_locks does not double-count them.
+        assert lock.debit_on_lock is True
 
         await global_db_session.refresh(org_with_tokens)
         assert org_with_tokens.token_balance == 90
@@ -426,6 +429,7 @@ class TestCleanupExpired:
             user_id="user-1",
             correlation_id="corr-expired-1",
             status=TokenLockStatus.locked,
+            debit_on_lock=True,
             locked_at=now - timedelta(hours=1),
             expires_at=now - timedelta(minutes=30),
         )
@@ -477,6 +481,7 @@ class TestCleanupExpired:
                 user_id="user-1",
                 correlation_id=f"corr-multi-expired-{i}",
                 status=TokenLockStatus.locked,
+                debit_on_lock=True,
                 locked_at=now - timedelta(hours=1),
                 expires_at=now - timedelta(minutes=30),
             )
@@ -507,6 +512,7 @@ class TestCleanupExpired:
                 user_id="user-1",
                 correlation_id=f"corr-mixed-expired-{i}",
                 status=TokenLockStatus.locked,
+                debit_on_lock=True,
                 locked_at=now - timedelta(hours=1),
                 expires_at=now - timedelta(minutes=30),
             )
@@ -520,6 +526,7 @@ class TestCleanupExpired:
             user_id="user-1",
             correlation_id="corr-mixed-active",
             status=TokenLockStatus.locked,
+            debit_on_lock=True,
             locked_at=now - timedelta(minutes=1),
             expires_at=now + timedelta(hours=1),
         )

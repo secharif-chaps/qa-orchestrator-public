@@ -8,28 +8,38 @@ Key operations:
 - get_balance(): Get current token balance for organization
 - add_tokens(): Add tokens to organization balance (admin operation)
 - consume_tokens(): Consume tokens for operations (with module enablement check)
+- lock_tokens(): Reserve tokens (no debit) for an upcoming operation
+- confirm_lock(): Debit reserved tokens after the operation succeeds
+- release_lock(): Release a reservation without debiting tokens
 - get_transaction_history(): Query transaction history with filters
 """
 
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
+from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import Select
 
+from app.core.config import settings
 from app.core.logging_config import get_logger
 from app.models.organization import (
     ModuleName,
     Organization,
     OrganizationModule,
     ReferenceType,
+    TokenLock,
+    TokenLockStatus,
     TokenTransaction,
     TransactionType,
 )
 from app.services.exceptions import (
     InsufficientTokensException,
+    LockExpiredException,
+    LockNotFoundException,
+    LockNotInLockedStateException,
     ModuleNotEnabledException,
 )
 
@@ -177,6 +187,23 @@ class TokenManager:
         """
         org = await self._ensure_organization_exists(org_id)
         return org.token_balance
+
+    async def get_available_balance(self, org_id: str) -> int:
+        """Get available token balance accounting for active reservations.
+
+        Available balance = ``token_balance`` minus the sum of amounts
+        currently locked by non-expired ``TokenLock`` rows. This is the
+        figure that should be checked before reserving new tokens.
+
+        Args:
+            org_id: Keycloak organization UUID.
+
+        Returns:
+            Available balance, never negative (clamped to 0).
+        """
+        org = await self._ensure_organization_exists(org_id)
+        active_sum = await self._sum_active_locks(org_id, datetime.now(UTC))
+        return max(org.token_balance - active_sum, 0)
 
     async def add_tokens(
         self,
@@ -353,6 +380,421 @@ class TokenManager:
 
         return org
 
+    # ------------------------------------------------------------------
+    # Token lock lifecycle (TAR-1569): lock → confirm | release
+    #
+    # Semantics differ from `consume_tokens`:
+    # - lock_tokens() does NOT debit the balance. It creates a TokenLock with
+    #   status='locked' and an expiry. Available balance is computed as
+    #   token_balance - sum(active locked amounts).
+    # - confirm_lock() performs the actual debit and creates a TokenTransaction.
+    # - release_lock() abandons the reservation without any debit.
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _ensure_aware(value: datetime) -> datetime:
+        """Coerce a possibly-naive datetime to UTC-aware.
+
+        ``DateTime(timezone=True)`` columns are stored as UTC-aware in PostgreSQL
+        but SQLite (used by the unit-test suite) drops the timezone on read.
+        Comparing such a value with an aware ``datetime.now(UTC)`` raises
+        ``TypeError``, so we defensively re-attach UTC when missing.
+        """
+        return value if value.tzinfo is not None else value.replace(tzinfo=UTC)
+
+    async def _sum_active_locks(self, org_id: str, now: datetime) -> int:
+        """Return the total amount currently reserved by active (non-expired) locks.
+
+        A lock is considered "active" when it is in the ``locked`` state and its
+        ``expires_at`` is still in the future. Expired locks no longer count
+        against the available balance.
+
+        Only reservation-only locks (``debit_on_lock=False``) are summed.
+        Proxy locks (``debit_on_lock=True``) have already been deducted from
+        ``token_balance`` at lock time, so subtracting them here would
+        double-count the same amount and produce spurious 402 errors.
+
+        Args:
+            org_id: Keycloak organization UUID.
+            now: Reference timestamp used to compare against ``expires_at``.
+
+        Returns:
+            Sum of reserved amounts, or 0 when no active locks exist.
+        """
+        result = await self.db.execute(
+            select(func.coalesce(func.sum(TokenLock.amount), 0)).filter(
+                TokenLock.organization_id == org_id,
+                TokenLock.status == TokenLockStatus.locked,
+                TokenLock.expires_at > now,
+                TokenLock.debit_on_lock.is_(False),
+            )
+        )
+        return int(result.scalar_one() or 0)
+
+    async def lock_tokens(
+        self,
+        org_id: str,
+        amount: int,
+        module_name: ModuleName,
+        user_id: str,
+        correlation_id: str,
+        reference_id: str | None = None,
+    ) -> TokenLock:
+        """Reserve tokens for an upcoming operation by creating a TokenLock.
+
+        Reservation logic:
+        - available_balance = organization.token_balance - sum(active locks)
+        - if available_balance < amount → InsufficientTokensException
+        - otherwise create a TokenLock(status='locked') with an expiry computed
+          from ``settings.TOKEN_LOCK_TIMEOUT_SECONDS``.
+
+        Idempotency: if a lock with the same ``correlation_id`` already exists
+        in the ``locked`` state and is not expired, the existing lock is
+        returned unchanged. This makes the operation safe to retry.
+
+        Args:
+            org_id: Keycloak organization UUID.
+            amount: Number of tokens to reserve (must be positive).
+            module_name: Module reserving the tokens (must be enabled).
+            user_id: Keycloak user ID who initiates the lock.
+            correlation_id: Unique idempotency key for this reservation.
+            reference_id: Optional reference (e.g. company_id, delivery_id).
+
+        Returns:
+            The created (or existing idempotent) TokenLock.
+
+        Raises:
+            ValueError: If ``amount`` is not strictly positive.
+            ModuleNotEnabledException: If the module is not enabled for the org.
+            InsufficientTokensException: If the available balance is too low.
+        """
+        if amount <= 0:
+            raise ValueError("Token lock amount must be positive")
+
+        # Module gate first — same contract as consume_tokens.
+        await self._check_module_enabled(org_id, module_name)
+
+        # Make sure the org row exists before we lock it.
+        await self._ensure_organization_exists(org_id)
+
+        now = datetime.now(UTC)
+
+        # Idempotency check: returning the same lock for the same correlation_id
+        # while it is still active makes the endpoint retry-safe even when the
+        # caller didn't get the previous response.
+        existing_result = await self.db.execute(select(TokenLock).filter(TokenLock.correlation_id == correlation_id))
+        existing_lock = existing_result.scalar_one_or_none()
+        if existing_lock is not None:
+            if (
+                existing_lock.status == TokenLockStatus.locked
+                and self._ensure_aware(existing_lock.expires_at) > now
+                and existing_lock.organization_id == org_id
+                and existing_lock.amount == amount
+            ):
+                logger.info(
+                    "Returning existing token lock for correlation_id (idempotent retry)",
+                    extra={
+                        "lock_id": str(existing_lock.id),
+                        "organization_id": org_id,
+                        "correlation_id": correlation_id,
+                    },
+                )
+                return existing_lock
+            # Any other prior state for the same correlation_id is a programming
+            # error; let the unique constraint surface it on insert below.
+
+        # SELECT FOR UPDATE on the org row to serialize concurrent reservations.
+        result = await self.db.execute(
+            select(Organization).filter(Organization.organization_id == org_id).with_for_update()
+        )
+        org = result.scalar_one()
+
+        active_locked_sum = await self._sum_active_locks(org_id, now)
+        available_balance = org.token_balance - active_locked_sum
+
+        if available_balance < amount:
+            # No DB mutation happened; balance stays untouched.
+            raise InsufficientTokensException(
+                current_balance=max(available_balance, 0),
+                required_tokens=amount,
+            )
+
+        expires_at = now + timedelta(seconds=settings.TOKEN_LOCK_TIMEOUT_SECONDS)
+
+        token_lock = TokenLock(
+            organization_id=org_id,
+            amount=amount,
+            module=module_name,
+            user_id=user_id,
+            correlation_id=correlation_id,
+            reference_id=reference_id,
+            status=TokenLockStatus.locked,
+            locked_at=now,
+            expires_at=expires_at,
+        )
+        self.db.add(token_lock)
+
+        try:
+            await self.db.commit()
+            await self.db.refresh(token_lock)
+        except SQLAlchemyError as e:
+            await self.db.rollback()
+            logger.error(
+                f"Failed to create token lock: {e}",
+                extra={
+                    "organization_id": org_id,
+                    "amount": amount,
+                    "module_name": module_name.value,
+                    "correlation_id": correlation_id,
+                    "user_id": user_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+        logger.info(
+            f"Locked {amount} tokens for org {org_id} (lock_id={token_lock.id})",
+            extra={
+                "lock_id": str(token_lock.id),
+                "organization_id": org_id,
+                "amount": amount,
+                "token_module": module_name.value,
+                "correlation_id": correlation_id,
+                "reference_id": reference_id,
+                "user_id": user_id,
+                "expires_at": str(expires_at),
+            },
+        )
+
+        return token_lock
+
+    async def _load_lock_for_update(self, org_id: str, lock_id: UUID) -> TokenLock:
+        """Load a TokenLock row for update, scoped to the given organization.
+
+        Args:
+            org_id: Keycloak organization UUID.
+            lock_id: UUID of the TokenLock to load.
+
+        Returns:
+            The TokenLock row, locked FOR UPDATE.
+
+        Raises:
+            LockNotFoundException: If no lock matches the given org_id/lock_id.
+        """
+        result = await self.db.execute(
+            select(TokenLock).filter(TokenLock.id == lock_id, TokenLock.organization_id == org_id).with_for_update()
+        )
+        lock = result.scalar_one_or_none()
+        if lock is None:
+            raise LockNotFoundException(str(lock_id))
+        return lock
+
+    async def confirm_lock(
+        self,
+        org_id: str,
+        lock_id: UUID,
+        user_id: str,
+        reference_type: ReferenceType,
+    ) -> tuple[Organization, TokenTransaction]:
+        """Confirm a token lock: debit the reserved tokens for real.
+
+        Side effects:
+        - Decrements ``organization.token_balance`` by the lock amount.
+        - Creates a ``TokenTransaction`` (negative amount, type=consume).
+        - Marks the lock as ``confirmed`` and stamps ``settled_at``.
+
+        Expired locks are transitioned to the ``expired`` state and the
+        operation fails with ``LockExpiredException`` so the caller can
+        observe the terminal state.
+
+        Args:
+            org_id: Keycloak organization UUID.
+            lock_id: UUID of the lock to confirm.
+            user_id: Keycloak user ID performing the confirmation.
+            reference_type: ReferenceType to attach to the resulting
+                TokenTransaction.
+
+        Returns:
+            Tuple of (updated Organization, created TokenTransaction).
+
+        Raises:
+            LockNotFoundException: If no matching lock exists for this org.
+            LockExpiredException: If the lock had expired before confirmation.
+            LockNotInLockedStateException: If the lock is already settled.
+        """
+        now = datetime.now(UTC)
+        lock = await self._load_lock_for_update(org_id, lock_id)
+
+        # Auto-expire locks that exceeded their TTL before any other state
+        # transition is allowed.
+        if lock.status == TokenLockStatus.locked and self._ensure_aware(lock.expires_at) <= now:
+            lock.status = TokenLockStatus.expired
+            lock.settled_at = now
+            try:
+                await self.db.commit()
+            except SQLAlchemyError as e:
+                await self.db.rollback()
+                logger.error(
+                    f"Failed to auto-expire token lock during confirm: {e}",
+                    extra={
+                        "lock_id": str(lock_id),
+                        "organization_id": org_id,
+                        "error": str(e),
+                    },
+                )
+                raise
+            logger.info(
+                "Token lock auto-expired during confirm",
+                extra={
+                    "lock_id": str(lock_id),
+                    "organization_id": org_id,
+                    "user_id": user_id,
+                },
+            )
+            raise LockExpiredException(str(lock_id))
+
+        if lock.status != TokenLockStatus.locked:
+            raise LockNotInLockedStateException(str(lock_id), lock.status.value)
+
+        # Lock the org row for the actual debit.
+        org_result = await self.db.execute(
+            select(Organization).filter(Organization.organization_id == org_id).with_for_update()
+        )
+        org = org_result.scalar_one()
+
+        org.token_balance -= lock.amount
+        new_balance = org.token_balance
+
+        transaction = TokenTransaction(
+            organization_id=org_id,
+            amount=-lock.amount,
+            balance_after=new_balance,
+            transaction_type=TransactionType.consume,
+            reference_type=reference_type,
+            reference_id=lock.reference_id,
+            created_by=user_id,
+        )
+        self.db.add(transaction)
+
+        lock.status = TokenLockStatus.confirmed
+        lock.settled_at = now
+
+        try:
+            await self.db.commit()
+            await self.db.refresh(org)
+            await self.db.refresh(transaction)
+            await self.db.refresh(lock)
+        except SQLAlchemyError as e:
+            await self.db.rollback()
+            logger.error(
+                f"Failed to confirm token lock: {e}",
+                extra={
+                    "lock_id": str(lock_id),
+                    "organization_id": org_id,
+                    "amount": lock.amount,
+                    "user_id": user_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+        logger.info(
+            f"Confirmed token lock {lock_id}: debited {lock.amount} tokens, new balance {new_balance}",
+            extra={
+                "lock_id": str(lock_id),
+                "organization_id": org_id,
+                "amount": lock.amount,
+                "new_balance": new_balance,
+                "reference_type": reference_type.value,
+                "reference_id": lock.reference_id,
+                "user_id": user_id,
+            },
+        )
+
+        return org, transaction
+
+    async def release_lock(
+        self,
+        org_id: str,
+        lock_id: UUID,
+    ) -> TokenLock:
+        """Release a token lock without debiting any tokens.
+
+        Same expiration/state checks as :py:meth:`confirm_lock`, but no balance
+        change and no transaction is created.
+
+        Args:
+            org_id: Keycloak organization UUID.
+            lock_id: UUID of the lock to release.
+
+        Returns:
+            The TokenLock with status=``released``.
+
+        Raises:
+            LockNotFoundException: If no matching lock exists for this org.
+            LockExpiredException: If the lock had expired.
+            LockNotInLockedStateException: If the lock is already settled.
+        """
+        now = datetime.now(UTC)
+        lock = await self._load_lock_for_update(org_id, lock_id)
+
+        if lock.status == TokenLockStatus.locked and self._ensure_aware(lock.expires_at) <= now:
+            lock.status = TokenLockStatus.expired
+            lock.settled_at = now
+            try:
+                await self.db.commit()
+            except SQLAlchemyError as e:
+                await self.db.rollback()
+                logger.error(
+                    f"Failed to auto-expire token lock during release: {e}",
+                    extra={
+                        "lock_id": str(lock_id),
+                        "organization_id": org_id,
+                        "error": str(e),
+                    },
+                )
+                raise
+            logger.info(
+                "Token lock auto-expired during release",
+                extra={
+                    "lock_id": str(lock_id),
+                    "organization_id": org_id,
+                },
+            )
+            raise LockExpiredException(str(lock_id))
+
+        if lock.status != TokenLockStatus.locked:
+            raise LockNotInLockedStateException(str(lock_id), lock.status.value)
+
+        lock.status = TokenLockStatus.released
+        lock.settled_at = now
+
+        try:
+            await self.db.commit()
+            await self.db.refresh(lock)
+        except SQLAlchemyError as e:
+            await self.db.rollback()
+            logger.error(
+                f"Failed to release token lock: {e}",
+                extra={
+                    "lock_id": str(lock_id),
+                    "organization_id": org_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+        logger.info(
+            f"Released token lock {lock_id} for org {org_id} (no debit)",
+            extra={
+                "lock_id": str(lock_id),
+                "organization_id": org_id,
+                "amount": lock.amount,
+            },
+        )
+
+        return lock
+
     def _build_transaction_filters(
         self,
         query: Select,
@@ -453,8 +895,6 @@ class TokenManager:
         Returns:
             Total count of matching transactions
         """
-        from sqlalchemy import func
-
         query = select(func.count()).select_from(TokenTransaction)
         query = self._build_transaction_filters(query, org_id, transaction_type, reference_type, date_from, date_to)
 

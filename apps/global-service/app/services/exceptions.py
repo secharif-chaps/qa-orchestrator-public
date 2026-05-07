@@ -2,6 +2,11 @@
 
 This module defines HTTP exceptions with specific status codes and
 structured error responses for token and module operations.
+
+It also defines plain Python exceptions for the token lock lifecycle
+(lock/confirm/release). Those are intentionally NOT HTTPException
+subclasses — the endpoint layer maps them to the appropriate HTTP
+status codes so the service layer stays transport-agnostic.
 """
 
 from fastapi import HTTPException, status
@@ -26,6 +31,10 @@ class InsufficientTokensException(HTTPException):
     """
 
     def __init__(self, current_balance: int, required_tokens: int):
+        # Keep attributes accessible for callers that want to re-format the
+        # response detail (e.g. the lock/confirm/release endpoints).
+        self.current_balance = current_balance
+        self.required_tokens = required_tokens
         error_detail = TokenError(
             message=(f"Insufficient tokens. Current balance: {current_balance}, required: {required_tokens}"),
             current_balance=current_balance,
@@ -62,3 +71,42 @@ class PreferencesUpdateException(HTTPException):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to update preferences. Please try again.",
         )
+
+
+# ---------------------------------------------------------------------------
+# Token lock lifecycle exceptions (plain Python, mapped in the endpoint layer)
+# ---------------------------------------------------------------------------
+
+
+class LockNotFoundException(Exception):
+    """Raised when a token lock cannot be found for the given org/lock_id pair."""
+
+    def __init__(self, lock_id: str):
+        self.lock_id = lock_id
+        super().__init__(f"Token lock {lock_id} not found")
+
+
+class LockExpiredException(Exception):
+    """Raised when a token lock has expired and can no longer be confirmed/released.
+
+    The service layer is expected to mark the lock as ``expired`` before
+    raising this exception so callers see a consistent terminal state.
+    """
+
+    def __init__(self, lock_id: str):
+        self.lock_id = lock_id
+        super().__init__(f"Token lock {lock_id} has expired")
+
+
+class LockNotInLockedStateException(Exception):
+    """Raised when trying to confirm/release a lock that is not in the 'locked' state.
+
+    Attributes:
+        lock_id: The lock identifier that was operated on.
+        current_status: The lock's current status (e.g. ``confirmed``, ``released``).
+    """
+
+    def __init__(self, lock_id: str, current_status: str):
+        self.lock_id = lock_id
+        self.current_status = current_status
+        super().__init__(f"Token lock {lock_id} is in state '{current_status}', not 'locked'")

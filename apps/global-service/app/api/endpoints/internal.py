@@ -20,9 +20,28 @@ from app.models.folder import FolderShare
 from app.models.organization import ModuleName, ReferenceType
 from app.proxy.registry import ModuleName as ProxyModuleName
 from app.proxy.routes import get_module_registry
-from app.schemas.errors import INSUFFICIENT_TOKENS_RESPONSE, INTERNAL_RESPONSES
+from app.schemas.errors import (
+    INSUFFICIENT_TOKENS_RESPONSE,
+    INTERNAL_RESPONSES,
+    LOCK_CONFLICT_RESPONSE,
+    LOCK_NOT_FOUND_RESPONSE,
+)
 from app.schemas.folder import CompanyFolderInfoResponse
-from app.schemas.token import ConsumeTokensRequest, ConsumeTokensResponse, TokenTransactionRead
+from app.schemas.token import (
+    ConfirmLockRequest,
+    ConfirmLockResponse,
+    ConsumeTokensRequest,
+    ConsumeTokensResponse,
+    LockTokensRequest,
+    LockTokensResponse,
+    ReleaseLockResponse,
+    TokenTransactionRead,
+)
+from app.services.exceptions import (
+    LockExpiredException,
+    LockNotFoundException,
+    LockNotInLockedStateException,
+)
 from app.services.folder import FolderService
 from app.services.token_manager import (
     InsufficientTokensException,
@@ -136,6 +155,31 @@ async def announce_module(
 # ── Organization token and folder endpoints ──
 
 
+def _ensure_org_matches_token(org_id_str: str, token_payload: InternalTokenPayload) -> None:
+    """Reject requests where the path organization differs from the JWT one.
+
+    Args:
+        org_id_str: Organization UUID parsed from the URL path.
+        token_payload: Verified internal JWT payload.
+
+    Raises:
+        HTTPException 403: If the two values don't match.
+    """
+    if org_id_str != token_payload.org_id:
+        logger.warning(
+            "Organization ID mismatch in internal token endpoint",
+            extra={
+                "path_org_id": org_id_str,
+                "token_org_id": token_payload.org_id,
+                "user_id": token_payload.sub,
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"message": "Organization ID in path does not match token organization"},
+        )
+
+
 @router.post(
     "/organizations/{organization_id}/tokens/consume",
     response_model=ConsumeTokensResponse,
@@ -179,21 +223,7 @@ async def consume_organization_tokens(
         HTTPException 422: If organization_id is not a valid UUID format
     """
     org_id_str = str(organization_id)
-
-    # Verify that the organization_id in the path matches the org_id in the JWT
-    if org_id_str != token_payload.org_id:
-        logger.warning(
-            "Organization ID mismatch in internal token consumption",
-            extra={
-                "path_org_id": org_id_str,
-                "token_org_id": token_payload.org_id,
-                "user_id": token_payload.sub,
-            },
-        )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={"message": "Organization ID in path does not match token organization"},
-        )
+    _ensure_org_matches_token(org_id_str, token_payload)
 
     # Parse enum values from strings
     try:
@@ -294,6 +324,344 @@ async def consume_organization_tokens(
                 "required_tokens": request.amount,
             },
         )
+
+
+# ── Token lock lifecycle (TAR-1569) ──
+
+
+@router.post(
+    "/organizations/{organization_id}/tokens/lock",
+    response_model=LockTokensResponse,
+    summary="Lock (reserve) organization tokens",
+    responses={**INTERNAL_RESPONSES, **INSUFFICIENT_TOKENS_RESPONSE},
+    status_code=status.HTTP_201_CREATED,
+)
+async def lock_organization_tokens(
+    organization_id: UUID = Path(
+        ...,
+        description="Organization UUID",
+        examples=["550e8400-e29b-41d4-a716-446655440000"],
+    ),
+    request: LockTokensRequest = ...,
+    token_payload: InternalTokenPayload = Depends(get_internal_token),
+    token_manager: TokenManager = Depends(get_token_manager),
+) -> LockTokensResponse:
+    """Reserve tokens for an upcoming operation (internal API).
+
+    Atomically checks that ``token_balance - sum(active locks) >= amount`` and
+    creates a TokenLock with status ``locked``. The reservation expires
+    automatically after ``TOKEN_LOCK_TIMEOUT_SECONDS`` if not confirmed or
+    released. Idempotent on ``correlation_id``: a retry with the same key
+    returns the existing active lock instead of creating a new one.
+
+    Args:
+        organization_id: Keycloak organization UUID from URL path.
+        request: Lock request payload (amount, module_name, correlation_id, ...).
+        token_payload: Verified internal JWT payload (dependency).
+        token_manager: TokenManager service instance (dependency).
+
+    Returns:
+        LockTokensResponse with the lock_id, expiry and remaining
+        available_balance.
+
+    Raises:
+        HTTPException 401: If internal JWT is invalid or missing.
+        HTTPException 403: If org_id mismatches the JWT or module not enabled.
+        HTTPException 402: If the available balance is insufficient.
+        HTTPException 400: If module_name is not a valid enum value.
+    """
+    org_id_str = str(organization_id)
+    _ensure_org_matches_token(org_id_str, token_payload)
+
+    try:
+        module_name = ModuleName(request.module_name)
+    except ValueError as e:
+        logger.warning(
+            "Invalid module_name in token lock request",
+            extra={"module_name": request.module_name, "error": str(e)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"message": f"Invalid enum value: {str(e)}"},
+        )
+
+    logger.info(
+        "Internal token lock request",
+        extra={
+            "organization_id": org_id_str,
+            "amount": request.amount,
+            "module_name": request.module_name,
+            "correlation_id": request.correlation_id,
+            "reference_id": request.reference_id,
+            "user_id": token_payload.sub,
+        },
+    )
+
+    try:
+        token_lock = await token_manager.lock_tokens(
+            org_id=org_id_str,
+            amount=request.amount,
+            module_name=module_name,
+            user_id=token_payload.sub,
+            correlation_id=request.correlation_id,
+            reference_id=request.reference_id,
+        )
+    except ModuleNotEnabledException as e:
+        logger.warning(
+            "Module not enabled for token lock",
+            extra={
+                "organization_id": org_id_str,
+                "module_name": request.module_name,
+                "user_id": token_payload.sub,
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"message": str(e)},
+        )
+    except InsufficientTokensException as e:
+        logger.warning(
+            "Insufficient tokens for lock",
+            extra={
+                "organization_id": org_id_str,
+                "requested_amount": request.amount,
+                "current_balance": e.current_balance,
+                "user_id": token_payload.sub,
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_402_PAYMENT_REQUIRED,
+            detail={
+                "message": str(e),
+                "current_balance": e.current_balance,
+                "required_tokens": request.amount,
+            },
+        )
+
+    # The freshly created lock is part of active reservations, so the
+    # available balance reported here already reflects it.
+    available_balance = await token_manager.get_available_balance(org_id_str)
+
+    return LockTokensResponse(
+        lock_id=token_lock.id,
+        organization_id=org_id_str,
+        amount=token_lock.amount,
+        expires_at=token_lock.expires_at,
+        available_balance=available_balance,
+        status=token_lock.status,
+    )
+
+
+@router.post(
+    "/organizations/{organization_id}/tokens/{lock_id}/confirm",
+    response_model=ConfirmLockResponse,
+    summary="Confirm a token lock (debit and consume)",
+    responses={
+        **INTERNAL_RESPONSES,
+        **LOCK_NOT_FOUND_RESPONSE,
+        **LOCK_CONFLICT_RESPONSE,
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def confirm_organization_token_lock(
+    organization_id: UUID = Path(..., description="Organization UUID"),
+    lock_id: UUID = Path(..., description="Token lock UUID"),
+    request: ConfirmLockRequest = ...,
+    token_payload: InternalTokenPayload = Depends(get_internal_token),
+    token_manager: TokenManager = Depends(get_token_manager),
+) -> ConfirmLockResponse:
+    """Confirm a previously created lock: debit tokens and persist a transaction.
+
+    Args:
+        organization_id: Keycloak organization UUID from URL path.
+        lock_id: TokenLock UUID from URL path.
+        request: ConfirmLockRequest carrying the reference_type to record.
+        token_payload: Verified internal JWT payload (dependency).
+        token_manager: TokenManager service instance (dependency).
+
+    Returns:
+        ConfirmLockResponse with the new balance and the created transaction.
+
+    Raises:
+        HTTPException 401: If internal JWT is invalid or missing.
+        HTTPException 403: If org_id mismatches the JWT.
+        HTTPException 404: If the lock doesn't exist for this organization.
+        HTTPException 409: If the lock has expired or is not in 'locked' state.
+        HTTPException 400: If reference_type is not a valid enum value.
+    """
+    org_id_str = str(organization_id)
+    _ensure_org_matches_token(org_id_str, token_payload)
+
+    try:
+        reference_type = ReferenceType(request.reference_type)
+    except ValueError as e:
+        logger.warning(
+            "Invalid reference_type in token lock confirm",
+            extra={"reference_type": request.reference_type, "error": str(e)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"message": f"Invalid enum value: {str(e)}"},
+        )
+
+    logger.info(
+        "Internal token lock confirm request",
+        extra={
+            "organization_id": org_id_str,
+            "lock_id": str(lock_id),
+            "reference_type": request.reference_type,
+            "user_id": token_payload.sub,
+        },
+    )
+
+    try:
+        org, transaction = await token_manager.confirm_lock(
+            org_id=org_id_str,
+            lock_id=lock_id,
+            user_id=token_payload.sub,
+            reference_type=reference_type,
+        )
+    except LockNotFoundException as e:
+        logger.warning(
+            "Token lock not found",
+            extra={"organization_id": org_id_str, "lock_id": str(lock_id)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"message": str(e), "lock_id": e.lock_id},
+        )
+    except LockExpiredException as e:
+        logger.warning(
+            "Token lock expired during confirm",
+            extra={"organization_id": org_id_str, "lock_id": str(lock_id)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "message": str(e),
+                "lock_id": e.lock_id,
+                "status": "expired",
+            },
+        )
+    except LockNotInLockedStateException as e:
+        logger.warning(
+            "Token lock not in 'locked' state",
+            extra={
+                "organization_id": org_id_str,
+                "lock_id": str(lock_id),
+                "current_status": e.current_status,
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "message": str(e),
+                "lock_id": e.lock_id,
+                "status": e.current_status,
+            },
+        )
+
+    return ConfirmLockResponse(
+        success=True,
+        lock_id=lock_id,
+        balance=org.token_balance,
+        transaction=TokenTransactionRead.model_validate(transaction),
+    )
+
+
+@router.post(
+    "/organizations/{organization_id}/tokens/{lock_id}/release",
+    response_model=ReleaseLockResponse,
+    summary="Release a token lock (no debit)",
+    responses={
+        **INTERNAL_RESPONSES,
+        **LOCK_NOT_FOUND_RESPONSE,
+        **LOCK_CONFLICT_RESPONSE,
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def release_organization_token_lock(
+    organization_id: UUID = Path(..., description="Organization UUID"),
+    lock_id: UUID = Path(..., description="Token lock UUID"),
+    token_payload: InternalTokenPayload = Depends(get_internal_token),
+    token_manager: TokenManager = Depends(get_token_manager),
+) -> ReleaseLockResponse:
+    """Release a previously created lock without debiting any tokens.
+
+    Args:
+        organization_id: Keycloak organization UUID from URL path.
+        lock_id: TokenLock UUID from URL path.
+        token_payload: Verified internal JWT payload (dependency).
+        token_manager: TokenManager service instance (dependency).
+
+    Returns:
+        ReleaseLockResponse with the lock id and final ``released`` status.
+
+    Raises:
+        HTTPException 401: If internal JWT is invalid or missing.
+        HTTPException 403: If org_id mismatches the JWT.
+        HTTPException 404: If the lock doesn't exist for this organization.
+        HTTPException 409: If the lock has expired or is not in 'locked' state.
+    """
+    org_id_str = str(organization_id)
+    _ensure_org_matches_token(org_id_str, token_payload)
+
+    logger.info(
+        "Internal token lock release request",
+        extra={
+            "organization_id": org_id_str,
+            "lock_id": str(lock_id),
+            "user_id": token_payload.sub,
+        },
+    )
+
+    try:
+        lock = await token_manager.release_lock(org_id=org_id_str, lock_id=lock_id)
+    except LockNotFoundException as e:
+        logger.warning(
+            "Token lock not found",
+            extra={"organization_id": org_id_str, "lock_id": str(lock_id)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"message": str(e), "lock_id": e.lock_id},
+        )
+    except LockExpiredException as e:
+        logger.warning(
+            "Token lock expired during release",
+            extra={"organization_id": org_id_str, "lock_id": str(lock_id)},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "message": str(e),
+                "lock_id": e.lock_id,
+                "status": "expired",
+            },
+        )
+    except LockNotInLockedStateException as e:
+        logger.warning(
+            "Token lock not in 'locked' state",
+            extra={
+                "organization_id": org_id_str,
+                "lock_id": str(lock_id),
+                "current_status": e.current_status,
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "message": str(e),
+                "lock_id": e.lock_id,
+                "status": e.current_status,
+            },
+        )
+
+    return ReleaseLockResponse(
+        success=True,
+        lock_id=lock.id,
+        status=lock.status,
+    )
 
 
 @router.get(

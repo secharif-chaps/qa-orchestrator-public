@@ -59,6 +59,20 @@ INSUFFICIENT_TOKENS_RESPONSE: dict[int, dict] = {
     },
 }
 
+LOCK_NOT_FOUND_RESPONSE: dict[int, dict] = {
+    404: {
+        "description": "Token lock not found for this organization",
+        "model": ErrorDetail,
+    },
+}
+
+LOCK_CONFLICT_RESPONSE: dict[int, dict] = {
+    409: {
+        "description": ("Token lock cannot be modified (already confirmed/released, or expired)"),
+        "model": ErrorDetail,
+    },
+}
+
 # For internal-only endpoints (internal JWT, not user-facing Keycloak JWT)
 INTERNAL_RESPONSES: dict[int, dict] = {
     401: {
