@@ -50,18 +50,24 @@ readonly class ContentQualityProcessor implements PreSaveDocumentProcessorInterf
     private const int ABSOLUTE_MIN_CONTENT_LENGTH = 50;
 
     /**
-     * Substrings that cause a halt when they appear in the (lowercased)
-     * page title. Mirrors {@see HtmlMetadata::ERROR_TITLE_PATTERNS}.
+     * Single-word patterns matched as **whole words** (`\b…\b`). Substring
+     * matching used to false-positive on legitimate titles ("Sherlock and
+     * the Erroneous Detective" matched on `error`, "Background Hollywood"
+     * matched on `blocked`). The word-boundary regex keeps the original
+     * intent (catch "Forbidden", "Access denied", "PAYWALL") without
+     * those collateral hits.
      */
-    private const array ERROR_TITLE_PATTERNS = [
+    private const string ERROR_WORD_REGEX = '/\b(error|blocked|forbidden|unauthorized|paywall|denied)\b/iu';
+
+    /**
+     * Multi-word phrases matched as plain substrings. Their composition is
+     * specific enough that substring matching does not produce false
+     * positives, so the cheaper `str_contains` is preserved.
+     */
+    private const array ERROR_PHRASE_PATTERNS = [
         'access denied',
-        'forbidden',
-        '403',
-        '404',
         'not found',
         'page not found',
-        'error',
-        'blocked',
         'captcha',
         'please verify',
         'just a moment',
@@ -69,12 +75,17 @@ readonly class ContentQualityProcessor implements PreSaveDocumentProcessorInterf
         'checking your browser',
         'enable javascript',
         'enable cookies',
-        'unauthorized',
         'login required',
         'sign in',
         'subscribe to continue',
-        'paywall',
     ];
+
+    /**
+     * HTTP status codes triggering a halt — kept as plain `str_contains`
+     * since digits don't have word-boundary issues and "403" / "404" stay
+     * unambiguous in a page title.
+     */
+    private const array ERROR_NUMERIC_PATTERNS = ['403', '404'];
 
     public function process(DocumentPipelineContext $context): DocumentPipelineContext
     {
@@ -82,14 +93,11 @@ readonly class ContentQualityProcessor implements PreSaveDocumentProcessorInterf
         $title = $document->getTitle();
         $content = $document->getContent();
 
-        $lowerTitle = mb_strtolower($title);
-        foreach (self::ERROR_TITLE_PATTERNS as $pattern) {
-            if (str_contains($lowerTitle, $pattern)) {
-                return $context->withHalt(new TranslatedText(
-                    fr: \sprintf('Le titre suggère une page d\'erreur ou bloquée : "%s".', $title),
-                    en: \sprintf('Page title suggests an error or blocked page: "%s".', $title),
-                ));
-            }
+        if ('' !== $title && $this->titleLooksLikeErrorPage($title)) {
+            return $context->withHalt(new TranslatedText(
+                fr: \sprintf('Le titre suggère une page d\'erreur ou bloquée : "%s".', $title),
+                en: \sprintf('Page title suggests an error or blocked page: "%s".', $title),
+            ));
         }
 
         $textLength = mb_strlen(trim(strip_tags($content)));
@@ -116,5 +124,27 @@ readonly class ContentQualityProcessor implements PreSaveDocumentProcessorInterf
         }
 
         return '' !== $context->document->getTitle() || '' !== $context->document->getContent();
+    }
+
+    private function titleLooksLikeErrorPage(string $title): bool
+    {
+        if (1 === preg_match(self::ERROR_WORD_REGEX, $title)) {
+            return true;
+        }
+
+        $lowerTitle = mb_strtolower($title);
+        foreach (self::ERROR_PHRASE_PATTERNS as $pattern) {
+            if (str_contains($lowerTitle, $pattern)) {
+                return true;
+            }
+        }
+
+        foreach (self::ERROR_NUMERIC_PATTERNS as $pattern) {
+            if (str_contains($title, $pattern)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

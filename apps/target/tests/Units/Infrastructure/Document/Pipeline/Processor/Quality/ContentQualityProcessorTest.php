@@ -37,6 +37,24 @@ final class ContentQualityProcessorTest extends TestCase
         yield 'subscribe paywall' => ['Subscribe to continue reading'];
         yield 'paywall hit' => ['Behind the paywall: members only'];
         yield 'login required' => ['Login required to view this page'];
+        yield 'error word boundary' => ['Server Error encountered'];
+        yield 'blocked word boundary' => ['Page Blocked by administrator'];
+        yield 'denied word boundary' => ['Access Denied: insufficient permissions'];
+    }
+
+    /**
+     * @return iterable<string, array{0: string}>
+     */
+    public static function legitTitleProvider(): iterable
+    {
+        // The substring 'error' appears inside 'Erroneous' but should not halt.
+        yield 'erroneous detective' => ['Sherlock Holmes and the Erroneous Detective'];
+        // 'blocked' appears inside 'unblocked'; same deal.
+        yield 'unblocked product' => ['Unblocked! Hollywood reopens after strikes'];
+        // 'denied' appears inside legitimate compound words.
+        yield 'unaffected article' => ['Behind the scenes of a top movie'];
+        // Long-form title without any pattern.
+        yield 'normal long-form' => ['Why Vue 3 Composition API changes the React vs Vue debate'];
     }
 
     #[DataProvider('errorTitleProvider')]
@@ -53,6 +71,20 @@ final class ContentQualityProcessorTest extends TestCase
         self::assertTrue($result->isHalted, "Title '$title' should halt the pipeline.");
         self::assertNotNull($result->haltReason);
         self::assertStringContainsString($title, $result->haltReason->en);
+    }
+
+    #[DataProvider('legitTitleProvider')]
+    #[Test]
+    public function doesNotHaltOnLegitimateTitleWithIncidentalPatternMatch(string $title): void
+    {
+        $context = $this->buildContext(
+            title: $title,
+            content: 'Content body that is long enough to pass the absolute floor.',
+        );
+
+        $result = $this->processor->process($context);
+
+        self::assertFalse($result->isHalted, "Title '$title' must NOT halt the pipeline.");
     }
 
     #[Test]
