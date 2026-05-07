@@ -7,6 +7,7 @@ namespace App\Infrastructure\Document;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Application\Collect\Task\CreateCollectTaskAction;
+use App\Application\Collect\Web\WebCollectConfig;
 use App\Domain\Collect\CollectTask;
 use App\Domain\Collect\Url\UrlSourceTypeClassifierInterface;
 use App\Domain\Document\Document;
@@ -102,18 +103,15 @@ class CreateDocumentProcessor implements ProcessorInterface
             }
         }
 
-        $configuration = array_filter(
-            [
-                'url' => $inputDto->url,
-                'raw_html' => $inputDto->html,
-                'title' => $inputDto->title,
-                'excerpt' => $inputDto->excerpt,
-                // The HTTP path runs the chain inline so the response body
-                // can carry the persisted Document — same `_sync_chain`
-                // marker the CLI uses.
-                '_sync_chain' => true,
-            ],
-            static fn (mixed $value): bool => null !== $value,
+        // The HTTP path runs the chain inline so the response body can carry
+        // the persisted Document — `syncChain: true` is what tells the
+        // WebProviderGateway to forward the sync transport down the chain.
+        $configuration = new WebCollectConfig(
+            url: $inputDto->url,
+            rawHtml: $inputDto->html,
+            titleOverride: $inputDto->title,
+            excerptOverride: $inputDto->excerpt,
+            syncChain: true,
         );
 
         $sourceId = $source->getId();
@@ -130,7 +128,7 @@ class CreateDocumentProcessor implements ProcessorInterface
                 sourceId: $sourceId,
                 watchFileId: $watchFileId,
                 start: true,
-                configuration: $configuration,
+                configuration: $configuration->toCollectTaskConfiguration(),
             ),
             [new TransportNamesStamp(['sync'])],
         );

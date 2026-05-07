@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Command\Document;
 
 use App\Application\Collect\Task\CreateCollectTaskAction;
+use App\Application\Collect\Web\WebCollectConfig;
 use App\Domain\Collect\CollectTask;
 use App\Domain\Collect\CollectTaskGatewayInterface;
 use App\Domain\Collect\CollectTaskStatus;
@@ -218,15 +219,12 @@ class CreateDocumentCommand extends Command
 
         $sync = true === $input->getOption('sync');
 
-        $configuration = array_filter(
-            [
-                'url' => \is_string($url) ? $url : null,
-                'raw_html' => $rawHtml,
-                'title' => \is_string($titleOverride) ? $titleOverride : null,
-                'excerpt' => \is_string($excerptOverride) ? $excerptOverride : null,
-                '_sync_chain' => $sync ? true : null,
-            ],
-            static fn (mixed $value): bool => null !== $value,
+        $configuration = new WebCollectConfig(
+            url: \is_string($url) ? $url : null,
+            rawHtml: $rawHtml,
+            titleOverride: \is_string($titleOverride) ? $titleOverride : null,
+            excerptOverride: \is_string($excerptOverride) ? $excerptOverride : null,
+            syncChain: $sync,
         );
 
         $sourceId = $source->getId();
@@ -237,7 +235,7 @@ class CreateDocumentCommand extends Command
                 sourceId: $sourceId,
                 watchFileId: $watchFileId,
                 start: true,
-                configuration: $configuration,
+                configuration: $configuration->toCollectTaskConfiguration(),
             ),
             $stamps,
         );

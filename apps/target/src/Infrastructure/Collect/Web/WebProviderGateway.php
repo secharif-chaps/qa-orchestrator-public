@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Collect\Web;
 
+use App\Application\Collect\Web\Exception\InvalidWebCollectConfigException;
 use App\Application\Collect\Web\FetchWebUrlAction;
+use App\Application\Collect\Web\WebCollectConfig;
 use App\Domain\Collect\CollectTask;
 use App\Domain\Collect\CollectTaskStatus;
 use App\Domain\Collect\Exception\CollectException;
@@ -50,39 +52,38 @@ readonly class WebProviderGateway implements ProviderGatewayInterface
 
     public function createTask(CollectTask $collectTask): string
     {
-        $configuration = $collectTask->getConfiguration();
-        $hasUrl = isset($configuration['url']) && \is_string($configuration['url']) && '' !== $configuration['url'];
-        $hasRawHtml = isset($configuration['raw_html'])
-            && \is_string($configuration['raw_html'])
-            && '' !== $configuration['raw_html'];
-
-        if (!$hasUrl && !$hasRawHtml) {
-            throw new CollectException(
-                'Web provider requires either "url" or "raw_html" in CollectTask configuration',
-            );
+        try {
+            $config = WebCollectConfig::fromCollectTaskConfiguration($collectTask->getConfiguration());
+            $config->validate();
+        } catch (InvalidWebCollectConfigException $e) {
+            throw new CollectException($e->getMessage(), 0, $e);
         }
 
         $collectTaskId = $collectTask->getId();
-        \assert(\is_string($collectTaskId));
+        if (null === $collectTaskId) {
+            // CreateCollectTaskHandler saves the task before calling us, so
+            // this branch is essentially unreachable in production. The
+            // explicit guard keeps the type system honest and surfaces the
+            // logic violation if a future caller forgets the save.
+            throw new CollectException('Web provider received an unsaved CollectTask without an id.');
+        }
 
         // Synthetic id, opaque to callers — there is no remote run to track.
         // Kept distinguishable via the `web-` prefix so logs and audit
         // dashboards can spot the provider at a glance.
         $providerTaskId = 'web-' . bin2hex(random_bytes(8));
 
-        $syncChain = (bool) ($configuration['_sync_chain'] ?? false);
-
         $this->messageBus->dispatch(
-            new FetchWebUrlAction(collectTaskId: $collectTaskId, sync: $syncChain),
+            new FetchWebUrlAction(collectTaskId: $collectTaskId, sync: $config->syncChain),
             [new DispatchAfterCurrentBusStamp()],
         );
 
         $this->logger?->info('CollectTask created with web provider', [
             'collect_task_id' => $collectTaskId,
             'provider_task_id' => $providerTaskId,
-            'has_url' => $hasUrl,
-            'has_raw_html' => $hasRawHtml,
-            'sync_chain' => $syncChain,
+            'has_url' => null !== $config->url,
+            'has_raw_html' => null !== $config->rawHtml,
+            'sync_chain' => $config->syncChain,
         ]);
 
         return $providerTaskId;

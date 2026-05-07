@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Collect\Web;
 
+use App\Application\Collect\Web\Exception\InvalidWebCollectConfigException;
 use App\Application\Document\IngestDocumentAction;
 use App\Domain\Collect\CollectTaskGatewayInterface;
 use App\Domain\Collect\Exception\CollectException;
@@ -66,38 +67,28 @@ readonly class FetchWebUrlHandler
             throw new CollectException(\sprintf('CollectTask not found: %s', $action->collectTaskId), 0, $e);
         }
 
-        $configuration = $collectTask->getConfiguration();
-        $url = isset($configuration['url']) && \is_string($configuration['url']) ? $configuration['url'] : null;
-        $rawHtml = isset($configuration['raw_html']) && \is_string($configuration['raw_html'])
-            ? $configuration['raw_html']
-            : null;
-        $titleOverride = isset($configuration['title']) && \is_string($configuration['title'])
-            ? $configuration['title']
-            : null;
-        $excerptOverride = isset($configuration['excerpt']) && \is_string($configuration['excerpt'])
-            ? $configuration['excerpt']
-            : null;
-
-        if (null === $url && null === $rawHtml) {
-            $this->logger?->error('FetchWebUrlHandler: missing url/raw_html in CollectTask configuration', [
+        try {
+            $config = WebCollectConfig::fromCollectTaskConfiguration($collectTask->getConfiguration());
+            $config->validate();
+        } catch (InvalidWebCollectConfigException $e) {
+            $this->logger?->error('FetchWebUrlHandler: invalid web configuration', [
                 'collect_task_id' => $action->collectTaskId,
+                'error' => $e->getMessage(),
             ]);
             $collectTask->fail($this->eventDispatcher);
             $this->collectTaskGateway->save($collectTask);
 
-            throw new CollectException(
-                'Web provider requires either "url" or "raw_html" in CollectTask configuration',
-            );
+            throw new CollectException($e->getMessage(), 0, $e);
         }
 
         $collectTask->resume($this->eventDispatcher);
 
         try {
-            $html = null !== $url ? $this->htmlFetcher->fetch($url) : (string) $rawHtml;
+            $html = null !== $config->url ? $this->htmlFetcher->fetch($config->url) : (string) $config->rawHtml;
         } catch (HtmlFetchException $e) {
             $this->logger?->error('FetchWebUrlHandler: failed to fetch URL', [
                 'collect_task_id' => $action->collectTaskId,
-                'url' => $url,
+                'url' => $config->url,
                 'error' => $e->getMessage(),
             ]);
             $collectTask->fail($this->eventDispatcher);
@@ -106,13 +97,13 @@ readonly class FetchWebUrlHandler
             throw new CollectException(\sprintf('Failed to fetch URL: %s', $e->getMessage()), 0, $e);
         }
 
-        $metadata = $this->metadataExtractor->extract($html, $url);
+        $metadata = $this->metadataExtractor->extract($html, $config->url);
         $document = $this->documentBuilder->build(
             metadata: $metadata,
             rawHtml: $html,
-            sourceUrl: $url,
-            titleOverride: $titleOverride,
-            excerptOverride: $excerptOverride,
+            sourceUrl: $config->url,
+            titleOverride: $config->titleOverride,
+            excerptOverride: $config->excerptOverride,
         );
 
         $collectTaskId = $collectTask->getId();
@@ -135,8 +126,8 @@ readonly class FetchWebUrlHandler
         $this->logger?->info('FetchWebUrlHandler: web ingestion completed', [
             'collect_task_id' => $action->collectTaskId,
             'document_id' => $document->getId(),
-            'has_url' => null !== $url,
-            'has_raw_html' => null !== $rawHtml,
+            'has_url' => null !== $config->url,
+            'has_raw_html' => null !== $config->rawHtml,
             'sync_chain' => $action->sync,
         ]);
     }
