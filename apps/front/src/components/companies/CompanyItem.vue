@@ -52,7 +52,13 @@
       <div v-if="company.tasks && company.tasks.length > 0" class="flex items-center gap-2">
         <i class="fas fa-tasks text-neutral-black-font w-4 text-sm"></i>
         <div class="flex items-center gap-2">
-          <span class="text-neutral-black-font text-sm"> {{ company.tasks.length }} tasks </span>
+          <span class="text-neutral-black-font text-sm">
+            {{
+              t('screen.company.item.tasks.count', {
+                count: company.tasks.length,
+              })
+            }}
+          </span>
           <Tag :intent="getTaskStatusVariant(company.tasks)" size="xs">
             {{ getTaskStatusText(company.tasks) }}
           </Tag>

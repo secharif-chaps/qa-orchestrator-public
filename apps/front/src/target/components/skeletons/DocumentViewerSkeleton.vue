@@ -4,7 +4,7 @@
     <div class="flex flex-1 flex-col overflow-hidden">
       <!-- Header -->
       <div class="shrink-0 px-8 py-6">
-        <div class="h-8 animate-pulse rounded bg-gray-200" style="width: 90%"></div>
+        <div class="h-8 w-[90%] animate-pulse rounded bg-gray-200"></div>
       </div>
 
       <!-- Content Area -->
@@ -21,12 +21,10 @@
             </div>
             <div class="flex gap-4">
               <div
-                class="h-30 animate-pulse rounded-lg border border-gray-200 bg-gray-200"
-                style="width: 30%"
+                class="h-30 w-[30%] animate-pulse rounded-lg border border-gray-200 bg-gray-200"
               />
               <div
-                class="h-30 animate-pulse rounded-lg border border-gray-200 bg-gray-200"
-                style="width: 30%"
+                class="h-30 w-[30%] animate-pulse rounded-lg border border-gray-200 bg-gray-200"
               />
             </div>
             <div class="space-y-3">

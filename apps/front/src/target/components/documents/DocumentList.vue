@@ -17,12 +17,7 @@
       @reject="rejectSelectedDocuments"
     />
 
-    <ErrorMessage
-      v-if="error"
-      :title="$t('common.error.title.list')"
-      width="full"
-      style="margin: 1rem"
-    />
+    <ErrorMessage v-if="error" :title="$t('common.error.title.list')" width="full" class="m-4" />
     <EmptyState
       v-else-if="hasNoDocuments && (filtersCounts || searchQuery)"
       :title="$t('target.documents.empty.title')"
@@ -75,7 +70,7 @@
 
       <div class="shrink-0 rounded bg-white px-6 py-2 shadow-2xl">
         <div v-if="isLoading" class="flex items-center justify-between">
-          <div class="h-4 animate-pulse rounded bg-gray-200" style="width: 200px"></div>
+          <div class="h-4 w-50 animate-pulse rounded bg-gray-200"></div>
           <div class="flex items-center gap-2">
             <div class="h-8 w-8 animate-pulse rounded bg-gray-200"></div>
             <div class="h-8 w-8 animate-pulse rounded bg-gray-200"></div>

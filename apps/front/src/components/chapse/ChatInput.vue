@@ -3,7 +3,7 @@
     <!-- Context Badges Row (always visible to allow adding companies) -->
     <div class="border-sage-300 dark:border-sage-700 flex flex-wrap items-center gap-2 px-4 py-2">
       <span class="text-sage-900 dark:text-sage-300 text-xs">
-        {{ $t('common.sidebar.chapse.context') }}
+        {{ $t('sidebar.chapse.context') }}
       </span>
       <ContextBadge
         v-for="company in companyContext"
@@ -59,12 +59,12 @@
           class="bg-sage-300 dark:bg-sage-800 text-sage-950 dark:text-sage-200 rounded px-1.5 py-0.5"
           >{{ $t('common.keyboard.ctrl') }}</kbd
         >
-        +
+        <span class="mx-1">{{ $t('common.keyboard.separator') }}</span>
         <kbd
           class="bg-sage-300 dark:bg-sage-800 text-sage-950 dark:text-sage-200 rounded px-1.5 py-0.5"
           >{{ $t('common.keyboard.enter') }}</kbd
         >
-        {{ $t('common.sidebar.chapse.toSend') }}
+        {{ $t('sidebar.chapse.toSend') }}
       </p>
     </div>
   </div>

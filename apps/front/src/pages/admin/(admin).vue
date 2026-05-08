@@ -25,29 +25,18 @@
               <Badge class="shrink-0" variant="secondary" color="sage" :icon="feature.icon" />
               <div class="ml-4">
                 <h3 class="text-lg font-semibold">
-                  {{ $t(feature.titleKey, feature.titleDefault) }}
+                  {{ feature.title }}
                 </h3>
-                <Tag
-                  color="sage"
-                  size="sm"
-                  :label="
-                    $t(
-                      feature.badgeLabel,
-                      feature.badgeLabel === 'admin.adminRequired'
-                        ? 'Admin Required'
-                        : feature.badgeLabel,
-                    )
-                  "
-                />
+                <Tag color="sage" size="sm" :label="feature.badgeLabel" />
               </div>
             </div>
 
             <p class="text-neutral-black-font mb-4 text-sm">
-              {{ $t(feature.descriptionKey, feature.descriptionDefault) }}
+              {{ feature.description }}
             </p>
             <div class="transition-transform group-hover:translate-x-2">
               <div class="text-accent-600 flex items-center text-sm font-medium">
-                <span>{{ $t(feature.actionKey, feature.actionDefault) }}</span>
+                <span>{{ feature.action }}</span>
                 <i class="fa fa-arrow-right ml-2"></i>
               </div>
             </div>
@@ -81,17 +70,17 @@ import Card from '@/components/ui/Card.vue'
 import { useAuthStore } from '@/stores/auth'
 import { Alert, Badge, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 interface AdminFeature {
   id: string
-  titleKey: string
-  titleDefault: string
-  descriptionKey: string
-  descriptionDefault: string
+  title: string
+  description: string
   icon: string
   iconBgColor: string
   iconTextColor: string
@@ -99,95 +88,81 @@ interface AdminFeature {
   ringColor: string
   badgeVariant: 'primary' | 'teal' | 'success' | 'warning'
   badgeLabel: string
-  actionKey: string
-  actionDefault: string
+  action: string
   actionTextColor: string
   permission?: string
   navigate: () => void
 }
 
-const features: AdminFeature[] = [
+const features = computed((): AdminFeature[] => [
   {
     id: 'organizations',
-    titleKey: 'admin.features.organizations.title',
-    titleDefault: 'Organization Management',
-    descriptionKey: 'admin.features.organizations.description',
-    descriptionDefault: 'Manage organization modules, tokens, and settings',
+    title: t('admin.features.organizations.title'),
+    description: t('admin.features.organizations.description'),
     icon: 'fa fa-building',
     iconBgColor: 'bg-primary/10',
     iconTextColor: 'text-sage-content',
     iconHoverBgColor: 'group-hover:bg-primary/20',
     ringColor: 'ring-primary/50',
     badgeVariant: 'primary',
-    badgeLabel: 'admin.adminRequired',
-    actionKey: 'admin.features.manage',
-    actionDefault: 'Manage',
+    badgeLabel: t('admin.adminRequired'),
+    action: t('admin.features.manage'),
     actionTextColor: 'text-sage-content',
     permission: 'admin.organizations',
     navigate: () => router.push('/admin/organizations'),
   },
   {
     id: 'users',
-    titleKey: 'admin.features.users.title',
-    titleDefault: 'User Management',
-    descriptionKey: 'admin.features.users.description',
-    descriptionDefault: 'Manage user organization assignments and user access',
+    title: t('admin.features.users.title'),
+    description: t('admin.features.users.description'),
     icon: 'fa fa-users',
     iconBgColor: 'bg-secondary/10',
     iconTextColor: 'text-almond-600',
     iconHoverBgColor: 'group-hover:bg-secondary/20',
     ringColor: 'ring-accent/50',
     badgeVariant: 'primary',
-    badgeLabel: 'admin.adminRequired',
-    actionKey: 'admin.features.manage',
-    actionDefault: 'Manage',
+    badgeLabel: t('admin.adminRequired'),
+    action: t('admin.features.manage'),
     actionTextColor: 'text-almond-600',
     permission: 'admin.organizations',
     navigate: () => router.push('/admin/users'),
   },
   {
     id: 'usage',
-    titleKey: 'admin.features.usage.title',
-    titleDefault: 'Usage Dashboard',
-    descriptionKey: 'admin.features.usage.description',
-    descriptionDefault: 'View application usage metrics across all organizations',
+    title: t('admin.features.usage.title'),
+    description: t('admin.features.usage.description'),
     icon: 'fa fa-chart-line',
     iconBgColor: 'bg-info/10',
     iconTextColor: 'text-info',
     iconHoverBgColor: 'group-hover:bg-info/20',
     ringColor: 'ring-info/50',
     badgeVariant: 'primary',
-    badgeLabel: 'admin.adminRequired',
-    actionKey: 'admin.features.view',
-    actionDefault: 'View',
+    badgeLabel: t('admin.adminRequired'),
+    action: t('admin.features.view'),
     actionTextColor: 'text-info',
     permission: 'admin.organizations',
     navigate: () => router.push('/admin/usage'),
   },
   {
     id: 'tasks',
-    titleKey: 'admin.features.tasks.title',
-    titleDefault: 'Task Monitoring',
-    descriptionKey: 'admin.features.tasks.description',
-    descriptionDefault:
-      'Monitor running tasks across all organizations and restart stuck processes',
+    title: t('admin.features.tasks.title'),
+    description: t('admin.features.tasks.description'),
     icon: 'fa fa-tasks',
     iconBgColor: 'bg-info/10',
     iconTextColor: 'text-info',
     iconHoverBgColor: 'group-hover:bg-info/20',
     ringColor: 'ring-info/50',
     badgeVariant: 'primary',
-    badgeLabel: 'admin.adminRequired',
-    actionKey: 'admin.features.monitor',
-    actionDefault: 'Monitor',
+    badgeLabel: t('admin.adminRequired'),
+    action: t('admin.features.monitor'),
     actionTextColor: 'text-info',
     permission: 'admin.tasks',
     navigate: () => router.push('/admin/tasks'),
   },
-]
+])
 
 const visibleFeatures = computed(() => {
-  return features.filter(
+  return features.value.filter(
     (feature) => !feature.permission || authStore.hasPermission(feature.permission),
   )
 })

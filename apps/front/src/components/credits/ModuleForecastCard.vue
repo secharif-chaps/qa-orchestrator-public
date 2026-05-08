@@ -51,16 +51,12 @@
 
         <!-- Remaining info -->
         <div class="text-neutral-black-font text-sm">
-          {{ $t('settings.credits.module.canCreate') }} :
-        </div>
-
-        <!-- Remaining count pill - smaller with white background -->
-        <div
-          class="border-primary-lighter-stroke inline-flex w-fit items-center rounded-full border bg-white px-3 py-1.5 shadow-sm"
-        >
-          <span class="text-base-content text-sm font-medium">
-            {{ formattedCount }} {{ itemPluralLabel }}
-          </span>
+          {{
+            $t('settings.credits.module.canCreate', {
+              count: formattedCount,
+              item: itemPluralLabel,
+            })
+          }}
         </div>
       </template>
     </div>
@@ -100,9 +96,6 @@ const MODULE_CONFIG: Record<
     iconBg: string
     iconText: string
     icon: string
-    labelKey: string
-    itemKey: string
-    itemPluralKey: string
   }
 > = {
   screen: {
@@ -111,9 +104,6 @@ const MODULE_CONFIG: Record<
     iconBg: 'bg-indigo-100',
     iconText: 'text-indigo-600',
     icon: 'fa-solid fa-building',
-    labelKey: 'settings.credits.module.screen.label',
-    itemKey: 'settings.credits.module.screen.item',
-    itemPluralKey: 'settings.credits.module.screen.itemPlural',
   },
   target: {
     cardBg: 'bg-rose-50/50',
@@ -121,9 +111,6 @@ const MODULE_CONFIG: Record<
     iconBg: 'bg-rose-100',
     iconText: 'text-rose-600',
     icon: 'fa-solid fa-bullseye',
-    labelKey: 'settings.credits.module.target.label',
-    itemKey: 'settings.credits.module.target.item',
-    itemPluralKey: 'settings.credits.module.target.itemPlural',
   },
   explore: {
     cardBg: 'bg-almond-50/50',
@@ -131,9 +118,6 @@ const MODULE_CONFIG: Record<
     iconBg: 'bg-almond-100',
     iconText: 'text-almond-600',
     icon: 'fa-solid fa-project-diagram',
-    labelKey: 'settings.credits.module.explore.label',
-    itemKey: 'settings.credits.module.explore.item',
-    itemPluralKey: 'settings.credits.module.explore.itemPlural',
   },
 }
 
@@ -141,10 +125,28 @@ const moduleConfig = computed(() => {
   return MODULE_CONFIG[props.forecast.module] || MODULE_CONFIG.screen
 })
 
-// Translated labels using i18n keys
-const moduleLabel = computed(() => t(moduleConfig.value.labelKey))
-const itemLabel = computed(() => t(moduleConfig.value.itemKey))
-const itemPluralLabel = computed(() => t(moduleConfig.value.itemPluralKey))
+const moduleLabelMap = computed<Record<ModuleName, string>>(() => ({
+  screen: t('settings.credits.module.screen.label'),
+  target: t('settings.credits.module.target.label'),
+  explore: t('settings.credits.module.explore.label'),
+}))
+
+const itemLabelMap = computed<Record<ModuleName, string>>(() => ({
+  screen: t('settings.credits.module.screen.item'),
+  target: t('settings.credits.module.target.item'),
+  explore: t('settings.credits.module.explore.item'),
+}))
+
+const itemPluralLabelMap = computed<Record<ModuleName, string>>(() => ({
+  screen: t('settings.credits.module.screen.itemPlural'),
+  target: t('settings.credits.module.target.itemPlural'),
+  explore: t('settings.credits.module.explore.itemPlural'),
+}))
+
+// Translated labels
+const moduleLabel = computed(() => moduleLabelMap.value[props.forecast.module])
+const itemLabel = computed(() => itemLabelMap.value[props.forecast.module])
+const itemPluralLabel = computed(() => itemPluralLabelMap.value[props.forecast.module])
 
 const formattedCount = computed(() => {
   if (!props.forecast.enabled || props.forecast.remainingCount === null) {

@@ -17,13 +17,13 @@
           :data-tab-id="tab.id"
           class="shrink-0 rounded-lg px-2 py-2 text-sm whitespace-nowrap"
         >
-          {{ t(tab.label) }}
+          {{ tabLabelMap[tab.id] }}
         </span>
         <span
           data-tab-id="__overflow"
           class="flex shrink-0 items-center gap-1 rounded-lg px-2 py-2 text-sm whitespace-nowrap"
         >
-          99
+          {{ OVERFLOW_MEASURE_PLACEHOLDER }}
           <Icon icon="fa-chevron-right" class="text-xs" aria-hidden="true" />
         </span>
       </div>
@@ -75,6 +75,9 @@ interface Props {
 }
 
 const { folderId, companyId, maxWidthPercent = 70, jobOffersCount } = defineProps<Props>()
+
+// Two-digit placeholder used only to measure the max width of the overflow badge in the hidden measurement row.
+const OVERFLOW_MEASURE_PLACEHOLDER = '99'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -129,6 +132,17 @@ const DEFAULT_TABS: TabDefinition[] = [
     label: 'screen.company.tabs.financial',
   },
 ]
+
+const tabLabelMap = computed<Record<string, string>>(() => ({
+  profile: t('screen.company.tabs.profile'),
+  timeline: t('screen.company.tabs.timeline'),
+  products: t('screen.company.tabs.products'),
+  team: t('screen.company.tabs.team'),
+  jobs: t('screen.company.tabs.jobs'),
+  press: t('screen.company.tabs.press'),
+  csr: t('screen.company.tabs.csr'),
+  financial: t('screen.company.tabs.financial'),
+}))
 
 // ── Visit tracking (localStorage) ──────────────────────────────────
 const VISITS_KEY = 'chapsmind:company-tab-visits'
@@ -188,7 +202,7 @@ const activeTabId = computed(() => {
 // ── NavigationTab conversion ────────────────────────────────────────
 const toNavigationTab = (tab: TabDefinition): NavigationTab => ({
   id: tab.id,
-  title: t(tab.label),
+  title: tabLabelMap.value[tab.id] ?? tab.label,
   isActive: tab.id === activeTabId.value,
   badge: tab.id === 'jobs' && jobOffersCount ? jobOffersCount : undefined,
   click: () => {
@@ -292,7 +306,7 @@ onUnmounted(() => {
 
 // Re-measure when language or tab order changes
 watch(
-  () => allTabsOrdered.value.map((tab) => t(tab.label)).join(','),
+  () => allTabsOrdered.value.map((tab) => tabLabelMap.value[tab.id] ?? tab.id).join(','),
   async () => {
     await nextTick()
     measureAllTabs()

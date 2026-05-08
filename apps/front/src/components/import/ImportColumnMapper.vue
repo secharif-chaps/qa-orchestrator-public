@@ -22,11 +22,11 @@
                 </code>
                 <span
                   v-if="mapping.isRequired"
-                  class="text-error text-sm"
                   :title="$t('admin.import.requiredFieldTooltip')"
+                  class="text-error text-sm font-medium"
+                  aria-hidden="true"
+                  >{{ $t('common.requiredMarker') }}</span
                 >
-                  *
-                </span>
               </div>
             </td>
             <td class="px-4 py-3">
@@ -134,6 +134,8 @@ import { Alert, Select, SelectItem } from '@owlint/feathers-vue'
 import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
+
 interface Props {
   /** Column mappings */
   mappings: ColumnMapping[]
@@ -149,8 +151,6 @@ const emit = defineEmits<{
   'update:mappings': [mappings: ColumnMapping[]]
   'update:generatePasswords': [value: boolean]
 }>()
-
-const { t } = useI18n()
 
 /**
  * Check if all required fields are mapped
@@ -183,7 +183,7 @@ function isFieldUsed(field: TargetField, excludeColumn: string): boolean {
 function getFieldOptions(csvColumn: string) {
   const used = (field: TargetField) => (isFieldUsed(field, csvColumn) ? ' ✓' : '')
   return [
-    { value: 'ignore', label: `— ${t('admin.import.ignore')}` },
+    { value: 'ignore', label: t('admin.import.ignoreOption') },
     { value: 'username', label: `${t('admin.import.fields.username')}${used('username')}` },
     { value: 'email', label: `${t('admin.import.fields.email')}${used('email')}` },
     { value: 'firstname', label: `${t('admin.import.fields.firstname')}${used('firstname')}` },

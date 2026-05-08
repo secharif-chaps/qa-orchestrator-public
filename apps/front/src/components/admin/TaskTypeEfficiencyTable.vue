@@ -141,9 +141,9 @@
       >
         <div class="grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
           <div>
-            <span class="text-neutral-black-font font-medium"
-              >{{ t('admin.taskTypes.summary.mostExpensive') }}:</span
-            >
+            <span class="text-neutral-black-font font-medium">{{
+              t('admin.taskTypes.summary.mostExpensive')
+            }}</span>
             <Tag
               :intent="getTaskTypeVariant(data.summary.most_expensive_type)"
               :label="data.summary.most_expensive_type"
@@ -151,9 +151,9 @@
             />
           </div>
           <div>
-            <span class="text-neutral-black-font font-medium"
-              >{{ t('admin.taskTypes.summary.mostFrequent') }}:</span
-            >
+            <span class="text-neutral-black-font font-medium">{{
+              t('admin.taskTypes.summary.mostFrequent')
+            }}</span>
             <Tag
               :intent="getTaskTypeVariant(data.summary.most_frequent_type)"
               :label="data.summary.most_frequent_type"
@@ -161,9 +161,9 @@
             />
           </div>
           <div>
-            <span class="text-neutral-black-font font-medium"
-              >{{ t('admin.taskTypes.summary.totalTaskTypes') }}:</span
-            >
+            <span class="text-neutral-black-font font-medium">{{
+              t('admin.taskTypes.summary.totalTaskTypes')
+            }}</span>
             <span class="ml-2 font-semibold">{{ data.summary.total_task_types }}</span>
           </div>
         </div>

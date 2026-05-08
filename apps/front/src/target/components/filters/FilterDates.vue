@@ -30,7 +30,7 @@
           <SelectItem v-for="option in options" :key="option" :option="option">
             <ORadio :id="option" v-model="selectedPeriod" :value="option" />
             <span class="of:flex of:items-center of:gap-2">
-              <span>{{ t(`target.watchFiles.filters.type.dates.period.${option}`) }}</span>
+              <span>{{ periodLabelMap[option] ?? option }}</span>
             </span>
           </SelectItem>
         </template>
@@ -67,6 +67,12 @@ import { computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+
+const periodLabelMap = computed<Record<string, string>>(() => ({
+  last_week: t('target.watchFiles.filters.type.dates.period.last_week'),
+  last_month: t('target.watchFiles.filters.type.dates.period.last_month'),
+  last_3_month: t('target.watchFiles.filters.type.dates.period.last_3_month'),
+}))
 
 interface Props {
   datesFilterCount?: number

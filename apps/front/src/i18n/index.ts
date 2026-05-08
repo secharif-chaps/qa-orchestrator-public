@@ -15,7 +15,12 @@ const messageCompiler: MessageCompiler = (message, { locale }: MessageCompilerCo
   return () => String(message)
 }
 
-const DEFAULT_LOCALE = 'en-US'
+export const LOCALES = {
+  EN: 'en-US',
+  FR: 'fr-FR',
+} as const
+
+export const DEFAULT_LOCALE = LOCALES.EN
 
 const i18n = createI18n({
   legacy: false,

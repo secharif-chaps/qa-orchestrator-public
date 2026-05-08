@@ -202,7 +202,11 @@
                     class="font-semibold"
                     :class="transaction.amount > 0 ? 'text-success' : 'text-error'"
                   >
-                    {{ transaction.amount > 0 ? '+' : '' }}{{ transaction.amount.toLocaleString() }}
+                    {{
+                      transaction.amount > 0
+                        ? t('common.positiveAmount', { value: transaction.amount.toLocaleString() })
+                        : transaction.amount.toLocaleString()
+                    }}
                   </span>
                 </td>
                 <td class="text-neutral-black-font px-4 py-3 text-right text-sm">
@@ -217,9 +221,9 @@
                     <span class="capitalize">{{
                       transaction.reference_type.replace('_', ' ')
                     }}</span>
-                    <span v-if="transaction.reference_id" class="text-neutral-black-font text-xs">
-                      ({{ truncateId(transaction.reference_id) }})
-                    </span>
+                    <span v-if="transaction.reference_id" class="text-neutral-black-font text-xs">{{
+                      t('common.inParentheses', { value: truncateId(transaction.reference_id) })
+                    }}</span>
                   </div>
                 </td>
                 <td class="text-neutral-black-font px-4 py-3 text-sm">

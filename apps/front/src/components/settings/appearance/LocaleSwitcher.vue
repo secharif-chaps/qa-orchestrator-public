@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { loadLocaleMessages } from '@/i18n'
+import { LOCALES, loadLocaleMessages } from '@/i18n'
 import { toast } from '@/utils/toast'
 import { Switch } from '@owlint/feathers-vue'
 import { ref, watch } from 'vue'
@@ -61,13 +61,13 @@ const STORAGE_KEY = 'user-locale'
 
 const localeOptions = [
   {
-    value: 'en-US',
+    value: LOCALES.EN,
     label: 'English',
     description: 'Use English language',
     icon: 'fas fa-language',
   },
   {
-    value: 'fr-FR',
+    value: LOCALES.FR,
     label: 'Français',
     description: 'Utiliser la langue française',
     icon: 'fas fa-language',

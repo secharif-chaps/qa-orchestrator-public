@@ -26,7 +26,7 @@
             class="shrink-0 rounded-full object-contain"
           />
           <span>{{ actor.label }}</span>
-          <span class="text-gray-800"> ({{ count }}) </span>
+          <span class="text-gray-800">{{ $t('common.countSuffix', { count }) }}</span>
         </label>
       </Checkbox>
     </div>
@@ -41,7 +41,11 @@
       variant="tertiary"
       @click="displayAllActors = !displayAllActors"
     >
-      {{ t(`target.watchFiles.filters.type.actors.see.${displayAllActors ? 'less' : 'more'}`) }}
+      {{
+        displayAllActors
+          ? t('target.watchFiles.filters.type.actors.see.less')
+          : t('target.watchFiles.filters.type.actors.see.more')
+      }}
     </Button>
     <Button
       v-if="selectedActors.length"

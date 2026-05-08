@@ -19,10 +19,10 @@
 
       <div class="flex-1">
         <h3 :class="['text-base font-semibold', isAdmin ? 'text-error' : '']">
-          {{ $t(`admin.permissions.roles.${role.id}.name`) }}
+          {{ roleName }}
         </h3>
         <p class="text-neutral-black-font text-sm">
-          {{ $t(`admin.permissions.roles.${role.id}.description`) }}
+          {{ roleDescription }}
         </p>
       </div>
 
@@ -49,9 +49,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Role } from '@/types/role'
+import type { Role, RoleId } from '@/types/role'
 import { Icon, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   role: Role
@@ -67,7 +68,26 @@ interface Emits {
 const { role, selected, disabled } = defineProps<Props>()
 defineEmits<Emits>()
 
+const { t } = useI18n()
+
 const isAdmin = computed(() => role.id === 'admin')
+
+const roleNameMap: Record<RoleId, string> = {
+  reader: t('admin.permissions.roles.reader.name'),
+  writer: t('admin.permissions.roles.writer.name'),
+  manager: t('admin.permissions.roles.manager.name'),
+  admin: t('admin.permissions.roles.admin.name'),
+}
+
+const roleDescriptionMap: Record<RoleId, string> = {
+  reader: t('admin.permissions.roles.reader.description'),
+  writer: t('admin.permissions.roles.writer.description'),
+  manager: t('admin.permissions.roles.manager.description'),
+  admin: t('admin.permissions.roles.admin.description'),
+}
+
+const roleName = computed(() => roleNameMap[role.id as RoleId] ?? role.name)
+const roleDescription = computed(() => roleDescriptionMap[role.id as RoleId] ?? role.description)
 
 const blockClasses = computed(() => {
   // Disabled state takes priority

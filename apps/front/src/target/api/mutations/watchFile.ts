@@ -125,7 +125,9 @@ export const useToggleWatchFileFavorite = () => {
   const { mutate, ...mutation } = useMutation({
     mutation: (watchFile: WatchFile) => {
       const defaultErrorMessage = {
-        title: t('target.watchFiles.status_change.error_' + !!watchFile.isFavorite),
+        title: watchFile.isFavorite
+          ? t('target.watchFiles.status_change.error_true')
+          : t('target.watchFiles.status_change.error_false'),
       }
       return toggleWatchFileFavorite(watchFile.id, !!watchFile.isFavorite, defaultErrorMessage)
     },
@@ -171,9 +173,9 @@ export const useToggleWatchFileFavorite = () => {
     },
     onSuccess(_, { isFavorite, name }) {
       toast.success(
-        t('target.watchFiles.status_change.success_' + isFavorite, {
-          name,
-        }),
+        isFavorite
+          ? t('target.watchFiles.status_change.success_true', { name })
+          : t('target.watchFiles.status_change.success_false', { name }),
       )
     },
   })

@@ -187,7 +187,13 @@ export const useDocumentValidation = (options?: CallbackMutations<DocumentValida
       }
 
       options?.onSuccess?.(data)
-      toast.success(t('target.watchFiles.documents.status_change.success_' + action))
+      const statusChangeSuccessMsg =
+        action === DocumentValidationAction.ACCEPT
+          ? t('target.watchFiles.documents.status_change.success_accept')
+          : action === DocumentValidationAction.REFUSE
+            ? t('target.watchFiles.documents.status_change.success_refuse')
+            : t('target.watchFiles.documents.status_change.success_uncertain')
+      toast.success(statusChangeSuccessMsg)
     },
   })
   return {
@@ -213,8 +219,12 @@ export const useBatchDocumentValidation = (
       documentIds: string[]
       action: DocumentValidationAction
     }): Promise<BatchValidationResponse> => {
+      const batchErrorTitle =
+        action === DocumentValidationAction.ACCEPT
+          ? t('target.watchFiles.documents.batch_status_change.error_accept')
+          : t('target.watchFiles.documents.batch_status_change.error_refuse')
       const defaultErrorMessage = {
-        title: t('target.watchFiles.documents.batch_status_change.error_' + action),
+        title: batchErrorTitle,
       }
       return batchDocumentValidation(documentIds, action, defaultErrorMessage)
     },
@@ -298,24 +308,27 @@ export const useBatchDocumentValidation = (
       }
 
       if (data.failed_count > 0) {
-        toast.warning(
-          t(
-            'target.watchFiles.documents.batch_status_change.partial_success_' + action,
-            {
-              success: data.validated_count,
-              failed: data.failed_count,
-            },
-            data.validated_count,
-          ),
-        )
+        const partialSuccessMsg =
+          action === DocumentValidationAction.ACCEPT
+            ? t('target.watchFiles.documents.batch_status_change.partial_success_accept', {
+                count: data.validated_count,
+                failed: data.failed_count,
+              })
+            : t('target.watchFiles.documents.batch_status_change.partial_success_refuse', {
+                count: data.validated_count,
+                failed: data.failed_count,
+              })
+        toast.warning(partialSuccessMsg)
       } else {
-        toast.success(
-          t(
-            'target.watchFiles.documents.batch_status_change.success_' + action,
-            { count: data.validated_count },
-            data.validated_count,
-          ),
-        )
+        const batchSuccessMsg =
+          action === DocumentValidationAction.ACCEPT
+            ? t('target.watchFiles.documents.batch_status_change.success_accept', {
+                count: data.validated_count,
+              })
+            : t('target.watchFiles.documents.batch_status_change.success_refuse', {
+                count: data.validated_count,
+              })
+        toast.success(batchSuccessMsg)
       }
     },
     onError: (error, { watchFileId }, { oldCollection, documentsCollection }) => {

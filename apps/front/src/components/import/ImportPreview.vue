@@ -24,7 +24,13 @@
         <p class="text-sm">{{ $t('admin.import.duplicatesMessage') }}</p>
         <ul class="mt-2 list-inside list-disc text-sm">
           <li v-for="dup in duplicateEmails" :key="dup.email">
-            <strong>{{ dup.username }}</strong> ({{ dup.email }}) - Row {{ dup.rowIndex + 1 }}
+            {{
+              t('admin.import.duplicateRow', {
+                username: dup.username,
+                email: dup.email,
+                row: dup.rowIndex + 1,
+              })
+            }}
           </li>
         </ul>
       </template>
@@ -40,10 +46,16 @@
       <template #default>
         <ul class="mt-2 max-h-32 list-inside list-disc overflow-y-auto text-sm">
           <li v-for="(error, idx) in validationErrors.slice(0, 10)" :key="idx">
-            Row {{ error.row + 1 }}: {{ error.field }} - {{ error.message }}
+            {{
+              t('admin.import.validationErrorRow', {
+                row: error.row + 1,
+                field: error.field,
+                message: error.message,
+              })
+            }}
           </li>
           <li v-if="validationErrors.length > 10" class="text-sage-500">
-            ... and {{ validationErrors.length - 10 }} more errors
+            {{ t('admin.import.moreErrors', { count: validationErrors.length - 10 }) }}
           </li>
         </ul>
       </template>
@@ -54,8 +66,11 @@
       <table class="w-full min-w-max">
         <thead class="bg-primary-lightest">
           <tr>
-            <th class="text-sage-700 dark:text-sage-200 px-4 py-3 text-left text-sm font-semibold">
-              #
+            <th
+              class="text-sage-700 dark:text-sage-200 px-4 py-3 text-left text-sm font-semibold"
+              :aria-label="$t('admin.import.rowNumber')"
+            >
+              {{ $t('common.rowNumber') }}
             </th>
             <th class="text-sage-700 dark:text-sage-200 px-4 py-3 text-left text-sm font-semibold">
               {{ $t('admin.import.fields.username') }}
@@ -153,7 +168,7 @@ const props = withDefaults(defineProps<Props>(), {
   validationErrors: () => [],
 })
 
-useI18n()
+const { t } = useI18n()
 
 /**
  * Users to display (limited for preview)

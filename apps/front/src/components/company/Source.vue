@@ -26,9 +26,7 @@
     </template>
     <template #tooltip>
       <template v-if="isLLMSource(getSourcedSource(sourcedValue))">
-        Cette information est issue de la base de connaissances du modèle de langage (LLM). Un LLM
-        s'appuie sur un vaste ensemble de textes analysés lors de son entraînement, et ne consulte
-        pas de sources externes en temps réel.
+        {{ t('screen.company.source.llmDisclaimer') }}
       </template>
       <template v-else>
         {{ getSourcedSource(sourcedValue) }}
@@ -52,9 +50,7 @@
     </template>
     <template #tooltip>
       <template v-if="isLLMSource(source)">
-        Cette information est issue de la base de connaissances du modèle de langage (LLM). Un LLM
-        s'appuie sur un vaste ensemble de textes analysés lors de son entraînement, et ne consulte
-        pas de sources externes en temps réel.
+        {{ t('screen.company.source.llmDisclaimer') }}
       </template>
       <template v-else>
         {{ source }}
@@ -67,6 +63,9 @@
 import { getSourcedSource } from '@/components/helpers/sourcedValues'
 import type { SourcedValue } from '@/types/company'
 import { Button, Tooltip } from '@owlint/feathers-vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   sourcedValue?: SourcedValue<string>

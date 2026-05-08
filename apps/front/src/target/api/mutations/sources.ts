@@ -118,7 +118,11 @@ export const useChangeSourceStatus = () => {
     onSuccess(_, { source }) {
       const newStatus =
         source.status === SourceStatus.ACTIVE ? SourceStatus.INACTIVE : SourceStatus.ACTIVE
-      toast.success(t('target.watchFiles.sources.status_change.' + newStatus))
+      const sourceStatusMsg =
+        newStatus === SourceStatus.ACTIVE
+          ? t('target.watchFiles.sources.status_change.active')
+          : t('target.watchFiles.sources.status_change.inactive')
+      toast.success(sourceStatusMsg)
     },
   })
   return {

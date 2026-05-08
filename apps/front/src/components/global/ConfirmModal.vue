@@ -29,7 +29,7 @@
     <template #description>
       <div class="space-y-3 text-sm">
         <!-- Main message -->
-        <p v-sanitize-html="modalState.message" class="text-gray-700" />
+        <p class="text-gray-700">{{ modalState.message }}</p>
 
         <!-- Info Section (light blue container) -->
         <div v-if="modalState.infoSection" class="bg-sage-50 rounded-lg p-3">

@@ -9,7 +9,9 @@
         {{ $t('common.auth.callback.processing') }}
       </p>
       <div v-if="error" class="text-red-600">
-        <p>{{ $t('common.auth.callback.loginFailed') }}: {{ error }}</p>
+        <p>
+          {{ $t('common.auth.callback.loginFailed', { message: error }) }}
+        </p>
         <Button
           @click="$router.push('/login')"
           :label="$t('common.auth.callback.tryAgain')"

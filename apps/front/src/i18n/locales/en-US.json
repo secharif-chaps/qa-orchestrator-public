@@ -2,6 +2,7 @@
   "admin": {
     "adminRequired": "Admin Required",
     "costChart": {
+      "amount": "${amount}",
       "error": "Failed to load chart data",
       "loading": "Loading chart data...",
       "noData": "No workspace data available",
@@ -26,7 +27,7 @@
       "actionTitle": "This action will:",
       "cancel": "Cancel",
       "confirm": "Disable User",
-      "confirmText": "Are you sure you want to disable",
+      "confirmText": "Are you sure you want to disable {username}?",
       "title": "Disable User"
     },
     "features": {
@@ -63,10 +64,12 @@
       "dropZoneSubtitle": "Supports CSV and Excel files (max 100 users)",
       "dropZoneTitle": "Drag and drop your file here",
       "duplicate": "Duplicate",
+      "duplicateRow": "{username} ({email}) - Row {row}",
       "duplicatesFound": "Duplicate emails found",
       "duplicatesMessage": "The following users have duplicate email addresses and will be skipped:",
       "errorCount": "{count} users failed to import",
       "errorMessage": "Some users could not be imported. See details below.",
+      "errorRow": "Row {row}: {username} ({email})",
       "errors": {
         "emailInvalid": "Invalid email format",
         "emailRequired": "Email is required",
@@ -82,11 +85,12 @@
       "generateAllPasswords": "Generate all passwords",
       "generateAllPasswordsHint": "Random passwords will be generated for all users, ignoring passwords in the file.",
       "hideDetails": "Hide details",
-      "ignore": "Ignore column",
       "ignoredColumnsMessage": "The following columns are not mapped: {columns}",
       "ignoredColumnsWarning": "Some columns will be ignored",
+      "ignoreOption": "— Ignore column",
       "importButton": "Import Users",
       "mapsTo": "Maps to",
+      "moreErrors": "... and {count} more errors",
       "needHelpMessage": "Download our sample CSV file to see the expected format with example data.",
       "needHelpTitle": "Need a template?",
       "noPasswordColumnMessage": "Random passwords will be generated for all users. You will be able to download them after the import is complete.",
@@ -101,6 +105,7 @@
       "requiredFieldsMessage": "Username and Email columns must be mapped to proceed.",
       "requiredFieldsWarning": "Required fields not mapped",
       "requiredFieldTooltip": "Required field",
+      "rowNumber": "Row number",
       "rows": "rows",
       "selectOrganization": "Target Organization",
       "selectOrganizationPlaceholder": "Select an organization...",
@@ -118,6 +123,7 @@
       "title": "Import Users",
       "usePasswordsFromFile": "Use passwords from file",
       "usePasswordsFromFileHint": "Passwords from the CSV will be used. Random passwords will be generated for users without one.",
+      "validationErrorRow": "Row {row}: {field} - {message}",
       "validationErrors": "Validation errors found",
       "willGenerate": "Will generate"
     },
@@ -178,6 +184,7 @@
       },
       "itemName": "organizations",
       "members": "Members",
+      "organizationId": "ID: {id}",
       "search": "Search organizations...",
       "title": "Workspace Management"
     },
@@ -312,7 +319,7 @@
       "selection": {
         "clearSelection": "Clear Selection",
         "restart": "{count, plural, one {Restart # Task} other {Restart # Tasks}}",
-        "selected": "{count} selected"
+        "selected": "{count, plural, one {# selected} other {# selected}}"
       },
       "stats": {
         "failed": "Failed",
@@ -353,6 +360,7 @@
         "press": "Press",
         "products": "Products",
         "profile": "Profile",
+        "sanctions": "Sanctions",
         "team": "Team",
         "timeline": "Timeline"
       },
@@ -378,9 +386,9 @@
       "percentOfAllTasks": "% of all tasks",
       "percentOfTotal": "% of total",
       "summary": {
-        "mostExpensive": "Most Expensive",
-        "mostFrequent": "Most Frequent",
-        "totalTaskTypes": "Total Task Types"
+        "mostExpensive": "Most Expensive:",
+        "mostFrequent": "Most Frequent:",
+        "totalTaskTypes": "Total Task Types:"
       },
       "title": "Task Type Cost Efficiency"
     },
@@ -544,9 +552,10 @@
       "selectAll": "Select All",
       "selectedCount": "{count, plural, one {(# document)} other {(# documents)}}"
     },
+    "atUsername": "@{username}",
     "auth": {
       "callback": {
-        "loginFailed": "Login failed",
+        "loginFailed": "Login failed: {message}",
         "processing": "Processing login...",
         "tryAgain": "Try again"
       },
@@ -591,6 +600,9 @@
       "usage": "Usage",
       "users": "Users"
     },
+    "bullet": "•",
+    "bulletPrefixed": "• {value}",
+    "bulletSeparated": "{left} • {right}",
     "button": {
       "cancel": "Cancel",
       "close": "Close",
@@ -599,10 +611,13 @@
     },
     "cancel": "Cancel",
     "close": "Close",
+    "closeIcon": "×",
     "collectedOn": "Collected on {date}",
     "comingSoon": "Coming soon",
     "confirm": "Confirm",
     "copied": "Copied to clipboard!",
+    "countOfTotal": "{count}/{total}",
+    "countSuffix": " ({count})",
     "dialog": {
       "info_item_ai_validation": "Automatic validation by AI",
       "info_item_archive_always_accessible": "It will remain accessible at all times",
@@ -620,10 +635,10 @@
         "title": "Incomplete processing"
       }
     },
-    "documentType_html": "HTML",
-    "documentType_pdf": "PDF",
+    "documentType": "{type, select, html {HTML} pdf {PDF} other {{type}}}",
     "done": "Done",
     "empty": "No results found",
+    "emptyValue": "—",
     "error": {
       "description": "Something went wrong. Please try again in a few moments or check your connection. If the problem persists, please contact an administrator.",
       "title": {
@@ -633,6 +648,7 @@
     },
     "errors": {
       "forbidden": {
+        "code": "403",
         "contact": "Contact Administrator",
         "goBack": "Go Back",
         "goHome": "Go to Home",
@@ -644,6 +660,7 @@
           "insufficientTokensMessage": "You don't have enough tokens to access the {module} module. Contact your administrator to add more tokens.",
           "moduleDisabled": "{module} Disabled",
           "moduleDisabledMessage": "The {module} module has been disabled for your organization. Contact your administrator to enable this feature.",
+          "moduleLabel": "{module} Module",
           "status": {
             "disabled": "Disabled",
             "noTokens": "No Tokens"
@@ -654,6 +671,7 @@
       "generic": "An error occurred",
       "no_data": "No data returned",
       "notFound": {
+        "code": "404",
         "goBack": "Go Back",
         "goHome": "Go to Home",
         "help": "Need Help?",
@@ -790,13 +808,13 @@
         "namePlaceholder": "Enter folder name...",
         "save": "Save Changes",
         "tags": "Tags",
-        "tagsOptional": "optional",
+        "tagsOptional": "(optional)",
         "tagsPlaceholder": "Enter tags separated by commas..."
       },
       "grid": {
-        "by": "by",
+        "byWithName": "by @{name}",
         "created": "Created",
-        "owner": "Owner:"
+        "ownerWithName": "Owner: @{name}"
       },
       "groups": {
         "mine": "My Folders",
@@ -846,7 +864,7 @@
         "success": "Company moved to {folderName}",
         "title": "Move Company to Folder"
       },
-      "name": "Name",
+      "nameLabel": "Name:",
       "owner": {
         "you": "You"
       },
@@ -909,9 +927,6 @@
       "shared": {
         "badge": "Shared"
       },
-      "tab": {
-        "items": "Items"
-      },
       "table": {
         "actions": "Actions",
         "created": "Created",
@@ -925,7 +940,7 @@
       },
       "title": "{count, plural, =0 {Your folders} one {Your folder} other {All your folders (#)}}",
       "tooltip": {
-        "createdBy": "Created by {username} on {date} at {time}"
+        "createdBy": "— Created by {username} on {date} at {time}"
       },
       "validation": {
         "nameMaxLength": "Folder name must be less than 50 characters",
@@ -938,20 +953,13 @@
       }
     },
     "genericError": "An error occurred",
+    "inParentheses": "({value})",
     "keyboard": {
       "ctrl": "Ctrl",
-      "enter": "Enter"
+      "enter": "Enter",
+      "separator": "+"
     },
-    "language_de": "German",
-    "language_en": "English",
-    "language_es": "Spanish",
-    "language_fr": "French",
-    "language_it": "Italian",
-    "language_ja": "Japanese",
-    "language_pt": "Portuguese",
-    "language_ru": "Russian",
-    "language_xx": "Other",
-    "language_zh": "Chinese",
+    "language": "{code, select, de {German} en {English} es {Spanish} fr {French} it {Italian} ja {Japanese} pt {Portuguese} ru {Russian} zh {Chinese} other {Other}}",
     "loading": "Loading...",
     "login": {
       "errors": {
@@ -977,9 +985,9 @@
       "discover": "Discover",
       "explore": "Knowledge Graph",
       "screen": "Company Card",
-      "target": "Watchfile",
-      "unknown": "Unknown module"
+      "target": "Watch file"
     },
+    "moreCount": "+{count}",
     "na": "N/A",
     "new": "New",
     "next": "Next",
@@ -992,6 +1000,8 @@
       "page": "Page:",
       "show": "Show:"
     },
+    "percentValue": "{value}%",
+    "positiveAmount": "+{value}",
     "preview": {
       "items": {
         "newMessage": "New Message Received",
@@ -1003,51 +1013,16 @@
       }
     },
     "publishedOn": "Published on {date}",
+    "quoted": "\"{value}\"",
+    "requiredMarker": "*",
+    "rowNumber": "#",
     "search": {
       "clear": "Clear search",
       "placeholder": "Search"
     },
     "sidebar": {
       "chapse": {
-        "addCompany": "Add company",
-        "addThisCompanyToContext": "Add {name} to context",
-        "clearHistory": "Clear history",
-        "confirmClearMessages": "Are you sure you want to clear all messages?",
-        "confirmDeleteConversation": "Are you sure you want to delete this conversation?",
-        "context": "Context:",
-        "dateGroups": {
-          "lastMonth": "Last 30 days",
-          "lastWeek": "Last 7 days",
-          "older": "Older",
-          "today": "Today",
-          "yesterday": "Yesterday"
-        },
-        "enterFullscreen": "Enter fullscreen",
-        "exitFullscreen": "Exit fullscreen",
-        "loadMore": "Load more",
-        "newConversation": "New conversation",
-        "noCompaniesFound": "No companies found",
-        "placeholder": "Write a message...",
-        "searchCompanies": "Search companies...",
-        "suggestions": {
-          "company": {
-            "summary": "Give me a summary of this company",
-            "technologies": "List the mentioned technologies"
-          },
-          "folder": {
-            "compare": "Compare the companies in this folder",
-            "summarize": "Summarize the companies in this folder"
-          },
-          "home": {
-            "orgActivity": "Summarize my organization activity",
-            "recentCompanies": "Show me my recent companies"
-          }
-        },
-        "thinking": "Thinking...",
-        "title": "Chaps-e",
-        "toSend": "To send",
-        "typeToSearch": "Type to search companies",
-        "welcomeMessage": "Hello! I'm Chaps-e, your AI assistant. How can I help you today?"
+        "addThisCompanyToContext": "Add {name} to context"
       },
       "foldersSidebar": {
         "allFolders": "Folders",
@@ -1100,6 +1075,13 @@
       "minutesAgo": "{count} min ago"
     },
     "today": "Today",
+    "userMenu": {
+      "administration": "Administration",
+      "darkMode": "Dark mode",
+      "lightMode": "Light mode",
+      "switchToEnglish": "English",
+      "switchToFrench": "Français"
+    },
     "validation": {
       "password": {
         "lowercase": "Password must contain at least one lowercase letter",
@@ -1344,7 +1326,6 @@
         },
         "selectFolder": "Select Folder"
       },
-      "created": "Created",
       "debug": {
         "workflowTitle": "Debug: Search Workflow"
       },
@@ -1365,6 +1346,12 @@
           "title": "Warning: This will permanently delete the company"
         }
       },
+      "detailsLabels": {
+        "created": "Created:",
+        "name": "Company:",
+        "tasks": "Tasks:",
+        "website": "Website:"
+      },
       "export": {
         "button": "Export",
         "modal": {
@@ -1373,10 +1360,6 @@
           "deselectAll": "Deselect All",
           "export": "Export",
           "options": {
-            "corporateStructure": {
-              "description": "Parent companies, subsidiaries, and affiliates",
-              "label": "Corporate Structure"
-            },
             "csr": {
               "description": "Responsibility initiatives and charity actions",
               "label": "Corporate Social Responsibility"
@@ -1442,6 +1425,7 @@
         "by": "by",
         "created": "Created on",
         "tasks": {
+          "count": "{count, plural, one {# task} other {# tasks}}",
           "status": {
             "complete": "Complete",
             "issues": "Issues",
@@ -1455,7 +1439,6 @@
         "description": "View and manage all companies in your organization",
         "title": "Company Management"
       },
-      "name": "Company",
       "onlinePresence": {
         "socialMedia": "Social Media Presence",
         "title": "Online Presence",
@@ -1493,6 +1476,9 @@
           "message": "Restoring a company will make it visible again in the main list."
         }
       },
+      "sanctions": {
+        "onuEuOfacBadge": "UN/EU/OFAC"
+      },
       "screening": {
         "messages": {
           "csr": "Evaluating CSR initiatives...",
@@ -1508,54 +1494,8 @@
       "search": {
         "placeholder": "Search companies..."
       },
-      "sections": {
-        "financial": {
-          "desc": "Revenue, profitability & funding",
-          "funding": {
-            "amount": "Amount",
-            "date": "Date",
-            "lastValuation": "Last Valuation",
-            "leadInvestor": "Lead Investor",
-            "noRounds": "No funding rounds found",
-            "round": "Round",
-            "title": "Funding History",
-            "totalFunding": "Total Funding"
-          },
-          "history": {
-            "noData": "No historical data available",
-            "period": "Period",
-            "title": "Historical Financials"
-          },
-          "identity": {
-            "currency": "Currency",
-            "exchange": "Exchange",
-            "fiscalYear": "Fiscal Year End",
-            "private": "Private Company",
-            "public": "Public Company",
-            "subsidiary": "Subsidiary",
-            "ticker": "Ticker"
-          },
-          "insights": "Financial Insights",
-          "metrics": {
-            "debtToEquity": "Debt / Equity",
-            "ebitdaMargin": "EBITDA Margin",
-            "freeCashFlow": "Free Cash Flow",
-            "grossMargin": "Gross Margin",
-            "netMargin": "Net Margin",
-            "revenue": "Revenue",
-            "revenueGrowth": "Revenue Growth"
-          },
-          "noData": "No financial data available for this company",
-          "title": "Financial",
-          "valuation": {
-            "enterpriseValue": "Enterprise Value",
-            "evEbitda": "EV / EBITDA",
-            "evRevenue": "EV / Revenue",
-            "marketCap": "Market Cap",
-            "peRatio": "P/E Ratio",
-            "title": "Valuation"
-          }
-        }
+      "source": {
+        "llmDisclaimer": "This information comes from the language model (LLM) knowledge base. An LLM relies on a vast set of texts analyzed during its training and does not consult external sources in real time."
       },
       "tabs": {
         "csr": "CSR",
@@ -1581,7 +1521,7 @@
         "runningShort": "{count} running",
         "startAll": "Start all tasks",
         "startAllError": "Failed to restart tasks",
-        "startAllPartial": "{failed} of {total} tasks failed to restart",
+        "startAllPartial": "{failed, plural, one {# task of {total} failed to restart} other {# tasks of {total} failed to restart}}",
         "startAllSuccess": "All tasks restarted successfully",
         "types": {
           "corporate_structure": {
@@ -1595,6 +1535,10 @@
           "digital": {
             "description": "Online presence, social media, digital strategy",
             "name": "Digital"
+          },
+          "financial": {
+            "description": "Financial data, revenue, key economic indicators",
+            "name": "Financial"
           },
           "jobs": {
             "description": "Job openings, career opportunities",
@@ -1656,8 +1600,7 @@
       "view": {
         "grid": "Grid View",
         "table": "Table View"
-      },
-      "website": "Website"
+      }
     },
     "csv": {
       "upload": {
@@ -1682,6 +1625,7 @@
         "results": {
           "failedImportsTitle": "Failed Imports",
           "failedLabel": "Failed",
+          "nameError": "— {name}: {error}",
           "successful": "Successful",
           "totalProcessed": "Total Processed"
         },
@@ -1704,7 +1648,9 @@
           "errorsFound": "Validation Errors Found",
           "errorsFoundMessage": "You can either fix the errors in your CSV file and re-upload, or proceed with import which will skip invalid rows.",
           "errorsTitle": "Validation Errors",
+          "fieldError": "— {field}: {error}",
           "invalidCompaniesLabel": "Invalid Companies",
+          "rowLabel": "Row {row}",
           "validCompaniesLabel": "Valid Companies"
         },
         "validationFailed": "Validation failed. Please check your connection and try again."
@@ -1726,12 +1672,12 @@
       "disabled": "Disabled",
       "edit": "Edit",
       "enabled": "Enabled",
-      "enabledAt": "Enabled at",
+      "enabledAt": "Enabled at: {date}",
       "epo": {
         "description": "European Patent Office — patent data enrichment for company cards",
         "name": "EPO"
       },
-      "lastUpdated": "Last updated",
+      "lastUpdated": "Last updated: {date}",
       "pappers": {
         "description": "French company data provider (legal info, financials, officers)",
         "name": "Pappers"
@@ -1776,7 +1722,7 @@
     },
     "products": {
       "associatedBrands": "Associated brands",
-      "categoryCount": "{count, plural, one {# product} other {# products}}",
+      "categoryCount": "{count, plural, =0 {No products} one {# product} other {# products}}",
       "header": {
         "summary": "{total} products across {categories} categories",
         "title": "Product Portfolio"
@@ -1936,18 +1882,18 @@
         "sanctions": {
           "clean": "Clean",
           "itemsCount": "{count} item(s) found",
-          "nature": "Nature",
+          "nature": "Nature:",
           "noData": "No sanctions or compliance issues found in WorldCheck screening",
           "riskAssessment": "Risk Assessment",
-          "riskJustification": "Risk Justification",
+          "riskJustification": "Risk Justification:",
           "riskLevels": {
             "critical": "Critical Risk",
             "high": "High Risk",
             "low": "Low Risk",
             "medium": "Medium Risk"
           },
-          "sourceCode": "Source Code",
-          "sources": "Sources",
+          "sourceCode": "Source Code:",
+          "sources": "Sources:",
           "title": "Sanctions & Compliance"
         },
         "team": {
@@ -1985,8 +1931,8 @@
     },
     "tasks": {
       "events": {
-        "ready": "Your Screen about <span class=\"font-bold\">{companyName}</span> is ready!",
-        "readyWithErrors": "Your Screen about <span class=\"font-bold\">{companyName}</span> completed with some errors.",
+        "ready": "Your Screen about {companyName} is ready!",
+        "readyWithErrors": "Your Screen about {companyName} completed with some errors.",
         "view": "View"
       }
     },
@@ -2101,7 +2047,7 @@
           "tip3": "Include product details to receive more personalized and contextual suggestions",
           "title": "Tips for Better Results"
         },
-        "optional": "Optional",
+        "optional": "(Optional)",
         "role": {
           "required": "Role is required",
           "tooLong": "Role must be less than 255 characters"
@@ -2184,7 +2130,7 @@
     },
     "credits": {
       "balance": {
-        "current": "Current balance"
+        "current": "Current balance: {balance} credits"
       },
       "cardDescription": "View credit usage and statistics",
       "dailyUsage": {
@@ -2195,7 +2141,7 @@
         "title": "Remaining capacity"
       },
       "module": {
-        "canCreate": "You can still create",
+        "canCreate": "You can still create: {count} {item}",
         "costPerItem": "1 {item} = {cost} credits",
         "disabled": "Module disabled",
         "explore": {
@@ -2239,6 +2185,7 @@
       "unit": "credits",
       "usage": {
         "noData": "No consumption for this period",
+        "percentageOf": "{percentage}% of {label}",
         "title": "Credit distribution",
         "total": "Total consumed"
       },
@@ -2593,6 +2540,48 @@
     },
     "viewSection": "Configure"
   },
+  "sidebar": {
+    "chapse": {
+      "addCompany": "Add company",
+      "clearHistory": "Clear history",
+      "confirmClearMessages": "Are you sure you want to clear all messages?",
+      "confirmDeleteConversation": "Are you sure you want to delete this conversation?",
+      "context": "Context:",
+      "contextLimit": "({count}/{max})",
+      "dateGroups": {
+        "lastMonth": "Last 30 days",
+        "lastWeek": "Last 7 days",
+        "older": "Older",
+        "today": "Today",
+        "yesterday": "Yesterday"
+      },
+      "enterFullscreen": "Enter fullscreen",
+      "exitFullscreen": "Exit fullscreen",
+      "loadMore": "Load more",
+      "newConversation": "New conversation",
+      "noCompaniesFound": "No companies found",
+      "placeholder": "Write a message...",
+      "searchCompanies": "Search companies...",
+      "suggestions": {
+        "company": {
+          "summary": "Give me a summary of this company",
+          "technologies": "List the mentioned technologies"
+        },
+        "folder": {
+          "compare": "Compare the companies in this folder",
+          "summarize": "Summarize the companies in this folder"
+        },
+        "home": {
+          "orgActivity": "Summarize my organization activity",
+          "recentCompanies": "Show me my recent companies"
+        }
+      },
+      "title": "Chaps-e",
+      "toSend": "To send",
+      "typeToSearch": "Type to search companies",
+      "welcomeMessage": "Hello! I'm Chaps-e, your AI assistant. How can I help you today?"
+    }
+  },
   "stream": {
     "actions": {
       "activate": "Activate",
@@ -2757,7 +2746,7 @@
         "title": "No documents found"
       },
       "inactive": {
-        "subtitle": "Start your watchfile in the <b>Configuration</b> tab to launch the first document collection.",
+        "subtitle": "Start your watch file in the Configuration tab to launch the first document collection.",
         "title": "No documents collected yet"
       },
       "loading": {
@@ -2828,12 +2817,7 @@
       "website": "Websites"
     },
     "watchFiles": {
-      "access": {
-        "admin": "Administrator",
-        "editor": "Editor",
-        "no_access": "No access",
-        "viewer": "Viewer"
-      },
+      "access": "{role, select, admin {Administrator} editor {Editor} viewer {Viewer} no_access {No access} other {{role}}}",
       "actions": {
         "add_favorite": "Add to favorites",
         "archive_watch_file": "Archive",
@@ -2876,18 +2860,12 @@
           "source_status_changed_active": "{userName} activated the source {sourceName}.",
           "source_status_changed_auto_disabled": "The source {sourceName} has been automatically disabled.",
           "source_status_changed_inactive": "{userName} deactivated the source {sourceName}.",
-          "status_changed": "{userName} changed the status of the watchfile from {oldStatus} to {newStatus}.",
-          "title": "Watchfile actions history",
-          "unknown_action": "Unknown action",
+          "status_changed": "{userName} changed the status of the watch file from {oldStatus} to {newStatus}.",
+          "title": "Watch file actions history",
           "view_actors_added": "View actor details",
-          "view_actors_added_drawer_title": "Actors added",
-          "view_actors_removed_drawer_title": "Actors removed",
-          "view_monitoring_details": "View monitoring details",
           "view_sources_added": "View source details",
-          "view_sources_added_drawer_title": "Sources added",
-          "view_sources_removed_drawer_title": "Sources removed",
-          "watch_file_created": "{userName} created the watchfile.",
-          "watch_file_updated": "{userName} updated the watchfile configuration."
+          "watch_file_created": "{userName} created the watch file.",
+          "watch_file_updated": "{userName} updated the watch file configuration."
         },
         "sources": {
           "action": {
@@ -2909,9 +2887,8 @@
             "source_connected": "The collect has been activated.",
             "source_error": "An error occurred. {errorMessage}",
             "source_recovered": "The collect has resumed.",
-            "source_status_changed_active": "{userName} has activated the source.",
-            "source_status_changed_inactive": "{userName} has deactivated the source.",
-            "unknown_action": "Unknown activity."
+            "source_status_changed_active": "{userName} activated the source.",
+            "source_status_changed_inactive": "{userName} deactivated the source."
           },
           "search": {
             "clear": "Clear search",
@@ -3050,9 +3027,14 @@
       },
       "assistant": {
         "empty_view": {
-          "description": "Describe what you want to monitor and Chaps-e will help you structure your watchfile.",
-          "list": "Chaps-e will guide you to:<ul><li>✓ Define the objectives of your watch<li/><li>✓ Identify the key players to be monitored<li/><li>✓ Configure the relevant information sources<li/><li>✓ Set the collect criteria</li/><li>✓ Schedule the collection of information<li/></ul>",
-          "title": "How do I use the watchfiles?"
+          "description": "Describe what you want to monitor and Chaps-e will help you structure your watch file.",
+          "listIntro": "Chaps-e will guide you to:",
+          "listItemCollectCriteria": "Set the collect criteria",
+          "listItemConfigureSources": "Configure the relevant information sources",
+          "listItemDefineObjectives": "Define the objectives of your watch",
+          "listItemIdentifyPlayers": "Identify the key players to be monitored",
+          "listItemScheduleCollect": "Schedule the collection of information",
+          "title": "How do I use the watch files?"
         }
       },
       "chat": {
@@ -3156,8 +3138,8 @@
         "batch_status_change": {
           "error_accept": "Error during batch validation",
           "error_refuse": "Error during batch rejection",
-          "partial_success_accept": "{count, plural, =0 {No documents validated} one {1 document validated, {failed} failed} other {{success} documents validated, {failed} failed}}",
-          "partial_success_refuse": "{count, plural, =0 {No documents rejected} one {1 document rejected, {failed} failed} other {{success} documents rejected, {failed} failed}}",
+          "partial_success_accept": "{count, plural, =0 {No documents validated} one {1 document validated, {failed} failed} other {{count} documents validated, {failed} failed}}",
+          "partial_success_refuse": "{count, plural, =0 {No documents rejected} one {1 document rejected, {failed} failed} other {{count} documents rejected, {failed} failed}}",
           "success_accept": "{count, plural, =0 {No documents validated} one {1 document successfully validated} other {# documents successfully validated}}",
           "success_refuse": "{count, plural, =0 {No documents rejected} one {1 document successfully rejected} other {# documents successfully rejected}}"
         },
@@ -3203,7 +3185,10 @@
       "edit": {
         "alert": {
           "enabled": {
-            "tooltip": "Monitoring in progress:<ul><li>Automatic source monitoring</li><li>Real-time document collection</li><li>Automatic AI validation</li></ul>"
+            "tooltipIntro": "Monitoring in progress:",
+            "tooltipItemAiValidation": "Automatic AI validation",
+            "tooltipItemDocumentCollection": "Real-time document collection",
+            "tooltipItemSourceMonitoring": "Automatic source monitoring"
           }
         }
       },
@@ -3271,12 +3256,12 @@
       "header_section": {
         "activation_modal": {
           "confirm": "Activate collect",
-          "description": "You are about to put the watchfile <b>\"{name}\"</b> in active mode.",
+          "description": "You are about to put the watch file \"{name}\" in active mode.",
           "title": "Put the collect in active mode"
         },
         "deactivation_modal": {
           "confirm": "Put in draft mode",
-          "description": "You are about to put the watchfile <b>\"{name}\"</b> back in draft mode.",
+          "description": "You are about to put the watch file \"{name}\" back in draft mode.",
           "title": "Put the collect in draft mode"
         },
         "status": {
@@ -3296,8 +3281,7 @@
       "list": {
         "columns": {
           "access": "Access",
-          "name": "Watchfile name",
-          "new_content": "New Content",
+          "name": "Watch file name",
           "status": "Status",
           "updated_at": "Last modified"
         },
@@ -3320,13 +3304,13 @@
         "title": "Reference subject for this watchfile"
       },
       "shareDialog": {
-        "accessListTitle": "People with access to the watchfile",
-        "changeRoleMessage": "Are you sure you want to change the role of <b>\"{user}\"</b> to <b>\"{role}\"</b>?",
+        "accessListTitle": "People with access to the watch file",
+        "changeRoleMessage": "Are you sure you want to change the role of \"{user}\" to \"{role}\"?",
         "changeRoleTitle": "Change role",
         "invite": "Invite",
         "invitePlaceholder": "Email, pseudo...",
         "owner": "Owner",
-        "removeUserMessage": "Are you sure you want to remove <b>\"{user}\"</b> from this watchfile?",
+        "removeUserMessage": "Are you sure you want to remove \"{user}\" from this watch file?",
         "removeUserTitle": "Remove user",
         "role": {
           "editor": "Editor",
@@ -3375,19 +3359,18 @@
       "status": {
         "archived": "Archived",
         "draft": "Draft",
-        "enabled": "Active",
-        "label": "Status:"
+        "enabled": "Active"
       },
       "status_change": {
         "archive": {
           "confirm_button": "Archive",
-          "confirm_message": "You are about to archive the watchfile <b>\"{name}\"</b>.",
-          "confirm_title": "Archive watchfile"
+          "confirm_message": "You are about to archive the watch file \"{name}\".",
+          "confirm_title": "Archive watch file"
         },
         "enabled": {
           "disabled_tooltip": {
-            "reference_subject": "You cannot do this action:<ul><li>The reference subject has not been generated for this watchfile yet</li></ul>Please try again in a few moments.",
-            "sources": "You cannot do this action:<ul><li>No sources configured</li></ul>Add at least one source in the Scope tab to activate the collection."
+            "reference_subject": "You cannot do this action: the reference subject has not been generated for this watch file yet. Please try again in a few moments.",
+            "sources": "You cannot do this action: no sources configured. Add at least one source in the Scope tab to activate the collection."
           }
         },
         "error_false": "An error occurred while removing \"{name}\" from your favorites",

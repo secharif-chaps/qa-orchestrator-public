@@ -39,7 +39,9 @@
             :title="getProgressTitle(lang.code)"
           >
             <i class="fa fa-spinner fa-spin" />
-            <span class="text-xs">{{ getProgressPercent(lang.code) }}%</span>
+            <span class="text-xs">{{
+              t('common.percentValue', { value: getProgressPercent(lang.code) })
+            }}</span>
           </span>
           <!-- Download icon for untranslated -->
           <i

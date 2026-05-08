@@ -122,16 +122,48 @@ const getActivityDescription = (activity: WatchFileActivity): WatchFileActivityD
 
   switch (actionType) {
     case 'created':
+      return createWatchFileActivityDescription(
+        'target.watchFiles.activity.history.created',
+        activity,
+      )
     case 'updated':
+      return createWatchFileActivityDescription(
+        'target.watchFiles.activity.history.updated',
+        activity,
+      )
     case 'source_status_changed':
+      return createWatchFileActivityDescription(
+        'target.watchFiles.activity.history.source_status_changed',
+        activity,
+      )
     case 'actor_status_changed':
+      return createWatchFileActivityDescription(
+        'target.watchFiles.activity.history.actor_status_changed',
+        activity,
+      )
     case 'shared_mode_changed':
+      return createWatchFileActivityDescription(
+        'target.watchFiles.activity.history.shared_mode_changed',
+        activity,
+      )
     case 'actor_added':
+      return createWatchFileActivityDescription(
+        'target.watchFiles.activity.history.actor_added',
+        activity,
+      )
     case 'source_added':
+      return createWatchFileActivityDescription(
+        'target.watchFiles.activity.history.source_added',
+        activity,
+      )
     case 'monitoring_type_detected':
+      return createWatchFileActivityDescription(
+        'target.watchFiles.activity.history.monitoring_type_detected',
+        activity,
+      )
     case 'reference_subject_updated':
       return createWatchFileActivityDescription(
-        `target.watchFiles.activity.history.${actionType}`,
+        'target.watchFiles.activity.history.reference_subject_updated',
         activity,
       )
 

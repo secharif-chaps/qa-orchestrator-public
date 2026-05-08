@@ -8,7 +8,7 @@
         <td class="px-4 py-3">
           <Tag
             :intent="deliveryStatusIntent(item.status)"
-            :label="t(`stream.delivery.status.${item.status}`)"
+            :label="deliveryStatusLabel[item.status]"
             size="sm"
           />
         </td>
@@ -23,7 +23,7 @@
       <template #cell(delivered_at)="{ value }">
         <td class="px-4 py-3">
           <span class="text-secondary text-sm">
-            {{ value ? formatDate(value, 'long') : '-' }}
+            {{ value ? formatDate(value) : EMPTY_DASH }}
           </span>
         </td>
       </template>
@@ -39,7 +39,7 @@
           <span v-if="value" class="text-error truncate text-sm" :title="value">
             {{ value }}
           </span>
-          <span v-else class="text-secondary text-sm">-</span>
+          <span v-else class="text-secondary text-sm">{{ EMPTY_DASH }}</span>
         </td>
       </template>
     </Table>
@@ -67,6 +67,15 @@ interface Props {
 const { streamId } = defineProps<Props>()
 const { t } = useI18n()
 const { formatDate } = useDateTime()
+
+const EMPTY_DASH = '-'
+
+const deliveryStatusLabel = computed<Record<string, string>>(() => ({
+  delivered: t('stream.delivery.status.delivered'),
+  failed: t('stream.delivery.status.failed'),
+  pending: t('stream.delivery.status.pending'),
+  skipped: t('stream.delivery.status.skipped'),
+}))
 
 const page = ref(1)
 const perPage = ref(20)

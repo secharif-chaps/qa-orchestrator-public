@@ -9,7 +9,7 @@
     >
       <Tag
         class="hidden lg:block"
-        :label="$t(module.labelKey)"
+        :label="moduleLabelMap[module.name] ?? module.name"
         :icon="module.icon"
         :color="module.color"
         :variant="module.status !== 'enabled' ? 'secondary' : 'primary'"
@@ -61,8 +61,17 @@ import { Tag } from '@owlint/feathers-vue'
 import { organizationModulesQuery } from '@/queries/tokens'
 import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
 import { getModuleDisplayConfig, type ModuleDisplayConfig } from '@/config/modules'
+import { useI18n } from 'vue-i18n'
 
 const { organizationId } = defineProps<{ organizationId: string }>()
+
+const { t } = useI18n()
+
+const moduleLabelMap = computed<Record<string, string>>(() => ({
+  screen: t('common.modules.screen'),
+  target: t('common.modules.target'),
+  explore: t('common.modules.explore'),
+}))
 
 const { data: modulesData } = useQuery(() => organizationModulesQuery({ organizationId }))
 const { data: featureFlagsData } = useQuery(() => organizationFeatureFlagsQuery({ organizationId }))

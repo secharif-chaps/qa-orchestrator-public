@@ -11,8 +11,8 @@
         name="filter-validations"
       >
         <label :for="status" class="pl-2">
-          <span>{{ $t(`target.watchFiles.documents.status.${status}`) }}</span>
-          <span class="text-gray-800"> ({{ count }}) </span>
+          <span>{{ documentStatusLabelMap[status] ?? status }}</span>
+          <span class="text-gray-800">{{ $t('common.countSuffix', { count }) }}</span>
         </label>
       </Checkbox>
     </div>
@@ -35,10 +35,20 @@
 
 <script lang="ts" setup>
 import { Button, Checkbox } from '@owlint/feathers-vue'
+import { computed } from 'vue'
 import type { StatusFacet } from '@target/types/facet'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+
+const documentStatusLabelMap = computed<Record<string, string>>(() => ({
+  ai_rejected: t('target.watchFiles.documents.status.ai_rejected'),
+  ai_uncertain: t('target.watchFiles.documents.status.ai_uncertain'),
+  ai_validated: t('target.watchFiles.documents.status.ai_validated'),
+  manual_accept: t('target.watchFiles.documents.status.manual_accept'),
+  manual_empty: t('target.watchFiles.documents.status.manual_empty'),
+  manual_refuse: t('target.watchFiles.documents.status.manual_refuse'),
+}))
 
 interface Props {
   statuses: StatusFacet[]

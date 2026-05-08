@@ -45,9 +45,18 @@ export default defineConfigWithVueTs(
     rules: {
       '@intlify/vue-i18n/no-missing-keys': 'error',
       '@intlify/vue-i18n/no-raw-text': 'warn',
-      '@intlify/vue-i18n/no-unused-keys': ['warn', { enableFix: false }],
+      '@intlify/vue-i18n/no-unused-keys': [
+        'warn',
+        {
+          enableFix: false,
+          extensions: ['.js', '.ts', '.vue'],
+        },
+      ],
       '@intlify/vue-i18n/no-duplicate-keys-in-locale': 'error',
       '@intlify/vue-i18n/no-html-messages': 'warn',
+      // Disabled: plugin parser does not support ICU MessageFormat (plural/select syntax)
+      // ICU validation is handled by eslint-plugin-i18n-json below
+      '@intlify/vue-i18n/valid-message-syntax': 'off',
     },
     settings: {
       'vue-i18n': {

@@ -26,7 +26,7 @@
           @click="toggleTheme"
         >
           <Icon :icon="isDark ? 'fa-sun' : 'fa-moon'" class="w-4 text-center" />
-          <span>{{ isDark ? 'Light mode' : 'Dark mode' }}</span>
+          <span>{{ isDark ? t('common.userMenu.lightMode') : t('common.userMenu.darkMode') }}</span>
         </button>
 
         <!-- Debug: Language toggle -->
@@ -36,7 +36,11 @@
           @click="toggleLocale"
         >
           <Icon icon="fa-language" class="w-4 text-center" />
-          <span>{{ locale === 'en-US' ? 'Français' : 'English' }}</span>
+          <span>{{
+            locale === LOCALES.EN
+              ? t('common.userMenu.switchToFrench')
+              : t('common.userMenu.switchToEnglish')
+          }}</span>
         </button>
 
         <!-- Separator (only if debug items shown) -->
@@ -49,7 +53,7 @@
           @click="goToAdmin(close)"
         >
           <Icon icon="fa-shield" class="w-4 text-center" />
-          <span>Administration</span>
+          <span>{{ t('common.userMenu.administration') }}</span>
         </button>
 
         <!-- Separator (only if admin shown) -->
@@ -79,6 +83,7 @@
 import LogoutConfirmationModal from '@/components/global/LogoutConfirmationModal.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import { useTheme } from '@/composables/useTheme'
+import { LOCALES } from '@/i18n'
 import { useAuthStore } from '@/stores/auth'
 import { Avatar, Icon } from '@owlint/feathers-vue'
 import { computed, ref } from 'vue'
@@ -106,7 +111,7 @@ const toggleTheme = () => {
 
 // Language toggle
 const toggleLocale = () => {
-  locale.value = locale.value === 'en-US' ? 'fr-FR' : 'en-US'
+  locale.value = locale.value === LOCALES.EN ? LOCALES.FR : LOCALES.EN
 }
 
 // Admin navigation

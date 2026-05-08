@@ -754,9 +754,16 @@ const hasActiveFilters = computed(() => {
   return filters.value.status || filters.value.task_type || filters.value.organization_id
 })
 
+const taskStatusLabelMap = computed<Partial<Record<TaskStatus, string>>>(() => ({
+  pending: t('admin.tasks.status.pending'),
+  running: t('admin.tasks.status.running'),
+  succeeded: t('admin.tasks.status.succeeded'),
+  error: t('admin.tasks.status.error'),
+}))
+
 const selectedStatusLabel = computed(() => {
   if (!filters.value.status) return t('admin.tasks.filters.allStatuses')
-  return t(`admin.tasks.status.${filters.value.status}`)
+  return taskStatusLabelMap.value[filters.value.status] ?? filters.value.status
 })
 
 const selectedTypeLabel = computed(() => {
@@ -810,23 +817,22 @@ function formatPercent(value: number): string {
   return `${(value * 100).toFixed(1)}%`
 }
 
-// Task type translation keys mapping
-const taskTypeKeys: Record<TaskType, string> = {
-  profile: 'admin.tasks.taskTypes.profile',
-  digital: 'admin.tasks.taskTypes.digital',
-  timeline: 'admin.tasks.taskTypes.timeline',
-  products: 'admin.tasks.taskTypes.products',
-  jobs: 'admin.tasks.taskTypes.jobs',
-  csr: 'admin.tasks.taskTypes.csr',
-  press: 'admin.tasks.taskTypes.press',
-  team: 'admin.tasks.taskTypes.team',
-  corporate_structure: 'admin.tasks.taskTypes.corporateStructure',
-  sanctions: 'admin.tasks.taskTypes.sanctions',
-  financial: 'admin.tasks.taskTypes.financial',
-}
+const taskTypeLabelMap = computed<Record<TaskType, string>>(() => ({
+  profile: t('admin.tasks.taskTypes.profile'),
+  digital: t('admin.tasks.taskTypes.digital'),
+  timeline: t('admin.tasks.taskTypes.timeline'),
+  products: t('admin.tasks.taskTypes.products'),
+  jobs: t('admin.tasks.taskTypes.jobs'),
+  csr: t('admin.tasks.taskTypes.csr'),
+  press: t('admin.tasks.taskTypes.press'),
+  team: t('admin.tasks.taskTypes.team'),
+  corporate_structure: t('admin.tasks.taskTypes.corporate_structure'),
+  sanctions: t('admin.tasks.taskTypes.sanctions'),
+  financial: t('admin.tasks.taskTypes.financial'),
+}))
 
 function formatTaskType(type: TaskType): string {
-  return t(taskTypeKeys[type]) || type
+  return taskTypeLabelMap.value[type] || type
 }
 
 type StatusIntent = 'success' | 'warning' | 'danger' | 'info' | 'neutral'

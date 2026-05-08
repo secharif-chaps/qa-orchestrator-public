@@ -42,7 +42,12 @@
               class="inline-block rounded-sm border px-2 py-1 text-xs font-medium whitespace-nowrap"
               :style="getLabelStyle(usageData[2].module)"
             >
-              {{ usageData[2].percentage.toFixed(0) }}% de {{ usageData[2].label }}
+              {{
+                t('settings.credits.usage.percentageOf', {
+                  percentage: usageData[2].percentage.toFixed(0),
+                  label: usageData[2].label,
+                })
+              }}
             </span>
           </div>
 
@@ -55,7 +60,12 @@
               class="inline-block rounded-sm border px-2 py-1 text-xs font-medium whitespace-nowrap"
               :style="getLabelStyle(usageData[0].module)"
             >
-              {{ usageData[0].percentage.toFixed(0) }}% de {{ usageData[0].label }}
+              {{
+                t('settings.credits.usage.percentageOf', {
+                  percentage: usageData[0].percentage.toFixed(0),
+                  label: usageData[0].label,
+                })
+              }}
             </span>
           </div>
 
@@ -68,7 +78,12 @@
               class="inline-block rounded-sm border px-2 py-1 text-xs font-medium whitespace-nowrap"
               :style="getLabelStyle(usageData[1].module)"
             >
-              {{ usageData[1].percentage.toFixed(0) }}% de {{ usageData[1].label }}
+              {{
+                t('settings.credits.usage.percentageOf', {
+                  percentage: usageData[1].percentage.toFixed(0),
+                  label: usageData[1].label,
+                })
+              }}
             </span>
           </div>
         </div>
@@ -102,6 +117,9 @@ import { MODULE_CHART_COLORS } from '@/types/credits'
 import { ArcElement, Chart as ChartJS, Legend, Tooltip, type TooltipItem } from 'chart.js'
 import { computed } from 'vue'
 import { Doughnut } from 'vue-chartjs'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend)

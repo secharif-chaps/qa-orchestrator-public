@@ -2,7 +2,9 @@
   <div class="flex min-h-screen items-center justify-center">
     <div class="max-w-112 px-4 text-center">
       <div class="mb-8">
-        <h1 class="text-neutral-black-font text-6xl font-bold">404</h1>
+        <h1 class="text-neutral-black-font text-6xl font-bold">
+          {{ $t('common.errors.notFound.code') }}
+        </h1>
         <h2 class="mt-4 text-2xl font-semibold">
           {{ $t('common.errors.notFound.title') }}
         </h2>

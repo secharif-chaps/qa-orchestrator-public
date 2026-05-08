@@ -28,10 +28,10 @@
             </div>
             <div>
               <h3 class="text-sm font-medium">
-                {{ $t(`settings.appearance.theme.options.${themeOption.value}.title`) }}
+                {{ themeOptionLabelMap[themeOption.value]?.title }}
               </h3>
               <p class="text-neutral-black-font text-sm">
-                {{ $t(`settings.appearance.theme.options.${themeOption.value}.description`) }}
+                {{ themeOptionLabelMap[themeOption.value]?.description }}
               </p>
             </div>
           </div>
@@ -50,6 +50,10 @@
 
 <script setup lang="ts">
 import { Switch } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 defineProps<{
   currentTheme: string
@@ -64,6 +68,23 @@ const themeOptions = [
   { value: 'dark', icon: 'fas fa-moon' },
   { value: 'system', icon: 'fas fa-desktop' },
 ]
+
+const themeOptionLabelMap = computed<Record<string, { title: string; description: string }>>(
+  () => ({
+    light: {
+      title: t('settings.appearance.theme.options.light.title'),
+      description: t('settings.appearance.theme.options.light.description'),
+    },
+    dark: {
+      title: t('settings.appearance.theme.options.dark.title'),
+      description: t('settings.appearance.theme.options.dark.description'),
+    },
+    system: {
+      title: t('settings.appearance.theme.options.system.title'),
+      description: t('settings.appearance.theme.options.system.description'),
+    },
+  }),
+)
 
 function handleThemeChange(themeValue: string) {
   emit('themeChange', themeValue)

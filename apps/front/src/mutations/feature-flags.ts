@@ -6,7 +6,7 @@ import { computed, ref } from 'vue'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { toggleFeatureFlag } from '@/api/feature-flags'
 import { FEATURE_FLAGS_QUERY_KEYS } from '@/queries/feature-flags'
-import { FEATURE_FLAG_CONFIG, type FeatureFlagName } from '@/types/feature-flags'
+import type { FeatureFlagName } from '@/types/feature-flags'
 import { toast } from '@/utils/toast'
 import { useI18n } from 'vue-i18n'
 
@@ -22,6 +22,15 @@ export const useToggleFeatureFlag = defineMutation(() => {
   const enabled = ref<boolean>(false)
   const config = ref<Record<string, unknown> | null>(null)
 
+  const flagLabelMap: Record<FeatureFlagName, string> = {
+    translation: t('settings.featureFlags.translation.name'),
+    discover: t('settings.featureFlags.discover.name'),
+    pappers: t('settings.featureFlags.pappers.name'),
+    worldcheck: t('settings.featureFlags.worldcheck.name'),
+    stream: t('settings.featureFlags.stream.name'),
+    epo: t('settings.featureFlags.epo.name'),
+  }
+
   const { mutate, status, ...mutation } = useMutation({
     mutation: () =>
       toggleFeatureFlag(organizationId.value, flag.value, {
@@ -32,7 +41,7 @@ export const useToggleFeatureFlag = defineMutation(() => {
       const action = enabled.value
         ? t('settings.featureFlags.toggle.enabled')
         : t('settings.featureFlags.toggle.disabled')
-      const flagName = t(FEATURE_FLAG_CONFIG[flag.value].labelKey)
+      const flagName = flagLabelMap[flag.value] ?? flag.value
       toast.success(t('settings.featureFlags.toggle.success', { flag: flagName, action }))
 
       queryCache.invalidateQueries({

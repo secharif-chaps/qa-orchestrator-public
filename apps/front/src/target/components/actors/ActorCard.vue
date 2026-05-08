@@ -119,8 +119,19 @@ const buttonStatus = computed({
   },
 })
 
+const actorTypeLabelMap = computed<Record<string, string>>(() => ({
+  competitor: t('target.watchFiles.actors.type.competitor'),
+  customer: t('target.watchFiles.actors.type.customer'),
+  other: t('target.watchFiles.actors.type.other'),
+  parent: t('target.watchFiles.actors.type.parent'),
+  partner: t('target.watchFiles.actors.type.partner'),
+  regulator: t('target.watchFiles.actors.type.regulator'),
+  subsidiary: t('target.watchFiles.actors.type.subsidiary'),
+  supplier: t('target.watchFiles.actors.type.supplier'),
+}))
+
 const actorTypeLabel = computed(() => {
-  return t('target.watchFiles.actors.type.' + actor.type)
+  return actorTypeLabelMap.value[actor.type] ?? actor.type
 })
 
 const handleCardClick = () => {

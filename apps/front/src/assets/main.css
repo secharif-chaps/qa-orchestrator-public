@@ -846,10 +846,6 @@
     color: var(--color-sage-400);
   }
 
-  .separator {
-    border-color: var(--color-almond-100);
-  }
-
   .border-primary-focus {
     border-color: var(--color-primary);
   }
@@ -918,6 +914,14 @@
 /* Temporary fix: Reka UI popper z-index too low — waiting for Vuellar fix */
 div[data-reka-popper-content-wrapper] {
   z-index: 20 !important;
+}
+
+@utility field-required {
+  &::after {
+    content: '*';
+    color: var(--color-error);
+    margin-left: 0.125rem;
+  }
 }
 
 /* Fix: Vuellar Modal backdrop too light — semi-transparent gray hurts readability (TAR-1530) */

@@ -17,7 +17,7 @@
       <ProfileSourcedBlock
         v-for="block in digitalStrategyBlocks"
         :key="block.key"
-        :title="$t(`screen.profile.sections.digital.${block.key}`)"
+        :title="digitalFieldLabelMap[block.key] ?? block.key"
         :sourced-value="block.sourcedValue"
       />
     </div>
@@ -61,6 +61,7 @@ import { companyByIdQuery } from '@/queries/companies'
 import type { SourcedValue } from '@/types/company'
 import { useQuery } from '@pinia/colada'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 interface DigitalStrategyContent {
@@ -76,6 +77,15 @@ interface OnlineServicesContent {
 }
 
 const route = useRoute()
+const { t } = useI18n()
+
+const digitalFieldLabelMap: Record<string, string> = {
+  overallStrategy: t('screen.profile.sections.digital.overallStrategy'),
+  digitalTransformation: t('screen.profile.sections.digital.digitalTransformation'),
+  eCommerceCapabilities: t('screen.profile.sections.digital.eCommerceCapabilities'),
+  mobileStrategy: t('screen.profile.sections.digital.mobileStrategy'),
+  digitalMarketingApproach: t('screen.profile.sections.digital.digitalMarketingApproach'),
+}
 
 const companyId = computed(() => String((route.params as Record<string, string>).companyId || ''))
 

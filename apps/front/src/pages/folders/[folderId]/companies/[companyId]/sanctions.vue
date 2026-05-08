@@ -93,14 +93,14 @@
                 <div class="flex min-w-0 flex-1 flex-col gap-0.5">
                   <div class="flex items-center gap-2">
                     <span class="text-sm font-semibold">{{ item.entity_name }}</span>
-                    <span v-if="item.country" class="text-neutral-black-font text-xs">
-                      ({{ item.country }})
-                    </span>
+                    <span v-if="item.country" class="text-neutral-black-font text-xs">{{
+                      t('common.inParentheses', { value: item.country })
+                    }}</span>
                     <span
                       v-if="item.is_onu_eu_ofac"
                       class="bg-error-light text-error-light-content rounded px-1.5 py-0.5 text-[10px] font-bold uppercase"
                     >
-                      ONU/EU/OFAC
+                      {{ t('screen.company.sanctions.onuEuOfacBadge') }}
                     </span>
                   </div>
                   <span v-if="item.sanction_type" class="text-neutral-black-font text-xs">
@@ -130,31 +130,31 @@
               </p>
 
               <div v-if="item.sanction_nature" class="flex items-start gap-2">
-                <span class="text-neutral-black-font text-xs font-medium">
-                  {{ $t('screen.profile.sections.sanctions.nature') }}:
-                </span>
+                <span class="text-neutral-black-font text-xs font-medium">{{
+                  $t('screen.profile.sections.sanctions.nature')
+                }}</span>
                 <span class="text-neutral-black-font text-xs">{{ item.sanction_nature }}</span>
               </div>
 
               <div v-if="item.source_code" class="flex items-start gap-2">
-                <span class="text-neutral-black-font text-xs font-medium">
-                  {{ $t('screen.profile.sections.sanctions.sourceCode') }}:
-                </span>
+                <span class="text-neutral-black-font text-xs font-medium">{{
+                  $t('screen.profile.sections.sanctions.sourceCode')
+                }}</span>
                 <span class="text-neutral-black-font font-mono text-xs">{{
                   item.source_code
                 }}</span>
               </div>
 
               <div v-if="item.risk_justification" class="flex items-start gap-2">
-                <span class="text-neutral-black-font text-xs font-medium">
-                  {{ $t('screen.profile.sections.sanctions.riskJustification') }}:
-                </span>
+                <span class="text-neutral-black-font text-xs font-medium">{{
+                  $t('screen.profile.sections.sanctions.riskJustification')
+                }}</span>
                 <span class="text-neutral-black-font text-xs">{{ item.risk_justification }}</span>
               </div>
 
               <div v-if="item.weblinks?.length" class="flex flex-col gap-1">
                 <span class="text-neutral-black-font text-xs font-medium">
-                  {{ $t('screen.profile.sections.sanctions.sources') }}:
+                  {{ $t('screen.profile.sections.sanctions.sources') }}
                 </span>
                 <div class="flex flex-col gap-1">
                   <a

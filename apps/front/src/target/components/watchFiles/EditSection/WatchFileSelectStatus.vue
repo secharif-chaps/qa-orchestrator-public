@@ -26,7 +26,7 @@
           </template>
           <OPopper v-if="isDisabledStatus(option)" placement="top">
             <template #tooltip>
-              <div v-sanitize-html="disabledStatusTooltip" class="tooltip-content" />
+              <span>{{ disabledStatusTooltip }}</span>
             </template>
             <span class="cursor-not-allowed">
               {{ statusLabel(option) }}
@@ -142,15 +142,3 @@ async function onStatusChange(newStatus: WatchFileStatus) {
   showStatusModal(watchFile, newStatus)
 }
 </script>
-
-<style scoped>
-.tooltip-content :deep(ul) {
-  list-style-type: disc;
-  padding-left: 1.25rem;
-  margin-top: 0.25rem;
-}
-
-.tooltip-content :deep(li) {
-  margin-bottom: 0.25rem;
-}
-</style>

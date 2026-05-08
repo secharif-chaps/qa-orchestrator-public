@@ -35,7 +35,7 @@
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-neutral-black-font">{{ $t('common.folder.name') }}:</span>
+              <span class="text-neutral-black-font">{{ $t('common.folder.nameLabel') }}</span>
               <span class="font-medium">{{ folderToRestore.name }}</span>
             </div>
           </div>

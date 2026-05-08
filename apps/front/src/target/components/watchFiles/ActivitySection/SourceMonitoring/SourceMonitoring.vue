@@ -89,16 +89,35 @@ const getActivityDescription = (activity: SourceActivity): SourceActivityDescrip
 
   switch (actionType) {
     case SourceActionType.SOURCE_CONNECTED:
-    case SourceActionType.SOURCE_ERROR:
-    case SourceActionType.SOURCE_RECOVERED:
-    case SourceActionType.SOURCE_CONFIG_UPDATED:
-    case SourceActionType.SOURCE_ADDED_TO_WATCHFILE:
-    case SourceActionType.SOURCE_STATUS_CHANGED:
       return createSourceActivityDescription(
-        `target.watchFiles.activity.sources.history.${actionType}`,
+        'target.watchFiles.activity.sources.history.source_connected',
         activity,
       )
-
+    case SourceActionType.SOURCE_ERROR:
+      return createSourceActivityDescription(
+        'target.watchFiles.activity.sources.history.source_error',
+        activity,
+      )
+    case SourceActionType.SOURCE_RECOVERED:
+      return createSourceActivityDescription(
+        'target.watchFiles.activity.sources.history.source_recovered',
+        activity,
+      )
+    case SourceActionType.SOURCE_CONFIG_UPDATED:
+      return createSourceActivityDescription(
+        'target.watchFiles.activity.sources.history.source_config_updated',
+        activity,
+      )
+    case SourceActionType.SOURCE_ADDED_TO_WATCHFILE:
+      return createSourceActivityDescription(
+        'target.watchFiles.activity.sources.history.source_added_to_watchfile',
+        activity,
+      )
+    case SourceActionType.SOURCE_STATUS_CHANGED:
+      return createSourceActivityDescription(
+        'target.watchFiles.activity.sources.history.source_status_changed',
+        activity,
+      )
     default:
       return createSourceActivityDescription(
         'target.watchFiles.activity.sources.history.unknown_action',

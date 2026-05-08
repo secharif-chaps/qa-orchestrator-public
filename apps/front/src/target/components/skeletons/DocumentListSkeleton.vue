@@ -8,11 +8,11 @@
         </div>
 
         <div class="min-w-0 flex-1">
-          <div class="mb-2 h-4 animate-pulse rounded bg-gray-200" style="width: 60%"></div>
+          <div class="mb-2 h-4 w-3/5 animate-pulse rounded bg-gray-200"></div>
           <div class="flex items-center gap-2">
-            <div class="h-3 animate-pulse rounded bg-gray-200" style="width: 10%"></div>
+            <div class="h-3 w-[10%] animate-pulse rounded bg-gray-200"></div>
             <div class="h-1 w-1 rounded-full bg-gray-200"></div>
-            <div class="h-3 animate-pulse rounded bg-gray-200" style="width: 20%"></div>
+            <div class="h-3 w-1/5 animate-pulse rounded bg-gray-200"></div>
           </div>
         </div>
 

@@ -54,11 +54,11 @@
       <div class="flex items-center gap-2">
         <Tag
           :icon="stream.status === 'active' ? 'fa-play' : 'fa-times'"
-          :label="t(`stream.status.${stream.status}`)"
+          :label="streamStatusLabel[stream.status]"
           size="sm"
           color="sage"
         />
-        <Tag :label="t(`stream.channel.${stream.channel_type}`)" size="sm" color="sage" />
+        <Tag :label="channelLabel[stream.channel_type]" size="sm" color="sage" />
       </div>
     </div>
   </div>
@@ -91,6 +91,19 @@ const { t } = useI18n()
 const { formatRelativeTime } = useDateTime()
 const router = useRouter()
 const route = useRoute()
+
+const streamStatusLabel = computed<Record<StreamRead['status'], string>>(() => ({
+  active: t('stream.status.active'),
+  archived: t('stream.status.archived'),
+  draft: t('stream.status.draft'),
+  paused: t('stream.status.paused'),
+}))
+
+const channelLabel = computed<Record<ChannelType, string>>(() => ({
+  slack_webhook: t('stream.channel.slack_webhook'),
+  teams: t('stream.channel.teams'),
+  webhook: t('stream.channel.webhook'),
+}))
 
 const navigateToEdit = () => {
   const folderId = (route.params as Record<string, string>).folderId

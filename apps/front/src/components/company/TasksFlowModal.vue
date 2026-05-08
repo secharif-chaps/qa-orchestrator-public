@@ -310,10 +310,38 @@ const taskTypes: TaskType[] = [
   'sanctions',
 ]
 
+const taskTypeNameMap: Record<TaskType, string> = {
+  profile: t('screen.company.tasks.types.profile.name'),
+  digital: t('screen.company.tasks.types.digital.name'),
+  csr: t('screen.company.tasks.types.csr.name'),
+  press: t('screen.company.tasks.types.press.name'),
+  timeline: t('screen.company.tasks.types.timeline.name'),
+  products: t('screen.company.tasks.types.products.name'),
+  team: t('screen.company.tasks.types.team.name'),
+  jobs: t('screen.company.tasks.types.jobs.name'),
+  corporate_structure: t('screen.company.tasks.types.corporate_structure.name'),
+  sanctions: t('screen.company.tasks.types.sanctions.name'),
+  financial: t('screen.company.tasks.types.financial.name'),
+}
+
+const taskTypeDescriptionMap: Record<TaskType, string> = {
+  profile: t('screen.company.tasks.types.profile.description'),
+  digital: t('screen.company.tasks.types.digital.description'),
+  csr: t('screen.company.tasks.types.csr.description'),
+  press: t('screen.company.tasks.types.press.description'),
+  timeline: t('screen.company.tasks.types.timeline.description'),
+  products: t('screen.company.tasks.types.products.description'),
+  team: t('screen.company.tasks.types.team.description'),
+  jobs: t('screen.company.tasks.types.jobs.description'),
+  corporate_structure: t('screen.company.tasks.types.corporate_structure.description'),
+  sanctions: t('screen.company.tasks.types.sanctions.description'),
+  financial: t('screen.company.tasks.types.financial.description'),
+}
+
 const taskConfigs: TaskConfig[] = taskTypes.map((type) => ({
   type,
-  name: t(`screen.company.tasks.types.${type}.name`),
-  description: t(`screen.company.tasks.types.${type}.description`),
+  name: taskTypeNameMap[type],
+  description: taskTypeDescriptionMap[type],
 }))
 
 const { mutate: restart } = useRestartTask()

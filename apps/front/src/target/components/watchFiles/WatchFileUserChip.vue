@@ -9,7 +9,7 @@
       :aria-label="$t('target.watchFiles.user.remove')"
       @click="$emit('remove', user.id)"
     >
-      &times;
+      {{ $t('common.closeIcon') }}
     </button>
   </span>
 </template>

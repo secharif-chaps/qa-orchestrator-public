@@ -17,23 +17,200 @@
     </i18n-t>
   </div>
 
-  <i18n-t v-else scope="global" :keypath="keypath" tag="span">
-    <template #userName>
-      <span class="font-semibold">{{ userName }}</span>
-    </template>
-    <template #sourceName>
-      <span class="font-semibold">{{ sourceName }}</span>
-    </template>
-    <template #actorName>
-      <span class="font-semibold">{{ actorName }}</span>
-    </template>
-    <template #userEmail>
-      <span class="font-semibold">{{ userEmail }}</span>
-    </template>
-    <template #role>
-      <span class="italic">{{ roleText }}</span>
-    </template>
+  <i18n-t
+    v-else-if="activity.actionType === 'created'"
+    scope="global"
+    keypath="target.watchFiles.activity.history.watch_file_created"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
   </i18n-t>
+  <i18n-t
+    v-else-if="activity.actionType === 'updated'"
+    scope="global"
+    keypath="target.watchFiles.activity.history.watch_file_updated"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+  </i18n-t>
+  <i18n-t
+    v-else-if="
+      activity.actionType === 'source_status_changed' &&
+      (activity.actionData as SourceStatusChangedActionData).status === 'active'
+    "
+    scope="global"
+    keypath="target.watchFiles.activity.history.source_status_changed_active"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+    <template #sourceName
+      ><span class="font-semibold">{{ sourceName }}</span></template
+    >
+  </i18n-t>
+  <i18n-t
+    v-else-if="
+      activity.actionType === 'source_status_changed' &&
+      (activity.actionData as SourceStatusChangedActionData).status === 'inactive'
+    "
+    scope="global"
+    keypath="target.watchFiles.activity.history.source_status_changed_inactive"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+    <template #sourceName
+      ><span class="font-semibold">{{ sourceName }}</span></template
+    >
+  </i18n-t>
+  <i18n-t
+    v-else-if="
+      activity.actionType === 'source_status_changed' &&
+      (activity.actionData as SourceStatusChangedActionData).status === 'auto_disabled'
+    "
+    scope="global"
+    keypath="target.watchFiles.activity.history.source_status_changed_auto_disabled"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+    <template #sourceName
+      ><span class="font-semibold">{{ sourceName }}</span></template
+    >
+  </i18n-t>
+  <i18n-t
+    v-else-if="
+      activity.actionType === 'actor_status_changed' &&
+      (activity.actionData as ActorStatusChangedActionData).status === 'active'
+    "
+    scope="global"
+    keypath="target.watchFiles.activity.history.actor_status_changed_active"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+    <template #actorName
+      ><span class="font-semibold">{{ actorName }}</span></template
+    >
+  </i18n-t>
+  <i18n-t
+    v-else-if="
+      activity.actionType === 'actor_status_changed' &&
+      (activity.actionData as ActorStatusChangedActionData).status === 'inactive'
+    "
+    scope="global"
+    keypath="target.watchFiles.activity.history.actor_status_changed_inactive"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+    <template #actorName
+      ><span class="font-semibold">{{ actorName }}</span></template
+    >
+  </i18n-t>
+  <i18n-t
+    v-else-if="
+      activity.actionType === 'shared_mode_changed' &&
+      (activity.actionData as SharedModeChangedActionData).new_value ===
+        WatchFileUserAccessState.NO_ACCESS
+    "
+    scope="global"
+    keypath="target.watchFiles.activity.history.shared_mode_removed"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+    <template #userEmail
+      ><span class="font-semibold">{{ userEmail }}</span></template
+    >
+  </i18n-t>
+  <i18n-t
+    v-else-if="
+      activity.actionType === 'shared_mode_changed' &&
+      (activity.actionData as SharedModeChangedActionData).new_value ===
+        WatchFileUserAccessState.OWNER
+    "
+    scope="global"
+    keypath="target.watchFiles.activity.history.shared_mode_owner"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+  </i18n-t>
+  <i18n-t
+    v-else-if="activity.actionType === 'shared_mode_changed'"
+    scope="global"
+    keypath="target.watchFiles.activity.history.shared_mode_changed"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+    <template #userEmail
+      ><span class="font-semibold">{{ userEmail }}</span></template
+    >
+    <template #role
+      ><span class="italic">{{ roleText }}</span></template
+    >
+  </i18n-t>
+  <i18n-t
+    v-else-if="activity.actionType === 'actor_added'"
+    scope="global"
+    keypath="target.watchFiles.activity.history.actor_added"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+    <template #actorName
+      ><span class="font-semibold">{{ actorName }}</span></template
+    >
+  </i18n-t>
+  <i18n-t
+    v-else-if="activity.actionType === 'source_added'"
+    scope="global"
+    keypath="target.watchFiles.activity.history.source_added"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+    <template #sourceName
+      ><span class="font-semibold">{{ sourceName }}</span></template
+    >
+  </i18n-t>
+  <i18n-t
+    v-else-if="activity.actionType === 'monitoring_type_detected'"
+    scope="global"
+    keypath="target.watchFiles.activity.history.monitoring_type_detected"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+  </i18n-t>
+  <i18n-t
+    v-else-if="activity.actionType === 'reference_subject_detected'"
+    scope="global"
+    keypath="target.watchFiles.activity.history.reference_subject_detected"
+    tag="span"
+  >
+    <template #userName
+      ><span class="font-semibold">{{ userName }}</span></template
+    >
+  </i18n-t>
+  <span v-else />
 </template>
 
 <script setup lang="ts">
@@ -61,12 +238,18 @@ interface Props {
 const props = defineProps<Props>()
 const { t } = useI18n()
 
+const headerStatusLabelMap: Record<string, string> = {
+  draft: t('target.watchFiles.header_section.status.draft'),
+  enabled: t('target.watchFiles.header_section.status.enabled'),
+  archived: t('target.watchFiles.header_section.status.archived'),
+}
+
 const userName = computed(() => props.activity.user.displayName)
 
 const oldStatusText = computed(() => {
   if (props.activity.actionType === 'status_changed') {
     const statusData = props.activity.actionData as StatusChangedActionData
-    return t('target.watchFiles.header_section.status.' + statusData.old_status)
+    return headerStatusLabelMap[statusData.old_status] ?? statusData.old_status
   }
   return ''
 })
@@ -74,7 +257,7 @@ const oldStatusText = computed(() => {
 const newStatusText = computed(() => {
   if (props.activity.actionType === 'status_changed') {
     const statusData = props.activity.actionData as StatusChangedActionData
-    return t('target.watchFiles.header_section.status.' + statusData.new_status)
+    return headerStatusLabelMap[statusData.new_status] ?? statusData.new_status
   }
   return ''
 })
@@ -108,45 +291,6 @@ function getStatusIcon(status: WatchFileStatus) {
   }
 }
 
-const keypath = computed(() => {
-  const { actionType } = props.activity
-
-  switch (actionType) {
-    case 'created':
-      return 'target.watchFiles.activity.history.watch_file_created'
-    case 'updated':
-      return 'target.watchFiles.activity.history.watch_file_updated'
-    case 'source_status_changed': {
-      const sourceData = props.activity.actionData as SourceStatusChangedActionData
-      return 'target.watchFiles.activity.history.source_status_changed_' + sourceData.status
-    }
-    case 'actor_status_changed': {
-      const actorData = props.activity.actionData as ActorStatusChangedActionData
-      return 'target.watchFiles.activity.history.actor_status_changed_' + actorData.status
-    }
-    case 'shared_mode_changed': {
-      const sharedData = props.activity.actionData as SharedModeChangedActionData
-      if (sharedData.new_value === WatchFileUserAccessState.NO_ACCESS) {
-        return 'target.watchFiles.activity.history.shared_mode_removed'
-      }
-      if (sharedData.new_value === WatchFileUserAccessState.OWNER) {
-        return 'target.watchFiles.activity.history.shared_mode_owner'
-      }
-      return 'target.watchFiles.activity.history.shared_mode_changed'
-    }
-    case 'actor_added':
-      return 'target.watchFiles.activity.history.actor_added'
-    case 'source_added':
-      return 'target.watchFiles.activity.history.source_added'
-    case 'monitoring_type_detected':
-      return 'target.watchFiles.activity.history.monitoring_type_detected'
-    case 'reference_subject_detected':
-      return 'target.watchFiles.activity.history.reference_subject_detected'
-    default:
-      return ''
-  }
-})
-
 const sourceName = computed(() => {
   if (props.activity.actionType === 'source_status_changed') {
     const sourceData = props.activity.actionData as SourceStatusChangedActionData
@@ -174,7 +318,7 @@ const userEmail = computed(() => {
 const roleText = computed(() => {
   if (props.activity.actionType === 'shared_mode_changed') {
     const sharedData = props.activity.actionData as SharedModeChangedActionData
-    return t('target.watchFiles.access.' + sharedData.new_value)
+    return t('target.watchFiles.access', { role: sharedData.new_value })
   }
   return ''
 })

@@ -17,7 +17,7 @@
 
     <template #cell(channel_type)="{ value }">
       <td class="px-4 py-3">
-        <Tag :label="t(`stream.channel.${value}`)" size="sm" />
+        <Tag :label="channelLabel[value as ChannelType]" size="sm" />
       </td>
     </template>
 
@@ -25,7 +25,7 @@
       <td class="px-4 py-3">
         <Tag
           :icon="value === 'active' ? 'fa-play' : 'fa-times'"
-          :label="t(`stream.status.${value}`)"
+          :label="streamStatusLabel[value as StreamRead['status']]"
           size="sm"
           color="sage"
         />
@@ -95,6 +95,19 @@ const { t } = useI18n()
 const router = useRouter()
 const { formatRelativeTime } = useDateTime()
 const route = useRoute()
+
+const streamStatusLabel = computed<Record<StreamRead['status'], string>>(() => ({
+  active: t('stream.status.active'),
+  archived: t('stream.status.archived'),
+  draft: t('stream.status.draft'),
+  paused: t('stream.status.paused'),
+}))
+
+const channelLabel = computed<Record<ChannelType, string>>(() => ({
+  slack_webhook: t('stream.channel.slack_webhook'),
+  teams: t('stream.channel.teams'),
+  webhook: t('stream.channel.webhook'),
+}))
 
 const columns = computed(() => [
   { key: 'name', label: t('stream.list.columns.name') },

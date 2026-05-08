@@ -61,14 +61,15 @@ export const extractUsedKeys = (sourceFiles, allKnownKeys) => {
   const usedKeys = new Set()
   const prefixes = new Set()
 
-  // Patterns: t('key'), $t('key'), t("key"), t(`key`), t(`prefix.${...}`)
-  const staticPattern = /\$?t\(\s*['"]([^'"]+)['"]/g
-  const staticBacktickPattern = /\$?t\(\s*`([^`$]+)`/g
-  const dynamicPattern = /\$?t\(\s*`([^`]*)\$\{/g
+  // Patterns: t('key'), $t('key'), tm('key') (message array/object), plus backtick and dynamic forms.
+  const staticPattern = /\$?tm?\(\s*['"]([^'"]+)['"]/g
+  const staticBacktickPattern = /\$?tm?\(\s*`([^`$]+)`/g
+  const dynamicPattern = /\$?tm?\(\s*`([^`]*)\$\{/g
 
   // String literals that look like i18n keys (contain dots, used as props/values)
   // Matches: 'some.dotted.key' or "some.dotted.key" but NOT inside t() calls
-  const stringLiteralPattern = /['"]([a-zA-Z][a-zA-Z0-9]*(?:\.[a-zA-Z][a-zA-Z0-9]*){1,5})['"]/g
+  // Identifier segments allow underscores (snake_case keys are common in locales).
+  const stringLiteralPattern = /['"]([a-zA-Z][a-zA-Z0-9_]*(?:\.[a-zA-Z][a-zA-Z0-9_]*){1,5})['"]/g
 
   for (const file of sourceFiles) {
     const content = readFileSync(file, 'utf-8')
