@@ -7,11 +7,16 @@ tasks:
     cmd: bash ../../infra/scripts/setup-yarnrc.sh
 
   lint:
-    desc: Run all linters (ESLint, Prettier, Stylelint)
+    desc: Run all linters (ESLint, Prettier, Stylelint, i18n ICU)
     cmds:
       - task: lint:eslint
+      - task: lint:i18n
       - task: lint:prettier
       - task: lint:stylelint
+
+  lint:i18n:
+    desc: Validate ICU MessageFormat syntax in locale files
+    cmd: npx eslint --config eslint.i18n.config.js src/i18n/locales/
 
   lint:eslint:
     desc: Check TypeScript/Vue code style with ESLint

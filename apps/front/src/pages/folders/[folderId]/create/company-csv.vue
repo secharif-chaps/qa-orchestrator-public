@@ -253,8 +253,15 @@
               :key="`${error.row_number}-${error.field}`"
               class="bg-error/5 border-error/20 rounded-sm border p-3 text-sm"
             >
-              <span class="font-medium">Row {{ error.row_number }}</span>
-              - {{ error.field }}: {{ error.error }}
+              <span class="font-medium">{{
+                t('screen.csv.upload.validation.rowLabel', { row: error.row_number })
+              }}</span>
+              {{
+                t('screen.csv.upload.validation.fieldError', {
+                  field: error.field,
+                  error: error.error,
+                })
+              }}
             </div>
           </div>
 
@@ -324,8 +331,12 @@
             :key="result.row_number"
             class="bg-error/5 border-error/20 rounded-sm border p-3 text-sm"
           >
-            <span class="font-medium">Row {{ result.row_number }}</span>
-            - {{ result.name }}: {{ result.error }}
+            <span class="font-medium">{{
+              t('screen.csv.upload.validation.rowLabel', { row: result.row_number })
+            }}</span>
+            {{
+              t('screen.csv.upload.results.nameError', { name: result.name, error: result.error })
+            }}
           </div>
         </div>
 

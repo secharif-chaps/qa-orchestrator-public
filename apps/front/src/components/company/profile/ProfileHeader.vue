@@ -24,7 +24,9 @@
               {{ company.name }}
             </h1>
             <p v-if="company.profile?.catchphrase" class="text-neutral-black-font text-sm italic">
-              "{{ getSourcedValue(company.profile?.catchphrase) }}"
+              <span>{{
+                $t('common.quoted', { value: getSourcedValue(company.profile?.catchphrase) })
+              }}</span>
               <Source :sourced-value="company?.profile?.catchphrase" />
             </p>
           </div>

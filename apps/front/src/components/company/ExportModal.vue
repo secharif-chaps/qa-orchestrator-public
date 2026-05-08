@@ -111,10 +111,37 @@ const optionIds = [
   'press',
 ] as const
 
+const exportOptionLabels: Record<string, string> = {
+  titleSlide: t('screen.company.export.modal.options.titleSlide.label'),
+  profile: t('screen.company.export.modal.options.profile.label'),
+  productsServices: t('screen.company.export.modal.options.productsServices.label'),
+  targetAudience: t('screen.company.export.modal.options.targetAudience.label'),
+  digitalStrategy: t('screen.company.export.modal.options.digitalStrategy.label'),
+  csr: t('screen.company.export.modal.options.csr.label'),
+  news: t('screen.company.export.modal.options.news.label'),
+  timeline: t('screen.company.export.modal.options.timeline.label'),
+  team: t('screen.company.export.modal.options.team.label'),
+  jobs: t('screen.company.export.modal.options.jobs.label'),
+  press: t('screen.company.export.modal.options.press.label'),
+}
+
+const exportOptionDescriptions: Record<string, string> = {
+  titleSlide: t('screen.company.export.modal.options.titleSlide.description'),
+  profile: t('screen.company.export.modal.options.profile.description'),
+  productsServices: t('screen.company.export.modal.options.productsServices.description'),
+  targetAudience: t('screen.company.export.modal.options.targetAudience.description'),
+  digitalStrategy: t('screen.company.export.modal.options.digitalStrategy.description'),
+  csr: t('screen.company.export.modal.options.csr.description'),
+  news: t('screen.company.export.modal.options.news.description'),
+  timeline: t('screen.company.export.modal.options.timeline.description'),
+  team: t('screen.company.export.modal.options.team.description'),
+  jobs: t('screen.company.export.modal.options.jobs.description'),
+  press: t('screen.company.export.modal.options.press.description'),
+}
+
 // Helper to get translated option
-const getOptionLabel = (id: string) => t(`screen.company.export.modal.options.${id}.label`)
-const getOptionDescription = (id: string) =>
-  t(`screen.company.export.modal.options.${id}.description`)
+const getOptionLabel = (id: string) => exportOptionLabels[id] ?? id
+const getOptionDescription = (id: string) => exportOptionDescriptions[id] ?? ''
 
 // Default export options with dynamic labels
 const createDefaultOptions = () =>

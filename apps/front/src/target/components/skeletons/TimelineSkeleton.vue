@@ -1,7 +1,7 @@
 <template>
   <div class="flex w-full flex-1">
     <!-- Vertical line -->
-    <div class="absolute top-0 left-6 z-10 w-0.5 bg-gray-200" style="height: 100%"></div>
+    <div class="absolute top-0 left-6 z-10 h-full w-0.5 bg-gray-200"></div>
     <div ref="timelineRef" class="relative w-full pl-10">
       <!-- Simulate 3 days of activities -->
       <template v-for="dayIndex in 2" :key="dayIndex">

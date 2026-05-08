@@ -55,7 +55,13 @@
             class="bg-error/10 rounded-sm p-3 text-sm"
           >
             <p class="text-error-light-content font-medium">
-              Row {{ error.row_index + 1 }}: {{ error.username }} ({{ error.email }})
+              {{
+                t('admin.import.errorRow', {
+                  row: error.row_index + 1,
+                  username: error.username,
+                  email: error.email,
+                })
+              }}
             </p>
             <p class="text-error-light-content/80">{{ error.error_message }}</p>
           </div>
@@ -131,7 +137,7 @@ defineEmits<{
   done: []
 }>()
 
-useI18n()
+const { t } = useI18n()
 
 // State
 const showErrors = ref(false)

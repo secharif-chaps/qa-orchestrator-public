@@ -67,7 +67,7 @@
             variant="tertiary"
             size="sm"
             :loading="loading"
-            :label="$t('common.sidebar.chapse.loadMore')"
+            :label="$t('sidebar.chapse.loadMore')"
             block
             @click="$emit('load-more')"
           />
@@ -145,28 +145,28 @@ const groupedConversations = computed<ConversationGroup[]>(() => {
   const result: ConversationGroup[] = []
 
   if (groups.today.length > 0) {
-    result.push({ label: t('common.sidebar.chapse.dateGroups.today'), conversations: groups.today })
+    result.push({ label: t('sidebar.chapse.dateGroups.today'), conversations: groups.today })
   }
   if (groups.yesterday.length > 0) {
     result.push({
-      label: t('common.sidebar.chapse.dateGroups.yesterday'),
+      label: t('sidebar.chapse.dateGroups.yesterday'),
       conversations: groups.yesterday,
     })
   }
   if (groups.lastWeek.length > 0) {
     result.push({
-      label: t('common.sidebar.chapse.dateGroups.lastWeek'),
+      label: t('sidebar.chapse.dateGroups.lastWeek'),
       conversations: groups.lastWeek,
     })
   }
   if (groups.lastMonth.length > 0) {
     result.push({
-      label: t('common.sidebar.chapse.dateGroups.lastMonth'),
+      label: t('sidebar.chapse.dateGroups.lastMonth'),
       conversations: groups.lastMonth,
     })
   }
   if (groups.older.length > 0) {
-    result.push({ label: t('common.sidebar.chapse.dateGroups.older'), conversations: groups.older })
+    result.push({ label: t('sidebar.chapse.dateGroups.older'), conversations: groups.older })
   }
 
   return result

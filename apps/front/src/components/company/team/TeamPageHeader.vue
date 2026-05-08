@@ -2,9 +2,9 @@
   <div class="gap-2xs flex flex-wrap">
     <StatCard
       v-for="stat in stats"
-      :key="stat.labelKey"
+      :key="stat.label"
       :icon="stat.icon"
-      :label="$t(stat.labelKey)"
+      :label="stat.label"
       :value="stat.value"
       :color="stat.color"
     />
@@ -16,6 +16,9 @@ import StatCard from '@/components/ui/StatCard.vue'
 import type { TeamMember } from '@/types/company'
 import type { StatCardColor } from '@/types/ui'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   team: TeamMember[]
@@ -88,29 +91,29 @@ const departmentsCount = computed(() => {
   return departments.size
 })
 
-const stats = computed<{ icon: string; labelKey: string; value: number; color: StatCardColor }[]>(
+const stats = computed<{ icon: string; label: string; value: number; color: StatCardColor }[]>(
   () => [
     {
       icon: 'fa-users',
-      labelKey: 'screen.team.totalMembers',
+      label: t('screen.team.totalMembers'),
       value: totalMembers.value,
       color: 'sage',
     },
     {
       icon: 'fa-user-tie',
-      labelKey: 'screen.team.executives',
+      label: t('screen.team.executives'),
       value: executivesCount.value,
       color: 'indigo',
     },
     {
       icon: 'fa-user-cog',
-      labelKey: 'screen.team.managers',
+      label: t('screen.team.managers'),
       value: managersCount.value,
       color: 'blue',
     },
     {
       icon: 'fa-building',
-      labelKey: 'screen.team.departments',
+      label: t('screen.team.departments'),
       value: departmentsCount.value,
       color: 'cherry',
     },

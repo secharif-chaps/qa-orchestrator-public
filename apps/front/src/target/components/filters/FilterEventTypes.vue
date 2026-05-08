@@ -17,8 +17,8 @@
         name="filter-eventTypes"
       >
         <label v-if="eventType" :for="eventType" class="flex items-center gap-2 pl-2">
-          <span>{{ $t(`target.watchFiles.analysis.event.type.${eventType}`) }}</span>
-          <span class="text-gray-800"> ({{ count }}) </span>
+          <span>{{ eventTypeLabelMap[eventType] ?? eventType }}</span>
+          <span class="text-gray-800">{{ $t('common.countSuffix', { count }) }}</span>
         </label>
       </Checkbox>
     </div>
@@ -34,9 +34,9 @@
       @click="displayAllEventTypes = !displayAllEventTypes"
     >
       {{
-        t(
-          `target.watchFiles.filters.type.event_types.see.${displayAllEventTypes ? 'less' : 'more'}`,
-        )
+        displayAllEventTypes
+          ? t('target.watchFiles.filters.type.event_types.see.less')
+          : t('target.watchFiles.filters.type.event_types.see.more')
       }}
     </Button>
     <Button
@@ -64,6 +64,16 @@ import { computed, ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+
+const eventTypeLabelMap = computed<Record<string, string>>(() => ({
+  commercial_business: t('target.watchFiles.analysis.event.type.commercial_business'),
+  financial: t('target.watchFiles.analysis.event.type.financial'),
+  market_competitors: t('target.watchFiles.analysis.event.type.market_competitors'),
+  organizational_hr: t('target.watchFiles.analysis.event.type.organizational_hr'),
+  regulatory_political: t('target.watchFiles.analysis.event.type.regulatory_political'),
+  societal_environmental: t('target.watchFiles.analysis.event.type.societal_environmental'),
+  technological_rd: t('target.watchFiles.analysis.event.type.technological_rd'),
+}))
 
 interface Props {
   eventTypes: AnalysisEventFacet[]

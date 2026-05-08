@@ -46,9 +46,8 @@
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Folder Name -->
           <div>
-            <label class="mb-2 block text-sm font-medium">
+            <label class="field-required mb-2 block text-sm font-medium">
               {{ $t('common.folder.form.name') }}
-              <span class="text-red-500">*</span>
             </label>
             <Input
               id="folder-name"
@@ -69,9 +68,9 @@
           <div>
             <label class="mb-2 block text-sm font-medium">
               {{ $t('common.folder.form.tags') }}
-              <span class="text-neutral-black-font ml-1 text-xs"
-                >({{ $t('common.folder.form.tagsOptional') }})</span
-              >
+              <span class="text-neutral-black-font ml-1 text-xs">
+                {{ $t('common.folder.form.tagsOptional') }}
+              </span>
             </label>
             <Input
               id="folder-tags"

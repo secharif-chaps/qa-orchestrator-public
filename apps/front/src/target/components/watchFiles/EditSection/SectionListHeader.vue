@@ -28,14 +28,14 @@
       </div>
       <Button
         v-if="(!readonly && !batchSelection) || isNew"
-        :aria-label="addButtonText"
+        :aria-label="resolvedAddButtonText"
         :icon="addIcon"
         variant="tertiary"
         size="sm"
         :disabled="isNew"
         @click="$emit('add')"
       >
-        {{ addButtonText }}
+        {{ resolvedAddButtonText }}
       </Button>
     </div>
     <span class="text-sm" :class="{ invisible: loading || error }">
@@ -53,6 +53,7 @@ interface SectionListHeaderProps {
   title: string
   refreshButtonTitle?: string
   refreshIcon?: string
+  /** Translated text for the add button. Falls back to t('common.action.add') when omitted. */
   addButtonText?: string
   addIcon?: string
   subTitle?: string
@@ -66,9 +67,12 @@ interface SectionListHeaderProps {
 
 type SectionListHeaderEmits = (e: 'refresh' | 'add') => void
 
+const { d, t } = useI18n()
+
+const props = defineProps<SectionListHeaderProps>()
+
 const {
   refreshIcon = 'fa-arrow-rotate-right',
-  addButtonText = 'common.action.add',
   addIcon = 'fa-plus',
   subTitle = '',
   refreshButtonTitle = 'target.watchFiles.aria_label_refresh_button',
@@ -78,9 +82,9 @@ const {
   error = '',
   batchSelection = false,
   isNew = false,
-} = defineProps<SectionListHeaderProps>()
+} = props
 
-const { d } = useI18n()
+const resolvedAddButtonText = computed(() => props.addButtonText ?? t('common.action.add'))
 
 const formattedLastUpdate = computed(() => {
   if (!lastUpdate) return ''

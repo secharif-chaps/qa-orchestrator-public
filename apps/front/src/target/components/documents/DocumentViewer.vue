@@ -13,10 +13,7 @@
       @click="$emit('close')"
     >
       <!-- Overlay background -->
-      <div
-        class="absolute inset-0 bg-black transition-opacity duration-300"
-        style="opacity: 0.8"
-      ></div>
+      <div class="absolute inset-0 bg-black/80 transition-opacity duration-300"></div>
 
       <!-- Modal container -->
       <div

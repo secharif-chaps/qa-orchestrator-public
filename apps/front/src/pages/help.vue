@@ -7,18 +7,13 @@
 
     <!-- No help content available -->
     <div v-if="!hasAnyHelpAccess" class="py-16 text-center">
-      <div class="text-gray-500 dark:text-gray-400">
-        <div class="mb-4 text-6xl">📚</div>
-        <h3 class="mb-2 text-xl font-medium">
+      <div class="flex flex-col items-center gap-4 text-gray-500 dark:text-gray-400">
+        <Badge variant="secondary" color="sage" icon="fa fa-book" size="lg" />
+        <h3 class="text-xl font-medium">
           {{ $t('settings.help.noContent.title') }}
         </h3>
         <p>
-          {{
-            $t(
-              'settings.help.noContent.message',
-              "You don't have access to any help sections based on your current permissions.",
-            )
-          }}
+          {{ $t('settings.help.noContent.message') }}
         </p>
       </div>
     </div>
@@ -72,9 +67,9 @@
       <!-- Main Content -->
       <div class="lg:col-span-3">
         <div v-if="!selectedSection" class="py-16 text-center">
-          <div class="text-gray-500 dark:text-gray-400">
-            <div class="mb-4 text-4xl">👈</div>
-            <h3 class="mb-2 text-lg font-medium">
+          <div class="flex flex-col items-center gap-4 text-gray-500 dark:text-gray-400">
+            <Badge variant="secondary" color="sage" icon="fa fa-hand-point-left" size="lg" />
+            <h3 class="text-lg font-medium">
               {{ $t('settings.help.selectTopic.title') }}
             </h3>
             <p>
@@ -116,7 +111,7 @@
 
 <script lang="ts" setup>
 import { usePermissionBasedHelp } from '@/composables/usePermissionBasedHelp'
-import { Select, SelectItem } from '@owlint/feathers-vue'
+import { Badge, Select, SelectItem } from '@owlint/feathers-vue'
 import { marked } from 'marked'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

@@ -10,7 +10,7 @@
         @click="showDropdown = !showDropdown"
       >
         <div class="h-6 w-6 rounded-sm" :class="getColorPreviewClasses()"></div>
-        <span class="flex-1 text-left">{{ t(`common.folder.form.colors.${selectedColor}`) }}</span>
+        <span class="flex-1 text-left">{{ colorLabelMap[selectedColor] }}</span>
         <i class="fas fa-chevron-down text-neutral-black-font"></i>
       </button>
 
@@ -32,8 +32,8 @@
               getColorClasses(color),
               selectedColor === color ? 'border-primary' : 'border-transparent',
             ]"
+            :title="colorLabelMap[color]"
             @click="selectColor(color)"
-            :title="t(`common.folder.form.colors.${color}`)"
           ></button>
         </div>
       </div>
@@ -87,6 +87,27 @@ const availableColors = [
   'rose',
   'gray',
 ]
+
+const colorLabelMap = computed<Record<string, string>>(() => ({
+  red: t('common.folder.form.colors.red'),
+  orange: t('common.folder.form.colors.orange'),
+  amber: t('common.folder.form.colors.amber'),
+  yellow: t('common.folder.form.colors.yellow'),
+  lime: t('common.folder.form.colors.lime'),
+  green: t('common.folder.form.colors.green'),
+  emerald: t('common.folder.form.colors.emerald'),
+  teal: t('common.folder.form.colors.teal'),
+  cyan: t('common.folder.form.colors.cyan'),
+  sky: t('common.folder.form.colors.sky'),
+  blue: t('common.folder.form.colors.blue'),
+  indigo: t('common.folder.form.colors.indigo'),
+  violet: t('common.folder.form.colors.violet'),
+  purple: t('common.folder.form.colors.purple'),
+  fuchsia: t('common.folder.form.colors.fuchsia'),
+  pink: t('common.folder.form.colors.pink'),
+  rose: t('common.folder.form.colors.rose'),
+  gray: t('common.folder.form.colors.gray'),
+}))
 
 const selectColor = (color: string) => {
   selectedColor.value = color

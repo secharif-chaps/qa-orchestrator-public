@@ -41,7 +41,7 @@
           <Tag size="sm">
             {{ document.source?.name }}
           </Tag>
-          <span class="text-gray-600">•</span>
+          <span class="text-gray-600">{{ $t('common.bullet') }}</span>
           <span
             class="text-gray-600"
             :class="{
@@ -64,7 +64,10 @@
         size="sm"
         :intent="document.aiValidation?.status === 'validated' ? 'success' : 'danger'"
       >
-        {{ t(`target.watchFiles.documents.aiValidationStatus.${document.aiValidation?.status}`) }}
+        {{
+          aiValidationStatusLabelMap[document.aiValidation?.status ?? ''] ??
+          document.aiValidation?.status
+        }}
       </Tag>
       <DocumentValidationButtons
         v-if="isUserEditable"
@@ -73,7 +76,7 @@
         icon-only
       />
       <Tag v-else-if="document.manualStatus" size="sm">
-        {{ t(`target.watchFiles.documents.manualStatus.${document.manualStatus}`) }}
+        {{ manualStatusLabelMap[document.manualStatus ?? ''] ?? document.manualStatus }}
       </Tag>
     </div>
   </div>
@@ -91,6 +94,16 @@ import Logo from '@/components/ui/Logo.vue'
 import DocumentValidationButtons from './DocumentValidationButtons.vue'
 
 const { t, d } = useI18n()
+
+const aiValidationStatusLabelMap: Record<string, string> = {
+  validated: t('target.watchFiles.documents.aiValidationStatus.validated'),
+  rejected: t('target.watchFiles.documents.aiValidationStatus.rejected'),
+}
+
+const manualStatusLabelMap: Record<string, string> = {
+  accept: t('target.watchFiles.documents.manualStatus.accept'),
+  refuse: t('target.watchFiles.documents.manualStatus.refuse'),
+}
 
 interface Props {
   document: Document

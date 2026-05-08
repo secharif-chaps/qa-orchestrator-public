@@ -74,7 +74,7 @@
 
     <div class="text-neutral-black-font flex items-center justify-between text-sm">
       <span>{{ $t('common.folder.item.created') }} {{ formatDate(item.created_at) }}</span>
-      <span v-if="item.owner">{{ $t('common.folder.grid.by') }} @{{ item.owner }}</span>
+      <span v-if="item.owner">{{ $t('common.folder.grid.byWithName', { name: item.owner }) }}</span>
     </div>
   </Card>
 

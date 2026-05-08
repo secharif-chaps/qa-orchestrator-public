@@ -46,16 +46,46 @@ const emit = defineEmits<{
   reset: []
 }>()
 
+const resolveDateLabel = (
+  usePublished: boolean,
+  datePattern: string,
+  params: Record<string, string>,
+): string => {
+  if (usePublished) {
+    switch (datePattern) {
+      case 'after_date':
+        return t('target.watchFiles.filters.type.dates.published.after_date', params)
+      case 'before_date':
+        return t('target.watchFiles.filters.type.dates.published.before_date', params)
+      case 'date_range':
+        return t('target.watchFiles.filters.type.dates.published.date_range', params)
+      case 'single_date':
+        return t('target.watchFiles.filters.type.dates.published.single_date', params)
+      default:
+        return ''
+    }
+  } else {
+    switch (datePattern) {
+      case 'after_date':
+        return t('target.watchFiles.filters.type.dates.collected.after_date', params)
+      case 'before_date':
+        return t('target.watchFiles.filters.type.dates.collected.before_date', params)
+      case 'date_range':
+        return t('target.watchFiles.filters.type.dates.collected.date_range', params)
+      case 'single_date':
+        return t('target.watchFiles.filters.type.dates.collected.single_date', params)
+      default:
+        return ''
+    }
+  }
+}
+
 const datesFilterLabel = computed(() => {
   if (!datesFilterCount) return ''
 
-  // For analysis, we don't have date type distinction, use a generic key
-  // For documents, use the date type to determine if it's published or collected
-  const filterTypeKey = showDateType
-    ? selectedDateType === 'publication'
-      ? 'published'
-      : 'collected'
-    : 'date' // Generic key for analysis
+  // For analysis, we don't have date type distinction; use collected keys.
+  // For documents, use the date type to determine if it's published or collected.
+  const usePublished = showDateType && selectedDateType === 'publication'
 
   let interval: {
     start: Date | undefined
@@ -84,14 +114,8 @@ const datesFilterLabel = computed(() => {
   } else if (interval.end) {
     datePattern = 'before_date'
   } else {
-    datePattern = 'no_date'
+    return ''
   }
-
-  // Use different translation keys based on whether we have date type or not
-  // For analysis (no date type), use "collected" keys as analysis is about collected documents
-  const translationKey = showDateType
-    ? `target.watchFiles.filters.type.dates.${filterTypeKey}.${datePattern}`
-    : `target.watchFiles.filters.type.dates.collected.${datePattern}`
 
   const translationParams: Record<string, string> = {}
 
@@ -102,6 +126,6 @@ const datesFilterLabel = computed(() => {
     translationParams.endDate = d(interval.end, 'short')
   }
 
-  return t(translationKey, translationParams)
+  return resolveDateLabel(usePublished, datePattern, translationParams)
 })
 </script>

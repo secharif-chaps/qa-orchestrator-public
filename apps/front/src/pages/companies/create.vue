@@ -79,9 +79,8 @@
       <form @submit.prevent="submit" class="flex flex-col gap-6">
         <!-- Folder Selection (when no folder ID in route) -->
         <div v-if="needsFolderSelection" class="flex flex-col gap-2">
-          <label for="folder-select" class="text-sm font-medium">
+          <label for="folder-select" class="field-required text-sm font-medium">
             {{ $t('screen.company.create.selectFolder') }}
-            <span class="text-error">*</span>
           </label>
           <Select
             v-model="selectedFolderOption"
@@ -102,7 +101,7 @@
                       v-if="option.createdAt && option.ownerUsername"
                       class="text-xs text-gray-600 dark:text-gray-100"
                     >
-                      — {{ formatFolderCreationInfo(option) }}
+                      {{ formatFolderCreationInfo(option) }}
                     </span>
                   </SelectItem>
                 </SelectGroup>

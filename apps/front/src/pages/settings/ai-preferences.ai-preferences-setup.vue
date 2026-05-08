@@ -34,9 +34,8 @@
 
         <!-- Goals Field -->
         <div class="space-y-2">
-          <label for="goals" class="block text-sm font-medium">
+          <label for="goals" class="field-required block text-sm font-medium">
             {{ $t('settings.aiPreferences.setup.fields.goals.label') }}
-            <span class="text-warning ml-1">*</span>
           </label>
           <textarea
             id="goals"
@@ -62,7 +61,14 @@
             <div v-else class="text-neutral-black-font text-xs">
               {{ $t('settings.aiPreferences.setup.fields.goals.helper') }}
             </div>
-            <div class="text-neutral-black-font text-xs">{{ form.goals_text.length }}/2000</div>
+            <div class="text-neutral-black-font text-xs">
+              {{
+                $t('common.countOfTotal', {
+                  count: form.goals_text.length,
+                  total: GOALS_MAX_LENGTH,
+                })
+              }}
+            </div>
           </div>
         </div>
 
@@ -70,7 +76,6 @@
         <div class="space-y-2">
           <label for="desired-output" class="block text-sm font-medium">
             {{ $t('settings.aiPreferences.setup.fields.desiredOutput.label') }}
-            <span class="text-warning ml-1">*</span>
           </label>
           <textarea
             id="desired-output"
@@ -102,7 +107,12 @@
               {{ $t('settings.aiPreferences.setup.fields.desiredOutput.helper') }}
             </div>
             <div class="text-neutral-black-font text-xs">
-              {{ form.desired_output_text.length }}/2000
+              {{
+                $t('common.countOfTotal', {
+                  count: form.desired_output_text.length,
+                  total: DESIRED_OUTPUT_MAX_LENGTH,
+                })
+              }}
             </div>
           </div>
         </div>
@@ -111,9 +121,9 @@
         <div class="space-y-2">
           <label for="documentation" class="block text-sm font-medium">
             {{ $t('settings.aiPreferences.setup.fields.documentation.label') }}
-            <span class="text-neutral-black-font ml-2 text-sm font-normal"
-              >({{ $t('settings.aiPreferences.setup.optional') }})</span
-            >
+            <span class="text-neutral-black-font ml-2 text-sm font-normal">
+              {{ $t('settings.aiPreferences.setup.optional') }}
+            </span>
           </label>
           <textarea
             id="documentation"
@@ -128,7 +138,12 @@
               {{ $t('settings.aiPreferences.setup.fields.documentation.helper') }}
             </div>
             <div class="text-neutral-black-font text-xs">
-              {{ form.documentation_text?.length || 0 }}/5000
+              {{
+                $t('common.countOfTotal', {
+                  count: form.documentation_text?.length || 0,
+                  total: DOCUMENTATION_MAX_LENGTH,
+                })
+              }}
             </div>
           </div>
         </div>
@@ -210,6 +225,10 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const { t } = useI18n()
+
+const GOALS_MAX_LENGTH = 2000
+const DESIRED_OUTPUT_MAX_LENGTH = 2000
+const DOCUMENTATION_MAX_LENGTH = 5000
 
 // Form state
 const form = reactive<AiPreferencesCreate>({

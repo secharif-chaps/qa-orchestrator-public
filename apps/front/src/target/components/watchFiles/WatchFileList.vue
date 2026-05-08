@@ -38,7 +38,6 @@
           v-if="showSortCard"
           ref="sortCard"
           class="shadow-1 rounded-2xs absolute top-full right-0 z-20 mt-2 flex w-max min-w-52 flex-col gap-2 border border-gray-100 bg-white"
-          style="width: max-content; min-width: 200px"
         >
           <div>
             <div class="text-sage-800 p-2 text-xs">
@@ -178,16 +177,16 @@
                 {{ item.newContentCount }}
                 {{ $t('target.watchFiles.new_content.documents') }}
               </RouterLink>
-              <span v-else class="text-sm text-gray-400"
-                >0 {{ $t('target.watchFiles.new_content.documents') }}</span
-              >
+              <span v-else class="text-sm text-gray-400">
+                {{ ZERO_COUNT }} {{ $t('target.watchFiles.new_content.documents') }}
+              </span>
             </td>
           </template>
           <template #cell(status)="{ item }">
             <td class="px-2 py-3 text-sm text-gray-900">
               <div class="flex items-center gap-1">
                 <Icon :icon="statusIcon(item.status)" />
-                {{ t(`target.watchFiles.status.${item.status}`) }}
+                {{ watchFileStatusLabelMap[item.status] ?? item.status }}
               </div>
             </td>
           </template>
@@ -264,6 +263,14 @@ const {
 
 const { t } = useI18n()
 const toast = useToast()
+
+const watchFileStatusLabelMap = computed<Record<string, string>>(() => ({
+  draft: t('target.watchFiles.status.draft'),
+  enabled: t('target.watchFiles.status.enabled'),
+  archived: t('target.watchFiles.status.archived'),
+}))
+
+const ZERO_COUNT = 0
 
 interface TableColumn {
   key: string

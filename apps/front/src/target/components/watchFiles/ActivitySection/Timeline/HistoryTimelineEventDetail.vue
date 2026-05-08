@@ -99,5 +99,20 @@ const emptyDescription = computed(() =>
     : t('target.watchFiles.activity.history.event.empty.sources.description'),
 )
 
-const drawerTitle = computed(() => t(`target.watchFiles.activity.history.event.${eventType}`))
+const eventTypeTitleMap: Record<string, string> = {
+  WATCHFILE_ACTOR_ADDED: t('target.watchFiles.activity.history.event.WATCHFILE_ACTOR_ADDED', 1),
+  WATCHFILE_ACTOR_STATUS_CHANGED: t(
+    'target.watchFiles.activity.history.event.WATCHFILE_ACTOR_STATUS_CHANGED',
+    1,
+  ),
+  WATCHFILE_SOURCE_ADDED: t('target.watchFiles.activity.history.event.WATCHFILE_SOURCE_ADDED', 1),
+  WATCHFILE_SOURCE_STATUS_CHANGED: t(
+    'target.watchFiles.activity.history.event.WATCHFILE_SOURCE_STATUS_CHANGED',
+    1,
+  ),
+}
+
+const drawerTitle = computed(() =>
+  eventType ? (eventTypeTitleMap[eventType] ?? String(eventType)) : '',
+)
 </script>

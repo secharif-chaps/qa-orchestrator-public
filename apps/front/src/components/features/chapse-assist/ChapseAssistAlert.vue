@@ -9,7 +9,6 @@
       alt="Chapse Assistant"
       class="h-20 w-auto object-contain"
       loading="lazy"
-      style="image-rendering: -webkit-optimize-contrast; image-rendering: smooth"
     />
 
     <!-- Content -->

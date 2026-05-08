@@ -94,6 +94,26 @@ function normalizePermissions(permissions: string[]): string[] {
  */
 export function useRoles() {
   const { t } = useI18n()
+
+  const roleLabels: Record<RoleId, { name: string; description: string }> = {
+    reader: {
+      name: t('admin.permissions.roles.reader.name'),
+      description: t('admin.permissions.roles.reader.description'),
+    },
+    writer: {
+      name: t('admin.permissions.roles.writer.name'),
+      description: t('admin.permissions.roles.writer.description'),
+    },
+    manager: {
+      name: t('admin.permissions.roles.manager.name'),
+      description: t('admin.permissions.roles.manager.description'),
+    },
+    admin: {
+      name: t('admin.permissions.roles.admin.name'),
+      description: t('admin.permissions.roles.admin.description'),
+    },
+  }
+
   /**
    * Get a user's role based on their permissions
    *
@@ -139,15 +159,15 @@ export function useRoles() {
   }
 
   /**
-   * Get all available roles
+   * Get all available roles with translated name/description
    *
    * @returns Array of all role definitions
    */
   function getAllRoles(): Role[] {
     return Object.values(ROLES).map((role: Role) => ({
       ...role,
-      name: t(`admin.permissions.roles.${role.id}.name`, role.name),
-      description: t(`admin.permissions.roles.${role.id}.description`, role.description),
+      name: roleLabels[role.id]?.name ?? role.name,
+      description: roleLabels[role.id]?.description ?? role.description,
     }))
   }
 

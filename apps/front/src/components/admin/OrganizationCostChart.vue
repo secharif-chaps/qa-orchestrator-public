@@ -42,7 +42,9 @@
           <span class="text-neutral-black-font truncate text-sm">{{
             workspace.workspace_name
           }}</span>
-          <span class="ml-auto text-sm font-medium">${{ workspace.total_cost.toFixed(2) }}</span>
+          <span class="ml-auto text-sm font-medium">{{
+            t('admin.costChart.amount', { amount: workspace.total_cost.toFixed(2) })
+          }}</span>
         </div>
       </div>
     </div>

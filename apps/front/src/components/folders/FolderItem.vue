@@ -72,7 +72,7 @@
                   size="xs"
                 />
                 <span v-if="folder.tags.length > 2" class="text-neutral-black-font text-xs">
-                  +{{ folder.tags.length - 2 }}
+                  {{ $t('common.moreCount', { count: folder.tags.length - 2 }) }}
                 </span>
               </div>
             </div>
@@ -151,9 +151,11 @@
         <span>
           <!-- Show "by @owner" for shared folders, or just owner for owned folders -->
           <template v-if="isSharedWithMe">
-            {{ $t('common.folder.grid.owner') }} @{{ folder.owner }}
+            {{ $t('common.folder.grid.ownerWithName', { name: folder.owner }) }}
           </template>
-          <template v-else> {{ $t('common.folder.grid.by') }} @{{ folder.owner }} </template>
+          <template v-else>
+            {{ $t('common.folder.grid.byWithName', { name: folder.owner }) }}
+          </template>
         </span>
       </div>
     </div>
@@ -191,15 +193,12 @@ const emit = defineEmits<{
 const isParentHovered = ref(false)
 const isChildHovered = ref(false)
 
-// Folder permissions
 const folderRef = toRef(props, 'folder')
 const { isSharedWithMe, canCreateItems } = useFolderPermissions(folderRef)
 
-// Use mutation for optimistic UI
 const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } =
   useToggleFolderFavorite()
 
-// Compute share role label for display
 const shareRoleLabel = computed(() => {
   if (!props.folder.share_role) return ''
   return props.folder.share_role === 'writer'
@@ -207,7 +206,6 @@ const shareRoleLabel = computed(() => {
     : t('common.folder.share.reader')
 })
 
-// Compute folder color classes based on the color prop
 const folderColorClasses = computed(() => {
   const color = props.folder?.color || 'blue'
   const colorMap: Record<string, string> = {
@@ -233,25 +231,20 @@ const folderColorClasses = computed(() => {
   return colorMap[color] || colorMap.blue
 })
 
-// Compute folder icon
 const folderIcon = computed(() => {
   return props.folder.icon || 'fas fa-folder'
 })
 
-// Compute item count
 const itemCount = computed(() => {
   return props.folder.items?.length || props.folder.items_count || 0
 })
 
-// Compute preview items (show up to 4 items)
 const previewItems = computed(() => {
   if (!props.folder.items || props.folder.items.length === 0) return []
-
   return props.folder.items
 })
 
 function handleCardClick() {
-  // Only emit viewFolder if not clicking on the favorite button
   emit('viewFolder', props.folder.id)
 }
 
@@ -265,15 +258,12 @@ function handleItemClick(itemId: string, index: number) {
 
 async function toggleFavorite() {
   if (isTogglingFavorite.value) return
-
-  const shouldBeFavorite = !props.folder.is_favorite
   await toggleFavoriteMutation({
     folderId: props.folder.id,
-    shouldBeFavorite,
+    shouldBeFavorite: !props.folder.is_favorite,
   })
 }
 
-// Suppress unused variable warnings for hover refs used only in template bindings
 void isParentHovered.value
 void isChildHovered.value
 </script>

@@ -41,12 +41,16 @@ export const useChangeActorStatus = (options?: CallbackMutations<unknown>) => {
       options?.onSuccess?.(data)
 
       const sourceCount = sourceIds?.length || 0
-      const messageKey =
+      const actorSuccessMsg =
         status === ActorStatus.ACTIVE
-          ? 'target.watchFiles.actors.deactivation_modal.success.activated'
-          : 'target.watchFiles.actors.deactivation_modal.success.deactivated'
+          ? t('target.watchFiles.actors.deactivation_modal.success.activated', {
+              count: sourceCount,
+            })
+          : t('target.watchFiles.actors.deactivation_modal.success.deactivated', {
+              count: sourceCount,
+            })
 
-      toast.success(t(messageKey, sourceCount))
+      toast.success(actorSuccessMsg)
 
       queryCache.invalidateQueries({
         key: ACTOR_QUERY_KEYS.byWatchFile(watchFileId),
@@ -118,11 +122,13 @@ export const useBatchChangeActorStatus = (options?: CallbackMutations<unknown>) 
       const failedCount = data.failed
 
       if (data.success || successCount > 0) {
-        toast.success(t('target.watchFiles.actors.batch_change.success', successCount))
+        toast.success(t('target.watchFiles.actors.batch_change.success', { count: successCount }))
       }
 
       if (failedCount > 0) {
-        toast.error(t('target.watchFiles.actors.batch_change.partial_error', failedCount))
+        toast.error(
+          t('target.watchFiles.actors.batch_change.partial_error', { count: failedCount }),
+        )
       }
 
       queryCache.invalidateQueries({

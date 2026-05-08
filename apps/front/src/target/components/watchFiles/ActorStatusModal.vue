@@ -70,7 +70,7 @@
               <td class="px-4 py-3">
                 <div v-if="item.isSkeleton" class="flex items-center gap-2">
                   <div class="h-4 w-4 animate-pulse rounded-full bg-gray-200"></div>
-                  <div class="h-4 animate-pulse rounded bg-gray-200" style="width: 120px"></div>
+                  <div class="h-4 w-[120px] animate-pulse rounded bg-gray-200"></div>
                 </div>
                 <SourceCard v-else :source="item" variant="minimal" />
               </td>
@@ -79,8 +79,7 @@
               <td class="min-w-32 px-4 py-3">
                 <div
                   v-if="item.isSkeleton"
-                  class="h-6 animate-pulse rounded-full bg-gray-200"
-                  style="width: 80px"
+                  class="h-6 w-20 animate-pulse rounded-full bg-gray-200"
                 ></div>
                 <div v-else class="whitespace-nowrap">
                   <Tag variant="secondary" size="sm">
@@ -123,6 +122,7 @@ import {
   type SortOrder,
 } from '@owlint/feathers-vue'
 import { useChangeActorStatus } from '@target/api/mutations/actor'
+import { useSourceTypeLabel } from '@target/composables/useSourceTypeLabel'
 import { useToast } from '@target/composables/useToast'
 import { ActorStatus } from '@target/types/actor'
 import type { Source } from '@target/types/source'
@@ -151,6 +151,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const toast = useToast()
+const { getSourceTypeLabel } = useSourceTypeLabel()
 
 const { changeStatus } = useChangeActorStatus({
   onSuccess: () => {
@@ -422,21 +423,6 @@ watch(isOpen, async (isOpen) => {
     selectedSourceIds.value = filterActorSources.map(({ id }) => id)
   }
 })
-
-// Get translated source type label
-const getSourceTypeLabel = (type: string | undefined): string => {
-  if (!type) return 'Unknown'
-
-  if (type.startsWith('social_media:')) {
-    return t('target.sourceTypes.social_media')
-  }
-
-  const translation = t(`target.sourceTypes.${type}`)
-  if (translation !== `target.sourceTypes.${type}`) {
-    return translation
-  }
-  return type
-}
 
 const handleClose = () => {
   emit('close')

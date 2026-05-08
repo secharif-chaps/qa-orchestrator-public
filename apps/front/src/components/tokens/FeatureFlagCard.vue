@@ -19,10 +19,10 @@
           <!-- Feature Flag Info -->
           <div>
             <h3 class="font-medium capitalize">
-              {{ $t(flagConfig.labelKey, flagName) }}
+              {{ flagLabel }}
             </h3>
             <p class="text-neutral-black-font text-sm">
-              {{ $t(flagConfig.descriptionKey, defaultDescription) }}
+              {{ flagDescription }}
             </p>
           </div>
         </div>
@@ -87,19 +87,26 @@ const flagName = computed(() => props.flag.charAt(0).toUpperCase() + props.flag.
 // Check if this is the discover flag
 const isDiscoverFlag = computed(() => props.flag === 'discover')
 
-// Default descriptions for feature flags
-const defaultDescriptions: Record<FeatureFlagName, string> = {
-  translation: 'Translate company data to other languages',
-  discover: 'Access external Discover dashboard',
-  pappers: 'Fetch company data from Pappers API',
-  worldcheck: 'Due diligence screening via WorldCheck One API',
-  stream: 'Multi-channel event distribution (Teams, Slack, Webhook)',
-  epo: 'European Patent Office — patent data for company cards',
+const featureFlagLabelMap: Record<FeatureFlagName, string> = {
+  translation: t('settings.featureFlags.translation.name'),
+  discover: t('settings.featureFlags.discover.name'),
+  pappers: t('settings.featureFlags.pappers.name'),
+  worldcheck: t('settings.featureFlags.worldcheck.name'),
+  stream: t('settings.featureFlags.stream.name'),
+  epo: t('settings.featureFlags.epo.name'),
 }
 
-const defaultDescription = computed(
-  () => defaultDescriptions[props.flag] || 'Feature functionality',
-)
+const featureFlagDescriptionMap: Record<FeatureFlagName, string> = {
+  translation: t('settings.featureFlags.translation.description'),
+  discover: t('settings.featureFlags.discover.description'),
+  pappers: t('settings.featureFlags.pappers.description'),
+  worldcheck: t('settings.featureFlags.worldcheck.description'),
+  stream: t('settings.featureFlags.stream.description'),
+  epo: t('settings.featureFlags.epo.description'),
+}
+
+const flagLabel = computed(() => featureFlagLabelMap[props.flag] ?? flagName.value)
+const flagDescription = computed(() => featureFlagDescriptionMap[props.flag] ?? '')
 
 // URL input state for discover flag
 const urlInput = ref<string>((props.config?.url as string) || '')

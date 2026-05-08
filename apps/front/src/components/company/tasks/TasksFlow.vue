@@ -10,9 +10,9 @@
       <div class="flex items-center gap-3">
         <span class="font-medium">{{ t('screen.company.debug.workflowTitle') }}</span>
         <div class="flex items-center">
-          <span class="text-neutral-black-font text-xs font-medium"
-            >{{ completedCount }}/{{ totalTasks }}</span
-          >
+          <span class="text-neutral-black-font text-xs font-medium">
+            {{ t('common.countOfTotal', { count: completedCount, total: totalTasks }) }}
+          </span>
         </div>
       </div>
       <i class="fa" :class="!isOpen ? 'fa-chevron-up' : 'fa-chevron-down'"></i>

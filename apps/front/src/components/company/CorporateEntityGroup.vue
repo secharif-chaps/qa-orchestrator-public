@@ -13,9 +13,9 @@
         <Icon icon="fa-circle" class="text-neutral-black-font mt-1.5 text-[6px]" />
         <div class="min-w-0 flex-1">
           <span class="text-sm font-medium">{{ entity.name }}</span>
-          <span v-if="entity.country" class="text-neutral-black-font ml-1 text-xs">
-            ({{ entity.country }})
-          </span>
+          <span v-if="entity.country" class="text-neutral-black-font ml-1 text-xs">{{
+            $t('common.inParentheses', { value: entity.country })
+          }}</span>
           <Source v-if="entity.source" :source="entity.source" />
         </div>
       </li>

@@ -107,6 +107,7 @@
 </template>
 
 <script setup lang="ts">
+import { LOCALES } from '@/i18n'
 import { Button, Tag } from '@owlint/feathers-vue'
 import logo_chaps from '@target/assets/images/CHAPSVISION_LOGO_ChapsVision_logo_icone_amande.svg'
 import { useAuth } from '@target/composables/useAuth'
@@ -121,11 +122,7 @@ const { resetMercure } = useMercure()
 const { setLocale } = useLocalized()
 
 const toggleLocale = () => {
-  if (locale.value === 'en-US') {
-    setLocale('fr-FR')
-  } else {
-    setLocale('en-US')
-  }
+  setLocale(locale.value === LOCALES.EN ? LOCALES.FR : LOCALES.EN)
 }
 
 const signOut = async () => {

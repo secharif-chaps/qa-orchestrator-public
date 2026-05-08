@@ -35,11 +35,15 @@
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-neutral-black-font">{{ $t('screen.company.name') }}:</span>
+              <span class="text-neutral-black-font">{{
+                $t('screen.company.detailsLabels.name')
+              }}</span>
               <span class="font-medium">{{ companyToRestore.name }}</span>
             </div>
             <div v-if="companyToRestore.website" class="flex justify-between">
-              <span class="text-neutral-black-font">{{ $t('screen.company.website') }}:</span>
+              <span class="text-neutral-black-font">{{
+                $t('screen.company.detailsLabels.website')
+              }}</span>
               <span class="text-xs">{{ companyToRestore.website }}</span>
             </div>
           </div>

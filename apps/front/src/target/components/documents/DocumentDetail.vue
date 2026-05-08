@@ -35,8 +35,8 @@
       :title="t('target.documents.detail.summary.title')"
       :content="summaryText"
       :status="document.summaryStatus"
-      pending-title="target.watchFiles.documents.summary.pending"
-      error-title="target.watchFiles.documents.summary.error"
+      :pending-title="t('target.watchFiles.documents.summary.pending')"
+      :error-title="t('target.watchFiles.documents.summary.error')"
     >
       <template #subtitle>
         <Tag v-if="document.summaryGeneratedAt" size="sm" icon="fa-clock" variant="secondary">
@@ -50,8 +50,8 @@
       :title="validationTitle"
       :content="validationReasonText"
       :status="document.aiValidation.status"
-      pending-title="target.watchFiles.documents.validation.pending"
-      error-title="target.watchFiles.documents.validation.error"
+      :pending-title="t('target.watchFiles.documents.validation.pending')"
+      :error-title="t('target.watchFiles.documents.validation.error')"
     >
       <template #subtitle>
         <Tag v-if="document.aiValidation.processedAt" size="sm" icon="fa-clock" variant="secondary">
@@ -111,13 +111,19 @@ const validationReasonText = getLocalizedString(
   computed(() => document?.aiValidation?.validationReason),
 )
 
+const validationTitleMap: Record<string, string> = {
+  rejected: t('target.documents.detail.validation.title.rejected'),
+  uncertain: t('target.documents.detail.validation.title.uncertain'),
+  validated: t('target.documents.detail.validation.title.validated'),
+}
+
 const validationTitle = computed(() => {
   if (!document?.aiValidation) return ''
 
   const status = document.aiValidation.status
   if (status === 'pending' || status === 'failed') return ''
 
-  return t(`target.documents.detail.validation.title.${status}`)
+  return validationTitleMap[status] ?? ''
 })
 
 const acceptedTitle = computed(() => {
@@ -175,13 +181,13 @@ const metadataItems = computed(() => {
     {
       key: 'type',
       label: t('target.documents.detail.type'),
-      value: t('common.documentType_' + document?.type.toLowerCase()),
+      value: t('common.documentType', { type: document?.type.toLowerCase() }),
       leftIcon: getDocumentIcon(document?.type),
     },
     {
       key: 'language',
       label: t('target.documents.detail.language'),
-      value: t('common.language_' + document?.language.toLowerCase()),
+      value: t('common.language', { code: document?.language.toLowerCase() }),
     },
   ]
 })

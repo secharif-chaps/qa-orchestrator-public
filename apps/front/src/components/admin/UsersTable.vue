@@ -19,7 +19,7 @@
       <td class="px-4 py-3">
         <div class="text-sm">
           <template v-if="getFullName(item)">{{ getFullName(item) }}</template>
-          <span v-else class="text-neutral-black-font italic">—</span>
+          <span v-else class="text-neutral-black-font italic">{{ t('common.emptyValue') }}</span>
         </div>
       </td>
     </template>
@@ -42,7 +42,7 @@
       <td class="px-4 py-3">
         <div class="text-sm">
           <template v-if="item.organization_name">{{ item.organization_name }}</template>
-          <span v-else class="text-neutral-black-font italic">—</span>
+          <span v-else class="text-neutral-black-font italic">{{ t('common.emptyValue') }}</span>
         </div>
       </td>
     </template>

@@ -19,7 +19,9 @@
                 class="rounded-full"
               />
             </div>
-            <div class="text-neutral-black-font text-sm">@{{ item.username }}</div>
+            <div class="text-neutral-black-font text-sm">
+              {{ t('common.atUsername', { username: item.username }) }}
+            </div>
           </div>
         </div>
       </td>

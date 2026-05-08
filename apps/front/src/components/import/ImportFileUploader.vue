@@ -86,8 +86,12 @@
       <div class="flex-1">
         <p class="text-success-light-content font-medium">{{ parsedData.fileName }}</p>
         <p class="text-success-light-content/80 text-sm">
-          {{ formatFileSize(parsedData.fileSize) }} • {{ parsedData.rowCount }}
-          {{ $t('admin.import.rows') }}
+          {{
+            $t('common.bulletSeparated', {
+              left: formatFileSize(parsedData.fileSize),
+              right: `${parsedData.rowCount} ${$t('admin.import.rows')}`,
+            })
+          }}
         </p>
       </div>
       <Button

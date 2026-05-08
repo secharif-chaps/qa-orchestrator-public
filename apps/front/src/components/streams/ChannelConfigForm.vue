@@ -114,7 +114,9 @@
         <template v-else>
           <Icon icon="fa-times-circle" class="text-error mr-1" />
           {{ t('stream.form.testError') }}
-          <span v-if="testError" class="text-secondary ml-1">({{ testError }})</span>
+          <span v-if="testError" class="text-secondary ml-1">{{
+            t('common.inParentheses', { value: testError })
+          }}</span>
         </template>
       </span>
     </div>

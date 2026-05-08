@@ -6,9 +6,6 @@ const PHRASE_ROTATION_INTERVAL_MS = 60_000 // 60 seconds
 const TYPING_INDICATOR_COUNT = 20
 const REASSURANCE_MESSAGE_COUNT = 20
 
-/**
- * Get a random index different from the current one
- */
 function getRandomIndexExcluding(max: number, exclude: number): number {
   if (max <= 1) return 0
   let newIndex: number
@@ -18,12 +15,6 @@ function getRandomIndexExcluding(max: number, exclude: number): number {
   return newIndex
 }
 
-/**
- * Composable for managing typing indicator phrases with random selection and rotation.
- * - Selects a random phrase on mount
- * - Rotates to a new random phrase every 60 seconds
- * - Switches to reassurance phrases after showReassurance becomes true
- */
 export function useTypingIndicatorPhrases(showReassurance: MaybeRefOrGetter<boolean>) {
   const { t } = useI18n()
 
@@ -84,15 +75,57 @@ export function useTypingIndicatorPhrases(showReassurance: MaybeRefOrGetter<bool
     stopRotation()
   })
 
-  // Current typing indicator phrase
   const typingIndicatorPhrase = computed(() => {
-    return t(`target.watchFiles.chat.typing_indicator.${typingIndicatorIndex.value}`)
+    const phrases = [
+      t('target.watchFiles.chat.typing_indicator.0'),
+      t('target.watchFiles.chat.typing_indicator.1'),
+      t('target.watchFiles.chat.typing_indicator.2'),
+      t('target.watchFiles.chat.typing_indicator.3'),
+      t('target.watchFiles.chat.typing_indicator.4'),
+      t('target.watchFiles.chat.typing_indicator.5'),
+      t('target.watchFiles.chat.typing_indicator.6'),
+      t('target.watchFiles.chat.typing_indicator.7'),
+      t('target.watchFiles.chat.typing_indicator.8'),
+      t('target.watchFiles.chat.typing_indicator.9'),
+      t('target.watchFiles.chat.typing_indicator.10'),
+      t('target.watchFiles.chat.typing_indicator.11'),
+      t('target.watchFiles.chat.typing_indicator.12'),
+      t('target.watchFiles.chat.typing_indicator.13'),
+      t('target.watchFiles.chat.typing_indicator.14'),
+      t('target.watchFiles.chat.typing_indicator.15'),
+      t('target.watchFiles.chat.typing_indicator.16'),
+      t('target.watchFiles.chat.typing_indicator.17'),
+      t('target.watchFiles.chat.typing_indicator.18'),
+      t('target.watchFiles.chat.typing_indicator.19'),
+    ]
+    return phrases[typingIndicatorIndex.value] ?? ''
   })
 
-  // Current reassurance phrase (only used when showReassurance is true)
   const reassurancePhrase = computed(() => {
     if (!toValue(showReassurance)) return undefined
-    return t(`target.watchFiles.chat.reassurance_message.${reassuranceMessageIndex.value}`)
+    const phrases = [
+      t('target.watchFiles.chat.reassurance_message.0'),
+      t('target.watchFiles.chat.reassurance_message.1'),
+      t('target.watchFiles.chat.reassurance_message.2'),
+      t('target.watchFiles.chat.reassurance_message.3'),
+      t('target.watchFiles.chat.reassurance_message.4'),
+      t('target.watchFiles.chat.reassurance_message.5'),
+      t('target.watchFiles.chat.reassurance_message.6'),
+      t('target.watchFiles.chat.reassurance_message.7'),
+      t('target.watchFiles.chat.reassurance_message.8'),
+      t('target.watchFiles.chat.reassurance_message.9'),
+      t('target.watchFiles.chat.reassurance_message.10'),
+      t('target.watchFiles.chat.reassurance_message.11'),
+      t('target.watchFiles.chat.reassurance_message.12'),
+      t('target.watchFiles.chat.reassurance_message.13'),
+      t('target.watchFiles.chat.reassurance_message.14'),
+      t('target.watchFiles.chat.reassurance_message.15'),
+      t('target.watchFiles.chat.reassurance_message.16'),
+      t('target.watchFiles.chat.reassurance_message.17'),
+      t('target.watchFiles.chat.reassurance_message.18'),
+      t('target.watchFiles.chat.reassurance_message.19'),
+    ]
+    return phrases[reassuranceMessageIndex.value]
   })
 
   return {

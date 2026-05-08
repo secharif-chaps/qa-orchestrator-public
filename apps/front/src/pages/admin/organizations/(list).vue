@@ -51,7 +51,9 @@
               <p class="text-neutral-black-font text-sm">
                 {{ org.description || $t('admin.organization.noDescription') }}
               </p>
-              <p class="text-neutral-black-font mt-1 text-xs">ID: {{ org.id }}</p>
+              <p class="text-neutral-black-font mt-1 text-xs">
+                {{ t('admin.organizations.organizationId', { id: org.id }) }}
+              </p>
             </div>
           </div>
           <div class="flex items-center gap-3">
@@ -99,8 +101,10 @@ import OrganizationsListSkeleton from '@/components/admin/OrganizationsListSkele
 import { Alert, Searchbar, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
+const { t } = useI18n()
 const router = useRouter()
 
 // State

@@ -46,22 +46,30 @@
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-neutral-black-font">{{ $t('screen.company.name') }}:</span>
+              <span class="text-neutral-black-font">{{
+                $t('screen.company.detailsLabels.name')
+              }}</span>
               <span class="font-medium">{{ companyToDelete.name }}</span>
             </div>
             <div v-if="companyToDelete.website" class="flex justify-between">
-              <span class="text-neutral-black-font">{{ $t('screen.company.website') }}:</span>
+              <span class="text-neutral-black-font">{{
+                $t('screen.company.detailsLabels.website')
+              }}</span>
               <span class="text-xs">{{ companyToDelete.website }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-neutral-black-font">{{ $t('screen.company.created') }}:</span>
-              <span>{{ formatDate(companyToDelete.created_at, 'eventDate') }}</span>
+              <span class="text-neutral-black-font">{{
+                $t('screen.company.detailsLabels.created')
+              }}</span>
+              <span>{{ formatDate(companyToDelete.created_at) }}</span>
             </div>
             <div
               v-if="companyToDelete.tasks && companyToDelete.tasks.length > 0"
               class="flex justify-between"
             >
-              <span class="text-neutral-black-font">{{ $t('screen.company.tasks') }}:</span>
+              <span class="text-neutral-black-font">{{
+                $t('screen.company.detailsLabels.tasks')
+              }}</span>
               <span class="inline-flex items-center gap-1">
                 <i class="fa fa-tasks text-neutral-black-font text-xs"></i>
                 {{ companyToDelete.tasks.length }} {{ $t('screen.company.tasks.count') }}

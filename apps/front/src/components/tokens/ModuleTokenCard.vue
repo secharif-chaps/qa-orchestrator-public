@@ -12,7 +12,7 @@
         </div>
         <div>
           <h3 class="font-medium capitalize">
-            {{ $t(`settings.tokens.modules.${module}.name`, module) }}
+            {{ moduleNameMap[module] ?? module }}
           </h3>
           <p class="text-neutral-black-font text-sm">
             {{ moduleDescription }}
@@ -80,7 +80,21 @@ const moduleIcons: Record<ModuleName, string> = {
 // Computed properties
 const moduleIcon = computed(() => moduleIcons[props.module] || 'fa fa-cog')
 
-const moduleDescription = computed(() => t(`settings.tokens.modules.${props.module}.description`))
+const moduleNameMap: Record<ModuleName, string> = {
+  screen: t('settings.tokens.modules.screen.name'),
+  target: t('settings.tokens.modules.target.name'),
+  explore: t('settings.tokens.modules.explore.name'),
+  stream: t('settings.tokens.modules.stream.name'),
+}
+
+const moduleDescriptionMap: Record<ModuleName, string> = {
+  screen: t('settings.tokens.modules.screen.description'),
+  target: t('settings.tokens.modules.target.description'),
+  explore: t('settings.tokens.modules.explore.description'),
+  stream: t('settings.tokens.modules.stream.description'),
+}
+
+const moduleDescription = computed(() => moduleDescriptionMap[props.module])
 
 // Toggle module enabled state
 async function handleToggle() {

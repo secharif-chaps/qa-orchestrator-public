@@ -11,10 +11,9 @@
       <div v-if="showOrganizationSelector">
         <label
           for="organization-select"
-          class="text-sage-700 dark:text-sage-200 mb-2 block text-sm font-medium"
+          class="field-required text-sage-700 dark:text-sage-200 mb-2 block text-sm font-medium"
         >
           {{ $t('admin.import.selectOrganization') }}
-          <span class="text-error">*</span>
         </label>
         <select
           id="organization-select"

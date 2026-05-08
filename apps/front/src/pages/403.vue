@@ -2,7 +2,9 @@
   <div class="bg-primary-lighter flex min-h-screen items-center justify-center">
     <div class="text-center">
       <div class="mb-8">
-        <h1 class="text-neutral-black-font text-6xl font-bold">403</h1>
+        <h1 class="text-neutral-black-font text-6xl font-bold">
+          {{ $t('common.errors.forbidden.code') }}
+        </h1>
 
         <!-- Token-specific error messages -->
         <div v-if="isTokenError">
@@ -20,13 +22,23 @@
           >
             <i class="fa fa-coins text-neutral-black-font"></i>
             <span class="text-sm">
-              <span class="font-medium capitalize">{{ errorModule }}</span> Module
-              <span v-if="reason === 'module_disabled'" class="ml-2 text-red-600"
-                >• {{ $t('common.errors.forbidden.token.status.disabled') }}</span
-              >
-              <span v-else-if="reason === 'insufficient_tokens'" class="ml-2 text-red-600"
-                >• {{ $t('common.errors.forbidden.token.status.noTokens') }}</span
-              >
+              <span class="font-medium capitalize">{{
+                t('common.errors.forbidden.token.moduleLabel', { module: errorModule })
+              }}</span>
+              <span v-if="reason === 'module_disabled'" class="ml-2 text-red-600">
+                {{
+                  $t('common.bulletPrefixed', {
+                    value: $t('common.errors.forbidden.token.status.disabled'),
+                  })
+                }}
+              </span>
+              <span v-else-if="reason === 'insufficient_tokens'" class="ml-2 text-red-600">
+                {{
+                  $t('common.bulletPrefixed', {
+                    value: $t('common.errors.forbidden.token.status.noTokens'),
+                  })
+                }}
+              </span>
             </span>
           </div>
         </div>

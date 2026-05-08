@@ -24,7 +24,7 @@
           {{ name }}
         </p>
         <p class="font-regular text-primary-font truncate text-sm leading-4">
-          {{ folderName }} • {{ timeAgo }}
+          {{ $t('common.bulletSeparated', { left: folderName, right: timeAgo }) }}
         </p>
       </div>
     </div>

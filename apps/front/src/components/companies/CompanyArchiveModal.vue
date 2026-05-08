@@ -22,11 +22,15 @@
         </h4>
         <div class="flex flex-col gap-2 text-sm">
           <div class="flex justify-between">
-            <span class="text-neutral-black-font">{{ t('screen.company.name') }}:</span>
+            <span class="text-neutral-black-font">{{
+              t('screen.company.detailsLabels.name')
+            }}</span>
             <span class="font-medium">{{ companyToArchive.name }}</span>
           </div>
           <div v-if="companyToArchive.website" class="flex justify-between">
-            <span class="text-neutral-black-font">{{ t('screen.company.website') }}:</span>
+            <span class="text-neutral-black-font">{{
+              t('screen.company.detailsLabels.website')
+            }}</span>
             <span class="text-xs">{{ companyToArchive.website }}</span>
           </div>
         </div>

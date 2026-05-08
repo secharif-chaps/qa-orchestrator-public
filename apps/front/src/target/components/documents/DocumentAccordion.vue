@@ -2,13 +2,13 @@
   <div>
     <div v-if="status === 'pending'" class="w-full animate-pulse overflow-hidden rounded">
       <div class="flex h-8 items-center bg-gray-200 px-2 text-xs">
-        {{ t(pendingTitle) }}
+        {{ pendingTitleResolved }}
       </div>
       <div class="h-32 bg-gray-100" />
     </div>
     <InformationMessage
       v-else-if="status === 'failed'"
-      :title="$t(errorTitle)"
+      :title="errorTitleResolved"
       color="error"
       width="full"
     />
@@ -59,6 +59,7 @@
 import { Icon } from '@owlint/feathers-vue'
 import type { AiValidationStatus, SummaryStatusType } from '@target/types/document'
 import { Accordion } from 'reka-ui/namespaced'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import InformationMessage from '../global/InformationMessage.vue'
 
@@ -69,16 +70,20 @@ interface Props {
   subtitle?: string
   content?: string
   status?: SummaryStatusType | AiValidationStatus
+  /** Pre-translated text shown while the content is loading. */
   errorTitle?: string
+  /** Pre-translated text shown when loading is in progress. */
   pendingTitle?: string
 }
 
-const {
-  title,
-  subtitle = undefined,
-  content = undefined,
-  status = 'completed',
-  errorTitle = 'common.errors.generic',
-  pendingTitle = 'common.action.loading',
-} = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  subtitle: undefined,
+  content: undefined,
+  status: 'completed',
+  errorTitle: undefined,
+  pendingTitle: undefined,
+})
+
+const errorTitleResolved = computed(() => props.errorTitle ?? t('common.errors.generic'))
+const pendingTitleResolved = computed(() => props.pendingTitle ?? t('common.action.loading'))
 </script>

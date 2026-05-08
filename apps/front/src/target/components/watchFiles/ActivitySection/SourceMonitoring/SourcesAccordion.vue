@@ -66,6 +66,7 @@
 import { Badge, Button } from '@owlint/feathers-vue'
 import ErrorMessage from '@target/components/global/ErrorMessage.vue'
 import SourceCard from '@target/components/sources/SourceCard.vue'
+import { useSourceTypeLabel } from '@target/composables/useSourceTypeLabel'
 import type { Source, SourceGroup, SourcesGroupedResponse } from '@target/types/source'
 import { CollectorStatus } from '@target/types/source'
 import { Accordion } from 'reka-ui/namespaced'
@@ -84,6 +85,7 @@ interface Emits {
 const { sourcesData = undefined, searchQuery = '' } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 const { t } = useI18n()
+const { getSourceTypeLabel } = useSourceTypeLabel()
 
 const handleMonitoringClick = (source: Source) => {
   emit('monitoring-click', source)
@@ -113,7 +115,7 @@ const sections = computed(() => {
 
       return {
         value: group.type || 'unknown',
-        title: t(`target.sourceTypes.${group.type || 'unknown'}`),
+        title: getSourceTypeLabel(group.type || 'unknown'),
         count: groupSources.length,
         sources: groupSources,
       }

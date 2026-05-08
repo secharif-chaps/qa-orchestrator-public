@@ -26,7 +26,7 @@
     <!-- Main Chat Area -->
     <div class="flex min-w-0 flex-1 flex-col">
       <!-- Header -->
-      <SidebarHeader :title="$t('common.sidebar.chapse.title')">
+      <SidebarHeader :title="$t('sidebar.chapse.title')">
         <div class="flex items-center gap-2">
           <Button
             variant="tertiary"
@@ -34,8 +34,8 @@
             size="sm"
             :title="
               sidebarStore.isFullscreen
-                ? $t('common.sidebar.chapse.exitFullscreen')
-                : $t('common.sidebar.chapse.enterFullscreen')
+                ? $t('sidebar.chapse.exitFullscreen')
+                : $t('sidebar.chapse.enterFullscreen')
             "
             @click="toggleFullscreen"
           />
@@ -43,14 +43,14 @@
             variant="tertiary"
             icon="fa-solid fa-plus"
             size="sm"
-            :title="$t('common.sidebar.chapse.newConversation')"
+            :title="$t('sidebar.chapse.newConversation')"
             @click="handleNewConversation"
           />
           <Button
             variant="tertiary"
             icon="fa-solid fa-trash"
             size="sm"
-            :title="$t('common.sidebar.chapse.clearHistory')"
+            :title="$t('sidebar.chapse.clearHistory')"
             @click="handleClearHistory"
           />
         </div>
@@ -88,7 +88,7 @@
           <p class="text-sage-900 dark:text-sage-300 max-w-80 text-center">
             {{
               $t(
-                'common.sidebar.chapse.welcomeMessage',
+                'sidebar.chapse.welcomeMessage',
                 "Hello! I'm Chaps-e, your AI assistant. How can I help you today?",
               )
             }}
@@ -118,7 +118,7 @@
             </div>
             <div class="bg-sage-800 text-sage-200 text-sm rounded-md px-4 py-3">
               <i class="fa fa-circle fa-beat text-primary text-xs mr-2"></i>
-              {{ $t('common.sidebar.chapse.thinking') }}
+              {{ $t('sidebar.chapse.thinking') }}
             </div>
           </div> -->
         </template>
@@ -127,7 +127,7 @@
       <!-- Chat Input -->
       <ChatInput
         v-model="userMessage"
-        :placeholder="$t('common.sidebar.chapse.placeholder')"
+        :placeholder="$t('sidebar.chapse.placeholder')"
         :loading="isLoading"
         :disabled="isStreaming || !canUseChapse"
         :company-context="companyContext"
@@ -330,17 +330,16 @@ interface Suggestion {
 
 const suggestions = computed<Suggestion[]>(() => {
   const routeName = route.name as string
-  const suggestionsTranslationPrefix = 'common.sidebar.chapse.suggestions'
 
   if (routeName === '/(home)') {
     return [
       {
-        label: t(`${suggestionsTranslationPrefix}.home.recentCompanies`),
-        message: t(`${suggestionsTranslationPrefix}.home.recentCompanies`),
+        label: t('sidebar.chapse.suggestions.home.recentCompanies'),
+        message: t('sidebar.chapse.suggestions.home.recentCompanies'),
       },
       {
-        label: t(`${suggestionsTranslationPrefix}.home.orgActivity`),
-        message: t(`${suggestionsTranslationPrefix}.home.orgActivity`),
+        label: t('sidebar.chapse.suggestions.home.orgActivity'),
+        message: t('sidebar.chapse.suggestions.home.orgActivity'),
       },
     ]
   }
@@ -348,12 +347,12 @@ const suggestions = computed<Suggestion[]>(() => {
   if (routeName?.includes('/companies/[companyId]')) {
     return [
       {
-        label: t(`${suggestionsTranslationPrefix}.company.summary`),
-        message: t(`${suggestionsTranslationPrefix}.company.summary`),
+        label: t('sidebar.chapse.suggestions.company.summary'),
+        message: t('sidebar.chapse.suggestions.company.summary'),
       },
       {
-        label: t(`${suggestionsTranslationPrefix}.company.technologies`),
-        message: t(`${suggestionsTranslationPrefix}.company.technologies`),
+        label: t('sidebar.chapse.suggestions.company.technologies'),
+        message: t('sidebar.chapse.suggestions.company.technologies'),
       },
     ]
   }
@@ -361,12 +360,12 @@ const suggestions = computed<Suggestion[]>(() => {
   if (routeName?.startsWith('/folders/[folderId]') && !routeName?.includes('/companies/')) {
     return [
       {
-        label: t(`${suggestionsTranslationPrefix}.folder.summarize`),
-        message: t(`${suggestionsTranslationPrefix}.folder.summarize`),
+        label: t('sidebar.chapse.suggestions.folder.summarize'),
+        message: t('sidebar.chapse.suggestions.folder.summarize'),
       },
       {
-        label: t(`${suggestionsTranslationPrefix}.folder.compare`),
-        message: t(`${suggestionsTranslationPrefix}.folder.compare`),
+        label: t('sidebar.chapse.suggestions.folder.compare'),
+        message: t('sidebar.chapse.suggestions.folder.compare'),
       },
     ]
   }
@@ -402,7 +401,7 @@ async function handleSelectConversation(conversationId: string) {
 }
 
 const handleDeleteConversation = async (conversationId: string) => {
-  if (confirm(t('common.sidebar.chapse.confirmDeleteConversation'))) {
+  if (confirm(t('sidebar.chapse.confirmDeleteConversation'))) {
     await deleteConversation(conversationId)
   }
 }
@@ -416,7 +415,7 @@ async function handleLoadMoreConversations() {
 }
 
 const handleClearHistory = () => {
-  if (confirm(t('common.sidebar.chapse.confirmClearMessages'))) {
+  if (confirm(t('sidebar.chapse.confirmClearMessages'))) {
     clearHistory()
   }
 }

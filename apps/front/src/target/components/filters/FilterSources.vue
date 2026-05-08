@@ -26,7 +26,7 @@
             class="shrink-0 rounded-full object-contain"
           />
           <span>{{ source.name }}</span>
-          <span class="text-gray-800"> ({{ count }}) </span>
+          <span class="text-gray-800">{{ $t('common.countSuffix', { count }) }}</span>
         </label>
       </Checkbox>
     </div>
@@ -41,7 +41,11 @@
       variant="tertiary"
       @click="displayAllSources = !displayAllSources"
     >
-      {{ t(`target.watchFiles.filters.type.sources.see.${displayAllSources ? 'less' : 'more'}`) }}
+      {{
+        displayAllSources
+          ? t('target.watchFiles.filters.type.sources.see.less')
+          : t('target.watchFiles.filters.type.sources.see.more')
+      }}
     </Button>
     <Button
       v-if="selectedSources.length"

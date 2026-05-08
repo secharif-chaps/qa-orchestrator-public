@@ -56,9 +56,8 @@
 
         <!-- Goals Field -->
         <div class="relative flex flex-col">
-          <label for="goals">
+          <label for="goals" class="field-required">
             {{ $t('settings.aiPreferences.setup.fields.goals.label') }}
-            <span class="text-warning ml-1">*</span>
           </label>
           <Textarea
             id="goals"
@@ -76,7 +75,6 @@
         <div>
           <label for="desiredOutput">
             {{ $t('settings.aiPreferences.setup.fields.desiredOutput.label') }}
-            <span class="text-warning ml-1">*</span>
           </label>
           <Textarea
             id="desired-output"
@@ -94,9 +92,9 @@
         <div>
           <label for="documentation">
             {{ $t('settings.aiPreferences.setup.fields.documentation.label') }}
-            <span class="text-neutral-black-font ml-2 text-sm font-normal"
-              >({{ $t('settings.aiPreferences.setup.optional') }})</span
-            >
+            <span class="text-neutral-black-font ml-2 text-sm font-normal">
+              {{ $t('settings.aiPreferences.setup.optional') }}
+            </span>
           </label>
           <Textarea
             id="documentation"

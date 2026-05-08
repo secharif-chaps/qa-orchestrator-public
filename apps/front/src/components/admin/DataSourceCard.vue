@@ -118,12 +118,10 @@
           class="text-neutral-black-font text-xs"
         >
           <span v-if="config?.enabled_at">
-            {{ $t('screen.dataSources.enabledAt') }}:
-            {{ formatDate(config.enabled_at, 'long') }}
+            {{ $t('screen.dataSources.enabledAt', { date: formatDate(config.enabled_at) }) }}
           </span>
           <span v-if="config?.updated_at" class="ml-3">
-            {{ $t('screen.dataSources.lastUpdated') }}:
-            {{ formatDate(config.updated_at, 'long') }}
+            {{ $t('screen.dataSources.lastUpdated', { date: formatDate(config.updated_at) }) }}
           </span>
         </div>
       </div>

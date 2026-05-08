@@ -17,9 +17,11 @@
       <!-- User Info -->
       <div class="mb-6">
         <p class="text-neutral-black-font text-sm">
-          {{ t('admin.disableUser.confirmText') }}
-          <span class="font-semibold">{{ username }}</span
-          >?
+          <i18n-t scope="global" keypath="admin.disableUser.confirmText" tag="span">
+            <template #username>
+              <span class="font-semibold">{{ username }}</span>
+            </template>
+          </i18n-t>
         </p>
       </div>
 
