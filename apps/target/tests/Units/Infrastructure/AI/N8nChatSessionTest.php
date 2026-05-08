@@ -143,7 +143,7 @@ class N8nChatSessionTest extends TestCase
                 'userMessageContentText' => 'Test message',
                 'userMessageId' => self::MESSAGE_ID,
                 'conversationId' => self::CONVERSATION_ID,
-                'conversationLanguage' => 'en',
+                'userLanguage' => 'en',
                 'metadata' => [
                     'collectors_list' => [],
                     'source_types' => SourceType::values(),
