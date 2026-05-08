@@ -148,8 +148,10 @@ class PressItem(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     type: PressItemTypeEnum | None = None
+    title: str | None = Field(default=None, max_length=500)
     value: str | None = None
     source: str | None = None
+    date: str | None = None
 
 
 class PressAgentOutput(BaseModel):
@@ -302,8 +304,10 @@ class CsrInitiative(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     type: CsrInitiativeTypeEnum | None = None
+    title: str | None = Field(default=None, max_length=500)
     value: str | None = None
     source: str | None = None
+    date: str | None = None
 
 
 class CsrAgentOutput(BaseModel):
