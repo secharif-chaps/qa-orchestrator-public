@@ -25,10 +25,12 @@ import enum
 from sqlalchemy import (
     Boolean,
     Column,
+    Date,
     DateTime,
     Enum,
     ForeignKey,
     Integer,
+    String,
     Text,
 )
 from sqlalchemy.dialects.postgresql import ARRAY
@@ -478,6 +480,10 @@ class CompanyCsrInitiative(Base):
     value = Column(Text, nullable=True)
     value_source = Column(Text, nullable=True)
 
+    # Title and date (extracted by LLM)
+    title = Column(String(500), nullable=True)
+    date = Column(Date, nullable=True)
+
     # Timestamp
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
@@ -523,6 +529,10 @@ class CompanyPressItem(Base):
     # Value with source (translatable)
     value = Column(Text, nullable=True)
     value_source = Column(Text, nullable=True)
+
+    # Title and date (extracted by LLM)
+    title = Column(String(500), nullable=True)
+    date = Column(Date, nullable=True)
 
     # Timestamp
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)

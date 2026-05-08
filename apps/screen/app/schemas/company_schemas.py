@@ -13,6 +13,7 @@ Schemas follow the frontend TypeScript interfaces for compatibility while
 supporting the normalized database structure.
 """
 
+import datetime
 from enum import StrEnum
 from typing import Any, Generic, TypeVar
 
@@ -443,8 +444,18 @@ class CsrInitiativeResponse(BaseModel):
     """CSR initiative response schema."""
 
     type: CsrInitiativeTypeEnum
+    title: str | None = Field(
+        default=None,
+        description="Short title of the CSR initiative (program, certification, report, etc.).",
+        examples=["Programme Net Zéro 2030"],
+    )
     value: str
     source: str
+    date: datetime.date | None = Field(
+        default=None,
+        description="Initiative or publication date in ISO 8601 (YYYY-MM-DD). Null when the source does not provide one.",
+        examples=["2024-03-15"],
+    )
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
@@ -473,8 +484,10 @@ class CsrInitiativeSourced(BaseModel):
     """CSR initiative with sourced fields for agent input."""
 
     type: CsrInitiativeTypeEnum
+    title: str | None = Field(default=None, max_length=500)
     value: str
     source: str
+    date: datetime.date | None = None
 
     model_config = ConfigDict(extra="ignore")
 
@@ -499,8 +512,18 @@ class PressItemResponse(BaseModel):
     """
 
     type: PressItemTypeEnum
+    title: str | None = Field(
+        default=None,
+        description="Short title of the press item (article headline, release name, etc.).",
+        examples=["Interview CEO – Les Échos"],
+    )
     value: str
     source: str
+    date: datetime.date | None = Field(
+        default=None,
+        description="Publication date in ISO 8601 (YYYY-MM-DD). Null when the source does not provide one.",
+        examples=["2024-03-15"],
+    )
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
@@ -534,8 +557,10 @@ class PressItemSourced(BaseModel):
     """Press item with sourced fields for agent input."""
 
     type: PressItemTypeEnum
+    title: str | None = Field(default=None, max_length=500)
     value: str
     source: str
+    date: datetime.date | None = None
 
     model_config = ConfigDict(extra="ignore")
 

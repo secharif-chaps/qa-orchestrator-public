@@ -102,6 +102,24 @@ def _get_string_value(data: dict | str | None, key: str) -> str | None:
     return None
 
 
+def _parse_date(value: str | None) -> _Date | None:
+    """Parse an ISO 8601 date string (YYYY-MM-DD) to a date object.
+
+    Args:
+        value: Date string in ISO 8601 format, or None
+
+    Returns:
+        date object if parsing succeeds, None otherwise
+    """
+    if not value:
+        return None
+    try:
+        return _Date.fromisoformat(value)
+    except (ValueError, TypeError):
+        logger.warning(f"Could not parse date: {value}")
+        return None
+
+
 # =============================================================================
 # PROFILE DATA - WRITER AND READER
 # =============================================================================
@@ -1128,6 +1146,8 @@ def _save_csr_initiatives(db: Session, company_id: int, csr_data: dict) -> None:
                     type=init_type,
                     value=value,
                     value_source=source,
+                    title=item.get("title"),
+                    date=_parse_date(item.get("date")),
                 )
             )
 
@@ -1183,6 +1203,8 @@ def get_csr_data(db: Session, company_id: int) -> dict[str, Any]:
                 {
                     "value": init.value,
                     "source": init.value_source,
+                    "title": init.title,
+                    "date": init.date.isoformat() if init.date else None,
                 }
             )
 
@@ -1274,6 +1296,8 @@ def _save_press_items(db: Session, company_id: int, press_data: dict) -> None:
                         type=item_type,
                         value=value,
                         value_source=source,
+                        title=item.get("title"),
+                        date=_parse_date(item.get("date")),
                     )
                 )
     else:
@@ -1359,6 +1383,8 @@ def get_press_data(db: Session, company_id: int) -> dict[str, Any]:
                 {
                     "value": item.value,
                     "source": item.value_source,
+                    "title": item.title,
+                    "date": item.date.isoformat() if item.date else None,
                 }
             )
 
