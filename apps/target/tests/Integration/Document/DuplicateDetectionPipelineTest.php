@@ -100,7 +100,7 @@ final class DuplicateDetectionPipelineTest extends KernelTestCase
     #[Test]
     public function recrawlOfSameContentHaltsAndAppendsTraceToOriginal(): void
     {
-        $sharedContent = 'Identical wire content recrawled hours later.';
+        $sharedContent = 'Identical wire content recrawled hours later by an independent cron job.';
 
         // First pass — fresh document, gets indexed.
         $first = $this->makeDocument(
@@ -148,7 +148,7 @@ final class DuplicateDetectionPipelineTest extends KernelTestCase
     {
         // Three different sources collecting the same article — the
         // original's `duplicates` should hold all three attempts.
-        $sharedContent = 'Highly republished article about a major event.';
+        $sharedContent = 'Highly republished article about a major event that swept through the news wires.';
 
         $original = $this->makeDocument(
             id: 'doc-original-multi',
@@ -307,7 +307,7 @@ final class DuplicateDetectionPipelineTest extends KernelTestCase
         // be verified — must be silently skipped, not crash.
         $legacy = $this->makeDocument(
             id: 'doc-legacy',
-            content: 'Pre-fingerprinting content from before TAR-1145.',
+            content: 'Pre-fingerprinting content from before TAR-1145 — legacy index path before the dedup rollout.',
             url: 'https://legacy.com/x',
         );
         // No setFingerprint call. Save directly to bypass the pipeline.
@@ -316,7 +316,7 @@ final class DuplicateDetectionPipelineTest extends KernelTestCase
 
         $candidate = $this->makeDocument(
             id: 'doc-after-fingerprinting',
-            content: 'Wholly different content that must be UNIQUE.',
+            content: 'Wholly different content that must be reported as UNIQUE by the dedup pipeline.',
             url: 'https://example.com/different',
         );
 
@@ -343,9 +343,12 @@ final class DuplicateDetectionPipelineTest extends KernelTestCase
             provider: 'apify',
         );
 
-        // Pipeline didn't halt, no fingerprint posed (processor skipped).
-        self::assertFalse($context->isHalted);
+        // The dedup processor's `supports()` short-circuits on empty content
+        // (no fingerprint to probe with, no canonical URL on the candidate),
+        // so no fingerprint is posed. The ContentQualityProcessor halts the
+        // pipeline upstream — that is its job, not what this test asserts on.
         self::assertNull($candidate->getFingerprint());
+        self::assertNull($context->duplicateOf);
     }
 
     #[Test]
@@ -353,7 +356,7 @@ final class DuplicateDetectionPipelineTest extends KernelTestCase
     {
         $existing = $this->makeDocument(
             id: 'doc-self',
-            content: 'Document already in the index.',
+            content: 'Document already in the index that the dedup processor must not match against itself.',
             url: 'https://example.com/self',
         );
         $existing->setCanonicalUrl('https://example.com/self');
@@ -414,7 +417,7 @@ final class DuplicateDetectionPipelineTest extends KernelTestCase
     #[Test]
     public function missingCollectMetadataStillHaltsButSkipsTrace(): void
     {
-        $sharedContent = 'Content used to test missing-metadata path.';
+        $sharedContent = 'Content used to test the missing-metadata path through the dedup pipeline.';
         $original = $this->makeDocument(
             id: 'doc-orig-missing-meta',
             content: $sharedContent,
