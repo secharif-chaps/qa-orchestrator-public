@@ -1451,14 +1451,22 @@ class Document implements HasWatchFileInterface
 
     /**
      * Record a tentative collect that the dedup pipeline matched against
-     * this document. The list is bounded by {@see self::MAX_DUPLICATE_ATTEMPTS} —
-     * the oldest entry is evicted when the cap is reached, FIFO-style.
+     * this document. Stored **newest-first** so API consumers (and the
+     * CLI recap) see the most recent collect at index 0 without an extra
+     * sort step. The list is bounded by {@see self::MAX_DUPLICATE_ATTEMPTS} —
+     * the oldest entry (at the tail) is evicted when the cap is reached,
+     * FIFO-style.
      *
-     * Same-URL collisions overwrite the existing entry rather than appending
-     * a duplicate one. Recurrent retry-style collects on a single URL would
-     * otherwise saturate the bounded list and crowd out the diversity of
-     * sources the trace is meant to capture (the "vu sur AFP, Le Monde,
-     * Reuters" UX signal).
+     * Same-URL collisions remove the existing entry and re-insert the
+     * fresh one at the front rather than appending a duplicate. Recurrent
+     * retry-style collects on a single URL would otherwise saturate the
+     * bounded list and crowd out the diversity of sources the trace is
+     * meant to capture (the "vu sur AFP, Le Monde, Reuters" UX signal),
+     * and bubbling the refreshed entry to the top mirrors the natural
+     * "this article was seen again" semantic. Null-URL attempts
+     * (raw-HTML pastes) skip the same-URL match — each paste is a
+     * distinct event with no idempotent key — and rely on the FIFO cap
+     * to bound growth.
      *
      * The semantics are intentionally pipeline-agnostic: the caller decides
      * the {@see DuplicateAttempt::$outcome} (`DUPLICATE` / `NEAR_EXACT` /
@@ -1466,19 +1474,23 @@ class Document implements HasWatchFileInterface
      */
     public function recordDuplicate(DuplicateAttempt $attempt): self
     {
-        foreach ($this->duplicates as $i => $existing) {
-            if ($existing->url === $attempt->url) {
-                $this->duplicates[$i] = $attempt;
-
-                return $this;
+        if (null !== $attempt->url) {
+            foreach ($this->duplicates as $i => $existing) {
+                if ($existing->url === $attempt->url) {
+                    // Drop the old position so the prepend below puts the
+                    // refreshed attempt at the front. `array_splice` keeps
+                    // the list contiguous (PHPStan-friendly), unlike
+                    // `unset` + manual re-key.
+                    array_splice($this->duplicates, $i, 1);
+                    break;
+                }
             }
         }
 
-        $this->duplicates[] = $attempt;
+        array_unshift($this->duplicates, $attempt);
 
-        $overflow = \count($this->duplicates) - self::MAX_DUPLICATE_ATTEMPTS;
-        if ($overflow > 0) {
-            $this->duplicates = \array_slice($this->duplicates, $overflow);
+        if (\count($this->duplicates) > self::MAX_DUPLICATE_ATTEMPTS) {
+            $this->duplicates = \array_slice($this->duplicates, 0, self::MAX_DUPLICATE_ATTEMPTS);
         }
 
         return $this;

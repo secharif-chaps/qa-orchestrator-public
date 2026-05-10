@@ -48,7 +48,7 @@ class DocumentDuplicateTrackingTest extends TestCase
         self::assertSame([$attempt], $this->document->getDuplicates());
     }
 
-    public function testRecordsAreReturnedInInsertionOrder(): void
+    public function testRecordsAreReturnedNewestFirst(): void
     {
         $first = $this->makeAttempt(DuplicateMatchStage::CANONICAL_URL, suffix: 'first');
         $second = $this->makeAttempt(DuplicateMatchStage::CONTENT_HASH, suffix: 'second');
@@ -60,7 +60,7 @@ class DocumentDuplicateTrackingTest extends TestCase
             ->recordDuplicate($third);
 
         $duplicates = $this->document->getDuplicates();
-        self::assertSame([$first, $second, $third], $duplicates);
+        self::assertSame([$third, $second, $first], $duplicates);
     }
 
     public function testFifoBoundedAtMaxDuplicateAttempts(): void
@@ -74,15 +74,17 @@ class DocumentDuplicateTrackingTest extends TestCase
 
         self::assertCount(Document::MAX_DUPLICATE_ATTEMPTS, $this->document->getDuplicates());
 
-        // Adding one more must evict the oldest entry, not throw.
+        // Adding one more must evict the oldest entry (at the tail), not throw.
         $newest = $this->makeAttempt(DuplicateMatchStage::CANONICAL_URL, suffix: 'overflow-1');
         $this->document->recordDuplicate($newest);
 
         $duplicates = $this->document->getDuplicates();
         self::assertCount(Document::MAX_DUPLICATE_ATTEMPTS, $duplicates);
-        self::assertSame($newest, $duplicates[Document::MAX_DUPLICATE_ATTEMPTS - 1]);
-        // The first entry (kept-0) was evicted; kept-1 is now at index 0.
-        self::assertSame('https://example.com/kept-1', $duplicates[0]->url);
+        // Newest goes to the front.
+        self::assertSame($newest, $duplicates[0]);
+        // The first inserted entry (kept-0) was evicted from the tail;
+        // kept-1 is now the oldest still alive, sitting at the tail.
+        self::assertSame('https://example.com/kept-1', $duplicates[Document::MAX_DUPLICATE_ATTEMPTS - 1]->url);
     }
 
     public function testFifoEvictsMultipleEntriesWhenManyAreAddedPastTheCap(): void
@@ -96,11 +98,13 @@ class DocumentDuplicateTrackingTest extends TestCase
 
         $duplicates = $this->document->getDuplicates();
         self::assertCount(Document::MAX_DUPLICATE_ATTEMPTS, $duplicates);
-        self::assertSame('https://example.com/entry-10', $duplicates[0]->url);
+        // The last inserted (entry-(MAX+9)) is the newest → index 0.
         self::assertSame(
             'https://example.com/entry-' . (Document::MAX_DUPLICATE_ATTEMPTS + 9),
-            $duplicates[Document::MAX_DUPLICATE_ATTEMPTS - 1]->url,
+            $duplicates[0]->url,
         );
+        // entry-0..entry-9 evicted; entry-10 is the oldest still alive → at the tail.
+        self::assertSame('https://example.com/entry-10', $duplicates[Document::MAX_DUPLICATE_ATTEMPTS - 1]->url);
     }
 
     public function testReturnsSelfForFluentChaining(): void
@@ -136,18 +140,19 @@ class DocumentDuplicateTrackingTest extends TestCase
         self::assertSame($secondSameUrl, $duplicates[0]);
     }
 
-    public function testRerecordingSameUrlPreservesPositionsOfOtherEntries(): void
+    public function testRerecordingSameUrlBubblesRefreshedEntryToTheFront(): void
     {
         $a = $this->makeAttempt(DuplicateMatchStage::CANONICAL_URL, suffix: 'a');
         $b = $this->makeAttempt(DuplicateMatchStage::CANONICAL_URL, suffix: 'b');
         $c = $this->makeAttempt(DuplicateMatchStage::CANONICAL_URL, suffix: 'c');
 
-        // Initial order: [a, b, c]
+        // After three appends with newest-first storage: [c, b, a]
         $this->document->recordDuplicate($a)
             ->recordDuplicate($b)
             ->recordDuplicate($c);
 
-        // Rerecording `b` must overwrite at index 1, not move it to the tail.
+        // Rerecording `b` removes its old position and prepends the refreshed
+        // entry — "seen again" is more relevant than "where it sat before".
         $bRefreshed = new DuplicateAttempt(
             url: $b->url,
             watchFileId: 'wf-refreshed',
@@ -161,7 +166,24 @@ class DocumentDuplicateTrackingTest extends TestCase
         $this->document->recordDuplicate($bRefreshed);
 
         $duplicates = $this->document->getDuplicates();
-        self::assertSame([$a, $bRefreshed, $c], $duplicates);
+        self::assertSame([$bRefreshed, $c, $a], $duplicates);
+    }
+
+    public function testNullUrlAttemptsAreAlwaysAppendedAndNeverDeduplicated(): void
+    {
+        // Raw-HTML pastes (CLI --html-file, API `html` payload) carry no URL.
+        // Each paste is a distinct event with no idempotent key — record both,
+        // newest-first, and rely on the FIFO cap to bound growth.
+        $first = $this->makeNullUrlAttempt(suffix: 'paste-1');
+        $second = $this->makeNullUrlAttempt(suffix: 'paste-2');
+
+        $this->document
+            ->recordDuplicate($first)
+            ->recordDuplicate($second);
+
+        $duplicates = $this->document->getDuplicates();
+        self::assertCount(2, $duplicates);
+        self::assertSame([$second, $first], $duplicates);
     }
 
     public function testFingerprintAccessorsRoundTripNullByDefault(): void
@@ -180,6 +202,20 @@ class DocumentDuplicateTrackingTest extends TestCase
             collectedAt: new \DateTimeImmutable(),
             outcome: DuplicateOutcome::DUPLICATE,
             matchStage: $stage,
+        );
+    }
+
+    private function makeNullUrlAttempt(string $suffix): DuplicateAttempt
+    {
+        return new DuplicateAttempt(
+            url: null,
+            watchFileId: 'wf-1',
+            collectTaskId: "ct-{$suffix}",
+            sourceId: 'src-1',
+            provider: 'manual',
+            collectedAt: new \DateTimeImmutable(),
+            outcome: DuplicateOutcome::DUPLICATE,
+            matchStage: DuplicateMatchStage::CONTENT_HASH,
         );
     }
 }
