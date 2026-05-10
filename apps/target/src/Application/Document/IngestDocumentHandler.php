@@ -110,6 +110,11 @@ readonly class IngestDocumentHandler
         $context = null;
         $watchFile = $document->getWatchFile();
         if (null !== $watchFile) {
+            $this->logger?->info('Running post-save pipeline', [
+                'document_id' => $document->getId(),
+                'collect_task_id' => $action->collectTaskId,
+            ]);
+
             $context = $this->preSavePipeline->process(
                 document: $document,
                 watchFile: $watchFile,
@@ -150,6 +155,10 @@ readonly class IngestDocumentHandler
         // call `findByCollectTaskId` immediately after dispatch and would
         // otherwise hit the OpenSearch refresh interval window.
         $this->documentGateway->save($document, waitForRefresh: $action->sync);
+        $this->logger?->info('Document saved', [
+            'document_id' => $document->getId(),
+            'collect_task_id' => $action->collectTaskId,
+        ]);
 
         $stamps = $action->sync
             // Force the `sync` in-memory transport for this dispatch only —

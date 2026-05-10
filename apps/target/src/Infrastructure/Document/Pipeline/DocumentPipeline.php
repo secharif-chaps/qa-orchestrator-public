@@ -54,12 +54,21 @@ readonly class DocumentPipeline implements DocumentPipelineInterface
                 continue;
             }
 
+            $startAt = microtime(true);
+            $this->logger?->info('Pipeline "{processor}" processor started', [
+                'processor' => $processor::class,
+                'document_id' => $document->getId(),
+                'signals_before' => array_keys($context->signals),
+                'start_at' => $startAt,
+            ]);
+
             $context = $processor->process($context);
 
-            $this->logger?->debug('Pipeline processor ran', [
+            $this->logger?->info('Pipeline "{processor}" processor finished, took {duration} seconds', [
                 'processor' => $processor::class,
                 'document_id' => $document->getId(),
                 'signals' => array_keys($context->signals),
+                'duration' => microtime(true) - $startAt,
             ]);
 
             if ($context->isHalted) {
