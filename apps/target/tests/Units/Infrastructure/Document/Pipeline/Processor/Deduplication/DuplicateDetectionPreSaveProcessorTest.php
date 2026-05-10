@@ -155,8 +155,12 @@ class DuplicateDetectionPreSaveProcessorTest extends TestCase
         self::assertSame([], $original->getDuplicates());
     }
 
-    public function testMatchSkipsRecordingWhenCandidateHasNoUrl(): void
+    public function testMatchRecordsAttemptWithNullUrlWhenCandidateIsRawHtmlPaste(): void
     {
+        // Raw-HTML pastes (CLI --html-file, API `html` payload) legitimately
+        // have no URL — the audit trail must still be persisted with
+        // `DuplicateAttempt.url = null` rather than dropped, otherwise we
+        // lose the "this paste matched X" signal for the trace UI.
         $sharedContent = 'Same article, no URL on candidate.';
         $original = $this->indexedOriginal(id: 'doc-original', canonicalUrl: null, content: $sharedContent);
 
@@ -165,7 +169,10 @@ class DuplicateDetectionPreSaveProcessorTest extends TestCase
         $context = $this->processor->process($this->makeContext(document: $candidate));
 
         self::assertTrue($context->isHalted);
-        self::assertSame([], $original->getDuplicates());
+        $attempts = $original->getDuplicates();
+        self::assertCount(1, $attempts);
+        self::assertNull($attempts[0]->url);
+        self::assertSame(DuplicateMatchStage::CONTENT_HASH, $attempts[0]->matchStage);
     }
 
     public function testReindexingTheSameDocumentDoesNotMatchItself(): void

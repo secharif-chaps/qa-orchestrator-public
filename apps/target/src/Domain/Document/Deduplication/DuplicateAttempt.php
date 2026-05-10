@@ -25,15 +25,16 @@ readonly class DuplicateAttempt
 {
     public function __construct(
         #[ApiProperty(
-            description: 'Canonical URL of the duplicate candidate, normalised the same way the master URL is normalised in the canonical-URL stage.',
+            description: 'Canonical URL of the duplicate candidate, normalised the same way the master URL is normalised in the canonical-URL stage. May be null when the candidate was a raw-HTML paste (CLI `--html-file` / API `html` payload) and no URL was attached upstream.',
             example: 'https://www.lemonde.fr/economie/article/2026/02/14/exemple_6234567_3234.html',
             openapiContext: [
                 'type' => 'string',
                 'format' => 'uri',
+                'nullable' => true,
             ],
         )]
         #[Groups(['document:read', 'document:save'])]
-        public string $url,
+        public ?string $url,
         #[Groups(['document:save'])]
         public string $watchFileId,
         #[Groups(['document:save'])]

@@ -186,36 +186,39 @@ readonly class IngestDocumentHandler
      * so the audit trail on the persisted document carries the same shape as
      * dedup-pipeline matches and the API consumer sees a uniform `duplicates[]`.
      *
-     * Returns `null` when the candidate has no URL at all (raw_html paste with
-     * no source URL) — recording an empty-URL attempt would cause idempotence
-     * collisions in {@see Document::recordDuplicate()} and convey no signal.
+     * Returns `null` only when the CollectTask carries un-persisted entities
+     * (typical in test fixtures) — in production the audit trail is always
+     * written, including for raw-HTML pastes whose URL is null.
      */
     private function buildProviderIdMergeAttempt(
         Document $candidate,
         CollectTask $collectTask,
         string $collectTaskId,
     ): ?DuplicateAttempt {
-        $url = $candidate->getCanonicalUrl() ?? $candidate->getUrl();
-        if (null === $url || '' === $url) {
-            return null;
-        }
-
         // CollectTask in production always carries persisted entities; tests
         // sometimes wire ad-hoc WatchFile / Source without an id and the
         // typed `string` getId() either trips a TypeError (WatchFile) or
         // throws an explicit LogicException (Source). Skip the audit trail
         // in those edge cases — the merge itself still happens.
         try {
-            $watchFileId = $collectTask->getWatchFile()
-->getId();
-            $sourceId = $collectTask->getSource()
-->getId();
+            $watchFileId = $collectTask
+                ->getWatchFile()
+                ->getId();
+
+            $sourceId = $collectTask
+                ->getSource()
+                ->getId();
         } catch (\TypeError|\LogicException) {
             return null;
         }
 
+        // URL may be null for raw-HTML pastes — DuplicateAttempt.url is
+        // nullable for exactly this case, and Document::recordDuplicate()
+        // handles null-URL entries distinctly (no overwrite, FIFO cap).
+        $url = $candidate->getCanonicalUrl() ?? $candidate->getUrl();
+
         return new DuplicateAttempt(
-            url: $url,
+            url: '' !== $url ? $url : null,
             watchFileId: $watchFileId,
             collectTaskId: $collectTaskId,
             sourceId: $sourceId,

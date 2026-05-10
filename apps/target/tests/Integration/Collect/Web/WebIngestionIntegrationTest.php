@@ -205,6 +205,134 @@ class WebIngestionIntegrationTest extends AbstractApiTestCase
         self::assertSame('Pasted clipping', $documents[0]->getTitle());
     }
 
+    #[Test]
+    public function pastingSameRawHtmlTwiceRecordsContentHashAuditTrailWithNullUrl(): void
+    {
+        $watchFile = $this->makeWatchFile();
+        $source = $this->makeManualSource($watchFile);
+
+        $html = <<<'HTML'
+            <html><head><title>Recurring clipping</title></head>
+            <body><article>
+            <p>This pasted article carries enough body text for the fingerprint
+            computer to produce a stable content_hash so a second paste with
+            the exact same body resolves as a content_hash duplicate of the
+            first.</p>
+            </article></body></html>
+            HTML;
+
+        // First paste — persisted as the canonical entry.
+        $firstEnvelope = $this->bus->dispatch(
+            new CreateCollectTaskAction(
+                sourceId: $source->getId(),
+                watchFileId: $watchFile->getId(),
+                start: true,
+                configuration: new WebCollectConfig(rawHtml: $html, syncChain: true)
+                    ->toCollectTaskConfiguration(),
+            ),
+            [new TransportNamesStamp(['sync'])],
+        );
+        $firstTaskId = $this->extractCollectTask($firstEnvelope)
+->getId();
+        self::assertIsString($firstTaskId);
+        $originals = $this->documentGateway->findByCollectTaskId($firstTaskId);
+        self::assertCount(1, $originals);
+        $originalId = $originals[0]->getId();
+
+        // Second paste, same body → dedup pipeline matches on content_hash.
+        $secondEnvelope = $this->bus->dispatch(
+            new CreateCollectTaskAction(
+                sourceId: $source->getId(),
+                watchFileId: $watchFile->getId(),
+                start: true,
+                configuration: new WebCollectConfig(rawHtml: $html, syncChain: true)
+                    ->toCollectTaskConfiguration(),
+            ),
+            [new TransportNamesStamp(['sync'])],
+        );
+        $secondTaskId = $this->extractCollectTask($secondEnvelope)
+->getId();
+        self::assertIsString($secondTaskId);
+
+        // The match writes a DuplicateAttempt on the original and halts the
+        // save of the candidate. `findByCollectTaskId(secondTaskId)` therefore
+        // reaches the original via the nested duplicates[] index.
+        $matched = $this->documentGateway->findByCollectTaskId($secondTaskId);
+        self::assertCount(1, $matched);
+        self::assertSame($originalId, $matched[0]->getId());
+
+        $attempts = $matched[0]->getDuplicates();
+        self::assertCount(1, $attempts);
+        // Raw-HTML pastes legitimately carry no URL — `DuplicateAttempt.url`
+        // must accept null so the audit trail is recorded instead of silently
+        // dropped (TAR-1147 regression target).
+        self::assertNull($attempts[0]->url);
+        self::assertSame($secondTaskId, $attempts[0]->collectTaskId);
+    }
+
+    #[Test]
+    public function pastingHtmlMatchingAlreadyCollectedUrlDocRecordsAuditOnTheUrlOriginal(): void
+    {
+        $watchFile = $this->makeWatchFile();
+        $source = $this->makeManualSource($watchFile);
+
+        $url = 'https://example.com/republished-article';
+        $body = <<<'HTML'
+            <html><head><title>Republished article</title></head>
+            <body><article>
+            <p>A reasonably long body so the SimHash / MinHash signatures the
+            fingerprint computer derives are stable and the dedup pipeline
+            picks the content_hash branch rather than degenerating to title
+            fallback.</p>
+            </article></body></html>
+            HTML;
+        $this->htmlFetcher->reply(url: $url, html: $body);
+
+        // First collect — via URL, normal HTTP path.
+        $urlEnvelope = $this->bus->dispatch(
+            new CreateCollectTaskAction(
+                sourceId: $source->getId(),
+                watchFileId: $watchFile->getId(),
+                start: true,
+                configuration: new WebCollectConfig(url: $url, syncChain: true)
+                    ->toCollectTaskConfiguration(),
+            ),
+            [new TransportNamesStamp(['sync'])],
+        );
+        $urlTaskId = $this->extractCollectTask($urlEnvelope)
+->getId();
+        self::assertIsString($urlTaskId);
+        $urlDocs = $this->documentGateway->findByCollectTaskId($urlTaskId);
+        self::assertCount(1, $urlDocs);
+        $urlDocId = $urlDocs[0]->getId();
+
+        // Second collect — operator pastes the same body without a URL.
+        // Pipeline matches on content_hash → original (the URL doc) gets a
+        // DuplicateAttempt with `url: null` (paste has no URL).
+        $pasteEnvelope = $this->bus->dispatch(
+            new CreateCollectTaskAction(
+                sourceId: $source->getId(),
+                watchFileId: $watchFile->getId(),
+                start: true,
+                configuration: new WebCollectConfig(rawHtml: $body, syncChain: true)
+                    ->toCollectTaskConfiguration(),
+            ),
+            [new TransportNamesStamp(['sync'])],
+        );
+        $pasteTaskId = $this->extractCollectTask($pasteEnvelope)
+->getId();
+        self::assertIsString($pasteTaskId);
+
+        $matched = $this->documentGateway->findByCollectTaskId($pasteTaskId);
+        self::assertCount(1, $matched);
+        self::assertSame($urlDocId, $matched[0]->getId());
+
+        $attempts = $matched[0]->getDuplicates();
+        self::assertCount(1, $attempts);
+        self::assertNull($attempts[0]->url);
+        self::assertSame($pasteTaskId, $attempts[0]->collectTaskId);
+    }
+
     private function extractCollectTask(\Symfony\Component\Messenger\Envelope $envelope): CollectTask
     {
         $stamp = $envelope->last(HandledStamp::class);

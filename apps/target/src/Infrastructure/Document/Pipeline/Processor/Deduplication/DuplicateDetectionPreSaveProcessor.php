@@ -167,20 +167,12 @@ class DuplicateDetectionPreSaveProcessor implements PreSaveDocumentProcessorInte
             return;
         }
 
+        // Raw-HTML pastes legitimately have no URL (CLI `--html-file`, API
+        // `html` payload). Persist the audit trail anyway — the URL field
+        // on the persisted DuplicateAttempt is nullable for exactly this
+        // case, and recordDuplicate() handles null-URL entries distinctly
+        // (no overwrite, FIFO cap takes care of growth).
         $url = $context->document->getUrl();
-        if (null === $url) {
-            $this->logger?->error(
-                'DuplicateDetectionPreSaveProcessor: audit trace lost — candidate has no URL, recordDuplicate skipped',
-                [
-                    'document_id' => $context->document->getId(),
-                    'original_id' => $originalId,
-                    'outcome' => $result->outcome->value,
-                    'stage' => $stage->value,
-                ],
-            );
-
-            return;
-        }
 
         try {
             $original = $this->documentGateway->get($originalId);
