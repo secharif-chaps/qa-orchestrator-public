@@ -26,6 +26,7 @@ use App\Domain\Source\SourceType;
 use App\Domain\WatchFile\WatchFile;
 use App\Infrastructure\Document\Pipeline\PreSaveDocumentPipeline;
 use App\Tests\Units\Infrastructure\Document\NullDocumentGateway;
+use App\Tests\Utils\EntityUtilsTrait;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
@@ -41,6 +42,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[AllowMockObjectsWithoutExpectations]
 class IngestDocumentHandlerTest extends TestCase
 {
+    use EntityUtilsTrait;
     private IngestDocumentHandler $handler;
     private CollectTaskGatewayInterface&Stub $collectTaskGateway;
     private DocumentGatewayInterface&Stub $documentGateway;
@@ -1032,10 +1034,9 @@ class IngestDocumentHandlerTest extends TestCase
             'Test Org',
             'test-org-id'
         ));
-        // Force a non-null id so handlers/processors that call getId() on the
-        // entity don't trip the typed `string` return on the unsaved entity.
-        $reflection = new \ReflectionProperty(WatchFile::class, 'id');
-        $reflection->setValue($watchFile, 'wf-test-id');
+        // Force a non-null id so handlers that call getId() on the entity
+        // don't trip the typed `string` return on the unsaved entity.
+        $this->forcePropertyValue($watchFile, 'wf-test-id');
 
         return $watchFile;
     }
