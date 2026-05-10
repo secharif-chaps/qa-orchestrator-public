@@ -1028,10 +1028,16 @@ class IngestDocumentHandlerTest extends TestCase
 
     private function createWatchFile(): WatchFile
     {
-        return new WatchFile('Test Watchfile', 'Test user objective for monitoring', new Organisation(
+        $watchFile = new WatchFile('Test Watchfile', 'Test user objective for monitoring', new Organisation(
             'Test Org',
             'test-org-id'
         ));
+        // Force a non-null id so handlers/processors that call getId() on the
+        // entity don't trip the typed `string` return on the unsaved entity.
+        $reflection = new \ReflectionProperty(WatchFile::class, 'id');
+        $reflection->setValue($watchFile, 'wf-test-id');
+
+        return $watchFile;
     }
 
     private function createActor(): Actor

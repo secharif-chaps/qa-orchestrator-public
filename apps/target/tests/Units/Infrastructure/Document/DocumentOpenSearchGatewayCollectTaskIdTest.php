@@ -52,7 +52,7 @@ class DocumentOpenSearchGatewayCollectTaskIdTest extends TestCase
     }
 
     #[Test]
-    public function buildsConstantScoreTermQueryOnCollectTaskId(): void
+    public function buildsBoolShouldQueryMatchingTopLevelAndDuplicatesCollectTaskId(): void
     {
         $this->openSearch
             ->expects($this->once())
@@ -62,11 +62,18 @@ class DocumentOpenSearchGatewayCollectTaskIdTest extends TestCase
                 self::assertGreaterThan(1, $params['body']['size']);
 
                 $query = $params['body']['query'];
-                self::assertArrayHasKey('constant_score', $query);
+                self::assertArrayHasKey('bool', $query);
+
+                $should = $query['bool']['should'];
+                self::assertCount(2, $should, 'Query must match both top-level and duplicates[].collectTaskId.');
+
+                self::assertSame('task-abc-123', $should[0]['term']['collectTaskId']['value'] ?? null);
+                self::assertSame('duplicates', $should[1]['nested']['path'] ?? null);
                 self::assertSame(
                     'task-abc-123',
-                    $query['constant_score']['filter']['term']['collectTaskId']['value'] ?? null,
+                    $should[1]['nested']['query']['term']['duplicates.collectTaskId']['value'] ?? null,
                 );
+                self::assertSame(1, $query['bool']['minimum_should_match'] ?? null);
 
                 return [
                     'hits' => [

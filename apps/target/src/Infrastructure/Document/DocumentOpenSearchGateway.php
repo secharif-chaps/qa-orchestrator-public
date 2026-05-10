@@ -566,10 +566,45 @@ readonly class DocumentOpenSearchGateway implements DocumentGatewayInterface, Fi
 
     public function findByCollectTaskId(string $collectTaskId): array
     {
+        // Match both:
+        // - documents newly created by this collect task (top-level `collectTaskId`),
+        // - documents that pre-existed and were re-touched by this collect
+        //   task (providerId merge or dedup-pipeline match → an entry in the
+        //   nested `duplicates[]` whose `collectTaskId` equals the input).
+        //
         // 100 hits is generous: web/manual yield 1 doc per task; an Apify
         // dataset rarely tops a few dozen items per task in practice. If
         // a caller needs more, they should paginate via _search/_scroll.
-        return $this->findManyByTerm('collectTaskId', $collectTaskId, null, limit: 100, logLabel: 'collectTaskId');
+        $query = [
+            'bool' => [
+                'should' => [
+                    [
+                        'term' => [
+                            'collectTaskId' => [
+                                'value' => $collectTaskId,
+                            ],
+                        ],
+                    ],
+                    [
+                        'nested' => [
+                            'path' => 'duplicates',
+                            'query' => [
+                                'term' => [
+                                    'duplicates.collectTaskId' => [
+                                        'value' => $collectTaskId,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'minimum_should_match' => 1,
+            ],
+        ];
+
+        return $this->searchAndDenormalize($query, 100, 'collectTaskId', [
+            'collect_task_id' => $collectTaskId,
+        ]);
     }
 
     public function findStaleAiValidationDocuments(\DateTimeImmutable $cutoff, int $limit): array

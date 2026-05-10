@@ -325,11 +325,44 @@ class CreateDocumentCommand extends Command
         }
 
         foreach ($documents as $document) {
-            $io->success(\sprintf('Document persisted: "%s" (ID: %s).', $document->getTitle(), $document->getId()));
+            if ($this->isReingestionMerge($document, $collectTaskId)) {
+                // The persisted entity pre-existed and was re-touched by this
+                // sync chain (providerId match → IngestDocumentHandler merge).
+                // Surface it explicitly so the operator does not mistake the
+                // outcome for a fresh insert.
+                $io->note(\sprintf(
+                    'Document MERGED into existing entry: "%s" (ID: %s). See `duplicates[]` for the audit trail.',
+                    $document->getTitle(),
+                    $document->getId(),
+                ));
+            } else {
+                $io->success(\sprintf(
+                    'Document persisted: "%s" (ID: %s).',
+                    $document->getTitle(),
+                    $document->getId(),
+                ));
+            }
             $this->renderQualityReport($io, $document);
         }
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * A merge re-ingestion is detected when the persisted document carries a
+     * `DuplicateAttempt` entry whose `collectTaskId` matches the task we just
+     * dispatched — that entry was appended by IngestDocumentHandler when it
+     * found an existing document by providerId.
+     */
+    private function isReingestionMerge(Document $document, string $collectTaskId): bool
+    {
+        foreach ($document->getDuplicates() as $duplicate) {
+            if ($duplicate->collectTaskId === $collectTaskId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function renderQualityReport(SymfonyStyle $io, Document $document): void

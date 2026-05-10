@@ -105,7 +105,18 @@ class NullDocumentGateway implements DocumentGatewayInterface, FingerprintGatewa
     {
         return array_values(array_filter(
             $this->documents,
-            static fn (Document $document): bool => $document->getCollectTaskId() === $collectTaskId,
+            static function (Document $document) use ($collectTaskId): bool {
+                if ($document->getCollectTaskId() === $collectTaskId) {
+                    return true;
+                }
+                foreach ($document->getDuplicates() as $duplicate) {
+                    if ($duplicate->collectTaskId === $collectTaskId) {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
         ));
     }
 

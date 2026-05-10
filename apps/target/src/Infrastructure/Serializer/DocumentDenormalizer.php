@@ -319,15 +319,26 @@ class DocumentDenormalizer implements DenormalizerInterface, DenormalizerAwareIn
             // properties and produces the expected nested array. Type info
             // is only erased on the load path (raw `array` from OpenSearch
             // _source) which is why the asymmetry exists.
-            $value = array_map(
-                fn (mixed $item): DuplicateAttempt => $this->denormalizer->denormalize(
-                    $item,
-                    DuplicateAttempt::class,
-                    $format,
-                    $context,
-                ),
-                $value,
-            );
+            $denormalized = [];
+            foreach ($value as $item) {
+                try {
+                    $denormalized[] = $this->denormalizer->denormalize(
+                        $item,
+                        DuplicateAttempt::class,
+                        $format,
+                        $context,
+                    );
+                } catch (MissingConstructorArgumentsException $e) {
+                    $this->logger?->warning(
+                        'DocumentDenormalizer: skipping partial DuplicateAttempt entry',
+                        [
+                            'document_id' => $data['id'] ?? null,
+                            'error' => $e->getMessage(),
+                        ],
+                    );
+                }
+            }
+            $value = $denormalized;
         }
 
         $this->setPropertyValueSafely($document, $property, $value);

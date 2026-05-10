@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\Application\Document;
 
 use App\Application\Document\Pipeline\RunPostSavePipelineAction;
+use App\Domain\Collect\CollectTask;
 use App\Domain\Collect\CollectTaskGatewayInterface;
+use App\Domain\Document\Deduplication\DuplicateAttempt;
+use App\Domain\Document\Deduplication\DuplicateMatchStage;
+use App\Domain\Document\Deduplication\DuplicateOutcome;
 use App\Domain\Document\Document;
 use App\Domain\Document\DocumentGatewayInterface;
 use App\Domain\Document\Exception\ValidationException;
@@ -84,8 +88,18 @@ readonly class IngestDocumentHandler
         }
 
         if (null !== $existingDocument) {
+            // Record the audit trail BEFORE the merge so we capture the URL
+            // / source / provider that triggered THIS collect attempt rather
+            // than the previously-persisted values. The document's own
+            // `collectTaskId` is intentionally left untouched — it always
+            // points at the task that first created the entity, while
+            // `duplicates[]` traces every subsequent re-collect.
+            $attempt = $this->buildProviderIdMergeAttempt($document, $collectTask, $action->collectTaskId);
             $this->mergeDocumentData($existingDocument, $document);
             $document = $existingDocument;
+            if (null !== $attempt) {
+                $document->recordDuplicate($attempt);
+            }
             $this->logger?->info('Document merged into existing entry by providerId', [
                 'document_id' => $document->getId(),
                 'provider_id' => $document->getProviderId(),
@@ -163,6 +177,53 @@ readonly class IngestDocumentHandler
         }
 
         return new IngestDocumentResult(document: $document, preSaveContext: $context);
+    }
+
+    /**
+     * Build a {@see DuplicateAttempt} describing the providerId-merge event:
+     * the new collect attempt is treated as a `DUPLICATE` matched at
+     * `CANONICAL_URL` stage (providerId is `sha256(canonicalUrl ?? sourceUrl)`),
+     * so the audit trail on the persisted document carries the same shape as
+     * dedup-pipeline matches and the API consumer sees a uniform `duplicates[]`.
+     *
+     * Returns `null` when the candidate has no URL at all (raw_html paste with
+     * no source URL) — recording an empty-URL attempt would cause idempotence
+     * collisions in {@see Document::recordDuplicate()} and convey no signal.
+     */
+    private function buildProviderIdMergeAttempt(
+        Document $candidate,
+        CollectTask $collectTask,
+        string $collectTaskId,
+    ): ?DuplicateAttempt {
+        $url = $candidate->getCanonicalUrl() ?? $candidate->getUrl();
+        if (null === $url || '' === $url) {
+            return null;
+        }
+
+        // CollectTask in production always carries persisted entities; tests
+        // sometimes wire ad-hoc WatchFile / Source without an id and the
+        // typed `string` getId() either trips a TypeError (WatchFile) or
+        // throws an explicit LogicException (Source). Skip the audit trail
+        // in those edge cases — the merge itself still happens.
+        try {
+            $watchFileId = $collectTask->getWatchFile()
+->getId();
+            $sourceId = $collectTask->getSource()
+->getId();
+        } catch (\TypeError|\LogicException) {
+            return null;
+        }
+
+        return new DuplicateAttempt(
+            url: $url,
+            watchFileId: $watchFileId,
+            collectTaskId: $collectTaskId,
+            sourceId: $sourceId,
+            provider: $collectTask->getProviderName(),
+            collectedAt: new \DateTimeImmutable(),
+            outcome: DuplicateOutcome::DUPLICATE,
+            matchStage: DuplicateMatchStage::CANONICAL_URL,
+        );
     }
 
     /**
