@@ -164,23 +164,26 @@ class FetchWebUrlHandlerTest extends TestCase
         self::assertTrue($dispatched->sync, 'IngestDocumentAction must carry sync=true to forward the chain');
     }
 
-    public function testFailsTaskAndThrowsWhenConfigurationLacksUrlAndRawHtml(): void
+    public function testTransitionsTaskToFailedWithoutThrowingWhenConfigurationLacksUrlAndRawHtml(): void
     {
+        // Re-throwing on a business-level failure (bad operator config) would
+        // let DoctrineTransactionMiddleware roll back the FAILED transition
+        // and leave the source locked. The handler returns silently; the CLI
+        // / API reload the task and surface the FAILED status themselves.
         $task = $this->createCollectTask([]);
         $task->start('web-test', $this->eventDispatcher);
 
-        $this->expectException(CollectException::class);
-        $this->expectExceptionMessageMatches('/url.*raw_html|raw_html.*url/');
+        $this->handler->__invoke(new FetchWebUrlAction(self::TASK_ID));
 
-        try {
-            $this->handler->__invoke(new FetchWebUrlAction(self::TASK_ID));
-        } finally {
-            self::assertSame(CollectTaskStatus::FAILED, $task->getStatus());
-        }
+        self::assertSame(CollectTaskStatus::FAILED, $task->getStatus());
+        self::assertSame([], $this->messageBus->getDispatchedMessages());
     }
 
-    public function testFailsTaskAndThrowsWhenFetchFails(): void
+    public function testTransitionsTaskToFailedWithoutThrowingWhenFetchFails(): void
     {
+        // Same rationale as the bad-config branch: 4xx upstream failures are
+        // deterministic, retrying inflates the error rate without changing
+        // the outcome, and re-throwing would erase the FAILED persistence.
         $task = $this->createCollectTask([
             'url' => 'https://example.com/down',
         ]);
@@ -189,14 +192,10 @@ class FetchWebUrlHandlerTest extends TestCase
         $this->htmlFetcher->method('fetch')
 ->willThrowException(HtmlFetchException::fetchFailed('https://example.com/down', 'connection refused'));
 
-        $this->expectException(CollectException::class);
-        $this->expectExceptionMessageMatches('/Failed to fetch URL/');
+        $this->handler->__invoke(new FetchWebUrlAction(self::TASK_ID));
 
-        try {
-            $this->handler->__invoke(new FetchWebUrlAction(self::TASK_ID));
-        } finally {
-            self::assertSame(CollectTaskStatus::FAILED, $task->getStatus());
-        }
+        self::assertSame(CollectTaskStatus::FAILED, $task->getStatus());
+        self::assertSame([], $this->messageBus->getDispatchedMessages());
     }
 
     public function testThrowsWhenCollectTaskNotFound(): void

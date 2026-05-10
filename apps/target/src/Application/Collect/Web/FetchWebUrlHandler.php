@@ -74,6 +74,12 @@ readonly class FetchWebUrlHandler
             $config = WebCollectConfig::fromCollectTaskConfiguration($collectTask->getConfiguration());
             $config->validate();
         } catch (InvalidWebCollectConfigException $e) {
+            // Business-level failure (operator-supplied bad config). Persist
+            // FAILED and return — throwing here would let
+            // DoctrineTransactionMiddleware roll back the very save() above,
+            // leaving the CollectTask stuck in QUEUED/RUNNING and locking
+            // the source for the next attempt. The CLI / API caller reads
+            // the FAILED status back from the gateway to surface the error.
             $this->logger?->error('FetchWebUrlHandler: invalid web configuration', [
                 'collect_task_id' => $action->collectTaskId,
                 'error' => $e->getMessage(),
@@ -81,7 +87,7 @@ readonly class FetchWebUrlHandler
             $collectTask->fail($this->eventDispatcher);
             $this->collectTaskGateway->save($collectTask);
 
-            throw new CollectException($e->getMessage(), 0, $e);
+            return;
         }
 
         $collectTask->resume($this->eventDispatcher);
@@ -91,6 +97,11 @@ readonly class FetchWebUrlHandler
         } catch (HtmlFetchException $e) {
             // Reachable only when fetching a URL — the raw_html branch
             // never throws HtmlFetchException — so $config->url is non-null.
+            // Persist FAILED and return (same rationale as the invalid-config
+            // branch above): the rollback from re-throwing would erase the
+            // FAILED transition and leave the source locked. Cloudflare 4xx
+            // are deterministic — there is no value in letting the messenger
+            // retry a malformed URL anyway.
             $this->logger?->error('FetchWebUrlHandler: failed to fetch URL', [
                 'collect_task_id' => $action->collectTaskId,
                 'url' => $this->urlSanitizer->redactCredentials((string) $config->url),
@@ -99,7 +110,7 @@ readonly class FetchWebUrlHandler
             $collectTask->fail($this->eventDispatcher);
             $this->collectTaskGateway->save($collectTask);
 
-            throw new CollectException(\sprintf('Failed to fetch URL: %s', $e->getMessage()), 0, $e);
+            return;
         }
 
         $metadata = $this->metadataExtractor->extract($html, $config->url);
