@@ -1,10 +1,10 @@
-import { useMercureStore } from '@target/stores/mercure'
+import { useMercureStore } from '@/stores/mercure'
+import { apiClient } from '@/api/client'
+import i18n from '@/i18n'
 import { useOnline } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useAppFetch } from './useAppFetch'
-import { useToast } from './useToast'
+import { useToast } from '@/composables/useToast'
 
 /**
  * Simple cookie helper to replace Nuxt's useCookie auto-import.
@@ -70,14 +70,21 @@ const eventSources = new Map<string, EventSource>()
 const retryCounts = new Map<string, number>()
 const isOnline = useOnline()
 let connectionTimer: ReturnType<typeof setTimeout> | null = null
+// Guards the online/offline watcher so it is registered only once. Without
+// this, every call to useMercure() (and apiClient triggers many) would attach
+// a new watcher, leaking memory and multiplying resubscribeAll() at network
+// recovery.
+let onlineWatcherInitialized = false
 
 export function useMercure() {
   const mercureStore = useMercureStore()
   const { activeSubscriptions, hasShownDisconnectToast } = storeToRefs(mercureStore)
   const isConnected = ref(false)
-  const fetch = useAppFetch()
   const toast = useToast()
-  const { t } = useI18n()
+  // Use the global i18n instance: useMercure can be invoked from a promise chain
+  // (e.g. apiClient.request after the fetch resolves), where Vue's setup-only
+  // composables like useI18n() throw. The global instance works anywhere.
+  const t = i18n.global.t
 
   // Resubscribe all previously active subscriptions
   const resubscribeAll = async () => {
@@ -87,24 +94,29 @@ export function useMercure() {
     }
   }
 
-  // Proactive network status detection
-  watch(isOnline, async (online) => {
-    if (activeSubscriptions.value.length === 0) {
-      return
-    }
-
-    if (!online) {
-      handleConnectionLost()
-    } else {
-      for (const eventSource of eventSources.values()) {
-        eventSource.close()
+  // Proactive network status detection — registered once at first composable
+  // invocation. The closure captures Pinia refs / module-level state, all of
+  // which are singletons, so a single watcher serves every consumer correctly.
+  if (!onlineWatcherInitialized) {
+    onlineWatcherInitialized = true
+    watch(isOnline, async (online) => {
+      if (activeSubscriptions.value.length === 0) {
+        return
       }
-      eventSources.clear()
-      retryCounts.clear()
 
-      await resubscribeAll()
-    }
-  })
+      if (!online) {
+        handleConnectionLost()
+      } else {
+        for (const eventSource of eventSources.values()) {
+          eventSource.close()
+        }
+        eventSources.clear()
+        retryCounts.clear()
+
+        await resubscribeAll()
+      }
+    })
+  }
 
   function handleConnectionLost() {
     if (connectionTimer !== null) {
@@ -159,8 +171,9 @@ export function useMercure() {
     }
 
     try {
-      // Use the useAppFetch composable to make the API request
-      const data: MercureTokenResponse = await fetch('/security/real-time/token')
+      const data = await apiClient.get<MercureTokenResponse>('/security/real-time/token', {
+        silent: true,
+      })
 
       // Store token in cookie
       mercureCookie.value = data.token

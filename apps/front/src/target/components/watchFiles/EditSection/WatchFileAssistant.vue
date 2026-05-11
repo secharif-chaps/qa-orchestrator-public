@@ -63,7 +63,7 @@ import {
   getConversationMessagesQuery,
   getLastConversationQuery,
 } from '@target/api/queries/conversation'
-import { useMercure } from '@target/composables/useMercure'
+import { useMercure } from '@/composables/realtime/useMercure'
 import ChatInput from '@target/components/chat/ChatInput.vue'
 import AssistantEmptyView from '@target/components/watchFiles/EditSection/AssistantEmptyView.vue'
 import ConnectionBanner from '@target/components/watchFiles/EditSection/ConnectionBanner.vue'

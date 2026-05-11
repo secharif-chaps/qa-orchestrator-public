@@ -51,16 +51,20 @@ export const getUserOrganization = async (userId: string) => {
  * Assign a user to an organization or change their organization
  */
 export const assignUserOrganization = async (userId: string, organizationId: string) => {
-  return apiClient.put<OrganizationMemberResponse>(`/users/${userId}/organization`, {
-    organization_id: organizationId,
-  } satisfies AssignOrganizationRequest)
+  return apiClient.put<OrganizationMemberResponse>(
+    `/users/${userId}/organization`,
+    {
+      organization_id: organizationId,
+    } satisfies AssignOrganizationRequest,
+    { silent: true },
+  )
 }
 
 /**
  * Update user's permissions (roles)
  */
 export const updateUserPermissions = async (userId: string, permissions: string[]) => {
-  return apiClient.put(`/users/${userId}/permissions`, { permissions })
+  return apiClient.put(`/users/${userId}/permissions`, { permissions }, { silent: true })
 }
 
 export interface ResetPasswordResponse {
@@ -75,9 +79,13 @@ export interface ResetPasswordResponse {
  * User will be required to change password on next login
  */
 export const resetUserPassword = async (userId: string, temporaryPassword: string) => {
-  return apiClient.post<ResetPasswordResponse>(`/users/${userId}/reset-password`, {
-    temporary_password: temporaryPassword,
-  })
+  return apiClient.post<ResetPasswordResponse>(
+    `/users/${userId}/reset-password`,
+    {
+      temporary_password: temporaryPassword,
+    },
+    { silent: true },
+  )
 }
 
 /**
@@ -85,7 +93,7 @@ export const resetUserPassword = async (userId: string, temporaryPassword: strin
  * This sets enabled=false in Keycloak
  */
 export const disableUser = async (userId: string) => {
-  return apiClient.put(`/users/${userId}/disable`, {})
+  return apiClient.put(`/users/${userId}/disable`, {}, { silent: true })
 }
 
 /**
@@ -93,5 +101,5 @@ export const disableUser = async (userId: string) => {
  * This sets enabled=true in Keycloak
  */
 export const enableUser = async (userId: string) => {
-  return apiClient.put(`/users/${userId}/enable`, {})
+  return apiClient.put(`/users/${userId}/enable`, {}, { silent: true })
 }

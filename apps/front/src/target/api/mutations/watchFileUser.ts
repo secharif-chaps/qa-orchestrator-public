@@ -6,7 +6,7 @@ import {
   updateWatchFileUserRole,
 } from '@target/api/watchFileUser'
 import { useRole } from '@target/composables/useRole'
-import { useToast } from '@target/composables/useToast'
+import { useToast } from '@/composables/useToast'
 import type { User } from '@target/types/user'
 import type { WatchFileUser, WatchFileUserRole } from '@target/types/watchFileUser'
 import { useI18n } from 'vue-i18n'

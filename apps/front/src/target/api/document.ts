@@ -1,4 +1,4 @@
-import { useApi } from '@target/composables/useApi'
+import { apiClient } from '@/api/client'
 import { convertDateStringToDate, formatToISOWithTimezone, getPeriodDates } from '@/utils/date'
 import type { DefaultErrorMessage } from '@target/types/api'
 import type {
@@ -16,17 +16,15 @@ import type { JsonLdCollection } from '@target/types/jsonld'
 const ROOT_URL = '/watch_files'
 
 export const getItemDocument = async (id: string) => {
-  const response = await useApi().get<Document>(`/documents/${id}`)
-  return response.data
+  return apiClient.get<Document>(`/documents/${id}`)
 }
 
 export const markDocumentAsSeen = async (id: string, defaultErrorMessage: DefaultErrorMessage) => {
-  const response = await useApi().post<Document>(
+  return apiClient.post<Document>(
     `/documents/${id}/mark-seen`,
     {},
-    { defaultErrorMessage },
+    { mediaType: 'ld+json', errorMessage: defaultErrorMessage },
   )
-  return response.data
 }
 
 export const getCollectionDocument = async ({
@@ -58,7 +56,7 @@ export const getCollectionDocument = async ({
     }),
   }
 
-  const response = await useApi().get<JsonLdCollection<Document> & { facets?: DocumentFacets }>(
+  const response = await apiClient.get<JsonLdCollection<Document> & { facets?: DocumentFacets }>(
     `${ROOT_URL}/${watchFileId}/documents`,
     {
       query,
@@ -77,10 +75,10 @@ export const getCollectionDocument = async ({
     'manual_refuse',
     'manual_empty',
   ]
-  const filteredFacets = response.data.facets
+  const filteredFacets = response.facets
     ? {
-        ...response.data.facets,
-        validationStatuses: response.data.facets.validationStatuses
+        ...response.facets,
+        validationStatuses: response.facets.validationStatuses
           ?.filter((facet) => !rejectedValidationStatuses.includes(facet.status))
           .sort((a, b) => {
             const indexA = validationStatusOrder.indexOf(a.status)
@@ -95,8 +93,8 @@ export const getCollectionDocument = async ({
     : undefined
 
   return {
-    items: response.data.member,
-    totalItems: response.data.totalItems,
+    items: response.member,
+    totalItems: response.totalItems,
     facets: filteredFacets,
   }
 }
@@ -106,13 +104,11 @@ export const documentValidation = async (
   action: DocumentValidationAction,
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
-  const response = await useApi().post<DocumentValidationResponse>(
+  return apiClient.post<DocumentValidationResponse>(
     `documents/${documentId}/manual-validate`,
     { action },
-    { defaultErrorMessage },
+    { mediaType: 'ld+json', errorMessage: defaultErrorMessage },
   )
-
-  return response.data
 }
 
 export const batchDocumentValidation = async (
@@ -120,16 +116,14 @@ export const batchDocumentValidation = async (
   action: DocumentValidationAction,
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
-  const response = await useApi().post<BatchValidationResponse>(
+  return apiClient.post<BatchValidationResponse>(
     'documents/batch-manual-validate',
     {
       document_ids: documentIds,
       action,
     },
-    { defaultErrorMessage },
+    { mediaType: 'ld+json', errorMessage: defaultErrorMessage },
   )
-
-  return response.data
 }
 
 const buildFilterQuery = (filters: FilterParams): Record<string, string | number | string[]> => {

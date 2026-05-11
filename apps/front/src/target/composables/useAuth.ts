@@ -10,7 +10,7 @@ let visibilityChangeRegistered = false
 // The OIDC session (Keycloak via oidc-client-ts) stays alive as long as the tab is open,
 // through 3 complementary mechanisms:
 //
-// 1. Before each API request: useAppFetch checks isTokenExpired() and refreshes if needed.
+// 1. Before each API request: apiClient checks expires_at and refreshes if needed.
 //    Handles the common case where the user actively interacts with the app.
 //
 // 2. Automatic silent renew (automaticSilentRenew: true in oidc-client-ts config, see auth store):

@@ -5,7 +5,7 @@ import {
   markDocumentAsSeen,
 } from '@target/api/document'
 import { DOCUMENT_QUERY_KEYS } from '@target/api/queries/document'
-import { useToast } from '@target/composables/useToast'
+import { useToast } from '@/composables/useToast'
 import { useWatchFileDocumentsStore } from '@target/stores/watchFileDocuments'
 import type {
   BatchValidationResponse,

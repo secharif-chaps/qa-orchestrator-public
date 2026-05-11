@@ -123,7 +123,7 @@ import {
 } from '@owlint/feathers-vue'
 import { useChangeActorStatus } from '@target/api/mutations/actor'
 import { useSourceTypeLabel } from '@target/composables/useSourceTypeLabel'
-import { useToast } from '@target/composables/useToast'
+import { useToast } from '@/composables/useToast'
 import { ActorStatus } from '@target/types/actor'
 import type { Source } from '@target/types/source'
 import { SourceStatus } from '@target/types/source'

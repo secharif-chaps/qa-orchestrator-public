@@ -669,7 +669,6 @@
         }
       },
       "generic": "Une erreur s'est produite",
-      "no_data": "Aucune donnée retournée",
       "notFound": {
         "code": "404",
         "goBack": "Retour",
@@ -678,10 +677,9 @@
         "message": "La page que vous recherchez n'existe pas ou a été déplacée.",
         "title": "Page Non Trouvée"
       },
-      "rate_limit": "Trop de requêtes. Veuillez patienter {seconds} secondes.",
-      "token_refresh_failed": "Échec du rafraîchissement du token",
-      "unauthorized": "Non autorisé",
-      "unexpected": "Une erreur inattendue s'est produite"
+      "rateLimit": "Trop de requêtes. Veuillez patienter {seconds} secondes.",
+      "unexpected": "Une erreur inattendue s'est produite",
+      "validation": "Les données soumises sont invalides"
     },
     "filters": {
       "button": {

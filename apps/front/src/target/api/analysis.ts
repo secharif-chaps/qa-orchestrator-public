@@ -1,5 +1,5 @@
 import { convertDateStringToDate, formatToISOWithTimezone, getPeriodDates } from '@/utils/date'
-import { useApi } from '@target/composables/useApi'
+import { apiClient } from '@/api/client'
 import type {
   AnalysisCollectionParams,
   Document,
@@ -39,7 +39,7 @@ export const getCollectionAnalysis = async ({
     }),
   }
 
-  const response = await useApi().get<JsonLdCollection<Document>>(
+  const response = await apiClient.get<JsonLdCollection<Document>>(
     `${ROOT_URL}/${watchFileId}/analysis`,
     {
       query,
@@ -47,8 +47,8 @@ export const getCollectionAnalysis = async ({
   )
 
   return {
-    items: response.data.member,
-    totalItems: response.data.totalItems,
+    items: response.member,
+    totalItems: response.totalItems,
   }
 }
 export const getAnalysisFacets = async ({
@@ -75,16 +75,16 @@ export const getAnalysisFacets = async ({
     }),
   }
 
-  const response = await useApi().get<DocumentFacets>(
+  const response = await apiClient.get<DocumentFacets>(
     `${ROOT_URL}/${watchFileId}/analysis/facets`,
     {
       query,
     },
   )
   return {
-    actors: response.data.actors,
-    sources: response.data.sources,
-    statuses: response.data.statuses,
+    actors: response.actors,
+    sources: response.sources,
+    statuses: response.statuses,
   }
 }
 

@@ -87,31 +87,29 @@ export const getFoldersWithItems = async (filters: FolderListApiFilters) => {
 }
 
 export const createFolder = async (folder: FolderCreate) => {
-  const response = await apiClient.post<Folder>('/folders/', folder)
-  return response
+  return apiClient.post<Folder>('/folders/', folder, { silent: true })
 }
 
 export const updateFolder = async (folderId: string, folder: FolderUpdate) => {
-  const response = await apiClient.put<Folder>(`/folders/${folderId}`, folder)
-  return response
+  return apiClient.put<Folder>(`/folders/${folderId}`, folder, { silent: true })
 }
 
 /**
  * Add a folder to the current user's favorites.
  */
 export const addFolderFavorite = async (folderId: string) => {
-  const response = await apiClient.post<{ message: string; is_favorite: boolean }>(
+  return apiClient.post<{ message: string; is_favorite: boolean }>(
     `/folders/${folderId}/favorite`,
     {}, // Empty body for POST
+    { silent: true },
   )
-  return response
 }
 
 /**
  * Remove a folder from the current user's favorites.
  */
 export const removeFolderFavorite = async (folderId: string) => {
-  await apiClient.delete(`/folders/${folderId}/favorite`)
+  await apiClient.delete(`/folders/${folderId}/favorite`, { silent: true })
   // DELETE endpoint returns void, return the expected state
   return { message: 'Folder removed from favorites', is_favorite: false }
 }
@@ -129,18 +127,15 @@ export const toggleFolderFavorite = async (folderId: string, shouldBeFavorite: b
 }
 
 export const deleteFolder = async (folderId: string) => {
-  const response = await apiClient.delete(`/folders/${folderId}`)
-  return response
+  await apiClient.delete(`/folders/${folderId}`, { silent: true })
 }
 
 export const restoreFolder = async (folderId: string) => {
-  const response = await apiClient.post<Folder>(`/folders/${folderId}/restore`, {})
-  return response
+  return apiClient.post<Folder>(`/folders/${folderId}/restore`, {}, { silent: true })
 }
 
 export const addItemToFolder = async (folderId: string, item: FolderItemAdd) => {
-  const response = await apiClient.post(`/folders/${folderId}/items`, item)
-  return response
+  return apiClient.post(`/folders/${folderId}/items`, item, { silent: true })
 }
 
 export const removeItemFromFolder = async (
@@ -149,10 +144,9 @@ export const removeItemFromFolder = async (
   itemType: 'company',
 ) => {
   const params = new URLSearchParams({ item_type: itemType })
-  const response = await apiClient.delete(
-    `/folders/${folderId}/items/${itemId}?${params.toString()}`,
-  )
-  return response
+  await apiClient.delete(`/folders/${folderId}/items/${itemId}?${params.toString()}`, {
+    silent: true,
+  })
 }
 
 export const moveItemBetweenFolders = async (data: {
@@ -161,11 +155,11 @@ export const moveItemBetweenFolders = async (data: {
   item_id: string
   item_type: 'company'
 }) => {
-  const response = await apiClient.patch(
+  return apiClient.patch(
     `/folders/${data.current_folder_id}/items/${data.item_id}?item_type=${data.item_type}`,
     { folder_id: data.destination_folder_id },
+    { silent: true },
   )
-  return response
 }
 
 // =====================================================
@@ -186,8 +180,7 @@ export const getFolderShares = async (folderId: string) => {
  * POST /folders/{folder_id}/shares
  */
 export const createFolderShare = async (folderId: string, share: FolderShareCreate) => {
-  const response = await apiClient.post<FolderShare>(`/folders/${folderId}/shares`, share)
-  return response
+  return apiClient.post<FolderShare>(`/folders/${folderId}/shares`, share, { silent: true })
 }
 
 /**
@@ -199,11 +192,9 @@ export const updateFolderShare = async (
   shareUserId: string,
   update: FolderShareUpdate,
 ) => {
-  const response = await apiClient.patch<FolderShare>(
-    `/folders/${folderId}/shares/${shareUserId}`,
-    update,
-  )
-  return response
+  return apiClient.patch<FolderShare>(`/folders/${folderId}/shares/${shareUserId}`, update, {
+    silent: true,
+  })
 }
 
 /**
@@ -211,7 +202,7 @@ export const updateFolderShare = async (
  * DELETE /folders/{folder_id}/shares/{share_user_id}
  */
 export const deleteFolderShare = async (folderId: string, shareUserId: string) => {
-  await apiClient.delete(`/folders/${folderId}/shares/${shareUserId}`)
+  await apiClient.delete(`/folders/${folderId}/shares/${shareUserId}`, { silent: true })
 }
 
 /**

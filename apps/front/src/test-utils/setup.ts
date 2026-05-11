@@ -38,7 +38,8 @@ vi.mock('vue-i18n', () => ({
   createI18n: vi.fn(() => ({
     global: {
       t: mockT,
-      locale: 'en-US',
+      // ref-like locale: code reads `.value` (mirrors the runtime composer shape).
+      locale: { value: 'en-US' },
     },
   })),
 }))

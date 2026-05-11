@@ -56,7 +56,9 @@ export async function addOrganizationTokens(
   amount: number,
 ): Promise<TokenBalanceResponse> {
   const data: AddTokensRequest = { amount }
-  return apiClient.post<TokenBalanceResponse>(`/organizations/${organizationId}/tokens`, data)
+  return apiClient.post<TokenBalanceResponse>(`/organizations/${organizationId}/tokens`, data, {
+    silent: true,
+  })
 }
 
 /**
@@ -131,5 +133,6 @@ export async function toggleModule(
   return apiClient.put<ModuleToggleResponse>(
     `/organizations/${organizationId}/modules/${module}/toggle`,
     { enabled },
+    { silent: true },
   )
 }

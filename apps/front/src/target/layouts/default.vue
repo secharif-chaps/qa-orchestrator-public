@@ -17,14 +17,11 @@
         </div>
       </div>
     </div>
-
-    <ToastContainer />
   </div>
 </template>
 
 <script lang="ts" setup>
 import Sidebar from '@target/components/global/Sidebar.vue'
-import ToastContainer from '@target/components/global/ToastContainer.vue'
 import { config } from '@target/config'
 import { useSidebarStore } from '@target/stores/sidebar'
 import { useHead } from '@unhead/vue'

@@ -152,12 +152,17 @@ const sendMessage = async () => {
       content: msg.text,
     }))
 
-    // Send to mint-backend API with authentication
-    const response: ChatResponse = await apiClient.post(`/companies/${companyId.value}/chatbot`, {
-      message: userQuestion,
-      company_context: company.value,
-      chat_history: chatHistory,
-    })
+    // Send to mint-backend API with authentication.
+    // silent: errors are rendered as a chat message instead of a toast.
+    const response: ChatResponse = await apiClient.post(
+      `/companies/${companyId.value}/chatbot`,
+      {
+        message: userQuestion,
+        company_context: company.value,
+        chat_history: chatHistory,
+      },
+      { silent: true },
+    )
 
     // Parse the response to extract actual content from stringified format
     let responseText = response.response || t('screen.company.chat.noResponse')

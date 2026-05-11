@@ -23,11 +23,9 @@ export const createOrganizationUser = async (
   organizationId: string,
   user: OrganizationUserCreate,
 ): Promise<OrganizationUserResponse> => {
-  const response = await apiClient.post<OrganizationUserResponse>(
-    `/organizations/${organizationId}/users`,
-    user,
-  )
-  return response
+  return apiClient.post<OrganizationUserResponse>(`/organizations/${organizationId}/users`, user, {
+    silent: true,
+  })
 }
 
 export const updateOrganizationUser = async (
@@ -35,18 +33,18 @@ export const updateOrganizationUser = async (
   userId: string,
   user: OrganizationUserUpdate,
 ): Promise<OrganizationUserResponse> => {
-  const response = await apiClient.put<OrganizationUserResponse>(
+  return apiClient.put<OrganizationUserResponse>(
     `/organizations/${organizationId}/users/${userId}`,
     user,
+    { silent: true },
   )
-  return response
 }
 
 export const deleteOrganizationUser = async (
   organizationId: string,
   userId: string,
 ): Promise<void> => {
-  await apiClient.delete(`/organizations/${organizationId}/users/${userId}`)
+  await apiClient.delete(`/organizations/${organizationId}/users/${userId}`, { silent: true })
 }
 
 export const getOrganizationUser = async (
@@ -63,7 +61,11 @@ export const resendPasswordReset = async (
   organizationId: string,
   userId: string,
 ): Promise<void> => {
-  await apiClient.post(`/organizations/${organizationId}/users/${userId}/reset-password`, {})
+  await apiClient.post(
+    `/organizations/${organizationId}/users/${userId}/reset-password`,
+    {},
+    { silent: true },
+  )
 }
 
 export const toggleUserStatus = async (
@@ -71,9 +73,9 @@ export const toggleUserStatus = async (
   userId: string,
   enabled: boolean,
 ): Promise<OrganizationUserResponse> => {
-  const response = await apiClient.patch<OrganizationUserResponse>(
+  return apiClient.patch<OrganizationUserResponse>(
     `/organizations/${organizationId}/users/${userId}/status`,
     { enabled },
+    { silent: true },
   )
-  return response
 }

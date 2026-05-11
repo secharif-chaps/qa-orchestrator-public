@@ -1,4 +1,4 @@
-import type { MercureSubscription } from '@target/composables/useMercure'
+import type { MercureSubscription } from '@/composables/realtime/useMercure'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 

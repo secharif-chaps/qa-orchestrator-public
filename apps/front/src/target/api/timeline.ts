@@ -1,4 +1,4 @@
-import { useApi } from '@target/composables/useApi'
+import { apiClient } from '@/api/client'
 import type {
   TimelineEventActors,
   TimelineEventParams,
@@ -11,17 +11,13 @@ export const getWatchFileTimelineEventActors = async ({
   watchFileId,
   eventId,
 }: TimelineEventParams) => {
-  const response = await useApi().get<TimelineEventActors>(
-    `${ROOT_URL}/${watchFileId}/timeline/${eventId}/actors`,
-  )
-  return response.data
+  return apiClient.get<TimelineEventActors>(`${ROOT_URL}/${watchFileId}/timeline/${eventId}/actors`)
 }
 export const getWatchFileTimelineEventSources = async ({
   watchFileId,
   eventId,
 }: TimelineEventParams) => {
-  const response = await useApi().get<TimelineEventSources>(
+  return apiClient.get<TimelineEventSources>(
     `${ROOT_URL}/${watchFileId}/timeline/${eventId}/sources`,
   )
-  return response.data
 }

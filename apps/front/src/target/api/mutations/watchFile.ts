@@ -8,8 +8,7 @@ import {
   toggleWatchFileFavorite,
   updateWatchFile,
 } from '@target/api/watchFile'
-import { useApi } from '@target/composables/useApi'
-import { useToast } from '@target/composables/useToast'
+import { useToast } from '@/composables/useToast'
 import { useWatchFileStore } from '@target/stores/watchFile'
 import type { WatchFile } from '@target/types/watchFile'
 import { ref } from 'vue'
@@ -21,7 +20,6 @@ interface CallbackMutations<T> {
 }
 
 export const useCreateWatchFile = (options?: CallbackMutations<WatchFile>) => {
-  useApi()
   const queryCache = useQueryCache()
   const watchFileStore = useWatchFileStore()
 
