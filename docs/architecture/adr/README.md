@@ -40,6 +40,7 @@ All ADRs follow a consistent format. See [template.md](./template.md) for the st
 | [ADR-0019](./0019-security-audit-trail.md)                     | Security Audit Trail                           | Proposed | security, audit, compliance, iso27001, observability                  |
 | [ADR-0020](./0020-stream-module-architecture.md)               | Stream Module Architecture                     | Proposed | backend, architecture, stream, distribution                           |
 | [ADR-0021](./0021-stream-newsletter-channel.md)                | Stream Newsletter Channel                      | Proposed | backend, frontend, stream, newsletter, email, mjml, np6               |
+| [ADR-0022](./0022-uv-package-manager.md)                       | Migrate from Poetry to uv for Python Services  | Proposed | backend, tooling, python, dependencies, devex                         |
 
 ## Status Definitions
 
