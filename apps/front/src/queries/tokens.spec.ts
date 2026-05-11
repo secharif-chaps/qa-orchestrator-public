@@ -287,7 +287,11 @@ describe('useAddGlobalTokens mutation', () => {
     const { addOrganizationTokens } = await import('@/api/tokens')
     const result = await addOrganizationTokens('org-uuid-123', 175)
 
-    expect(mockPost).toHaveBeenCalledWith('/organizations/org-uuid-123/tokens', { amount: 175 })
+    expect(mockPost).toHaveBeenCalledWith(
+      '/organizations/org-uuid-123/tokens',
+      { amount: 175 },
+      { silent: true },
+    )
     expect(result.balance).toBe(525)
   })
 

@@ -77,9 +77,13 @@ export async function requestTranslation(
   companyId: number | string,
   languageCode: string,
 ): Promise<TranslateResponse> {
-  return apiClient.post<TranslateResponse>(`/translation/translate/${companyId}`, {
-    language_code: languageCode,
-  })
+  return apiClient.post<TranslateResponse>(
+    `/translation/translate/${companyId}`,
+    {
+      language_code: languageCode,
+    },
+    { silent: true },
+  )
 }
 
 /**

@@ -26,20 +26,21 @@ vi.mock('@target/composables/useAuth', () => ({
   }),
 }))
 
-vi.mock('@target/composables/useApi', () => ({
-  useApi: () => ({
+vi.mock('@/api/client', () => ({
+  apiClient: {
     get: vi.fn(),
     post: vi.fn(),
+    put: vi.fn(),
     patch: vi.fn(),
     delete: vi.fn(),
-  }),
+  },
 }))
 
 vi.mock('@target/api/watchFile', () => ({
   retryMessage: vi.fn(),
 }))
 
-vi.mock('@target/composables/useToast', () => ({
+vi.mock('@/composables/useToast', () => ({
   useToast: () => ({
     error: vi.fn(),
     success: vi.fn(),

@@ -3,7 +3,6 @@ import { jwtDecode } from 'jwt-decode'
 import { User, UserManager, WebStorageStateStore } from 'oidc-client-ts'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
 
 export const useAuthStore = defineStore(
   'auth',
@@ -155,15 +154,13 @@ export const useAuthStore = defineStore(
         try {
           await refreshToken()
         } catch {
-          user.value = null
+          await signOut()
         }
       })
 
-      const router = useRouter()
-
       manager.events.addSilentRenewError((error: Error) => {
         console.error('Silent renew error:', error)
-        router.push('/login')
+        signOut()
       })
 
       userManager.value = manager

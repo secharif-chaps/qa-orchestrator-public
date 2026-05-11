@@ -98,23 +98,19 @@ export interface CreateCompanyRequest {
 }
 
 export const createCompany = async (company: CreateCompanyRequest) => {
-  const response = await apiClient.post<Company>('/companies/', company)
-  return response
+  return apiClient.post<Company>('/companies/', company, { silent: true })
 }
 
 export const deleteCompany = async (companyId: string) => {
-  const response = await apiClient.delete(`/companies/${companyId}`)
-  return response
+  await apiClient.delete(`/companies/${companyId}`, { silent: true })
 }
 
 export const restoreCompany = async (companyId: string) => {
-  const response = await apiClient.post(`/companies/${companyId}/restore`, {})
-  return response
+  return apiClient.post(`/companies/${companyId}/restore`, {}, { silent: true })
 }
 
 export const refreshCompany = async (companyId: string) => {
-  const response = await apiClient.post<Company>(`/companies/${companyId}/refresh`, {})
-  return response
+  return apiClient.post<Company>(`/companies/${companyId}/refresh`, {}, { silent: true })
 }
 
 export const validateCSV = async (

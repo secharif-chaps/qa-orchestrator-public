@@ -33,5 +33,6 @@ export const toggleFeatureFlag = async (
   return apiClient.patch<FeatureFlagToggleResponse>(
     `/organizations/${organizationId}/feature-flags/${flag}`,
     data,
+    { silent: true },
   )
 }

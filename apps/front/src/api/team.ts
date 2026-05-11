@@ -42,12 +42,14 @@ export const updateMemberPermissions = async (
   userId: string,
   data: UpdateTeamMemberPermissions,
 ) => {
-  return apiClient.patch<TeamMember>(`/team/members/${userId}`, data)
+  return apiClient.patch<TeamMember>(`/team/members/${userId}`, data, { silent: true })
 }
 
 /**
  * Reset team member password with a custom temporary password
  */
 export const resetMemberPassword = async (userId: string, data: ResetPasswordRequest) => {
-  return apiClient.post<TeamMemberPasswordReset>(`/team/members/${userId}/reset-password`, data)
+  return apiClient.post<TeamMemberPasswordReset>(`/team/members/${userId}/reset-password`, data, {
+    silent: true,
+  })
 }

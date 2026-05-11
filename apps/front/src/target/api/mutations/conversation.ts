@@ -6,7 +6,7 @@ import {
   getOlderConversationMessages,
   retryMessage,
 } from '@target/api/watchFile'
-import { useToast } from '@target/composables/useToast'
+import { useToast } from '@/composables/useToast'
 import { useConversationStore } from '@target/stores/conversation'
 import type { Message } from '@target/types/conversation'
 import { MessageRole, MessageStatus } from '@target/types/conversation'

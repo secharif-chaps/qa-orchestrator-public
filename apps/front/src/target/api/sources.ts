@@ -1,5 +1,5 @@
 import type { SortOrder } from '@owlint/feathers-vue'
-import { useApi } from '@target/composables/useApi'
+import { apiClient } from '@/api/client'
 import type { DefaultErrorMessage } from '@target/types/api'
 import type { JsonLdCollection } from '@target/types/jsonld'
 import type {
@@ -12,15 +12,11 @@ import type {
 const ROOT_URL = '/watch_files'
 
 export const getWatchFileSourcesGrouped = async (watchFileId: string) => {
-  const response = await useApi().get<SourcesGroupedResponse>(
-    `${ROOT_URL}/${watchFileId}/sources/grouped`,
-  )
-  return response.data
+  return apiClient.get<SourcesGroupedResponse>(`${ROOT_URL}/${watchFileId}/sources/grouped`)
 }
 
 export const getSourceHistory = async (sourceId: string) => {
-  const response = await useApi().get<GroupedSourceActivityDto>(`/sources/${sourceId}/history`)
-  return response.data
+  return apiClient.get<GroupedSourceActivityDto>(`/sources/${sourceId}/history`)
 }
 
 export const getCollectionSource = async (
@@ -48,7 +44,7 @@ export const getCollectionSource = async (
     query['type[]'] = type
   }
 
-  const response = await useApi().get<JsonLdCollection<Source>>(
+  const response = await apiClient.get<JsonLdCollection<Source>>(
     `${ROOT_URL}/${watchFileId}/sources`,
     {
       query,
@@ -56,8 +52,8 @@ export const getCollectionSource = async (
   )
 
   return {
-    items: response.data.member,
-    totalItems: response.data.totalItems,
+    items: response.member,
+    totalItems: response.totalItems,
   }
 }
 
@@ -67,12 +63,11 @@ export const changeSourceStatus = async (
   status: string,
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
-  const response = await useApi().post<Source>(
+  return apiClient.post<Source>(
     `${ROOT_URL}/${watchFileId}/sources/${sourceId}/change-status`,
     { status },
-    { defaultErrorMessage },
+    { mediaType: 'ld+json', errorMessage: defaultErrorMessage },
   )
-  return response.data
 }
 
 export const batchChangeSourceStatus = async (
@@ -81,15 +76,14 @@ export const batchChangeSourceStatus = async (
   status: string,
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
-  const response = await useApi().post<BatchChangeSourceStatusResponse>(
+  return apiClient.post<BatchChangeSourceStatusResponse>(
     `${ROOT_URL}/${watchFileId}/sources/batch-change-status`,
     {
       sources,
       status,
     },
-    { defaultErrorMessage },
+    { mediaType: 'ld+json', errorMessage: defaultErrorMessage },
   )
-  return response.data
 }
 
 export interface SourceTypesResponse {
@@ -108,9 +102,5 @@ export const getSourceTypes = async (
   if (name) {
     query.name = name
   }
-  const response = await useApi().get<SourceTypesResponse>(
-    `${ROOT_URL}/${watchFileId}/source-types`,
-    { query },
-  )
-  return response.data
+  return apiClient.get<SourceTypesResponse>(`${ROOT_URL}/${watchFileId}/source-types`, { query })
 }

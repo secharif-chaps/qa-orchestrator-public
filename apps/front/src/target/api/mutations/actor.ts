@@ -1,7 +1,7 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { batchChangeActorStatus, changeActorStatus, removeWatchFileActor } from '@target/api/actor'
 import { ACTOR_QUERY_KEYS } from '@target/api/queries/actor'
-import { useToast } from '@target/composables/useToast'
+import { useToast } from '@/composables/useToast'
 import { ActorStatus } from '@target/types/actor'
 import { useI18n } from 'vue-i18n'
 import { SOURCES_QUERY_KEYS } from '../queries/sources'

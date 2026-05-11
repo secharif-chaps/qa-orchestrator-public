@@ -112,7 +112,7 @@ import { Button, Tag } from '@owlint/feathers-vue'
 import logo_chaps from '@target/assets/images/CHAPSVISION_LOGO_ChapsVision_logo_icone_amande.svg'
 import { useAuth } from '@target/composables/useAuth'
 import { useLocalized } from '@target/composables/useLocalized'
-import { useMercure } from '@target/composables/useMercure'
+import { useMercure } from '@/composables/realtime/useMercure'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 

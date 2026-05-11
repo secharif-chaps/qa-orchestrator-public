@@ -669,7 +669,6 @@
         }
       },
       "generic": "An error occurred",
-      "no_data": "No data returned",
       "notFound": {
         "code": "404",
         "goBack": "Go Back",
@@ -678,10 +677,9 @@
         "message": "The page you're looking for doesn't exist or has been moved.",
         "title": "Page Not Found"
       },
-      "rate_limit": "Too many requests. Please wait {seconds} seconds.",
-      "token_refresh_failed": "Failed to refresh token",
-      "unauthorized": "Unauthorized",
-      "unexpected": "An unexpected error occurred"
+      "rateLimit": "Too many requests. Please wait {seconds} seconds.",
+      "unexpected": "An unexpected error occurred",
+      "validation": "The submitted data is invalid"
     },
     "filters": {
       "button": {

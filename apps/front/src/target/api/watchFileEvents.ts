@@ -1,6 +1,6 @@
 import { convertDateStringToDate, formatToISOWithTimezone, getPeriodDates } from '@/utils/date'
 import type { SortOrder } from '@owlint/feathers-vue'
-import { useApi } from '@target/composables/useApi'
+import { apiClient } from '@/api/client'
 import { DatesPeriod } from '@target/types/filter'
 import type {
   WatchFileEventCollection,
@@ -11,12 +11,12 @@ import type { LocationQueryRaw } from 'vue-router'
 export const getWatchFileEventsLink = async (
   link: string,
 ): Promise<WatchFileEventCollectionResponse> => {
-  const response = await useApi().get<WatchFileEventCollection>(link)
+  const response = await apiClient.get<WatchFileEventCollection>(link)
 
   return {
-    items: response.data.member,
-    totalItems: response.data.totalItems,
-    nextPageUrl: response.data.view?.next,
+    items: response.member,
+    totalItems: response.totalItems,
+    nextPageUrl: response.view?.next,
   }
 }
 
@@ -96,7 +96,7 @@ export const getWatchFileEvents = async (
     }
   }
 
-  const response = await useApi().get<WatchFileEventCollection>(
+  const response = await apiClient.get<WatchFileEventCollection>(
     `/watch_files/${watchFileId}/events`,
     {
       query: queryParams,
@@ -104,8 +104,8 @@ export const getWatchFileEvents = async (
   )
 
   return {
-    items: response.data.member,
-    totalItems: response.data.totalItems,
-    nextPageUrl: response.data.view?.next,
+    items: response.member,
+    totalItems: response.totalItems,
+    nextPageUrl: response.view?.next,
   }
 }

@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { Icon } from '@owlint/feathers-vue'
-import { useMercureStore } from '@target/stores/mercure'
+import { useMercureStore } from '@/stores/mercure'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 

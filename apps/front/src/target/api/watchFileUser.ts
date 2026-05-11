@@ -1,14 +1,11 @@
-import { useApi } from '@target/composables/useApi'
+import { apiClient } from '@/api/client'
 import type { DefaultErrorMessage } from '@target/types/api'
 import type { JsonLdCollection } from '@target/types/jsonld'
 import type { User } from '@target/types/user'
 import type { WatchFileUser, WatchFileUserRole } from '@target/types/watchFileUser'
 
 export const getWatchFileUsers = async (watchFileId: string) => {
-  const response = await useApi().get<JsonLdCollection<WatchFileUser>>(
-    `/watch_files/${watchFileId}/share`,
-  )
-  return response.data
+  return apiClient.get<JsonLdCollection<WatchFileUser>>(`/watch_files/${watchFileId}/share`)
 }
 
 export const addWatchFileUsers = async (
@@ -23,12 +20,11 @@ export const addWatchFileUsers = async (
       role,
     })),
   }
-  const response = await useApi().post<JsonLdCollection<WatchFileUser>>(
+  return apiClient.post<JsonLdCollection<WatchFileUser>>(
     `/watch_files/${watchFileId}/share`,
     payload,
-    { defaultErrorMessage },
+    { mediaType: 'ld+json', errorMessage: defaultErrorMessage },
   )
-  return response.data
 }
 
 export const removeWatchFileUser = async (
@@ -36,8 +32,8 @@ export const removeWatchFileUser = async (
   watchFileUserId: string,
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
-  await useApi().delete(`/watch_files/${watchFileId}/share/${watchFileUserId}`, {
-    defaultErrorMessage,
+  await apiClient.delete(`/watch_files/${watchFileId}/share/${watchFileUserId}`, {
+    errorMessage: defaultErrorMessage,
   })
 }
 

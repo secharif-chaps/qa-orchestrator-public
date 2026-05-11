@@ -19,6 +19,13 @@ vi.mock('vue-i18n', () => ({
     t: (key: string, fallback?: string) => fallback || key,
     locale: ref('en-US'),
   }),
+  createI18n: () => ({
+    global: {
+      t: (key: string) => key,
+      locale: { value: 'en-US' },
+    },
+    install: () => {},
+  }),
 }))
 
 // Mock router

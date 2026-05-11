@@ -32,8 +32,7 @@ export const getStreamsByFolder = async (
 }
 
 export const createStream = async (folderId: string, data: StreamCreate) => {
-  const response = await apiClient.post<StreamRead>(`/folders/${folderId}/streams`, data)
-  return response
+  return apiClient.post<StreamRead>(`/folders/${folderId}/streams`, data, { silent: true })
 }
 
 export const getStreamById = async (streamId: string) => {
@@ -42,17 +41,15 @@ export const getStreamById = async (streamId: string) => {
 }
 
 export const updateStream = async (streamId: string, data: StreamUpdate) => {
-  const response = await apiClient.patch<StreamRead>(`/streams/${streamId}`, data)
-  return response
+  return apiClient.patch<StreamRead>(`/streams/${streamId}`, data, { silent: true })
 }
 
 export const deleteStream = async (streamId: string) => {
-  await apiClient.delete(`/streams/${streamId}`)
+  await apiClient.delete(`/streams/${streamId}`, { silent: true })
 }
 
 export const updateStreamStatus = async (streamId: string, data: StreamStatusUpdate) => {
-  const response = await apiClient.patch<StreamRead>(`/streams/${streamId}/status`, data)
-  return response
+  return apiClient.patch<StreamRead>(`/streams/${streamId}/status`, data, { silent: true })
 }
 
 export const getDeliveries = async (
@@ -70,8 +67,7 @@ export const getDeliveries = async (
 }
 
 export const dispatchStream = async (streamId: string) => {
-  const response = await apiClient.post<DispatchResponse>(`/streams/${streamId}/dispatch`, {})
-  return response
+  return apiClient.post<DispatchResponse>(`/streams/${streamId}/dispatch`, {}, { silent: true })
 }
 
 export const testConnection = async (data: TestConnectionRequest) => {

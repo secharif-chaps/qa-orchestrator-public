@@ -1,5 +1,5 @@
 import { convertDateStringToDate, formatToISOWithTimezone, getPeriodDates } from '@/utils/date'
-import { useApi } from '@target/composables/useApi'
+import { apiClient } from '@/api/client'
 import type { AnalysisFacets } from '@target/types/facet'
 import { DatesPeriod } from '@target/types/filter'
 import type { JsonLdCollection } from '@target/types/jsonld'
@@ -8,7 +8,7 @@ import type { LocationQueryRaw } from 'vue-router'
 
 const ROOT_URL = '/watch_files'
 
-interface EventsGraphFilters {
+interface EventsGraphFilters extends Record<string, unknown> {
   startDate?: string
   endDate?: string
   'actors.id'?: string[]
@@ -71,15 +71,15 @@ export const getEventsGraph = async (watchFileId: string, filters?: LocationQuer
     }
   }
 
-  const response = await useApi().get<
+  const response = await apiClient.get<
     JsonLdCollection<WatchFileGraphEvent> & { facets?: AnalysisFacets }
   >(`${ROOT_URL}/${watchFileId}/events/graph`, {
     query: queryParams,
   })
 
   return {
-    items: response.data.member,
-    totalItems: response.data.totalItems,
-    facets: response.data.facets,
+    items: response.member,
+    totalItems: response.totalItems,
+    facets: response.facets,
   }
 }

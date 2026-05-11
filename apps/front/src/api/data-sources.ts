@@ -21,9 +21,9 @@ export const updateDataSourceConfig = async (
   if (apiSecret !== undefined) {
     body.api_secret = apiSecret
   }
-  const response = await apiClient.put<DataSourceConfig>(
+  return apiClient.put<DataSourceConfig>(
     `/organizations/${organizationId}/data-sources/${source}/config`,
     body,
+    { silent: true },
   )
-  return response
 }

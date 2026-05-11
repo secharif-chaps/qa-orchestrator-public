@@ -1,6 +1,6 @@
 import { useMutation, useQueryCache, type EntryKey } from '@pinia/colada'
 import { batchChangeSourceStatus, changeSourceStatus } from '@target/api/sources'
-import { useToast } from '@target/composables/useToast'
+import { useToast } from '@/composables/useToast'
 import { SourceStatus, type Source } from '@target/types/source'
 import { useI18n } from 'vue-i18n'
 import { SOURCES_QUERY_KEYS } from '../queries/sources'

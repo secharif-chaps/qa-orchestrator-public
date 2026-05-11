@@ -1,7 +1,7 @@
 import { useQueryCache } from '@pinia/colada'
+import { apiClient } from '@/api/client'
 import { ACTOR_QUERY_KEYS } from '@target/api/queries/actor'
 import { SOURCES_QUERY_KEYS } from '@target/api/queries/sources'
-import { useApi } from '@target/composables/useApi'
 import type { DefaultErrorMessage } from '@target/types/api'
 import type {
   Conversation,
@@ -32,21 +32,22 @@ export const WATCHFILES_SUBSCRIBE_KEYS = {
 export const getItemWatchFile = async (id: string) => {
   const queryCache = useQueryCache()
 
-  const response = await useApi().get<WatchFile>(`${ROOT_URL}/${id}`, {
-    subscribeKey: WATCHFILES_SUBSCRIBE_KEYS.byId(id),
-    onUpdate: (data: WatchFile) => {
-      if (data && typeof data === 'object' && 'id' in data) {
-        queryCache.setQueryData(WATCH_FILE_QUERY_KEYS.byId(id), data)
-        queryCache.invalidateQueries({
-          key: ACTOR_QUERY_KEYS.byWatchFile(id),
-        })
-        queryCache.invalidateQueries({
-          key: SOURCES_QUERY_KEYS.byWatchFile(id),
-        })
-      }
+  return apiClient.get<WatchFile, WatchFile>(`${ROOT_URL}/${id}`, {
+    realtime: {
+      key: WATCHFILES_SUBSCRIBE_KEYS.byId(id),
+      onMessage: (data: WatchFile) => {
+        if (data && typeof data === 'object' && 'id' in data) {
+          queryCache.setQueryData(WATCH_FILE_QUERY_KEYS.byId(id), data)
+          queryCache.invalidateQueries({
+            key: ACTOR_QUERY_KEYS.byWatchFile(id),
+          })
+          queryCache.invalidateQueries({
+            key: SOURCES_QUERY_KEYS.byWatchFile(id),
+          })
+        }
+      },
     },
   })
-  return response.data
 }
 
 export const getCollectionWatchFile = async ({
@@ -58,7 +59,7 @@ export const getCollectionWatchFile = async ({
   onlyFavorites,
   includeArchived,
 }: WatchFileFilters) => {
-  const response = await useApi().get<JsonLdCollection<WatchFile>>(ROOT_URL, {
+  const response = await apiClient.get<JsonLdCollection<WatchFile>>(ROOT_URL, {
     query: {
       [`sort[${sortBy}]`]: sortOrder.toLowerCase(),
       page,
@@ -70,16 +71,19 @@ export const getCollectionWatchFile = async ({
   })
 
   return {
-    items: response.data.member,
-    totalItems: response.data.totalItems,
+    items: response.member,
+    totalItems: response.totalItems,
   }
 }
 
 export const createWatchFile = async (content: string) => {
-  const response = await useApi().post<WatchFile>(ROOT_URL, {
-    content,
-  })
-  return response.data
+  return apiClient.post<WatchFile>(
+    ROOT_URL,
+    {
+      content,
+    },
+    { mediaType: 'ld+json' },
+  )
 }
 
 export const updateWatchFile = async (
@@ -87,14 +91,14 @@ export const updateWatchFile = async (
   data: Partial<WatchFile>,
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
-  const response = await useApi().patch<WatchFile>(`${ROOT_URL}/${id}`, data, {
-    defaultErrorMessage,
+  return apiClient.patch<WatchFile>(`${ROOT_URL}/${id}`, data, {
+    mediaType: 'merge-patch+json',
+    errorMessage: defaultErrorMessage,
   })
-  return response.data
 }
 
 export const deleteWatchFile = async (id: string) => {
-  await useApi().delete(`${ROOT_URL}/${id}`)
+  await apiClient.delete(`${ROOT_URL}/${id}`)
 }
 
 export const changeWatchFileStatus = async (
@@ -102,12 +106,11 @@ export const changeWatchFileStatus = async (
   status: string,
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
-  const response = await useApi().post<WatchFile>(
+  return apiClient.post<WatchFile>(
     `${ROOT_URL}/${id}/status/${status}`,
     {},
-    { defaultErrorMessage },
+    { mediaType: 'ld+json', errorMessage: defaultErrorMessage },
   )
-  return response.data
 }
 
 export const toggleWatchFileFavorite = async (
@@ -116,44 +119,44 @@ export const toggleWatchFileFavorite = async (
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
   if (isFavorite) {
-    await useApi().post(`${ROOT_URL}/${id}/favorite`, {}, { defaultErrorMessage })
+    await apiClient.post(
+      `${ROOT_URL}/${id}/favorite`,
+      {},
+      { mediaType: 'ld+json', errorMessage: defaultErrorMessage },
+    )
   } else {
-    await useApi().delete(`${ROOT_URL}/${id}/favorite`, {
-      defaultErrorMessage,
+    await apiClient.delete(`${ROOT_URL}/${id}/favorite`, {
+      errorMessage: defaultErrorMessage,
     })
   }
 }
 
 export const removeWatchFileActor = async (watchFileId: string, actorId: number) => {
-  await useApi().delete(`${ROOT_URL}/${watchFileId}/actors/${actorId}`)
+  await apiClient.delete(`${ROOT_URL}/${watchFileId}/actors/${actorId}`)
 }
 
 export const getWatchFileTimeline = async (
   watchFileId: string,
   params?: { page?: number; limit?: number },
 ) => {
-  const response = await useApi().get<GroupedWatchFileActivityDto>(
-    `${ROOT_URL}/${watchFileId}/history`,
-    {
-      query: {
-        itemsPerPage: 10,
-        ...params,
-      },
+  return apiClient.get<GroupedWatchFileActivityDto>(`${ROOT_URL}/${watchFileId}/history`, {
+    query: {
+      itemsPerPage: 10,
+      ...params,
     },
-  )
-  return response.data
+  })
 }
 
 export const getLastConversation = async (
   watchFileId: string,
   onUpdate?: (conversation: Conversation) => void,
 ) => {
-  let options = {}
+  const options: Parameters<typeof apiClient.get<Conversation>>[1] = {}
 
   if (onUpdate) {
-    options = {
-      subscribeKey: WATCHFILES_SUBSCRIBE_KEYS.lastConversation(watchFileId),
-      onUpdate: (data: unknown) => {
+    options.realtime = {
+      key: WATCHFILES_SUBSCRIBE_KEYS.lastConversation(watchFileId),
+      onMessage: (data: unknown) => {
         if (
           data &&
           typeof data === 'object' &&
@@ -166,11 +169,8 @@ export const getLastConversation = async (
       },
     }
   }
-  const response = await useApi().get<Conversation>(
-    `${ROOT_URL}/${watchFileId}/conversations/last`,
-    options,
-  )
-  return response.data
+
+  return apiClient.get<Conversation>(`${ROOT_URL}/${watchFileId}/conversations/last`, options)
 }
 
 export const getConversationMessages = async (
@@ -178,86 +178,89 @@ export const getConversationMessages = async (
   params?: { order?: Record<string, string> },
   onUpdate?: (message: Message) => void,
 ) => {
-  const options: {
-    query: Record<string, unknown>
-    subscribeKey?: string
-    onUpdate?: (data: unknown) => void
-  } = {
+  const options: Parameters<typeof apiClient.get<JsonLdCollection<Message>>>[1] = {
     query: {
       ...params,
     },
   }
 
   if (onUpdate) {
-    options.subscribeKey = WATCHFILES_SUBSCRIBE_KEYS.conversationMessages(conversationId)
-    options.onUpdate = (data: unknown) => {
-      if (
-        data &&
-        typeof data === 'object' &&
-        '@type' in data &&
-        (data as Record<string, unknown>)['@type'] === 'Message' &&
-        'contents' in data &&
-        Array.isArray((data as Record<string, unknown>).contents)
-      ) {
-        const messageData = data as Record<string, unknown>
-        const newMessage: Message = {
-          id: messageData.id as string,
-          '@type': 'Message',
-          contents: messageData.contents as (TextContent | FunctionCallContent)[],
-          role: messageData.role as MessageRole,
-          status: (messageData.status as MessageStatus) || 'sent',
-          retryCount: (messageData.retryCount as number) || 0,
-          metadata: messageData.metadata as Record<string, unknown>,
-          createdAt: messageData.createdAt as string,
-          loading: messageData.loading as boolean,
-          createdBy: messageData.createdBy as {
-            defaultThumbnail?: string
-          } | null,
-        }
+    options.realtime = {
+      key: WATCHFILES_SUBSCRIBE_KEYS.conversationMessages(conversationId),
+      onMessage: (data: unknown) => {
+        if (
+          data &&
+          typeof data === 'object' &&
+          '@type' in data &&
+          (data as Record<string, unknown>)['@type'] === 'Message' &&
+          'contents' in data &&
+          Array.isArray((data as Record<string, unknown>).contents)
+        ) {
+          const messageData = data as Record<string, unknown>
+          const newMessage: Message = {
+            id: messageData.id as string,
+            '@type': 'Message',
+            contents: messageData.contents as (TextContent | FunctionCallContent)[],
+            role: messageData.role as MessageRole,
+            status: (messageData.status as MessageStatus) || 'sent',
+            retryCount: (messageData.retryCount as number) || 0,
+            metadata: messageData.metadata as Record<string, unknown>,
+            createdAt: messageData.createdAt as string,
+            loading: messageData.loading as boolean,
+            createdBy: messageData.createdBy as {
+              defaultThumbnail?: string
+            } | null,
+          }
 
-        onUpdate(newMessage)
-      }
+          onUpdate(newMessage)
+        }
+      },
     }
   }
 
-  const response = await useApi().get<JsonLdCollection<Message>>(
+  const response = await apiClient.get<JsonLdCollection<Message>>(
     `/conversations/${conversationId}/messages`,
     options,
   )
 
   return {
-    items: response.data.member.reverse(),
-    totalItems: response.data.totalItems,
-    nextUrl: response.data.view?.next,
+    items: response.member.reverse(),
+    totalItems: response.totalItems,
+    nextUrl: response.view?.next,
   }
 }
 
 export const getOlderConversationMessages = async (nextUrl: string) => {
-  const response = await useApi().get<JsonLdCollection<Message>>(nextUrl)
+  const response = await apiClient.get<JsonLdCollection<Message>>(nextUrl)
   return {
-    items: response.data.member.reverse(),
-    totalItems: response.data.totalItems,
-    nextUrl: response.data.view?.next,
+    items: response.member.reverse(),
+    totalItems: response.totalItems,
+    nextUrl: response.view?.next,
   }
 }
 
 export const addMessage = async (conversationId: string, message: string) => {
-  const response = await useApi().post<Conversation>(`/conversations/${conversationId}/messages`, {
-    content: message,
-  })
-  return response.data
+  return apiClient.post<Conversation>(
+    `/conversations/${conversationId}/messages`,
+    {
+      content: message,
+    },
+    { mediaType: 'ld+json' },
+  )
 }
 
 export const retryMessage = async (messageId: string, defaultErrorMessage: DefaultErrorMessage) => {
-  const response = await useApi().post<Message>(
+  return apiClient.post<Message>(
     `/messages/${messageId}/retry`,
     {},
-    { defaultErrorMessage },
+    { mediaType: 'ld+json', errorMessage: defaultErrorMessage },
   )
-  return response.data
 }
 
 export const cancelConversation = async (conversationId: string) => {
-  const response = await useApi().post<Conversation>(`/conversations/${conversationId}/cancel`, {})
-  return response.data
+  return apiClient.post<Conversation>(
+    `/conversations/${conversationId}/cancel`,
+    {},
+    { mediaType: 'ld+json' },
+  )
 }

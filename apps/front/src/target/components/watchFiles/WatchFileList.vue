@@ -229,7 +229,7 @@
 
 <script setup lang="ts">
 import { useDateTime } from '@/composables/useDateTime'
-import { useToast } from '@/target/composables/useToast'
+import { useToast } from '@/composables/useToast'
 import { RouteNames } from '@/target/types/route-names'
 import { Button, Checkbox, HeaderCell, Icon, ORadio, Searchbar, Table } from '@owlint/feathers-vue'
 import Pagination from '@/components/ui/Pagination.vue'

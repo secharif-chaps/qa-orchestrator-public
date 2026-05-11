@@ -13,6 +13,8 @@
         <RouterView />
       </UnauthenticatedLayout>
     </template>
+
+    <ToastContainer />
   </div>
   <PiniaColadaDevtools />
 </template>
@@ -23,6 +25,7 @@ import { computed, onMounted, watch } from 'vue'
 import DefaultLayout from './layouts/DefaultLayout.vue'
 import UnauthenticatedLayout from './layouts/UnauthenticatedLayout.vue'
 import AuthLoader from './components/ui/AuthLoader.vue'
+import ToastContainer from './components/ui/ToastContainer.vue'
 import { useAuthStore } from './stores/auth'
 import { useSidebarStore } from './stores/sidebar'
 import { useTaskEvents } from './composables/useTaskEvents'

@@ -12,5 +12,5 @@ import type { BulkImportRequest, BulkImportResponse } from '@/types/user-import'
  * @returns The bulk import response with success/error counts and detailed results
  */
 export const importUsers = async (request: BulkImportRequest): Promise<BulkImportResponse> => {
-  return apiClient.post<BulkImportResponse>('/users/import', request)
+  return apiClient.post<BulkImportResponse>('/users/import', request, { silent: true })
 }

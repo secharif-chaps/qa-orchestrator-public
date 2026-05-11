@@ -1,5 +1,5 @@
 import type { SortOrder } from '@owlint/feathers-vue'
-import { useApi } from '@target/composables/useApi'
+import { apiClient } from '@/api/client'
 import type {
   Actor,
   ActorFilters,
@@ -49,7 +49,7 @@ export const getCollectionActor = async ({
     }
   }
 
-  const response = await useApi().get<JsonLdCollection<WatchFileActor>>(
+  const response = await apiClient.get<JsonLdCollection<WatchFileActor>>(
     `/watch_files/${watchFileId}/actors`,
     {
       query,
@@ -57,14 +57,13 @@ export const getCollectionActor = async ({
   )
 
   return {
-    items: response.data.member || [],
-    totalItems: response.data.totalItems || 0,
+    items: response.member || [],
+    totalItems: response.totalItems || 0,
   }
 }
 
 export const getItemActor = async (watchFileId: string, actorId: string) => {
-  const response = await useApi().get<Actor>(`/watch_files/${watchFileId}/actors/${actorId}`)
-  return response.data
+  return apiClient.get<Actor>(`/watch_files/${watchFileId}/actors/${actorId}`)
 }
 
 export const getActorSources = async (
@@ -89,22 +88,22 @@ export const getActorSources = async (
     query[`order[${sortBy}]`] = sortOrder.toLowerCase()
   }
 
-  const response = await useApi().get<JsonLdCollection<Source>>(
+  const response = await apiClient.get<JsonLdCollection<Source>>(
     `/watch_files/${watchFileId}/actors/${actorId}/sources`,
     {
       query,
     },
   )
 
-  if (response.data && typeof response.data === 'object' && 'member' in response.data) {
+  if (response && typeof response === 'object' && 'member' in response) {
     return {
-      items: response.data.member,
-      totalItems: response.data.totalItems || 0,
+      items: response.member,
+      totalItems: response.totalItems || 0,
     }
   }
 
   return {
-    items: response.data,
+    items: response,
     totalItems: 0,
   }
 }
@@ -116,16 +115,15 @@ export const changeActorStatus = async (
   sourceIds?: string[],
   defaultErrorMessage?: DefaultErrorMessage,
 ) => {
-  const response = await useApi().post(
+  return apiClient.post(
     `/watch_files/${watchFileId}/actors/${actorId}/status`,
     {
       sourceIds: sourceIds || [],
       status,
       newStatus: false,
     },
-    { defaultErrorMessage },
+    { mediaType: 'ld+json', errorMessage: defaultErrorMessage },
   )
-  return response.data
 }
 
 export const removeWatchFileActor = async (
@@ -133,10 +131,9 @@ export const removeWatchFileActor = async (
   actorId: string,
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
-  const response = await useApi().delete(`/watch_files/${watchFileId}/actors/${actorId}`, {
-    defaultErrorMessage,
+  await apiClient.delete(`/watch_files/${watchFileId}/actors/${actorId}`, {
+    errorMessage: defaultErrorMessage,
   })
-  return response.data
 }
 
 export const getActorTypes = async (
@@ -151,11 +148,7 @@ export const getActorTypes = async (
   if (name) {
     query.name = name
   }
-  const response = await useApi().get<ActorTypesResponse>(
-    `/watch_files/${watchFileId}/actor-types`,
-    { query },
-  )
-  return response.data
+  return apiClient.get<ActorTypesResponse>(`/watch_files/${watchFileId}/actor-types`, { query })
 }
 
 export const batchChangeActorStatus = async (
@@ -163,12 +156,11 @@ export const batchChangeActorStatus = async (
   actors: Array<{ id: string; sourceIds: string[] }>,
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
-  const response = await useApi().post<BatchChangeActorStatusResponse>(
+  return apiClient.post<BatchChangeActorStatusResponse>(
     `/watch_files/${watchFileId}/actors/batch-change-status`,
     {
       actors,
     },
-    { defaultErrorMessage },
+    { mediaType: 'ld+json', errorMessage: defaultErrorMessage },
   )
-  return response.data
 }
