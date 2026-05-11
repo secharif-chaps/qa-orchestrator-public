@@ -4,7 +4,7 @@ ChapsMind follows a **modular architecture** with a clear separation between glo
 
 ## Architecture Philosophy
 
-```
+```text
 ChapsMind Platform
 │
 ├── Global Service (API Gateway + Shared Services)
@@ -99,7 +99,7 @@ flowchart TB
 
 ## Module Documentation Structure
 
-```
+```text
 modules/
 ├── README.md                    # This file
 ├── frontend.md                  # Unified Vue.js frontend (all modules)

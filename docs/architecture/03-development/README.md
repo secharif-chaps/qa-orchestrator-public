@@ -17,7 +17,7 @@ The Development View addresses:
 
 ChapsMind follows a **clean architecture** approach with clear separation of concerns:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Presentation Layer                           │
 │  - Vue.js components (pages, features, UI)                      │

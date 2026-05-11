@@ -47,7 +47,7 @@ ChapsMind is a multi-module application (TARGET, SCREEN, STREAM, EXPLORE) being 
 
 ### 1. Translation File Format
 
-**Decision: Nested JSON, one file per language**
+#### Decision: Nested JSON, one file per language
 
 All translation files use the **nested JSON** format, in a single file per language with top-level namespaces to organize keys.
 
@@ -78,9 +78,9 @@ All translation files use the **nested JSON** format, in a single file per langu
 
 Two approaches were evaluated:
 
-**Option A: One file per language (CHOSEN)**
+##### Option A: One file per language (CHOSEN)
 
-```
+```text
 front/src/i18n/
 ├── index.ts                          # vue-i18n configuration
 └── locales/
@@ -88,9 +88,9 @@ front/src/i18n/
     └── fr-FR.json                    # All French keys
 ```
 
-**Option B: One folder per module**
+##### Option B: One folder per module
 
-```
+```text
 front/src/i18n/
 ├── index.ts
 └── locales/
@@ -115,7 +115,7 @@ front/src/i18n/
 | **File size**         | ~2330 keys = ~3700 lines (manageable with i18n Ally) |                   ~300-800 lines per file                   |
 | **i18n Ally DX**      |                    Works natively                    |         Requires `pathMatcher` + `namespace` config         |
 
-**Decision: Option A - Single file per language**
+##### Decision: Option A - Single file per language
 
 Simplicity wins. With ~2330 keys and 2 languages, a single file per language is perfectly manageable. Nested JSON already provides a clear hierarchical structure (the `common.*`, `target.*`, `dashboard.*` namespaces exist within the file tree). Splitting into folders adds complexity without real benefit at our scale.
 
@@ -123,7 +123,7 @@ Simplicity wins. With ~2330 keys and 2 languages, a single file per language is 
 
 #### Chosen File Structure
 
-```
+```text
 front/src/i18n/
 ├── index.ts                          # vue-i18n configuration + lazy loading
 └── locales/
@@ -199,7 +199,7 @@ This provides the same logical organization as folders, but in a single easy-to-
 
 #### Format
 
-```
+```text
 {module}.{feature}.{element}
 ```
 
@@ -244,7 +244,7 @@ The initial namespaces are:
 
 Reusable keys across modules go in the `common` namespace:
 
-```
+```text
 common.actions.*          # Generic buttons and actions
 common.status.*           # States (loading, error, empty)
 common.validation.*       # Form validation messages
@@ -283,13 +283,13 @@ In `en-US.json`, the key is stored as:
 
 You **cannot** simply `Ctrl+F` for `common.modal.error.title` in the JSON file: it won't match.
 
-**Method 1: Search for the last key segment**
+##### Method 1: Search for the last key segment
 
 The simplest method: search for `"title"` in the JSON file. Since the file is structured by namespaces, you can visually locate the right section (`common` → `modal` → `error`).
 
 In practice, search for the most specific segment. For `common.modal.error.title`, search for `"error"` (more unique than `"title"`) and navigate through the context.
 
-**Method 2: IDE Plugin (recommended)**
+##### Method 2: IDE Plugin (recommended)
 
 **VS Code — i18n Ally:**
 
@@ -313,7 +313,7 @@ For richer inline annotations similar to i18n Ally, install the **i18n Support**
 
 This IDE integration is **the main reason** why the tooling section marks IDE plugins as high priority.
 
-**Method 3: Grep with key segments**
+##### Method 3: Grep with key segments
 
 From the command line, search for a unique intermediate segment:
 
@@ -351,9 +351,9 @@ This script is included in the CI tasks to implement (`TASK-CI-08`).
 
 ### 3. Fallback Strategy
 
-**Decision: Local fallback chain with `en-US` as root language**
+#### Decision: Local fallback chain with `en-US` as root language
 
-```
+```text
 Configuration:
   fallbackLocale: 'en-US'
 
@@ -701,7 +701,7 @@ n(1234567.89, 'currency') // "$1,234,567.89" / "1 234 567,89 $"
 
 ### 5. Lazy Loading by Language and Module
 
-**Decision: Asynchronous loading for non-default locales**
+#### Decision: Asynchronous loading for non-default locales
 
 Only `en-US` (default language) is included in the initial bundle. Other languages are loaded on demand.
 
@@ -766,7 +766,7 @@ With **i18n Ally**, steps 2-3 are simplified: right-click on the key in the `.vu
 
 **Before creating a new key**, always check if an existing translation already covers (or closely matches) the text you need. This avoids duplication and promotes reuse.
 
-**Method 1: Exact search by keyword**
+##### Method 1: Exact search by keyword
 
 Search the `en-US.json` or `fr-FR.json` file for a keyword from the text you want to translate:
 
@@ -780,7 +780,7 @@ grep -i "compan" apps/front/src/i18n/locales/en-US.json
 # → finds "company", "companies", etc.
 ```
 
-**Method 2: i18n Ally / IDE search**
+##### Method 2: i18n Ally / IDE search
 
 - **VS Code (i18n Ally)**: Use the sidebar tree view to browse existing keys by namespace. The search bar in the i18n Ally panel searches both keys and values.
 - **WebStorm**: Use `Ctrl+Shift+F` (Find in Files) scoped to `src/i18n/locales/` to search by translated text.
@@ -828,7 +828,7 @@ This script (see `TASK-CI-08`) resolves key paths to their file location.
 
 #### Decision Diagram
 
-```
+```text
 New translation key needed?
   │
   ├─ 1. Search existing keys: yarn i18n:search "your text"
@@ -1010,7 +1010,7 @@ import vueI18n from '@intlify/eslint-plugin-vue-i18n'
 
 #### Current State
 
-```
+```text
 front/src/
 ├── i18n/locales/          # Main layer (nested TS)
 │   ├── en-US.ts           # ~2900 lines (~1750 keys)
@@ -1022,27 +1022,27 @@ front/src/
 
 #### Migration Plan
 
-**Phase 1: Format Normalization** (prerequisite)
+##### Phase 1: Format Normalization (prerequisite)
 
 1. Convert `.ts` files to nested `.json` → `en-US.json`, `fr-FR.json`
 2. Convert flat Target keys (dot-notation) to nested JSON
 3. Merge both layers into a single file per language
 4. Remove the spread operator merge and old `.ts` files
 
-**Phase 2: Namespace Cleanup**
+##### Phase 2: Namespace Cleanup
 
 1. Rename/reorganize top-level keys to follow the convention (`common`, `target`, `screen`, `dashboard`, `settings`, `admin`)
 2. Move shared keys under `common.*`
 3. Remove identified orphaned keys
 
-**Phase 3: Screen Integration**
+##### Phase 3: Screen Integration
 
 1. Import existing Screen translations into the single file
 2. Place them under the `screen.*` namespace
 3. Identify common Screen/Target keys and move them under `common.*`
 4. Resolve key conflicts (same key, different translation)
 
-**Phase 4: Lazy Loading**
+##### Phase 4: Lazy Loading
 
 1. Implement asynchronous per-language loading (dynamic import)
 2. Remove synchronous loading of `fr-FR`
@@ -1057,7 +1057,7 @@ When merging Target + Screen, if the same key exists with different translations
 
 #### Source of Truth
 
-**Decision: Files in the Git repository**
+##### Decision: Files in the Git repository
 
 The JSON files in the repo are the source of truth. No external platform (Crowdin, Lokalise) for now.
 

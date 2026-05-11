@@ -182,7 +182,7 @@ lefthook install
 | Vitesse      | Moyenne (Node startup)   | Rapide (binary compile)    |
 | Parallel     | Non natif                | Oui (`parallel: true`)     |
 
-> **Doc** : https://github.com/evilmartians/lefthook
+> **Doc** : <https://github.com/evilmartians/lefthook>
 
 ---
 
@@ -291,7 +291,7 @@ indent_style = space
 indent_size = 2
 ```
 
-> **Doc** : https://editorconfig.org/
+> **Doc** : <https://editorconfig.org/>
 
 ---
 
@@ -438,7 +438,7 @@ Resultat : "ca marche sur ma machine" est un probleme recurrent, et l'onboarding
 
 Un Dev Container est un **environnement de dev complet defini en code**. Au lieu d'installer les outils sur chaque machine, on definit un container Docker avec tout pre-installe. L'IDE (VS Code ou JetBrains) se connecte **a l'interieur du container** — le dev code comme d'habitude, mais dans un environnement Linux identique pour tout le monde.
 
-```
+```text
 ┌─ Machine du dev (Windows / macOS / Linux) ─────────┐
 │                                                     │
 │  IDE (VS Code / JetBrains Gateway)                  │
@@ -458,7 +458,7 @@ Un Dev Container est un **environnement de dev complet defini en code**. Au lieu
 
 **C'est different de docker-compose** : docker-compose fait tourner les **services** (DB, backend, frontend). Le Dev Container fait tourner l'**outil de dev** (IDE, terminal, linters). Les deux coexistent.
 
-> **Doc** : https://containers.dev/
+> **Doc** : <https://containers.dev/>
 
 #### Support IDE
 
@@ -470,11 +470,11 @@ Un Dev Container est un **environnement de dev complet defini en code**. Au lieu
 
 > **PHPStorm et les Dev Containers** : JetBrains supporte les Dev Containers via Gateway depuis 2023. Le support s'ameliore a chaque version. Les devs PHP sous PHPStorm peuvent l'utiliser, meme si l'experience est legerement moins fluide que VS Code.
 >
-> **Doc JetBrains** : https://www.jetbrains.com/help/idea/connect-to-devcontainer.html
+> **Doc JetBrains** : <https://www.jetbrains.com/help/idea/connect-to-devcontainer.html>
 
 #### Configuration proposee
 
-```
+```text
 .devcontainer/
 ├── devcontainer.json         ← Configuration principale
 ├── Dockerfile                ← Image custom (optionnel, si besoin de plus que les features)
@@ -579,7 +579,7 @@ echo "   Run 'make up' to start all services"
 
 **Avant (sans Dev Container) — onboarding Windows** :
 
-```
+```text
 1. Installer Docker Desktop
 2. Installer Node.js 20 (attention a la version)
 3. Installer pnpm (npm install -g pnpm)
@@ -601,7 +601,7 @@ echo "   Run 'make up' to start all services"
 
 **Apres (avec Dev Container)** :
 
-```
+```text
 1. Installer Docker Desktop
 2. Installer VS Code + extension Dev Containers
 3. git clone <repo>
@@ -617,7 +617,7 @@ echo "   Run 'make up' to start all services"
 
 Le Dev Container resout le probleme des line endings une fois pour toutes. A l'interieur du container, tout est en `LF` (Linux). Mais il faut aussi configurer git cote host pour eviter les conversions automatiques :
 
-```
+```text
 # .gitattributes (a la racine du repo)
 * text=auto eol=lf
 *.sh text eol=lf
@@ -650,7 +650,7 @@ Les devs PHP qui utilisent PHPStorm ont deux options :
 
 L'option 1 est plus uniforme. L'option 2 est un fallback si Gateway ne convient pas.
 
-> **Doc** : https://www.jetbrains.com/help/phpstorm/configuring-remote-interpreters.html
+> **Doc** : <https://www.jetbrains.com/help/phpstorm/configuring-remote-interpreters.html>
 
 ---
 

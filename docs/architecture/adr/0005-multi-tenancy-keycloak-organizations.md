@@ -208,7 +208,7 @@ def list_companies(
 
 ## References
 
-- [Keycloak Organizations Documentation](https://www.keycloak.org/docs/latest/server_admin/#_organizations)
+- [Keycloak Organizations Documentation](https://www.keycloak.org/docs/latest/server_admin/)
 - [ADR-0003: Keycloak Authentication](./0003-keycloak-authentication.md)
 - [ADR-0007: User/Org Identification](./0007-keycloak-user-org-identification.md)
 - [Constraints Document](../01-context/constraints.md)

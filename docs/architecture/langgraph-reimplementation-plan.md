@@ -9,7 +9,7 @@
 
 ## Table of Contents
 
-- [A. What to Remove (Dify/Celery Cleanup)](#a-what-to-remove-difyCelery-cleanup)
+- [A. What to Remove (Dify/Celery Cleanup)](#a-what-to-remove-difycelery-cleanup)
 - [B. What to Keep from Main (DO NOT Touch)](#b-what-to-keep-from-main-do-not-touch)
 - [C. What to Create (New Agent System)](#c-what-to-create-new-agent-system)
 - [D. Implementation Phases](#d-implementation-phases)
@@ -168,7 +168,7 @@ The `pappers_enabled` and `worldcheck_enabled` feature flags remain unchanged.
 
 ### Backend: Agent Package (`apps/screen/app/agents/`)
 
-```
+```text
 apps/screen/app/agents/
 ├── __init__.py                  # Package marker
 ├── config.py                    # Constants, pricing, agent types, _build_agent_prompt() (~100 lines)
@@ -249,7 +249,7 @@ apps/screen/app/agents/
 **`nodes/base.py`** (~100 lines):
 
 - `run_agent(agent_name, company_name, website, company_brief, country_code) -> AgentResult`
-- `_extract_domain(website)`: strips www., handles ://
+- `_extract_domain(website)`: strips `www`., handles ://
 - `_infer_country_code(website)`: TLD → country code map (27 entries)
 - `_build_allowed_domains(agent_name, company_domain)`: replaces `{company_domain}` placeholder
 
@@ -714,7 +714,7 @@ This is defined in `config.py`'s `_AGENT_OUTPUT_FORMATS` and enforced by the pro
 
 The planner's output (company brief) is injected into each agent's user query:
 
-```
+```text
 === COMPANY BRIEF (from website exploration) ===
 Summary: ...
 Industry: ...
@@ -777,7 +777,7 @@ OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1}
 
 Add to `.env.example`:
 
-```
+```ini
 AZURE_OPENAI_API_KEY=
 AZURE_OPENAI_ENDPOINT=https://chapsmind.cognitiveservices.azure.com
 AZURE_OPENAI_API_VERSION=2024-05-01-preview

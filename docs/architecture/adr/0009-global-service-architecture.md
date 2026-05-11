@@ -44,7 +44,7 @@ We will implement a **simplified service architecture** where the **Global Servi
 
 ### Architecture Overview
 
-```
+```text
                     ┌─────────────────────────────────────────┐
                     │              Frontend SPA               │
                     │     (Screen, Target, Explore views)     │
@@ -241,9 +241,9 @@ We will implement a **simplified service architecture** where the **Global Servi
 
 The Global Service handles two responsibilities:
 
-**1. Gateway Layer (All Requests)**
+#### 1. Gateway Layer (All Requests)
 
-```
+```text
 Frontend Request
       │
       ▼
@@ -261,7 +261,7 @@ Frontend Request
       └── /api/*         → Handle directly (shared services)
 ```
 
-**2. Shared Services (Direct Handling)**
+#### 2. Shared Services (Direct Handling)
 
 - `/api/tokens/*` - Token management
 - `/api/folders/*` - Folder management
@@ -272,7 +272,7 @@ Frontend Request
 
 All endpoints go through Global Service:
 
-```
+```http
 # Shared Services (handled by Global Service)
 GET   /api/organization/context
 GET   /api/tokens/balance
@@ -294,7 +294,7 @@ POST  /api/target/watchfiles
 
 Modules call Global Service for shared operations:
 
-```
+```http
 # Internal API (not exposed to frontend)
 GET   /api/internal/organizations/{org_id}/tokens/balance
 POST  /api/internal/tokens/consume

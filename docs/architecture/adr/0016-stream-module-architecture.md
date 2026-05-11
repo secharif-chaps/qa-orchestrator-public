@@ -56,7 +56,7 @@ Build Stream as a **standalone FastAPI service** at `apps/stream/` with its own 
 
 ### Architecture Overview
 
-```
+```text
                     ┌─────────────────────────────────────────┐
                     │              Frontend SPA               │
                     │  (Stream sidebar, Stream editor page)   │
@@ -112,7 +112,7 @@ Build Stream as a **standalone FastAPI service** at `apps/stream/` with its own 
 
 ### Event Flow
 
-```
+```text
 Producer Service ──writes to outbox table──► producer_db (same transaction as business op)
                                                   │
 Producer Relay ──polls (+ optional pg_notify)──────┘
@@ -262,7 +262,7 @@ This ADR focuses on a **minimal form-based UI** to create and manage streams. Th
 
 Single-page form with dynamic sections based on channel type and mode:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │  ← Retour au dossier            Créer un Stream         │
 ├─────────────────────────────────────────────────────────┤
@@ -347,7 +347,7 @@ All channels expose a **"Tester la connexion"** button that sends a test payload
 
 In recurrence mode, dispatched digests use a **simple template** that aggregates queued events — no AI generation. Example Slack/Teams output:
 
-```
+```text
 📋 Digest hebdomadaire — "Concurrents IA"
 Période : 24 mars – 30 mars 2026
 
@@ -657,7 +657,7 @@ Stream operations consume credits from the organization's global token balance (
 Credit consumption is tracked via the internal token API (`POST /api/internal/tokens/consume`) on Global Service. If an organization has insufficient credits, dispatch is skipped and the delivery is marked as `skipped`.
 
 > **Note**: Exact credit costs will be finalized during implementation based on actual LLM token usage per channel type.
-
+>
 > **Implementation note**: Credit costs are implemented as configurable settings (`STREAM_COST_TEAMS`, `STREAM_COST_SLACK`, `STREAM_COST_WEBHOOK`) that can be adjusted via environment variables without code changes.
 
 ---
@@ -680,7 +680,7 @@ Global Service v2 (MRs !70–!77) replaces the former single-backend proxy with 
 
 Stream registers in the ModuleRegistry config. The gateway handles everything else:
 
-```
+```text
 /api/stream/*  → STREAM_BASE_URL (new Stream service, via registry)
 /api/*         → SCREEN_BASE_URL (existing Screen service, default fallback)
 ```
@@ -704,7 +704,7 @@ The frontend for this iteration is intentionally minimal — just enough UI to c
 
 The existing "Nouveau" button dropdown (in `FoldersHeader.vue`) gains a "Stream" option:
 
-```
+```text
 + Nouveau ▼
 ├── Veille          (1000 crédits)
 ├── Fiche Entreprise (50 crédits)
@@ -851,7 +851,7 @@ Single-page form for creating and editing streams (see [Stream Creation Form](#s
 
 ## New Files
 
-```
+```text
 apps/stream/
 ├── app/
 │   ├── adapters/                  # Channel adapters
@@ -911,7 +911,7 @@ A user has a folder "Concurrents IA" with an active **live Slack stream** config
 
 ### Step-by-step flow
 
-```
+```text
  ① Target Service                ② target_db                  ③ Target Relay
  ┌─────────────────┐            ┌─────────────────┐          ┌──────────────────┐
  │ Watchfile crawl  │──INSERT───►│ documents table  │          │ Poll outbox      │
@@ -950,7 +950,7 @@ A user has a folder "Concurrents IA" with an active **live Slack stream** config
 
 ### What the user sees in Slack
 
-```
+```text
 ┌─────────────────────────────────────────────────┐
 │ 📄  Nouveau document dans "Concurrents IA"      │
 │                                                 │
@@ -989,7 +989,7 @@ Inspired by Stripe's webhook event filtering, each stream subscribes to **specif
 
 The event catalog is **hardcoded in the Stream service** as a Python constant. The frontend fetches it via a simple endpoint. Auto-discovery from producer services comes in Phase 3.
 
-```
+```http
 GET /api/stream/event-types
 
 [

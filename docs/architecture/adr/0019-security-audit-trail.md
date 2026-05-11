@@ -176,7 +176,7 @@ In production, `eventsEnabled: true` + `adminEventsEnabled: true` are enabled in
 
 - Direct write to `audit_events` via standard Postgres connection, best-effort. A write failure surfaces a critical alert (Prometheus counter `audit_events_write_failures_total`).
 
-**4.3 Generic hook to avoid omission — complete example of the Python decorator**
+#### 4.3 Generic hook to avoid omission — complete example of the Python decorator
 
 A FastAPI `@audited(...)` decorator is provided and **mandatory** on all sensitive mutant endpoints of `global-service`. It captures the request context, executes the business logic, then writes the audit entry in the same transaction on success.
 
@@ -364,7 +364,7 @@ async def elevate_to_admin(
 
 **CI policy**: A test `tests/policy/test_audited_coverage.py` parses the AST of all modules `apps/*/app/api/endpoints/` and verifies that every handler `POST`, `PUT`, `PATCH`, `DELETE` not explicitly listed in a whitelist `ENDPOINTS_EXEMPT_FROM_AUDIT` bears the `@audited` decorator. Rejection at CI otherwise.
 
-**4.4 Client IP Propagation**
+#### 4.4 Client IP Propagation
 
 Currently the gateway strips `X-Forwarded-For`. To retrieve the real IP:
 
@@ -372,7 +372,7 @@ Currently the gateway strips `X-Forwarded-For`. To retrieve the real IP:
 - The gateway reads these headers, validates (whitelist of trusted upstream proxies), and copies them to an internal header `X-Client-IP` which it transmits to backends via the Internal JWT (claim `client_ip`).
 - The original external headers remain stripped on the backends side to prevent spoofing.
 
-**4.5 Audit Publishing from Sub-modules (screen, stream, target)**
+#### 4.5 Audit Publishing from Sub-modules (screen, stream, target)
 
 The `audit_events` table lives in the `global-service` DB (schema `global`). Sub-modules (screen, stream, target) do not have direct DB access to it — this is intentional, to maintain schema separation and avoid coupling. They publish instead via an **internal HTTP endpoint** exposed by the gateway.
 
@@ -779,7 +779,7 @@ Recommended alerts (to be defined in future observability ADR, not here):
 1. **Alembic migration** to create `global.audit_events` + Postgres roles `audit_writer` / `audit_reader`.
 2. **`audit_service` module** in `global-service`: `AuditService.record(event_type, ...)`.
 3. **`@audited` decorator** and `contextvars` to propagate `request_id`, `client_ip`, `user_agent`.
-4. **Progressive endpoint instrumentation** (order by criticality: admin._ > folder._ > resource._ > token._).
+4. **Progressive endpoint instrumentation** (order by criticality: `admin.*` > `folder.*` > `resource.*` > `token.*`).
 5. **Activate Keycloak Events** in `realm-chapsmind.json`.
 6. **Keycloak Admin API polling**: Celery task + writer to `audit_events`.
 7. **Read endpoints** `/api/admin/audit/events` and `/api/organizations/{id}/audit/events`.
@@ -817,5 +817,5 @@ Strong articulation points:
 - **ADR-0003** (Keycloak Authentication) — IdP context.
 - **ADR-0009** (Global Service Architecture) — natural home for audit.
 - [ISO 27001 Annex A.12.4 — Logging and monitoring](https://www.iso.org/standard/54534.html)
-- [Keycloak Events and Event Listeners documentation](https://www.keycloak.org/docs/latest/server_admin/#admin-events)
+- [Keycloak Events and Event Listeners documentation](https://www.keycloak.org/docs/latest/server_admin/)
 - [pg_partman documentation](https://github.com/pgpartman/pg_partman)

@@ -26,7 +26,7 @@ From [Test Writing Standards](../../../agent-os/standards/testing/test-writing.m
 
 #### Backend Test Structure
 
-```
+```text
 back/tests/
 ├── unit/              # Fast, isolated tests
 │   ├── test_services.py
@@ -87,7 +87,7 @@ def test_create_company_unauthorized(db_session, mock_user_no_perms):
 
 #### Frontend Test Structure (Planned)
 
-```
+```text
 front/src/
 ├── components/
 │   ├── ui/
@@ -298,5 +298,5 @@ Tests should run automatically on:
 ## Related Documentation
 
 - [Test Writing Standards](../../../agent-os/standards/testing/test-writing.md) - Testing best practices
-- [Backend CLAUDE.md](../../../back/CLAUDE.md) - Backend testing section
+- [Backend CLAUDE.md](../../../apps/screen/CLAUDE.md) - Backend testing section
 - [Coding Standards](./coding-standards.md) - Development conventions

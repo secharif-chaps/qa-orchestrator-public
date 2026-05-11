@@ -15,7 +15,7 @@ ChapsMind handles two categories of data:
 
 **User identity data is NOT stored in the application database.** All user information resides exclusively in Keycloak.
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Keycloak (Identity Provider)                  │
 ├─────────────────────────────────────────────────────────────────┤

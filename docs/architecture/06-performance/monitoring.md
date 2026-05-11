@@ -25,14 +25,14 @@ ChapsMind has **limited observability** in the current architecture. The primary
 
 ### Access
 
-| Environment     | URL                   | Notes                           |
-| --------------- | --------------------- | ------------------------------- |
-| **Development** | http://localhost:5555 | Via Docker Compose              |
-| **Production**  | Internal only         | Access via kubectl port-forward |
+| Environment     | URL                     | Notes                           |
+| --------------- | ----------------------- | ------------------------------- |
+| **Development** | <http://localhost:5555> | Via Docker Compose              |
+| **Production**  | Internal only           | Access via kubectl port-forward |
 
 ### Dashboard Features
 
-```
+```text
 +------------------------------------------------------------------+
 |  Celery Flower Dashboard                                          |
 +------------------------------------------------------------------+
@@ -147,7 +147,7 @@ readinessProbe:
 
 The following observability stack is planned but **not yet implemented**:
 
-```
+```text
 +------------------------------------------------------------------+
 |                    Observability Stack (Planned)                  |
 +------------------------------------------------------------------+

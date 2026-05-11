@@ -1,8 +1,8 @@
 # Creating and maintaining an Agent Skill
 
 > **Project**: Target / Chapsmind
-> **Reference spec**: https://agentskills.io/specification
-> **Best practices**: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+> **Reference spec**: <https://agentskills.io/specification>
+> **Best practices**: <https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices>
 
 ---
 
@@ -31,7 +31,7 @@ An Agent Skill is a **folder containing a SKILL.md file** that teaches an AI age
 - **Marketplace**: skills.sh indexes 73K+ compliant skills. We can install third-party skills and publish ours.
 - **Automatic validation**: `skills-ref validate` checks compliance - impossible without a standardized format.
 
-For the full details, see the [section 0 of the strategy document](agent-skills-strategy.md#0-why-follow-the-agentskillsio-spec).
+For the full details, see section 0 of the strategy document.
 
 ---
 
@@ -39,8 +39,8 @@ For the full details, see the [section 0 of the strategy document](agent-skills-
 
 Before creating or modifying a skill:
 
-1. Read the agentskills.io spec (10 min): https://agentskills.io/specification
-2. Read the Anthropic best practices (15 min): https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+1. Read the agentskills.io spec (10 min): <https://agentskills.io/specification>
+2. Read the Anthropic best practices (15 min): <https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices>
 3. Browse 2-3 existing skills in `.claude/skills/` to understand the format
 4. Have access to the basil or chapsmind-workspace repo
 
@@ -50,7 +50,7 @@ Before creating or modifying a skill:
 
 ### Location
 
-```
+```text
 .claude/skills/{skill-name}/
     SKILL.md                    # Required - main instructions
     references/                 # Optional - detailed documentation
@@ -88,7 +88,7 @@ Skills live in `.claude/skills/` (native Claude Code location, supported by the 
 Before creating a skill, answer these 3 questions:
 
 - [ ] **No existing skill covers the topic?** Browse `.claude/skills/`
-- [ ] **No marketplace skill does it better?** Search on https://skills.sh
+- [ ] **No marketplace skill does it better?** Search on <https://skills.sh>
 - [ ] **The topic justifies a dedicated skill?** If it's 3 lines of config, add them to an existing skill
 
 ### Step 2 - Create the structure
@@ -218,7 +218,7 @@ The description is the primary activation criterion. The agent reads ALL descrip
 
 **Recommended structure:**
 
-```
+```text
 
 [What the skill does]. Use when [trigger conditions].
 Activates when [file patterns or contexts].
@@ -228,7 +228,7 @@ CRITICAL - [most important rule].
 
 **Real example (pinia-colada):**
 
-```
+```text
 
 Data fetching with Pinia Colada queries and mutations for Vue/Nuxt
 applications. Use when fetching data from the API, creating query
@@ -354,7 +354,7 @@ A SKILL.md that starts directly with instructions without an activation section.
 
 ### 5. Support files at the root
 
-```
+```text
 my-skill/
     SKILL.md
     examples.md        # At the root, not in references/
@@ -365,7 +365,7 @@ Doesn't follow the spec's `references/` convention, makes the structure less rea
 
 **Fix**:
 
-```
+```text
 my-skill/
     SKILL.md
     references/
@@ -404,7 +404,7 @@ class WatchFile {
 
 ### Structure
 
-```
+```text
 .claude/skills/pinia-colada/
     SKILL.md                     # 264 lines
     references/

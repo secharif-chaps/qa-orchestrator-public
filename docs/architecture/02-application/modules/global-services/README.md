@@ -2,7 +2,7 @@
 
 The Global Service acts as both **API Gateway** and **shared services layer** for ChapsMind. This simplified architecture avoids microservices complexity while enabling module separation.
 
-**Key Decision**: Global Service IS the gateway - there is no separate Kong/Traefik component. See [ADR-0009](../../adr/0009-global-service-architecture.md) for rationale.
+**Key Decision**: Global Service IS the gateway - there is no separate Kong/Traefik component. See [ADR-0009](../../../adr/0009-global-service-architecture.md) for rationale.
 
 ## Overview
 
@@ -155,6 +155,6 @@ Global services will have their own database tables (or dedicated database) for:
 ## Related Documentation
 
 - [Auth Service](./auth-service.md) - Keycloak integration details
-- [ADR-0009: Global Service Architecture](../../adr/0009-global-service-architecture.md) - Architecture decision
-- [Authorization](../../05-security/authorization.md) - Permission model
-- [Containers](../containers.md) - Deployment architecture
+- [ADR-0009: Global Service Architecture](../../../adr/0009-global-service-architecture.md) - Architecture decision
+- [Authorization](../../../05-security/authorization.md) - Permission model
+- [Containers](../../containers.md) - Deployment architecture

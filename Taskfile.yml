@@ -123,6 +123,15 @@ tasks:
     desc: Validate Claude skills structure
     cmd: for dir in .claude/skills/*/; do npx skills-ref validate "$dir" || exit 1; done
 
+  # ─── Documentation ─────────────────────────────────
+  docs:lint:
+    desc: Lint Markdown structure under docs/ (markdownlint-cli2 via Docker)
+    cmd: docker run --rm -v "$PWD:/workdir" davidanson/markdownlint-cli2:v0.18.1 "docs/**/*.md"
+
+  docs:links:
+    desc: Check internal and external links under docs/ (lychee via Docker)
+    cmd: docker run --rm -v "$PWD:/workspace" -w /workspace lycheeverse/lychee:latest --config lychee.toml --include-fragments "docs/**/*.md"
+
   # ─── All ────────────────────────────────────────────
   lint:
     desc: Lint all projects

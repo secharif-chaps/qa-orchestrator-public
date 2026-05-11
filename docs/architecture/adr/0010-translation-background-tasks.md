@@ -12,7 +12,7 @@ The MINT application needs to translate company data fields from English to mult
 
 The initial implementation used Celery with RabbitMQ for asynchronous translation processing:
 
-```
+```text
 Frontend → API → DB (create job) → RabbitMQ → Celery Worker → SYSTRAN → DB
 ```
 
@@ -47,7 +47,7 @@ Replace Celery-based translation processing with FastAPI BackgroundTasks.
 
 ### New Architecture
 
-```
+```text
 Frontend → API → Response (202 Accepted)
                     ↓
               BackgroundTask → SYSTRAN → DB (update)

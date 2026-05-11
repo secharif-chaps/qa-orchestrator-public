@@ -8,7 +8,7 @@ This document describes ChapsMind's current scalability characteristics and plan
 
 ChapsMind currently operates as a **single-instance deployment**:
 
-```
+```text
                      +------------------+
                      |   Load Balancer  |
                      |   (Kubernetes)   |
@@ -41,7 +41,7 @@ ChapsMind currently operates as a **single-instance deployment**:
 
 The primary scalability mechanism is **Celery workers** for background processing:
 
-```
+```text
 +-------------+     +-------------+     +------------------+
 |  Backend    | --> |  RabbitMQ   | --> |  Celery Workers  |
 |  API        |     |  (Broker)   |     |  (1-N instances) |
@@ -78,7 +78,7 @@ CELERY_WORKER_PREFETCH_MULTIPLIER = 1  # One task at a time per worker
 
 **Dify is the primary scalability bottleneck** in ChapsMind. Every company card creation triggers multiple Dify workflow calls:
 
-```
+```text
 Company Created
       │
       ▼
@@ -164,6 +164,7 @@ Components that can be scaled horizontally today:
    ```
 
 2. **Backend API**: Design is stateless, can add replicas
+
    ```yaml
    # Example: Scale API (requires load balancer configuration)
    kubectl scale deployment mint-backend --replicas=2 -n chapsmind
@@ -180,7 +181,7 @@ For database and single-instance components:
 
 Planned architecture where Global Service acts as both API Gateway and shared services:
 
-```
+```text
                     ┌─────────────────────────────────────────┐
                     │              Frontend SPA               │
                     └──────────────────┬──────────────────────┘

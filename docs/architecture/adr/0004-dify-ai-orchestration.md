@@ -136,7 +136,7 @@ Key implementation decisions:
 
 ### Workflow Architecture
 
-```
+```text
 Company Creation
        |
        v
@@ -174,5 +174,5 @@ async def run_datacollector(company: Company) -> dict:
 
 - [Dify Documentation](https://docs.dify.ai/)
 - [Dify GitHub](https://github.com/langgenius/dify)
-- [AI Orchestration Module](../02-application/modules/ai-orchestration.md)
+- [AI Orchestration Module](../02-application/modules/screen/ai-orchestration.md)
 - [ChapsMind Tech Stack](../../../agent-os/product/tech-stack.md)

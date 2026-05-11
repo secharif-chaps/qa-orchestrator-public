@@ -17,7 +17,7 @@ ChapsMind implements a **defense-in-depth** strategy with multiple layers of sec
 
 The security architecture consists of multiple complementary layers:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Layer 1: Edge Security                        │
 │  - HTTPS/TLS encryption for all traffic                         │
@@ -71,7 +71,7 @@ The security architecture consists of multiple complementary layers:
 
 ## Related Documentation
 
-- [Auth Service Module](../02-application/modules/auth-service.md) - Keycloak integration details
+- [Auth Service Module](../02-application/modules/global-services/auth-service.md) - Keycloak integration details
 - [ADR-0003: Keycloak Authentication](../adr/0003-keycloak-authentication.md) - Authentication decision record
 - [ADR-0005: Multi-Tenancy](../adr/0005-multi-tenancy-keycloak-organizations.md) - Organization isolation
 - [ADR-0007: User/Org Identification](../adr/0007-keycloak-user-org-identification.md) - Identity management approach

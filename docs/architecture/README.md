@@ -139,7 +139,7 @@ flowchart TB
 
 ## Document Structure
 
-```
+```text
 docs/architecture/
 ├── README.md                          # This file - entry point
 ├── 01-context/                        # Business context
@@ -195,15 +195,15 @@ docs/architecture/
 
 ## Related Documentation
 
-| Resource            | Location                                                                 | Description                    |
-| ------------------- | ------------------------------------------------------------------------ | ------------------------------ |
-| Workspace Guide     | [`CLAUDE.md`](../../CLAUDE.md)                                           | Development guide and patterns |
-| Product Mission     | [`agent-os/product/mission.md`](../../agent-os/product/mission.md)       | Product pitch and vision       |
-| Tech Stack          | [`agent-os/product/tech-stack.md`](../../agent-os/product/tech-stack.md) | Technology details             |
-| Coding Standards    | [`agent-os/standards/`](../../agent-os/standards/)                       | Development conventions        |
-| Feature Specs       | [`agent-os/specs/`](../../agent-os/specs/)                               | Feature specifications         |
-| Frontend Components | [`front/src/components/CLAUDE.md`](../../front/src/components/CLAUDE.md) | Component guidelines           |
-| API Documentation   | `/docs` endpoint                                                         | Live OpenAPI documentation     |
+| Resource            | Location                                                                           | Description                    |
+| ------------------- | ---------------------------------------------------------------------------------- | ------------------------------ |
+| Workspace Guide     | [`CLAUDE.md`](../../CLAUDE.md)                                                     | Development guide and patterns |
+| Product Mission     | [`agent-os/product/mission.md`](../../agent-os/product/mission.md)                 | Product pitch and vision       |
+| Tech Stack          | [`agent-os/product/tech-stack.md`](../../agent-os/product/tech-stack.md)           | Technology details             |
+| Coding Standards    | [`agent-os/standards/`](../../agent-os/standards/)                                 | Development conventions        |
+| Feature Specs       | [`agent-os/specs/`](../../agent-os/specs/)                                         | Feature specifications         |
+| Frontend Components | [`apps/front/src/components/CLAUDE.md`](../../apps/front/src/components/CLAUDE.md) | Component guidelines           |
+| API Documentation   | `/docs` endpoint                                                                   | Live OpenAPI documentation     |
 
 ---
 

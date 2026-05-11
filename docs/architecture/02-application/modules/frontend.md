@@ -59,7 +59,7 @@ flowchart TB
 
 ## Directory Structure
 
-```
+```text
 src/
 ├── api/              # Pure HTTP functions
 ├── components/       # Vue components

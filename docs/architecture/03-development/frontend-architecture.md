@@ -61,7 +61,7 @@ flowchart TB
 
 ## Directory Structure
 
-```
+```text
 src/
 ├── api/                    # Pure HTTP functions
 │   ├── client.ts          # ApiClient class with auth handling
@@ -162,7 +162,7 @@ flowchart TB
 
 ### Component Decomposition Rules
 
-From [Components CLAUDE.md](../../../front/src/components/CLAUDE.md):
+From [Components CLAUDE.md](../../../apps/front/src/components/CLAUDE.md):
 
 1. **Extract list items**: Always create dedicated item components for `v-for` loops
 2. **Keep pages small**: Pages should orchestrate, not render complex UI
@@ -227,7 +227,7 @@ export const companyByIdQuery = defineQueryOptions(({ id }: { id: string }) => (
 
 ## Data Flow Pattern
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                         Component                                │
 │  const { data, isLoading, error } = useQuery(companyByIdQuery)  │
@@ -379,5 +379,5 @@ See [Vuellar Standards](../../../agent-os/standards/frontend/vuellar/components.
 - [API Contracts](./api-contracts.md) - Frontend API patterns
 - [Frontend Module](../02-application/modules/frontend.md) - Module overview
 - [ADR-006: Pinia Colada](../adr/0006-pinia-colada-data-fetching.md) - Data fetching decision
-- [Components CLAUDE.md](../../../front/src/components/CLAUDE.md) - Component guidelines
-- [Pages CLAUDE.md](../../../front/src/pages/CLAUDE.md) - Routing patterns
+- [Components CLAUDE.md](../../../apps/front/src/components/CLAUDE.md) - Component guidelines
+- [Pages CLAUDE.md](../../../apps/front/src/pages/CLAUDE.md) - Routing patterns
