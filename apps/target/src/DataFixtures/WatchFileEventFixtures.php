@@ -16,8 +16,6 @@ use OpenSearch\Client;
 
 class WatchFileEventFixtures extends Fixture implements DependentFixtureInterface
 {
-    use OpenSearchFixtureTrait;
-
     public function __construct(
         private readonly Client $openSearchClient,
     ) {
@@ -25,14 +23,12 @@ class WatchFileEventFixtures extends Fixture implements DependentFixtureInterfac
 
     public function getDependencies(): array
     {
-        return [WatchFileFixtures::class, ActorFixtures::class];
+        return [OpenSearchSetupFixture::class, WatchFileFixtures::class, ActorFixtures::class];
     }
 
     public function load(ObjectManager $manager): void
     {
         mt_srand(54321);
-
-        $this->clearOpenSearchIndex(WatchFileEvent::INDEX_NAME);
 
         $watchFiles = $this->getWatchFiles($manager);
         $actors = $this->getActors($manager);

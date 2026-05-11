@@ -25,8 +25,6 @@ use Symfony\Component\Uid\Uuid;
 
 class DocumentFixtures extends Fixture implements DependentFixtureInterface
 {
-    use OpenSearchFixtureTrait;
-
     public function __construct(
         private readonly Client $openSearchClient,
         #[Autowire(service: DocumentNormalizer::class)]
@@ -36,16 +34,19 @@ class DocumentFixtures extends Fixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return [WatchFileFixtures::class, ActorFixtures::class, SourceFixtures::class, UserFixtures::class];
+        return [
+            OpenSearchSetupFixture::class,
+            WatchFileFixtures::class,
+            ActorFixtures::class,
+            SourceFixtures::class,
+            UserFixtures::class,
+        ];
     }
 
     public function load(ObjectManager $manager): void
     {
         // Set seed for reproducible random data
         mt_srand(12345);
-
-        // Clear existing documents from the index before uploading new ones
-        $this->clearOpenSearchIndex(Document::INDEX_NAME);
 
         $watchFiles = $this->getWatchFiles($manager);
         $actors = $this->getActorsFromDatabase($manager);
