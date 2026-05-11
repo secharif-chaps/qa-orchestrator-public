@@ -1,7 +1,7 @@
 """Extend company_patents / company_patent_item with families + legal fields
 
-Revision ID: 043
-Revises: 042
+Revision ID: 044
+Revises: 043
 Create Date: 2026-04-23
 
 TAR-1579 extension of the patents agent — adds the columns required to
@@ -22,8 +22,8 @@ from sqlalchemy.dialects import postgresql
 
 from alembic import op
 
-revision = "043"
-down_revision = "042"
+revision = "044"
+down_revision = "043"
 branch_labels = None
 depends_on = None
 
