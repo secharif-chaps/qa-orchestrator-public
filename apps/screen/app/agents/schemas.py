@@ -471,10 +471,11 @@ class PatentsAgentOutput(BaseModel):
     """Output schema for the patents agent — the Phase 2 LLM response.
 
     Only carries the fields the LLM produces: the narrative insights, the
-    labelled top classification domains, and the list of key patent
-    numbers. Aggregate counts (``total_patents_count``, ``filing_trend``)
-    are computed programmatically in Phase 1 and merged by the node
-    before persistence.
+    labelled top classification domains, the list of key patent numbers,
+    and the families + legal ``portfolio_strength`` assessment.
+    Aggregate counts (``total_patents_count``, ``filing_trend``,
+    ``geographic_coverage``, ``status_breakdown``) are computed
+    programmatically in Phase 1 and merged by the node before persistence.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -487,6 +488,14 @@ class PatentsAgentOutput(BaseModel):
     key_patent_doc_ids: list[str] = Field(
         default_factory=list,
         description="Up to 10 doc_ids (exact patent numbers) that the analyst considers key patents.",
+    )
+    portfolio_strength: str = Field(
+        default="",
+        description=(
+            "1-2 paragraphs assessing portfolio solidity and geographic strategy: "
+            "priority countries, active/expired ratio, expansion or retreat signals. "
+            "Empty string when families AND legal data are both unavailable."
+        ),
     )
 
 
