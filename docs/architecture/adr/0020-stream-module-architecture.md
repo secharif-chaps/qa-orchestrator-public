@@ -1,4 +1,4 @@
-# ADR-0016: Stream Module Architecture
+# ADR-0020: Stream Module Architecture
 
 ## Status
 
@@ -18,6 +18,7 @@
 - [ADR-0012 — LangGraph Agent System](./0012-langgraph-agent-system.md)
 - [ADR-0013 — Chat Service Replacement](./0013-chat-service-replacement.md)
 - [ADR-0015 — Multi-Module API Gateway](./0015-multi-module-gateway.md)
+- [ADR-0021 — Stream Newsletter Channel](./0021-stream-newsletter-channel.md) (adds the 4th channel, depends on Phase 2 recurrence here)
 
 ---
 

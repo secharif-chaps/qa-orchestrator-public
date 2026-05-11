@@ -53,7 +53,7 @@ class TokenConsumeResult:
 def get_credit_cost(channel_type: ChannelType) -> int:
     """Return the credit cost for a dispatch on the given channel type.
 
-    Costs are configured via environment variables with ADR-0016 defaults:
+    Costs are configured via environment variables with ADR-0020 defaults:
     - Teams / Slack: 5 credits
     - Webhook: 2 credits
     """

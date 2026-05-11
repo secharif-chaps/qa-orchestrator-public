@@ -88,6 +88,15 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${STREAM_DB:-stream_db}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      # Newsletter channel — NP6 email delivery (ADR-0020 Phase 1a).
+      # Empty defaults are intentional: the integrations/email module fails fast at runtime
+      # when required, but absence here must not block local boot for unrelated work.
+      NP6_BASE_URL: ${NP6_BASE_URL:-}
+      NP6_API_KEY: ${NP6_API_KEY:-}
+      NP6_FROM_EMAIL: ${NP6_FROM_EMAIL:-}
+      NP6_BAT_TEST_SEGMENT_ID: ${NP6_BAT_TEST_SEGMENT_ID:-1319}
+      STREAM_UNSUBSCRIBE_SECRET: ${STREAM_UNSUBSCRIBE_SECRET:-}
+      STREAM_NEWSLETTER_MAX_EVENTS_PER_BATCH: ${STREAM_NEWSLETTER_MAX_EVENTS_PER_BATCH:-50}
 
   # Global Service (Gateway) — always up, routes to screen and target
   # No depends_on screen/target: they are optional modules (profiled in local dev)

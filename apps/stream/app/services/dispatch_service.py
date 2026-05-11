@@ -1,7 +1,7 @@
 """Dispatch service — processes pending deliveries through channel adapters.
 
 After a successful send, consumes credits from the organization's token
-balance via the Global Service (ADR-0016 credit system).  Credits are
+balance via the Global Service (ADR-0020 credit system).  Credits are
 **only** debited on success so that failed deliveries never cost tokens.
 
 If the organisation has insufficient credits the delivery is marked SKIPPED
@@ -316,7 +316,7 @@ class DispatchService:
     ) -> DispatchResult:
         """Send a test message to validate channel configuration.
 
-        Test connections never consume tokens (ADR-0016: 0 credits).
+        Test connections never consume tokens (ADR-0020: 0 credits).
 
         Args:
             channel_type: The channel type to test
