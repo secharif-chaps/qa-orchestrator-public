@@ -234,4 +234,4 @@ KEYCLOAK_CLIENT_SECRET=<secret>
 
 - [Authorization](./authorization.md) - Role-based access control after authentication
 - [ADR-0003: Keycloak Authentication](../adr/0003-keycloak-authentication.md) - Decision record
-- [Backend CLAUDE.md](../../../back/CLAUDE.md) - Security best practices section
+- [Backend CLAUDE.md](../../../apps/screen/CLAUDE.md) - Security best practices section

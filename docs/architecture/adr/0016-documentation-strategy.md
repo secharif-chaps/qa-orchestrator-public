@@ -43,7 +43,7 @@ All technical documentation converges into the ChapsMind monorepo. Basil documen
 
 ### D2. Hybrid directory structure (by concern, with module subdivisions)
 
-```
+```text
 chapsmind/docs/
 ├── architecture/              # arc42 views (existing, unchanged)
 │   ├── 01-context/            # Stakeholders, constraints, business goals

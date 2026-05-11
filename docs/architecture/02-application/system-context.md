@@ -47,5 +47,5 @@ C4Context
 ## Related Documentation
 
 - [Containers](./containers.md) - Internal container architecture
-- [Auth Service](./modules/auth-service.md) - Keycloak integration details
-- [AI Orchestration](./modules/ai-orchestration.md) - Dify integration
+- [Auth Service](./modules/global-services/auth-service.md) - Keycloak integration details
+- [AI Orchestration](./modules/screen/ai-orchestration.md) - Dify integration

@@ -46,7 +46,7 @@ Replace Dify + Celery with a **LangGraph-based agent system** running inside the
 
 ### Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                    FastAPI Process                        │
 │                                                          │
@@ -137,7 +137,7 @@ class CompanyAnalysisState(TypedDict):
 
 ### Graph Topology
 
-```
+```text
 START → planner → [Send() fan-out per agent] → synthesizer → END
                                                     ↓ (conditional)
                                               retry agents → synthesizer
@@ -331,7 +331,7 @@ langgraph-checkpoint-postgres = "^2.0"   # Enabled from v1 for crash recovery
 
 ### Environment Variables
 
-```
+```ini
 AZURE_OPENAI_API_KEY       # Required
 AZURE_OPENAI_ENDPOINT      # Default: https://chapsmind.cognitiveservices.azure.com
 AZURE_OPENAI_API_VERSION   # Default: 2024-05-01-preview

@@ -44,8 +44,8 @@ flowchart TB
 
 ## Key Decisions
 
-1. **No Users Table**: User identity managed entirely in Keycloak (see [ADR-0007](../../adr/0007-keycloak-user-org-identification.md))
-2. **No Organization Members Table**: Membership managed by Keycloak Organizations (see [ADR-0005](../../adr/0005-multi-tenancy-keycloak-organizations.md))
+1. **No Users Table**: User identity managed entirely in Keycloak (see [ADR-0007](../../../adr/0007-keycloak-user-org-identification.md))
+2. **No Organization Members Table**: Membership managed by Keycloak Organizations (see [ADR-0005](../../../adr/0005-multi-tenancy-keycloak-organizations.md))
 3. **JWT Validation**: Backend validates tokens using fastapi-keycloak library
 
 ## Authentication Flow
@@ -188,9 +188,9 @@ class KeycloakAdminService:
 
 ## Related Documentation
 
-- [Authentication](../../05-security/authentication.md) - Detailed OIDC flow
-- [Authorization](../../05-security/authorization.md) - RBAC documentation
+- [Authentication](../../../05-security/authentication.md) - Detailed OIDC flow
+- [Authorization](../../../05-security/authorization.md) - RBAC documentation
 - [Global Services](./README.md) - API Gateway overview
-- [ADR-0003: Keycloak Authentication](../../adr/0003-keycloak-authentication.md)
-- [ADR-0005: Multi-Tenancy](../../adr/0005-multi-tenancy-keycloak-organizations.md)
-- [ADR-0007: User/Org Identification](../../adr/0007-keycloak-user-org-identification.md)
+- [ADR-0003: Keycloak Authentication](../../../adr/0003-keycloak-authentication.md)
+- [ADR-0005: Multi-Tenancy](../../../adr/0005-multi-tenancy-keycloak-organizations.md)
+- [ADR-0007: User/Org Identification](../../../adr/0007-keycloak-user-org-identification.md)

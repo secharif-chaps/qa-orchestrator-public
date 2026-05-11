@@ -100,7 +100,7 @@ Observations:
 
 #### Branches and Environments
 
-```
+```text
 main (protected)                   <- Auto merge -> deploy integration
   |
   +-- feat/TAR-xxx-description     <- Feature branch (front + screen + infra)
@@ -114,7 +114,7 @@ release/prod                       <- Tag/branch -> deploy prod (manual promotio
 
 #### Environment Promotion Pipeline
 
-```
+```text
 Feature branch        main               preprod             prod
      |                  |                    |                  |
      |   MR + review    |                    |                  |
@@ -157,7 +157,7 @@ Feature branch        main               preprod             prod
 
 **Submodules (previous)**:
 
-```
+```text
 1. git checkout -b feat/translation        <- in front/
 2. ... dev + commit + push + MR front
 3. git checkout -b feat/translation        <- in back/
@@ -177,7 +177,7 @@ Feature branch        main               preprod             prod
 
 **Monorepo (current)**:
 
-```
+```text
 1. git checkout -b feat/TAR-42-translation
 2. ... modify apps/front/ + apps/screen/
 3. git add + commit + push
@@ -195,7 +195,7 @@ Feature branch        main               preprod             prod
 
 **Submodules**:
 
-```
+```text
 1. cd back/ && git checkout -b fix/api-bug
 2. Fix + commit + push + MR
 3. Wait for review + merge
@@ -209,7 +209,7 @@ Feature branch        main               preprod             prod
 
 **Monorepo**:
 
-```
+```text
 1. git checkout -b fix/TAR-99-api-bug
 2. Fix in apps/screen/ + commit + push + MR
 3. Review + merge
@@ -235,7 +235,7 @@ Each app owns its own `.gitlab-ci.yml` with its business logic. The root file or
 
 #### File Structure
 
-```
+```text
 chapsmind/
 +-- .gitlab-ci.yml                      <- Orchestrator: stages + includes
 +-- apps/
@@ -437,7 +437,7 @@ A custom Python script (`scripts/ci/assign_reviewers.py`) reproduces the CODEOWN
 
 #### CODEOWNERS File
 
-```
+```text
 # .gitlab/CODEOWNERS
 # Same syntax as GitLab Premium -- used by CI job
 
@@ -608,7 +608,7 @@ Reconsider adding a tool if any of these signals appear:
 
 ## 10. Decision
 
-**Recommendation: Option B -- Monorepo**
+### Recommendation: Option B -- Monorepo
 
 **Justification**:
 

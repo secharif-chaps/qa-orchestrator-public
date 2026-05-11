@@ -75,9 +75,9 @@ From the **monorepo root**:
 
 You will be prompted through 3 steps:
 
-**Step 1 — Choose a company**
+#### Step 1 — Choose a company
 
-```
+```text
 ── Step 1 / 3 : Choose a company ──
 
   [1]  inwi  (id: 1)
@@ -85,9 +85,9 @@ You will be prompted through 3 steps:
 Enter number: 1
 ```
 
-**Step 2 — Choose a task**
+#### Step 2 — Choose a task
 
-```
+```text
 ── Step 2 / 3 : Choose a task ──
 
   [1]  csr       (id: 4, current status: succeeded)
@@ -101,9 +101,9 @@ Enter number: 1
 Enter number: 6
 ```
 
-**Step 3 — Choose an error type**
+#### Step 3 — Choose an error type
 
-```
+```text
 ── Step 3 / 3 : Choose an error type ──
 
   [1]  Rate limit LLM      (rate_limit_llm)         — countdown timer, recoverable

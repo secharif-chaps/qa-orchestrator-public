@@ -83,7 +83,7 @@ const count = t('items', { count: 5 })
 
 ### Translation File Structure
 
-```
+```text
 src/
   locales/
     en.json

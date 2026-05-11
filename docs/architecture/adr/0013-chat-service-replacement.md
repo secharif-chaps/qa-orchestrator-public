@@ -27,7 +27,7 @@ Replace the Dify chat workflow with a direct **Azure OpenAI chat completion** ca
 
 ### Architecture
 
-```
+```text
 Frontend (existing SSE consumer)
     │
     ▼

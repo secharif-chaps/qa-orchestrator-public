@@ -8,7 +8,7 @@ ChapsMind implements **Role-Based Access Control (RBAC)** with a permission mode
 
 Permissions follow a consistent `resource.action` format:
 
-```
+```text
 <resource>.<action>
 
 Examples:
@@ -441,5 +441,5 @@ See [Workspace CLAUDE.md](../../../CLAUDE.md#test-users) for test user credentia
 ## Related Documentation
 
 - [Authentication](./authentication.md) - How users are authenticated before authorization
-- [Backend Security Practices](../../../back/CLAUDE.md#security-best-practices) - Backend security patterns
-- [Workspace Permission System](../../../CLAUDE.md#permission-system) - Complete permission documentation
+- [Backend Security Practices](../../../apps/screen/CLAUDE.md) - Backend security patterns
+- [Workspace Permission System](../../../CLAUDE.md#available-permissions) - Complete permission documentation

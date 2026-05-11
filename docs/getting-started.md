@@ -97,13 +97,13 @@ task logs        # Tail all logs
 
 ## Services & URLs
 
-| Service            | URL                       | Credentials   |
-| ------------------ | ------------------------- | ------------- |
-| Application        | http://localhost          | via nginx     |
-| API                | http://localhost/api      | Bearer token  |
-| API Docs (Swagger) | http://localhost/api/docs | —             |
-| Keycloak Admin     | http://localhost:8080     | admin / admin |
-| RabbitMQ Admin     | http://localhost:15672    | guest / guest |
+| Service            | URL                         | Credentials   |
+| ------------------ | --------------------------- | ------------- |
+| Application        | <http://localhost>          | via nginx     |
+| API                | <http://localhost/api>      | Bearer token  |
+| API Docs (Swagger) | <http://localhost/api/docs> | —             |
+| Keycloak Admin     | <http://localhost:8080>     | admin / admin |
+| RabbitMQ Admin     | <http://localhost:15672>    | guest / guest |
 
 ---
 

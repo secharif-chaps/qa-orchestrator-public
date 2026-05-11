@@ -6,7 +6,7 @@ This document provides an index of coding standards and conventions for ChapsMin
 
 All detailed coding standards are maintained in:
 
-```
+```text
 agent-os/standards/
 ├── backend/           # Backend-specific standards
 ├── frontend/          # Frontend-specific standards
@@ -39,12 +39,12 @@ agent-os/standards/
 
 ### Frontend Standards
 
-| Document                                                               | Description                |
-| ---------------------------------------------------------------------- | -------------------------- |
-| [Components](../../../agent-os/standards/frontend/components.md)       | Vue component patterns     |
-| [CSS](../../../agent-os/standards/frontend/css.md)                     | Tailwind CSS conventions   |
-| [Accessibility](../../../agent-os/standards/frontend/accessibility.md) | WCAG compliance guidelines |
-| [Responsive](../../../agent-os/standards/frontend/responsive.md)       | Responsive design patterns |
+| Document                                                                      | Description                |
+| ----------------------------------------------------------------------------- | -------------------------- |
+| [Components](../../../agent-os/standards/frontend/vue/component-structure.md) | Vue component patterns     |
+| [Tailwind CSS](../../../agent-os/standards/frontend/tailwind.md)              | Tailwind CSS conventions   |
+| [Accessibility](../../../agent-os/standards/frontend/accessibility.md)        | WCAG compliance guidelines |
+| [Responsive](../../../agent-os/standards/frontend/responsive.md)              | Responsive design patterns |
 
 ### Testing Standards
 
@@ -56,12 +56,12 @@ agent-os/standards/
 
 Detailed development guides are embedded in the codebase:
 
-| Document                                                        | Description                                       |
-| --------------------------------------------------------------- | ------------------------------------------------- |
-| [Workspace CLAUDE.md](../../../CLAUDE.md)                       | Main development guide with patterns and examples |
-| [Backend CLAUDE.md](../../../back/CLAUDE.md)                    | Python/FastAPI development guide                  |
-| [Components CLAUDE.md](../../../front/src/components/CLAUDE.md) | Component patterns and UI guidelines              |
-| [Pages CLAUDE.md](../../../front/src/pages/CLAUDE.md)           | File-based routing patterns                       |
+| Document                                                             | Description                                       |
+| -------------------------------------------------------------------- | ------------------------------------------------- |
+| [Workspace CLAUDE.md](../../../CLAUDE.md)                            | Main development guide with patterns and examples |
+| [Backend CLAUDE.md](../../../apps/screen/CLAUDE.md)                  | Python/FastAPI development guide                  |
+| [Components CLAUDE.md](../../../apps/front/src/components/CLAUDE.md) | Component patterns and UI guidelines              |
+| [Pages CLAUDE.md](../../../apps/front/src/pages/CLAUDE.md)           | File-based routing patterns                       |
 
 ## Key Conventions Summary
 

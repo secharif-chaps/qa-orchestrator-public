@@ -352,6 +352,48 @@ mr:renovate-config-validate:
   script:
     - renovate-config-validator renovate.json
 
+# ─── Documentation linting (TAR-1534) ─────────────────
+# Two checks on MRs touching docs/:
+#   markdownlint-cli2 → structural Markdown lint
+#   lychee            → dead link detection (internal, external, anchors)
+# See ADR-0016 (Phase 4, Decision D7).
+mr:docs-markdownlint:
+  stage: lint
+  needs: []
+  image:
+    name: davidanson/markdownlint-cli2:v0.18.1
+    entrypoint: [""]
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $AGENT_ISSUE
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - docs/**/*
+        - .markdownlint-cli2.jsonc
+  script:
+    - markdownlint-cli2 "docs/**/*.md"
+
+mr:docs-lychee:
+  stage: lint
+  needs: []
+  image:
+    name: lycheeverse/lychee:latest
+    entrypoint: [""]
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $AGENT_ISSUE
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - docs/**/*
+        - lychee.toml
+  cache:
+    key: lychee-cache
+    paths:
+      - .lycheecache
+    policy: pull-push
+  script:
+    - lychee --config lychee.toml --include-fragments "docs/**/*.md"
+
 # ─── Daily MR report to Slack ────────────────────────────
 main:daily-mr-report:
   stage: notify

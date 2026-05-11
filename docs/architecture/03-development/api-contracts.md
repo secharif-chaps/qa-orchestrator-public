@@ -170,7 +170,7 @@ export const companiesQuery = defineQueryOptions(({ filters }: { filters: Compan
 
 ### Query Key Patterns
 
-```
+```text
 companies                    # Root key
 companies.{id}              # Single company
 companies.list.{filters}    # Filtered list
@@ -291,7 +291,7 @@ async function handleSubmit() {
 
 ### URL Patterns
 
-```
+```text
 /companies                  # Collection
 /companies/{id}             # Single resource
 /companies/{id}/tasks       # Nested resource

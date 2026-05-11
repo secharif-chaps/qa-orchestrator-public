@@ -44,7 +44,7 @@ Key implementation decisions:
 
 Permission model:
 
-```
+```text
 Organization Permissions:
 - organization.read
 - organization.write
@@ -168,7 +168,7 @@ Due to this decision, the application database:
 
 ### Authentication Flow
 
-```
+```text
 1. User navigates to protected route
 2. Frontend redirects to Keycloak login
 3. User authenticates with Keycloak
@@ -188,7 +188,7 @@ Due to this decision, the application database:
 ## References
 
 - [Keycloak Documentation](https://www.keycloak.org/documentation)
-- [Keycloak Organizations](https://www.keycloak.org/docs/latest/server_admin/#_organizations)
+- [Keycloak Organizations](https://www.keycloak.org/docs/latest/server_admin/)
 - [OIDC Protocol](https://openid.net/connect/)
 - [ChapsMind Security Architecture](../05-security/)
 - [GDPR Compliance Guide](https://gdpr.eu/)

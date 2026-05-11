@@ -50,6 +50,9 @@ coverage/
 test-results.xml
 apps/front/.yarnrc.yml
 
+# ─── Documentation linting ───────────────────────
+.lycheecache
+
 # ─── gRPC generated ──────────────────────────────
 apps/global-service/app/grpc_generated/*
 !apps/global-service/app/grpc_generated/__init__.py

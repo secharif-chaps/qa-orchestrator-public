@@ -104,7 +104,7 @@ flowchart TB
 
 ### Current Structure (Combined Backend)
 
-```
+```text
 app/
 ├── api/
 │   └── endpoints/
@@ -129,7 +129,7 @@ app/
 
 ### Planned Structure (Screen Service)
 
-```
+```text
 screen-service/
 ├── api/
 │   └── endpoints/

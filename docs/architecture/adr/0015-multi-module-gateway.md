@@ -89,5 +89,4 @@ All routes in a central YAML/DB.
 ## References
 
 - [ADR-0009: Global Service Architecture](./0009-global-service-architecture.md)
-- [Plan: Gateway multi-modules](../../../docs/reviews/plan-multi-module-gateway.md)
 - [OpenAPI Specification Extensions](https://spec.openapis.org/oas/v3.1.0#specification-extensions)

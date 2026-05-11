@@ -63,7 +63,7 @@ flowchart TB
 
 ## Directory Structure
 
-```
+```text
 app/
 ├── api/
 │   └── endpoints/              # API route handlers
@@ -406,7 +406,7 @@ FastAPI automatically generates OpenAPI documentation:
 ## Related Documentation
 
 - [API Contracts](./api-contracts.md) - API patterns and frontend integration
-- [Backend Module](../02-application/modules/backend-api.md) - Module overview
+- [Backend Module](../02-application/modules/screen/backend-api.md) - Module overview
 - [ADR-002: FastAPI Backend](../adr/0002-fastapi-backend.md) - Framework choice
-- [Backend CLAUDE.md](../../../back/CLAUDE.md) - Detailed development guide
+- [Backend CLAUDE.md](../../../apps/screen/CLAUDE.md) - Detailed development guide
 - [Migrations Standard](../../../agent-os/standards/backend/migrations.md) - Migration conventions

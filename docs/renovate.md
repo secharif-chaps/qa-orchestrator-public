@@ -95,7 +95,7 @@ Vulnerability alerts bypass the grouping and scheduling rules entirely:
 
 Renovate commits use this prefix (configured in `renovate.json`):
 
-```
+```text
 📦 chore(deps): update <package> to vX.Y.Z
 ```
 
@@ -140,7 +140,7 @@ variable that Renovate reads natively.
 
 ### 3. Create the scheduled pipeline
 
-**CI/CD → Schedules → New schedule**
+In **CI/CD → Schedules → New schedule**:
 
 - Description: `Renovate dependency updates`
 - Interval pattern: custom → `0 2 * * *`
