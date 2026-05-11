@@ -24,7 +24,7 @@ tasks:
 
   lint:prettier:
     desc: Check code formatting with Prettier
-    cmd: npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown .
+    cmd: npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown --ignore-path ../../.prettierignore ../../
 
   lint:stylelint:
     desc: Check CSS code style with Stylelint
@@ -34,7 +34,7 @@ tasks:
     desc: Fix all linting issues automatically
     cmds:
       - npx eslint --fix .
-      - npx prettier --write --no-error-on-unmatched-pattern --ignore-unknown .
+      - npx prettier --write --no-error-on-unmatched-pattern --ignore-unknown --ignore-path ../../.prettierignore ../../
       - npx stylelint --fix "src/**/*.{vue,css}"
 
   lint:staged:
