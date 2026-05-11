@@ -1,7 +1,7 @@
 """Add company_patents section + company_patent_item items
 
-Revision ID: 042
-Revises: 041
+Revision ID: 041
+Revises: 040
 Create Date: 2026-04-22
 
 Creates the two tables backing the patents agent produced by TAR-1578:
@@ -17,8 +17,8 @@ from sqlalchemy.dialects import postgresql
 
 from alembic import op
 
-revision = "042"
-down_revision = "041"
+revision = "041"
+down_revision = "040"
 branch_labels = None
 depends_on = None
 
