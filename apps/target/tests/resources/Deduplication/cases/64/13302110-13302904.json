@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 100,
-    "master": {
-        "id": "legacy-64-master-13302110",
-        "url": "",
-        "title": "Validation en deux étapes activée",
-        "content": "<html><body>\n    <br/>\n       <br/>\n      <br/>\nValidation en deux  tapes activ e            <br/>\n <a style=\"font-family: &apos;google sans&apos;,roboto,robotodraft,helvetica,arial,sans-serif;color: rgba(0,0,0,0.87); font-size: 14px; line-height: 20px;\">mailpourmonapplication2@gmail.com</a>            <br/>\n          <br/>\n<p>Votre compte Google mailpourmonapplication2@gmail.com est   pr sent prot g  par la validation en deux  tapes. Lorsque vous vous connectez sur un nouvel appareil ou sur un appareil qui n&apos;est pas fiable, vous devez utiliser votre deuxi me facteur pour confirmer votre identit .</p> <p><b>Ne perdez pas l&apos;acc s   votre compte</b><br/>Vous pouvez ajouter un num ro de t l phone de secours ou obtenir des codes de secours   utiliser lorsque vous n&apos;avez pas votre deuxi me facteur avec vous.</p>Pour v rifier les param tres de la validation en deux  tapes et y apporter des modifications,  <a href=\"https://accounts.google.com/AccountChooser?Email=mailpourmonapplication2@gmail.com&amp;continue=https://myaccount.google.com/signinoptions/two-step-verification?rfn%3D16%26rfnc%3D1%26eid%3D-9073124023344752338%26et%3D0\" style=\"text-decoration: none; color: #4285f4;\" target=\"_blank\">cliquez ici</a> .          <br/>\nVous pouvez aussi voir l&apos;activit  li e   la s curit  de votre compte ici :<br/><a style=\"color: rgba(0, 0, 0, 0.87);text-decoration: inherit;\">https://myaccount.google.com/notifications</a>           <br/>\n         <br/>\nCet e-mail vous a  t  envoy  pour vous informer de modifications importantes apport es   votre compte et aux services Google que vous utilisez.           <br/>\n   2022 Google Ireland Ltd., <a style=\"font-family: roboto-regular,helvetica,arial,sans-serif;color: rgba(0,0,0,0.54); font-size: 11px; line-height: 18px; padding-top: 12px; text-align: center;\">Gordon House, Barrow Street, Dublin 4, Ireland</a>            <br/>\n          <br/>\n         <br/>\n       <br/>\n    <br/>\n    <br/>\n</body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13302904",
-        "url": "",
-        "title": "Validation en deux étapes activée",
-        "content": "<html><body>\n    <br/>\n       <br/>\n      <br/>\nValidation en deux  tapes activ e            <br/>\n <a style=\"font-family: &apos;google sans&apos;,roboto,robotodraft,helvetica,arial,sans-serif;color: rgba(0,0,0,0.87); font-size: 14px; line-height: 20px;\">mailpourmonapplication2@gmail.com</a>            <br/>\n          <br/>\n<p>Votre compte Google mailpourmonapplication2@gmail.com est   pr sent prot g  par la validation en deux  tapes. Lorsque vous vous connectez sur un nouvel appareil ou sur un appareil qui n&apos;est pas fiable, vous devez utiliser votre deuxi me facteur pour confirmer votre identit .</p> <p><b>Ne perdez pas l&apos;acc s   votre compte</b><br/>Vous pouvez ajouter un num ro de t l phone de secours ou obtenir des codes de secours   utiliser lorsque vous n&apos;avez pas votre deuxi me facteur avec vous.</p>Pour v rifier les param tres de la validation en deux  tapes et y apporter des modifications,  <a href=\"https://accounts.google.com/AccountChooser?Email=mailpourmonapplication2@gmail.com&amp;continue=https://myaccount.google.com/signinoptions/two-step-verification?rfn%3D16%26rfnc%3D1%26eid%3D-9073124023344752338%26et%3D0\" style=\"text-decoration: none; color: #4285f4;\" target=\"_blank\">cliquez ici</a> .          <br/>\nVous pouvez aussi voir l&apos;activit  li e   la s curit  de votre compte ici :<br/><a style=\"color: rgba(0, 0, 0, 0.87);text-decoration: inherit;\">https://myaccount.google.com/notifications</a>           <br/>\n         <br/>\nCet e-mail vous a  t  envoy  pour vous informer de modifications importantes apport es   votre compte et aux services Google que vous utilisez.           <br/>\n   2022 Google Ireland Ltd., <a style=\"font-family: roboto-regular,helvetica,arial,sans-serif;color: rgba(0,0,0,0.54); font-size: 11px; line-height: 18px; padding-top: 12px; text-align: center;\">Gordon House, Barrow Street, Dublin 4, Ireland</a>            <br/>\n          <br/>\n         <br/>\n       <br/>\n    <br/>\n    <br/>\n</body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "identical"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Candidate is an exact recrawl of the same Google security email as the master."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "content_hash",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 100,
+  "master": {
+    "id": "legacy-64-master-13302110",
+    "url": "",
+    "title": "Validation en deux étapes activée",
+    "content": "<html><body>\n    <br/>\n       <br/>\n      <br/>\nValidation en deux  tapes activ e            <br/>\n <a style=\"font-family: &apos;google sans&apos;,roboto,robotodraft,helvetica,arial,sans-serif;color: rgba(0,0,0,0.87); font-size: 14px; line-height: 20px;\">mailpourmonapplication2@gmail.com</a>            <br/>\n          <br/>\n<p>Votre compte Google mailpourmonapplication2@gmail.com est   pr sent prot g  par la validation en deux  tapes. Lorsque vous vous connectez sur un nouvel appareil ou sur un appareil qui n&apos;est pas fiable, vous devez utiliser votre deuxi me facteur pour confirmer votre identit .</p> <p><b>Ne perdez pas l&apos;acc s   votre compte</b><br/>Vous pouvez ajouter un num ro de t l phone de secours ou obtenir des codes de secours   utiliser lorsque vous n&apos;avez pas votre deuxi me facteur avec vous.</p>Pour v rifier les param tres de la validation en deux  tapes et y apporter des modifications,  <a href=\"https://accounts.google.com/AccountChooser?Email=mailpourmonapplication2@gmail.com&amp;continue=https://myaccount.google.com/signinoptions/two-step-verification?rfn%3D16%26rfnc%3D1%26eid%3D-9073124023344752338%26et%3D0\" style=\"text-decoration: none; color: #4285f4;\" target=\"_blank\">cliquez ici</a> .          <br/>\nVous pouvez aussi voir l&apos;activit  li e   la s curit  de votre compte ici :<br/><a style=\"color: rgba(0, 0, 0, 0.87);text-decoration: inherit;\">https://myaccount.google.com/notifications</a>           <br/>\n         <br/>\nCet e-mail vous a  t  envoy  pour vous informer de modifications importantes apport es   votre compte et aux services Google que vous utilisez.           <br/>\n   2022 Google Ireland Ltd., <a style=\"font-family: roboto-regular,helvetica,arial,sans-serif;color: rgba(0,0,0,0.54); font-size: 11px; line-height: 18px; padding-top: 12px; text-align: center;\">Gordon House, Barrow Street, Dublin 4, Ireland</a>            <br/>\n          <br/>\n         <br/>\n       <br/>\n    <br/>\n    <br/>\n</body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13302904",
+    "url": "",
+    "title": "Validation en deux étapes activée",
+    "content": "<html><body>\n    <br/>\n       <br/>\n      <br/>\nValidation en deux  tapes activ e            <br/>\n <a style=\"font-family: &apos;google sans&apos;,roboto,robotodraft,helvetica,arial,sans-serif;color: rgba(0,0,0,0.87); font-size: 14px; line-height: 20px;\">mailpourmonapplication2@gmail.com</a>            <br/>\n          <br/>\n<p>Votre compte Google mailpourmonapplication2@gmail.com est   pr sent prot g  par la validation en deux  tapes. Lorsque vous vous connectez sur un nouvel appareil ou sur un appareil qui n&apos;est pas fiable, vous devez utiliser votre deuxi me facteur pour confirmer votre identit .</p> <p><b>Ne perdez pas l&apos;acc s   votre compte</b><br/>Vous pouvez ajouter un num ro de t l phone de secours ou obtenir des codes de secours   utiliser lorsque vous n&apos;avez pas votre deuxi me facteur avec vous.</p>Pour v rifier les param tres de la validation en deux  tapes et y apporter des modifications,  <a href=\"https://accounts.google.com/AccountChooser?Email=mailpourmonapplication2@gmail.com&amp;continue=https://myaccount.google.com/signinoptions/two-step-verification?rfn%3D16%26rfnc%3D1%26eid%3D-9073124023344752338%26et%3D0\" style=\"text-decoration: none; color: #4285f4;\" target=\"_blank\">cliquez ici</a> .          <br/>\nVous pouvez aussi voir l&apos;activit  li e   la s curit  de votre compte ici :<br/><a style=\"color: rgba(0, 0, 0, 0.87);text-decoration: inherit;\">https://myaccount.google.com/notifications</a>           <br/>\n         <br/>\nCet e-mail vous a  t  envoy  pour vous informer de modifications importantes apport es   votre compte et aux services Google que vous utilisez.           <br/>\n   2022 Google Ireland Ltd., <a style=\"font-family: roboto-regular,helvetica,arial,sans-serif;color: rgba(0,0,0,0.54); font-size: 11px; line-height: 18px; padding-top: 12px; text-align: center;\">Gordon House, Barrow Street, Dublin 4, Ireland</a>            <br/>\n          <br/>\n         <br/>\n       <br/>\n    <br/>\n    <br/>\n</body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Candidate is an exact recrawl of the same Google security email as the master."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "content_hash",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

@@ -7,16 +7,16 @@ The AI Validation system allows documents to be enriched with AI-generated valid
 ## Architecture
 
 - **Domain Layer**:
-    - `AiValidationStatus` enum (PENDING|VALIDATED|REJECTED|UNCERTAIN|FAILED) - AI validation specific status
-    - `AIValidation` value object (status, confidence score, validation reason, processed date, reference subject)
-    - `ValidationReason` value object (bilingual text support)
-    - `Document` entity (with AI validation methods)
+  - `AiValidationStatus` enum (PENDING|VALIDATED|REJECTED|UNCERTAIN|FAILED) - AI validation specific status
+  - `AIValidation` value object (status, confidence score, validation reason, processed date, reference subject)
+  - `ValidationReason` value object (bilingual text support)
+  - `Document` entity (with AI validation methods)
 - **Application Layer**:
-    - `EnrichDocumentWithAiValidationAction` (command)
-    - `EnrichDocumentWithAiValidationHandler` (handler)
+  - `EnrichDocumentWithAiValidationAction` (command)
+  - `EnrichDocumentWithAiValidationHandler` (handler)
 - **Infrastructure Layer**:
-    - `DocumentOpenSearchGateway` (OpenSearch persistence)
-    - OpenSearch migration for AI validation fields
+  - `DocumentOpenSearchGateway` (OpenSearch persistence)
+  - OpenSearch migration for AI validation fields
 - **UserInterface Layer**: Symfony Messenger integration
 
 ## AI Validation Statuses
@@ -43,16 +43,16 @@ The AI validation fields are stored in OpenSearch with the following structure:
 
 ```json
 {
-    "aiValidation": {
-        "status": "validated",
-        "confidenceScore": 95,
-        "validationReason": {
-            "en": "Document content is highly relevant and meets quality standards",
-            "fr": "Le contenu du document est très pertinent et respecte les standards de qualité"
-        },
-        "processedAt": "2024-01-15T14:30:00+00:00",
-        "referenceSubject": "Technology and AI"
-    }
+  "aiValidation": {
+    "status": "validated",
+    "confidenceScore": 95,
+    "validationReason": {
+      "en": "Document content is highly relevant and meets quality standards",
+      "fr": "Le contenu du document est très pertinent et respecte les standards de qualité"
+    },
+    "processedAt": "2024-01-15T14:30:00+00:00",
+    "referenceSubject": "Technology and AI"
+  }
 }
 ```
 
@@ -76,8 +76,8 @@ When N8N encounters an error during validation, it sends:
 
 ```json
 {
-    "documentId": "e2cc1724-65d5-3a71-8965-c48f0e79b59c",
-    "validationError": "Authorization failed - please check your credentials"
+  "documentId": "e2cc1724-65d5-3a71-8965-c48f0e79b59c",
+  "validationError": "Authorization failed - please check your credentials"
 }
 ```
 
@@ -170,17 +170,17 @@ The N8N workflow (`docker/n8n/workflows/validate-document.json`) handles AI vali
 
 ```json
 {
-    "documentId": "32653957-6121-32b6-94a6-83040ef720f5",
-    "aiValidation": {
-        "status": "validated",
-        "confidenceScore": 85,
-        "validationReason": {
-            "fr": "Le document présente une forte pertinence stratégique...",
-            "en": "The document demonstrates strong strategic relevance..."
-        },
-        "processedAt": "2025-10-05T12:55:29.143Z",
-        "referenceSubject": "Default reference subject for testing"
-    }
+  "documentId": "32653957-6121-32b6-94a6-83040ef720f5",
+  "aiValidation": {
+    "status": "validated",
+    "confidenceScore": 85,
+    "validationReason": {
+      "fr": "Le document présente une forte pertinence stratégique...",
+      "en": "The document demonstrates strong strategic relevance..."
+    },
+    "processedAt": "2025-10-05T12:55:29.143Z",
+    "referenceSubject": "Default reference subject for testing"
+  }
 }
 ```
 
@@ -188,8 +188,8 @@ The N8N workflow (`docker/n8n/workflows/validate-document.json`) handles AI vali
 
 ```json
 {
-    "documentId": "e2cc1724-65d5-3a71-8965-c48f0e79b59c",
-    "validationError": "Authorization failed - please check your credentials"
+  "documentId": "e2cc1724-65d5-3a71-8965-c48f0e79b59c",
+  "validationError": "Authorization failed - please check your credentials"
 }
 ```
 

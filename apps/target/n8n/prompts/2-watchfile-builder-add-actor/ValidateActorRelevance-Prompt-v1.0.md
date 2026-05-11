@@ -20,25 +20,25 @@ Do NOT repeat similar queries or rephrase the same search. If results are limite
 ## Your Tasks
 
 1. **Verify Actor Existence & Accuracy**
-    - Use your knowledge + the web search result(s) to confirm the actor exists and is active
-    - Check if the primaryDomain corresponds to the actor
-    - Verify the company is still active (not defunct, merged, or renamed)
+   - Use your knowledge + the web search result(s) to confirm the actor exists and is active
+   - Check if the primaryDomain corresponds to the actor
+   - Verify the company is still active (not defunct, merged, or renamed)
 
 2. **Detect Duplicates**
-    - Compare against existing actors in watchFileActors (check label variations, primaryDomain, aliases)
-    - Check for alternative names, abbreviations, translations (Inc./Corp./Ltd./SA/SAS)
-    - Flag if the actor is already present under a different name
+   - Compare against existing actors in watchFileActors (check label variations, primaryDomain, aliases)
+   - Check for alternative names, abbreviations, translations (Inc./Corp./Ltd./SA/SAS)
+   - Flag if the actor is already present under a different name
 
 3. **Assess Relevance**
-    - Evaluate alignment with the WatchFile's userObjective and referenceSubject
-    - Consider if the actor type (company/supplier/customer) makes sense
-    - Verify if the actor operates in the domains covered by the WatchFile
+   - Evaluate alignment with the WatchFile's userObjective and referenceSubject
+   - Consider if the actor type (company/supplier/customer) makes sense
+   - Verify if the actor operates in the domains covered by the WatchFile
 
 4. **Provide a Relevance Score (1-100)**
-    - 90-100: Perfect fit, directly relevant, fills a gap
-    - 70-89: Good fit, relevant but some concerns
-    - 50-69: Moderate relevance, significant concerns
-    - 1-49: Poor fit, not recommended
+   - 90-100: Perfect fit, directly relevant, fills a gap
+   - 70-89: Good fit, relevant but some concerns
+   - 50-69: Moderate relevance, significant concerns
+   - 1-49: Poor fit, not recommended
 
 5. **Output Format**
    Return a JSON object:

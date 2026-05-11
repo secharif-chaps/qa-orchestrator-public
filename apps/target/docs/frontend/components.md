@@ -36,11 +36,11 @@ pwa/components/
 - **PascalCase**: All component names use PascalCase
 - **Descriptive Names**: Names should clearly indicate the component's purpose
 - **Prefix-based**: Use prefixes to indicate component category
-    - `Base-`: Generic, reusable components
-    - `Form-`: Form-related components
-    - `Layout-`: Layout and structural components
-    - `Icon-`: Icon components
-    - `Business-`: Domain-specific components
+  - `Base-`: Generic, reusable components
+  - `Form-`: Form-related components
+  - `Layout-`: Layout and structural components
+  - `Icon-`: Icon components
+  - `Business-`: Domain-specific components
 
 ## 🧩 Base Components
 
@@ -814,32 +814,32 @@ import UserCard from '~/components/UserCard.vue'
 import type { User } from '~/types/user'
 
 describe('UserCard', () => {
-    const mockUser: User = {
-        id: '1',
-        email: 'john@example.com',
-        firstName: 'John',
-        lastName: 'Doe',
-    }
+  const mockUser: User = {
+    id: '1',
+    email: 'john@example.com',
+    firstName: 'John',
+    lastName: 'Doe',
+  }
 
-    it('renders user information correctly', () => {
-        const wrapper = mount(UserCard, {
-            props: { user: mockUser },
-        })
-
-        expect(wrapper.text()).toContain('John Doe')
-        expect(wrapper.text()).toContain('john@example.com')
+  it('renders user information correctly', () => {
+    const wrapper = mount(UserCard, {
+      props: { user: mockUser },
     })
 
-    it('emits edit event when edit button is clicked', async () => {
-        const wrapper = mount(UserCard, {
-            props: { user: mockUser, editable: true },
-        })
+    expect(wrapper.text()).toContain('John Doe')
+    expect(wrapper.text()).toContain('john@example.com')
+  })
 
-        await wrapper.find('[data-testid=\"edit-button\"]').trigger('click')
-
-        expect(wrapper.emitted().edit).toBeTruthy()
-        expect(wrapper.emitted().edit[0]).toEqual([mockUser])
+  it('emits edit event when edit button is clicked', async () => {
+    const wrapper = mount(UserCard, {
+      props: { user: mockUser, editable: true },
     })
+
+    await wrapper.find('[data-testid=\"edit-button\"]').trigger('click')
+
+    expect(wrapper.emitted().edit).toBeTruthy()
+    expect(wrapper.emitted().edit[0]).toEqual([mockUser])
+  })
 })
 ```
 
@@ -881,53 +881,53 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import UserCard from '~/components/UserCard.vue'
 
 const meta: Meta<typeof UserCard> = {
-    title: 'Components/UserCard',
-    component: UserCard,
-    parameters: {
-        docs: {
-            description: {
-                component: 'A card component for displaying user information',
-            },
-        },
+  title: 'Components/UserCard',
+  component: UserCard,
+  parameters: {
+    docs: {
+      description: {
+        component: 'A card component for displaying user information',
+      },
     },
-    argTypes: {
-        editable: {
-            control: 'boolean',
-            description: 'Whether the card allows editing',
-        },
-        showDetails: {
-            control: 'boolean',
-            description: 'Whether to show detailed information',
-        },
+  },
+  argTypes: {
+    editable: {
+      control: 'boolean',
+      description: 'Whether the card allows editing',
     },
+    showDetails: {
+      control: 'boolean',
+      description: 'Whether to show detailed information',
+    },
+  },
 }
 
 export default meta
 type Story = StoryObj<typeof UserCard>
 
 export const Default: Story = {
-    args: {
-        user: {
-            id: '1',
-            email: 'john@example.com',
-            firstName: 'John',
-            lastName: 'Doe',
-        },
+  args: {
+    user: {
+      id: '1',
+      email: 'john@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
     },
+  },
 }
 
 export const Editable: Story = {
-    args: {
-        ...Default.args,
-        editable: true,
-    },
+  args: {
+    ...Default.args,
+    editable: true,
+  },
 }
 
 export const WithDetails: Story = {
-    args: {
-        ...Default.args,
-        showDetails: true,
-    },
+  args: {
+    ...Default.args,
+    showDetails: true,
+  },
 }
 ```
 

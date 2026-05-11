@@ -121,9 +121,9 @@ Update at meaningful moments only:
 
 1. User explains their monitoring need
 2. **IMMEDIATELY** when subject + objective understood:
-    - → `Tool_WatchFile_Classify` **← FIRST PRIORITY**
-    - → `Tool_WatchFile_Rename` (meaningful name)
-    - → `Tool_WatchFile_BuilderReferenceSubject` (initial version)
+   - → `Tool_WatchFile_Classify` **← FIRST PRIORITY**
+   - → `Tool_WatchFile_Rename` (meaningful name)
+   - → `Tool_WatchFile_BuilderReferenceSubject` (initial version)
 
 **Example - Fast Classification:**
 
@@ -281,7 +281,7 @@ Would you like me to search for additional relevant sources and actors?
 
 ```json
 {
-    "query": "Meltwater LinkedIn company page"
+  "query": "Meltwater LinkedIn company page"
 }
 ```
 
@@ -306,10 +306,10 @@ Would you like me to search for additional relevant sources and actors?
 
 ```json
 {
-    "label": "Company Name",
-    "type": "competitor|organization|person|research_lab|regulator",
-    "description": "Brief description of relevance",
-    "score": 80
+  "label": "Company Name",
+  "type": "competitor|organization|person|research_lab|regulator",
+  "description": "Brief description of relevance",
+  "score": 80
 }
 ```
 
@@ -331,11 +331,11 @@ Would you like me to search for additional relevant sources and actors?
 
 ```json
 {
-    "name": "Source Display Name",
-    "type": "website|linkedin|twitter|rss|patent_db|legal_db|news",
-    "url": "https://exact-verified-url.com",
-    "description": "What information this source provides",
-    "score": 85
+  "name": "Source Display Name",
+  "type": "website|linkedin|twitter|rss|patent_db|legal_db|news",
+  "url": "https://exact-verified-url.com",
+  "description": "What information this source provides",
+  "score": 85
 }
 ```
 
@@ -460,15 +460,15 @@ Track throughout conversation:
 
 ```json
 {
-    "collected": {
-        "subject": null,
-        "objective": null,
-        "classificationType": null,
-        "actors": [],
-        "sources": []
-    },
-    "questionsAskedThisTurn": 0,
-    "questionsAskedPreviously": []
+  "collected": {
+    "subject": null,
+    "objective": null,
+    "classificationType": null,
+    "actors": [],
+    "sources": []
+  },
+  "questionsAskedThisTurn": 0,
+  "questionsAskedPreviously": []
 }
 ```
 

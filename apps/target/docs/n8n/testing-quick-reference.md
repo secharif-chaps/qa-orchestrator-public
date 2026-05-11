@@ -8,17 +8,17 @@ One-page reference for setting up testable N8N workflows.
 
 ```json
 {
-    "success": true,
-    "message": "Descriptive success/error message",
-    "context": {
-        "execution": {
-            "id": "{{ $execution.id }}"
-        },
-        "timestamp": "{{ $now }}"
+  "success": true,
+  "message": "Descriptive success/error message",
+  "context": {
+    "execution": {
+      "id": "{{ $execution.id }}"
     },
-    "messageId": null,
-    "conversationId": "...",
-    "watchFileId": "..."
+    "timestamp": "{{ $now }}"
+  },
+  "messageId": null,
+  "conversationId": "...",
+  "watchFileId": "..."
 }
 ```
 
@@ -84,29 +84,29 @@ Response_Return_Success / Response_Return_Error
 
 ```json
 {
-    "version": "1.0",
-    "metadata": {
-        "workflowId": "WORKFLOW_ID",
-        "workflowName": "Workflow Name",
-        "description": "Dataset description",
-        "snapshotNormalization": {
-            "removeFields": ["*.context.execution", "*.context.timestamp"]
-        }
-    },
-    "testCases": [
-        {
-            "testCaseId": "TC-001",
-            "name": "Test name",
-            "description": "What this tests",
-            "expectedOutput": "Success",
-            "input": {
-                /* webhook payload */
-            },
-            "snapshot": {
-                /* expected response */
-            }
-        }
-    ]
+  "version": "1.0",
+  "metadata": {
+    "workflowId": "WORKFLOW_ID",
+    "workflowName": "Workflow Name",
+    "description": "Dataset description",
+    "snapshotNormalization": {
+      "removeFields": ["*.context.execution", "*.context.timestamp"]
+    }
+  },
+  "testCases": [
+    {
+      "testCaseId": "TC-001",
+      "name": "Test name",
+      "description": "What this tests",
+      "expectedOutput": "Success",
+      "input": {
+        /* webhook payload */
+      },
+      "snapshot": {
+        /* expected response */
+      }
+    }
+  ]
 }
 ```
 
@@ -203,17 +203,17 @@ Automatically included in webhook requests:
 
 ```json
 {
-    "_testMetadata": {
-        "runId": "test-1763243143106-r9t4m1y",
-        "testCaseId": "TC-001",
-        "testCaseName": "First creation",
-        "timestamp": "2025-11-15T00:12:34.567Z",
-        "source": "n8n-test-runner",
-        "datasetFile": "reference-subject.json"
-    },
-    "watchFile": {
-        /* actual test data */
-    }
+  "_testMetadata": {
+    "runId": "test-1763243143106-r9t4m1y",
+    "testCaseId": "TC-001",
+    "testCaseName": "First creation",
+    "timestamp": "2025-11-15T00:12:34.567Z",
+    "source": "n8n-test-runner",
+    "datasetFile": "reference-subject.json"
+  },
+  "watchFile": {
+    /* actual test data */
+  }
 }
 ```
 

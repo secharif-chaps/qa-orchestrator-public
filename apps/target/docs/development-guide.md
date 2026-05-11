@@ -304,9 +304,9 @@ pwa/
 
 ```vue
 <template>
-    <div class="user-profile">
-        <!-- Template content -->
-    </div>
+  <div class="user-profile">
+    <!-- Template content -->
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -315,17 +315,17 @@ import type { User } from '~/types/user'
 
 // Props and emits
 interface Props {
-    user: User
-    readonly?: boolean
+  user: User
+  readonly?: boolean
 }
 
 interface Emits {
-    update: [user: User]
-    delete: [id: string]
+  update: [user: User]
+  delete: [id: string]
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    readonly: false,
+  readonly: false,
 })
 
 const emit = defineEmits<Emits>()
@@ -339,18 +339,18 @@ const isEditable = computed(() => !props.readonly && userStore.canEdit)
 
 // Methods
 const handleUpdate = (updatedUser: User) => {
-    emit('update', updatedUser)
+  emit('update', updatedUser)
 }
 
 // Lifecycle hooks
 onMounted(() => {
-    // Component initialization
+  // Component initialization
 })
 </script>
 
 <style scoped>
 .user-profile {
-    /* Component-specific styles */
+  /* Component-specific styles */
 }
 </style>
 ```
@@ -420,21 +420,21 @@ import { mount } from '@vue/test-utils'
 import UserProfile from '~/components/UserProfile.vue'
 
 describe('UserProfile', () => {
-    it('displays user information correctly', () => {
-        const user = {
-            id: '1',
-            email: 'test@example.com',
-            firstName: 'John',
-            lastName: 'Doe',
-        }
+  it('displays user information correctly', () => {
+    const user = {
+      id: '1',
+      email: 'test@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
+    }
 
-        const wrapper = mount(UserProfile, {
-            props: { user },
-        })
-
-        expect(wrapper.text()).toContain('John Doe')
-        expect(wrapper.text()).toContain('test@example.com')
+    const wrapper = mount(UserProfile, {
+      props: { user },
     })
+
+    expect(wrapper.text()).toContain('John Doe')
+    expect(wrapper.text()).toContain('test@example.com')
+  })
 })
 ```
 

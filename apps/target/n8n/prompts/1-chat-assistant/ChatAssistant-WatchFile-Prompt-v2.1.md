@@ -39,9 +39,9 @@ Your approach combines the classic 5W+H framework (What, Why, Who, Where, When, 
 - DO NOT wait for "complete" information before acting
 - Add elements as they come, refine later
 - Use the specific tool for each element type:
-    - Actor names → `Tool_WatchFile_BuilderActor`
-    - Sources → `Tool_WatchFile_BuilderSource`
-    - Subject refinement → `Tool_WatchFile_BuilderReferenceSubject`
+  - Actor names → `Tool_WatchFile_BuilderActor`
+  - Sources → `Tool_WatchFile_BuilderSource`
+  - Subject refinement → `Tool_WatchFile_BuilderReferenceSubject`
 
 ### Rule 4: PROGRESSIVE COLLECTION (ONE PHASE AT A TIME)
 
@@ -219,11 +219,11 @@ User mentions "Crayon, Klue, Kompyte"
 
 ```json
 {
-    "label": "Actor name (person, company, organization) - min 2 characters",
-    "primaryDomain": "Main website domain for icon display (e.g., 'crayon.co') - domain only, no protocol, no path. Can be null",
-    "score": "Importance score 0-100 for THIS watchfile. Not general industry importance, but specific relevance to this monitoring objective. 100=critical actor whose actions directly impact the subject, 0=irrelevant to this watchfile",
-    "explanation_fr": "French explanation of WHY this actor matters specifically for THIS monitoring objective (not a general description)",
-    "explanation_en": "English explanation of WHY this actor matters specifically for THIS monitoring objective (not a general description)"
+  "label": "Actor name (person, company, organization) - min 2 characters",
+  "primaryDomain": "Main website domain for icon display (e.g., 'crayon.co') - domain only, no protocol, no path. Can be null",
+  "score": "Importance score 0-100 for THIS watchfile. Not general industry importance, but specific relevance to this monitoring objective. 100=critical actor whose actions directly impact the subject, 0=irrelevant to this watchfile",
+  "explanation_fr": "French explanation of WHY this actor matters specifically for THIS monitoring objective (not a general description)",
+  "explanation_en": "English explanation of WHY this actor matters specifically for THIS monitoring objective (not a general description)"
 }
 ```
 
@@ -231,11 +231,11 @@ User mentions "Crayon, Klue, Kompyte"
 
 ```json
 {
-    "label": "Crayon",
-    "primaryDomain": "crayon.co",
-    "score": 95,
-    "explanation_fr": "Concurrent direct majeur en veille concurrentielle. Leurs lancements produits et stratégies pricing impactent directement notre positionnement marché.",
-    "explanation_en": "Major direct competitor in competitive intelligence. Their product launches and pricing strategies directly impact our market positioning."
+  "label": "Crayon",
+  "primaryDomain": "crayon.co",
+  "score": 95,
+  "explanation_fr": "Concurrent direct majeur en veille concurrentielle. Leurs lancements produits et stratégies pricing impactent directement notre positionnement marché.",
+  "explanation_en": "Major direct competitor in competitive intelligence. Their product launches and pricing strategies directly impact our market positioning."
 }
 ```
 
@@ -254,15 +254,15 @@ A watchfile collects data from configured sources. Use this tool to add monitori
 
 ```json
 {
-    "name": "Source name - min 2 characters",
-    "description_fr": "French description of what this source provides",
-    "description_en": "English description of what this source provides",
-    "type": "Source type: rss_feed | website | blog | social_media:x:user | social_media:linkedin:company | youtube_channel | etc.",
-    "url": "Source URL (RSS feed, website, YouTube channel, etc.) - required",
-    "primaryDomain": "Main domain for icon display (e.g., 'techcrunch.com') - domain only, no protocol",
-    "query": "Optional search filter to apply on results from this source (e.g., 'competitive intelligence OR market intelligence')",
-    "relevance_fr": "French explanation of WHY this source is valuable specifically for THIS monitoring objective",
-    "relevance_en": "English explanation of WHY this source is valuable specifically for THIS monitoring objective"
+  "name": "Source name - min 2 characters",
+  "description_fr": "French description of what this source provides",
+  "description_en": "English description of what this source provides",
+  "type": "Source type: rss_feed | website | blog | social_media:x:user | social_media:linkedin:company | youtube_channel | etc.",
+  "url": "Source URL (RSS feed, website, YouTube channel, etc.) - required",
+  "primaryDomain": "Main domain for icon display (e.g., 'techcrunch.com') - domain only, no protocol",
+  "query": "Optional search filter to apply on results from this source (e.g., 'competitive intelligence OR market intelligence')",
+  "relevance_fr": "French explanation of WHY this source is valuable specifically for THIS monitoring objective",
+  "relevance_en": "English explanation of WHY this source is valuable specifically for THIS monitoring objective"
 }
 ```
 
@@ -270,15 +270,15 @@ A watchfile collects data from configured sources. Use this tool to add monitori
 
 ```json
 {
-    "name": "TechCrunch Enterprise",
-    "description_fr": "Actualités tech entreprise couvrant les startups et tendances logicielles B2B",
-    "description_en": "Enterprise tech news covering B2B software startups and trends",
-    "type": "rss_feed",
-    "url": "https://techcrunch.com/category/enterprise/feed/",
-    "primaryDomain": "techcrunch.com",
-    "query": "competitive intelligence OR market intelligence OR sales enablement",
-    "relevance_fr": "Source majeure pour les annonces de levées de fonds, acquisitions et lancements produits dans le secteur SaaS B2B",
-    "relevance_en": "Major source for funding announcements, acquisitions and product launches in the B2B SaaS sector"
+  "name": "TechCrunch Enterprise",
+  "description_fr": "Actualités tech entreprise couvrant les startups et tendances logicielles B2B",
+  "description_en": "Enterprise tech news covering B2B software startups and trends",
+  "type": "rss_feed",
+  "url": "https://techcrunch.com/category/enterprise/feed/",
+  "primaryDomain": "techcrunch.com",
+  "query": "competitive intelligence OR market intelligence OR sales enablement",
+  "relevance_fr": "Source majeure pour les annonces de levées de fonds, acquisitions et lancements produits dans le secteur SaaS B2B",
+  "relevance_en": "Major source for funding announcements, acquisitions and product launches in the B2B SaaS sector"
 }
 ```
 
@@ -296,7 +296,7 @@ The reference subject is a natural language query capturing the essence of what 
 
 ```json
 {
-    "referenceSubject": "Natural language query capturing monitoring essence. Should include: topic, key entities, geographic scope if applicable, specific focus areas. Written in user's language."
+  "referenceSubject": "Natural language query capturing monitoring essence. Should include: topic, key entities, geographic scope if applicable, specific focus areas. Written in user's language."
 }
 ```
 
@@ -304,7 +304,7 @@ The reference subject is a natural language query capturing the essence of what 
 
 ```json
 {
-    "referenceSubject": "Monitor competitive intelligence software vendors (Crayon, Klue, Kompyte, Contify) for product launches, pricing changes, partnership announcements, and funding rounds. Focus on B2B SaaS market in North America and Europe. Track AI/ML feature developments and customer wins."
+  "referenceSubject": "Monitor competitive intelligence software vendors (Crayon, Klue, Kompyte, Contify) for product launches, pricing changes, partnership announcements, and funding rounds. Focus on B2B SaaS market in North America and Europe. Track AI/ML feature developments and customer wins."
 }
 ```
 
@@ -418,9 +418,9 @@ User provides actors → IMMEDIATELY call Tool_WatchFile_BuilderActor for each �
 
 ```json
 {
-    "label": "Crayon",
-    "score": 85,
-    "explanation_en": "Crayon is a leading competitive intelligence platform."
+  "label": "Crayon",
+  "score": 85,
+  "explanation_en": "Crayon is a leading competitive intelligence platform."
 }
 ```
 
@@ -428,9 +428,9 @@ User provides actors → IMMEDIATELY call Tool_WatchFile_BuilderActor for each �
 
 ```json
 {
-    "label": "Crayon",
-    "score": 95,
-    "explanation_en": "Direct competitor whose product launches and feature updates directly inform our roadmap decisions. Their recent AI capabilities release is particularly relevant."
+  "label": "Crayon",
+  "score": 95,
+  "explanation_en": "Direct competitor whose product launches and feature updates directly inform our roadmap decisions. Their recent AI capabilities release is particularly relevant."
 }
 ```
 

@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13497895",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139686478&origin=inward",
-        "title": "Light Electric Vehicle Motor-Drive Design Based on Hybrid Si/SiC Y-Inverter and Dual-Rotor Halbach Machine",
-        "content": "<html><body>This paper presents the design of a high-efficiency high power-density traction chain, based on an original high-speed machine concept powered by an innovative power converter, featuring built-in voltage boosting. The input power source is a 60 V battery. The inverter is designed with hybrid semiconductor technology: silicon on the input (low-voltage) side and silicon carbide on the output (higher-voltage) side. The switching frequency of the primary and secondary side switches can be set independently for best efficiency and electro-magnetic signature. The paper includes the detailed design of magnetic components enabling dual switching frequency operation and reduction of current stress in semiconductors and capacitors by means of interleaved cross-coupled inductance power cells. Preliminary prototype development and experimental test results are also discussed. <br/><br/><br/>Authors: Trang H., Castellazzi A., Domae S., Dong T., Nakamura T.. <br/><br/>Affiliations: Kyoto University of Advanced Science, Kyoto University. <br/><br/>Publication: Journal of Electrical Engineering and Technology, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13498294",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139686478&origin=inward",
-        "title": "Light Electric Vehicle Motor-Drive Design Based on Hybrid Si/SiC Y-Inverter and Dual-Rotor Halbach Machine",
-        "content": "<html><body>This paper presents the design of a high-efficiency high power-density traction chain, based on an original high-speed machine concept powered by an innovative power converter, featuring built-in voltage boosting. The input power source is a 60 V battery. The inverter is designed with hybrid semiconductor technology: silicon on the input (low-voltage) side and silicon carbide on the output (higher-voltage) side. The switching frequency of the primary and secondary side switches can be set independently for best efficiency and electro-magnetic signature. The paper includes the detailed design of magnetic components enabling dual switching frequency operation and reduction of current stress in semiconductors and capacitors by means of interleaved cross-coupled inductance power cells. Preliminary prototype development and experimental test results are also discussed. <br/><br/><br/>Authors: Trang H., Castellazzi A., Domae S., Dong T., Nakamura T.. <br/><br/>Affiliations: Kyoto University of Advanced Science, Kyoto University. <br/><br/>Publication: Journal of Electrical Engineering and Technology, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "partial_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13497895",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139686478&origin=inward",
+    "title": "Light Electric Vehicle Motor-Drive Design Based on Hybrid Si/SiC Y-Inverter and Dual-Rotor Halbach Machine",
+    "content": "<html><body>This paper presents the design of a high-efficiency high power-density traction chain, based on an original high-speed machine concept powered by an innovative power converter, featuring built-in voltage boosting. The input power source is a 60 V battery. The inverter is designed with hybrid semiconductor technology: silicon on the input (low-voltage) side and silicon carbide on the output (higher-voltage) side. The switching frequency of the primary and secondary side switches can be set independently for best efficiency and electro-magnetic signature. The paper includes the detailed design of magnetic components enabling dual switching frequency operation and reduction of current stress in semiconductors and capacitors by means of interleaved cross-coupled inductance power cells. Preliminary prototype development and experimental test results are also discussed. <br/><br/><br/>Authors: Trang H., Castellazzi A., Domae S., Dong T., Nakamura T.. <br/><br/>Affiliations: Kyoto University of Advanced Science, Kyoto University. <br/><br/>Publication: Journal of Electrical Engineering and Technology, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13498294",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139686478&origin=inward",
+    "title": "Light Electric Vehicle Motor-Drive Design Based on Hybrid Si/SiC Y-Inverter and Dual-Rotor Halbach Machine",
+    "content": "<html><body>This paper presents the design of a high-efficiency high power-density traction chain, based on an original high-speed machine concept powered by an innovative power converter, featuring built-in voltage boosting. The input power source is a 60 V battery. The inverter is designed with hybrid semiconductor technology: silicon on the input (low-voltage) side and silicon carbide on the output (higher-voltage) side. The switching frequency of the primary and secondary side switches can be set independently for best efficiency and electro-magnetic signature. The paper includes the detailed design of magnetic components enabling dual switching frequency operation and reduction of current stress in semiconductors and capacitors by means of interleaved cross-coupled inductance power cells. Preliminary prototype development and experimental test results are also discussed. <br/><br/><br/>Authors: Trang H., Castellazzi A., Domae S., Dong T., Nakamura T.. <br/><br/>Affiliations: Kyoto University of Advanced Science, Kyoto University. <br/><br/>Publication: Journal of Electrical Engineering and Technology, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "partial_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

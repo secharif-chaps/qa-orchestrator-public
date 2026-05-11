@@ -18,106 +18,106 @@ The `watchfile_events` index enables efficient storage and search of events auto
 
 ```json
 {
-    "mappings": {
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "title": {
+        "type": "object",
         "properties": {
-            "id": {
-                "type": "keyword"
-            },
-            "title": {
-                "type": "object",
-                "properties": {
-                    "fr": {
-                        "type": "text",
-                        "analyzer": "french",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword",
-                                "ignore_above": 256
-                            }
-                        }
-                    },
-                    "en": {
-                        "type": "text",
-                        "analyzer": "english",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword",
-                                "ignore_above": 256
-                            }
-                        }
-                    }
-                }
-            },
-            "start_date": {
-                "type": "date"
-            },
-            "end_date": {
-                "type": "date"
-            },
-            "description": {
-                "type": "object",
-                "properties": {
-                    "fr": {
-                        "type": "text",
-                        "analyzer": "french",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword",
-                                "ignore_above": 512
-                            }
-                        }
-                    },
-                    "en": {
-                        "type": "text",
-                        "analyzer": "english",
-                        "fields": {
-                            "keyword": {
-                                "type": "keyword",
-                                "ignore_above": 512
-                            }
-                        }
-                    }
-                }
-            },
-            "event_type": {
-                "type": "keyword"
-            },
-            "actors": {
-                "type": "nested",
-                "properties": {
-                    "id": {
-                        "type": "keyword"
-                    },
-                    "name": {
-                        "type": "keyword"
-                    },
-                    "role": {
-                        "type": "keyword"
-                    },
-                    "watchfile_id": {
-                        "type": "keyword"
-                    }
-                }
-            },
-            "document_links": {
-                "type": "nested",
-                "properties": {
-                    "id": {
-                        "type": "keyword"
-                    },
-                    "text_extract": {
-                        "type": "text"
-                    }
-                }
-            },
-            "extraction_status": {
-                "type": "keyword"
-            },
-            "created_at": {
-                "type": "date"
+          "fr": {
+            "type": "text",
+            "analyzer": "french",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
             }
+          },
+          "en": {
+            "type": "text",
+            "analyzer": "english",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
         }
+      },
+      "start_date": {
+        "type": "date"
+      },
+      "end_date": {
+        "type": "date"
+      },
+      "description": {
+        "type": "object",
+        "properties": {
+          "fr": {
+            "type": "text",
+            "analyzer": "french",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 512
+              }
+            }
+          },
+          "en": {
+            "type": "text",
+            "analyzer": "english",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 512
+              }
+            }
+          }
+        }
+      },
+      "event_type": {
+        "type": "keyword"
+      },
+      "actors": {
+        "type": "nested",
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "name": {
+            "type": "keyword"
+          },
+          "role": {
+            "type": "keyword"
+          },
+          "watchfile_id": {
+            "type": "keyword"
+          }
+        }
+      },
+      "document_links": {
+        "type": "nested",
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "text_extract": {
+            "type": "text"
+          }
+        }
+      },
+      "extraction_status": {
+        "type": "keyword"
+      },
+      "created_at": {
+        "type": "date"
+      }
     }
+  }
 }
 ```
 
@@ -130,9 +130,9 @@ The `watchfile_events` index enables efficient storage and search of events auto
 ### Title Field
 
 - **`title`** (object, required): Bilingual event title (max 100 characters each)
-    - **`title.fr`** (text): French title analyzed with `french` analyzer
-    - **`title.en`** (text): English title analyzed with `english` analyzer
-    - Each language has a `.keyword` sub-field for exact matching and sorting (max 256 characters)
+  - **`title.fr`** (text): French title analyzed with `french` analyzer
+  - **`title.en`** (text): English title analyzed with `english` analyzer
+  - Each language has a `.keyword` sub-field for exact matching and sorting (max 256 characters)
 
 ### Temporal Fields
 
@@ -143,25 +143,25 @@ The `watchfile_events` index enables efficient storage and search of events auto
 ### Descriptive Fields
 
 - **`description`** (object): Bilingual event description
-    - **`description.fr`** (text): French description with `french` analyzer
-    - **`description.en`** (text): English description with `english` analyzer
-    - Each language has a `.keyword` sub-field for sorting and aggregations (max 512 characters)
+  - **`description.fr`** (text): French description with `french` analyzer
+  - **`description.en`** (text): English description with `english` analyzer
+  - Each language has a `.keyword` sub-field for sorting and aggregations (max 512 characters)
 
 ### Categorical Fields
 
 - **`event_type`** (keyword): Event type from:
-    - `commercial_business`: Commercial and business events
-    - `financial`: Financial events
-    - `organizational_hr`: Organizational and HR events
-    - `technological_rd`: Technological and R&D events
-    - `regulatory_political`: Regulatory and political events
-    - `market_competitors`: Market and competition events
-    - `societal_environmental`: Societal and environmental events
+  - `commercial_business`: Commercial and business events
+  - `financial`: Financial events
+  - `organizational_hr`: Organizational and HR events
+  - `technological_rd`: Technological and R&D events
+  - `regulatory_political`: Regulatory and political events
+  - `market_competitors`: Market and competition events
+  - `societal_environmental`: Societal and environmental events
 
 - **`extraction_status`** (keyword): Extraction status from:
-    - `pending`: Awaiting extraction
-    - `completed`: Extraction completed successfully
-    - `failed`: Extraction failed
+  - `pending`: Awaiting extraction
+  - `completed`: Extraction completed successfully
+  - `failed`: Extraction failed
 
 ### Nested Fields
 

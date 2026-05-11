@@ -135,48 +135,48 @@ Since input context is already validated (>= 80% by conversational agent):
 
 ```json
 {
-    "primaryType": "technological",
-    "confidenceScore": 75,
-    "justification": {
-        "en": "Clear explanation of WHY this type, based on objective and context. (in English)",
-        "fr": "Explication claire des raisons pour lesquelles ce type a été choisi, en fonction de l'objectif et du contexte. (en Français)"
-    },
-    "secondaryTypes": [
-        {
-            "type": "competitive",
-            "score": 65,
-            "justification": {
-                "en": "Why this is also relevant. (in English)",
-                "fr": "Pourquoi cela est également pertinent. (en Français)"
-            }
-        }
-    ],
-    "explanation": {
-        "keywords": ["extracted", "keywords", "from", "conversation"],
-        "detectedEntities": ["OpenAI", "Anthropic", "DeepMind"],
-        "userObjective": {
-            "en": "Clear statement of what user wants to achieve. (in English)",
-            "fr": "Déclaration claire de ce que l'utilisateur souhaite accomplir. (en Français)"
-        }
-    },
-    "sourceSuggestions": [
-        "Specific source 1 relevant to this intelligence type",
-        "Specific source 2 with URL if applicable",
-        "Specific source 3 tailored to detected entities"
-    ],
-    "actorSuggestions": [
-        "Specific actor 1 relevant to monitoring objective",
-        "Specific actor 2 (not already in WatchFile)",
-        "Specific actor 3 based on detected topic"
-    ],
-    "deepSearchReadiness": {
-        "ready": true,
-        "reason": {
-            "en": "Classification confidence is high enough to proceed with automated search",
-            "fr": "La fiabilité de la classification est suffisamment élevée pour procéder à une recherche automatisée."
-        },
-        "suggestedSearchQueries": ["Search query 1 for DeepSearch", "Search query 2 for DeepSearch"]
+  "primaryType": "technological",
+  "confidenceScore": 75,
+  "justification": {
+    "en": "Clear explanation of WHY this type, based on objective and context. (in English)",
+    "fr": "Explication claire des raisons pour lesquelles ce type a été choisi, en fonction de l'objectif et du contexte. (en Français)"
+  },
+  "secondaryTypes": [
+    {
+      "type": "competitive",
+      "score": 65,
+      "justification": {
+        "en": "Why this is also relevant. (in English)",
+        "fr": "Pourquoi cela est également pertinent. (en Français)"
+      }
     }
+  ],
+  "explanation": {
+    "keywords": ["extracted", "keywords", "from", "conversation"],
+    "detectedEntities": ["OpenAI", "Anthropic", "DeepMind"],
+    "userObjective": {
+      "en": "Clear statement of what user wants to achieve. (in English)",
+      "fr": "Déclaration claire de ce que l'utilisateur souhaite accomplir. (en Français)"
+    }
+  },
+  "sourceSuggestions": [
+    "Specific source 1 relevant to this intelligence type",
+    "Specific source 2 with URL if applicable",
+    "Specific source 3 tailored to detected entities"
+  ],
+  "actorSuggestions": [
+    "Specific actor 1 relevant to monitoring objective",
+    "Specific actor 2 (not already in WatchFile)",
+    "Specific actor 3 based on detected topic"
+  ],
+  "deepSearchReadiness": {
+    "ready": true,
+    "reason": {
+      "en": "Classification confidence is high enough to proceed with automated search",
+      "fr": "La fiabilité de la classification est suffisamment élevée pour procéder à une recherche automatisée."
+    },
+    "suggestedSearchQueries": ["Search query 1 for DeepSearch", "Search query 2 for DeepSearch"]
+  }
 }
 ```
 
@@ -204,22 +204,22 @@ Since input context is already validated (>= 80% by conversational agent):
 
 ```json
 {
-    "sourceSuggestions": [
-        "Google Patents (patents.google.com) - Patent filings in [detected topic]",
-        "ArXiv.org - Latest research papers on [topic]",
-        "IEEE Xplore - Technical publications",
-        "[Detected entity] Research Blog",
-        "GitHub Trending - Open source projects in [topic]",
-        "TechCrunch - Technology news",
-        "MIT Technology Review - Emerging tech analysis"
-    ],
-    "actorSuggestions": [
-        "Key researchers in [topic] (based on citation analysis)",
-        "R&D departments of [detected entities]",
-        "University labs specializing in [topic]",
-        "Patent leaders in this domain",
-        "Emerging startups in [topic] space"
-    ]
+  "sourceSuggestions": [
+    "Google Patents (patents.google.com) - Patent filings in [detected topic]",
+    "ArXiv.org - Latest research papers on [topic]",
+    "IEEE Xplore - Technical publications",
+    "[Detected entity] Research Blog",
+    "GitHub Trending - Open source projects in [topic]",
+    "TechCrunch - Technology news",
+    "MIT Technology Review - Emerging tech analysis"
+  ],
+  "actorSuggestions": [
+    "Key researchers in [topic] (based on citation analysis)",
+    "R&D departments of [detected entities]",
+    "University labs specializing in [topic]",
+    "Patent leaders in this domain",
+    "Emerging startups in [topic] space"
+  ]
 }
 ```
 
@@ -227,22 +227,22 @@ Since input context is already validated (>= 80% by conversational agent):
 
 ```json
 {
-    "sourceSuggestions": [
-        "[Competitor] Official Blog and Press Releases",
-        "Crunchbase - Funding and company data",
-        "[Competitor] LinkedIn Company Page",
-        "Business news: TechCrunch, The Verge, Bloomberg",
-        "Industry analyst reports (Gartner, Forrester)",
-        "[Competitor] Investor Relations pages",
-        "Product Hunt - Product launches"
-    ],
-    "actorSuggestions": [
-        "CEOs and executives of [detected competitors]",
-        "Direct competitors not yet tracked: [suggestions based on industry]",
-        "Strategic partners of [detected entities]",
-        "Key investors in this space",
-        "Industry analysts covering this sector"
-    ]
+  "sourceSuggestions": [
+    "[Competitor] Official Blog and Press Releases",
+    "Crunchbase - Funding and company data",
+    "[Competitor] LinkedIn Company Page",
+    "Business news: TechCrunch, The Verge, Bloomberg",
+    "Industry analyst reports (Gartner, Forrester)",
+    "[Competitor] Investor Relations pages",
+    "Product Hunt - Product launches"
+  ],
+  "actorSuggestions": [
+    "CEOs and executives of [detected competitors]",
+    "Direct competitors not yet tracked: [suggestions based on industry]",
+    "Strategic partners of [detected entities]",
+    "Key investors in this space",
+    "Industry analysts covering this sector"
+  ]
 }
 ```
 
@@ -250,22 +250,22 @@ Since input context is already validated (>= 80% by conversational agent):
 
 ```json
 {
-    "sourceSuggestions": [
-        "EUR-Lex (europa.eu) - EU legislation",
-        "Journal Officiel (legifrance.gouv.fr) - French official gazette",
-        "[Relevant regulator] official website (e.g., CNIL, ANRT)",
-        "ISO.org - International standards",
-        "Regulatory news: Law360, JD Supra",
-        "Compliance news feeds",
-        "Government consultation portals"
-    ],
-    "actorSuggestions": [
-        "Regulatory bodies: CNIL (France), ICO (UK), FTC (US)",
-        "European Commission - DG [relevant directorate]",
-        "Industry associations advocating on regulation",
-        "Legal experts specializing in [topic]",
-        "Policy think tanks"
-    ]
+  "sourceSuggestions": [
+    "EUR-Lex (europa.eu) - EU legislation",
+    "Journal Officiel (legifrance.gouv.fr) - French official gazette",
+    "[Relevant regulator] official website (e.g., CNIL, ANRT)",
+    "ISO.org - International standards",
+    "Regulatory news: Law360, JD Supra",
+    "Compliance news feeds",
+    "Government consultation portals"
+  ],
+  "actorSuggestions": [
+    "Regulatory bodies: CNIL (France), ICO (UK), FTC (US)",
+    "European Commission - DG [relevant directorate]",
+    "Industry associations advocating on regulation",
+    "Legal experts specializing in [topic]",
+    "Policy think tanks"
+  ]
 }
 ```
 
@@ -273,22 +273,22 @@ Since input context is already validated (>= 80% by conversational agent):
 
 ```json
 {
-    "sourceSuggestions": [
-        "Statista - Market statistics and trends",
-        "Google Trends - Search trend analysis",
-        "Social media: Twitter/X trends, Reddit discussions",
-        "Industry trade publications",
-        "Customer review platforms (G2, Capterra, Trustpilot)",
-        "E-commerce data sources",
-        "Market research reports (Nielsen, Ipsos)"
-    ],
-    "actorSuggestions": [
-        "Market analysts covering [topic]",
-        "Industry associations and trade groups",
-        "Key distributors/retailers in [market]",
-        "Influencers and opinion leaders",
-        "Customer advocacy groups"
-    ]
+  "sourceSuggestions": [
+    "Statista - Market statistics and trends",
+    "Google Trends - Search trend analysis",
+    "Social media: Twitter/X trends, Reddit discussions",
+    "Industry trade publications",
+    "Customer review platforms (G2, Capterra, Trustpilot)",
+    "E-commerce data sources",
+    "Market research reports (Nielsen, Ipsos)"
+  ],
+  "actorSuggestions": [
+    "Market analysts covering [topic]",
+    "Industry associations and trade groups",
+    "Key distributors/retailers in [market]",
+    "Influencers and opinion leaders",
+    "Customer advocacy groups"
+  ]
 }
 ```
 
@@ -296,23 +296,23 @@ Since input context is already validated (>= 80% by conversational agent):
 
 ```json
 {
-    "sourceSuggestions": [
-        "Financial Times - Business strategy news",
-        "Wall Street Journal - Corporate moves",
-        "Bloomberg - Financial and strategic news",
-        "[Company] Annual Reports and 10-K filings",
-        "M&A databases (PitchBook, CB Insights)",
-        "Executive networks (LinkedIn executive pages)",
-        "Strategic consulting firm insights (McKinsey, BCG publications)"
-    ],
-    "actorSuggestions": [
-        "C-level executives of [detected entities]",
-        "Board members and strategic advisors",
-        "Major investors and VCs in this space",
-        "M&A advisors and investment banks",
-        "Strategic consulting firms",
-        "Industry visionaries and thought leaders"
-    ]
+  "sourceSuggestions": [
+    "Financial Times - Business strategy news",
+    "Wall Street Journal - Corporate moves",
+    "Bloomberg - Financial and strategic news",
+    "[Company] Annual Reports and 10-K filings",
+    "M&A databases (PitchBook, CB Insights)",
+    "Executive networks (LinkedIn executive pages)",
+    "Strategic consulting firm insights (McKinsey, BCG publications)"
+  ],
+  "actorSuggestions": [
+    "C-level executives of [detected entities]",
+    "Board members and strategic advisors",
+    "Major investors and VCs in this space",
+    "M&A advisors and investment banks",
+    "Strategic consulting firms",
+    "Industry visionaries and thought leaders"
+  ]
 }
 ```
 
@@ -331,49 +331,49 @@ Since input context is already validated (>= 80% by conversational agent):
 
 ```json
 {
-    "primaryType": "technological",
-    "confidenceScore": 92,
-    "justification": {
-        "en": "Your monitoring objective clearly focuses on tracking innovations and technological breakthroughs in generative AI. The actors (OpenAI, Anthropic) are R&D-focused organizations, and your interest in their research outputs confirms this is technological intelligence.",
-        "fr": "Votre objectif de surveillance est clairement axé sur le suivi des innovations et des avancées technologiques dans le domaine de l'IA générative. Les acteurs (OpenAI, Anthropic) sont des organisations axées sur la R&D, et votre intérêt pour les résultats de leurs recherches confirme qu'il s'agit bien d'intelligence technologique."
+  "primaryType": "technological",
+  "confidenceScore": 92,
+  "justification": {
+    "en": "Your monitoring objective clearly focuses on tracking innovations and technological breakthroughs in generative AI. The actors (OpenAI, Anthropic) are R&D-focused organizations, and your interest in their research outputs confirms this is technological intelligence.",
+    "fr": "Votre objectif de surveillance est clairement axé sur le suivi des innovations et des avancées technologiques dans le domaine de l'IA générative. Les acteurs (OpenAI, Anthropic) sont des organisations axées sur la R&D, et votre intérêt pour les résultats de leurs recherches confirme qu'il s'agit bien d'intelligence technologique."
+  },
+  "secondaryTypes": [],
+  "explication": {
+    "keywords": ["innovations", "generative AI", "breakthroughs", "research"],
+    "detectedEntities": ["OpenAI", "Anthropic"],
+    "userObjective": "Track technological innovations in generative AI from leading research organizations"
+  },
+  "sourceSuggestions": [
+    "OpenAI Research Blog (openai.com/research)",
+    "Anthropic Research (anthropic.com/research)",
+    "ArXiv.org - cs.AI category",
+    "Google AI Blog (ai.googleblog.com)",
+    "Papers with Code (paperswithcode.com)",
+    "Hugging Face Blog (huggingface.co/blog)",
+    "AI alignment research forums"
+  ],
+  "actorSuggestions": [
+    "DeepMind (Google) - Major AI research lab",
+    "Meta AI Research (FAIR) - Fundamental AI research",
+    "Ilya Sutskever - OpenAI Chief Scientist",
+    "Dario Amodei - Anthropic CEO & AI safety researcher",
+    "Yann LeCun - Meta Chief AI Scientist",
+    "Demis Hassabis - DeepMind CEO",
+    "Stability AI - Generative AI research"
+  ],
+  "deepSearchReadiness": {
+    "ready": true,
+    "reason": {
+      "en": "Clear technological focus with specific entities and sources identified",
+      "fr": "Orientation technologique claire avec identification d'entités et de sources spécifiques"
     },
-    "secondaryTypes": [],
-    "explication": {
-        "keywords": ["innovations", "generative AI", "breakthroughs", "research"],
-        "detectedEntities": ["OpenAI", "Anthropic"],
-        "userObjective": "Track technological innovations in generative AI from leading research organizations"
-    },
-    "sourceSuggestions": [
-        "OpenAI Research Blog (openai.com/research)",
-        "Anthropic Research (anthropic.com/research)",
-        "ArXiv.org - cs.AI category",
-        "Google AI Blog (ai.googleblog.com)",
-        "Papers with Code (paperswithcode.com)",
-        "Hugging Face Blog (huggingface.co/blog)",
-        "AI alignment research forums"
-    ],
-    "actorSuggestions": [
-        "DeepMind (Google) - Major AI research lab",
-        "Meta AI Research (FAIR) - Fundamental AI research",
-        "Ilya Sutskever - OpenAI Chief Scientist",
-        "Dario Amodei - Anthropic CEO & AI safety researcher",
-        "Yann LeCun - Meta Chief AI Scientist",
-        "Demis Hassabis - DeepMind CEO",
-        "Stability AI - Generative AI research"
-    ],
-    "deepSearchReadiness": {
-        "ready": true,
-        "reason": {
-            "en": "Clear technological focus with specific entities and sources identified",
-            "fr": "Orientation technologique claire avec identification d'entités et de sources spécifiques"
-        },
-        "suggestedSearchQueries": [
-            "generative AI research papers 2024-2025",
-            "OpenAI technical reports and publications",
-            "Anthropic Claude technical documentation",
-            "large language model breakthroughs"
-        ]
-    }
+    "suggestedSearchQueries": [
+      "generative AI research papers 2024-2025",
+      "OpenAI technical reports and publications",
+      "Anthropic Claude technical documentation",
+      "large language model breakthroughs"
+    ]
+  }
 }
 ```
 
@@ -390,58 +390,58 @@ Since input context is already validated (>= 80% by conversational agent):
 
 ```json
 {
-    "primaryType": "competitive",
-    "confidenceScore": 72,
-    "justification": {
-        "en": "Your primary objective is to 'stay competitive', which indicates competitive intelligence. However, you're also tracking technological innovations, hence the secondary technological dimension.",
-        "fr": "Votre objectif principal est de 'rester compétitif', ce qui renvoie à la veille concurrentielle. Cependant, vous suivez également les innovations technologiques, d'où la dimension technologique secondaire."
-    },
-    "secondaryTypes": [
-        {
-            "type": "technological",
-            "score": 68,
-            "justification": {
-                "en": "Tracking product launches and technological innovations from OpenAI also constitutes technological intelligence",
-                "fr": "Le suivi des lancements de produits et des innovations technologiques d'OpenAI relève également du renseignement technologique."
-            }
-        }
-    ],
-    "explication": {
-        "keywords": ["competitive", "product launches", "innovations", "competitor"],
-        "detectedEntities": ["OpenAI"],
-        "userObjective": "Track OpenAI's strategic moves and innovations to maintain competitive advantage"
-    },
-    "sourceSuggestions": [
-        "OpenAI Official Blog (openai.com/blog) - Product announcements",
-        "TechCrunch - Tech news and competition",
-        "The Verge - Tech product analysis",
-        "OpenAI LinkedIn Page - Corporate news",
-        "Crunchbase OpenAI - Funding data",
-        "Product Hunt - Product launches",
-        "Bloomberg Technology - Strategic moves"
-    ],
-    "actorSuggestions": [
-        "Sam Altman - OpenAI CEO (strategy)",
-        "Anthropic - Direct competitor in generative AI",
-        "Google DeepMind - Major competitor",
-        "Microsoft - OpenAI strategic partner",
-        "Inflection AI - Emerging competitor",
-        "Cohere - Enterprise AI competitor",
-        "Tech analysts (Benedict Evans, Ben Thompson)"
-    ],
-    "deepSearchReadiness": {
-        "ready": true,
-        "reason": {
-            "en": "Dual competitive/tech focus requires multi-dimensional research",
-            "fr": "Une double orientation concurrentielle/technologique nécessite une recherche multidimensionnelle."
-        },
-        "suggestedSearchQueries": [
-            "OpenAI strategic moves and partnerships",
-            "Competitive analysis generative AI market",
-            "AI product launches 2024-2025",
-            "OpenAI vs Anthropic comparison"
-        ]
+  "primaryType": "competitive",
+  "confidenceScore": 72,
+  "justification": {
+    "en": "Your primary objective is to 'stay competitive', which indicates competitive intelligence. However, you're also tracking technological innovations, hence the secondary technological dimension.",
+    "fr": "Votre objectif principal est de 'rester compétitif', ce qui renvoie à la veille concurrentielle. Cependant, vous suivez également les innovations technologiques, d'où la dimension technologique secondaire."
+  },
+  "secondaryTypes": [
+    {
+      "type": "technological",
+      "score": 68,
+      "justification": {
+        "en": "Tracking product launches and technological innovations from OpenAI also constitutes technological intelligence",
+        "fr": "Le suivi des lancements de produits et des innovations technologiques d'OpenAI relève également du renseignement technologique."
+      }
     }
+  ],
+  "explication": {
+    "keywords": ["competitive", "product launches", "innovations", "competitor"],
+    "detectedEntities": ["OpenAI"],
+    "userObjective": "Track OpenAI's strategic moves and innovations to maintain competitive advantage"
+  },
+  "sourceSuggestions": [
+    "OpenAI Official Blog (openai.com/blog) - Product announcements",
+    "TechCrunch - Tech news and competition",
+    "The Verge - Tech product analysis",
+    "OpenAI LinkedIn Page - Corporate news",
+    "Crunchbase OpenAI - Funding data",
+    "Product Hunt - Product launches",
+    "Bloomberg Technology - Strategic moves"
+  ],
+  "actorSuggestions": [
+    "Sam Altman - OpenAI CEO (strategy)",
+    "Anthropic - Direct competitor in generative AI",
+    "Google DeepMind - Major competitor",
+    "Microsoft - OpenAI strategic partner",
+    "Inflection AI - Emerging competitor",
+    "Cohere - Enterprise AI competitor",
+    "Tech analysts (Benedict Evans, Ben Thompson)"
+  ],
+  "deepSearchReadiness": {
+    "ready": true,
+    "reason": {
+      "en": "Dual competitive/tech focus requires multi-dimensional research",
+      "fr": "Une double orientation concurrentielle/technologique nécessite une recherche multidimensionnelle."
+    },
+    "suggestedSearchQueries": [
+      "OpenAI strategic moves and partnerships",
+      "Competitive analysis generative AI market",
+      "AI product launches 2024-2025",
+      "OpenAI vs Anthropic comparison"
+    ]
+  }
 }
 ```
 

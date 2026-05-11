@@ -41,6 +41,7 @@ async def create_company(
 ```
 
 **Available helpers**:
+
 - `get_current_user(required_roles=[...])` — route-level role check, raises 403 automatically
 - `verify_role_access(user, role)` — inline single-role check, raises 403 if missing
 - `verify_any_role_access(user, roles)` — inline OR-logic check

@@ -1,36 +1,36 @@
 {
-    "account_id": 204,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 60,
-    "master": {
-        "id": "legacy-204-master-8967563",
-        "url": "https://www.bostonherald.com/2022/02/13/russia-could-use-false-flag-operation-to-justify-attacking-ukraine-biden-national-security-advisor-warns/",
-        "title": "Russia could use ‘false flag operation’ to justify attacking Ukraine, Biden national security advisor warns",
-        "content": "<html><head><title>Russia could use ‘false flag operation’ to justify attacking Ukraine, Biden national security advisor warns</title></head><body><div><p>President Biden’s team is warning that Russia could use a “false flag operation” to justify attacking Ukraine, as Biden on Sunday told Ukraine’s leader that the U.S. would respond “swiftly and decisively” to a Russian onslaught.</p>\n<p>As Russia amasses more than 100,000 troops on Ukraine’s border, U.S. intelligence officials are sounding the alarm that a Russian invasion could happen “any day now,” before the end of the Olympics. The major military action could happen after Russia stages a fake attack on themselves, according to Biden’s national security advisor.</p>\n<p>“We have seen over the course of the past 10 days a dramatic acceleration in the buildup of Russian forces and the disposition of those forces in such a way that they could launch a military action, essentially at any time,” Jake Sullivan, Biden’s adviser, said on Sunday on CBS’ “Face the Nation.”</p>\n<p>“We also are watching very carefully for the possibility that there is a pretext or a false flag operation to kick off the Russian action in which Russian intelligence services conduct some kind of attack on Russian proxy forces in eastern Ukraine or on Russian citizens, and then blame it on the Ukrainians,” Sullivan later added.</p>\t\n<p>A false flag operation to start a war is in “the Russian playbook,” he said on CNN’s “State of the Union.”</p>\n<p>“We have seen them do this before many times,” Sullivan said. “You ask any Russia expert, they will point to examples of where Russia has used false flag operations as pretext to start military action.”</p>\n<p>If Russia ends up invading Ukraine, it’s likely to begin with a significant barrage of missiles and bomb attacks. Through those attacks, innocent civilians could be killed regardless of their nationality, Sullivan said.</p>\n<p>“It would then be followed by an onslaught of a ground force moving across the Ukrainian frontier, again, where innocent civilians could get caught in the crossfire or get trapped in places that they could not move from,” Sullivan said.</p>\n<p>“So that is why we are being so clear and direct to American citizens that while commercial transport options are still available, they should take advantage of them,” he added.</p>\t\n\n<p>Biden on Sunday talked to Ukraine President Volodymyr Zelenskyy, reaffirming the United States’ commitment to Ukraine’s sovereignty and territorial integrity.</p>\n<p>“President Biden made clear that the United States would respond swiftly and decisively, together with its Allies and partners, to any further Russian aggression against Ukraine,” the White House said in a statement about the phone call.</p>\n<p>“The two leaders agreed on the importance of continuing to pursue diplomacy and deterrence in response to Russia’s military build-up on Ukraine’s borders,” the White House added.</p>\n<p>The U.S. is prepared to respond “immediately and decisively” if Russia moves forward, Sullivan said.</p>\n<p>“We will defend NATO territory. We will impose costs on Russia,” he added. “And we will ensure that we emerge from this, as the West, stronger, more determined, more purposeful than we have been in 30 years, and that Russia ultimately suffers a significant strategic cost for military action.”</p>\n</div></body></html>"
-    },
-    "candidate": {
-        "id": "legacy-204-dup-8976223",
-        "url": "https://news.yahoo.com/biden-warns-russia-costs-ukraine-214046034.html",
-        "title": "Biden warns Russia of costs of Ukraine invasion",
-        "content": "<html><head><title>Biden warns Russia of costs of Ukraine invasion</title></head><body><div><p>The Hill</p><p>Democratic and Republican voters are split on whether they want President Biden and former President Trump to lead their party&apos;s ticket in the 2024 election, according to a new poll.The survey, conducted by CNN and SSRS, found that 45 percent of Democrats and Democratic-leaning independents who are registered to vote say the party should renominate Biden as its candidate for president in 2024, while 51 percent of those respondents would opt for...</p></div></body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "unique",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "unique",
-        "note": "Candidate content is unrelated to Russia-Ukraine false flag warning and instead discusses 2024 election polling, so they are different articles."
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "agreement_unique",
-    "content_source": "hbase_full"
+  "account_id": 204,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 60,
+  "master": {
+    "id": "legacy-204-master-8967563",
+    "url": "https://www.bostonherald.com/2022/02/13/russia-could-use-false-flag-operation-to-justify-attacking-ukraine-biden-national-security-advisor-warns/",
+    "title": "Russia could use ‘false flag operation’ to justify attacking Ukraine, Biden national security advisor warns",
+    "content": "<html><head><title>Russia could use ‘false flag operation’ to justify attacking Ukraine, Biden national security advisor warns</title></head><body><div><p>President Biden’s team is warning that Russia could use a “false flag operation” to justify attacking Ukraine, as Biden on Sunday told Ukraine’s leader that the U.S. would respond “swiftly and decisively” to a Russian onslaught.</p>\n<p>As Russia amasses more than 100,000 troops on Ukraine’s border, U.S. intelligence officials are sounding the alarm that a Russian invasion could happen “any day now,” before the end of the Olympics. The major military action could happen after Russia stages a fake attack on themselves, according to Biden’s national security advisor.</p>\n<p>“We have seen over the course of the past 10 days a dramatic acceleration in the buildup of Russian forces and the disposition of those forces in such a way that they could launch a military action, essentially at any time,” Jake Sullivan, Biden’s adviser, said on Sunday on CBS’ “Face the Nation.”</p>\n<p>“We also are watching very carefully for the possibility that there is a pretext or a false flag operation to kick off the Russian action in which Russian intelligence services conduct some kind of attack on Russian proxy forces in eastern Ukraine or on Russian citizens, and then blame it on the Ukrainians,” Sullivan later added.</p>\t\n<p>A false flag operation to start a war is in “the Russian playbook,” he said on CNN’s “State of the Union.”</p>\n<p>“We have seen them do this before many times,” Sullivan said. “You ask any Russia expert, they will point to examples of where Russia has used false flag operations as pretext to start military action.”</p>\n<p>If Russia ends up invading Ukraine, it’s likely to begin with a significant barrage of missiles and bomb attacks. Through those attacks, innocent civilians could be killed regardless of their nationality, Sullivan said.</p>\n<p>“It would then be followed by an onslaught of a ground force moving across the Ukrainian frontier, again, where innocent civilians could get caught in the crossfire or get trapped in places that they could not move from,” Sullivan said.</p>\n<p>“So that is why we are being so clear and direct to American citizens that while commercial transport options are still available, they should take advantage of them,” he added.</p>\t\n\n<p>Biden on Sunday talked to Ukraine President Volodymyr Zelenskyy, reaffirming the United States’ commitment to Ukraine’s sovereignty and territorial integrity.</p>\n<p>“President Biden made clear that the United States would respond swiftly and decisively, together with its Allies and partners, to any further Russian aggression against Ukraine,” the White House said in a statement about the phone call.</p>\n<p>“The two leaders agreed on the importance of continuing to pursue diplomacy and deterrence in response to Russia’s military build-up on Ukraine’s borders,” the White House added.</p>\n<p>The U.S. is prepared to respond “immediately and decisively” if Russia moves forward, Sullivan said.</p>\n<p>“We will defend NATO territory. We will impose costs on Russia,” he added. “And we will ensure that we emerge from this, as the West, stronger, more determined, more purposeful than we have been in 30 years, and that Russia ultimately suffers a significant strategic cost for military action.”</p>\n</div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-204-dup-8976223",
+    "url": "https://news.yahoo.com/biden-warns-russia-costs-ukraine-214046034.html",
+    "title": "Biden warns Russia of costs of Ukraine invasion",
+    "content": "<html><head><title>Biden warns Russia of costs of Ukraine invasion</title></head><body><div><p>The Hill</p><p>Democratic and Republican voters are split on whether they want President Biden and former President Trump to lead their party&apos;s ticket in the 2024 election, according to a new poll.The survey, conducted by CNN and SSRS, found that 45 percent of Democrats and Democratic-leaning independents who are registered to vote say the party should renominate Biden as its candidate for president in 2024, while 51 percent of those respondents would opt for...</p></div></body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "unique",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "unique",
+    "note": "Candidate content is unrelated to Russia-Ukraine false flag warning and instead discusses 2024 election polling, so they are different articles."
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "agreement_unique",
+  "content_source": "hbase_full"
 }

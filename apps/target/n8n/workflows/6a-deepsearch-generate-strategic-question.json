@@ -32,10 +32,7 @@
       },
       "type": "n8n-nodes-base.executionData",
       "typeVersion": 1.1,
-      "position": [
-        -2576,
-        -416
-      ],
+      "position": [-2576, -416],
       "id": "476f054f-0486-47b2-b35a-a1fa7155856a",
       "name": "ExecutionData_Store_TestMetadata"
     },
@@ -47,10 +44,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -2800,
-        -416
-      ],
+      "position": [-2800, -416],
       "id": "22c5c9c3-c10f-47c3-84ce-f5853775a7cb",
       "name": "Set_Format_TestInput"
     },
@@ -60,10 +54,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -2352,
-        -320
-      ],
+      "position": [-2352, -320],
       "id": "cb516324-c7a1-402b-9aa7-a786725a696b",
       "name": "Code_Initialize_WatchFileData"
     },
@@ -77,10 +68,7 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [
-        -3024,
-        -416
-      ],
+      "position": [-3024, -416],
       "id": "41c5942d-f5b6-4cc7-95c0-93385bd331a8",
       "name": "Webhook_Trigger_TestInput",
       "webhookId": "f48c19fb-78d5-422e-9a73-d7ee5dc0e7fc"
@@ -112,10 +100,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        -2576,
-        -224
-      ],
+      "position": [-2576, -224],
       "id": "c72114fe-e36f-42f1-bc4f-1f048d6e64ba",
       "name": "Workflow_Trigger_DeepSearch"
     },
@@ -127,10 +112,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -832,
-        -512
-      ],
+      "position": [-832, -512],
       "id": "b921d87a-6b6b-4387-862d-0a23572a8c1c",
       "name": "Feedback_AgentSuccess",
       "executeOnce": false
@@ -148,10 +130,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
-      "position": [
-        -2096,
-        -320
-      ],
+      "position": [-2096, -320],
       "id": "cef4329a-5fd8-4691-967c-bb483e6a6d86",
       "name": "LLM_StrategicQuestions_GeneratorAgent",
       "retryOnFail": true,
@@ -165,10 +144,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
-      "position": [
-        -1872,
-        -80
-      ],
+      "position": [-1872, -80],
       "id": "a3d8c6ef-9597-4d1b-af60-725ca4d395ed",
       "name": "LLM_Parser_StrategicQuestionGenerator"
     },
@@ -180,10 +156,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -1504,
-        -224
-      ],
+      "position": [-1504, -224],
       "id": "b5f641d8-70de-454f-9398-3b1ba812637b",
       "name": "Feedback_AgentAIError"
     },
@@ -193,10 +166,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -1504,
-        -416
-      ],
+      "position": [-1504, -416],
       "id": "c46a9aeb-166d-48b6-84e4-eaafc87d9a36",
       "name": "Split_Item_StrategicQuestion"
     },
@@ -266,10 +236,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -1280,
-        -416
-      ],
+      "position": [-1280, -416],
       "id": "86586ff5-4cf9-4126-b716-76804b02f9e8",
       "name": "Workflow_Execute_InternalWebhook",
       "onError": "continueRegularOutput"
@@ -311,10 +278,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -1056,
-        -416
-      ],
+      "position": [-1056, -416],
       "id": "e5fea335-8b2f-417f-8640-2999ed7e6b94",
       "name": "Condition_Check_IsSuccess"
     },
@@ -326,10 +290,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -832,
-        -320
-      ],
+      "position": [-832, -320],
       "id": "38bc4572-18ff-4b6a-8362-d82a4da566fe",
       "name": "Feedback_StrategicQuestionSaveError",
       "executeOnce": false
@@ -358,10 +319,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -2128,
-        -80
-      ],
+      "position": [-2128, -80],
       "id": "e1da0a82-1773-402f-b431-5bd3887314eb",
       "name": "LLM_Model_Primary",
       "credentials": {
@@ -395,10 +353,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -2000,
-        -80
-      ],
+      "position": [-2000, -80],
       "id": "ec81c23f-37b7-43ae-b859-9f448b666351",
       "name": "LLM_Model_Fallback",
       "credentials": {
@@ -427,10 +382,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -1840,
-        128
-      ],
+      "position": [-1840, 128],
       "id": "75d33dc4-65e4-4531-9d2f-7f41c4bb8642",
       "name": "LLM_Model_ValidationParser",
       "credentials": {

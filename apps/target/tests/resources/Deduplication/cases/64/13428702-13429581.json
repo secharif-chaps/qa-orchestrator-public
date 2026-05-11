@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13428702",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85136817943&origin=inward",
-        "title": "Impact of ATC speed instructions on fuel consumption and noise exposure: an assessment of real operations in Zurich",
-        "content": "<html><body>Approach operations at busy airports are louder and less fuel efficient than they technically could be. Carrying out a safe approach under fluctuating wind and weather conditions while following individual air traffic control (ATC) instructions imposes a significant workload on the flight crew, especially with the limited systems support and information availability on the flight deck today. The SESAR exploratory research project DYNCAT (Dynamic Configuration Adjustment in the TMA) aims to highlight the impact of current approach operations on the environment based on all relevant data sources (on-board operational data, ATC commands, noise measurement data, surrounding traffic and weather information) allowed to evaluate individual approach operations in their full context, exemplarily for the Airbus A320 at Zurich airport. The evaluations performed are a unique opportunity to analyse the impact of ATC instructions on fuel consumption and noise exposure during real operations. The results showed that speed instructions, especially when given early during the transition phase, lead to high fuel consumption, due to the long-time flight in low speed levels correlated to earlier usage of Flaps configurations. A mean difference of almost 50 kg in fuel burned is observed when comparing the flights with speed restrictions to those without. On the other hand, speed restrictions provide a well-defined airspeed guidance for the pilots during transition and final approach, which leads to lower usage of speed brakes and also to lower speed levels for the landing gear extension. The less speed restrictions were given to the pilots by ATC, the higher was the usage of speed brakes during the final approach, and also the landing gear deployment was performed at higher speed levels, which ceteris paribus contributes significantly to the noise exposure and noise footprint. Based on these evaluations, requirements for a novel flight management system (FMS) function, which is set to be developed in the next steps of the project, were derived to support pilots and controllers through extended information exchange, thus increasing predictability of the lateral and vertical flight profiles for both sides. A central component is a novel airborne energy management assistance system including a configuration management functionality, to be implemented through an extension of the FMS capabilities. <br/><br/><br/>Authors: Abdelmoula F., Roeser M.S., Kühne C.G., Gerber M., Wunderli J.M.. <br/><br/>Affiliations: Empa - Swiss Federal Laboratories for Materials Science and Technology, Deutsches Zentrum für Luft- und Raumfahrt (DLR), Deutsche Aircraft GmbH, CARIAD SE, Swiss Skylab Foundation. <br/><br/>Publication: CEAS Aeronautical Journal, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13429581",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85136817943&origin=inward",
-        "title": "Impact of ATC speed instructions on fuel consumption and noise exposure: an assessment of real operations in Zurich",
-        "content": "<html><body>Approach operations at busy airports are louder and less fuel efficient than they technically could be. Carrying out a safe approach under fluctuating wind and weather conditions while following individual air traffic control (ATC) instructions imposes a significant workload on the flight crew, especially with the limited systems support and information availability on the flight deck today. The SESAR exploratory research project DYNCAT (Dynamic Configuration Adjustment in the TMA) aims to highlight the impact of current approach operations on the environment based on all relevant data sources (on-board operational data, ATC commands, noise measurement data, surrounding traffic and weather information) allowed to evaluate individual approach operations in their full context, exemplarily for the Airbus A320 at Zurich airport. The evaluations performed are a unique opportunity to analyse the impact of ATC instructions on fuel consumption and noise exposure during real operations. The results showed that speed instructions, especially when given early during the transition phase, lead to high fuel consumption, due to the long-time flight in low speed levels correlated to earlier usage of Flaps configurations. A mean difference of almost 50 kg in fuel burned is observed when comparing the flights with speed restrictions to those without. On the other hand, speed restrictions provide a well-defined airspeed guidance for the pilots during transition and final approach, which leads to lower usage of speed brakes and also to lower speed levels for the landing gear extension. The less speed restrictions were given to the pilots by ATC, the higher was the usage of speed brakes during the final approach, and also the landing gear deployment was performed at higher speed levels, which ceteris paribus contributes significantly to the noise exposure and noise footprint. Based on these evaluations, requirements for a novel flight management system (FMS) function, which is set to be developed in the next steps of the project, were derived to support pilots and controllers through extended information exchange, thus increasing predictability of the lateral and vertical flight profiles for both sides. A central component is a novel airborne energy management assistance system including a configuration management functionality, to be implemented through an extension of the FMS capabilities. <br/><br/><br/>Authors: Abdelmoula F., Roeser M.S., Kühne C.G., Gerber M., Wunderli J.M.. <br/><br/>Affiliations: Empa - Swiss Federal Laboratories for Materials Science and Technology, Deutsches Zentrum für Luft- und Raumfahrt (DLR), Deutsche Aircraft GmbH, CARIAD SE, Swiss Skylab Foundation. <br/><br/>Publication: CEAS Aeronautical Journal, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "partial_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13428702",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85136817943&origin=inward",
+    "title": "Impact of ATC speed instructions on fuel consumption and noise exposure: an assessment of real operations in Zurich",
+    "content": "<html><body>Approach operations at busy airports are louder and less fuel efficient than they technically could be. Carrying out a safe approach under fluctuating wind and weather conditions while following individual air traffic control (ATC) instructions imposes a significant workload on the flight crew, especially with the limited systems support and information availability on the flight deck today. The SESAR exploratory research project DYNCAT (Dynamic Configuration Adjustment in the TMA) aims to highlight the impact of current approach operations on the environment based on all relevant data sources (on-board operational data, ATC commands, noise measurement data, surrounding traffic and weather information) allowed to evaluate individual approach operations in their full context, exemplarily for the Airbus A320 at Zurich airport. The evaluations performed are a unique opportunity to analyse the impact of ATC instructions on fuel consumption and noise exposure during real operations. The results showed that speed instructions, especially when given early during the transition phase, lead to high fuel consumption, due to the long-time flight in low speed levels correlated to earlier usage of Flaps configurations. A mean difference of almost 50 kg in fuel burned is observed when comparing the flights with speed restrictions to those without. On the other hand, speed restrictions provide a well-defined airspeed guidance for the pilots during transition and final approach, which leads to lower usage of speed brakes and also to lower speed levels for the landing gear extension. The less speed restrictions were given to the pilots by ATC, the higher was the usage of speed brakes during the final approach, and also the landing gear deployment was performed at higher speed levels, which ceteris paribus contributes significantly to the noise exposure and noise footprint. Based on these evaluations, requirements for a novel flight management system (FMS) function, which is set to be developed in the next steps of the project, were derived to support pilots and controllers through extended information exchange, thus increasing predictability of the lateral and vertical flight profiles for both sides. A central component is a novel airborne energy management assistance system including a configuration management functionality, to be implemented through an extension of the FMS capabilities. <br/><br/><br/>Authors: Abdelmoula F., Roeser M.S., Kühne C.G., Gerber M., Wunderli J.M.. <br/><br/>Affiliations: Empa - Swiss Federal Laboratories for Materials Science and Technology, Deutsches Zentrum für Luft- und Raumfahrt (DLR), Deutsche Aircraft GmbH, CARIAD SE, Swiss Skylab Foundation. <br/><br/>Publication: CEAS Aeronautical Journal, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13429581",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85136817943&origin=inward",
+    "title": "Impact of ATC speed instructions on fuel consumption and noise exposure: an assessment of real operations in Zurich",
+    "content": "<html><body>Approach operations at busy airports are louder and less fuel efficient than they technically could be. Carrying out a safe approach under fluctuating wind and weather conditions while following individual air traffic control (ATC) instructions imposes a significant workload on the flight crew, especially with the limited systems support and information availability on the flight deck today. The SESAR exploratory research project DYNCAT (Dynamic Configuration Adjustment in the TMA) aims to highlight the impact of current approach operations on the environment based on all relevant data sources (on-board operational data, ATC commands, noise measurement data, surrounding traffic and weather information) allowed to evaluate individual approach operations in their full context, exemplarily for the Airbus A320 at Zurich airport. The evaluations performed are a unique opportunity to analyse the impact of ATC instructions on fuel consumption and noise exposure during real operations. The results showed that speed instructions, especially when given early during the transition phase, lead to high fuel consumption, due to the long-time flight in low speed levels correlated to earlier usage of Flaps configurations. A mean difference of almost 50 kg in fuel burned is observed when comparing the flights with speed restrictions to those without. On the other hand, speed restrictions provide a well-defined airspeed guidance for the pilots during transition and final approach, which leads to lower usage of speed brakes and also to lower speed levels for the landing gear extension. The less speed restrictions were given to the pilots by ATC, the higher was the usage of speed brakes during the final approach, and also the landing gear deployment was performed at higher speed levels, which ceteris paribus contributes significantly to the noise exposure and noise footprint. Based on these evaluations, requirements for a novel flight management system (FMS) function, which is set to be developed in the next steps of the project, were derived to support pilots and controllers through extended information exchange, thus increasing predictability of the lateral and vertical flight profiles for both sides. A central component is a novel airborne energy management assistance system including a configuration management functionality, to be implemented through an extension of the FMS capabilities. <br/><br/><br/>Authors: Abdelmoula F., Roeser M.S., Kühne C.G., Gerber M., Wunderli J.M.. <br/><br/>Affiliations: Empa - Swiss Federal Laboratories for Materials Science and Technology, Deutsches Zentrum für Luft- und Raumfahrt (DLR), Deutsche Aircraft GmbH, CARIAD SE, Swiss Skylab Foundation. <br/><br/>Publication: CEAS Aeronautical Journal, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "partial_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

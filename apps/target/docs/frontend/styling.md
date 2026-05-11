@@ -29,173 +29,173 @@ This guide covers the styling approach, Tailwind CSS configuration, and design s
 import type { Config } from 'tailwindcss'
 
 export default {
-    content: [
-        './components/**/*.{js,vue,ts}',
-        './layouts/**/*.vue',
-        './pages/**/*.vue',
-        './plugins/**/*.{js,ts}',
-        './app.vue',
-        './error.vue',
-    ],
-    darkMode: 'class',
-    theme: {
-        extend: {
-            // Custom color palette
-            colors: {
-                // Primary brand colors
-                brand: {
-                    50: '#eff6ff',
-                    100: '#dbeafe',
-                    200: '#bfdbfe',
-                    300: '#93c5fd',
-                    400: '#60a5fa',
-                    500: '#3b82f6', // Primary
-                    600: '#2563eb',
-                    700: '#1d4ed8',
-                    800: '#1e40af',
-                    900: '#1e3a8a',
-                    950: '#172554',
-                },
-
-                // Semantic colors
-                success: {
-                    50: '#f0fdf4',
-                    100: '#dcfce7',
-                    200: '#bbf7d0',
-                    300: '#86efac',
-                    400: '#4ade80',
-                    500: '#22c55e', // Success
-                    600: '#16a34a',
-                    700: '#15803d',
-                    800: '#166534',
-                    900: '#14532d',
-                },
-
-                warning: {
-                    50: '#fffbeb',
-                    100: '#fef3c7',
-                    200: '#fde68a',
-                    300: '#fcd34d',
-                    400: '#fbbf24',
-                    500: '#f59e0b', // Warning
-                    600: '#d97706',
-                    700: '#b45309',
-                    800: '#92400e',
-                    900: '#78350f',
-                },
-
-                error: {
-                    50: '#fef2f2',
-                    100: '#fee2e2',
-                    200: '#fecaca',
-                    300: '#fca5a5',
-                    400: '#f87171',
-                    500: '#ef4444', // Error
-                    600: '#dc2626',
-                    700: '#b91c1c',
-                    800: '#991b1b',
-                    900: '#7f1d1d',
-                },
-
-                // Neutral grays
-                gray: {
-                    50: '#f9fafb',
-                    100: '#f3f4f6',
-                    200: '#e5e7eb',
-                    300: '#d1d5db',
-                    400: '#9ca3af',
-                    500: '#6b7280',
-                    600: '#4b5563',
-                    700: '#374151',
-                    800: '#1f2937',
-                    900: '#111827',
-                    950: '#030712',
-                },
-            },
-
-            // Typography
-            fontFamily: {
-                sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-                mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
-            },
-
-            fontSize: {
-                xs: ['0.75rem', { lineHeight: '1rem' }],
-                sm: ['0.875rem', { lineHeight: '1.25rem' }],
-                base: ['1rem', { lineHeight: '1.5rem' }],
-                lg: ['1.125rem', { lineHeight: '1.75rem' }],
-                xl: ['1.25rem', { lineHeight: '1.75rem' }],
-                '2xl': ['1.5rem', { lineHeight: '2rem' }],
-                '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
-                '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
-                '5xl': ['3rem', { lineHeight: '1' }],
-                '6xl': ['3.75rem', { lineHeight: '1' }],
-            },
-
-            // Spacing
-            spacing: {
-                '18': '4.5rem',
-                '88': '22rem',
-                '128': '32rem',
-            },
-
-            // Border radius
-            borderRadius: {
-                none: '0',
-                sm: '0.125rem',
-                DEFAULT: '0.25rem',
-                md: '0.375rem',
-                lg: '0.5rem',
-                xl: '0.75rem',
-                '2xl': '1rem',
-                '3xl': '1.5rem',
-                full: '9999px',
-            },
-
-            // Shadows
-            boxShadow: {
-                sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-                DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-                md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-                lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-                xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-                '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
-                inner: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
-                none: 'none',
-            },
-
-            // Animation
-            animation: {
-                'fade-in': 'fadeIn 0.5s ease-in-out',
-                'slide-up': 'slideUp 0.3s ease-out',
-                'bounce-in': 'bounceIn 0.6s ease-out',
-                'pulse-slow': 'pulse 3s infinite',
-            },
-
-            keyframes: {
-                fadeIn: {
-                    '0%': { opacity: '0' },
-                    '100%': { opacity: '1' },
-                },
-                slideUp: {
-                    '0%': { transform: 'translateY(100%)', opacity: '0' },
-                    '100%': { transform: 'translateY(0)', opacity: '1' },
-                },
-                bounceIn: {
-                    '0%': { transform: 'scale(0.3)', opacity: '0' },
-                    '50%': { transform: 'scale(1.05)', opacity: '0.8' },
-                    '70%': { transform: 'scale(0.9)', opacity: '0.9' },
-                    '100%': { transform: 'scale(1)', opacity: '1' },
-                },
-            },
+  content: [
+    './components/**/*.{js,vue,ts}',
+    './layouts/**/*.vue',
+    './pages/**/*.vue',
+    './plugins/**/*.{js,ts}',
+    './app.vue',
+    './error.vue',
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      // Custom color palette
+      colors: {
+        // Primary brand colors
+        brand: {
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6', // Primary
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+          950: '#172554',
         },
+
+        // Semantic colors
+        success: {
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#22c55e', // Success
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d',
+        },
+
+        warning: {
+          50: '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#f59e0b', // Warning
+          600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f',
+        },
+
+        error: {
+          50: '#fef2f2',
+          100: '#fee2e2',
+          200: '#fecaca',
+          300: '#fca5a5',
+          400: '#f87171',
+          500: '#ef4444', // Error
+          600: '#dc2626',
+          700: '#b91c1c',
+          800: '#991b1b',
+          900: '#7f1d1d',
+        },
+
+        // Neutral grays
+        gray: {
+          50: '#f9fafb',
+          100: '#f3f4f6',
+          200: '#e5e7eb',
+          300: '#d1d5db',
+          400: '#9ca3af',
+          500: '#6b7280',
+          600: '#4b5563',
+          700: '#374151',
+          800: '#1f2937',
+          900: '#111827',
+          950: '#030712',
+        },
+      },
+
+      // Typography
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+      },
+
+      fontSize: {
+        xs: ['0.75rem', { lineHeight: '1rem' }],
+        sm: ['0.875rem', { lineHeight: '1.25rem' }],
+        base: ['1rem', { lineHeight: '1.5rem' }],
+        lg: ['1.125rem', { lineHeight: '1.75rem' }],
+        xl: ['1.25rem', { lineHeight: '1.75rem' }],
+        '2xl': ['1.5rem', { lineHeight: '2rem' }],
+        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+        '5xl': ['3rem', { lineHeight: '1' }],
+        '6xl': ['3.75rem', { lineHeight: '1' }],
+      },
+
+      // Spacing
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
+      },
+
+      // Border radius
+      borderRadius: {
+        none: '0',
+        sm: '0.125rem',
+        DEFAULT: '0.25rem',
+        md: '0.375rem',
+        lg: '0.5rem',
+        xl: '0.75rem',
+        '2xl': '1rem',
+        '3xl': '1.5rem',
+        full: '9999px',
+      },
+
+      // Shadows
+      boxShadow: {
+        sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+        md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+        lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+        xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+        '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
+        inner: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
+        none: 'none',
+      },
+
+      // Animation
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+        'bounce-in': 'bounceIn 0.6s ease-out',
+        'pulse-slow': 'pulse 3s infinite',
+      },
+
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(100%)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        bounceIn: {
+          '0%': { transform: 'scale(0.3)', opacity: '0' },
+          '50%': { transform: 'scale(1.05)', opacity: '0.8' },
+          '70%': { transform: 'scale(0.9)', opacity: '0.9' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+      },
     },
-    plugins: [
-        require('@tailwindcss/forms'),
-        require('@tailwindcss/typography'),
-        require('@tailwindcss/aspect-ratio'),
-        require('@tailwindcss/container-queries'),
-    ],
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/aspect-ratio'),
+    require('@tailwindcss/container-queries'),
+  ],
 } satisfies Config
 ```
 
@@ -395,85 +395,85 @@ export default {
 
 /* Button variants */
 .btn-primary {
-    @apply bg-brand-600 hover:bg-brand-700 focus:ring-brand-500 inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
+  @apply bg-brand-600 hover:bg-brand-700 focus:ring-brand-500 inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .btn-secondary {
-    @apply focus:ring-brand-500 inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors duration-200 hover:bg-gray-50 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
+  @apply focus:ring-brand-500 inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors duration-200 hover:bg-gray-50 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .btn-outline {
-    @apply text-brand-700 border-brand-300 hover:bg-brand-50 focus:ring-brand-500 inline-flex items-center justify-center rounded-md border bg-transparent px-4 py-2 text-sm font-medium transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
+  @apply text-brand-700 border-brand-300 hover:bg-brand-50 focus:ring-brand-500 inline-flex items-center justify-center rounded-md border bg-transparent px-4 py-2 text-sm font-medium transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .btn-ghost {
-    @apply focus:ring-brand-500 inline-flex items-center justify-center rounded-md border border-transparent bg-transparent px-4 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
+  @apply focus:ring-brand-500 inline-flex items-center justify-center rounded-md border border-transparent bg-transparent px-4 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .btn-danger {
-    @apply bg-error-600 hover:bg-error-700 focus:ring-error-500 inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
+  @apply bg-error-600 hover:bg-error-700 focus:ring-error-500 inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 /* Form elements */
 .form-input {
-    @apply focus:ring-brand-500 focus:border-brand-500 w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm transition-colors duration-200 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-50;
+  @apply focus:ring-brand-500 focus:border-brand-500 w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm transition-colors duration-200 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-50;
 }
 
 .form-input-error {
-    @apply form-input border-red-300 focus:border-red-500 focus:ring-red-500;
+  @apply form-input border-red-300 focus:border-red-500 focus:ring-red-500;
 }
 
 .form-label {
-    @apply mb-1 block text-sm font-medium text-gray-700;
+  @apply mb-1 block text-sm font-medium text-gray-700;
 }
 
 .form-label-required::after {
-    @apply ml-1 text-red-500;
-    content: '*';
+  @apply ml-1 text-red-500;
+  content: '*';
 }
 
 .form-error {
-    @apply mt-1 text-sm text-red-600;
+  @apply mt-1 text-sm text-red-600;
 }
 
 .form-hint {
-    @apply mt-1 text-sm text-gray-500;
+  @apply mt-1 text-sm text-gray-500;
 }
 
 /* Status indicators */
 .status-success {
-    @apply bg-success-100 text-success-800 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  @apply bg-success-100 text-success-800 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
 
 .status-warning {
-    @apply bg-warning-100 text-warning-800 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  @apply bg-warning-100 text-warning-800 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
 
 .status-error {
-    @apply bg-error-100 text-error-800 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  @apply bg-error-100 text-error-800 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
 
 .status-info {
-    @apply bg-brand-100 text-brand-800 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  @apply bg-brand-100 text-brand-800 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
 
 /* Loading states */
 .loading-spinner {
-    @apply border-t-brand-600 animate-spin rounded-full border-2 border-gray-300;
+  @apply border-t-brand-600 animate-spin rounded-full border-2 border-gray-300;
 }
 
 .loading-skeleton {
-    @apply animate-pulse rounded bg-gray-300;
+  @apply animate-pulse rounded bg-gray-300;
 }
 
 /* Focus styles */
 .focus-ring {
-    @apply focus:ring-brand-500 focus:ring-2 focus:ring-offset-2 focus:outline-none;
+  @apply focus:ring-brand-500 focus:ring-2 focus:ring-offset-2 focus:outline-none;
 }
 
 /* Accessibility */
 .sr-only {
-    @apply absolute -m-px h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap;
+  @apply absolute -m-px h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap;
 }
 ```
 
@@ -486,45 +486,45 @@ export default {
 
 /* Dark mode color overrides */
 .dark {
-    --color-background: theme('colors.gray.900');
-    --color-surface: theme('colors.gray.800');
-    --color-text-primary: theme('colors.gray.100');
-    --color-text-secondary: theme('colors.gray.300');
-    --color-border: theme('colors.gray.700');
+  --color-background: theme('colors.gray.900');
+  --color-surface: theme('colors.gray.800');
+  --color-text-primary: theme('colors.gray.100');
+  --color-text-secondary: theme('colors.gray.300');
+  --color-border: theme('colors.gray.700');
 }
 
 /* Dark mode utility classes */
 .dark .bg-background {
-    background-color: var(--color-background);
+  background-color: var(--color-background);
 }
 
 .dark .bg-surface {
-    background-color: var(--color-surface);
+  background-color: var(--color-surface);
 }
 
 .dark .text-primary {
-    color: var(--color-text-primary);
+  color: var(--color-text-primary);
 }
 
 .dark .text-secondary {
-    color: var(--color-text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .dark .border-default {
-    border-color: var(--color-border);
+  border-color: var(--color-border);
 }
 
 /* Dark mode component overrides */
 .dark .form-input {
-    @apply border-gray-600 bg-gray-800 text-gray-100 placeholder-gray-400;
+  @apply border-gray-600 bg-gray-800 text-gray-100 placeholder-gray-400;
 }
 
 .dark .form-input:focus {
-    @apply border-brand-500 ring-brand-500;
+  @apply border-brand-500 ring-brand-500;
 }
 
 .dark .btn-secondary {
-    @apply border-gray-600 bg-gray-700 text-gray-100 hover:bg-gray-600;
+  @apply border-gray-600 bg-gray-700 text-gray-100 hover:bg-gray-600;
 }
 ```
 
@@ -561,11 +561,11 @@ const { isDark, toggleDarkMode } = useDarkMode()
 ```typescript
 // Tailwind breakpoints
 const breakpoints = {
-    sm: '640px', // Small devices (phones)
-    md: '768px', // Medium devices (tablets)
-    lg: '1024px', // Large devices (desktops)
-    xl: '1280px', // Extra large devices
-    '2xl': '1536px', // 2X large devices
+  sm: '640px', // Small devices (phones)
+  md: '768px', // Medium devices (tablets)
+  lg: '1024px', // Large devices (desktops)
+  xl: '1280px', // Extra large devices
+  '2xl': '1536px', // 2X large devices
 }
 ```
 
@@ -670,29 +670,29 @@ const breakpoints = {
 ```javascript
 // nuxt.config.ts
 export default defineNuxtConfig({
-    css: ['~/assets/css/main.css'],
-    postcss: {
-        plugins: {
-            tailwindcss: {},
-            autoprefixer: {},
-            ...(process.env.NODE_ENV === 'production' && {
-                '@fullhuman/postcss-purgecss': {
-                    content: [
-                        './components/**/*.{vue,js}',
-                        './layouts/**/*.vue',
-                        './pages/**/*.vue',
-                        './plugins/**/*.{js,ts}',
-                        './nuxt.config.{js,ts}',
-                        './app.vue',
-                    ],
-                    defaultExtractor: (content) => content.match(/[\\w-/:]+(?<!:)/g) || [],
-                    safelist: [
-                        /^(.*?)$/, // Keep dynamic classes
-                    ],
-                },
-            }),
+  css: ['~/assets/css/main.css'],
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+      ...(process.env.NODE_ENV === 'production' && {
+        '@fullhuman/postcss-purgecss': {
+          content: [
+            './components/**/*.{vue,js}',
+            './layouts/**/*.vue',
+            './pages/**/*.vue',
+            './plugins/**/*.{js,ts}',
+            './nuxt.config.{js,ts}',
+            './app.vue',
+          ],
+          defaultExtractor: (content) => content.match(/[\\w-/:]+(?<!:)/g) || [],
+          safelist: [
+            /^(.*?)$/, // Keep dynamic classes
+          ],
         },
+      }),
     },
+  },
 })
 ```
 
@@ -753,28 +753,28 @@ export default defineNuxtConfig({
 import { test, expect } from '@playwright/test'
 
 test.describe('Component Visual Tests', () => {
-    test('Button variants should match designs', async ({ page }) => {
-        await page.goto('/styleguide/buttons')
+  test('Button variants should match designs', async ({ page }) => {
+    await page.goto('/styleguide/buttons')
 
-        // Test different button states
-        await expect(page.locator('.btn-primary')).toHaveScreenshot('button-primary.png')
-        await expect(page.locator('.btn-secondary')).toHaveScreenshot('button-secondary.png')
+    // Test different button states
+    await expect(page.locator('.btn-primary')).toHaveScreenshot('button-primary.png')
+    await expect(page.locator('.btn-secondary')).toHaveScreenshot('button-secondary.png')
 
-        // Test hover states
-        await page.hover('.btn-primary')
-        await expect(page.locator('.btn-primary')).toHaveScreenshot('button-primary-hover.png')
+    // Test hover states
+    await page.hover('.btn-primary')
+    await expect(page.locator('.btn-primary')).toHaveScreenshot('button-primary-hover.png')
+  })
+
+  test('Dark mode should render correctly', async ({ page }) => {
+    await page.goto('/dashboard')
+
+    // Enable dark mode
+    await page.evaluate(() => {
+      document.documentElement.classList.add('dark')
     })
 
-    test('Dark mode should render correctly', async ({ page }) => {
-        await page.goto('/dashboard')
-
-        // Enable dark mode
-        await page.evaluate(() => {
-            document.documentElement.classList.add('dark')
-        })
-
-        await expect(page).toHaveScreenshot('dashboard-dark-mode.png')
-    })
+    await expect(page).toHaveScreenshot('dashboard-dark-mode.png')
+  })
 })
 ```
 
@@ -786,31 +786,31 @@ import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 
 test.describe('Styling Accessibility Tests', () => {
-    test('Color contrast should meet WCAG standards', async ({ page }) => {
-        await page.goto('/components')
+  test('Color contrast should meet WCAG standards', async ({ page }) => {
+    await page.goto('/components')
 
-        const accessibilityScanResults = await new AxeBuilder({ page })
-            .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
-            .analyze()
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+      .analyze()
 
-        expect(accessibilityScanResults.violations).toEqual([])
+    expect(accessibilityScanResults.violations).toEqual([])
+  })
+
+  test('Focus indicators should be visible', async ({ page }) => {
+    await page.goto('/form-example')
+
+    // Tab through form elements
+    await page.keyboard.press('Tab')
+    const focusedElement = await page.evaluate(() => document.activeElement?.tagName)
+
+    // Check focus ring visibility
+    const focusRing = await page.locator(':focus').evaluate((el) => {
+      const styles = window.getComputedStyle(el)
+      return styles.outline !== 'none' || styles.boxShadow.includes('ring')
     })
 
-    test('Focus indicators should be visible', async ({ page }) => {
-        await page.goto('/form-example')
-
-        // Tab through form elements
-        await page.keyboard.press('Tab')
-        const focusedElement = await page.evaluate(() => document.activeElement?.tagName)
-
-        // Check focus ring visibility
-        const focusRing = await page.locator(':focus').evaluate((el) => {
-            const styles = window.getComputedStyle(el)
-            return styles.outline !== 'none' || styles.boxShadow.includes('ring')
-        })
-
-        expect(focusRing).toBe(true)
-    })
+    expect(focusRing).toBe(true)
+  })
 })
 ```
 

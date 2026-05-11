@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13558986",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85142100732&origin=inward",
-        "title": "Numerical study on the noise propagation characteristics of rotor in non-uniform downwash flowfield Based on Linearized Euler Equations",
-        "content": "<html><body>To study the influence of non-uniform flowfield on the propagation characteristics of helicopter rotor noise, a Hybrid Computational Aeroacoustics (HCAA) method is developed. The acoustic source region is simulated by Computational Fluid Dynamics (CFD) technique with the Unsteady Reynolds Averaged Navier-Stokes equations (URANS) as the governing equations. Acoustic near-field is simulated by Computational Aeroacoustics (CAA) technique with the Linearized Euler Equations (LEE) as the governing equations, and the numerical discretization of the LEE is accomplished by Runge-Kutta Discontinuous Galerkin (RKDG) method. A novel acoustic source extraction method based on pressure and pressure gradient is proposed to accomplish the one-way CFD-CAA weak coupling. The HCAA method is validated through comparisons with noise experimental data of the UH-1H model rotor and the BO-105 model rotor. Based on the proposed HCAA method, the convection and refraction effects of rotor noise under different collective pitch angles are analyzed. The results show that the distortion effect of the rotor noise is most affected by the non-uniformly distributed downwash velocity field, resulting in an increment of acoustic energy below the rotor plane. The effect of non-uniformly distributed downwash velocity on noise propagation increases with the increase of the collective pitch angle. For the UH-1H model rotor, the maximum change of the sound pressure level is 0.8 dB (about 10% change of the effective sound pressure). <br/><br/><br/>Authors: Yang T., Chen X., Zhao Q., Zhao G.. <br/><br/>Affiliations: Nanjing University of Aeronautics and Astronautics. <br/><br/>Publication: International Journal of Aeroacoustics, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13559067",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85142100732&origin=inward",
-        "title": "Numerical study on the noise propagation characteristics of rotor in non-uniform downwash flowfield Based on Linearized Euler Equations",
-        "content": "<html><body>To study the influence of non-uniform flowfield on the propagation characteristics of helicopter rotor noise, a Hybrid Computational Aeroacoustics (HCAA) method is developed. The acoustic source region is simulated by Computational Fluid Dynamics (CFD) technique with the Unsteady Reynolds Averaged Navier-Stokes equations (URANS) as the governing equations. Acoustic near-field is simulated by Computational Aeroacoustics (CAA) technique with the Linearized Euler Equations (LEE) as the governing equations, and the numerical discretization of the LEE is accomplished by Runge-Kutta Discontinuous Galerkin (RKDG) method. A novel acoustic source extraction method based on pressure and pressure gradient is proposed to accomplish the one-way CFD-CAA weak coupling. The HCAA method is validated through comparisons with noise experimental data of the UH-1H model rotor and the BO-105 model rotor. Based on the proposed HCAA method, the convection and refraction effects of rotor noise under different collective pitch angles are analyzed. The results show that the distortion effect of the rotor noise is most affected by the non-uniformly distributed downwash velocity field, resulting in an increment of acoustic energy below the rotor plane. The effect of non-uniformly distributed downwash velocity on noise propagation increases with the increase of the collective pitch angle. For the UH-1H model rotor, the maximum change of the sound pressure level is 0.8 dB (about 10% change of the effective sound pressure). <br/><br/><br/>Authors: Yang T., Chen X., Zhao Q., Zhao G.. <br/><br/>Affiliations: Nanjing University of Aeronautics and Astronautics. <br/><br/>Publication: International Journal of Aeroacoustics, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13558986",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85142100732&origin=inward",
+    "title": "Numerical study on the noise propagation characteristics of rotor in non-uniform downwash flowfield Based on Linearized Euler Equations",
+    "content": "<html><body>To study the influence of non-uniform flowfield on the propagation characteristics of helicopter rotor noise, a Hybrid Computational Aeroacoustics (HCAA) method is developed. The acoustic source region is simulated by Computational Fluid Dynamics (CFD) technique with the Unsteady Reynolds Averaged Navier-Stokes equations (URANS) as the governing equations. Acoustic near-field is simulated by Computational Aeroacoustics (CAA) technique with the Linearized Euler Equations (LEE) as the governing equations, and the numerical discretization of the LEE is accomplished by Runge-Kutta Discontinuous Galerkin (RKDG) method. A novel acoustic source extraction method based on pressure and pressure gradient is proposed to accomplish the one-way CFD-CAA weak coupling. The HCAA method is validated through comparisons with noise experimental data of the UH-1H model rotor and the BO-105 model rotor. Based on the proposed HCAA method, the convection and refraction effects of rotor noise under different collective pitch angles are analyzed. The results show that the distortion effect of the rotor noise is most affected by the non-uniformly distributed downwash velocity field, resulting in an increment of acoustic energy below the rotor plane. The effect of non-uniformly distributed downwash velocity on noise propagation increases with the increase of the collective pitch angle. For the UH-1H model rotor, the maximum change of the sound pressure level is 0.8 dB (about 10% change of the effective sound pressure). <br/><br/><br/>Authors: Yang T., Chen X., Zhao Q., Zhao G.. <br/><br/>Affiliations: Nanjing University of Aeronautics and Astronautics. <br/><br/>Publication: International Journal of Aeroacoustics, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13559067",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85142100732&origin=inward",
+    "title": "Numerical study on the noise propagation characteristics of rotor in non-uniform downwash flowfield Based on Linearized Euler Equations",
+    "content": "<html><body>To study the influence of non-uniform flowfield on the propagation characteristics of helicopter rotor noise, a Hybrid Computational Aeroacoustics (HCAA) method is developed. The acoustic source region is simulated by Computational Fluid Dynamics (CFD) technique with the Unsteady Reynolds Averaged Navier-Stokes equations (URANS) as the governing equations. Acoustic near-field is simulated by Computational Aeroacoustics (CAA) technique with the Linearized Euler Equations (LEE) as the governing equations, and the numerical discretization of the LEE is accomplished by Runge-Kutta Discontinuous Galerkin (RKDG) method. A novel acoustic source extraction method based on pressure and pressure gradient is proposed to accomplish the one-way CFD-CAA weak coupling. The HCAA method is validated through comparisons with noise experimental data of the UH-1H model rotor and the BO-105 model rotor. Based on the proposed HCAA method, the convection and refraction effects of rotor noise under different collective pitch angles are analyzed. The results show that the distortion effect of the rotor noise is most affected by the non-uniformly distributed downwash velocity field, resulting in an increment of acoustic energy below the rotor plane. The effect of non-uniformly distributed downwash velocity on noise propagation increases with the increase of the collective pitch angle. For the UH-1H model rotor, the maximum change of the sound pressure level is 0.8 dB (about 10% change of the effective sound pressure). <br/><br/><br/>Authors: Yang T., Chen X., Zhao Q., Zhao G.. <br/><br/>Affiliations: Nanjing University of Aeronautics and Astronautics. <br/><br/>Publication: International Journal of Aeroacoustics, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

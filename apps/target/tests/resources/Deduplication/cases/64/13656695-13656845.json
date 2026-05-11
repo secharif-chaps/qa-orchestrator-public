@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13656695",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85146223969&origin=inward",
-        "title": "Robust Three-Dimensional Acoustic Performance Probabilistic Model for Nacelle Liners",
-        "content": "<html><body>This paper is devoted to the robust optimization of nacelle liners (acoustic treatments). The full computational aeroacoustic model is based on the convected Helmholtz equation in presence of a nonhomogeneous flow velocity field, which is computed by solving the potential Euler equations. Uncertainties are taken into account in order to increase the robustness of the predictions. A reduced-order computational aeroacoustic model is constructed in order to implement the nonparametric probabilistic model of uncertainties induced by the modeling errors in the aeroacoustic model and in the liner model. In addition, the uncertainties on the acoustic excitation induced by the fan are taken into account using the parametric probabilistic approach. The developed methodology is applied to a three-dimensional nacelle intake and allows for computing the confidence regions of the random far-field radiated pressure in terms of random sound pressure level, which are compared with experiments for one flight condition, one frequency, and for two types of liners. <br/><br/><br/>Authors: Dangla V., Soize C., Cunha G., Mosson A., Kassem M., Nieuwenhof B.V.D.. <br/><br/>Affiliations: Université Gustave Eiffel, Airbus France, Free Field Technologies. <br/><br/>Publication: AIAA Journal, October 2021, pp.4195-4211. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13656845",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85146223969&origin=inward",
-        "title": "Robust Three-Dimensional Acoustic Performance Probabilistic Model for Nacelle Liners",
-        "content": "<html><body>This paper is devoted to the robust optimization of nacelle liners (acoustic treatments). The full computational aeroacoustic model is based on the convected Helmholtz equation in presence of a nonhomogeneous flow velocity field, which is computed by solving the potential Euler equations. Uncertainties are taken into account in order to increase the robustness of the predictions. A reduced-order computational aeroacoustic model is constructed in order to implement the nonparametric probabilistic model of uncertainties induced by the modeling errors in the aeroacoustic model and in the liner model. In addition, the uncertainties on the acoustic excitation induced by the fan are taken into account using the parametric probabilistic approach. The developed methodology is applied to a three-dimensional nacelle intake and allows for computing the confidence regions of the random far-field radiated pressure in terms of random sound pressure level, which are compared with experiments for one flight condition, one frequency, and for two types of liners. <br/><br/><br/>Authors: Dangla V., Soize C., Cunha G., Mosson A., Kassem M., Nieuwenhof B.V.D.. <br/><br/>Affiliations: Université Gustave Eiffel, Airbus France, Free Field Technologies. <br/><br/>Publication: AIAA Journal, October 2021, pp.4195-4211. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "partial_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13656695",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85146223969&origin=inward",
+    "title": "Robust Three-Dimensional Acoustic Performance Probabilistic Model for Nacelle Liners",
+    "content": "<html><body>This paper is devoted to the robust optimization of nacelle liners (acoustic treatments). The full computational aeroacoustic model is based on the convected Helmholtz equation in presence of a nonhomogeneous flow velocity field, which is computed by solving the potential Euler equations. Uncertainties are taken into account in order to increase the robustness of the predictions. A reduced-order computational aeroacoustic model is constructed in order to implement the nonparametric probabilistic model of uncertainties induced by the modeling errors in the aeroacoustic model and in the liner model. In addition, the uncertainties on the acoustic excitation induced by the fan are taken into account using the parametric probabilistic approach. The developed methodology is applied to a three-dimensional nacelle intake and allows for computing the confidence regions of the random far-field radiated pressure in terms of random sound pressure level, which are compared with experiments for one flight condition, one frequency, and for two types of liners. <br/><br/><br/>Authors: Dangla V., Soize C., Cunha G., Mosson A., Kassem M., Nieuwenhof B.V.D.. <br/><br/>Affiliations: Université Gustave Eiffel, Airbus France, Free Field Technologies. <br/><br/>Publication: AIAA Journal, October 2021, pp.4195-4211. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13656845",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85146223969&origin=inward",
+    "title": "Robust Three-Dimensional Acoustic Performance Probabilistic Model for Nacelle Liners",
+    "content": "<html><body>This paper is devoted to the robust optimization of nacelle liners (acoustic treatments). The full computational aeroacoustic model is based on the convected Helmholtz equation in presence of a nonhomogeneous flow velocity field, which is computed by solving the potential Euler equations. Uncertainties are taken into account in order to increase the robustness of the predictions. A reduced-order computational aeroacoustic model is constructed in order to implement the nonparametric probabilistic model of uncertainties induced by the modeling errors in the aeroacoustic model and in the liner model. In addition, the uncertainties on the acoustic excitation induced by the fan are taken into account using the parametric probabilistic approach. The developed methodology is applied to a three-dimensional nacelle intake and allows for computing the confidence regions of the random far-field radiated pressure in terms of random sound pressure level, which are compared with experiments for one flight condition, one frequency, and for two types of liners. <br/><br/><br/>Authors: Dangla V., Soize C., Cunha G., Mosson A., Kassem M., Nieuwenhof B.V.D.. <br/><br/>Affiliations: Université Gustave Eiffel, Airbus France, Free Field Technologies. <br/><br/>Publication: AIAA Journal, October 2021, pp.4195-4211. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "partial_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

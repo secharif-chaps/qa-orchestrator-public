@@ -100,18 +100,18 @@ Key themes discussed. **Always in English.**
 
 ```json
 {
-    "searchResultId": "{{ $json.searchResult.id }}",
-    "extractions": {
-        "actors": [
-            /* max 3 */
-        ],
-        "sources": [
-            /* max 3 */
-        ],
-        "topics": [
-            /* max 3 */
-        ]
-    }
+  "searchResultId": "{{ $json.searchResult.id }}",
+  "extractions": {
+    "actors": [
+      /* max 3 */
+    ],
+    "sources": [
+      /* max 3 */
+    ],
+    "topics": [
+      /* max 3 */
+    ]
+  }
 }
 ```
 
@@ -128,42 +128,42 @@ Key themes discussed. **Always in English.**
 
 ```json
 {
-    "searchResultId": "abc-123",
-    "extractions": {
-        "actors": [
-            {
-                "label": "BYD",
-                "type": "competitor",
-                "primaryDomain": "byd.com",
-                "score": 95,
-                "explanation_fr": "Constructeur chinois de VE qui a dépassé Tesla au Q3 2024",
-                "explanation_en": "Chinese EV manufacturer that overtook Tesla in Q3 2024",
-                "confidence": 0.95
-            }
-        ],
-        "sources": [
-            {
-                "name": "TechCrunch",
-                "description_fr": "Publication tech sur l'innovation",
-                "description_en": "Tech publication on innovation",
-                "relevance_fr": "Source clé pour l'actualité VE",
-                "relevance_en": "Key source for EV news",
-                "primaryDomain": "techcrunch.com",
-                "url": "https://techcrunch.com/2024/tesla-competitors",
-                "type": "blog",
-                "score": 85,
-                "confidence": 0.9
-            }
-        ],
-        "topics": [
-            {
-                "name": "EV Market Share Competition",
-                "explanation": "Directly addresses competitive dynamics in the EV market",
-                "score": 90,
-                "confidence": 0.92
-            }
-        ]
-    }
+  "searchResultId": "abc-123",
+  "extractions": {
+    "actors": [
+      {
+        "label": "BYD",
+        "type": "competitor",
+        "primaryDomain": "byd.com",
+        "score": 95,
+        "explanation_fr": "Constructeur chinois de VE qui a dépassé Tesla au Q3 2024",
+        "explanation_en": "Chinese EV manufacturer that overtook Tesla in Q3 2024",
+        "confidence": 0.95
+      }
+    ],
+    "sources": [
+      {
+        "name": "TechCrunch",
+        "description_fr": "Publication tech sur l'innovation",
+        "description_en": "Tech publication on innovation",
+        "relevance_fr": "Source clé pour l'actualité VE",
+        "relevance_en": "Key source for EV news",
+        "primaryDomain": "techcrunch.com",
+        "url": "https://techcrunch.com/2024/tesla-competitors",
+        "type": "blog",
+        "score": 85,
+        "confidence": 0.9
+      }
+    ],
+    "topics": [
+      {
+        "name": "EV Market Share Competition",
+        "explanation": "Directly addresses competitive dynamics in the EV market",
+        "score": 90,
+        "confidence": 0.92
+      }
+    ]
+  }
 }
 ```
 

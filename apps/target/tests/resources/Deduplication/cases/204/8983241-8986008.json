@@ -1,36 +1,36 @@
 {
-    "account_id": 204,
-    "legacy_outcome": "NEAR_EXACT",
-    "legacy_level": 110,
-    "master": {
-        "id": "legacy-204-master-8983241",
-        "url": "https://balkaninsight.com/2022/02/15/concern-over-uncontrolled-security-cameras-in-serb-dominated-north-kosovo/",
-        "title": "Concern over ‘Uncontrolled’ Security Cameras in Serb- Dominated North Kosovo",
-        "content": "<html><head><title>Concern over ‘Uncontrolled’ Security Cameras in Serb- Dominated North Kosovo</title></head><body><div><p><img/><br/>Security cameras in Serb majority Kosovo northern municipalities. Photo:BIRN</p>\n<p>There are two close to the bus station in North Mitrovica, several in Zvecan and others in a village of Zubin Potok.</p>\n<p>But while, by law, security cameras directed at public streets should be the sole responsibility of Kosovo’s police force, dozens observed by BIRN in three Serb-majority municipalities in the country’s north are not apparently under anyone’s control.</p>\n<p>The Kosovo police say that, in the north, they operate only the security cameras on the main bridge in the ethnically divided town of Mitrovica, a frequent flashpoint since Kosovo’s 1998-99 war.</p>\n<p>But as for the others, municipal authorities in Zubin Potok, Zvecan and North Mitrovica – who answer more to Belgrade than they do Pristina – say they have no control.</p>\n<p>According to the Kosovo Information and Privacy Agency, AIP, only the Kosovo police “has legal authorisation to install security cameras that conduct preventive surveillance of public order.”</p>\n<p>“If they are installed by the municipalities, the surveillance and their control should be given to the Kosovo Police,” AIP told BIRN.</p>\n<p>AIP says it is working with police to make sure public security cameras across Kosovo are brought under police control, citing the example of cameras in western Peja/Pec municipality that were previously managed by the municipality.</p>\n<p>But this is not the case in the north, where ethnic Serbs, backed by Serbia, have resisted integration with the rest of majority-Albanian Kosovo.</p>\n<p>According to Besim Hoti, police deputy director for the north, many of the cameras identified by BIRN in the north are not functioning, while others are controlled either by municipal authorities or by public enterprises.</p>\n<p>In Zvecan, a security guard at the municipality – who did not give his name – told BIRN that the feed from the security cameras had recently been moved to the North Mitrovica municipality, widely seen as the base of Serbian so-called ‘parallel structures’ still operating in the north more than two decades since the war and 14 years since Kosovo declared independence from Serbia.</p>\n<p>Zvecan mayor Dragisa Milovic said the only camera operated by the municipality films “movement within the building of the municipality” and that any others filming the streets are not under municipality control.</p>\n<p>North Mitrovica deputy mayor Adrijana Hodzic said she was unaware “who installed the camera or who supervises these devices.”</p>\n<p>Asked whether his municipality is responsible for the cameras, Zubin Potok mayor Srdjan Vulovic told BIRN: “I don’t think so, but I’m not sure.”</p>\n</div></body></html>"
-    },
-    "candidate": {
-        "id": "legacy-204-dup-8986008",
-        "url": "https://prishtinainsight.com/concern-over-uncontrolled-security-cameras-in-serb-dominated-north-kosovo/",
-        "title": "Concern over ‘Uncontrolled’ Security Cameras in Serb- Dominated North Kosovo",
-        "content": "<html><head><title>Concern over ‘Uncontrolled’ Security Cameras in Serb- Dominated North Kosovo</title></head><body><div>\n<p>There are two close to the bus station in North Mitrovica, several in Zvecan and others in a village of Zubin Potok.</p>\n<p>But while, by law, security cameras directed at public streets should be the sole responsibility of Kosovo’s police force, dozens observed by BIRN in three Serb-majority municipalities in the country’s north are not apparently under anyone’s control.</p>\n<p>The Kosovo police say that, in the north, they operate only the security cameras on the main bridge in the ethnically divided town of Mitrovica, a frequent flashpoint since Kosovo’s 1998-99 war.</p>\n<p>But as for the others, municipal authorities in Zubin Potok, Zvecan and North Mitrovica – who answer more to Belgrade than they do Pristina – say they have no control.</p>\n<p>According to the Kosovo Information and Privacy Agency, AIP, only the Kosovo police “has legal authorisation to install security cameras that conduct preventive surveillance of public order.”</p>\n<p>“If they are installed by the municipalities, the surveillance and their control should be given to the Kosovo Police,” AIP told BIRN.</p>\n<p>AIP says it is working with police to make sure public security cameras across Kosovo are brought under police control, citing the example of cameras in western Peja/Pec municipality that were previously managed by the municipality.</p>\n<p>But this is not the case in the north, where ethnic Serbs, backed by Serbia, have resisted integration with the rest of majority-Albanian Kosovo.</p>\n<p>According to Besim Hoti, police deputy director for the north, many of the cameras identified by BIRN in the north are not functioning, while others are controlled either by municipal authorities or by public enterprises.</p>\n<p>In Zvecan, a security guard at the municipality – who did not give his name – told BIRN that the feed from the security cameras had recently been moved to the North Mitrovica municipality, widely seen as the base of Serbian so-called ‘parallel structures’ still operating in the north more than two decades since the war and 14 years since Kosovo declared independence from Serbia.</p>\n<p>Zvecan mayor Dragisa Milovic said the only camera operated by the municipality films “movement within the building of the municipality” and that any others filming the streets are not under municipality control.</p>\n<p>North Mitrovica deputy mayor Adrijana Hodzic said she was unaware “who installed the camera or who supervises these devices.”</p>\n<p>Asked whether his municipality is responsible for the cameras, Zubin Potok mayor Srdjan Vulovic told BIRN: “I don’t think so, but I’m not sure.”</p>\n</div></body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "partial_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same BIRN article with identical title and overlapping paragraphs, republished on a partner site."
-    },
-    "pinned": {
-        "outcome": "near_duplicate",
-        "stage": "min_hash_lsh",
-        "similarity": 0.984375
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 204,
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-204-master-8983241",
+    "url": "https://balkaninsight.com/2022/02/15/concern-over-uncontrolled-security-cameras-in-serb-dominated-north-kosovo/",
+    "title": "Concern over ‘Uncontrolled’ Security Cameras in Serb- Dominated North Kosovo",
+    "content": "<html><head><title>Concern over ‘Uncontrolled’ Security Cameras in Serb- Dominated North Kosovo</title></head><body><div><p><img/><br/>Security cameras in Serb majority Kosovo northern municipalities. Photo:BIRN</p>\n<p>There are two close to the bus station in North Mitrovica, several in Zvecan and others in a village of Zubin Potok.</p>\n<p>But while, by law, security cameras directed at public streets should be the sole responsibility of Kosovo’s police force, dozens observed by BIRN in three Serb-majority municipalities in the country’s north are not apparently under anyone’s control.</p>\n<p>The Kosovo police say that, in the north, they operate only the security cameras on the main bridge in the ethnically divided town of Mitrovica, a frequent flashpoint since Kosovo’s 1998-99 war.</p>\n<p>But as for the others, municipal authorities in Zubin Potok, Zvecan and North Mitrovica – who answer more to Belgrade than they do Pristina – say they have no control.</p>\n<p>According to the Kosovo Information and Privacy Agency, AIP, only the Kosovo police “has legal authorisation to install security cameras that conduct preventive surveillance of public order.”</p>\n<p>“If they are installed by the municipalities, the surveillance and their control should be given to the Kosovo Police,” AIP told BIRN.</p>\n<p>AIP says it is working with police to make sure public security cameras across Kosovo are brought under police control, citing the example of cameras in western Peja/Pec municipality that were previously managed by the municipality.</p>\n<p>But this is not the case in the north, where ethnic Serbs, backed by Serbia, have resisted integration with the rest of majority-Albanian Kosovo.</p>\n<p>According to Besim Hoti, police deputy director for the north, many of the cameras identified by BIRN in the north are not functioning, while others are controlled either by municipal authorities or by public enterprises.</p>\n<p>In Zvecan, a security guard at the municipality – who did not give his name – told BIRN that the feed from the security cameras had recently been moved to the North Mitrovica municipality, widely seen as the base of Serbian so-called ‘parallel structures’ still operating in the north more than two decades since the war and 14 years since Kosovo declared independence from Serbia.</p>\n<p>Zvecan mayor Dragisa Milovic said the only camera operated by the municipality films “movement within the building of the municipality” and that any others filming the streets are not under municipality control.</p>\n<p>North Mitrovica deputy mayor Adrijana Hodzic said she was unaware “who installed the camera or who supervises these devices.”</p>\n<p>Asked whether his municipality is responsible for the cameras, Zubin Potok mayor Srdjan Vulovic told BIRN: “I don’t think so, but I’m not sure.”</p>\n</div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-204-dup-8986008",
+    "url": "https://prishtinainsight.com/concern-over-uncontrolled-security-cameras-in-serb-dominated-north-kosovo/",
+    "title": "Concern over ‘Uncontrolled’ Security Cameras in Serb- Dominated North Kosovo",
+    "content": "<html><head><title>Concern over ‘Uncontrolled’ Security Cameras in Serb- Dominated North Kosovo</title></head><body><div>\n<p>There are two close to the bus station in North Mitrovica, several in Zvecan and others in a village of Zubin Potok.</p>\n<p>But while, by law, security cameras directed at public streets should be the sole responsibility of Kosovo’s police force, dozens observed by BIRN in three Serb-majority municipalities in the country’s north are not apparently under anyone’s control.</p>\n<p>The Kosovo police say that, in the north, they operate only the security cameras on the main bridge in the ethnically divided town of Mitrovica, a frequent flashpoint since Kosovo’s 1998-99 war.</p>\n<p>But as for the others, municipal authorities in Zubin Potok, Zvecan and North Mitrovica – who answer more to Belgrade than they do Pristina – say they have no control.</p>\n<p>According to the Kosovo Information and Privacy Agency, AIP, only the Kosovo police “has legal authorisation to install security cameras that conduct preventive surveillance of public order.”</p>\n<p>“If they are installed by the municipalities, the surveillance and their control should be given to the Kosovo Police,” AIP told BIRN.</p>\n<p>AIP says it is working with police to make sure public security cameras across Kosovo are brought under police control, citing the example of cameras in western Peja/Pec municipality that were previously managed by the municipality.</p>\n<p>But this is not the case in the north, where ethnic Serbs, backed by Serbia, have resisted integration with the rest of majority-Albanian Kosovo.</p>\n<p>According to Besim Hoti, police deputy director for the north, many of the cameras identified by BIRN in the north are not functioning, while others are controlled either by municipal authorities or by public enterprises.</p>\n<p>In Zvecan, a security guard at the municipality – who did not give his name – told BIRN that the feed from the security cameras had recently been moved to the North Mitrovica municipality, widely seen as the base of Serbian so-called ‘parallel structures’ still operating in the north more than two decades since the war and 14 years since Kosovo declared independence from Serbia.</p>\n<p>Zvecan mayor Dragisa Milovic said the only camera operated by the municipality films “movement within the building of the municipality” and that any others filming the streets are not under municipality control.</p>\n<p>North Mitrovica deputy mayor Adrijana Hodzic said she was unaware “who installed the camera or who supervises these devices.”</p>\n<p>Asked whether his municipality is responsible for the cameras, Zubin Potok mayor Srdjan Vulovic told BIRN: “I don’t think so, but I’m not sure.”</p>\n</div></body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "partial_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same BIRN article with identical title and overlapping paragraphs, republished on a partner site."
+  },
+  "pinned": {
+    "outcome": "near_duplicate",
+    "stage": "min_hash_lsh",
+    "similarity": 0.984375
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

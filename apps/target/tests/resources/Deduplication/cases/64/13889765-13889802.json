@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13889765",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85159478802&origin=inward",
-        "title": "MACHINING SIMULATION OF UNIDIRECTIONAL AND 2D WOVEN FIBER-REINFORCED COMPOSITES",
-        "content": "<html><body>Fiber-reinforced composite materials, including Polymer Matrix Composites (PMC), Ceramic Matrix Composites (CMC) and Carbon/Carbon composites (C/C), have been widely used on aerostructures due to their superior mechanical and thermal properties. Despite their flexibility to be molded into complex freeform geometries, most composite components must still undergo several machining operations before being incorporated into their final applications. However, the complex nature of composites, including the heterogeneous structure, high brittleness, and high hardness of the constituents, presents severe challenges for machining. Conventional machining strategies developed for metals are not directly applicable for composites. Without an analysis tool to help understand, plan, and optimize the machining of composites, manufacturers must rely on trial and error, which is slow, expensive, and results in strategies that are difficult to generalize. This study presents a Finite Element Analysis (FEA) tool that performs thermo-mechanical coupled simulations for the machining of unidirectional and 2D woven composites. This FEA tool integrates physics-based material modeling that accounts for anisotropic and heterogeneous material properties, multi-body deformable contact for modeling tool-workpiece interaction, machining kinematics modeling, adaptive meshing that provides high resolution near the cutting zone, and an explicit dynamic finite element solver. It is used to model complex three-dimensional machining processes such as turning, milling, and drilling based on user-defined cutting tool geometries, process parameters, and materials. Simulation outputs include cutting forces, stresses and temperatures of the tool and workpiece, and workpiece quality indicators like intralaminar and interlaminar damage. The modeling tool will allow composite machining to be performed with a solid scientific foundation, eliminate the trial-and-error methods, and, ultimately, enable the production of high quality parts in a fast and cost-effective manner. <br/><br/><br/>Authors: Hou F., Heigel J., Olson D., Monpara G., Marusich K.. <br/><br/>Affiliations: . <br/><br/>Publication: Composites and Advanced Materials Expo, CAMX 2022, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13889802",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85159478802&origin=inward",
-        "title": "MACHINING SIMULATION OF UNIDIRECTIONAL AND 2D WOVEN FIBER-REINFORCED COMPOSITES",
-        "content": "<html><body>Fiber-reinforced composite materials, including Polymer Matrix Composites (PMC), Ceramic Matrix Composites (CMC) and Carbon/Carbon composites (C/C), have been widely used on aerostructures due to their superior mechanical and thermal properties. Despite their flexibility to be molded into complex freeform geometries, most composite components must still undergo several machining operations before being incorporated into their final applications. However, the complex nature of composites, including the heterogeneous structure, high brittleness, and high hardness of the constituents, presents severe challenges for machining. Conventional machining strategies developed for metals are not directly applicable for composites. Without an analysis tool to help understand, plan, and optimize the machining of composites, manufacturers must rely on trial and error, which is slow, expensive, and results in strategies that are difficult to generalize. This study presents a Finite Element Analysis (FEA) tool that performs thermo-mechanical coupled simulations for the machining of unidirectional and 2D woven composites. This FEA tool integrates physics-based material modeling that accounts for anisotropic and heterogeneous material properties, multi-body deformable contact for modeling tool-workpiece interaction, machining kinematics modeling, adaptive meshing that provides high resolution near the cutting zone, and an explicit dynamic finite element solver. It is used to model complex three-dimensional machining processes such as turning, milling, and drilling based on user-defined cutting tool geometries, process parameters, and materials. Simulation outputs include cutting forces, stresses and temperatures of the tool and workpiece, and workpiece quality indicators like intralaminar and interlaminar damage. The modeling tool will allow composite machining to be performed with a solid scientific foundation, eliminate the trial-and-error methods, and, ultimately, enable the production of high quality parts in a fast and cost-effective manner. <br/><br/><br/>Authors: Hou F., Heigel J., Olson D., Monpara G., Marusich K.. <br/><br/>Affiliations: . <br/><br/>Publication: Composites and Advanced Materials Expo, CAMX 2022, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13889765",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85159478802&origin=inward",
+    "title": "MACHINING SIMULATION OF UNIDIRECTIONAL AND 2D WOVEN FIBER-REINFORCED COMPOSITES",
+    "content": "<html><body>Fiber-reinforced composite materials, including Polymer Matrix Composites (PMC), Ceramic Matrix Composites (CMC) and Carbon/Carbon composites (C/C), have been widely used on aerostructures due to their superior mechanical and thermal properties. Despite their flexibility to be molded into complex freeform geometries, most composite components must still undergo several machining operations before being incorporated into their final applications. However, the complex nature of composites, including the heterogeneous structure, high brittleness, and high hardness of the constituents, presents severe challenges for machining. Conventional machining strategies developed for metals are not directly applicable for composites. Without an analysis tool to help understand, plan, and optimize the machining of composites, manufacturers must rely on trial and error, which is slow, expensive, and results in strategies that are difficult to generalize. This study presents a Finite Element Analysis (FEA) tool that performs thermo-mechanical coupled simulations for the machining of unidirectional and 2D woven composites. This FEA tool integrates physics-based material modeling that accounts for anisotropic and heterogeneous material properties, multi-body deformable contact for modeling tool-workpiece interaction, machining kinematics modeling, adaptive meshing that provides high resolution near the cutting zone, and an explicit dynamic finite element solver. It is used to model complex three-dimensional machining processes such as turning, milling, and drilling based on user-defined cutting tool geometries, process parameters, and materials. Simulation outputs include cutting forces, stresses and temperatures of the tool and workpiece, and workpiece quality indicators like intralaminar and interlaminar damage. The modeling tool will allow composite machining to be performed with a solid scientific foundation, eliminate the trial-and-error methods, and, ultimately, enable the production of high quality parts in a fast and cost-effective manner. <br/><br/><br/>Authors: Hou F., Heigel J., Olson D., Monpara G., Marusich K.. <br/><br/>Affiliations: . <br/><br/>Publication: Composites and Advanced Materials Expo, CAMX 2022, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13889802",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85159478802&origin=inward",
+    "title": "MACHINING SIMULATION OF UNIDIRECTIONAL AND 2D WOVEN FIBER-REINFORCED COMPOSITES",
+    "content": "<html><body>Fiber-reinforced composite materials, including Polymer Matrix Composites (PMC), Ceramic Matrix Composites (CMC) and Carbon/Carbon composites (C/C), have been widely used on aerostructures due to their superior mechanical and thermal properties. Despite their flexibility to be molded into complex freeform geometries, most composite components must still undergo several machining operations before being incorporated into their final applications. However, the complex nature of composites, including the heterogeneous structure, high brittleness, and high hardness of the constituents, presents severe challenges for machining. Conventional machining strategies developed for metals are not directly applicable for composites. Without an analysis tool to help understand, plan, and optimize the machining of composites, manufacturers must rely on trial and error, which is slow, expensive, and results in strategies that are difficult to generalize. This study presents a Finite Element Analysis (FEA) tool that performs thermo-mechanical coupled simulations for the machining of unidirectional and 2D woven composites. This FEA tool integrates physics-based material modeling that accounts for anisotropic and heterogeneous material properties, multi-body deformable contact for modeling tool-workpiece interaction, machining kinematics modeling, adaptive meshing that provides high resolution near the cutting zone, and an explicit dynamic finite element solver. It is used to model complex three-dimensional machining processes such as turning, milling, and drilling based on user-defined cutting tool geometries, process parameters, and materials. Simulation outputs include cutting forces, stresses and temperatures of the tool and workpiece, and workpiece quality indicators like intralaminar and interlaminar damage. The modeling tool will allow composite machining to be performed with a solid scientific foundation, eliminate the trial-and-error methods, and, ultimately, enable the production of high quality parts in a fast and cost-effective manner. <br/><br/><br/>Authors: Hou F., Heigel J., Olson D., Monpara G., Marusich K.. <br/><br/>Affiliations: . <br/><br/>Publication: Composites and Advanced Materials Expo, CAMX 2022, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

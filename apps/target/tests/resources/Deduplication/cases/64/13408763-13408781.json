@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 53,
-    "master": {
-        "id": "legacy-64-master-13408763",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135961146&origin=inward",
-        "title": "A high-accuracy non-contact online measurement method of the rotorstator axial gap based on frequency scanning interferometry",
-        "content": "<html><body>Rotor-stator axial gap is a key design parameter that directly affects the efficiency and safety of large rotating machines. With optimum axial clearance value determined, the rotating machine can work with the highest efficiency. To realize active clearance control (ACC) of rotating machinery, high-precision non-contact online measurement of the axial gap must be carried out. However, traditional measurement methods are challenged by the extreme working environment, such as extreme temperature, high rotating speed, and narrow space conditions; no mature measurement method was reported to realize the high accuracy, non-contact, and online performance required by the axial gap measurement. In this paper, a rotor-stator axial gap measurement method is proposed based on frequency scanning interferometry, and the mathematical model of axial clearance measurement is established. The weak reflection signal of lens and time delay estimation algorithm is employed to undermine the impact of probe pigtail length drift caused by the temperature change under extreme conditions. The axial gap measurement prototype based on sweep frequency ranging was developed, and the measurement and system calibration was carried out. The experimental results verify the effectiveness and accuracy of the method. The drift of the system was less than 20μm in 30 minutes with millimeter level pigtail drift, and the measurement accuracy was better than 50μm. <br/><br/><br/>Authors: Bao R., Duan F., Fu X., Li X., Liu W., Yu Z.. <br/><br/>Affiliations: Tianjin University, Yunnan Open University. <br/><br/>Publication: Proceedings of SPIE - The International Society for Optical Engineering, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13408781",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135897600&origin=inward",
-        "title": "High precision real-time non-contact measurement of rotor-stator axial gap in narrow space based on laser swept-wavelength interferometry with 1kHz speed",
-        "content": "<html><body>In our work, a rotor-stator axial gap non-contact real-time measurement system based on SWI with an auxiliary interferometer for nonlinearity correction is established. The measurement speed is 1kHz and the principle is given. The data of 6-10mm distance is collected, and the distance of each position is calculated by windowed FFT and Hilbert transform respectively. The simulation results indicate that the measurement error of Hilbert algorithm is on the order of a fraction of nanometers, while that of FFT is micrometer level. However, FFT takes 36μs in one measurement which is three times faster than Hilbert algorithm. Both of the two meet the precision requirement of axial gap measurement, it helps us to choose the more appropriate algorithm according to the actual situation. <br/><br/><br/>Authors: Li X., Duan F., Fu X., Liu Z., Bao R., Zhi F., Jiang J.. <br/><br/>Affiliations: Tianjin University, Yunnan Open University. <br/><br/>Publication: Proceedings of SPIE - The International Society for Optical Engineering, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "unique",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "unique",
-        "note": "Different but related SPIE papers with distinct methods, descriptions, and author lists despite same venue and topic"
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "agreement_unique",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 53,
+  "master": {
+    "id": "legacy-64-master-13408763",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135961146&origin=inward",
+    "title": "A high-accuracy non-contact online measurement method of the rotorstator axial gap based on frequency scanning interferometry",
+    "content": "<html><body>Rotor-stator axial gap is a key design parameter that directly affects the efficiency and safety of large rotating machines. With optimum axial clearance value determined, the rotating machine can work with the highest efficiency. To realize active clearance control (ACC) of rotating machinery, high-precision non-contact online measurement of the axial gap must be carried out. However, traditional measurement methods are challenged by the extreme working environment, such as extreme temperature, high rotating speed, and narrow space conditions; no mature measurement method was reported to realize the high accuracy, non-contact, and online performance required by the axial gap measurement. In this paper, a rotor-stator axial gap measurement method is proposed based on frequency scanning interferometry, and the mathematical model of axial clearance measurement is established. The weak reflection signal of lens and time delay estimation algorithm is employed to undermine the impact of probe pigtail length drift caused by the temperature change under extreme conditions. The axial gap measurement prototype based on sweep frequency ranging was developed, and the measurement and system calibration was carried out. The experimental results verify the effectiveness and accuracy of the method. The drift of the system was less than 20μm in 30 minutes with millimeter level pigtail drift, and the measurement accuracy was better than 50μm. <br/><br/><br/>Authors: Bao R., Duan F., Fu X., Li X., Liu W., Yu Z.. <br/><br/>Affiliations: Tianjin University, Yunnan Open University. <br/><br/>Publication: Proceedings of SPIE - The International Society for Optical Engineering, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13408781",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135897600&origin=inward",
+    "title": "High precision real-time non-contact measurement of rotor-stator axial gap in narrow space based on laser swept-wavelength interferometry with 1kHz speed",
+    "content": "<html><body>In our work, a rotor-stator axial gap non-contact real-time measurement system based on SWI with an auxiliary interferometer for nonlinearity correction is established. The measurement speed is 1kHz and the principle is given. The data of 6-10mm distance is collected, and the distance of each position is calculated by windowed FFT and Hilbert transform respectively. The simulation results indicate that the measurement error of Hilbert algorithm is on the order of a fraction of nanometers, while that of FFT is micrometer level. However, FFT takes 36μs in one measurement which is three times faster than Hilbert algorithm. Both of the two meet the precision requirement of axial gap measurement, it helps us to choose the more appropriate algorithm according to the actual situation. <br/><br/><br/>Authors: Li X., Duan F., Fu X., Liu Z., Bao R., Zhi F., Jiang J.. <br/><br/>Affiliations: Tianjin University, Yunnan Open University. <br/><br/>Publication: Proceedings of SPIE - The International Society for Optical Engineering, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "unique",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "unique",
+    "note": "Different but related SPIE papers with distinct methods, descriptions, and author lists despite same venue and topic"
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "agreement_unique",
+  "content_source": "hbase_full"
 }

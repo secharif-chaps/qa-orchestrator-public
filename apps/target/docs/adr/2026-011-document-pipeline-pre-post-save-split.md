@@ -6,7 +6,7 @@
 
 ## Context
 
-ADR-2026-003 introduced a single `DocumentProcessingPipeline` that ran *after* `documentGateway->save()` and produced a `QualityReport`. ADR-2026-006 (deduplication) added the need for **enrichment** (canonical URL, fingerprints) and **exact-match deduplication** to happen *before* save — otherwise the document is indexed without its enrichments and a duplicate is persisted unnecessarily.
+ADR-2026-003 introduced a single `DocumentProcessingPipeline` that ran _after_ `documentGateway->save()` and produced a `QualityReport`. ADR-2026-006 (deduplication) added the need for **enrichment** (canonical URL, fingerprints) and **exact-match deduplication** to happen _before_ save — otherwise the document is indexed without its enrichments and a duplicate is persisted unnecessarily.
 
 The original design also coupled three concerns inside one orchestration:
 
@@ -27,11 +27,11 @@ A single neutral `DocumentPipeline` class is instantiated twice:
 
 Each pipeline orders its processors by `#[AsTaggedItem(priority: …)]`. The informative `PipelinePhase` enum names the conventional priority ranges:
 
-| Phase            | Range    | Pipeline   |
-| ---------------- | -------- | ---------- |
-| `ENRICHMENT`     | 200-299  | pre-save   |
-| `DEDUPLICATION`  | 100-199  | pre-save (Stage 0 — exact match) and post-save (Stage 1+ — fuzzy) |
-| `SCORING`        |   1-99   | post-save  |
+| Phase           | Range   | Pipeline                                                          |
+| --------------- | ------- | ----------------------------------------------------------------- |
+| `ENRICHMENT`    | 200-299 | pre-save                                                          |
+| `DEDUPLICATION` | 100-199 | pre-save (Stage 0 — exact match) and post-save (Stage 1+ — fuzzy) |
+| `SCORING`       | 1-99    | post-save                                                         |
 
 ### 2. Neutral pipeline returns a neutral context
 
@@ -45,7 +45,7 @@ A new `QualityReportBuilder` interprets that context: a halted context becomes `
 
 ### 3. `IngestDocumentAction` (formerly `AddDocumentAction`)
 
-The unified ingestion message is renamed to make its role explicit. Both the manual API processor (`CreateDocumentProcessor`) and the CLI command (`document:create`) build a `Document` (now via the shared `DocumentBuilderFromHtmlMetadata`) and dispatch `IngestDocumentAction`. So do every collect provider (Apify, Bakus). The `Create*` symbols cover *initial creation from a URL or raw HTML*; the `Ingest*` symbols cover the unified post-construction step.
+The unified ingestion message is renamed to make its role explicit. Both the manual API processor (`CreateDocumentProcessor`) and the CLI command (`document:create`) build a `Document` (now via the shared `DocumentBuilderFromHtmlMetadata`) and dispatch `IngestDocumentAction`. So do every collect provider (Apify, Bakus). The `Create*` symbols cover _initial creation from a URL or raw HTML_; the `Ingest*` symbols cover the unified post-construction step.
 
 ### 4. Namespace layout
 

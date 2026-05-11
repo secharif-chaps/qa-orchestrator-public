@@ -20,28 +20,28 @@ Previously, a Pinia store might have been responsible for handling the update lo
 
 ```typescript
 export const useWatchFileStore = defineStore('watch-file', () => {
-    const isLoading = ref(false)
-    const error = ref<any>(null)
+  const isLoading = ref(false)
+  const error = ref<any>(null)
 
-    async function updateWatchFile(id: string, data: Partial<WatchFile>) {
-        isLoading.value = true
-        error.value = null
-        try {
-            const updatedFile = await useApi().patch(`/watch_files/${id}`, data)
-            // Logic to update the file in the local state
-            // Manually show a success toast
-            useToast().success('File updated!')
-            return updatedFile
-        } catch (e) {
-            error.value = e
-            // Manually show an error toast
-            useToast().error('Update failed!')
-        } finally {
-            isLoading.value = false
-        }
+  async function updateWatchFile(id: string, data: Partial<WatchFile>) {
+    isLoading.value = true
+    error.value = null
+    try {
+      const updatedFile = await useApi().patch(`/watch_files/${id}`, data)
+      // Logic to update the file in the local state
+      // Manually show a success toast
+      useToast().success('File updated!')
+      return updatedFile
+    } catch (e) {
+      error.value = e
+      // Manually show an error toast
+      useToast().error('Update failed!')
+    } finally {
+      isLoading.value = false
     }
+  }
 
-    return { isLoading, error, updateWatchFile }
+  return { isLoading, error, updateWatchFile }
 })
 ```
 
@@ -58,13 +58,13 @@ const watchFileStore = useWatchFileStore()
 const { isLoading, error } = storeToRefs(watchFileStore)
 
 const handleUpdate = async () => {
-    await watchFileStore.updateWatchFile('some-id', { name: 'New Name' })
+  await watchFileStore.updateWatchFile('some-id', { name: 'New Name' })
 }
 </script>
 
 <template>
-    <button @click="handleUpdate" :disabled="isLoading">Update</button>
-    <p v-if="error">An error occurred: {{ error.message }}</p>
+  <button @click="handleUpdate" :disabled="isLoading">Update</button>
+  <p v-if="error">An error occurred: {{ error.message }}</p>
 </template>
 ```
 
@@ -83,8 +83,8 @@ import { useApi } from '@/api/api'
 import type { WatchFile } from '@/types/watchFile'
 
 export const updateWatchFile = async (id: string, data: Partial<WatchFile>) => {
-    const response = await useApi().patch<WatchFile>(`/watch_files/${id}`, data)
-    return response.data
+  const response = await useApi().patch<WatchFile>(`/watch_files/${id}`, data)
+  return response.data
 }
 ```
 
@@ -101,35 +101,31 @@ import type { WatchFile } from '@/types/watchFile'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 
 export const useUpdateWatchFile = defineMutation(() => {
-    const toast = useToast()
-    const { t } = useI18n()
-    const queryCache = useQueryCache()
-    const watchFileStore = useWatchFileStore() // For accessing filters
+  const toast = useToast()
+  const { t } = useI18n()
+  const queryCache = useQueryCache()
+  const watchFileStore = useWatchFileStore() // For accessing filters
 
-    const { mutate, ...mutation } = useMutation({
-        mutation: ({ id, data }: { id: string; data: Partial<WatchFile> }) =>
-            updateWatchFile(id, data),
+  const { mutate, ...mutation } = useMutation({
+    mutation: ({ id, data }: { id: string; data: Partial<WatchFile> }) => updateWatchFile(id, data),
 
-        // Handle side-effects here
-        onError() {
-            toast.error(
-                t('watch_files.title.error.toast_title'),
-                t('watch_files.title.error.generic'),
-            )
-        },
-        onSuccess({ id }) {
-            toast.success(t('watch_files.title.success.updated'))
-            // Invalidate queries to refetch stale data
-            queryCache.invalidateQueries({
-                key: WATCH_FILE_QUERY_KEYS.withFilters(watchFileStore.filters),
-            })
-            queryCache.invalidateQueries({
-                key: WATCH_FILE_QUERY_KEYS.byId(id),
-            })
-        },
-    })
+    // Handle side-effects here
+    onError() {
+      toast.error(t('watch_files.title.error.toast_title'), t('watch_files.title.error.generic'))
+    },
+    onSuccess({ id }) {
+      toast.success(t('watch_files.title.success.updated'))
+      // Invalidate queries to refetch stale data
+      queryCache.invalidateQueries({
+        key: WATCH_FILE_QUERY_KEYS.withFilters(watchFileStore.filters),
+      })
+      queryCache.invalidateQueries({
+        key: WATCH_FILE_QUERY_KEYS.byId(id),
+      })
+    },
+  })
 
-    return { ...mutation, updateTask: mutate }
+  return { ...mutation, updateTask: mutate }
 })
 ```
 
@@ -147,13 +143,13 @@ import { useUpdateWatchFile } from '@/api/mutations/watchFile'
 const { updateTask, isLoading, error } = useUpdateWatchFile()
 
 const handleUpdate = async () => {
-    await updateTask({ id: 'some-id', data: { name: 'New Name' } })
+  await updateTask({ id: 'some-id', data: { name: 'New Name' } })
 }
 </script>
 
 <template>
-    <button @click="handleUpdate" :disabled="isLoading">Update</button>
-    <p v-if="error">An error occurred: {{ error.message }}</p>
+  <button @click="handleUpdate" :disabled="isLoading">Update</button>
+  <p v-if="error">An error occurred: {{ error.message }}</p>
 </template>
 ```
 
@@ -168,14 +164,14 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useWatchFileStore = defineStore('watch-file', () => {
-    // State related to server mutations is removed.
-    // State for UI controls or filters remains.
-    const filters = ref({
-        // ... filter properties
-    })
+  // State related to server mutations is removed.
+  // State for UI controls or filters remains.
+  const filters = ref({
+    // ... filter properties
+  })
 
-    return {
-        filters,
-    }
+  return {
+    filters,
+  }
 })
 ```

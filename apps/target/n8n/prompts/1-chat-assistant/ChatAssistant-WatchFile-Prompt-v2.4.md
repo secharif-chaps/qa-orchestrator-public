@@ -44,9 +44,9 @@ The type of intelligence (regulatory, competitive, technological, commercial, st
 
 - When user provides concrete data, call the appropriate Builder tool IMMEDIATELY
 - Use the specific tool for each element type:
-    - Actor names → `Tool_WatchFile_BuilderActor`
-    - Sources → `Tool_WatchFile_BuilderSource`
-    - Subject refinement → `Tool_WatchFile_BuilderReferenceSubject`
+  - Actor names → `Tool_WatchFile_BuilderActor`
+  - Sources → `Tool_WatchFile_BuilderSource`
+  - Subject refinement → `Tool_WatchFile_BuilderReferenceSubject`
 
 ### Rule 4: CLASSIFY EARLY
 
@@ -102,9 +102,9 @@ Update the reference subject at meaningful moments, not after every single actio
 1. User explains their monitoring need
 2. Chaps-e asks 1-2 clarifying questions if needed (objective, scope)
 3. As soon as subject + objective are clear:
-    - → `Tool_WatchFile_Rename` (meaningful name)
-    - → `Tool_WatchFile_Classify` (determine intelligence type) **← EARLY!**
-    - → `Tool_WatchFile_BuilderReferenceSubject` (initial version)
+   - → `Tool_WatchFile_Rename` (meaningful name)
+   - → `Tool_WatchFile_Classify` (determine intelligence type) **← EARLY!**
+   - → `Tool_WatchFile_BuilderReferenceSubject` (initial version)
 
 **Exit condition:** Classification is done → Move to Phase 2
 

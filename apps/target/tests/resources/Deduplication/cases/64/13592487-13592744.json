@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13592487",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143554672&origin=inward",
-        "title": "Application of Ceramic Matrix Composite in Automotive Industry",
-        "content": "<html><body>The development of the modern automotive industry requires a reduction in exhaust emissions, fuel consumption and vehicle’s weight, but at the same time an increase in safety and vehicle’s performance. The fulfillment of these complex and mutually contradictory conditions is possible with the application of new modern materials with improved properties as a replacement of traditional materials. The trend of development and application of new composite-based materials has existed for a long time, and continues in the next decade. The application of ceramic-based composite materials (CMC) is increasingly prevalent in the automotive industry, especially in those parts requiring high mechanical durability and high resistance to extreme temperatures with reduced mass. The various types of the ceramic base composites: oxide, silicon carbide (SiC), carbon and other materials are most commonly used as the matrix. Nowadays, CMCs are used to manufacture individual car engine components, valves, turbine parts, exhaust and intake systems, brake disks and brake system parts. <br/><br/><br/>Authors: Stojanovic B., Glisovic J.. <br/><br/>Affiliations: University of Kragujevac. <br/><br/>Publication: Encyclopedia of Materials: Composites, 1 January 2021, pp.275-292. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13592744",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143554672&origin=inward",
-        "title": "Application of Ceramic Matrix Composite in Automotive Industry",
-        "content": "<html><body>The development of the modern automotive industry requires a reduction in exhaust emissions, fuel consumption and vehicle’s weight, but at the same time an increase in safety and vehicle’s performance. The fulfillment of these complex and mutually contradictory conditions is possible with the application of new modern materials with improved properties as a replacement of traditional materials. The trend of development and application of new composite-based materials has existed for a long time, and continues in the next decade. The application of ceramic-based composite materials (CMC) is increasingly prevalent in the automotive industry, especially in those parts requiring high mechanical durability and high resistance to extreme temperatures with reduced mass. The various types of the ceramic base composites: oxide, silicon carbide (SiC), carbon and other materials are most commonly used as the matrix. Nowadays, CMCs are used to manufacture individual car engine components, valves, turbine parts, exhaust and intake systems, brake disks and brake system parts. <br/><br/><br/>Authors: Stojanovic B., Glisovic J.. <br/><br/>Affiliations: University of Kragujevac. <br/><br/>Publication: Encyclopedia of Materials: Composites, 1 January 2021, pp.275-292. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13592487",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143554672&origin=inward",
+    "title": "Application of Ceramic Matrix Composite in Automotive Industry",
+    "content": "<html><body>The development of the modern automotive industry requires a reduction in exhaust emissions, fuel consumption and vehicle’s weight, but at the same time an increase in safety and vehicle’s performance. The fulfillment of these complex and mutually contradictory conditions is possible with the application of new modern materials with improved properties as a replacement of traditional materials. The trend of development and application of new composite-based materials has existed for a long time, and continues in the next decade. The application of ceramic-based composite materials (CMC) is increasingly prevalent in the automotive industry, especially in those parts requiring high mechanical durability and high resistance to extreme temperatures with reduced mass. The various types of the ceramic base composites: oxide, silicon carbide (SiC), carbon and other materials are most commonly used as the matrix. Nowadays, CMCs are used to manufacture individual car engine components, valves, turbine parts, exhaust and intake systems, brake disks and brake system parts. <br/><br/><br/>Authors: Stojanovic B., Glisovic J.. <br/><br/>Affiliations: University of Kragujevac. <br/><br/>Publication: Encyclopedia of Materials: Composites, 1 January 2021, pp.275-292. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13592744",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143554672&origin=inward",
+    "title": "Application of Ceramic Matrix Composite in Automotive Industry",
+    "content": "<html><body>The development of the modern automotive industry requires a reduction in exhaust emissions, fuel consumption and vehicle’s weight, but at the same time an increase in safety and vehicle’s performance. The fulfillment of these complex and mutually contradictory conditions is possible with the application of new modern materials with improved properties as a replacement of traditional materials. The trend of development and application of new composite-based materials has existed for a long time, and continues in the next decade. The application of ceramic-based composite materials (CMC) is increasingly prevalent in the automotive industry, especially in those parts requiring high mechanical durability and high resistance to extreme temperatures with reduced mass. The various types of the ceramic base composites: oxide, silicon carbide (SiC), carbon and other materials are most commonly used as the matrix. Nowadays, CMCs are used to manufacture individual car engine components, valves, turbine parts, exhaust and intake systems, brake disks and brake system parts. <br/><br/><br/>Authors: Stojanovic B., Glisovic J.. <br/><br/>Affiliations: University of Kragujevac. <br/><br/>Publication: Encyclopedia of Materials: Composites, 1 January 2021, pp.275-292. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

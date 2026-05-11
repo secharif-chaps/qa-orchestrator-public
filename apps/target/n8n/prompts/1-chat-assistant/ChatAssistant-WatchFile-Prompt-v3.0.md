@@ -167,22 +167,22 @@ actors and sources, I need to understand a few key aspects of your need.
 
 ```json
 {
-    "needAssessment": {
-        "overallScore": 0,
-        "dimensions": {
-            "WHAT": { "answered": false, "confidence": 0, "value": null },
-            "WHY": { "answered": false, "confidence": 0, "value": null },
-            "WHO": { "answered": false, "confidence": 0, "value": null },
-            "WHERE": { "answered": false, "confidence": 0, "value": null },
-            "HOW": { "answered": false, "confidence": 0, "value": null },
-            "WHEN": { "answered": false, "confidence": 0, "value": null }
-        },
-        "currentQuestion": {
-            "dimension": null,
-            "attempts": 0
-        },
-        "classificationTriggered": false
-    }
+  "needAssessment": {
+    "overallScore": 0,
+    "dimensions": {
+      "WHAT": { "answered": false, "confidence": 0, "value": null },
+      "WHY": { "answered": false, "confidence": 0, "value": null },
+      "WHO": { "answered": false, "confidence": 0, "value": null },
+      "WHERE": { "answered": false, "confidence": 0, "value": null },
+      "HOW": { "answered": false, "confidence": 0, "value": null },
+      "WHEN": { "answered": false, "confidence": 0, "value": null }
+    },
+    "currentQuestion": {
+      "dimension": null,
+      "attempts": 0
+    },
+    "classificationTriggered": false
+  }
 }
 ```
 
@@ -440,16 +440,16 @@ Topics from classification guide the strategic questions and discovery:
 The reference subject has TWO versions:
 
 1. **Human Version (`referenceSubject.human`):**
-    - Displayed in WatchFile UI
-    - Concise, readable
-    - Only populated sections shown
-    - Empty sections NOT displayed
+   - Displayed in WatchFile UI
+   - Concise, readable
+   - Only populated sections shown
+   - Empty sections NOT displayed
 
 2. **LLM Version (`referenceSubject.llm`):**
-    - Used by validation AI
-    - Optimized for automated scoring
-    - Includes explicit relevance criteria
-    - Structured for precision filtering
+   - Used by validation AI
+   - Optimized for automated scoring
+   - Includes explicit relevance criteria
+   - Structured for precision filtering
 
 ### Incremental Build
 
@@ -671,10 +671,10 @@ From topics:        "{topic_keyword1} {topic_keyword2} actors organizations"
 
 ```json
 {
-    "label": "Entity Name",
-    "type": "competitor|organization|person|regulator|research_lab|investor|partner|other",
-    "description": "Brief description of relevance",
-    "score": 80
+  "label": "Entity Name",
+  "type": "competitor|organization|person|regulator|research_lab|investor|partner|other",
+  "description": "Brief description of relevance",
+  "score": 80
 }
 ```
 
@@ -686,11 +686,11 @@ From topics:        "{topic_keyword1} {topic_keyword2} actors organizations"
 
 ```json
 {
-    "name": "Source Display Name",
-    "type": "website|linkedin|twitter|rss|blog|news|patent_db|legal_db|research_db|regulatory|market_report",
-    "url": "https://exact-verified-url.com",
-    "description": "What information this source provides",
-    "score": 85
+  "name": "Source Display Name",
+  "type": "website|linkedin|twitter|rss|blog|news|patent_db|legal_db|research_db|regulatory|market_report",
+  "url": "https://exact-verified-url.com",
+  "description": "What information this source provides",
+  "score": 85
 }
 ```
 

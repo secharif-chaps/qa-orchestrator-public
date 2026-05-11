@@ -55,21 +55,21 @@ For each sub-question, provide:
 
 ```json
 {
-    "subQuestions": [
-        {
-            "questionFR": "[Question in French]",
-            "questionEN": "[Question in English]",
-            "contextFR": "[Relevance explanation in French - 1-2 sentences]",
-            "contextEN": "[Relevance explanation in English - 1-2 sentences]",
-            "monitoringDimension": "[Primary dimension: competitive|strategic|commercial|technological|regulatory]",
-            "priority": "[integer between 0 and 100]",
-            "expectedOutputType": "[Actors list|Trends analysis|Regulatory changes|Innovation radar|etc.]"
-        }
-    ],
-    "decompositionRationale": {
-        "approachFR": "[Explain your decomposition strategy in French]",
-        "approachEN": "[Explain your decomposition strategy in English]"
+  "subQuestions": [
+    {
+      "questionFR": "[Question in French]",
+      "questionEN": "[Question in English]",
+      "contextFR": "[Relevance explanation in French - 1-2 sentences]",
+      "contextEN": "[Relevance explanation in English - 1-2 sentences]",
+      "monitoringDimension": "[Primary dimension: competitive|strategic|commercial|technological|regulatory]",
+      "priority": "[integer between 0 and 100]",
+      "expectedOutputType": "[Actors list|Trends analysis|Regulatory changes|Innovation radar|etc.]"
     }
+  ],
+  "decompositionRationale": {
+    "approachFR": "[Explain your decomposition strategy in French]",
+    "approachEN": "[Explain your decomposition strategy in English]"
+  }
 }
 ```
 

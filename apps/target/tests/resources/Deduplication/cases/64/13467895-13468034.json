@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13467895",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85138365850&origin=inward",
-        "title": "Experimental evaluation of DPF performance loaded over Pt and sulfur-resisting material for marine diesel engines",
-        "content": "<html><body>Different from vehicle engines, Diesel Particulate Filter (DPF) inactivation is an unavoidable issue for low-speed marine diesel engines fueled with Heavy Fuel Oil (HFO). This paper introduced a sulfur resisting material in Silicon Carbide (SiC)-DPF to improve DPF performance. The results of bench-scale experiments showed that the Balance Point Temperature of the modified DPF module was 300°C and DPF modules had a good filtration performance, with Particulate Matters (PMs) residual being less than 0.6 g per cycle. In pilot-scale tests, PMs emissions of unit power decreased with engine load going up, filtration efficiency of nucleation mode PMs being only 36% under 100% load, while DPF still had a good performance in accumulation mode PMs control, being 94.2% under the same load. DPF modules showed excellent regeneration durability in the 205h endurance test, with a regeneration period of 1.5-2h under 380°C. There was no obvious degeneration in the DPF module structure, with no cracks or breakage. Besides, the DPF module could also control gaseous emissions, total emissions decreased by 10.53% for NO and 57.19% for CO, respectively. The results suggested that introducing sulfur-resisting material in DPF could greatly improve the DPF performance of low-speed marine diesel engines fueled with HFO. <br/><br/><br/>Authors: Li X., Li K., Yang H., Wang Z., Liu Y., Shen T., Tu S., Lou D.. <br/><br/>Affiliations: Tongji University, National Engineering Laboratory for Marine and Ocean Engineering Power System, Shanghai Marine Diesel Engine Research Institute. <br/><br/>Publication: PloS one, 2022, pp.e0272441. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13468034",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85138365850&origin=inward",
-        "title": "Experimental evaluation of DPF performance loaded over Pt and sulfur-resisting material for marine diesel engines",
-        "content": "<html><body>Different from vehicle engines, Diesel Particulate Filter (DPF) inactivation is an unavoidable issue for low-speed marine diesel engines fueled with Heavy Fuel Oil (HFO). This paper introduced a sulfur resisting material in Silicon Carbide (SiC)-DPF to improve DPF performance. The results of bench-scale experiments showed that the Balance Point Temperature of the modified DPF module was 300°C and DPF modules had a good filtration performance, with Particulate Matters (PMs) residual being less than 0.6 g per cycle. In pilot-scale tests, PMs emissions of unit power decreased with engine load going up, filtration efficiency of nucleation mode PMs being only 36% under 100% load, while DPF still had a good performance in accumulation mode PMs control, being 94.2% under the same load. DPF modules showed excellent regeneration durability in the 205h endurance test, with a regeneration period of 1.5-2h under 380°C. There was no obvious degeneration in the DPF module structure, with no cracks or breakage. Besides, the DPF module could also control gaseous emissions, total emissions decreased by 10.53% for NO and 57.19% for CO, respectively. The results suggested that introducing sulfur-resisting material in DPF could greatly improve the DPF performance of low-speed marine diesel engines fueled with HFO. <br/><br/><br/>Authors: Li X., Li K., Yang H., Wang Z., Liu Y., Shen T., Tu S., Lou D.. <br/><br/>Affiliations: Tongji University, National Engineering Laboratory for Marine and Ocean Engineering Power System, Shanghai Marine Diesel Engine Research Institute. <br/><br/>Publication: PloS one, 2022, pp.e0272441. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13467895",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85138365850&origin=inward",
+    "title": "Experimental evaluation of DPF performance loaded over Pt and sulfur-resisting material for marine diesel engines",
+    "content": "<html><body>Different from vehicle engines, Diesel Particulate Filter (DPF) inactivation is an unavoidable issue for low-speed marine diesel engines fueled with Heavy Fuel Oil (HFO). This paper introduced a sulfur resisting material in Silicon Carbide (SiC)-DPF to improve DPF performance. The results of bench-scale experiments showed that the Balance Point Temperature of the modified DPF module was 300°C and DPF modules had a good filtration performance, with Particulate Matters (PMs) residual being less than 0.6 g per cycle. In pilot-scale tests, PMs emissions of unit power decreased with engine load going up, filtration efficiency of nucleation mode PMs being only 36% under 100% load, while DPF still had a good performance in accumulation mode PMs control, being 94.2% under the same load. DPF modules showed excellent regeneration durability in the 205h endurance test, with a regeneration period of 1.5-2h under 380°C. There was no obvious degeneration in the DPF module structure, with no cracks or breakage. Besides, the DPF module could also control gaseous emissions, total emissions decreased by 10.53% for NO and 57.19% for CO, respectively. The results suggested that introducing sulfur-resisting material in DPF could greatly improve the DPF performance of low-speed marine diesel engines fueled with HFO. <br/><br/><br/>Authors: Li X., Li K., Yang H., Wang Z., Liu Y., Shen T., Tu S., Lou D.. <br/><br/>Affiliations: Tongji University, National Engineering Laboratory for Marine and Ocean Engineering Power System, Shanghai Marine Diesel Engine Research Institute. <br/><br/>Publication: PloS one, 2022, pp.e0272441. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13468034",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85138365850&origin=inward",
+    "title": "Experimental evaluation of DPF performance loaded over Pt and sulfur-resisting material for marine diesel engines",
+    "content": "<html><body>Different from vehicle engines, Diesel Particulate Filter (DPF) inactivation is an unavoidable issue for low-speed marine diesel engines fueled with Heavy Fuel Oil (HFO). This paper introduced a sulfur resisting material in Silicon Carbide (SiC)-DPF to improve DPF performance. The results of bench-scale experiments showed that the Balance Point Temperature of the modified DPF module was 300°C and DPF modules had a good filtration performance, with Particulate Matters (PMs) residual being less than 0.6 g per cycle. In pilot-scale tests, PMs emissions of unit power decreased with engine load going up, filtration efficiency of nucleation mode PMs being only 36% under 100% load, while DPF still had a good performance in accumulation mode PMs control, being 94.2% under the same load. DPF modules showed excellent regeneration durability in the 205h endurance test, with a regeneration period of 1.5-2h under 380°C. There was no obvious degeneration in the DPF module structure, with no cracks or breakage. Besides, the DPF module could also control gaseous emissions, total emissions decreased by 10.53% for NO and 57.19% for CO, respectively. The results suggested that introducing sulfur-resisting material in DPF could greatly improve the DPF performance of low-speed marine diesel engines fueled with HFO. <br/><br/><br/>Authors: Li X., Li K., Yang H., Wang Z., Liu Y., Shen T., Tu S., Lou D.. <br/><br/>Affiliations: Tongji University, National Engineering Laboratory for Marine and Ocean Engineering Power System, Shanghai Marine Diesel Engine Research Institute. <br/><br/>Publication: PloS one, 2022, pp.e0272441. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

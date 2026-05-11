@@ -4,19 +4,19 @@
 
 - **The conversation language is: {{ $('Code_Initialize_WatchFileData').last().json.userLanguage || 'en' }}**
 - **You MUST generate ALL text content in these fields in the SAME language as the conversation:**
-    - `analysis.userObjective` - MUST be in conversation language
-    - `suggestions.actors[].relevance` - MUST be in conversation language
-    - `suggestions.sources[].relevance` - MUST be in conversation language
+  - `analysis.userObjective` - MUST be in conversation language
+  - `suggestions.actors[].relevance` - MUST be in conversation language
+  - `suggestions.sources[].relevance` - MUST be in conversation language
 - **If conversation language is 'fr' (French):**
-    - Generate `userObjective` in French
-    - Generate all `relevance` fields in French
-    - Example: `"userObjective": "Suivre les tendances du marché et les opportunités commerciales"`
-    - Example: `"relevance": "Organisation clé pour identifier les acteurs du marché"`
+  - Generate `userObjective` in French
+  - Generate all `relevance` fields in French
+  - Example: `"userObjective": "Suivre les tendances du marché et les opportunités commerciales"`
+  - Example: `"relevance": "Organisation clé pour identifier les acteurs du marché"`
 - **If conversation language is 'en' (English):**
-    - Generate `userObjective` in English
-    - Generate all `relevance` fields in English
-    - Example: `"userObjective": "Track market trends and commercial opportunities"`
-    - Example: `"relevance": "Key organization to identify market actors"`
+  - Generate `userObjective` in English
+  - Generate all `relevance` fields in English
+  - Example: `"userObjective": "Track market trends and commercial opportunities"`
+  - Example: `"relevance": "Key organization to identify market actors"`
 - **Topics labels and keywords remain in English** (for web search optimization)
 
 ## ROLE
@@ -270,11 +270,11 @@ Weak signals, critics, and alternative perspectives.
 
 ```json
 {
-    "label": "Topic name in English",
-    "keywords": ["keyword1", "keyword2", "keyword3"],
-    "relevanceScore": 85,
-    "searchQueryTemplate": "template for web search queries {{ $now.format('yyyy') }}",
-    "tier": 1
+  "label": "Topic name in English",
+  "keywords": ["keyword1", "keyword2", "keyword3"],
+  "relevanceScore": 85,
+  "searchQueryTemplate": "template for web search queries {{ $now.format('yyyy') }}",
+  "tier": 1
 }
 ```
 
@@ -309,62 +309,62 @@ Weak signals, critics, and alternative perspectives.
 
 ```json
 [
-    {
-        "label": "Ultra-Fast Fashion Direct Competitors",
-        "keywords": ["Temu", "AliExpress", "Wish", "fast fashion", "dropshipping"],
-        "relevanceScore": 95,
-        "searchQueryTemplate": "{entity} direct competitors ultra-fast fashion {{ $now.format('yyyy') }}",
-        "tier": 1
-    },
-    {
-        "label": "Traditional Fast Fashion Players",
-        "keywords": ["H&M", "Zara", "Primark", "fast fashion retailers"],
-        "relevanceScore": 90,
-        "searchQueryTemplate": "{entity} vs traditional fast fashion H&M Zara {{ $now.format('yyyy') }}",
-        "tier": 1
-    },
-    {
-        "label": "E-commerce Pricing Wars",
-        "keywords": ["pricing", "discount", "promotion", "price comparison"],
-        "relevanceScore": 85,
-        "searchQueryTemplate": "{entity} pricing strategy discount ecommerce {{ $now.format('yyyy') }}",
-        "tier": 1
-    },
-    {
-        "label": "Fashion Industry Analysts",
-        "keywords": ["fashion analyst", "retail research", "market intelligence"],
-        "relevanceScore": 80,
-        "searchQueryTemplate": "fast fashion market analyst research firm {{ $now.format('yyyy') }}",
-        "tier": 2
-    },
-    {
-        "label": "Retail Trade Associations",
-        "keywords": ["retail association", "fashion trade group", "industry body"],
-        "relevanceScore": 75,
-        "searchQueryTemplate": "fashion retail trade association Europe USA {{ $now.format('yyyy') }}",
-        "tier": 2
-    },
-    {
-        "label": "Fashion Tech Investors",
-        "keywords": ["fashion tech", "retail investment", "VC funding"],
-        "relevanceScore": 70,
-        "searchQueryTemplate": "fast fashion ecommerce investor VC funding {{ $now.format('yyyy') }}",
-        "tier": 2
-    },
-    {
-        "label": "Emerging Fashion Startups",
-        "keywords": ["fashion startup", "sustainable fashion", "circular fashion"],
-        "relevanceScore": 75,
-        "searchQueryTemplate": "fashion startup disruptor sustainable circular {{ $now.format('yyyy') }}",
-        "tier": 3
-    },
-    {
-        "label": "Asian Market Entrants",
-        "keywords": ["Chinese fashion", "Asian ecommerce", "cross-border"],
-        "relevanceScore": 70,
-        "searchQueryTemplate": "Chinese fashion brand entering Europe USA {{ $now.format('yyyy') }}",
-        "tier": 3
-    }
+  {
+    "label": "Ultra-Fast Fashion Direct Competitors",
+    "keywords": ["Temu", "AliExpress", "Wish", "fast fashion", "dropshipping"],
+    "relevanceScore": 95,
+    "searchQueryTemplate": "{entity} direct competitors ultra-fast fashion {{ $now.format('yyyy') }}",
+    "tier": 1
+  },
+  {
+    "label": "Traditional Fast Fashion Players",
+    "keywords": ["H&M", "Zara", "Primark", "fast fashion retailers"],
+    "relevanceScore": 90,
+    "searchQueryTemplate": "{entity} vs traditional fast fashion H&M Zara {{ $now.format('yyyy') }}",
+    "tier": 1
+  },
+  {
+    "label": "E-commerce Pricing Wars",
+    "keywords": ["pricing", "discount", "promotion", "price comparison"],
+    "relevanceScore": 85,
+    "searchQueryTemplate": "{entity} pricing strategy discount ecommerce {{ $now.format('yyyy') }}",
+    "tier": 1
+  },
+  {
+    "label": "Fashion Industry Analysts",
+    "keywords": ["fashion analyst", "retail research", "market intelligence"],
+    "relevanceScore": 80,
+    "searchQueryTemplate": "fast fashion market analyst research firm {{ $now.format('yyyy') }}",
+    "tier": 2
+  },
+  {
+    "label": "Retail Trade Associations",
+    "keywords": ["retail association", "fashion trade group", "industry body"],
+    "relevanceScore": 75,
+    "searchQueryTemplate": "fashion retail trade association Europe USA {{ $now.format('yyyy') }}",
+    "tier": 2
+  },
+  {
+    "label": "Fashion Tech Investors",
+    "keywords": ["fashion tech", "retail investment", "VC funding"],
+    "relevanceScore": 70,
+    "searchQueryTemplate": "fast fashion ecommerce investor VC funding {{ $now.format('yyyy') }}",
+    "tier": 2
+  },
+  {
+    "label": "Emerging Fashion Startups",
+    "keywords": ["fashion startup", "sustainable fashion", "circular fashion"],
+    "relevanceScore": 75,
+    "searchQueryTemplate": "fashion startup disruptor sustainable circular {{ $now.format('yyyy') }}",
+    "tier": 3
+  },
+  {
+    "label": "Asian Market Entrants",
+    "keywords": ["Chinese fashion", "Asian ecommerce", "cross-border"],
+    "relevanceScore": 70,
+    "searchQueryTemplate": "Chinese fashion brand entering Europe USA {{ $now.format('yyyy') }}",
+    "tier": 3
+  }
 ]
 ```
 
@@ -394,90 +394,90 @@ Weak signals, critics, and alternative perspectives.
 
 ```json
 [
-    {
-        "label": "Labor Practice Controversies",
-        "keywords": ["sweatshop", "forced labor", "working conditions", "exploitation"],
-        "relevanceScore": 95,
-        "searchQueryTemplate": "{entity} labor sweatshop controversy investigation {{ $now.format('yyyy') }}",
-        "tier": 1
-    },
-    {
-        "label": "Environmental Impact Criticism",
-        "keywords": ["pollution", "waste", "sustainability", "greenwashing", "fast fashion impact"],
-        "relevanceScore": 90,
-        "searchQueryTemplate": "{entity} environmental impact pollution criticism {{ $now.format('yyyy') }}",
-        "tier": 1
-    },
-    {
-        "label": "Consumer Safety Issues",
-        "keywords": ["toxic", "recall", "safety", "chemicals", "health risk"],
-        "relevanceScore": 85,
-        "searchQueryTemplate": "{entity} product safety toxic chemicals recall {{ $now.format('yyyy') }}",
-        "tier": 1
-    },
-    {
-        "label": "Intellectual Property Disputes",
-        "keywords": ["copyright", "design theft", "lawsuit", "plagiarism"],
-        "relevanceScore": 80,
-        "searchQueryTemplate": "{entity} copyright design theft lawsuit {{ $now.format('yyyy') }}",
-        "tier": 1
-    },
-    {
-        "label": "NGO Watchdog Reports",
-        "keywords": ["NGO report", "investigation", "campaign", "advocacy"],
-        "relevanceScore": 90,
-        "searchQueryTemplate": "{entity} NGO report investigation campaign {{ $now.format('yyyy') }}",
-        "tier": 2
-    },
-    {
-        "label": "ESG Rating Agencies",
-        "keywords": ["ESG rating", "sustainability score", "corporate responsibility"],
-        "relevanceScore": 80,
-        "searchQueryTemplate": "{entity} ESG rating sustainability score {{ $now.format('yyyy') }}",
-        "tier": 2
-    },
-    {
-        "label": "Fashion Industry Critics",
-        "keywords": ["fashion critic", "industry watchdog", "ethical fashion"],
-        "relevanceScore": 75,
-        "searchQueryTemplate": "fast fashion critic ethical fashion advocate {{ $now.format('yyyy') }}",
-        "tier": 2
-    },
-    {
-        "label": "Consumer Protection Bodies",
-        "keywords": ["consumer protection", "product safety authority", "recall agency"],
-        "relevanceScore": 75,
-        "searchQueryTemplate": "{entity} consumer protection authority investigation {{ $now.format('yyyy') }}",
-        "tier": 2
-    },
-    {
-        "label": "Investigative Journalists",
-        "keywords": ["investigation", "documentary", "exposé", "undercover"],
-        "relevanceScore": 85,
-        "searchQueryTemplate": "{entity} investigation documentary journalist exposé {{ $now.format('yyyy') }}",
-        "tier": 3
-    },
-    {
-        "label": "Academic Researchers",
-        "keywords": ["research", "study", "academic", "university", "supply chain"],
-        "relevanceScore": 70,
-        "searchQueryTemplate": "fast fashion supply chain research academic study {{ $now.format('yyyy') }}",
-        "tier": 3
-    },
-    {
-        "label": "Influencer Critics",
-        "keywords": ["influencer", "boycott", "criticism", "social media"],
-        "relevanceScore": 75,
-        "searchQueryTemplate": "{entity} influencer boycott criticism viral {{ $now.format('yyyy') }}",
-        "tier": 3
-    },
-    {
-        "label": "Regulatory Scrutiny",
-        "keywords": ["customs", "import ban", "regulatory", "investigation"],
-        "relevanceScore": 80,
-        "searchQueryTemplate": "{entity} customs investigation import ban regulatory {{ $now.format('yyyy') }}",
-        "tier": 3
-    }
+  {
+    "label": "Labor Practice Controversies",
+    "keywords": ["sweatshop", "forced labor", "working conditions", "exploitation"],
+    "relevanceScore": 95,
+    "searchQueryTemplate": "{entity} labor sweatshop controversy investigation {{ $now.format('yyyy') }}",
+    "tier": 1
+  },
+  {
+    "label": "Environmental Impact Criticism",
+    "keywords": ["pollution", "waste", "sustainability", "greenwashing", "fast fashion impact"],
+    "relevanceScore": 90,
+    "searchQueryTemplate": "{entity} environmental impact pollution criticism {{ $now.format('yyyy') }}",
+    "tier": 1
+  },
+  {
+    "label": "Consumer Safety Issues",
+    "keywords": ["toxic", "recall", "safety", "chemicals", "health risk"],
+    "relevanceScore": 85,
+    "searchQueryTemplate": "{entity} product safety toxic chemicals recall {{ $now.format('yyyy') }}",
+    "tier": 1
+  },
+  {
+    "label": "Intellectual Property Disputes",
+    "keywords": ["copyright", "design theft", "lawsuit", "plagiarism"],
+    "relevanceScore": 80,
+    "searchQueryTemplate": "{entity} copyright design theft lawsuit {{ $now.format('yyyy') }}",
+    "tier": 1
+  },
+  {
+    "label": "NGO Watchdog Reports",
+    "keywords": ["NGO report", "investigation", "campaign", "advocacy"],
+    "relevanceScore": 90,
+    "searchQueryTemplate": "{entity} NGO report investigation campaign {{ $now.format('yyyy') }}",
+    "tier": 2
+  },
+  {
+    "label": "ESG Rating Agencies",
+    "keywords": ["ESG rating", "sustainability score", "corporate responsibility"],
+    "relevanceScore": 80,
+    "searchQueryTemplate": "{entity} ESG rating sustainability score {{ $now.format('yyyy') }}",
+    "tier": 2
+  },
+  {
+    "label": "Fashion Industry Critics",
+    "keywords": ["fashion critic", "industry watchdog", "ethical fashion"],
+    "relevanceScore": 75,
+    "searchQueryTemplate": "fast fashion critic ethical fashion advocate {{ $now.format('yyyy') }}",
+    "tier": 2
+  },
+  {
+    "label": "Consumer Protection Bodies",
+    "keywords": ["consumer protection", "product safety authority", "recall agency"],
+    "relevanceScore": 75,
+    "searchQueryTemplate": "{entity} consumer protection authority investigation {{ $now.format('yyyy') }}",
+    "tier": 2
+  },
+  {
+    "label": "Investigative Journalists",
+    "keywords": ["investigation", "documentary", "exposé", "undercover"],
+    "relevanceScore": 85,
+    "searchQueryTemplate": "{entity} investigation documentary journalist exposé {{ $now.format('yyyy') }}",
+    "tier": 3
+  },
+  {
+    "label": "Academic Researchers",
+    "keywords": ["research", "study", "academic", "university", "supply chain"],
+    "relevanceScore": 70,
+    "searchQueryTemplate": "fast fashion supply chain research academic study {{ $now.format('yyyy') }}",
+    "tier": 3
+  },
+  {
+    "label": "Influencer Critics",
+    "keywords": ["influencer", "boycott", "criticism", "social media"],
+    "relevanceScore": 75,
+    "searchQueryTemplate": "{entity} influencer boycott criticism viral {{ $now.format('yyyy') }}",
+    "tier": 3
+  },
+  {
+    "label": "Regulatory Scrutiny",
+    "keywords": ["customs", "import ban", "regulatory", "investigation"],
+    "relevanceScore": 80,
+    "searchQueryTemplate": "{entity} customs investigation import ban regulatory {{ $now.format('yyyy') }}",
+    "tier": 3
+  }
 ]
 ```
 
@@ -588,20 +588,20 @@ If strong evidence exists for multiple types (≥2 types with score ≥60):
 
 ```json
 {
-    "primaryType": "reputational",
-    "primarySubtype": "global",
-    "confidenceScore": 75,
-    "secondaryTypes": [
-        {
-            "type": "technological",
-            "subtype": null,
-            "score": 70,
-            "justification": {
-                "en": "User explicitly mentions tracking innovations.",
-                "fr": "L'utilisateur mentionne explicitement le suivi des innovations."
-            }
-        }
-    ]
+  "primaryType": "reputational",
+  "primarySubtype": "global",
+  "confidenceScore": 75,
+  "secondaryTypes": [
+    {
+      "type": "technological",
+      "subtype": null,
+      "score": 70,
+      "justification": {
+        "en": "User explicitly mentions tracking innovations.",
+        "fr": "L'utilisateur mentionne explicitement le suivi des innovations."
+      }
+    }
+  ]
 }
 ```
 

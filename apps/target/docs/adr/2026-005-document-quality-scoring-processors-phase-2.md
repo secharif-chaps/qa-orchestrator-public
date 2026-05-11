@@ -680,13 +680,13 @@ is a meaningful quality dimension that should not be ignored.
 ```yaml
 # Scheduled sync jobs
 services:
-    App\Infrastructure\DocumentQuality\Sync\MbfcSyncCommand:
-        tags:
-            - { name: 'scheduler.schedule', schedule: '0 3 * * 0' } # Weekly Sunday 3am
+  App\Infrastructure\DocumentQuality\Sync\MbfcSyncCommand:
+    tags:
+      - { name: 'scheduler.schedule', schedule: '0 3 * * 0' } # Weekly Sunday 3am
 
-    App\Infrastructure\DocumentQuality\Sync\OpenPageRankSyncCommand:
-        tags:
-            - { name: 'scheduler.schedule', schedule: '0 4 1 * *' } # Monthly 1st at 4am
+  App\Infrastructure\DocumentQuality\Sync\OpenPageRankSyncCommand:
+    tags:
+      - { name: 'scheduler.schedule', schedule: '0 4 1 * *' } # Monthly 1st at 4am
 ```
 
 ### 2. WHOIS/RDAP Client

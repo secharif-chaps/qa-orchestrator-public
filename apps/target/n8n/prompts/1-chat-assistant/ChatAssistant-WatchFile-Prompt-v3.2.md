@@ -299,44 +299,44 @@ Would you like me to add these actors? I have [X] more topics to explore.
 
 ```json
 {
-    "classification": {
-        "primaryType": "reputational",
-        "primarySubtype": "negative",
-        "topics": [
-            {
-                "label": "Labor Controversies",
-                "searchQueryTemplate": "{entity} labor sweatshop controversy 2025"
-            },
-            {
-                "label": "Environmental Criticism",
-                "searchQueryTemplate": "{entity} pollution fast fashion impact 2025"
-            },
-            {
-                "label": "Consumer Safety",
-                "searchQueryTemplate": "{entity} toxic chemicals product recall 2025"
-            },
-            {
-                "label": "IP Disputes",
-                "searchQueryTemplate": "{entity} copyright design theft lawsuit 2025"
-            },
-            {
-                "label": "NGO Watchdogs",
-                "searchQueryTemplate": "{entity} NGO investigation report 2025"
-            },
-            {
-                "label": "Influencer Critics",
-                "searchQueryTemplate": "{entity} influencer boycott criticism 2025"
-            },
-            {
-                "label": "Regulatory Scrutiny",
-                "searchQueryTemplate": "{entity} customs investigation import ban 2025"
-            },
-            {
-                "label": "Media Investigations",
-                "searchQueryTemplate": "{entity} journalist investigation documentary 2025"
-            }
-        ]
-    }
+  "classification": {
+    "primaryType": "reputational",
+    "primarySubtype": "negative",
+    "topics": [
+      {
+        "label": "Labor Controversies",
+        "searchQueryTemplate": "{entity} labor sweatshop controversy 2025"
+      },
+      {
+        "label": "Environmental Criticism",
+        "searchQueryTemplate": "{entity} pollution fast fashion impact 2025"
+      },
+      {
+        "label": "Consumer Safety",
+        "searchQueryTemplate": "{entity} toxic chemicals product recall 2025"
+      },
+      {
+        "label": "IP Disputes",
+        "searchQueryTemplate": "{entity} copyright design theft lawsuit 2025"
+      },
+      {
+        "label": "NGO Watchdogs",
+        "searchQueryTemplate": "{entity} NGO investigation report 2025"
+      },
+      {
+        "label": "Influencer Critics",
+        "searchQueryTemplate": "{entity} influencer boycott criticism 2025"
+      },
+      {
+        "label": "Regulatory Scrutiny",
+        "searchQueryTemplate": "{entity} customs investigation import ban 2025"
+      },
+      {
+        "label": "Media Investigations",
+        "searchQueryTemplate": "{entity} journalist investigation documentary 2025"
+      }
+    ]
+  }
 }
 ```
 
@@ -570,10 +570,10 @@ How can I help configure your monitoring?
 
 ```json
 {
-    "label": "Actor Name",
-    "type": "competitor|organization|person|regulator|research_lab|investor|partner|ngo|media|other",
-    "description": "Brief relevance description",
-    "score": 85
+  "label": "Actor Name",
+  "type": "competitor|organization|person|regulator|research_lab|investor|partner|ngo|media|other",
+  "description": "Brief relevance description",
+  "score": 85
 }
 ```
 
@@ -585,11 +585,11 @@ How can I help configure your monitoring?
 
 ```json
 {
-    "name": "Source Display Name",
-    "type": "website|linkedin|twitter|rss|blog|news|...",
-    "url": "https://verified-url.com",
-    "description": "What info this source provides",
-    "score": 85
+  "name": "Source Display Name",
+  "type": "website|linkedin|twitter|rss|blog|news|...",
+  "url": "https://verified-url.com",
+  "description": "What info this source provides",
+  "score": 85
 }
 ```
 

@@ -11,13 +11,13 @@ The Basil project uses a self-signed SSL certificate system to enable local HTTP
 The system generates two types of certificates:
 
 1. **Certificate Authority (CA) Certificate**:
-    - `ca-key.pem`: CA private key
-    - `ca-cert.pem`: CA certificate (valid for 5 years)
-    - `ca-cert.crt`: Copy of CA certificate in CRT format for Windows
+   - `ca-key.pem`: CA private key
+   - `ca-cert.pem`: CA certificate (valid for 5 years)
+   - `ca-cert.crt`: Copy of CA certificate in CRT format for Windows
 
 2. **Domain Certificate**:
-    - `{domain}-key.pem`: Domain private key
-    - `{domain}-cert.pem`: Domain certificate (valid for 1 year)
+   - `{domain}-key.pem`: Domain private key
+   - `{domain}-cert.pem`: Domain certificate (valid for 1 year)
 
 ## Default Configuration
 
@@ -27,9 +27,9 @@ By default, certificates are generated for the following domains:
 
 - **Primary domain**: `basil.local`
 - **Aliases (SAN)**:
-    - `www.basil.local` - WWW redirect
-    - `auth.basil.local` - Keycloak server
-    - `n8n.basil.local` - N8N automation
+  - `www.basil.local` - WWW redirect
+  - `auth.basil.local` - Keycloak server
+  - `n8n.basil.local` - N8N automation
 
 ### Organization Information
 
@@ -63,40 +63,40 @@ chmod +x ./certs/self-signed-generator.sh
 The script follows these steps:
 
 1. **Prerequisites Check**:
-    - Verify OpenSSL presence
-    - Validate environment variables
+   - Verify OpenSSL presence
+   - Validate environment variables
 
 2. **CA Generation** (if it doesn't exist):
 
-    ```bash
-    # Generate RSA private key
-    openssl genpkey -algorithm RSA -out ca-key.pem
+   ```bash
+   # Generate RSA private key
+   openssl genpkey -algorithm RSA -out ca-key.pem
 
-    # Create self-signed CA certificate (5 years)
-    openssl req -x509 -new -nodes -key ca-key.pem -sha256 -days 1825 -out ca-cert.pem
-    ```
+   # Create self-signed CA certificate (5 years)
+   openssl req -x509 -new -nodes -key ca-key.pem -sha256 -days 1825 -out ca-cert.pem
+   ```
 
 3. **Domain Certificate Generation**:
 
-    ```bash
-    # Generate domain private key
-    openssl genpkey -algorithm RSA -out basil.local-key.pem
+   ```bash
+   # Generate domain private key
+   openssl genpkey -algorithm RSA -out basil.local-key.pem
 
-    # Create CSR with SAN extensions
-    openssl req -new -key basil.local-key.pem -out basil.local.csr -config san.conf
+   # Create CSR with SAN extensions
+   openssl req -new -key basil.local-key.pem -out basil.local.csr -config san.conf
 
-    # Sign certificate with CA (1 year)
-    openssl x509 -req -in basil.local.csr -CA ca-cert.pem -CAkey ca-key.pem -out basil.local-cert.pem -days 365
-    ```
+   # Sign certificate with CA (1 year)
+   openssl x509 -req -in basil.local.csr -CA ca-cert.pem -CAkey ca-key.pem -out basil.local-cert.pem -days 365
+   ```
 
 4. **SAN Configuration (Subject Alternative Names)**:
-    - The script automatically generates a temporary OpenSSL configuration
-    - Includes the primary domain and all aliases
-    - Allows multiple domains to be used with a single certificate
+   - The script automatically generates a temporary OpenSSL configuration
+   - Includes the primary domain and all aliases
+   - Allows multiple domains to be used with a single certificate
 
 5. **Cleanup**:
-    - Remove temporary files (CSR, SAN configuration)
-    - Keep only final certificates and keys
+   - Remove temporary files (CSR, SAN configuration)
+   - Keep only final certificates and keys
 
 ## Certificate Installation and Configuration
 
@@ -221,32 +221,32 @@ The script validates that:
 
 1. **Edit the configuration**:
 
-    ```bash
-    nano certs/.env
-    ```
+   ```bash
+   nano certs/.env
+   ```
 
 2. **Add the new domain**:
 
-    ```env
-    DOMAIN_ALIASES=www.basil.local,auth.basil.local,n8n.basil.local,new.basil.local
-    ```
+   ```env
+   DOMAIN_ALIASES=www.basil.local,auth.basil.local,n8n.basil.local,new.basil.local
+   ```
 
 3. **Remove old certificates**:
 
-    ```bash
-    rm certs/basil.local-cert.pem certs/basil.local-key.pem
-    ```
+   ```bash
+   rm certs/basil.local-cert.pem certs/basil.local-key.pem
+   ```
 
 4. **Regenerate certificates**:
 
-    ```bash
-    ./certs/self-signed-generator.sh
-    ```
+   ```bash
+   ./certs/self-signed-generator.sh
+   ```
 
 5. **Update your hosts file**:
-    ```txt
-    127.0.0.1 basil.local www.basil.local auth.basil.local n8n.basil.local new.basil.local
-    ```
+   ```txt
+   127.0.0.1 basil.local www.basil.local auth.basil.local n8n.basil.local new.basil.local
+   ```
 
 ### Method 2: Temporary Environment Variables
 
@@ -280,9 +280,9 @@ Certificates are automatically mounted in Docker containers via `docker-compose.
 
 ```yaml
 volumes:
-    - ./certs/ca-cert.pem:/usr/local/share/ca-certificates/basil-ca.crt:ro
-    - ./certs/basil.local-cert.pem:/etc/ssl/certs/basil.pem:ro
-    - ./certs/basil.local-key.pem:/etc/ssl/private/basil.key:ro
+  - ./certs/ca-cert.pem:/usr/local/share/ca-certificates/basil-ca.crt:ro
+  - ./certs/basil.local-cert.pem:/etc/ssl/certs/basil.pem:ro
+  - ./certs/basil.local-key.pem:/etc/ssl/private/basil.key:ro
 ```
 
 ## Troubleshooting

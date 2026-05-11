@@ -21,16 +21,16 @@ Rate limiting is configured in `api/config/packages/rate_limiter.yaml`:
 
 ```yaml
 framework:
-    rate_limiter:
-        api_anonymous:
-            policy: 'sliding_window'
-            limit: 500
-            interval: '1 hour'
+  rate_limiter:
+    api_anonymous:
+      policy: 'sliding_window'
+      limit: 500
+      interval: '1 hour'
 
-        api_authenticated:
-            policy: 'sliding_window'
-            limit: 2000
-            interval: '1 hour'
+    api_authenticated:
+      policy: 'sliding_window'
+      limit: 2000
+      interval: '1 hour'
 ```
 
 ## Limits
@@ -64,10 +64,10 @@ When the rate limit is exceeded, the API returns a `429 Too Many Requests` respo
 
 ```json
 {
-    "@context": "/api/contexts/Error",
-    "@type": "hydra:Error",
-    "hydra:title": "An error occurred",
-    "hydra:description": "Rate limit exceeded. Please try again in 42 seconds."
+  "@context": "/api/contexts/Error",
+  "@type": "hydra:Error",
+  "hydra:title": "An error occurred",
+  "hydra:description": "Rate limit exceeded. Please try again in 42 seconds."
 }
 ```
 

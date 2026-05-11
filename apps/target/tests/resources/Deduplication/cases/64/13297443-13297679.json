@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13297443",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85132183264&origin=inward",
-        "title": "Modeling of laminated thick-walled shaft rotor accounting for onboard dynamics",
-        "content": "<html><body>Advanced composite materials provide engineers new possibilities for machine design due to their customization capacity and enhanced physical properties compared to the traditional isotropic materials. Onboard machinery, such as jet engines, transmission shafts, and energy storage flywheels, benefits from the use of composite shafts. Thus, improved mechanical efficiency can be achieved from both the reduced weight and orthotropy properties of composite materials. In this context, the dynamic behavior of a composite rotating machine under base excitation is evaluated. A modified finite element (FE) model based on the simplified homogenized beam theory (SHBT) is used to represent the dynamic behavior of a composite onboard thick-walled shaft. The FE-SHBT model considers transverse stresses, ply orthotropy, directional coupling related to the composite orthotropy, internal damping, and the gyroscopic effect. Experimental validation of the FE-SHBT model was carried out by using a test rig with a twenty-layer thick-walled carbon–epoxy composite hollow shaft, two aluminum discs, and two self-aligning ball bearings. The unknown parameters of the model were tuned to the experimental setup by using an optimization procedure. Various numerical responses concerning the onboard rotor vibration responses are presented to demonstrate the dynamic phenomena associated with the considered composite hollow shaft under base excitation. <br/><br/><br/>Authors: Del Claro V.T.S., Sousa M.S., Barbosa P.C.P.F., Cavalini A.A., Steffen V.. <br/><br/>Affiliations: Universidade Federal de Uberlândia. <br/><br/>Publication: Archive of Applied Mechanics, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13297679",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85132183264&origin=inward",
-        "title": "Modeling of laminated thick-walled shaft rotor accounting for onboard dynamics",
-        "content": "<html><body>Advanced composite materials provide engineers new possibilities for machine design due to their customization capacity and enhanced physical properties compared to the traditional isotropic materials. Onboard machinery, such as jet engines, transmission shafts, and energy storage flywheels, benefits from the use of composite shafts. Thus, improved mechanical efficiency can be achieved from both the reduced weight and orthotropy properties of composite materials. In this context, the dynamic behavior of a composite rotating machine under base excitation is evaluated. A modified finite element (FE) model based on the simplified homogenized beam theory (SHBT) is used to represent the dynamic behavior of a composite onboard thick-walled shaft. The FE-SHBT model considers transverse stresses, ply orthotropy, directional coupling related to the composite orthotropy, internal damping, and the gyroscopic effect. Experimental validation of the FE-SHBT model was carried out by using a test rig with a twenty-layer thick-walled carbon–epoxy composite hollow shaft, two aluminum discs, and two self-aligning ball bearings. The unknown parameters of the model were tuned to the experimental setup by using an optimization procedure. Various numerical responses concerning the onboard rotor vibration responses are presented to demonstrate the dynamic phenomena associated with the considered composite hollow shaft under base excitation. <br/><br/><br/>Authors: Del Claro V.T.S., Sousa M.S., Barbosa P.C.P.F., Cavalini A.A., Steffen V.. <br/><br/>Affiliations: Universidade Federal de Uberlândia. <br/><br/>Publication: Archive of Applied Mechanics, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13297443",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85132183264&origin=inward",
+    "title": "Modeling of laminated thick-walled shaft rotor accounting for onboard dynamics",
+    "content": "<html><body>Advanced composite materials provide engineers new possibilities for machine design due to their customization capacity and enhanced physical properties compared to the traditional isotropic materials. Onboard machinery, such as jet engines, transmission shafts, and energy storage flywheels, benefits from the use of composite shafts. Thus, improved mechanical efficiency can be achieved from both the reduced weight and orthotropy properties of composite materials. In this context, the dynamic behavior of a composite rotating machine under base excitation is evaluated. A modified finite element (FE) model based on the simplified homogenized beam theory (SHBT) is used to represent the dynamic behavior of a composite onboard thick-walled shaft. The FE-SHBT model considers transverse stresses, ply orthotropy, directional coupling related to the composite orthotropy, internal damping, and the gyroscopic effect. Experimental validation of the FE-SHBT model was carried out by using a test rig with a twenty-layer thick-walled carbon–epoxy composite hollow shaft, two aluminum discs, and two self-aligning ball bearings. The unknown parameters of the model were tuned to the experimental setup by using an optimization procedure. Various numerical responses concerning the onboard rotor vibration responses are presented to demonstrate the dynamic phenomena associated with the considered composite hollow shaft under base excitation. <br/><br/><br/>Authors: Del Claro V.T.S., Sousa M.S., Barbosa P.C.P.F., Cavalini A.A., Steffen V.. <br/><br/>Affiliations: Universidade Federal de Uberlândia. <br/><br/>Publication: Archive of Applied Mechanics, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13297679",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85132183264&origin=inward",
+    "title": "Modeling of laminated thick-walled shaft rotor accounting for onboard dynamics",
+    "content": "<html><body>Advanced composite materials provide engineers new possibilities for machine design due to their customization capacity and enhanced physical properties compared to the traditional isotropic materials. Onboard machinery, such as jet engines, transmission shafts, and energy storage flywheels, benefits from the use of composite shafts. Thus, improved mechanical efficiency can be achieved from both the reduced weight and orthotropy properties of composite materials. In this context, the dynamic behavior of a composite rotating machine under base excitation is evaluated. A modified finite element (FE) model based on the simplified homogenized beam theory (SHBT) is used to represent the dynamic behavior of a composite onboard thick-walled shaft. The FE-SHBT model considers transverse stresses, ply orthotropy, directional coupling related to the composite orthotropy, internal damping, and the gyroscopic effect. Experimental validation of the FE-SHBT model was carried out by using a test rig with a twenty-layer thick-walled carbon–epoxy composite hollow shaft, two aluminum discs, and two self-aligning ball bearings. The unknown parameters of the model were tuned to the experimental setup by using an optimization procedure. Various numerical responses concerning the onboard rotor vibration responses are presented to demonstrate the dynamic phenomena associated with the considered composite hollow shaft under base excitation. <br/><br/><br/>Authors: Del Claro V.T.S., Sousa M.S., Barbosa P.C.P.F., Cavalini A.A., Steffen V.. <br/><br/>Affiliations: Universidade Federal de Uberlândia. <br/><br/>Publication: Archive of Applied Mechanics, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

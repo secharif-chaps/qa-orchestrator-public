@@ -32,10 +32,7 @@
       },
       "type": "n8n-nodes-base.executionData",
       "typeVersion": 1.1,
-      "position": [
-        -11152,
-        -112
-      ],
+      "position": [-11152, -112],
       "id": "4f9f7341-d2f9-4b06-8043-26e2e484bdf1",
       "name": "ExecutionData_Store_TestMetadata"
     },
@@ -47,10 +44,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -11376,
-        -112
-      ],
+      "position": [-11376, -112],
       "id": "8093aacc-0f75-4409-98c4-e4c25c597b32",
       "name": "Set_Format_TestInput"
     },
@@ -60,10 +54,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -10928,
-        -16
-      ],
+      "position": [-10928, -16],
       "id": "40e132ef-622b-4da0-96d8-8960207f525a",
       "name": "Code_Initialize_WatchFileData"
     },
@@ -77,10 +68,7 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [
-        -11600,
-        -112
-      ],
+      "position": [-11600, -112],
       "id": "88d5e750-f4f9-477f-9701-d956f5477871",
       "name": "Webhook_Trigger_TestInput",
       "webhookId": "8d067253-7b62-4224-a148-02864821934a"
@@ -119,10 +107,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        -11152,
-        80
-      ],
+      "position": [-11152, 80],
       "id": "c36ba225-37e2-41e8-9e06-26d1bc7c44d9",
       "name": "Workflow_Trigger_DeepSearch"
     },
@@ -202,10 +187,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -10480,
-        -16
-      ],
+      "position": [-10480, -16],
       "id": "279fdf95-1e4c-4e3a-bff5-5f848a3b290b",
       "name": "Workflow_Execute_GenerateStrategicQuestion",
       "onError": "continueErrorOutput"
@@ -216,10 +198,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -10032,
-        -224
-      ],
+      "position": [-10032, -224],
       "id": "7bf6dd5c-06a5-4433-99d6-159b7a018e0f",
       "name": "Code_Build_MessageForFeedback"
     },
@@ -231,10 +210,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -10032,
-        112
-      ],
+      "position": [-10032, 112],
       "id": "0047d68a-70cd-4105-8050-6f024250bfcc",
       "name": "Feedback_AgentAIError",
       "executeOnce": false
@@ -276,10 +252,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -10256,
-        -112
-      ],
+      "position": [-10256, -112],
       "id": "fe38f3c0-0b67-403d-93dd-daf298adcd1b",
       "name": "Condition_Check_IsSuccess"
     },
@@ -291,10 +264,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -8912,
-        -64
-      ],
+      "position": [-8912, -64],
       "id": "fbce069b-1993-498a-a4b4-88549134f04b",
       "name": "Feedback_AgentAIError1",
       "executeOnce": false
@@ -306,10 +276,7 @@
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
-      "position": [
-        -9584,
-        -112
-      ],
+      "position": [-9584, -112],
       "id": "9d447551-e8ad-4375-917a-7e2d0806d8a3",
       "name": "Merge_Retrieve_StrategicQuestion"
     },
@@ -398,10 +365,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -9360,
-        -112
-      ],
+      "position": [-9360, -112],
       "id": "e30f465d-d3fe-456f-82aa-d0773914d24b",
       "name": "Workflow_Execute_GenerateSearchQueries",
       "onError": "continueErrorOutput"
@@ -443,10 +407,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -9136,
-        -272
-      ],
+      "position": [-9136, -272],
       "id": "ebd6e30a-63d1-449b-9f16-aa95a820627d",
       "name": "Condition_Check_IsSuccess1"
     },
@@ -545,10 +506,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -8240,
-        -272
-      ],
+      "position": [-8240, -272],
       "id": "da8dba67-26ef-4efb-a117-76b6f17744ec",
       "name": "Workflow_Execute_SearchQuery",
       "retryOnFail": false,
@@ -560,10 +518,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -7792,
-        -464
-      ],
+      "position": [-7792, -464],
       "id": "612c5a40-ec64-41f0-b308-baf61ed7c98f",
       "name": "Code_Build_SearchResultsFeedbackMessage"
     },
@@ -574,10 +529,7 @@
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
-      "position": [
-        -7344,
-        -400
-      ],
+      "position": [-7344, -400],
       "id": "7da91f21-2a8e-49a1-a5ce-a06394045809",
       "name": "Merge_Retrieve_SearchQueryResults"
     },
@@ -618,10 +570,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -8016,
-        -400
-      ],
+      "position": [-8016, -400],
       "id": "6009f4b4-f0fe-4c1c-bc81-0ad700822816",
       "name": "Condition_Check_SearchQueryExecuted"
     },
@@ -640,10 +589,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -6944,
-        -160
-      ],
+      "position": [-6944, -160],
       "id": "71e19ad9-bccd-4408-aee2-6e7bf49970c6",
       "name": "LLM_Model_Primary",
       "credentials": {
@@ -668,10 +614,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -6768,
-        -160
-      ],
+      "position": [-6768, -160],
       "id": "d6d70734-ce51-41bb-bd42-7c5be058f13d",
       "name": "LLM_Model_Fallback",
       "credentials": {
@@ -694,10 +637,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -6560,
-        32
-      ],
+      "position": [-6560, 32],
       "id": "412753d2-64d5-423a-8ddf-6d2d057e2fb7",
       "name": "LLM_Model_ValidationParser",
       "credentials": {
@@ -715,10 +655,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
-      "position": [
-        -6640,
-        -176
-      ],
+      "position": [-6640, -176],
       "id": "13d4cf31-2f26-45ae-ab08-ee839153454d",
       "name": "LLM_OutputParser_RelevanceScore"
     },
@@ -735,10 +672,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
-      "position": [
-        -6864,
-        -400
-      ],
+      "position": [-6864, -400],
       "id": "5c014e83-4c22-4c87-9089-7a4340ab5aff",
       "name": "LLM_Agent_ExtractEntities",
       "retryOnFail": true,
@@ -750,10 +684,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -7120,
-        -400
-      ],
+      "position": [-7120, -400],
       "id": "a2f98812-f48b-4e5f-b1aa-fe0e09c0ec58",
       "name": "Code_SearchResult_PrepareTop10ForExtraction"
     },
@@ -765,10 +696,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -6048,
-        -208
-      ],
+      "position": [-6048, -208],
       "id": "91d45949-753d-4aaf-90de-7d3f4c1b8025",
       "name": "Feedback_AgentAIError2"
     },
@@ -778,10 +706,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -6272,
-        -496
-      ],
+      "position": [-6272, -496],
       "id": "5f7e6bd7-33dd-4f6a-9ca6-925e4144d734",
       "name": "Code_Format_ExtractionData"
     },
@@ -851,10 +776,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -6048,
-        -400
-      ],
+      "position": [-6048, -400],
       "id": "33af9195-4b4d-4f72-8dc1-ae88a5b9be9f",
       "name": "Workflow_Execute_ExtractEntities",
       "onError": "continueRegularOutput"
@@ -867,10 +789,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -7792,
-        -160
-      ],
+      "position": [-7792, -160],
       "id": "2d2076e2-9e94-4443-914a-68bf4320619f",
       "name": "Feedback_AgentAIError3",
       "executeOnce": false
@@ -1003,10 +922,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -4944,
-        -416
-      ],
+      "position": [-4944, -416],
       "id": "c1d21653-8648-4e9b-ac81-a8c71e6822d7",
       "name": "Workflow_WatchFile_Builder"
     },
@@ -1016,10 +932,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -8912,
-        -368
-      ],
+      "position": [-8912, -368],
       "id": "a7058485-f773-4825-99d6-f8b0ef06ef77",
       "name": "Code_Build_WebSearchProgressMessage"
     },
@@ -1030,10 +943,7 @@
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
-      "position": [
-        -8464,
-        -368
-      ],
+      "position": [-8464, -368],
       "id": "45930946-3953-45f1-be44-9bf7db356cb7",
       "name": "Merge_Retrieve_WebSearchQuery"
     },
@@ -1043,10 +953,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -5600,
-        -560
-      ],
+      "position": [-5600, -560],
       "id": "e9af3919-1307-4f53-bc3c-b10a31b9aad9",
       "name": "Code_Build_EnrichmentProgressMessage"
     },
@@ -1057,10 +964,7 @@
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
-      "position": [
-        -5152,
-        -560
-      ],
+      "position": [-5152, -560],
       "id": "5de12288-08fb-475d-94bb-e993958ca5e2",
       "name": "Merge_Retrieve_SearchQueryResults1"
     },
@@ -1070,10 +974,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -5824,
-        -752
-      ],
+      "position": [-5824, -752],
       "id": "2d30b6a3-6454-46d6-b86f-40e5c21aba8e",
       "name": "Code_Build_FinalSummaryMessage"
     },
@@ -1085,10 +986,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -5376,
-        -752
-      ],
+      "position": [-5376, -752],
       "id": "6cfe0d7e-9612-4a03-a371-1009757bbb4a",
       "name": "Feedback_AgentAIError4"
     },
@@ -1098,10 +996,7 @@
       },
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
-      "position": [
-        -6048,
-        -592
-      ],
+      "position": [-6048, -592],
       "id": "1fb7b67c-0ebd-4205-a920-08457c6033d7",
       "name": "Split_Loop_Extractions"
     },
@@ -1111,10 +1006,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -5824,
-        -496
-      ],
+      "position": [-5824, -496],
       "id": "9acaba9c-c66f-497f-8325-dab05cdcbb4c",
       "name": "Code_Transform_Extraction"
     },
@@ -1206,10 +1098,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -10720,
-        -16
-      ],
+      "position": [-10720, -16],
       "id": "b1b6387a-c450-44bd-aed2-7cc3a4d84986",
       "name": "ExecuteWorkflow_IMS_StartDeepSearchFeedback",
       "onError": "continueRegularOutput"
@@ -1302,10 +1191,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -9792,
-        -224
-      ],
+      "position": [-9792, -224],
       "id": "d31f7c3e-bb9c-4836-8ebb-6d7a0bff7862",
       "name": "ExecuteWorkflow_IMS_StrategicQuestionGeneratedFeedback",
       "executeOnce": false,
@@ -1400,10 +1286,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -10240,
-        96
-      ],
+      "position": [-10240, 96],
       "id": "18a7021b-0b73-4a3b-9986-f25473a2b888",
       "name": "ExecuteWorkflow_IMS_ChatMessageFailed",
       "executeOnce": true,
@@ -1497,10 +1380,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -9120,
-        -80
-      ],
+      "position": [-9120, -80],
       "id": "6c8da390-ef6f-4672-9c21-7a9f8b2147d1",
       "name": "ExecuteWorkflow_IMS_ChatMessageFailed1",
       "executeOnce": true,
@@ -1594,10 +1474,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -8672,
-        -368
-      ],
+      "position": [-8672, -368],
       "id": "2f64e12f-b5c7-4dd4-8056-c361e23ec823",
       "name": "ExecuteWorkflow_IMS_WebSearchProgressFeedback",
       "executeOnce": false,
@@ -1692,10 +1569,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -8016,
-        -192
-      ],
+      "position": [-8016, -192],
       "id": "293e67b2-f13c-4ea1-a07b-434b82f7aba4",
       "name": "ExecuteWorkflow_IMS_ChatMessageFailed2",
       "executeOnce": true,
@@ -1789,10 +1663,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -7568,
-        -464
-      ],
+      "position": [-7568, -464],
       "id": "8f07b1e9-d5cd-4912-bed3-b812b711a9df",
       "name": "ExecuteWorkflow_IMS_SearchResultsSelectedFeedback",
       "executeOnce": false,
@@ -1887,10 +1758,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -6352,
-        -240
-      ],
+      "position": [-6352, -240],
       "id": "81d06cf3-0579-4cc4-9547-17f1d6baafcd",
       "name": "ExecuteWorkflow_IMS_ChatMessageFailed3",
       "executeOnce": true,
@@ -1984,10 +1852,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -5600,
-        -752
-      ],
+      "position": [-5600, -752],
       "id": "c364b35f-b7de-444b-aeb1-3e2440d8ded2",
       "name": "ExecuteWorkflow_IMS_SearchResultsSelectedFeedback2",
       "executeOnce": false,
@@ -2082,10 +1947,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -5376,
-        -560
-      ],
+      "position": [-5376, -560],
       "id": "46b4b178-8f63-40d1-a18e-d7d53b2af4ec",
       "name": "ExecuteWorkflow_IMS_SearchResultsSelectedFeedback1",
       "executeOnce": false,

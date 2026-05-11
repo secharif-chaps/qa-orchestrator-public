@@ -42,23 +42,23 @@ docker compose exec api php bin/console app:usage-limit:document:check --quota=5
 - Command relies on OpenSearch aggregations; ensure the cluster is reachable.
 - Log output is written to STDOUT/STDERR. Redirect to a persistent log file or centralized logging system.
 - The command exits with:
-    - `0` when successful (even if no WatchFiles exceeded quota)
-    - `1` when an error occurs
+  - `0` when successful (even if no WatchFiles exceeded quota)
+  - `1` when an error occurs
 
 ## Monitoring & alerting
 
 - Track the log message `WatchFile moved to DRAFT due to document quota exceeded`.
 - Alert if the cron command fails consecutively (non-zero exit code).
 - Optionally emit metrics:
-    - Number of WatchFiles processed
-    - Highest document count observed
+  - Number of WatchFiles processed
+  - Highest document count observed
 
 ## Manual execution checklist
 
 1. Run the command via Docker (`docker compose exec api ...`) or the dedicated task runner.
 2. Review console output/logs for:
-    - `Starting document quota check`
-    - `WatchFile moved to DRAFT...` entries
+   - `Starting document quota check`
+   - `WatchFile moved to DRAFT...` entries
 3. Re-run with `--quota` only in non-production environments.
 
 ## Failure recovery

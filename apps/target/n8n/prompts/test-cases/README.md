@@ -113,31 +113,31 @@ Pour chaque réponse de l'IA, évaluer :
 
 ```json
 {
-    "userLanguage": "fr",
-    "watchFileId": "[UUID test]",
-    "watchFile": {
-        "name": null,
-        "titleManuallySetByUser": false,
-        "classificationType": null,
-        "actors": [],
-        "sources": [],
-        "referenceSubject": null
-    },
-    "metadata": {
-        "source_types": [
-            "website",
-            "linkedin",
-            "twitter",
-            "rss",
-            "blog",
-            "news",
-            "patent_db",
-            "legal_db",
-            "research_db",
-            "regulatory",
-            "market_report"
-        ]
-    }
+  "userLanguage": "fr",
+  "watchFileId": "[UUID test]",
+  "watchFile": {
+    "name": null,
+    "titleManuallySetByUser": false,
+    "classificationType": null,
+    "actors": [],
+    "sources": [],
+    "referenceSubject": null
+  },
+  "metadata": {
+    "source_types": [
+      "website",
+      "linkedin",
+      "twitter",
+      "rss",
+      "blog",
+      "news",
+      "patent_db",
+      "legal_db",
+      "research_db",
+      "regulatory",
+      "market_report"
+    ]
+  }
 }
 ```
 
@@ -145,14 +145,14 @@ Pour chaque réponse de l'IA, évaluer :
 
 ```json
 {
-    "allowedTypes": [
-        "competitive",
-        "regulatory",
-        "technological",
-        "commercial",
-        "strategic",
-        "reputational"
-    ]
+  "allowedTypes": [
+    "competitive",
+    "regulatory",
+    "technological",
+    "commercial",
+    "strategic",
+    "reputational"
+  ]
 }
 ```
 

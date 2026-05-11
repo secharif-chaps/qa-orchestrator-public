@@ -16,20 +16,20 @@ This guide covers configuring PhpStorm IDE for optimal development with the Basi
 1. **File > Settings** (Ctrl+Alt+S on Windows/Linux, Cmd+, on macOS)
 2. Navigate to **Directories**
 3. Ensure the following directories are marked correctly:
-    - `.cache` - Excluded
-    - `.npm` - Excluded
-    - `.yarn` - Excluded
-    - `api/.cache` - Excluded
-    - `api/.phpunit.cache` - Excluded
-    - `api/src` - Sources
-    - `api/tests` - Tests
-    - `api/var` - Excluded
-    - `api/vendor` - Excluded
-    - `pwa/.yarn` - Excluded
-    - `pwa/node_modules` - Excluded
-    - `pwa/.nuxt` - Excluded
-    - `pwa/.output` - Excluded
-    - `pwa/.yarn` - Excluded
+   - `.cache` - Excluded
+   - `.npm` - Excluded
+   - `.yarn` - Excluded
+   - `api/.cache` - Excluded
+   - `api/.phpunit.cache` - Excluded
+   - `api/src` - Sources
+   - `api/tests` - Tests
+   - `api/var` - Excluded
+   - `api/vendor` - Excluded
+   - `pwa/.yarn` - Excluded
+   - `pwa/node_modules` - Excluded
+   - `pwa/.nuxt` - Excluded
+   - `pwa/.output` - Excluded
+   - `pwa/.yarn` - Excluded
 
 ## 🐳 Docker Integration
 
@@ -44,8 +44,8 @@ This guide covers configuring PhpStorm IDE for optimal development with the Basi
 1. **File > Settings > Build, Execution, Deployment > Docker**
 2. Click **"+"** to add a new Docker configuration
 3. Choose your Docker connection:
-    - **Windows/macOS**: Docker Desktop (usually auto-detected)
-    - **Linux**: Unix socket at `unix:///var/run/docker.sock`
+   - **Windows/macOS**: Docker Desktop (usually auto-detected)
+   - **Linux**: Unix socket at `unix:///var/run/docker.sock`
 4. Test the connection - you should see "Connection successful"
 
 ### Docker Compose Integration
@@ -64,20 +64,20 @@ This guide covers configuring PhpStorm IDE for optimal development with the Basi
 3. Click **"+"** > **From Docker, Vagrant, VM, WSL, Remote...**
 4. Select **Docker Compose**
 5. Configure as follows:
-    - **Server**: Select your Docker server
-    - **Configuration files**: `./compose.yaml`
-    - **Service**: `api`
-    - **Lifecycle**: Select `Connect to existing container`
-    - **Environment variables**: (leave empty or add custom vars)
+   - **Server**: Select your Docker server
+   - **Configuration files**: `./compose.yaml`
+   - **Service**: `api`
+   - **Lifecycle**: Select `Connect to existing container`
+   - **Environment variables**: (leave empty or add custom vars)
 6. Click **OK** and wait for PhpStorm to configure the interpreter
 7. Verify the interpreter shows PHP 8.4 with Xdebug
 
 ![phpstorm-cli-interpreter.png](../assets/phpstorm-cli-interpreter.png)
 
 8. Add mapping for path resolution:
-    - Click **"..."** next to the path mappings
-    - **Path mappings**: Map `{project}/api` to `/app` in the container
-    - Click **OK** to save
+   - Click **"..."** next to the path mappings
+   - **Path mappings**: Map `{project}/api` to `/app` in the container
+   - Click **OK** to save
 
 ![img.png](../assets/phpstorm-mapping-path.png)
 
@@ -93,9 +93,9 @@ This guide covers configuring PhpStorm IDE for optimal development with the Basi
 1. **File > Settings > PHP > Code Style**
 2. Click **"Set from..."** > **"Symfony"**
 3. Or import the project's style configuration:
-    - **File > Settings > Editor > Code Style > PHP**
-    - Click **"Import Scheme"** > **"EditorConfig"**
-    - Select `.editorconfig` from the project root
+   - **File > Settings > Editor > Code Style > PHP**
+   - Click **"Import Scheme"** > **"EditorConfig"**
+   - Select `.editorconfig` from the project root
 
 ## 🔧 Framework Integration
 
@@ -120,11 +120,11 @@ This guide covers configuring PhpStorm IDE for optimal development with the Basi
 1. **View > Tool Windows > Database** (or double-click the database icon)
 2. Click **"+"** > **Data Source** > **PostgreSQL**
 3. Configure connection:
-    - **Host**: `localhost`
-    - **Port**: `5432`
-    - **Database**: `basil`
-    - **User**: `basil`
-    - **Password**: (from your `.env` file)
+   - **Host**: `localhost`
+   - **Port**: `5432`
+   - **Database**: `basil`
+   - **User**: `basil`
+   - **Password**: (from your `.env` file)
 4. Click **"Test Connection"** to verify
 5. Click **OK** to save
 
@@ -148,25 +148,25 @@ This guide covers configuring PhpStorm IDE for optimal development with the Basi
 1. **Run > Edit Configurations**
 2. Click **"+"** > **PHP Web Page**
 3. Configure:
-    - **Name**: `Basil Debug`
-    - **Server**: Click **"..."** to create new server
-        - **Name**: `Basil Local`
-        - **Host**: `basil.local`
-        - **Port**: `443`
-        - **Debugger**: `Xdebug`
-        - **Use path mappings**: Check this box
-        - Map `{project}/api` to `/app`
-    - **Start URL**: `/`
+   - **Name**: `Basil Debug`
+   - **Server**: Click **"..."** to create new server
+     - **Name**: `Basil Local`
+     - **Host**: `basil.local`
+     - **Port**: `443`
+     - **Debugger**: `Xdebug`
+     - **Use path mappings**: Check this box
+     - Map `{project}/api` to `/app`
+   - **Start URL**: `/`
 4. Click **OK** to save
 
 ### Browser Debugging
 
 1. Install browser extension:
-    - **Chrome**: [Xdebug helper](https://chrome.google.com/webstore/detail/xdebug-helper/eadndfjplgieldjbigjakmdgkmoaaaoc)
-    - **Firefox**: [Xdebug Helper](https://addons.mozilla.org/en-US/firefox/addon/xdebug-helper-for-firefox/)
+   - **Chrome**: [Xdebug helper](https://chrome.google.com/webstore/detail/xdebug-helper/eadndfjplgieldjbigjakmdgkmoaaaoc)
+   - **Firefox**: [Xdebug Helper](https://addons.mozilla.org/en-US/firefox/addon/xdebug-helper-for-firefox/)
 
 2. **Configure IDE Key**:
-    - Extension settings > IDE Key: `PHPSTORM`
+   - Extension settings > IDE Key: `PHPSTORM`
 
 ### Start Debugging
 
@@ -233,9 +233,9 @@ This guide covers configuring PhpStorm IDE for optimal development with the Basi
 1. **Run > Edit Configurations**
 2. Click **"+"** > **PHPUnit**
 3. Configure:
-    - **Name**: `API Tests`
-    - **Test scope**: `Defined in the configuration file`
-    - **Interpreter**: Your Docker interpreter
+   - **Name**: `API Tests`
+   - **Test scope**: `Defined in the configuration file`
+   - **Interpreter**: Your Docker interpreter
 4. Run tests with **Run > Run 'API Tests'**
 
 ### JavaScript/Vue Testing
@@ -264,10 +264,10 @@ This guide covers configuring PhpStorm IDE for optimal development with the Basi
 
 1. **File > Settings > Editor > Inspections**
 2. Enable PHP-specific inspections:
-    - **PHP > Code style issues**
-    - **PHP > Error handling**
-    - **PHP > Probable bugs**
-    - **PHP > Performance**
+   - **PHP > Code style issues**
+   - **PHP > Error handling**
+   - **PHP > Probable bugs**
+   - **PHP > Performance**
 
 ## 📁 File Templates
 
@@ -317,18 +317,18 @@ class ${NAME}
 
 ```vue
 <template>
-    <div class="${COMPONENT_KEBAB}">
-        <!-- Component content -->
-    </div>
+  <div class="${COMPONENT_KEBAB}">
+    <!-- Component content -->
+  </div>
 </template>
 
 <script setup lang="ts">
 interface Props {
-    // Define props here
+  // Define props here
 }
 
 interface Emits {
-    // Define emits here
+  // Define emits here
 }
 
 const props = defineProps<Props>()
@@ -352,10 +352,10 @@ Create custom live templates for common patterns:
 
 1. **File > Settings > Editor > Live Templates**
 2. Create templates for:
-    - Symfony controllers
-    - API Platform resources
-    - Vue composables
-    - Test methods
+   - Symfony controllers
+   - API Platform resources
+   - Vue composables
+   - Test methods
 
 ### Useful Keyboard Shortcuts
 
@@ -417,12 +417,12 @@ Create custom live templates for common patterns:
 
 1. **File > Settings > Project > Project Structure**
 2. Mark as **Excluded**:
-    - `api/var/`
-    - `api/vendor/`
-    - `pwa/node_modules/`
-    - `pwa/.nuxt/`
-    - `pwa/.output/`
-    - `.git/`
+   - `api/var/`
+   - `api/vendor/`
+   - `pwa/node_modules/`
+   - `pwa/.nuxt/`
+   - `pwa/.output/`
+   - `.git/`
 
 ## 🛠️ Plugin Recommendations
 
@@ -483,9 +483,9 @@ If PhpStorm becomes unstable:
 
 1. **File > Invalidate Caches and Restart**
 2. Delete PhpStorm configuration directory:
-    - Windows: `%APPDATA%\JetBrains\PhpStorm{version}`
-    - macOS: `~/Library/Preferences/PhpStorm{version}`
-    - Linux: `~/.config/JetBrains/PhpStorm{version}`
+   - Windows: `%APPDATA%\JetBrains\PhpStorm{version}`
+   - macOS: `~/Library/Preferences/PhpStorm{version}`
+   - Linux: `~/.config/JetBrains/PhpStorm{version}`
 3. Restart PhpStorm and reconfigure
 
 This PhpStorm setup guide should provide a comprehensive configuration for optimal development experience with the Basil project.

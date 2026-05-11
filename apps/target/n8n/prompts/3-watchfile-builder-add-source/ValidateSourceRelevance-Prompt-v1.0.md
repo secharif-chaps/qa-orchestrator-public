@@ -90,14 +90,14 @@ Extract keywords from: `watchFile.name`, `watchFile.userObjective`, `watchFile.r
 
 ```json
 {
-    "relevanceScore": 85,
-    "duplicate": false,
-    "typeValid": false,
-    "correctedType": "website",
-    "justification": {
-        "fr": "...",
-        "en": "..."
-    }
+  "relevanceScore": 85,
+  "duplicate": false,
+  "typeValid": false,
+  "correctedType": "website",
+  "justification": {
+    "fr": "...",
+    "en": "..."
+  }
 }
 ```
 
@@ -129,14 +129,14 @@ Extract keywords from: `watchFile.name`, `watchFile.userObjective`, `watchFile.r
 
 ```json
 {
-    "relevanceScore": 95,
-    "duplicate": false,
-    "typeValid": false,
-    "correctedType": "website",
-    "justification": {
-        "fr": "Source officielle UE, hautement pertinente pour la veille AI Act. Type 'official_journal' invalide, corrigé en 'website'.",
-        "en": "Official EU source, highly relevant for AI Act monitoring. Type 'official_journal' invalid, corrected to 'website'."
-    }
+  "relevanceScore": 95,
+  "duplicate": false,
+  "typeValid": false,
+  "correctedType": "website",
+  "justification": {
+    "fr": "Source officielle UE, hautement pertinente pour la veille AI Act. Type 'official_journal' invalide, corrigé en 'website'.",
+    "en": "Official EU source, highly relevant for AI Act monitoring. Type 'official_journal' invalid, corrected to 'website'."
+  }
 }
 ```
 
@@ -159,14 +159,14 @@ Extract keywords from: `watchFile.name`, `watchFile.userObjective`, `watchFile.r
 
 ```json
 {
-    "relevanceScore": 72,
-    "duplicate": false,
-    "typeValid": false,
-    "correctedType": "rss_feed",
-    "justification": {
-        "fr": "URL contient '/feed/', type corrigé en 'rss_feed'. Source tech pertinente pour l'actualité IA.",
-        "en": "URL contains '/feed/', type corrected to 'rss_feed'. Relevant tech source for AI news."
-    }
+  "relevanceScore": 72,
+  "duplicate": false,
+  "typeValid": false,
+  "correctedType": "rss_feed",
+  "justification": {
+    "fr": "URL contient '/feed/', type corrigé en 'rss_feed'. Source tech pertinente pour l'actualité IA.",
+    "en": "URL contains '/feed/', type corrected to 'rss_feed'. Relevant tech source for AI news."
+  }
 }
 ```
 
@@ -189,14 +189,14 @@ Extract keywords from: `watchFile.name`, `watchFile.userObjective`, `watchFile.r
 
 ```json
 {
-    "relevanceScore": 78,
-    "duplicate": false,
-    "typeValid": true,
-    "correctedType": null,
-    "justification": {
-        "fr": "Page LinkedIn Commission Européenne pertinente pour les annonces officielles.",
-        "en": "EU Commission LinkedIn page relevant for official announcements."
-    }
+  "relevanceScore": 78,
+  "duplicate": false,
+  "typeValid": true,
+  "correctedType": null,
+  "justification": {
+    "fr": "Page LinkedIn Commission Européenne pertinente pour les annonces officielles.",
+    "en": "EU Commission LinkedIn page relevant for official announcements."
+  }
 }
 ```
 
@@ -206,20 +206,20 @@ Extract keywords from: `watchFile.name`, `watchFile.userObjective`, `watchFile.r
 
 ```json
 {
-    "watchFile": {
-        "sources": [
-            {
-                "url": "https://eur-lex.europa.eu/",
-                "primaryDomain": "eur-lex.europa.eu",
-                "query": "AI Act"
-            }
-        ]
-    },
-    "source": {
+  "watchFile": {
+    "sources": [
+      {
         "url": "https://eur-lex.europa.eu/",
         "primaryDomain": "eur-lex.europa.eu",
         "query": "AI Act"
-    }
+      }
+    ]
+  },
+  "source": {
+    "url": "https://eur-lex.europa.eu/",
+    "primaryDomain": "eur-lex.europa.eu",
+    "query": "AI Act"
+  }
 }
 ```
 
@@ -227,13 +227,13 @@ Extract keywords from: `watchFile.name`, `watchFile.userObjective`, `watchFile.r
 
 ```json
 {
-    "relevanceScore": 0,
-    "duplicate": true,
-    "typeValid": true,
-    "correctedType": null,
-    "justification": {
-        "fr": "Doublon : même URL et query déjà présents dans les sources.",
-        "en": "Duplicate: same URL and query already present in sources."
-    }
+  "relevanceScore": 0,
+  "duplicate": true,
+  "typeValid": true,
+  "correctedType": null,
+  "justification": {
+    "fr": "Doublon : même URL et query déjà présents dans les sources.",
+    "en": "Duplicate: same URL and query already present in sources."
+  }
 }
 ```

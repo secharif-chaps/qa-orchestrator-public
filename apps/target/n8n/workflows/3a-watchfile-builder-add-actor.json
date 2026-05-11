@@ -8,10 +8,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        -2128,
-        -336
-      ],
+      "position": [-2128, -336],
       "id": "d6e74df3-290c-4cdf-923f-78889b5d040e",
       "name": "Workflow_Trigger_AddActor"
     },
@@ -25,10 +22,7 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [
-        -2576,
-        -528
-      ],
+      "position": [-2576, -528],
       "id": "2c60a07d-83be-4e6f-b7cc-256e800367d7",
       "name": "Webhook_Trigger_TestInput",
       "webhookId": "2af49e2a-e460-4b87-bc21-81df5be9d831"
@@ -41,10 +35,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -2352,
-        -528
-      ],
+      "position": [-2352, -528],
       "id": "d41b1fc8-7b68-4a7e-ad24-913410c0ed12",
       "name": "Set_Format_TestInput"
     },
@@ -73,10 +64,7 @@
       },
       "type": "n8n-nodes-base.executionData",
       "typeVersion": 1.1,
-      "position": [
-        -2128,
-        -528
-      ],
+      "position": [-2128, -528],
       "id": "52b99456-5285-4b1c-aad5-62e14a397fdf",
       "name": "ExecutionData_Store_TestMetadata"
     },
@@ -106,10 +94,7 @@
       },
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1.1,
-      "position": [
-        144,
-        -112
-      ],
+      "position": [144, -112],
       "id": "ac51a0ff-46e1-406f-a89b-8ff5682e57a3",
       "name": "RabbitMQ_Publish_ActorCreation",
       "credentials": {
@@ -134,10 +119,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
-      "position": [
-        -736,
-        -304
-      ],
+      "position": [-736, -304],
       "id": "d2471c6c-358c-4c57-bd40-58566122dc5d",
       "name": "LLM_Agent_ValidateActorRelevance",
       "retryOnFail": true,
@@ -189,10 +171,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -80,
-        -112
-      ],
+      "position": [-80, -112],
       "id": "00f7a846-b4bc-4478-b623-a282ccbfa3a1",
       "name": "Condition_Validate_ActorRelevance"
     },
@@ -233,10 +212,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -1904,
-        -432
-      ],
+      "position": [-1904, -432],
       "id": "7c579c4f-b6ca-49d0-9c73-549b0e3b35f1",
       "name": "Condition_Check_ActorDuplicate"
     },
@@ -248,10 +224,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        816,
-        -352
-      ],
+      "position": [816, -352],
       "id": "141242f2-f946-45af-bc2f-40a0874228dd",
       "name": "Response_Return_Final"
     },
@@ -263,10 +236,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
-      "position": [
-        -448,
-        -80
-      ],
+      "position": [-448, -80],
       "id": "ef18b73e-4238-4351-b3d5-4d07b40dc65b",
       "name": "LLM_Parser_StructuredOutput"
     },
@@ -289,10 +259,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -368,
-        128
-      ],
+      "position": [-368, 128],
       "id": "4c291ab6-4e76-46d5-a35f-735cf0c5a3c0",
       "name": "LLM_Model_Parser",
       "credentials": {
@@ -310,10 +277,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        592,
-        -672
-      ],
+      "position": [592, -672],
       "id": "bea6d333-61b9-4272-aeec-05cfdc74e414",
       "name": "Feedback_DuplicateActorError"
     },
@@ -325,10 +289,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -80,
-        -304
-      ],
+      "position": [-80, -304],
       "id": "2bd1c2e2-6828-4de6-b7b3-b0178fdfe814",
       "name": "Feedback_AIAgentError"
     },
@@ -340,10 +301,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        592,
-        80
-      ],
+      "position": [592, 80],
       "id": "304adfc2-1406-4633-a48b-fd8d031e8f4b",
       "name": "Feedback_IrrelevantActorError"
     },
@@ -355,10 +313,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        592,
-        -112
-      ],
+      "position": [592, -112],
       "id": "e74df88f-7208-4539-a137-e5262a9d9878",
       "name": "Feedback_SuccessResponse"
     },
@@ -389,10 +344,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -1680,
-        -256
-      ],
+      "position": [-1680, -256],
       "id": "1e311f72-6f3d-432b-9866-dd8c70701cdd",
       "name": "Check_ActorType_IsValid"
     },
@@ -411,10 +363,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
-      "position": [
-        -1424,
-        48
-      ],
+      "position": [-1424, 48],
       "id": "9b01b83c-0aae-4fd6-b80e-dc7eefa09800",
       "name": "LLM_Agent_ValidateActorType",
       "retryOnFail": true,
@@ -433,10 +382,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -1456,
-        272
-      ],
+      "position": [-1456, 272],
       "id": "55f08956-e23d-412f-9f92-68ea01e8833f",
       "name": "LLM_Model_ActorTypePrimary",
       "credentials": {
@@ -461,10 +407,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -1328,
-        272
-      ],
+      "position": [-1328, 272],
       "id": "afa8111b-5454-45c8-963f-ef92efadc0ad",
       "name": "LLM_Model_ActorTypeSecondary",
       "credentials": {
@@ -482,10 +425,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
-      "position": [
-        -1200,
-        272
-      ],
+      "position": [-1200, 272],
       "id": "dd634fd2-0013-45f5-8319-f3b2d6ae9ddf",
       "name": "LLM_Parser_ActorTypeStructuredOutput"
     },
@@ -502,10 +442,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -1120,
-        480
-      ],
+      "position": [-1120, 480],
       "id": "b712b0b2-6cfd-4ee9-901b-bc0dfa7247af",
       "name": "LLM_Model_ActorTypeParser",
       "credentials": {
@@ -602,10 +539,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        368,
-        80
-      ],
+      "position": [368, 80],
       "id": "5f18e436-d768-4481-978a-7489f7280160",
       "name": "Workflow_SystemMessage_ActorNotRelevant"
     },
@@ -696,10 +630,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        368,
-        -112
-      ],
+      "position": [368, -112],
       "id": "70259962-63e3-4b66-9d9d-a8e3d2c8e651",
       "name": "Workflow_SystemMessage_ActorAdded"
     },
@@ -790,10 +721,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        368,
-        -672
-      ],
+      "position": [368, -672],
       "id": "90b9544c-04b9-461e-9a22-00209a174d79",
       "name": "Workflow_SystemMessage_ActorDuplicated"
     },
@@ -842,10 +770,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
-      "position": [
-        -576,
-        -80
-      ],
+      "position": [-576, -80],
       "id": "cfd9cbd9-d30e-441b-9fbf-e2aff3767e2d",
       "name": "Tool_WebSearch_Grounding"
     },
@@ -862,10 +787,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -832,
-        -80
-      ],
+      "position": [-832, -80],
       "id": "897e82fb-1dd1-4bb1-ac77-1a08c68511a4",
       "name": "LLM_Model_ActorTypePrimary1",
       "credentials": {
@@ -890,10 +812,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -704,
-        -80
-      ],
+      "position": [-704, -80],
       "id": "be71bc66-20dc-4c07-834b-7d0df4befb16",
       "name": "LLM_Model_ActorTypeSecondary1",
       "credentials": {

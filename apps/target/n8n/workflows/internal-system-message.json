@@ -35,10 +35,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        0,
-        0
-      ],
+      "position": [0, 0],
       "id": "79b7b97f-a03c-412a-b8dc-2b654c34b839",
       "name": "Workflow_Trigger_InternalSystemMessage"
     },
@@ -72,10 +69,7 @@
       },
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1.1,
-      "position": [
-        496,
-        -144
-      ],
+      "position": [496, -144],
       "id": "86df1300-8b83-48ef-b5d2-9d1e90032b1a",
       "name": "RabbitMQ_Publish_ChatMessage",
       "notesInFlow": false,
@@ -114,10 +108,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        224,
-        0
-      ],
+      "position": [224, 0],
       "id": "937136d2-08d1-4c63-ae53-9de0a3b1b190",
       "name": "Condition_Check_ConversationContext",
       "onError": "continueRegularOutput"
@@ -129,10 +120,7 @@
         "color": 6
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        16,
-        -240
-      ],
+      "position": [16, -240],
       "typeVersion": 1,
       "id": "c058dc77-de8d-4417-907b-9d58ccbb05be",
       "name": "Sticky Note"

@@ -1085,10 +1085,10 @@ api/src/
 ```yaml
 # config/services.yaml
 services:
-    # Auto-register all scoring processors
-    App\Infrastructure\DocumentQuality\Processor\Scoring\:
-        resource: '../src/Infrastructure/DocumentQuality/Processor/Scoring/'
-        tags: ['app.document_processor']
+  # Auto-register all scoring processors
+  App\Infrastructure\DocumentQuality\Processor\Scoring\:
+    resource: '../src/Infrastructure/DocumentQuality/Processor/Scoring/'
+    tags: ['app.document_processor']
 ```
 
 ---

@@ -8,10 +8,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        -2144,
-        984
-      ],
+      "position": [-2144, 984],
       "id": "72ef28b4-b6bd-4cd8-abfc-d9f413a78f14",
       "name": "Workflow_Trigger_AddSource"
     },
@@ -25,10 +22,7 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [
-        -2592,
-        792
-      ],
+      "position": [-2592, 792],
       "id": "f043659f-e32a-4d67-b53a-85006f05a856",
       "name": "Webhook_Trigger_TestInput",
       "webhookId": "2af49e2a-e460-4b87-bc21-81df5be9d831"
@@ -41,10 +35,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -2368,
-        792
-      ],
+      "position": [-2368, 792],
       "id": "64a85a58-bfc4-4dda-ad3f-48d60dd33e64",
       "name": "Set_Format_TestInput"
     },
@@ -73,10 +64,7 @@
       },
       "type": "n8n-nodes-base.executionData",
       "typeVersion": 1.1,
-      "position": [
-        -2144,
-        792
-      ],
+      "position": [-2144, 792],
       "id": "94cb3175-2084-4832-a189-c1440f0e4e23",
       "name": "ExecutionData_Store_TestMetadata"
     },
@@ -88,10 +76,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
-      "position": [
-        -1312,
-        1288
-      ],
+      "position": [-1312, 1288],
       "id": "64e75b9d-b2df-4c11-9a4d-8617428337b3",
       "name": "LLM_Parser_ValidationOutput"
     },
@@ -114,10 +99,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -1232,
-        1496
-      ],
+      "position": [-1232, 1496],
       "id": "edc00793-77b7-4059-806d-437e7d52d120",
       "name": "LLM_Model_ValidationParser",
       "credentials": {
@@ -142,10 +124,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
-      "position": [
-        -16,
-        1504
-      ],
+      "position": [-16, 1504],
       "id": "e7965d23-fc9c-4c5c-8a3d-729e356dcaf2",
       "name": "LLM_Agent_MapSourceBakus",
       "retryOnFail": true,
@@ -176,10 +155,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -48,
-        1728
-      ],
+      "position": [-48, 1728],
       "id": "592439e3-5c81-49e4-98cb-cfb9f167b228",
       "name": "LLM_Model_BakusPrimary",
       "credentials": {
@@ -197,10 +173,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
-      "position": [
-        208,
-        1728
-      ],
+      "position": [208, 1728],
       "id": "951073b1-dfa3-497f-aedf-dafc8f015e8d",
       "name": "LLM_Parser_BakusOutput"
     },
@@ -223,10 +196,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        288,
-        1936
-      ],
+      "position": [288, 1936],
       "id": "37842b83-32cc-4ef1-9a6d-8278f41bc033",
       "name": "LLM_Model_BakusParser",
       "credentials": {
@@ -250,10 +220,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
-      "position": [
-        -1600,
-        1064
-      ],
+      "position": [-1600, 1064],
       "id": "f0d60715-b68d-4788-96c6-84c75470586c",
       "name": "LLM_Agent_ValidateSourceRelevance",
       "retryOnFail": true,
@@ -286,10 +253,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -1920,
-        888
-      ],
+      "position": [-1920, 888],
       "id": "ba66fd5b-ff37-4c3e-92fe-4355ac79fd52",
       "name": "Condition_Check_SourceDuplicate"
     },
@@ -301,10 +265,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        2096,
-        256
-      ],
+      "position": [2096, 256],
       "id": "75630212-b433-4c60-b65d-92cf43607e41",
       "name": "Feedback_SourceDuplicated"
     },
@@ -316,10 +277,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        2096,
-        1704
-      ],
+      "position": [2096, 1704],
       "id": "f25332cb-822b-4f44-9042-223f70ef3f6e",
       "name": "Feedback_Success"
     },
@@ -331,10 +289,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        2096,
-        720
-      ],
+      "position": [2096, 720],
       "id": "9f918a28-d910-49d8-97de-5c51a0fc8886",
       "name": "Feedback_SourceNotRelevant"
     },
@@ -374,10 +329,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -944,
-        1160
-      ],
+      "position": [-944, 1160],
       "id": "87dbee63-b278-44ff-8290-fd9d8e6c0b26",
       "name": "Condition_Validate_SourceRelevance"
     },
@@ -407,10 +359,7 @@
       },
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1.1,
-      "position": [
-        1648,
-        1704
-      ],
+      "position": [1648, 1704],
       "id": "c2f616a2-b171-4b1e-a411-611bcb65f58f",
       "name": "RabbitMQ_Publish_SourceCreation",
       "credentials": {
@@ -448,10 +397,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        576,
-        1528
-      ],
+      "position": [576, 1528],
       "id": "2428d608-07e8-4c0f-be29-6eedea7b3b3e",
       "name": "Condition_Validate_BakusFormat"
     },
@@ -463,10 +409,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        2096,
-        1352
-      ],
+      "position": [2096, 1352],
       "id": "c11e08ec-da44-4eae-9826-6a05f609ffae",
       "name": "Feedback_BakusInvalid"
     },
@@ -478,10 +421,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        2096,
-        528
-      ],
+      "position": [2096, 528],
       "id": "042a0ddd-7be2-4e89-a771-775b75856d28",
       "name": "Feedback_AIAgentError"
     },
@@ -493,10 +433,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        2096,
-        1160
-      ],
+      "position": [2096, 1160],
       "id": "3d5eb722-309b-402f-b912-e784a0811f4f",
       "name": "Feedback_BakusBuilderError"
     },
@@ -511,10 +448,7 @@
       },
       "type": "n8n-nodes-base.jinaAi",
       "typeVersion": 1,
-      "position": [
-        -720,
-        1232
-      ],
+      "position": [-720, 1232],
       "id": "41477edb-89b7-46b2-8946-afed67ddacd8",
       "name": "JinaAI_Fetch_WebpageContent",
       "credentials": {
@@ -560,10 +494,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -272,
-        1456
-      ],
+      "position": [-272, 1456],
       "id": "455c071b-9da8-4e52-a05c-c43674a7e9c4",
       "name": "Condition_Validate_SourceURL"
     },
@@ -592,10 +523,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -1696,
-        1288
-      ],
+      "position": [-1696, 1288],
       "id": "b5157e05-7fe4-461b-a3fe-53abb4dc4879",
       "name": "LLM_Model_ValidationPrimary",
       "credentials": {
@@ -630,10 +558,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -1568,
-        1288
-      ],
+      "position": [-1568, 1288],
       "id": "cdacbeb9-4609-4425-8d59-093546adbbad",
       "name": "LLM_Model_ValidationFallback",
       "credentials": {
@@ -651,10 +576,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        2320,
-        960
-      ],
+      "position": [2320, 960],
       "id": "2c37a5c9-aa6f-4dae-a41e-a5c8c0c95953",
       "name": "Response_Return_Final"
     },
@@ -683,10 +605,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        80,
-        1728
-      ],
+      "position": [80, 1728],
       "id": "61a81527-62d1-444c-b555-f15bd936706d",
       "name": "LLM_Model_BakusFallback",
       "credentials": {
@@ -704,10 +623,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        576,
-        888
-      ],
+      "position": [576, 888],
       "id": "a9505cd5-dc4e-41ea-8d98-7cbad94dc668",
       "name": "Feedback_InvalidURL"
     },
@@ -715,10 +631,7 @@
       "parameters": {},
       "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
       "typeVersion": 1,
-      "position": [
-        -1440,
-        1288
-      ],
+      "position": [-1440, 1288],
       "id": "493044b7-2ae0-45cf-88c7-26f98afa49ec",
       "name": "Tool_Check_Wikipedia"
     },
@@ -730,10 +643,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        1424,
-        1704
-      ],
+      "position": [1424, 1704],
       "id": "266c267b-71d3-43fb-8c49-ccb8f7228c36",
       "name": "Set_Source_ObjectMaker"
     },
@@ -825,10 +735,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        1872,
-        256
-      ],
+      "position": [1872, 256],
       "id": "43cb5775-3b2b-4cde-81c5-76a8ed9ecb68",
       "name": "Workflow_SystemMessage_SourceDuplicated"
     },
@@ -920,10 +827,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        1872,
-        1160
-      ],
+      "position": [1872, 1160],
       "id": "3ea64067-c2e4-4f68-8316-a69f7bdbaab8",
       "name": "Workflow_SystemMessage_BakusBuilderError"
     },
@@ -1015,10 +919,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        1872,
-        1704
-      ],
+      "position": [1872, 1704],
       "id": "88a5f6e6-6cac-4124-91ad-3f2da82707cd",
       "name": "Workflow_SystemMessage_Success"
     },
@@ -1110,10 +1011,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        1872,
-        528
-      ],
+      "position": [1872, 528],
       "id": "2955f530-e619-405a-b981-f06caacac3bb",
       "name": "Workflow_SystemMessage_AIAgentError"
     },
@@ -1205,10 +1103,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        1872,
-        720
-      ],
+      "position": [1872, 720],
       "id": "ad8df5d5-852f-4d5a-84ee-f473744e7e48",
       "name": "Workflow_SystemMessage_SourceNotRelevant"
     },
@@ -1300,10 +1195,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        152,
-        888
-      ],
+      "position": [152, 888],
       "id": "81f8eade-b96c-45b8-b818-996ae4e67df7",
       "name": "Workflow_SystemMessage_BakusBuilderError2"
     },
@@ -1395,10 +1287,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        1872,
-        1352
-      ],
+      "position": [1872, 1352],
       "id": "74a7dd93-0794-485d-8f8d-a38a7835f7bb",
       "name": "Workflow_SystemMessage_BakusInvalid"
     },
@@ -1417,10 +1306,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
-      "position": [
-        832,
-        1704
-      ],
+      "position": [832, 1704],
       "id": "723131b3-5e55-45d3-b77f-42f80f57f20c",
       "name": "LLM_Agent_MapSourceActor",
       "retryOnFail": true,
@@ -1450,10 +1336,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        800,
-        1928
-      ],
+      "position": [800, 1928],
       "id": "e3233305-4a4f-4c1d-b365-4812cbebb0da",
       "name": "LLM_Model_MapSourceActorPrimary",
       "credentials": {
@@ -1488,10 +1371,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        928,
-        1928
-      ],
+      "position": [928, 1928],
       "id": "84d87c16-318e-48ec-b004-d0aee5473381",
       "name": "LLM_Model_MapSourceActorFallback",
       "credentials": {
@@ -1509,10 +1389,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
-      "position": [
-        1056,
-        1928
-      ],
+      "position": [1056, 1928],
       "id": "5a45611a-59e0-4cc1-934d-66ac4164790f",
       "name": "LLM_Parser_MapSourceActorOutput"
     },
@@ -1535,10 +1412,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        1136,
-        2136
-      ],
+      "position": [1136, 2136],
       "id": "39d28369-7258-4026-81a0-5497785db802",
       "name": "LLM_Model_MapSourceActorParser",
       "credentials": {
@@ -1584,10 +1458,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -496,
-        1312
-      ],
+      "position": [-496, 1312],
       "id": "845e5be1-9e73-4863-98cb-e48fbd635bf2",
       "name": "Condition_Validate_SourceURLStatus"
     }

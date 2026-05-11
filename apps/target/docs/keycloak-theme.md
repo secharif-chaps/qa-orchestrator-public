@@ -21,10 +21,10 @@ In your `docker-compose.override.yaml`, under the `keycloak` service, mount the 
 
 ```yaml
 services:
-    keycloak:
-        volumes:
-            - ./docker/keycloak/realm-chapsmind-dev.json:/opt/keycloak/data/import/realm-chapsmind-dev.json
-            - ./docker/keycloak/chapsmind-theme:/opt/keycloak/themes/chapsmind
+  keycloak:
+    volumes:
+      - ./docker/keycloak/realm-chapsmind-dev.json:/opt/keycloak/data/import/realm-chapsmind-dev.json
+      - ./docker/keycloak/chapsmind-theme:/opt/keycloak/themes/chapsmind
 ```
 
 This ensures:
@@ -183,9 +183,9 @@ To deploy the theme in production:
 
 1. **Download the theme JAR** from the package registry
 2. **Copy to Keycloak providers directory**:
-    ```bash
-    cp chapsmind-keycloak-theme-main.jar /opt/keycloak/providers/
-    ```
+   ```bash
+   cp chapsmind-keycloak-theme-main.jar /opt/keycloak/providers/
+   ```
 3. **Restart Keycloak** to load the new theme
 4. **Configure the realm** to use the `chapsmind-theme` login theme
 
@@ -195,12 +195,12 @@ The theme package includes a `META-INF/keycloak-themes.json` file that defines:
 
 ```json
 {
-    "themes": [
-        {
-            "name": "chapsmind-theme",
-            "types": ["login"]
-        }
-    ]
+  "themes": [
+    {
+      "name": "chapsmind-theme",
+      "types": ["login"]
+    }
+  ]
 }
 ```
 

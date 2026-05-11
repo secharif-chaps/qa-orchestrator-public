@@ -82,11 +82,7 @@
           "temporary": false
         }
       ],
-      "realmRoles": [
-        "organization.read",
-        "company.view",
-        "stream.read"
-      ]
+      "realmRoles": ["organization.read", "company.view", "stream.read"]
     },
     {
       "id": "b3a3e3c2-3a3b-4c3d-8e3f-3a3b3c3d3e3f",
@@ -119,11 +115,7 @@
           "view-clients",
           "manage-realm"
         ],
-        "account": [
-          "manage-account",
-          "manage-account-links",
-          "view-profile"
-        ]
+        "account": ["manage-account", "manage-account-links", "view-profile"]
       }
     }
   ],
@@ -145,21 +137,12 @@
         "http://localhost/auth/silent-callback",
         "http://localhost/login"
       ],
-      "webOrigins": [
-        "http://localhost"
-      ],
+      "webOrigins": ["http://localhost"],
       "attributes": {
         "post.logout.redirect.uris": "http://localhost/login",
         "pkce.code.challenge.method": "S256"
       },
-      "defaultClientScopes": [
-        "web-origins",
-        "acr",
-        "profile",
-        "roles",
-        "email",
-        "organization"
-      ],
+      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "email", "organization"],
       "protocolMappers": [
         {
           "name": "organization-mapper",
@@ -201,20 +184,9 @@
       "secret": "chapsmind-global-service-secret",
       "rootUrl": "http://localhost",
       "baseUrl": "http://localhost/api",
-      "redirectUris": [
-        "http://localhost/*"
-      ],
-      "webOrigins": [
-        "http://localhost"
-      ],
-      "defaultClientScopes": [
-        "web-origins",
-        "acr",
-        "profile",
-        "roles",
-        "email",
-        "organization"
-      ],
+      "redirectUris": ["http://localhost/*"],
+      "webOrigins": ["http://localhost"],
+      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "email", "organization"],
       "protocolMappers": [
         {
           "name": "organization-mapper",
@@ -256,14 +228,7 @@
       "authorizationServicesEnabled": false,
       "fullScopeAllowed": true,
       "secret": "chapsmind-admin-secret",
-      "defaultClientScopes": [
-        "web-origins",
-        "acr",
-        "profile",
-        "roles",
-        "email",
-        "organization"
-      ],
+      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "email", "organization"],
       "protocolMappers": [
         {
           "name": "organization-mapper",

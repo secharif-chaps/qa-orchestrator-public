@@ -48,7 +48,7 @@ After every POST/PUT/PATCH/DELETE operation, the frontend forces a token refresh
 ```typescript
 // Current frontend behavior - pwa/api/api.ts
 if (method !== 'GET') {
-    await mercure.getMercureToken(true) // Force refresh
+  await mercure.getMercureToken(true) // Force refresh
 }
 ```
 
@@ -251,7 +251,7 @@ authorizes subscriptions to any resource in the user's namespace.
 ```typescript
 // Before: Token refresh after every mutation
 if (method !== 'GET') {
-    await mercure.getMercureToken(true) // ❌ No longer needed
+  await mercure.getMercureToken(true) // ❌ No longer needed
 }
 
 // After: Token remains valid for new resources
@@ -433,9 +433,9 @@ The frontend discovers Mercure topics from API responses via `Link` headers:
 ```typescript
 // pwa/api/api.ts
 function discoverMercure(response: Response): MercureResponse | undefined {
-    const linkHeader = response.headers.get('Link')
-    const mercureMatch = linkHeader.match(/<([^>]+)>;\s*rel="mercure"/)
-    // Returns topic from response URL
+  const linkHeader = response.headers.get('Link')
+  const mercureMatch = linkHeader.match(/<([^>]+)>;\s*rel="mercure"/)
+  // Returns topic from response URL
 }
 ```
 
@@ -462,18 +462,18 @@ const topic = response.url // /api/watch_files/{id}
 
 // AFTER - topic from Link header with rel="topic"
 function discoverMercure(response: Response): { hubUrl: string; topic: string } | undefined {
-    const linkHeader = response.headers.get('Link')
-    if (!linkHeader) return undefined
+  const linkHeader = response.headers.get('Link')
+  if (!linkHeader) return undefined
 
-    const hubMatch = linkHeader.match(/<([^>]+)>;\s*rel="mercure"/)
-    const topicMatch = linkHeader.match(/<([^>]+)>;\s*rel="topic"/)
+  const hubMatch = linkHeader.match(/<([^>]+)>;\s*rel="mercure"/)
+  const topicMatch = linkHeader.match(/<([^>]+)>;\s*rel="topic"/)
 
-    if (!hubMatch || !topicMatch) return undefined
+  if (!hubMatch || !topicMatch) return undefined
 
-    return {
-        hubUrl: hubMatch[1],
-        topic: topicMatch[1], // Already user-scoped: /users/{userId}/...
-    }
+  return {
+    hubUrl: hubMatch[1],
+    topic: topicMatch[1], // Already user-scoped: /users/{userId}/...
+  }
 }
 ```
 
@@ -779,32 +779,32 @@ final class ActiveSubscribersChecker
 // pwa/composables/useMercureTopics.ts
 
 export function useMercureTopics() {
-    const { user } = useAuth()
+  const { user } = useAuth()
 
-    const assertAuthenticated = (): string => {
-        if (!user.value?.id) {
-            throw new Error('User must be authenticated to generate Mercure topics')
-        }
-        return user.value.id
+  const assertAuthenticated = (): string => {
+    if (!user.value?.id) {
+      throw new Error('User must be authenticated to generate Mercure topics')
     }
+    return user.value.id
+  }
 
-    const watchFileTopic = (watchFileId: string): string => {
-        return `/users/${assertAuthenticated()}/watch-files/${watchFileId}`
-    }
+  const watchFileTopic = (watchFileId: string): string => {
+    return `/users/${assertAuthenticated()}/watch-files/${watchFileId}`
+  }
 
-    const conversationTopic = (conversationId: string): string => {
-        return `/users/${assertAuthenticated()}/conversations/${conversationId}`
-    }
+  const conversationTopic = (conversationId: string): string => {
+    return `/users/${assertAuthenticated()}/conversations/${conversationId}`
+  }
 
-    const conversationMessagesTopic = (conversationId: string): string => {
-        return `/users/${assertAuthenticated()}/conversations/${conversationId}/messages`
-    }
+  const conversationMessagesTopic = (conversationId: string): string => {
+    return `/users/${assertAuthenticated()}/conversations/${conversationId}/messages`
+  }
 
-    return {
-        watchFileTopic,
-        conversationTopic,
-        conversationMessagesTopic,
-    }
+  return {
+    watchFileTopic,
+    conversationTopic,
+    conversationMessagesTopic,
+  }
 }
 ```
 
@@ -812,13 +812,12 @@ export function useMercureTopics() {
 // pwa/api/watchFile.ts - Updated subscription keys
 
 export const createWatchFileSubscribeKeys = (userId: string) => ({
-    byId: (watchFileId: string) => `/users/${userId}/watch-files/${watchFileId}`,
+  byId: (watchFileId: string) => `/users/${userId}/watch-files/${watchFileId}`,
 })
 
 export const createConversationSubscribeKeys = (userId: string) => ({
-    byId: (conversationId: string) => `/users/${userId}/conversations/${conversationId}`,
-    messages: (conversationId: string) =>
-        `/users/${userId}/conversations/${conversationId}/messages`,
+  byId: (conversationId: string) => `/users/${userId}/conversations/${conversationId}`,
+  messages: (conversationId: string) => `/users/${userId}/conversations/${conversationId}/messages`,
 })
 ```
 
@@ -887,14 +886,14 @@ subscribe(hubUrl, ['/users/{userId}/conversations/{c1}'], options, 'c1')
 
 // Future optimization: Single EventSource with multiple topics
 subscribe(
-    hubUrl,
-    [
-        '/users/{userId}/watch-files/{wf1}',
-        '/users/{userId}/watch-files/{wf2}',
-        '/users/{userId}/conversations/{c1}',
-    ],
-    options,
-    'consolidated',
+  hubUrl,
+  [
+    '/users/{userId}/watch-files/{wf1}',
+    '/users/{userId}/watch-files/{wf2}',
+    '/users/{userId}/conversations/{c1}',
+  ],
+  options,
+  'consolidated',
 )
 ```
 
@@ -903,15 +902,15 @@ messages based on the topic in the event:
 
 ```typescript
 eventSource.onmessage = (event) => {
-    const data = JSON.parse(event.data)
-    const topic = new URL(event.lastEventId).pathname // Or use custom header
+  const data = JSON.parse(event.data)
+  const topic = new URL(event.lastEventId).pathname // Or use custom header
 
-    // Client-side routing based on topic
-    if (topic.includes('/watch-files/')) {
-        handleWatchFileUpdate(data)
-    } else if (topic.includes('/conversations/')) {
-        handleConversationUpdate(data)
-    }
+  // Client-side routing based on topic
+  if (topic.includes('/watch-files/')) {
+    handleWatchFileUpdate(data)
+  } else if (topic.includes('/conversations/')) {
+    handleConversationUpdate(data)
+  }
 }
 ```
 

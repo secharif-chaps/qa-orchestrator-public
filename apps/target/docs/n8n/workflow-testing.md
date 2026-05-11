@@ -76,17 +76,17 @@ All testable N8N workflows **MUST** follow these conventions:
 
 ```json
 {
-    "success": true,
-    "message": "The reference subject has been correctly updated",
-    "context": {
-        "execution": {
-            "id": "12345"
-        },
-        "timestamp": "2025-11-15T10:30:00Z"
+  "success": true,
+  "message": "The reference subject has been correctly updated",
+  "context": {
+    "execution": {
+      "id": "12345"
     },
-    "messageId": null,
-    "conversationId": "1f0ba909-5099-6980-8667-497ced82fa8d",
-    "watchFileId": "1f0ba909-4cda-666e-9b4c-497ced82fa8d"
+    "timestamp": "2025-11-15T10:30:00Z"
+  },
+  "messageId": null,
+  "conversationId": "1f0ba909-5099-6980-8667-497ced82fa8d",
+  "watchFileId": "1f0ba909-4cda-666e-9b4c-497ced82fa8d"
 }
 ```
 
@@ -103,17 +103,17 @@ All testable N8N workflows **MUST** follow these conventions:
 
 ```json
 {
-    "success": false,
-    "message": "The reference subject \"...\" does not seem relevant for this WatchFile, check the analyse for more detail.",
-    "context": {
-        "execution": {
-            "id": "12346"
-        },
-        "timestamp": "2025-11-15T10:31:00Z"
+  "success": false,
+  "message": "The reference subject \"...\" does not seem relevant for this WatchFile, check the analyse for more detail.",
+  "context": {
+    "execution": {
+      "id": "12346"
     },
-    "messageId": null,
-    "conversationId": "conv-003",
-    "watchFileId": "c3d4e5f6-a7b8-6c7d-0e1f-2a3b4c5d6e7f"
+    "timestamp": "2025-11-15T10:31:00Z"
+  },
+  "messageId": null,
+  "conversationId": "conv-003",
+  "watchFileId": "c3d4e5f6-a7b8-6c7d-0e1f-2a3b4c5d6e7f"
 }
 ```
 
@@ -148,8 +148,8 @@ Examples:
 2. Click **Workflow Settings** (gear icon)
 3. Navigate to **Executions** tab
 4. Set:
-    - **Timeout**: `300` (seconds)
-    - **Save Execution Progress**: ✅ Enabled
+   - **Timeout**: `300` (seconds)
+   - **Save Execution Progress**: ✅ Enabled
 
 ## Setting Up a Workflow for Testing
 
@@ -169,10 +169,10 @@ Add a webhook node to receive test requests:
 
 ```json
 {
-    "httpMethod": "POST",
-    "path": "2af49e2a-e460-4b87-bc21-81df5be9d831",
-    "responseMode": "lastNode",
-    "responseData": "allEntries"
+  "httpMethod": "POST",
+  "path": "2af49e2a-e460-4b87-bc21-81df5be9d831",
+  "responseMode": "lastNode",
+  "responseData": "allEntries"
 }
 ```
 
@@ -214,26 +214,26 @@ If your production trigger uses RabbitMQ or other formats, add a Set node to nor
 
 ```json
 {
-    "dataToSave": {
-        "values": [
-            {
-                "key": "runId",
-                "value": "={{ $json._testMetadata.runId }}"
-            },
-            {
-                "key": "testCaseId",
-                "value": "={{ $json._testMetadata.testCaseId }}"
-            },
-            {
-                "key": "testCaseName",
-                "value": "={{ $json._testMetadata.testCaseName }}"
-            },
-            {
-                "key": "datasetFile",
-                "value": "={{ $json._testMetadata.datasetFile }}"
-            }
-        ]
-    }
+  "dataToSave": {
+    "values": [
+      {
+        "key": "runId",
+        "value": "={{ $json._testMetadata.runId }}"
+      },
+      {
+        "key": "testCaseId",
+        "value": "={{ $json._testMetadata.testCaseId }}"
+      },
+      {
+        "key": "testCaseName",
+        "value": "={{ $json._testMetadata.testCaseName }}"
+      },
+      {
+        "key": "datasetFile",
+        "value": "={{ $json._testMetadata.datasetFile }}"
+      }
+    ]
+  }
 }
 ```
 
@@ -283,48 +283,44 @@ Create JSON files in `docker/n8n/tests/datasets/`:
 
 ```json
 {
-    "version": "1.0",
-    "metadata": {
-        "workflowId": "7uS3PqE9HezIqOd1",
-        "workflowName": "WatchFile Builder - Update reference subject",
-        "description": "Evaluation dataset for reference subject update workflow",
-        "createdAt": "2025-11-14T23:00:00Z",
-        "snapshotNormalization": {
-            "removeFields": [
-                "*.context.execution",
-                "*.context.timestamp",
-                "referenceSubject.context"
-            ]
-        }
-    },
-    "testCases": [
+  "version": "1.0",
+  "metadata": {
+    "workflowId": "7uS3PqE9HezIqOd1",
+    "workflowName": "WatchFile Builder - Update reference subject",
+    "description": "Evaluation dataset for reference subject update workflow",
+    "createdAt": "2025-11-14T23:00:00Z",
+    "snapshotNormalization": {
+      "removeFields": ["*.context.execution", "*.context.timestamp", "referenceSubject.context"]
+    }
+  },
+  "testCases": [
+    {
+      "testCaseId": "TC-001",
+      "name": "First creation - Empty WatchFile",
+      "description": "Creating the first reference subject for a new watchfile",
+      "expectedBehavior": "The workflow must generate a complete structured subject",
+      "expectedOutput": "Success with generated referenceSubject",
+      "priority": "high",
+      "input": {
+        "watchFile": {
+          /* ... */
+        },
+        "language": "en",
+        "referenceSubject": "Monitor competitors in Market Intelligence..."
+      },
+      "snapshot": [
         {
-            "testCaseId": "TC-001",
-            "name": "First creation - Empty WatchFile",
-            "description": "Creating the first reference subject for a new watchfile",
-            "expectedBehavior": "The workflow must generate a complete structured subject",
-            "expectedOutput": "Success with generated referenceSubject",
-            "priority": "high",
-            "input": {
-                "watchFile": {
-                    /* ... */
-                },
-                "language": "en",
-                "referenceSubject": "Monitor competitors in Market Intelligence..."
-            },
-            "snapshot": [
-                {
-                    "referenceSubject": {
-                        "success": true,
-                        "message": "The reference subject has been correctly updated",
-                        "messageId": null,
-                        "conversationId": "...",
-                        "watchFileId": "..."
-                    }
-                }
-            ]
+          "referenceSubject": {
+            "success": true,
+            "message": "The reference subject has been correctly updated",
+            "messageId": null,
+            "conversationId": "...",
+            "watchFileId": "..."
+          }
         }
-    ]
+      ]
+    }
+  ]
 }
 ```
 
@@ -362,11 +358,11 @@ Create JSON files in `docker/n8n/tests/datasets/`:
 
 ```javascript
 ;[
-    '*.context.execution', // Execution metadata (all top-level keys)
-    '*.context.timestamp', // Execution timestamp
-    '*.context.messageId', // Message identifier
-    '*.context.conversationId', // Conversation identifier
-    '_testMetadata', // Test runner metadata
+  '*.context.execution', // Execution metadata (all top-level keys)
+  '*.context.timestamp', // Execution timestamp
+  '*.context.messageId', // Message identifier
+  '*.context.conversationId', // Conversation identifier
+  '_testMetadata', // Test runner metadata
 ]
 ```
 
@@ -374,16 +370,16 @@ Create JSON files in `docker/n8n/tests/datasets/`:
 
 ```json
 {
-    "metadata": {
-        "snapshotNormalization": {
-            "removeFields": [
-                "*.context.execution", // Wildcard: all top-level objects
-                "result.generatedAt", // Nested path
-                "_internal", // Top-level field
-                "*.metadata.processingTime" // Nested with wildcard
-            ]
-        }
+  "metadata": {
+    "snapshotNormalization": {
+      "removeFields": [
+        "*.context.execution", // Wildcard: all top-level objects
+        "result.generatedAt", // Nested path
+        "_internal", // Top-level field
+        "*.metadata.processingTime" // Nested with wildcard
+      ]
     }
+  }
 }
 ```
 
@@ -492,26 +488,26 @@ POST http://127.0.0.1:5678/webhook/2af49e2a-e460-4b87-bc21-81df5be9d831
 
 ```json
 {
-    "timestamp": "2025-11-15T10:30:00Z",
-    "summary": {
-        "total": 5,
-        "passed": 4,
-        "failed": 1,
-        "successRate": 80.0
-    },
-    "results": [
-        {
-            "testCaseId": "TC-001",
-            "passed": true,
-            "executionId": "146",
-            "executionUrl": "https://n8n.basil.local/workflow/.../executions/146",
-            "metrics": {
-                "responseTime": 2381,
-                "structureCompliance": true,
-                "isError": false
-            }
-        }
-    ]
+  "timestamp": "2025-11-15T10:30:00Z",
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "failed": 1,
+    "successRate": 80.0
+  },
+  "results": [
+    {
+      "testCaseId": "TC-001",
+      "passed": true,
+      "executionId": "146",
+      "executionUrl": "https://n8n.basil.local/workflow/.../executions/146",
+      "metrics": {
+        "responseTime": 2381,
+        "structureCompliance": true,
+        "isError": false
+      }
+    }
+  ]
 }
 ```
 
@@ -644,11 +640,11 @@ curl http://127.0.0.1:5678/webhook/test
 
 ```json
 {
-    "context": {
-        "execution": {
-            "id": "{{ $execution.id }}"
-        }
+  "context": {
+    "execution": {
+      "id": "{{ $execution.id }}"
     }
+  }
 }
 ```
 

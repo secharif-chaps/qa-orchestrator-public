@@ -10,16 +10,16 @@ Usage limits are configured in `api/config/services/usage_limits.yaml`. Each ent
 
 ```yaml
 usage_limits:
-    watchfile:
-        max_owned_non_archived: 25
-        max_active_per_user: 2
-    source:
-        max_per_watchfile: 100
-        max_active_per_watchfile: 20
-    actor:
-        max_per_watchfile: 75
-    document:
-        max_per_watchfile: 10000
+  watchfile:
+    max_owned_non_archived: 25
+    max_active_per_user: 2
+  source:
+    max_per_watchfile: 100
+    max_active_per_watchfile: 20
+  actor:
+    max_per_watchfile: 75
+  document:
+    max_per_watchfile: 10000
 ```
 
 The configuration is injected into `App\Infrastructure\UsageLimit\Config\UsageLimitConfig`, which implements `App\Domain\UsageLimit\UsageLimitConfigInterface`. Handlers and services should depend on the interface to keep a clean separation between the domain and infrastructure layers.

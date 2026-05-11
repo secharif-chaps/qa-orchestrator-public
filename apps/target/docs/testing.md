@@ -522,9 +522,9 @@ The project uses DAMA Doctrine Test Bundle for database isolation without the ov
 ```yaml
 # config/packages/dama_doctrine_test_bundle.yaml
 dama_doctrine_test_bundle:
-    enable_static_connection: true
-    enable_static_meta_data_cache: true
-    enable_static_query_cache: true
+  enable_static_connection: true
+  enable_static_meta_data_cache: true
+  enable_static_query_cache: true
 ```
 
 This configuration:
@@ -933,43 +933,43 @@ class UserFactory extends PersistentProxyObjectFactory
 
 1. **Use Named States for Common Scenarios**
 
-    ```php
-    public function withAdminRole(): self
-    {
-        return $this->with(['roles' => [User::ROLE_USER, User::ROLE_ADMIN]]);
-    }
+   ```php
+   public function withAdminRole(): self
+   {
+       return $this->with(['roles' => [User::ROLE_USER, User::ROLE_ADMIN]]);
+   }
 
-    public function withSpecificEmail(string $email): self
-    {
-        return $this->with(['email' => $email]);
-    }
-    ```
+   public function withSpecificEmail(string $email): self
+   {
+       return $this->with(['email' => $email]);
+   }
+   ```
 
 2. **Create Relationships**
 
-    ```php
-    // Create user with folders
-    $user = UserFactory::new()
-        ->has(FolderFactory::new()->many(3), 'folders')
-        ->create();
+   ```php
+   // Create user with folders
+   $user = UserFactory::new()
+       ->has(FolderFactory::new()->many(3), 'folders')
+       ->create();
 
-    // Create folder with specific owner
-    $folder = FolderFactory::new()
-        ->withCreatedBy(UserFactory::new()->create())
-        ->create();
-    ```
+   // Create folder with specific owner
+   $folder = FolderFactory::new()
+       ->withCreatedBy(UserFactory::new()->create())
+       ->create();
+   ```
 
 3. **Use Sequences for Unique Data**
-    ```php
-    UserFactory::new()
-        ->sequence(function() {
-            for ($i = 1; $i <= 10; $i++) {
-                yield ['email' => "user{$i}@example.com"];
-            }
-        })
-        ->many(10)
-        ->create();
-    ```
+   ```php
+   UserFactory::new()
+       ->sequence(function() {
+           for ($i = 1; $i <= 10; $i++) {
+               yield ['email' => "user{$i}@example.com"];
+           }
+       })
+       ->many(10)
+       ->create();
+   ```
 
 #### Creating New Factories with Symfony Maker
 
@@ -1412,14 +1412,14 @@ The test database runs entirely in RAM for maximum speed:
 ```yaml
 # compose.override.yml
 database-test:
-    image: postgres:17-alpine
-    profiles: [test]
-    tmpfs:
-        - /var/lib/postgresql/data # Database stored in RAM
-    environment:
-        POSTGRES_DB: basil_test
-        POSTGRES_USER: basil
-        POSTGRES_PASSWORD: basil
+  image: postgres:17-alpine
+  profiles: [test]
+  tmpfs:
+    - /var/lib/postgresql/data # Database stored in RAM
+  environment:
+    POSTGRES_DB: basil_test
+    POSTGRES_USER: basil
+    POSTGRES_PASSWORD: basil
 ```
 
 **Transaction Isolation**
@@ -1543,42 +1543,42 @@ import { useApi } from '~/composables/useApi'
 // Mock $fetch
 const mockFetch = vi.fn()
 vi.mock('#app', () => ({
-    useNuxtApp: () => ({
-        $fetch: mockFetch,
-    }),
+  useNuxtApp: () => ({
+    $fetch: mockFetch,
+  }),
 }))
 
 describe('useApi', () => {
-    beforeEach(() => {
-        vi.clearAllMocks()
-    })
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
-    it('should fetch users successfully', async () => {
-        // Arrange
-        const mockUsers = [
-            { id: 1, email: 'user1@example.com' },
-            { id: 2, email: 'user2@example.com' },
-        ]
-        mockFetch.mockResolvedValue(mockUsers)
+  it('should fetch users successfully', async () => {
+    // Arrange
+    const mockUsers = [
+      { id: 1, email: 'user1@example.com' },
+      { id: 2, email: 'user2@example.com' },
+    ]
+    mockFetch.mockResolvedValue(mockUsers)
 
-        // Act
-        const { getUsers } = useApi()
-        const result = await getUsers()
+    // Act
+    const { getUsers } = useApi()
+    const result = await getUsers()
 
-        // Assert
-        expect(mockFetch).toHaveBeenCalledWith('/api/users')
-        expect(result).toEqual(mockUsers)
-    })
+    // Assert
+    expect(mockFetch).toHaveBeenCalledWith('/api/users')
+    expect(result).toEqual(mockUsers)
+  })
 
-    it('should handle API errors', async () => {
-        // Arrange
-        const error = new Error('API Error')
-        mockFetch.mockRejectedValue(error)
+  it('should handle API errors', async () => {
+    // Arrange
+    const error = new Error('API Error')
+    mockFetch.mockRejectedValue(error)
 
-        // Act & Assert
-        const { getUsers } = useApi()
-        await expect(getUsers()).rejects.toThrow('API Error')
-    })
+    // Act & Assert
+    const { getUsers } = useApi()
+    await expect(getUsers()).rejects.toThrow('API Error')
+  })
 })
 ```
 
@@ -1594,47 +1594,47 @@ import UserCard from '~/components/UserCard.vue'
 import type { User } from '~/types/user'
 
 describe('UserCard', () => {
-    const mockUser: User = {
-        id: '1',
-        email: 'test@example.com',
-        firstName: 'John',
-        lastName: 'Doe',
-    }
+  const mockUser: User = {
+    id: '1',
+    email: 'test@example.com',
+    firstName: 'John',
+    lastName: 'Doe',
+  }
 
-    it('renders user information correctly', () => {
-        // Arrange & Act
-        const wrapper = mount(UserCard, {
-            props: { user: mockUser },
-        })
-
-        // Assert
-        expect(wrapper.text()).toContain('John Doe')
-        expect(wrapper.text()).toContain('test@example.com')
+  it('renders user information correctly', () => {
+    // Arrange & Act
+    const wrapper = mount(UserCard, {
+      props: { user: mockUser },
     })
 
-    it('emits update event when edit button is clicked', async () => {
-        // Arrange
-        const wrapper = mount(UserCard, {
-            props: { user: mockUser, editable: true },
-        })
+    // Assert
+    expect(wrapper.text()).toContain('John Doe')
+    expect(wrapper.text()).toContain('test@example.com')
+  })
 
-        // Act
-        await wrapper.find('[data-testid=\"edit-button\"]').trigger('click')
-
-        // Assert
-        expect(wrapper.emitted().edit).toBeTruthy()
-        expect(wrapper.emitted().edit[0]).toEqual([mockUser])
+  it('emits update event when edit button is clicked', async () => {
+    // Arrange
+    const wrapper = mount(UserCard, {
+      props: { user: mockUser, editable: true },
     })
 
-    it('does not show edit button when not editable', () => {
-        // Arrange & Act
-        const wrapper = mount(UserCard, {
-            props: { user: mockUser, editable: false },
-        })
+    // Act
+    await wrapper.find('[data-testid=\"edit-button\"]').trigger('click')
 
-        // Assert
-        expect(wrapper.find('[data-testid=\"edit-button\"]').exists()).toBe(false)
+    // Assert
+    expect(wrapper.emitted().edit).toBeTruthy()
+    expect(wrapper.emitted().edit[0]).toEqual([mockUser])
+  })
+
+  it('does not show edit button when not editable', () => {
+    // Arrange & Act
+    const wrapper = mount(UserCard, {
+      props: { user: mockUser, editable: false },
     })
+
+    // Assert
+    expect(wrapper.find('[data-testid=\"edit-button\"]').exists()).toBe(false)
+  })
 })
 ```
 
@@ -1650,48 +1650,48 @@ import { useUserStore } from '~/stores/user'
 
 // Mock API calls
 vi.mock('~/composables/useApi', () => ({
-    useApi: () => ({
-        getUsers: vi.fn(() => Promise.resolve([])),
-        createUser: vi.fn((user) => Promise.resolve({ id: '1', ...user })),
-    }),
+  useApi: () => ({
+    getUsers: vi.fn(() => Promise.resolve([])),
+    createUser: vi.fn((user) => Promise.resolve({ id: '1', ...user })),
+  }),
 }))
 
 describe('User Store', () => {
-    beforeEach(() => {
-        setActivePinia(createPinia())
-    })
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
 
-    it('initializes with empty state', () => {
-        // Arrange & Act
-        const store = useUserStore()
+  it('initializes with empty state', () => {
+    // Arrange & Act
+    const store = useUserStore()
 
-        // Assert
-        expect(store.users).toEqual([])
-        expect(store.loading).toBe(false)
-        expect(store.error).toBeNull()
-    })
+    // Assert
+    expect(store.users).toEqual([])
+    expect(store.loading).toBe(false)
+    expect(store.error).toBeNull()
+  })
 
-    it('fetches users successfully', async () => {
-        // Arrange
-        const store = useUserStore()
-        const mockUsers = [
-            { id: '1', email: 'user1@example.com' },
-            { id: '2', email: 'user2@example.com' },
-        ]
+  it('fetches users successfully', async () => {
+    // Arrange
+    const store = useUserStore()
+    const mockUsers = [
+      { id: '1', email: 'user1@example.com' },
+      { id: '2', email: 'user2@example.com' },
+    ]
 
-        // Mock the API response
-        const { useApi } = await import('~/composables/useApi')
-        const api = useApi()
-        vi.mocked(api.getUsers).mockResolvedValue(mockUsers)
+    // Mock the API response
+    const { useApi } = await import('~/composables/useApi')
+    const api = useApi()
+    vi.mocked(api.getUsers).mockResolvedValue(mockUsers)
 
-        // Act
-        await store.fetchUsers()
+    // Act
+    await store.fetchUsers()
 
-        // Assert
-        expect(store.users).toEqual(mockUsers)
-        expect(store.loading).toBe(false)
-        expect(store.error).toBeNull()
-    })
+    // Assert
+    expect(store.users).toEqual(mockUsers)
+    expect(store.loading).toBe(false)
+    expect(store.error).toBeNull()
+  })
 })
 ```
 
@@ -1709,58 +1709,58 @@ Key testing jobs in `.gitlab-ci.yml`:
 
 ```yaml
 phpunit:
-    stage: TestsAndSecurity
-    variables:
-        XDEBUG_MODE: coverage
-    script:
-        - cd api
-        - php bin/phpunit --coverage-text --colors=never --log-junit junit.xml --coverage-cobertura coverage.xml
-    coverage: '/^\s*Lines:\s*\d+\.\d+\%/'
-    artifacts:
-        reports:
-            junit: api/junit.xml
-            coverage_report:
-                coverage_format: cobertura
-                path: api/coverage.xml
+  stage: TestsAndSecurity
+  variables:
+    XDEBUG_MODE: coverage
+  script:
+    - cd api
+    - php bin/phpunit --coverage-text --colors=never --log-junit junit.xml --coverage-cobertura coverage.xml
+  coverage: '/^\s*Lines:\s*\d+\.\d+\%/'
+  artifacts:
+    reports:
+      junit: api/junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: api/coverage.xml
 ```
 
 **Code Quality:**
 
 ```yaml
 ecs:
-    stage: CodingStandards
-    script:
-        - cd api
-        - vendor/bin/ecs check --config=ecs.php
+  stage: CodingStandards
+  script:
+    - cd api
+    - vendor/bin/ecs check --config=ecs.php
 
 phpstan:
-    stage: CodingStandards
-    script:
-        - cd api
-        - vendor/bin/phpstan --memory-limit=1G analyse
+  stage: CodingStandards
+  script:
+    - cd api
+    - vendor/bin/phpstan --memory-limit=1G analyse
 
 eslint:
-    stage: CodingStandards
-    script:
-        - cd pwa
-        - yarn run build
-        - npx eslint .
+  stage: CodingStandards
+  script:
+    - cd pwa
+    - yarn run build
+    - npx eslint .
 ```
 
 **Security Audits:**
 
 ```yaml
 composer-audit:
-    stage: TestsAndSecurity
-    script:
-        - cd api
-        - composer audit
+  stage: TestsAndSecurity
+  script:
+    - cd api
+    - composer audit
 
 yarn-front-audit:
-    stage: TestsAndSecurity
-    script:
-        - cd pwa
-        - yarn npm audit
+  stage: TestsAndSecurity
+  script:
+    - cd pwa
+    - yarn npm audit
 ```
 
 ### Local Test Scripts
@@ -1807,13 +1807,13 @@ task pwa:eslint:fix            # Fix JavaScript/Vue code style
 
 ```json
 {
-    "scripts": {
-        "test": "vitest",
-        "test:coverage": "vitest run --coverage",
-        "test:ui": "vitest --ui",
-        "build": "nuxt build",
-        "dev": "nuxt dev"
-    }
+  "scripts": {
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "build": "nuxt build",
+    "dev": "nuxt dev"
+  }
 }
 ```
 
@@ -1895,26 +1895,26 @@ import { createPinia } from 'pinia'
 import type { ComponentMountingOptions } from '@vue/test-utils'
 
 export function createTestWrapper<T>(
-    component: T,
-    options: ComponentMountingOptions<T> = {},
+  component: T,
+  options: ComponentMountingOptions<T> = {},
 ): VueWrapper {
-    return mount(component, {
-        global: {
-            plugins: [createPinia()],
-            ...options.global,
-        },
-        ...options,
-    })
+  return mount(component, {
+    global: {
+      plugins: [createPinia()],
+      ...options.global,
+    },
+    ...options,
+  })
 }
 
 export function createMockUser(overrides = {}) {
-    return {
-        id: '1',
-        email: 'test@example.com',
-        firstName: 'Test',
-        lastName: 'User',
-        ...overrides,
-    }
+  return {
+    id: '1',
+    email: 'test@example.com',
+    firstName: 'Test',
+    lastName: 'User',
+    ...overrides,
+  }
 }
 ```
 
@@ -1925,11 +1925,11 @@ export function createMockUser(overrides = {}) {
 ```typescript
 // tests/__mocks__/api.ts
 export const mockApi = {
-    getUsers: vi.fn(() => Promise.resolve([])),
-    getUser: vi.fn((id: string) => Promise.resolve({ id, email: 'test@example.com' })),
-    createUser: vi.fn((user) => Promise.resolve({ id: '1', ...user })),
-    updateUser: vi.fn((id: string, user) => Promise.resolve({ id, ...user })),
-    deleteUser: vi.fn(() => Promise.resolve()),
+  getUsers: vi.fn(() => Promise.resolve([])),
+  getUser: vi.fn((id: string) => Promise.resolve({ id, email: 'test@example.com' })),
+  createUser: vi.fn((user) => Promise.resolve({ id: '1', ...user })),
+  updateUser: vi.fn((id: string, user) => Promise.resolve({ id, ...user })),
+  deleteUser: vi.fn(() => Promise.resolve()),
 }
 ```
 

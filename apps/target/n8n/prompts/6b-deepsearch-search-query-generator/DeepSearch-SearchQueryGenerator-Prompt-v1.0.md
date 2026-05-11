@@ -14,22 +14,22 @@ You will receive data in the following format:
 
 ```json
 {
-    "strategicQuestion": {
-        "question": "Who are the top 5 competitors of Tesla in the global EV market?",
-        "monitoringDimension": "Competitive",
-        "expectedOutputType": "Actors list"
-    },
-    "watchfile": {
-        "title": "WatchFile title",
-        "userObjective": "User's raw monitoring need",
-        "referenceSubject": "The expression of the need automatically reworked and refined",
-        "monitoringType": "Classified intelligence dimension",
-        "watchFileActors": ["Identified actors", "companies"],
-        "sources": ["Identified sources"],
-        "analysisResults": "Initial analysis of user expression needs",
-        "geography": "Global|Regional|Local",
-        "timeHorizon": "Short-term|Medium-term|Long-term"
-    }
+  "strategicQuestion": {
+    "question": "Who are the top 5 competitors of Tesla in the global EV market?",
+    "monitoringDimension": "Competitive",
+    "expectedOutputType": "Actors list"
+  },
+  "watchfile": {
+    "title": "WatchFile title",
+    "userObjective": "User's raw monitoring need",
+    "referenceSubject": "The expression of the need automatically reworked and refined",
+    "monitoringType": "Classified intelligence dimension",
+    "watchFileActors": ["Identified actors", "companies"],
+    "sources": ["Identified sources"],
+    "analysisResults": "Initial analysis of user expression needs",
+    "geography": "Global|Regional|Local",
+    "timeHorizon": "Short-term|Medium-term|Long-term"
+  }
 }
 ```
 
@@ -41,14 +41,14 @@ You MUST output a **valid JSON array only**. No markdown, no explanation, no wra
 
 ```json
 [
-    {
-        "country": "US",
-        "language": "en",
-        "query": "\"Tesla\" competitors \"market share\" electric vehicles 2024 -job -hiring",
-        "priority": 100,
-        "queryType": "primary",
-        "rationale": "Broad US market coverage for Tesla competitive landscape"
-    }
+  {
+    "country": "US",
+    "language": "en",
+    "query": "\"Tesla\" competitors \"market share\" electric vehicles 2024 -job -hiring",
+    "priority": 100,
+    "queryType": "primary",
+    "rationale": "Broad US market coverage for Tesla competitive landscape"
+  }
 ]
 ```
 
@@ -254,16 +254,16 @@ Based on `watchfile.analysisResults.temporalScope`:
 
 ```json
 {
-    "strategicQuestion": {
-        "question": "Who are the top 5 direct competitors of Tesla in the global EV market?",
-        "monitoringDimension": "Competitive"
-    },
-    "watchfile": {
-        "monitoringType": "Competitive Intelligence",
-        "watchFileActors": ["Tesla"],
-        "geography": "Global",
-        "timeHorizon": "Short-term"
-    }
+  "strategicQuestion": {
+    "question": "Who are the top 5 direct competitors of Tesla in the global EV market?",
+    "monitoringDimension": "Competitive"
+  },
+  "watchfile": {
+    "monitoringType": "Competitive Intelligence",
+    "watchFileActors": ["Tesla"],
+    "geography": "Global",
+    "timeHorizon": "Short-term"
+  }
 }
 ```
 
@@ -271,46 +271,46 @@ Based on `watchfile.analysisResults.temporalScope`:
 
 ```json
 [
-    {
-        "country": "US",
-        "language": "en",
-        "query": "\"Tesla\" competitors \"market share\" electric vehicles 2024 -job -hiring",
-        "priority": 100,
-        "queryType": "primary",
-        "rationale": "Primary US market competitive landscape"
-    },
-    {
-        "country": "US",
-        "language": "en",
-        "query": "site:gartner.com OR site:forrester.com \"Tesla\" EV competitive analysis",
-        "priority": 90,
-        "queryType": "authority",
-        "rationale": "US analyst reports from industry leaders"
-    },
-    {
-        "country": "DE",
-        "language": "de",
-        "query": "\"Tesla\" Konkurrenten Elektroauto Marktanteil 2024",
-        "priority": 70,
-        "queryType": "exploratory",
-        "rationale": "German market perspective from automotive hub"
-    },
-    {
-        "country": "CN",
-        "language": "zh",
-        "query": "特斯拉 竞争对手 电动汽车 市场份额 2024",
-        "priority": 50,
-        "queryType": "validation",
-        "rationale": "Chinese market validation - largest EV market globally"
-    },
-    {
-        "country": "FR",
-        "language": "fr",
-        "query": "\"Tesla\" concurrents \"véhicule électrique\" Europe after:2024-01-01",
-        "priority": 30,
-        "queryType": "contextual",
-        "rationale": "French/European market trends"
-    }
+  {
+    "country": "US",
+    "language": "en",
+    "query": "\"Tesla\" competitors \"market share\" electric vehicles 2024 -job -hiring",
+    "priority": 100,
+    "queryType": "primary",
+    "rationale": "Primary US market competitive landscape"
+  },
+  {
+    "country": "US",
+    "language": "en",
+    "query": "site:gartner.com OR site:forrester.com \"Tesla\" EV competitive analysis",
+    "priority": 90,
+    "queryType": "authority",
+    "rationale": "US analyst reports from industry leaders"
+  },
+  {
+    "country": "DE",
+    "language": "de",
+    "query": "\"Tesla\" Konkurrenten Elektroauto Marktanteil 2024",
+    "priority": 70,
+    "queryType": "exploratory",
+    "rationale": "German market perspective from automotive hub"
+  },
+  {
+    "country": "CN",
+    "language": "zh",
+    "query": "特斯拉 竞争对手 电动汽车 市场份额 2024",
+    "priority": 50,
+    "queryType": "validation",
+    "rationale": "Chinese market validation - largest EV market globally"
+  },
+  {
+    "country": "FR",
+    "language": "fr",
+    "query": "\"Tesla\" concurrents \"véhicule électrique\" Europe after:2024-01-01",
+    "priority": 30,
+    "queryType": "contextual",
+    "rationale": "French/European market trends"
+  }
 ]
 ```
 
@@ -320,16 +320,16 @@ Based on `watchfile.analysisResults.temporalScope`:
 
 ```json
 {
-    "strategicQuestion": {
-        "question": "What are the key provisions of the EU AI Act affecting conversational AI?",
-        "monitoringDimension": "Legal"
-    },
-    "watchfile": {
-        "monitoringType": "Legal Intelligence",
-        "watchFileActors": ["EU AI Act", "Chatbot"],
-        "geography": "Europe",
-        "timeHorizon": "Medium-term"
-    }
+  "strategicQuestion": {
+    "question": "What are the key provisions of the EU AI Act affecting conversational AI?",
+    "monitoringDimension": "Legal"
+  },
+  "watchfile": {
+    "monitoringType": "Legal Intelligence",
+    "watchFileActors": ["EU AI Act", "Chatbot"],
+    "geography": "Europe",
+    "timeHorizon": "Medium-term"
+  }
 }
 ```
 
@@ -337,46 +337,46 @@ Based on `watchfile.analysisResults.temporalScope`:
 
 ```json
 [
-    {
-        "country": "GB",
-        "language": "en",
-        "query": "\"EU AI Act\" chatbot \"conversational AI\" requirements provisions 2024",
-        "priority": 100,
-        "queryType": "primary",
-        "rationale": "English-language primary coverage of EU regulation"
-    },
-    {
-        "country": "FR",
-        "language": "fr",
-        "query": "site:eur-lex.europa.eu \"règlement IA\" chatbot obligations",
-        "priority": 90,
-        "queryType": "authority",
-        "rationale": "Official EU source in French"
-    },
-    {
-        "country": "DE",
-        "language": "de",
-        "query": "\"EU KI-Verordnung\" Chatbot Anforderungen Compliance",
-        "priority": 70,
-        "queryType": "exploratory",
-        "rationale": "German regulatory interpretation"
-    },
-    {
-        "country": "FR",
-        "language": "fr",
-        "query": "\"IA Act\" impact chatbot entreprises filetype:pdf",
-        "priority": 50,
-        "queryType": "validation",
-        "rationale": "French impact assessment reports"
-    },
-    {
-        "country": "ES",
-        "language": "es",
-        "query": "\"Ley de IA\" UE chatbot regulación 2024",
-        "priority": 30,
-        "queryType": "contextual",
-        "rationale": "Spanish market regulatory perspective"
-    }
+  {
+    "country": "GB",
+    "language": "en",
+    "query": "\"EU AI Act\" chatbot \"conversational AI\" requirements provisions 2024",
+    "priority": 100,
+    "queryType": "primary",
+    "rationale": "English-language primary coverage of EU regulation"
+  },
+  {
+    "country": "FR",
+    "language": "fr",
+    "query": "site:eur-lex.europa.eu \"règlement IA\" chatbot obligations",
+    "priority": 90,
+    "queryType": "authority",
+    "rationale": "Official EU source in French"
+  },
+  {
+    "country": "DE",
+    "language": "de",
+    "query": "\"EU KI-Verordnung\" Chatbot Anforderungen Compliance",
+    "priority": 70,
+    "queryType": "exploratory",
+    "rationale": "German regulatory interpretation"
+  },
+  {
+    "country": "FR",
+    "language": "fr",
+    "query": "\"IA Act\" impact chatbot entreprises filetype:pdf",
+    "priority": 50,
+    "queryType": "validation",
+    "rationale": "French impact assessment reports"
+  },
+  {
+    "country": "ES",
+    "language": "es",
+    "query": "\"Ley de IA\" UE chatbot regulación 2024",
+    "priority": 30,
+    "queryType": "contextual",
+    "rationale": "Spanish market regulatory perspective"
+  }
 ]
 ```
 
@@ -386,16 +386,16 @@ Based on `watchfile.analysisResults.temporalScope`:
 
 ```json
 {
-    "strategicQuestion": {
-        "question": "Quelles sont les innovations récentes en matière de batteries solid-state?",
-        "monitoringDimension": "Technological"
-    },
-    "watchfile": {
-        "monitoringType": "Technological Intelligence",
-        "watchFileActors": ["Solid-state batteries"],
-        "geography": "France",
-        "timeHorizon": "Short-term"
-    }
+  "strategicQuestion": {
+    "question": "Quelles sont les innovations récentes en matière de batteries solid-state?",
+    "monitoringDimension": "Technological"
+  },
+  "watchfile": {
+    "monitoringType": "Technological Intelligence",
+    "watchFileActors": ["Solid-state batteries"],
+    "geography": "France",
+    "timeHorizon": "Short-term"
+  }
 }
 ```
 
@@ -403,46 +403,46 @@ Based on `watchfile.analysisResults.temporalScope`:
 
 ```json
 [
-    {
-        "country": "FR",
-        "language": "fr",
-        "query": "\"batterie solid-state\" OR \"batterie à électrolyte solide\" innovation 2024",
-        "priority": 100,
-        "queryType": "primary",
-        "rationale": "French-language primary coverage of solid-state battery innovations"
-    },
-    {
-        "country": "FR",
-        "language": "fr",
-        "query": "site:usinenouvelle.com OR site:techniques-ingenieur.fr batterie solid-state",
-        "priority": 90,
-        "queryType": "authority",
-        "rationale": "French technical authority sources"
-    },
-    {
-        "country": "FR",
-        "language": "fr",
-        "query": "\"batterie solid-state\" recherche française CEA CNRS after:2024-01-01",
-        "priority": 70,
-        "queryType": "exploratory",
-        "rationale": "French research institutions involvement"
-    },
-    {
-        "country": "FR",
-        "language": "fr",
-        "query": "\"batterie à électrolyte solide\" prototype industrialisation France",
-        "priority": 50,
-        "queryType": "validation",
-        "rationale": "French industrialization progress validation"
-    },
-    {
-        "country": "FR",
-        "language": "fr",
-        "query": "batterie solid-state tendances marché automobile électrique France",
-        "priority": 30,
-        "queryType": "contextual",
-        "rationale": "French automotive market context"
-    }
+  {
+    "country": "FR",
+    "language": "fr",
+    "query": "\"batterie solid-state\" OR \"batterie à électrolyte solide\" innovation 2024",
+    "priority": 100,
+    "queryType": "primary",
+    "rationale": "French-language primary coverage of solid-state battery innovations"
+  },
+  {
+    "country": "FR",
+    "language": "fr",
+    "query": "site:usinenouvelle.com OR site:techniques-ingenieur.fr batterie solid-state",
+    "priority": 90,
+    "queryType": "authority",
+    "rationale": "French technical authority sources"
+  },
+  {
+    "country": "FR",
+    "language": "fr",
+    "query": "\"batterie solid-state\" recherche française CEA CNRS after:2024-01-01",
+    "priority": 70,
+    "queryType": "exploratory",
+    "rationale": "French research institutions involvement"
+  },
+  {
+    "country": "FR",
+    "language": "fr",
+    "query": "\"batterie à électrolyte solide\" prototype industrialisation France",
+    "priority": 50,
+    "queryType": "validation",
+    "rationale": "French industrialization progress validation"
+  },
+  {
+    "country": "FR",
+    "language": "fr",
+    "query": "batterie solid-state tendances marché automobile électrique France",
+    "priority": 30,
+    "queryType": "contextual",
+    "rationale": "French automotive market context"
+  }
 ]
 ```
 

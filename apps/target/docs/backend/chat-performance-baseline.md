@@ -22,30 +22,30 @@ All task groups completed:
 ### Optimizations Implemented
 
 1. **MessageEagerLoadingExtension** (`api/src/Infrastructure/Chat/MessageEagerLoadingExtension.php`)
-    - Custom Doctrine ORM extension for Message collection queries
-    - Adds LEFT JOINs for `contents` and `createdBy` relations
-    - Prevents N+1 query issues during serialization
+   - Custom Doctrine ORM extension for Message collection queries
+   - Adds LEFT JOINs for `contents` and `createdBy` relations
+   - Prevents N+1 query issues during serialization
 
 2. **MessageNormalizer** (`api/src/Infrastructure/Serializer/MessageNormalizer.php`)
-    - Custom serializer for Message entities
-    - Bypasses Symfony's reflection-based serialization
-    - Directly transforms Message entities to array output
-    - Handles MessageContent polymorphism (TextContent, FunctionCallContent, etc.)
+   - Custom serializer for Message entities
+   - Bypasses Symfony's reflection-based serialization
+   - Directly transforms Message entities to array output
+   - Handles MessageContent polymorphism (TextContent, FunctionCallContent, etc.)
 
 3. **MessageDoctrineGateway Enhancements** (`api/src/Infrastructure/Chat/MessageDoctrineGateway.php`)
-    - Added `createOptimizedQueryBuilder()` for reusable eager loading
-    - Added `findByConversationWithCursor()` for cursor-based pagination
-    - Added `countByConversation()` for pagination metadata
+   - Added `createOptimizedQueryBuilder()` for reusable eager loading
+   - Added `findByConversationWithCursor()` for cursor-based pagination
+   - Added `countByConversation()` for pagination metadata
 
 4. **Message Status Tracking** (`api/src/Domain/Chat/MessageStatus.php`)
-    - New status enum: pending, sent, delivered, error
-    - Database index on status column for query optimization
-    - Exposed via API for frontend status indicators
+   - New status enum: pending, sent, delivered, error
+   - Database index on status column for query optimization
+   - Exposed via API for frontend status indicators
 
 5. **Retry Mechanism** (`api/src/Application/Chat/RetryMessageHandler.php`)
-    - Maximum 3 retry attempts per message
-    - Status transitions: error -> pending -> sent
-    - API endpoint: POST `/api/messages/{id}/retry`
+   - Maximum 3 retry attempts per message
+   - Status transitions: error -> pending -> sent
+   - API endpoint: POST `/api/messages/{id}/retry`
 
 ## Final Performance Metrics
 
@@ -129,16 +129,16 @@ The `conversationHistory` changes partially resolved the issue. Task Groups 1-6 
 Based on code analysis:
 
 1. **MessageCollectionProvider** delegates to `api_platform.doctrine.orm.state.collection_provider`
-    - This uses standard API Platform serialization pipeline
-    - Now enhanced with MessageEagerLoadingExtension
+   - This uses standard API Platform serialization pipeline
+   - Now enhanced with MessageEagerLoadingExtension
 
 2. **MessageDoctrineGateway::findRecentByConversation()** uses `leftJoin('m.contents', 'c')`
-    - Prevents N+1 queries for MessageContent
-    - MessageEagerLoadingExtension ensures this pattern is used by API Platform
+   - Prevents N+1 queries for MessageContent
+   - MessageEagerLoadingExtension ensures this pattern is used by API Platform
 
 3. **SINGLE_TABLE inheritance** for MessageContent
-    - TextContent, FileContent, FunctionCallContent, FunctionResponseContent
-    - MessageNormalizer handles polymorphism efficiently
+   - TextContent, FileContent, FunctionCallContent, FunctionResponseContent
+   - MessageNormalizer handles polymorphism efficiently
 
 ### SQL Query Count
 
@@ -259,16 +259,16 @@ This ensures consistent JSON structure across all message delivery channels.
 ## Performance Monitoring Recommendations
 
 1. **Production Monitoring:**
-    - Add APM instrumentation to message collection endpoint
-    - Track p50/p75 latencies in production
-    - Alert if p50 > 200ms or p75 > 300ms
+   - Add APM instrumentation to message collection endpoint
+   - Track p50/p75 latencies in production
+   - Alert if p50 > 200ms or p75 > 300ms
 
 2. **Further Optimization (if needed):**
-    - Raw SQL query pattern (similar to ConversationDoctrineGateway)
-    - Result caching for frequently accessed conversations
-    - Consider Redis caching for hot conversations
+   - Raw SQL query pattern (similar to ConversationDoctrineGateway)
+   - Result caching for frequently accessed conversations
+   - Consider Redis caching for hot conversations
 
 3. **Threshold Updates:**
-    - After production deployment, collect real metrics
-    - Adjust test thresholds based on production performance
-    - Update documentation with production baseline
+   - After production deployment, collect real metrics
+   - Adjust test thresholds based on production performance
+   - Update documentation with production baseline

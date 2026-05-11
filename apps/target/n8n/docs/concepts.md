@@ -197,23 +197,23 @@ Make decisions and branch execution.
 ```javascript
 // Simple comparison
 {
-    {
-        $json.score > 0.8
-    }
+  {
+    $json.score > 0.8
+  }
 }
 
 // Complex logic
 {
-    {
-        $json.state === 'NEEDS_ANALYZED' && $json.documents.length > 0
-    }
+  {
+    $json.state === 'NEEDS_ANALYZED' && $json.documents.length > 0
+  }
 }
 
 // Check node output
 {
-    {
-        $node['LLM_Validator_Primary'].json.isValid === true
-    }
+  {
+    $node['LLM_Validator_Primary'].json.isValid === true
+  }
 }
 ```
 
@@ -359,12 +359,12 @@ Provide workflow status and results.
 
 ```json
 {
-    "status": "success",
-    "result": "{{ $json.generatedText }}",
-    "metadata": {
-        "confidence": "{{ $json.score }}",
-        "model": "gemini-1.5-flash"
-    }
+  "status": "success",
+  "result": "{{ $json.generatedText }}",
+  "metadata": {
+    "confidence": "{{ $json.score }}",
+    "model": "gemini-1.5-flash"
+  }
 }
 ```
 
@@ -456,30 +456,30 @@ Dynamic data manipulation using `{{ }}` syntax:
 ```javascript
 // Access data
 {
-    {
-        $json.folderName
-    }
+  {
+    $json.folderName
+  }
 }
 
 // Call functions
 {
-    {
-        $json.createdAt.toDate()
-    }
+  {
+    $json.createdAt.toDate()
+  }
 }
 
 // Conditional
 {
-    {
-        $json.score > 0.8 ? 'valid' : 'invalid'
-    }
+  {
+    $json.score > 0.8 ? 'valid' : 'invalid'
+  }
 }
 
 // Array operations
 {
-    {
-        $json.documents.map((d) => d.name)
-    }
+  {
+    $json.documents.map((d) => d.name)
+  }
 }
 ```
 
@@ -495,9 +495,9 @@ const items = $input.all()
 
 // Process
 const results = items.map((item) => ({
-    id: item.json.id,
-    processed: true,
-    timestamp: new Date().toISOString(),
+  id: item.json.id,
+  processed: true,
+  timestamp: new Date().toISOString(),
 }))
 
 // Return
@@ -531,9 +531,9 @@ Trigger_RabbitMQ
 Follow consistent naming:
 
 - **Main workflows**: `[Domain] - [Purpose]`
-    - Example: `WatchFile Builder - Update reference subject`
+  - Example: `WatchFile Builder - Update reference subject`
 - **Sub-workflows**: `[Domain] - [Sub-purpose] (Sub)`
-    - Example: `Document - Validation (Sub)`
+  - Example: `Document - Validation (Sub)`
 
 ## Performance Considerations
 

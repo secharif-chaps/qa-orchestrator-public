@@ -1,36 +1,36 @@
 {
-    "account_id": 204,
-    "legacy_outcome": "NEAR_EXACT",
-    "legacy_level": 110,
-    "master": {
-        "id": "legacy-204-master-8979903",
-        "url": "https://www.metro.us/euro-extends-gains-after/",
-        "title": "Euro extends gains after Russia ends some army drills near Ukraine",
-        "content": "<html><head><title>Euro extends gains after Russia ends some army drills near Ukraine</title></head><body><div><p>LONDON (Reuters) –     The euro rebounded on Tuesday, nearly erasing all of Monday’s losses, after reports that some Russian troops in areas near Ukraine have started returning to their bases.</p>\n<p>Against the greenback, the single currency climbed 0.4% to $1.1346, and within striking distance of Monday’s high of $1.1369 as European stock futures rebounded on the news.</p>\n<p>Some troops in Russia’s military districts adjacent to Ukraine are returning to bases after completing drills, Russia’s defence ministry was quoted as saying, a move that could de-escalate frictions between Moscow and the West.</p>\n<p>“While any news about a potential de-escalation is welcome, I think the markets will want to see something more concrete before judging the crisis to be over,” said Stuart Cole, head macro economist at Equiti Capital.</p>\n<p>“By this I think it will require the removal from the border of sufficient troop numbers or military hardware that makes an invasion materially more difficult to undertake,”</p>\n<p>Brewing geopolitical tensions had kept a lid on the euro’s gains in recent days even as the European Central Bank joined its central bank peers in signaling a hawkish turn in its monetary policy at a meeting this month.</p>\n<p>The euro tumbled to a near two-week low on Monday after Ukrainian President Volodymyr Zelenskiy called on citizens to fly the country’s flags from buildings and sing the national anthem in unison on Feb. 16, a date that some Western media have cited as a possible start of a Russian invasion.</p>\n<p>For now, investors greeted the news with relief, pushing up the currencies of economies that would be most affected by the conflict including the pound, euro and the Russian rouble while typical safe-haven shelters like the yen and the Swiss franc weakened.</p>\n<p>Away from geopolitics, U.S. Federal Reserve officials continuing to spar over how aggressively to begin upcoming interest rate increases at their March meeting.</p>\n<p>But the dollar failed to get a fresh lift from the comments with an index weakening 0.3% versus its rivals.</p>\n<p>In cryptocurrencies, bitcoin was 3.4% higher, trading around $44,000.</p>\n<p> (Reporting by Saikat Chatterjee; Editing by Raissa Kasolowsky)</p>\n<div><figure>\n\t\t\t<div>\n\t\t\t\t<a href=\"https://www.metro.us/euro-extends-gains-after/illustration-shows-u-s-dollar-banknotes/\"><img src=\"https://www.metro.us/wp-content/uploads/Reuters_Direct_Media/USOnlineReportBusinessNews/tagreuters.com2022binary_LYNXMPEI1E018-BASEIMAGE.jpg\"/></a>\n\t\t\t</div>\n\t\t\t\t\n\t\t\t\tIllustration shows U.S. dollar banknotes\n\t\t\t\t</figure>\n\t\t</div>\n\n</div></body></html>"
-    },
-    "candidate": {
-        "id": "legacy-204-dup-8984501",
-        "url": "https://www.brecorder.com/news/40154610/euro-extends-gains-after-russia-ends-some-army-drills-near-ukraine",
-        "title": "Euro extends gains after Russia ends some army drills near Ukraine",
-        "content": "<html><head><title>Euro extends gains after Russia ends some army drills near Ukraine</title></head><body><div><p><strong>LONDON: The euro rebounded on Tuesday, nearly erasing all of Monday&apos;s losses, after reports that some Russian troops in areas near Ukraine have started returning to their bases.</strong></p>\n\n<p>Against the greenback, the single currency climbed 0.4% to $1.1346, and within striking distance of Monday&apos;s high of $1.1369 as European stock futures rebounded on the news.</p>\n\n<p>Some troops in Russia&apos;s military districts adjacent to Ukraine are returning to bases after completing drills, Russia&apos;s defence ministry was quoted as saying, a move that could de-escalate frictions between Moscow and the West.</p>\n\n<p>&quot;While any news about a potential de-escalation is welcome, I think the markets will want to see something more concrete before judging the crisis to be over,&quot; said Stuart Cole, head macro economist at Equiti Capital.</p>\n\n<p>&quot;By this I think it will require the removal from the border of sufficient troop numbers or military hardware that makes an invasion materially more difficult to undertake,&quot;Brewing geopolitical tensions had kept a lid on the euro&apos;s gains in recent days even as the European Central Bank joined its central bank peers in signaling a hawkish turn in its monetary policy at a meeting this month.</p>\n\n<p><strong><a href=\"https://www.brecorder.com/news/40154564\"> Yuan firms as China refrains from more easing, for now </a></strong></p>\n\n<p>The euro tumbled to a near two-week low on Monday after Ukrainian President Volodymyr Zelenskiy called on citizens to fly the country&apos;s flags from buildings and sing the national anthem in unison on Feb. 16, a date that some Western media have cited as a possible start of a Russian invasion.</p>\n\n<p>For now, investors greeted the news with relief, pushing up the currencies of economies that would be most affected by the conflict including the pound, euro and the Russian rouble while typical safe-haven shelters like the yen and the Swiss franc weakened.</p>\n\n<p>Away from geopolitics, US Federal Reserve officials continuing to spar over how aggressively to begin upcoming interest rate increases at their March meeting.</p>\n\n<p>But the dollar failed to get a fresh lift from the comments with an index weakening 0.3% versus its rivals.</p>\n\n<p>In cryptocurrencies, bitcoin was 3.4% higher, trading around $44,000. </p>\n\n    </div></body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same Reuters article text and structure with only minor formatting and link differences"
-    },
-    "pinned": {
-        "outcome": "near_exact",
-        "stage": "min_hash_lsh",
-        "similarity": 0.953125
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 204,
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-204-master-8979903",
+    "url": "https://www.metro.us/euro-extends-gains-after/",
+    "title": "Euro extends gains after Russia ends some army drills near Ukraine",
+    "content": "<html><head><title>Euro extends gains after Russia ends some army drills near Ukraine</title></head><body><div><p>LONDON (Reuters) –     The euro rebounded on Tuesday, nearly erasing all of Monday’s losses, after reports that some Russian troops in areas near Ukraine have started returning to their bases.</p>\n<p>Against the greenback, the single currency climbed 0.4% to $1.1346, and within striking distance of Monday’s high of $1.1369 as European stock futures rebounded on the news.</p>\n<p>Some troops in Russia’s military districts adjacent to Ukraine are returning to bases after completing drills, Russia’s defence ministry was quoted as saying, a move that could de-escalate frictions between Moscow and the West.</p>\n<p>“While any news about a potential de-escalation is welcome, I think the markets will want to see something more concrete before judging the crisis to be over,” said Stuart Cole, head macro economist at Equiti Capital.</p>\n<p>“By this I think it will require the removal from the border of sufficient troop numbers or military hardware that makes an invasion materially more difficult to undertake,”</p>\n<p>Brewing geopolitical tensions had kept a lid on the euro’s gains in recent days even as the European Central Bank joined its central bank peers in signaling a hawkish turn in its monetary policy at a meeting this month.</p>\n<p>The euro tumbled to a near two-week low on Monday after Ukrainian President Volodymyr Zelenskiy called on citizens to fly the country’s flags from buildings and sing the national anthem in unison on Feb. 16, a date that some Western media have cited as a possible start of a Russian invasion.</p>\n<p>For now, investors greeted the news with relief, pushing up the currencies of economies that would be most affected by the conflict including the pound, euro and the Russian rouble while typical safe-haven shelters like the yen and the Swiss franc weakened.</p>\n<p>Away from geopolitics, U.S. Federal Reserve officials continuing to spar over how aggressively to begin upcoming interest rate increases at their March meeting.</p>\n<p>But the dollar failed to get a fresh lift from the comments with an index weakening 0.3% versus its rivals.</p>\n<p>In cryptocurrencies, bitcoin was 3.4% higher, trading around $44,000.</p>\n<p> (Reporting by Saikat Chatterjee; Editing by Raissa Kasolowsky)</p>\n<div><figure>\n\t\t\t<div>\n\t\t\t\t<a href=\"https://www.metro.us/euro-extends-gains-after/illustration-shows-u-s-dollar-banknotes/\"><img src=\"https://www.metro.us/wp-content/uploads/Reuters_Direct_Media/USOnlineReportBusinessNews/tagreuters.com2022binary_LYNXMPEI1E018-BASEIMAGE.jpg\"/></a>\n\t\t\t</div>\n\t\t\t\t\n\t\t\t\tIllustration shows U.S. dollar banknotes\n\t\t\t\t</figure>\n\t\t</div>\n\n</div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-204-dup-8984501",
+    "url": "https://www.brecorder.com/news/40154610/euro-extends-gains-after-russia-ends-some-army-drills-near-ukraine",
+    "title": "Euro extends gains after Russia ends some army drills near Ukraine",
+    "content": "<html><head><title>Euro extends gains after Russia ends some army drills near Ukraine</title></head><body><div><p><strong>LONDON: The euro rebounded on Tuesday, nearly erasing all of Monday&apos;s losses, after reports that some Russian troops in areas near Ukraine have started returning to their bases.</strong></p>\n\n<p>Against the greenback, the single currency climbed 0.4% to $1.1346, and within striking distance of Monday&apos;s high of $1.1369 as European stock futures rebounded on the news.</p>\n\n<p>Some troops in Russia&apos;s military districts adjacent to Ukraine are returning to bases after completing drills, Russia&apos;s defence ministry was quoted as saying, a move that could de-escalate frictions between Moscow and the West.</p>\n\n<p>&quot;While any news about a potential de-escalation is welcome, I think the markets will want to see something more concrete before judging the crisis to be over,&quot; said Stuart Cole, head macro economist at Equiti Capital.</p>\n\n<p>&quot;By this I think it will require the removal from the border of sufficient troop numbers or military hardware that makes an invasion materially more difficult to undertake,&quot;Brewing geopolitical tensions had kept a lid on the euro&apos;s gains in recent days even as the European Central Bank joined its central bank peers in signaling a hawkish turn in its monetary policy at a meeting this month.</p>\n\n<p><strong><a href=\"https://www.brecorder.com/news/40154564\"> Yuan firms as China refrains from more easing, for now </a></strong></p>\n\n<p>The euro tumbled to a near two-week low on Monday after Ukrainian President Volodymyr Zelenskiy called on citizens to fly the country&apos;s flags from buildings and sing the national anthem in unison on Feb. 16, a date that some Western media have cited as a possible start of a Russian invasion.</p>\n\n<p>For now, investors greeted the news with relief, pushing up the currencies of economies that would be most affected by the conflict including the pound, euro and the Russian rouble while typical safe-haven shelters like the yen and the Swiss franc weakened.</p>\n\n<p>Away from geopolitics, US Federal Reserve officials continuing to spar over how aggressively to begin upcoming interest rate increases at their March meeting.</p>\n\n<p>But the dollar failed to get a fresh lift from the comments with an index weakening 0.3% versus its rivals.</p>\n\n<p>In cryptocurrencies, bitcoin was 3.4% higher, trading around $44,000. </p>\n\n    </div></body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same Reuters article text and structure with only minor formatting and link differences"
+  },
+  "pinned": {
+    "outcome": "near_exact",
+    "stage": "min_hash_lsh",
+    "similarity": 0.953125
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

@@ -36,33 +36,39 @@ The application follows a Domain-Driven Design approach with the following compo
 ### Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/chapsmind-global-service.git
 cd chapsmind-global-service
 ```
 
 2. Create a virtual environment:
+
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
 3. Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
 4. Configure environment variables in `.env` file:
+
 ```
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/global_db
 ```
 
 5. Run database migrations:
+
 ```bash
 alembic upgrade head
 ```
 
 6. Start the application:
+
 ```bash
 uvicorn app.main:app --reload
 ```
@@ -70,6 +76,7 @@ uvicorn app.main:app --reload
 ## API Endpoints
 
 ### Organization Context Endpoint
+
 - REST `GET /api/organization/context` returns enabled modules, organization settings for frontend startup
 - Service-to-service endpoints (both REST and gRPC):
   - REST `GET /api/internal/organizations/{org_id}/context` / gRPC `GetOrganizationContext(organization_id)`
@@ -78,6 +85,7 @@ uvicorn app.main:app --reload
 - Module enablement stored in `organization_modules` table (organization_id, module_name, enabled)
 
 ### Token Endpoints
+
 - Service-to-service endpoints (both REST and gRPC):
   - REST `GET /api/internal/organizations/{org_id}/tokens/balance` / gRPC `GetTokenBalance(organization_id)` → returns balance
   - REST `POST /api/internal/tokens/consume` / gRPC `ConsumeTokens(organization_id, amount, reference_type, reference_id)` → deducts tokens
@@ -87,6 +95,7 @@ uvicorn app.main:app --reload
 - REST `GET /api/organization/tokens/history` for admin viewing
 
 ### Private Folders
+
 - Service-to-service endpoints (both REST and gRPC):
   - REST `POST /api/internal/folders` / gRPC `CreateFolder`
   - REST `GET /api/internal/users/{user_id}/folders` / gRPC `GetUserFolders` (owned + shared)
@@ -112,11 +121,13 @@ alembic revision --autogenerate -m "Description of changes"
 ```bash
 pytest
 ```
+
 ### Runing gRPC tests:
+
 ```bash
 docker compose -f compose.yaml -f compose.local.yaml exec -e PYTHONPATH=/app global-service poetry run pytest tests/grpc/test_grpc_server.py -v
 ```
- 
+
 ## License
 
-This project is licensed under the MIT License. 
+This project is licensed under the MIT License.

@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13161377",
-        "url": "https://www.aerotime.aero/articles/30756-cathay-pacific-passenger-traffic-remains-hampered-march-2022",
-        "title": "Cathay Pacific operated at under 2% of pre-COVID levels in March 2022",
-        "content": "<html><head><title>Cathay Pacific passenger traffic remains hampered</title></head><body><div> <p>Cathay Pacific passenger traffic in March 2022 continued to be hindered by capacity reductions as well as travel restrictions as a result of the ongoing COVID-19 pandemic. </p> <p>In March 2022, Hong Kong’s flag carrier carried a total of 30,628 passengers, a slight decrease compared to February 2022, and a substantial drop of 99% against pre-pandemic levels.  </p> <p>“March was yet another very difficult month for our travel business. Passenger flight capacity remained extremely low at just under 2% of pre-COVID-19 levels,” chief customer and commercial officer at Cathay Pacific, Ronald Lam announced in a statement dated April 14, 2022.  </p> <p>The slow passenger traffic in March 2022 was attributed to flight capacity reductions to Mainland China, and particularly to Shanghai, in response to the city’s tightened quarantine measures.  </p> <p>Beginning April 1, 2022, Hong Kong removed the flight ban for passengers arriving from Australia, Canada, France, India, Nepal, Pakistan, the Philippines, the United Kingdom, and the United States. Hong Kong has also shortened hotel quarantine from 14 to seven days for fully vaccinated passengers arriving to the city. Arrivals can end hotel quarantine after testing negative for COVID-19 on the sixth and seventh days of self-isolation.  </p> <p>The move was welcomed by Cathay Pacific, which saw low passenger traffic as a result of the city’s restrictions. </p>  <p>“We welcome the lifting of the transit ban and the place-specific suspension mechanism, the rationalization of the flight-specific suspension mechanism, as well as the reduction of the mandatory quarantine period for both travelers and aircrew alike in April,” Lam said.  </p> <p>But Lam added that travel restrictions remain stringent, and the airline has only been able to achieve a modest increase in its passenger flight capacity. </p> <p>Looking ahead to April 2022, the airline does not foresee significant signs of recovery in short-term passenger travel demand.   </p>       </div></body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13308652",
-        "url": "https://www.aerotime.aero/articles/30756-cathay-pacific-passenger-traffic-remains-hampered-march-2022",
-        "title": "Cathay Pacific operated at under 2% of pre-COVID levels in March 2022",
-        "content": "<html><head><title>Cathay Pacific passenger traffic remains hampered</title></head><body><div> <p>Cathay Pacific passenger traffic in March 2022 continued to be hindered by capacity reductions as well as travel restrictions as a result of the ongoing COVID-19 pandemic. </p> <p>In March 2022, Hong Kong’s flag carrier carried a total of 30,628 passengers, a slight decrease compared to February 2022, and a substantial drop of 99% against pre-pandemic levels.  </p> <p>“March was yet another very difficult month for our travel business. Passenger flight capacity remained extremely low at just under 2% of pre-COVID-19 levels,” chief customer and commercial officer at Cathay Pacific, Ronald Lam announced in a statement dated April 14, 2022.  </p> <p>The slow passenger traffic in March 2022 was attributed to flight capacity reductions to Mainland China, and particularly to Shanghai, in response to the city’s tightened quarantine measures.  </p> <p>Beginning April 1, 2022, Hong Kong removed the flight ban for passengers arriving from Australia, Canada, France, India, Nepal, Pakistan, the Philippines, the United Kingdom, and the United States. Hong Kong has also shortened hotel quarantine from 14 to seven days for fully vaccinated passengers arriving to the city. Arrivals can end hotel quarantine after testing negative for COVID-19 on the sixth and seventh days of self-isolation.  </p> <p>The move was welcomed by Cathay Pacific, which saw low passenger traffic as a result of the city’s restrictions. </p>  <p>“We welcome the lifting of the transit ban and the place-specific suspension mechanism, the rationalization of the flight-specific suspension mechanism, as well as the reduction of the mandatory quarantine period for both travelers and aircrew alike in April,” Lam said.  </p> <p>But Lam added that travel restrictions remain stringent, and the airline has only been able to achieve a modest increase in its passenger flight capacity. </p> <p>Looking ahead to April 2022, the airline does not foresee significant signs of recovery in short-term passenger travel demand.   </p>       </div></body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL and identical article content indicate a literal recrawl of the same story"
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13161377",
+    "url": "https://www.aerotime.aero/articles/30756-cathay-pacific-passenger-traffic-remains-hampered-march-2022",
+    "title": "Cathay Pacific operated at under 2% of pre-COVID levels in March 2022",
+    "content": "<html><head><title>Cathay Pacific passenger traffic remains hampered</title></head><body><div> <p>Cathay Pacific passenger traffic in March 2022 continued to be hindered by capacity reductions as well as travel restrictions as a result of the ongoing COVID-19 pandemic. </p> <p>In March 2022, Hong Kong’s flag carrier carried a total of 30,628 passengers, a slight decrease compared to February 2022, and a substantial drop of 99% against pre-pandemic levels.  </p> <p>“March was yet another very difficult month for our travel business. Passenger flight capacity remained extremely low at just under 2% of pre-COVID-19 levels,” chief customer and commercial officer at Cathay Pacific, Ronald Lam announced in a statement dated April 14, 2022.  </p> <p>The slow passenger traffic in March 2022 was attributed to flight capacity reductions to Mainland China, and particularly to Shanghai, in response to the city’s tightened quarantine measures.  </p> <p>Beginning April 1, 2022, Hong Kong removed the flight ban for passengers arriving from Australia, Canada, France, India, Nepal, Pakistan, the Philippines, the United Kingdom, and the United States. Hong Kong has also shortened hotel quarantine from 14 to seven days for fully vaccinated passengers arriving to the city. Arrivals can end hotel quarantine after testing negative for COVID-19 on the sixth and seventh days of self-isolation.  </p> <p>The move was welcomed by Cathay Pacific, which saw low passenger traffic as a result of the city’s restrictions. </p>  <p>“We welcome the lifting of the transit ban and the place-specific suspension mechanism, the rationalization of the flight-specific suspension mechanism, as well as the reduction of the mandatory quarantine period for both travelers and aircrew alike in April,” Lam said.  </p> <p>But Lam added that travel restrictions remain stringent, and the airline has only been able to achieve a modest increase in its passenger flight capacity. </p> <p>Looking ahead to April 2022, the airline does not foresee significant signs of recovery in short-term passenger travel demand.   </p>       </div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13308652",
+    "url": "https://www.aerotime.aero/articles/30756-cathay-pacific-passenger-traffic-remains-hampered-march-2022",
+    "title": "Cathay Pacific operated at under 2% of pre-COVID levels in March 2022",
+    "content": "<html><head><title>Cathay Pacific passenger traffic remains hampered</title></head><body><div> <p>Cathay Pacific passenger traffic in March 2022 continued to be hindered by capacity reductions as well as travel restrictions as a result of the ongoing COVID-19 pandemic. </p> <p>In March 2022, Hong Kong’s flag carrier carried a total of 30,628 passengers, a slight decrease compared to February 2022, and a substantial drop of 99% against pre-pandemic levels.  </p> <p>“March was yet another very difficult month for our travel business. Passenger flight capacity remained extremely low at just under 2% of pre-COVID-19 levels,” chief customer and commercial officer at Cathay Pacific, Ronald Lam announced in a statement dated April 14, 2022.  </p> <p>The slow passenger traffic in March 2022 was attributed to flight capacity reductions to Mainland China, and particularly to Shanghai, in response to the city’s tightened quarantine measures.  </p> <p>Beginning April 1, 2022, Hong Kong removed the flight ban for passengers arriving from Australia, Canada, France, India, Nepal, Pakistan, the Philippines, the United Kingdom, and the United States. Hong Kong has also shortened hotel quarantine from 14 to seven days for fully vaccinated passengers arriving to the city. Arrivals can end hotel quarantine after testing negative for COVID-19 on the sixth and seventh days of self-isolation.  </p> <p>The move was welcomed by Cathay Pacific, which saw low passenger traffic as a result of the city’s restrictions. </p>  <p>“We welcome the lifting of the transit ban and the place-specific suspension mechanism, the rationalization of the flight-specific suspension mechanism, as well as the reduction of the mandatory quarantine period for both travelers and aircrew alike in April,” Lam said.  </p> <p>But Lam added that travel restrictions remain stringent, and the airline has only been able to achieve a modest increase in its passenger flight capacity. </p> <p>Looking ahead to April 2022, the airline does not foresee significant signs of recovery in short-term passenger travel demand.   </p>       </div></body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL and identical article content indicate a literal recrawl of the same story"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

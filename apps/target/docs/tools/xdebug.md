@@ -56,17 +56,17 @@ In your `compose.yaml`, Xdebug is configured through environment variables:
 
 ```yaml
 services:
-    api:
-        environment:
-            # Xdebug configuration
-            XDEBUG_MODE: debug,coverage
-            XDEBUG_CONFIG: >-
-                client_host=host.docker.internal
-                client_port=9003
-                idekey=PHPSTORM
-                start_with_request=trigger
-                log=/tmp/xdebug.log
-                log_level=7
+  api:
+    environment:
+      # Xdebug configuration
+      XDEBUG_MODE: debug,coverage
+      XDEBUG_CONFIG: >-
+        client_host=host.docker.internal
+        client_port=9003
+        idekey=PHPSTORM
+        start_with_request=trigger
+        log=/tmp/xdebug.log
+        log_level=7
 ```
 
 ### Host Network Configuration
@@ -101,42 +101,42 @@ docker compose exec api ip route show default | awk '/default/ {print $3}'
 1. **File > Settings > PHP**
 2. Click **"..."** next to CLI Interpreter
 3. Add **Docker Compose** interpreter:
-    - **Server**: Your Docker server
-    - **Configuration files**: `./compose.yaml`
-    - **Service**: `api`
+   - **Server**: Your Docker server
+   - **Configuration files**: `./compose.yaml`
+   - **Service**: `api`
 4. Verify Xdebug is detected in interpreter info
 
 #### 2. Configure Debug Settings
 
 1. **File > Settings > PHP > Debug**
 2. Set configuration:
-    - **Debug port**: `9003`
-    - **Can accept external connections**: ✓
-    - **Max simultaneous connections**: `5`
-    - **Break at first line in PHP scripts**: ✗
-    - **Force break at first line when no path mapping specified**: ✗
-    - **Force break at first line when a script is outside the project**: ✗
+   - **Debug port**: `9003`
+   - **Can accept external connections**: ✓
+   - **Max simultaneous connections**: `5`
+   - **Break at first line in PHP scripts**: ✗
+   - **Force break at first line when no path mapping specified**: ✗
+   - **Force break at first line when a script is outside the project**: ✗
 
 #### 3. Configure Server
 
 1. **File > Settings > PHP > Servers**
 2. Create new server:
-    - **Name**: `Basil Local`
-    - **Host**: `basil.local`
-    - **Port**: `443`
-    - **Debugger**: `Xdebug`
-    - **Use path mappings**: ✓
-    - **Path mappings**:
-        - Project files: `{project_root}/api` → `/var/www/html`
+   - **Name**: `Basil Local`
+   - **Host**: `basil.local`
+   - **Port**: `443`
+   - **Debugger**: `Xdebug`
+   - **Use path mappings**: ✓
+   - **Path mappings**:
+     - Project files: `{project_root}/api` → `/var/www/html`
 
 #### 4. Create Debug Configuration
 
 1. **Run > Edit Configurations**
 2. Add **PHP Web Page**:
-    - **Name**: `Basil Debug`
-    - **Server**: `Basil Local`
-    - **Start URL**: `/`
-    - **Browser**: Chrome/Firefox
+   - **Name**: `Basil Debug`
+   - **Server**: `Basil Local`
+   - **Start URL**: `/`
+   - **Browser**: Chrome/Firefox
 
 ### VS Code Setup
 
@@ -153,27 +153,27 @@ Create `.vscode/launch.json`:
 
 ```json
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Listen for Xdebug",
-            "type": "php",
-            "request": "launch",
-            "port": 9003,
-            "pathMappings": {
-                "/var/www/html": "${workspaceFolder}/api"
-            },
-            "ignore": ["**/vendor/**/*.php"]
-        },
-        {
-            "name": "Launch currently open script",
-            "type": "php",
-            "request": "launch",
-            "program": "${file}",
-            "cwd": "${fileDirname}",
-            "port": 9003
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Listen for Xdebug",
+      "type": "php",
+      "request": "launch",
+      "port": 9003,
+      "pathMappings": {
+        "/var/www/html": "${workspaceFolder}/api"
+      },
+      "ignore": ["**/vendor/**/*.php"]
+    },
+    {
+      "name": "Launch currently open script",
+      "type": "php",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${fileDirname}",
+      "port": 9003
+    }
+  ]
 }
 ```
 
@@ -183,9 +183,9 @@ Create `.vscode/settings.json`:
 
 ```json
 {
-    "php.debug.executablePath": "/usr/bin/php",
-    "php.validate.executablePath": "/usr/bin/php",
-    "php.suggest.basic": false
+  "php.debug.executablePath": "/usr/bin/php",
+  "php.validate.executablePath": "/usr/bin/php",
+  "php.suggest.basic": false
 }
 ```
 
@@ -256,22 +256,22 @@ curl -H "Cookie: XDEBUG_SESSION=PHPSTORM" https://basil.local/api/users
 ### Basic Debugging Steps
 
 1. **Set Breakpoints**:
-    - Click in the gutter next to line numbers
-    - Or use `Ctrl+F8` (Cmd+F8) in PhpStorm
+   - Click in the gutter next to line numbers
+   - Or use `Ctrl+F8` (Cmd+F8) in PhpStorm
 
 2. **Start Listening**:
-    - Click "Start Listening for PHP Debug Connections" (phone icon)
-    - Or use **Run > Start Listening for PHP Debug Connections**
+   - Click "Start Listening for PHP Debug Connections" (phone icon)
+   - Or use **Run > Start Listening for PHP Debug Connections**
 
 3. **Trigger Debug Session**:
-    - Enable browser extension
-    - Or add `?XDEBUG_SESSION_START=PHPSTORM` to URL
-    - Make request to your application
+   - Enable browser extension
+   - Or add `?XDEBUG_SESSION_START=PHPSTORM` to URL
+   - Make request to your application
 
 4. **Debug Session**:
-    - Execution stops at breakpoints
-    - Use step controls to navigate
-    - Inspect variables in debug panel
+   - Execution stops at breakpoints
+   - Use step controls to navigate
+   - Inspect variables in debug panel
 
 ### Debug Controls
 
@@ -361,9 +361,9 @@ docker compose cp api:/tmp/xdebug_profiles ./profiles
 ```
 
 3. **Analyze with tools**:
-    - **KCacheGrind** (Linux/Windows)
-    - **QCacheGrind** (macOS)
-    - **Webgrind** (Web-based)
+   - **KCacheGrind** (Linux/Windows)
+   - **QCacheGrind** (macOS)
+   - **Webgrind** (Web-based)
 
 ## 🚨 Troubleshooting
 
@@ -440,7 +440,7 @@ docker compose exec -e XDEBUG_MODE=off api php bin/console cache:clear
 
 ```yaml
 environment:
-    XDEBUG_MODE: 'off' # Default off, enable when needed
+  XDEBUG_MODE: 'off' # Default off, enable when needed
 ```
 
 ### Debug Logs
@@ -539,13 +539,13 @@ When debugging multiple PHP services:
 ```yaml
 # Service 1
 api:
-    environment:
-        XDEBUG_CONFIG: 'client_port=9003 idekey=API'
+  environment:
+    XDEBUG_CONFIG: 'client_port=9003 idekey=API'
 
 # Service 2
 worker:
-    environment:
-        XDEBUG_CONFIG: 'client_port=9004 idekey=WORKER'
+  environment:
+    XDEBUG_CONFIG: 'client_port=9004 idekey=WORKER'
 ```
 
 ### Custom Debug Modes

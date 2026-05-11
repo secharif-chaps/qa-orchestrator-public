@@ -65,12 +65,12 @@ Override in `.gitlab-ci.yml` for specific components:
 
 ```yaml
 trivy-api:
-    variables:
-        TRIVY_SKIP_CVES: 'CVE-2023-12345' # API only
+  variables:
+    TRIVY_SKIP_CVES: 'CVE-2023-12345' # API only
 
 trivy-pwa:
-    variables:
-        TRIVY_SKIP_CVES: 'CVE-2024-67890' # PWA only
+  variables:
+    TRIVY_SKIP_CVES: 'CVE-2024-67890' # PWA only
 ```
 
 ### 3. Permanent Skip with .trivyignore
@@ -123,9 +123,9 @@ Security reports are automatically integrated into the project documentation:
 
 - **URL**: `https://your-gitlab-pages-url/security/`
 - **Contents**:
-    - Interactive HTML reports for each component
-    - Summary tables with vulnerability counts
-    - Raw JSON data for automated processing
+  - Interactive HTML reports for each component
+  - Summary tables with vulnerability counts
+  - Raw JSON data for automated processing
 
 ### CI/CD Artifacts
 
@@ -185,19 +185,19 @@ trivy-pwa.json     # Machine-readable JSON data
 ### Security Response Process
 
 1. **Critical/High Vulnerabilities Found**:
-    - Pipeline fails automatically
-    - Review vulnerability details in HTML reports
-    - Update base images or dependencies
-    - Or justify skip with documented reason
+   - Pipeline fails automatically
+   - Review vulnerability details in HTML reports
+   - Update base images or dependencies
+   - Or justify skip with documented reason
 
 2. **False Positives**:
-    - Add CVE to `.trivyignore` with justification
-    - Or use `TRIVY_SKIP_CVES` variable for temporary skip
+   - Add CVE to `.trivyignore` with justification
+   - Or use `TRIVY_SKIP_CVES` variable for temporary skip
 
 3. **Monitoring**:
-    - Regular review of security reports in GitLab Pages
-    - Update skip lists when CVEs are fixed
-    - Adjust thresholds based on risk appetite
+   - Regular review of security reports in GitLab Pages
+   - Update skip lists when CVEs are fixed
+   - Adjust thresholds based on risk appetite
 
 ## Troubleshooting
 

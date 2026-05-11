@@ -183,10 +183,10 @@ Topics are **contextual themes** that:
 
 ```json
 {
-    "label": "Topic name in English",
-    "keywords": ["keyword1", "keyword2", "keyword3"],
-    "relevanceScore": 85,
-    "searchQueryTemplate": "template for web search queries"
+  "label": "Topic name in English",
+  "keywords": ["keyword1", "keyword2", "keyword3"],
+  "relevanceScore": 85,
+  "searchQueryTemplate": "template for web search queries"
 }
 ```
 
@@ -207,18 +207,18 @@ Generate topics around:
 
 ```json
 [
-    {
-        "label": "Ultra-Fast Fashion Players",
-        "keywords": ["Temu", "AliExpress", "fast fashion", "dropshipping"],
-        "relevanceScore": 95,
-        "searchQueryTemplate": "{entity} ultra-fast fashion competitor market 2025"
-    },
-    {
-        "label": "E-commerce Pricing Wars",
-        "keywords": ["pricing", "discount", "promotion", "price comparison"],
-        "relevanceScore": 85,
-        "searchQueryTemplate": "{entity} pricing strategy discount ecommerce 2025"
-    }
+  {
+    "label": "Ultra-Fast Fashion Players",
+    "keywords": ["Temu", "AliExpress", "fast fashion", "dropshipping"],
+    "relevanceScore": 95,
+    "searchQueryTemplate": "{entity} ultra-fast fashion competitor market 2025"
+  },
+  {
+    "label": "E-commerce Pricing Wars",
+    "keywords": ["pricing", "discount", "promotion", "price comparison"],
+    "relevanceScore": 85,
+    "searchQueryTemplate": "{entity} pricing strategy discount ecommerce 2025"
+  }
 ]
 ```
 
@@ -237,18 +237,18 @@ Generate topics around:
 
 ```json
 [
-    {
-        "label": "AI Act Implementation Timeline",
-        "keywords": ["effective date", "deadline", "transition period", "enforcement"],
-        "relevanceScore": 95,
-        "searchQueryTemplate": "AI Act {keyword} 2024 2025 timeline"
-    },
-    {
-        "label": "High-Risk AI Classification",
-        "keywords": ["high-risk", "prohibited", "classification", "assessment"],
-        "relevanceScore": 90,
-        "searchQueryTemplate": "AI Act high-risk systems classification requirements 2025"
-    }
+  {
+    "label": "AI Act Implementation Timeline",
+    "keywords": ["effective date", "deadline", "transition period", "enforcement"],
+    "relevanceScore": 95,
+    "searchQueryTemplate": "AI Act {keyword} 2024 2025 timeline"
+  },
+  {
+    "label": "High-Risk AI Classification",
+    "keywords": ["high-risk", "prohibited", "classification", "assessment"],
+    "relevanceScore": 90,
+    "searchQueryTemplate": "AI Act high-risk systems classification requirements 2025"
+  }
 ]
 ```
 
@@ -300,36 +300,36 @@ Generate topics around:
 
 ```json
 [
-    {
-        "label": "Labor Practice Controversies",
-        "keywords": ["sweatshop", "forced labor", "working conditions", "exploitation"],
-        "relevanceScore": 95,
-        "searchQueryTemplate": "{entity} labor sweatshop controversy investigation 2025"
-    },
-    {
-        "label": "Environmental Impact Criticism",
-        "keywords": ["pollution", "waste", "sustainability", "greenwashing", "fast fashion impact"],
-        "relevanceScore": 90,
-        "searchQueryTemplate": "{entity} environmental impact pollution criticism 2025"
-    },
-    {
-        "label": "Consumer Safety Issues",
-        "keywords": ["toxic", "recall", "safety", "chemicals", "health risk"],
-        "relevanceScore": 85,
-        "searchQueryTemplate": "{entity} product safety toxic chemicals recall 2025"
-    },
-    {
-        "label": "Intellectual Property Disputes",
-        "keywords": ["copyright", "design theft", "lawsuit", "plagiarism"],
-        "relevanceScore": 80,
-        "searchQueryTemplate": "{entity} copyright design theft lawsuit 2025"
-    },
-    {
-        "label": "NGO Watchdog Reports",
-        "keywords": ["NGO report", "investigation", "campaign", "advocacy"],
-        "relevanceScore": 85,
-        "searchQueryTemplate": "{entity} NGO report investigation campaign 2025"
-    }
+  {
+    "label": "Labor Practice Controversies",
+    "keywords": ["sweatshop", "forced labor", "working conditions", "exploitation"],
+    "relevanceScore": 95,
+    "searchQueryTemplate": "{entity} labor sweatshop controversy investigation 2025"
+  },
+  {
+    "label": "Environmental Impact Criticism",
+    "keywords": ["pollution", "waste", "sustainability", "greenwashing", "fast fashion impact"],
+    "relevanceScore": 90,
+    "searchQueryTemplate": "{entity} environmental impact pollution criticism 2025"
+  },
+  {
+    "label": "Consumer Safety Issues",
+    "keywords": ["toxic", "recall", "safety", "chemicals", "health risk"],
+    "relevanceScore": 85,
+    "searchQueryTemplate": "{entity} product safety toxic chemicals recall 2025"
+  },
+  {
+    "label": "Intellectual Property Disputes",
+    "keywords": ["copyright", "design theft", "lawsuit", "plagiarism"],
+    "relevanceScore": 80,
+    "searchQueryTemplate": "{entity} copyright design theft lawsuit 2025"
+  },
+  {
+    "label": "NGO Watchdog Reports",
+    "keywords": ["NGO report", "investigation", "campaign", "advocacy"],
+    "relevanceScore": 85,
+    "searchQueryTemplate": "{entity} NGO report investigation campaign 2025"
+  }
 ]
 ```
 
@@ -351,14 +351,14 @@ If strong evidence exists for multiple types (≥2 types with score ≥60):
 
 ```json
 {
-    "primaryType": "competitive",
-    "confidenceScore": 75,
-    "secondaryTypes": [
-        {
-            "type": "technological",
-            "score": 70
-        }
-    ]
+  "primaryType": "competitive",
+  "confidenceScore": 75,
+  "secondaryTypes": [
+    {
+      "type": "technological",
+      "score": 70
+    }
+  ]
 }
 ```
 

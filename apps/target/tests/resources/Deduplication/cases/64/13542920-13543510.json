@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13542920",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141198708&origin=inward",
-        "title": "Nonlinear tribo-dynamic model of helicopter mid-reducer system under light loss of lubrication",
-        "content": "<html><body>When the helicopter tail transmission system loses oil due to damage, the system needs to persist for 30 minutes. Therefore, the nonlinear tribo-dynamics model of the helicopter intermediate reducer (HIR) is established, which is coupled with the loss of oil lubrication. To simulate condition of the HIR system under the loss of lubrication (LOL), this study begins by establishing a complete HIR system CFD model, and analyse the lubrication of the gear tooth surface and the oil churning/windage under different lubrication conditions. Then, a coupled model based on the result of the CFD is proposed to calculate the coefficient of friction (COF) under the condition of light loss of lubrication (LLOL). The results show that COF gradually decreases first and then increases rapidly. <br/><br/><br/>Authors: Lu F., Cao X., Bao H., Zhu R.. <br/><br/>Affiliations: Nanjing University of Aeronautics and Astronautics. <br/><br/>Publication: Journal of Mechanical Science and Technology, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13543510",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141198708&origin=inward",
-        "title": "Nonlinear tribo-dynamic model of helicopter mid-reducer system under light loss of lubrication",
-        "content": "<html><body>When the helicopter tail transmission system loses oil due to damage, the system needs to persist for 30 minutes. Therefore, the nonlinear tribo-dynamics model of the helicopter intermediate reducer (HIR) is established, which is coupled with the loss of oil lubrication. To simulate condition of the HIR system under the loss of lubrication (LOL), this study begins by establishing a complete HIR system CFD model, and analyse the lubrication of the gear tooth surface and the oil churning/windage under different lubrication conditions. Then, a coupled model based on the result of the CFD is proposed to calculate the coefficient of friction (COF) under the condition of light loss of lubrication (LLOL). The results show that COF gradually decreases first and then increases rapidly. <br/><br/><br/>Authors: Lu F., Cao X., Bao H., Zhu R.. <br/><br/>Affiliations: Nanjing University of Aeronautics and Astronautics. <br/><br/>Publication: Journal of Mechanical Science and Technology, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "partial_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13542920",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141198708&origin=inward",
+    "title": "Nonlinear tribo-dynamic model of helicopter mid-reducer system under light loss of lubrication",
+    "content": "<html><body>When the helicopter tail transmission system loses oil due to damage, the system needs to persist for 30 minutes. Therefore, the nonlinear tribo-dynamics model of the helicopter intermediate reducer (HIR) is established, which is coupled with the loss of oil lubrication. To simulate condition of the HIR system under the loss of lubrication (LOL), this study begins by establishing a complete HIR system CFD model, and analyse the lubrication of the gear tooth surface and the oil churning/windage under different lubrication conditions. Then, a coupled model based on the result of the CFD is proposed to calculate the coefficient of friction (COF) under the condition of light loss of lubrication (LLOL). The results show that COF gradually decreases first and then increases rapidly. <br/><br/><br/>Authors: Lu F., Cao X., Bao H., Zhu R.. <br/><br/>Affiliations: Nanjing University of Aeronautics and Astronautics. <br/><br/>Publication: Journal of Mechanical Science and Technology, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13543510",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141198708&origin=inward",
+    "title": "Nonlinear tribo-dynamic model of helicopter mid-reducer system under light loss of lubrication",
+    "content": "<html><body>When the helicopter tail transmission system loses oil due to damage, the system needs to persist for 30 minutes. Therefore, the nonlinear tribo-dynamics model of the helicopter intermediate reducer (HIR) is established, which is coupled with the loss of oil lubrication. To simulate condition of the HIR system under the loss of lubrication (LOL), this study begins by establishing a complete HIR system CFD model, and analyse the lubrication of the gear tooth surface and the oil churning/windage under different lubrication conditions. Then, a coupled model based on the result of the CFD is proposed to calculate the coefficient of friction (COF) under the condition of light loss of lubrication (LLOL). The results show that COF gradually decreases first and then increases rapidly. <br/><br/><br/>Authors: Lu F., Cao X., Bao H., Zhu R.. <br/><br/>Affiliations: Nanjing University of Aeronautics and Astronautics. <br/><br/>Publication: Journal of Mechanical Science and Technology, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "partial_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

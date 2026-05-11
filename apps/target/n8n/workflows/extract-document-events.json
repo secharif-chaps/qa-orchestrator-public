@@ -13,10 +13,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        1136,
-        160
-      ],
+      "position": [1136, 160],
       "id": "parse-response",
       "name": "Code_Transform_ParseEventsResponse"
     },
@@ -50,10 +47,7 @@
       },
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1.1,
-      "position": [
-        1136,
-        352
-      ],
+      "position": [1136, 352],
       "id": "send-error",
       "name": "RabbitMQ_Publish_ErrorResponse",
       "credentials": {
@@ -97,10 +91,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        288,
-        256
-      ],
+      "position": [288, 256],
       "id": "479a7fef-e33b-4be7-b4c3-86f3fc8deda3",
       "name": "Workflow_Trigger_ExtractDocumentEvents"
     },
@@ -117,10 +108,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
-      "position": [
-        544,
-        256
-      ],
+      "position": [544, 256],
       "id": "701c06e5-2299-4ea1-995e-ffd3c628c837",
       "name": "LLM_Agent_ExtractEventsActors",
       "retryOnFail": true,
@@ -160,10 +148,7 @@
       },
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1.1,
-      "position": [
-        1360,
-        160
-      ],
+      "position": [1360, 160],
       "id": "send-response",
       "name": "RabbitMQ_Publish_EventsActorsResult",
       "credentials": {
@@ -181,10 +166,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.2,
-      "position": [
-        768,
-        480
-      ],
+      "position": [768, 480],
       "id": "d1169b6d-4a99-4b40-a0db-2efa3472dfdd",
       "name": "LLM_Parser_EventsActorsSchema"
     },
@@ -213,10 +195,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        640,
-        480
-      ],
+      "position": [640, 480],
       "id": "126274e5-e1ab-440c-a640-82852dfef383",
       "name": "LLM_Model_Secondary",
       "credentials": {
@@ -251,10 +230,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        512,
-        480
-      ],
+      "position": [512, 480],
       "id": "d39ae260-9900-4700-ae88-f24fc092fdfe",
       "name": "LLM_Model_Primary",
       "credentials": {
@@ -283,10 +259,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        848,
-        688
-      ],
+      "position": [848, 688],
       "id": "639bb2d1-0bc4-4edd-8e47-93492fc2e2b5",
       "name": "LLM_Model_ValidationParser",
       "credentials": {

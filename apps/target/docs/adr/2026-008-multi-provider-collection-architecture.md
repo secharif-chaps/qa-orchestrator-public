@@ -145,12 +145,12 @@ The `ProviderResolverInterface` uses **SourceType-based routing** with a global 
 ```yaml
 # config/services/provider_routing.yaml
 parameters:
-    app.collect.provider_routing:
-        default: '%env(COLLECT_DEFAULT_PROVIDER)%' # e.g. 'bakus'
-        source_types:
-            rss_feed: 'apify'
-            blog: 'apify'
-            # Everything else → default
+  app.collect.provider_routing:
+    default: '%env(COLLECT_DEFAULT_PROVIDER)%' # e.g. 'bakus'
+    source_types:
+      rss_feed: 'apify'
+      blog: 'apify'
+      # Everything else → default
 ```
 
 ```php

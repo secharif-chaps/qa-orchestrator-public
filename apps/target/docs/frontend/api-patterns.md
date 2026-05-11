@@ -44,15 +44,15 @@ The `useApi` composable, located in `pwa/api/api.ts`, is a wrapper around `useFe
 To maintain consistency and clarity across our API interactions, we follow specific naming conventions for common CRUD (Create, Read, Update, Delete) operations. These conventions apply to the functions defined in `pwa/api/{resource}.ts` files.
 
 - **`getItem{ResourceName}`**: Used for fetching a single resource by its ID.
-    - Example: `getItemWatchFile(id: string)`
+  - Example: `getItemWatchFile(id: string)`
 - **`getCollection{ResourceName}`**: Used for fetching a collection of resources, often with filtering, sorting, and pagination.
-    - Example: `getCollectionWatchFile(params: object)`
+  - Example: `getCollectionWatchFile(params: object)`
 - **`create{ResourceName}`**: Used for creating a new resource.
-    - Example: `createWatchFile(data: Partial<Resource>)`
+  - Example: `createWatchFile(data: Partial<Resource>)`
 - **`update{ResourceName}`**: Used for updating an existing resource by its ID.
-    - Example: `updateWatchFile(id: string, data: Partial<Resource>)`
+  - Example: `updateWatchFile(id: string, data: Partial<Resource>)`
 - **`delete{ResourceName}`**: Used for deleting a resource by its ID.
-    - Example: `deleteWatchFile(id: string)`
+  - Example: `deleteWatchFile(id: string)`
 
 ## Creating API Functions
 
@@ -68,48 +68,48 @@ import type { WatchFile } from '@/types/watchFile'
 import type { SortOrder } from '@owlint/feathers-vue'
 
 export const getItemWatchFile = async (id: string) => {
-    const response = await useApi().get<WatchFile>(`/watch_files/${id}`)
-    return response.data
+  const response = await useApi().get<WatchFile>(`/watch_files/${id}`)
+  return response.data
 }
 
 export const getCollectionWatchFile = async ({
-    sortBy,
-    sortOrder,
-    ...params
+  sortBy,
+  sortOrder,
+  ...params
 }: {
-    sortBy: string
-    sortOrder: SortOrder
-    page?: number
-    itemsPerPage?: number
+  sortBy: string
+  sortOrder: SortOrder
+  page?: number
+  itemsPerPage?: number
 }) => {
-    const response = await useApi().get<JsonLdCollection<WatchFile>>('/watch_files', {
-        query: {
-            [`sort[${sortBy}]`]: sortOrder.toLowerCase(),
-            ...params,
-        },
-    })
+  const response = await useApi().get<JsonLdCollection<WatchFile>>('/watch_files', {
+    query: {
+      [`sort[${sortBy}]`]: sortOrder.toLowerCase(),
+      ...params,
+    },
+  })
 
-    return {
-        items: response.data.member,
-        totalItems: response.data.totalItems,
-    }
+  return {
+    items: response.data.member,
+    totalItems: response.data.totalItems,
+  }
 }
 
 export const createWatchFile = async (data: Partial<WatchFile>) => {
-    const response = await useApi().post<WatchFile>('/watch_files', {
-        ...data,
-        '@type': 'WatchFile',
-    })
-    return response.data
+  const response = await useApi().post<WatchFile>('/watch_files', {
+    ...data,
+    '@type': 'WatchFile',
+  })
+  return response.data
 }
 
 export const updateWatchFile = async (id: string, data: Partial<WatchFile>) => {
-    const response = await useApi().patch<WatchFile>(`/watch_files/${id}`, data)
-    return response.data
+  const response = await useApi().patch<WatchFile>(`/watch_files/${id}`, data)
+  return response.data
 }
 
 export const deleteWatchFile = async (id: string) => {
-    await useApi().delete(`/watch_files/${id}`)
+  await useApi().delete(`/watch_files/${id}`)
 }
 ```
 
@@ -128,31 +128,31 @@ Queries are for fetching data. They use `defineQueryOptions` from Pinia Colada a
 
 ```typescript
 import {
-    getLastWatchFileConversation,
-    getItemWatchFile,
-    getCollectionWatchFile,
+  getLastWatchFileConversation,
+  getItemWatchFile,
+  getCollectionWatchFile,
 } from '@/api/watchFile'
 import type { SortOrder } from '@owlint/feathers-vue'
 import { defineQueryOptions } from '@pinia/colada'
 
 export const WATCH_FILE_QUERY_KEYS = {
-    root: ['watchFiles'] as const,
-    byId: (id: string) => [...WATCH_FILE_QUERY_KEYS.root, id] as const,
-    withFilters: (filters: Record<string, any>) =>
-        [...WATCH_FILE_QUERY_KEYS.root, { filters }] as const,
+  root: ['watchFiles'] as const,
+  byId: (id: string) => [...WATCH_FILE_QUERY_KEYS.root, id] as const,
+  withFilters: (filters: Record<string, any>) =>
+    [...WATCH_FILE_QUERY_KEYS.root, { filters }] as const,
 }
 
 export const getItemWatchFileQuery = defineQueryOptions(({ id }: { id: string }) => ({
-    key: WATCH_FILE_QUERY_KEYS.byId(id),
-    query: () => getItemWatchFile(id),
+  key: WATCH_FILE_QUERY_KEYS.byId(id),
+  query: () => getItemWatchFile(id),
 }))
 
 export const getCollectionWatchFileQuery = defineQueryOptions(
-    (filters: { sortBy: string; sortOrder: SortOrder; page?: number; itemsPerPage?: number }) => ({
-        key: WATCH_FILE_QUERY_KEYS.withFilters(filters),
-        query: () => getCollectionWatchFile(filters),
-        enabled: !!filters.sortBy,
-    }),
+  (filters: { sortBy: string; sortOrder: SortOrder; page?: number; itemsPerPage?: number }) => ({
+    key: WATCH_FILE_QUERY_KEYS.withFilters(filters),
+    query: () => getCollectionWatchFile(filters),
+    enabled: !!filters.sortBy,
+  }),
 )
 ```
 
@@ -175,57 +175,55 @@ import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { WATCH_FILE_QUERY_KEYS } from '~/api/queries/watchFile'
 
 export const useUpdateWatchFile = defineMutation(() => {
-    const toast = useToast()
-    const { t } = useI18n()
-    const queryCache = useQueryCache()
-    const watchFileStore = useWatchFileStore()
+  const toast = useToast()
+  const { t } = useI18n()
+  const queryCache = useQueryCache()
+  const watchFileStore = useWatchFileStore()
 
-    const { mutate, ...mutation } = useMutation({
-        mutation: ({ id, data }: { id: string; data: Partial<WatchFile> }) =>
-            updateWatchFile(id, data),
-        onError() {
-            const errorMessage =
-                watchFileStore.getError('name') || t('watch_files.title.error.generic')
-            toast.error(t('watch_files.title.error.toast_title'), errorMessage)
-        },
-        onSuccess({ id }) {
-            toast.success(t('watch_files.title.success.updated'))
-            queryCache.invalidateQueries({
-                key: WATCH_FILE_QUERY_KEYS.withFilters(watchFileStore.filters),
-            })
-            queryCache.invalidateQueries({
-                key: WATCH_FILE_QUERY_KEYS.byId(id),
-            })
-        },
-    })
-    return { ...mutation, updateTask: mutate }
+  const { mutate, ...mutation } = useMutation({
+    mutation: ({ id, data }: { id: string; data: Partial<WatchFile> }) => updateWatchFile(id, data),
+    onError() {
+      const errorMessage = watchFileStore.getError('name') || t('watch_files.title.error.generic')
+      toast.error(t('watch_files.title.error.toast_title'), errorMessage)
+    },
+    onSuccess({ id }) {
+      toast.success(t('watch_files.title.success.updated'))
+      queryCache.invalidateQueries({
+        key: WATCH_FILE_QUERY_KEYS.withFilters(watchFileStore.filters),
+      })
+      queryCache.invalidateQueries({
+        key: WATCH_FILE_QUERY_KEYS.byId(id),
+      })
+    },
+  })
+  return { ...mutation, updateTask: mutate }
 })
 
 export const useToggleWatchFileFavorite = () => {
-    const toast = useToast()
-    const { t } = useI18n()
-    const queryCache = useQueryCache()
-    const watchFileStore = useWatchFileStore()
+  const toast = useToast()
+  const { t } = useI18n()
+  const queryCache = useQueryCache()
+  const watchFileStore = useWatchFileStore()
 
-    const { mutate, ...mutation } = useMutation({
-        mutation: (watchFile: WatchFile) =>
-            toggleWatchFileFavorite(watchFile.id, !!watchFile.isFavorite),
-        onMutate: ({ id }) => {
-            // Optimistic update logic here
-        },
-        onError: () => {
-            // Revert on error
-        },
-        onSettled() {
-            queryCache.invalidateQueries({
-                key: WATCH_FILE_QUERY_KEYS.withFilters(watchFileStore.filters),
-            })
-        },
-    })
-    return {
-        ...mutation,
-        toggleFavorite: mutate,
-    }
+  const { mutate, ...mutation } = useMutation({
+    mutation: (watchFile: WatchFile) =>
+      toggleWatchFileFavorite(watchFile.id, !!watchFile.isFavorite),
+    onMutate: ({ id }) => {
+      // Optimistic update logic here
+    },
+    onError: () => {
+      // Revert on error
+    },
+    onSettled() {
+      queryCache.invalidateQueries({
+        key: WATCH_FILE_QUERY_KEYS.withFilters(watchFileStore.filters),
+      })
+    },
+  })
+  return {
+    ...mutation,
+    toggleFavorite: mutate,
+  }
 }
 ```
 
@@ -249,14 +247,14 @@ import { ref } from 'vue'
 
 const page = ref(1)
 const {
-    data: watchFiles,
-    isLoading,
-    error,
+  data: watchFiles,
+  isLoading,
+  error,
 } = useQuery(getCollectionWatchFileQuery, () => ({
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
-    page: page.value,
-    itemsPerPage: 10,
+  sortBy: 'createdAt',
+  sortOrder: 'desc',
+  page: page.value,
+  itemsPerPage: 10,
 }))
 </script>
 ```
@@ -270,7 +268,7 @@ import { useUpdateWatchFile } from '@/api/mutations/watchFile'
 const { updateTask, isLoading, error } = useUpdateWatchFile()
 
 const handleUpdate = async () => {
-    await updateTask({ id: 'some-id', data: { name: 'New Name' } })
+  await updateTask({ id: 'some-id', data: { name: 'New Name' } })
 }
 </script>
 ```

@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13550591",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141609100&origin=inward",
-        "title": "Influences of Conductor Positions and Fast Rising Impulse Voltages on the Line-End Coil based on a Three-Phase High-Frequency Model",
-        "content": "<html><body>Due to the steep-edged voltage impulses from the new generation of power electronics, the lifespan of stator insulation systems is significantly shortened. In this paper, a three-phase high-frequency (HF) model based on multi-conductor transmission line theories (MTLs) is developed to predict the electrical field distributions of each conductor in the line-end coils. In addition, the results of possible best and worst conductor spatial distributions in the stator slot from the one-phase HF model on the basis of genetic algorithms are also further investigated by the three-phase HF model. Finally, the theoretical results are validated through partial discharge measurements. <br/><br/><br/>Authors: Helmholdt-Zhu T., Grabs V.. <br/><br/>Affiliations: Gottfried Wilhelm Leibniz Universität Hannover, Lenze SE. <br/><br/>Publication: 24th European Conference on Power Electronics and Applications, EPE 2022 ECCE Europe, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13551327",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141609100&origin=inward",
-        "title": "Influences of Conductor Positions and Fast Rising Impulse Voltages on the Line-End Coil based on a Three-Phase High-Frequency Model",
-        "content": "<html><body>Due to the steep-edged voltage impulses from the new generation of power electronics, the lifespan of stator insulation systems is significantly shortened. In this paper, a three-phase high-frequency (HF) model based on multi-conductor transmission line theories (MTLs) is developed to predict the electrical field distributions of each conductor in the line-end coils. In addition, the results of possible best and worst conductor spatial distributions in the stator slot from the one-phase HF model on the basis of genetic algorithms are also further investigated by the three-phase HF model. Finally, the theoretical results are validated through partial discharge measurements. <br/><br/><br/>Authors: Helmholdt-Zhu T., Grabs V.. <br/><br/>Affiliations: Gottfried Wilhelm Leibniz Universität Hannover, Lenze SE. <br/><br/>Publication: 24th European Conference on Power Electronics and Applications, EPE 2022 ECCE Europe, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13550591",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141609100&origin=inward",
+    "title": "Influences of Conductor Positions and Fast Rising Impulse Voltages on the Line-End Coil based on a Three-Phase High-Frequency Model",
+    "content": "<html><body>Due to the steep-edged voltage impulses from the new generation of power electronics, the lifespan of stator insulation systems is significantly shortened. In this paper, a three-phase high-frequency (HF) model based on multi-conductor transmission line theories (MTLs) is developed to predict the electrical field distributions of each conductor in the line-end coils. In addition, the results of possible best and worst conductor spatial distributions in the stator slot from the one-phase HF model on the basis of genetic algorithms are also further investigated by the three-phase HF model. Finally, the theoretical results are validated through partial discharge measurements. <br/><br/><br/>Authors: Helmholdt-Zhu T., Grabs V.. <br/><br/>Affiliations: Gottfried Wilhelm Leibniz Universität Hannover, Lenze SE. <br/><br/>Publication: 24th European Conference on Power Electronics and Applications, EPE 2022 ECCE Europe, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13551327",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141609100&origin=inward",
+    "title": "Influences of Conductor Positions and Fast Rising Impulse Voltages on the Line-End Coil based on a Three-Phase High-Frequency Model",
+    "content": "<html><body>Due to the steep-edged voltage impulses from the new generation of power electronics, the lifespan of stator insulation systems is significantly shortened. In this paper, a three-phase high-frequency (HF) model based on multi-conductor transmission line theories (MTLs) is developed to predict the electrical field distributions of each conductor in the line-end coils. In addition, the results of possible best and worst conductor spatial distributions in the stator slot from the one-phase HF model on the basis of genetic algorithms are also further investigated by the three-phase HF model. Finally, the theoretical results are validated through partial discharge measurements. <br/><br/><br/>Authors: Helmholdt-Zhu T., Grabs V.. <br/><br/>Affiliations: Gottfried Wilhelm Leibniz Universität Hannover, Lenze SE. <br/><br/>Publication: 24th European Conference on Power Electronics and Applications, EPE 2022 ECCE Europe, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

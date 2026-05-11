@@ -205,7 +205,7 @@ docker compose exec api tail -f var/log/dev.log
 ```typescript
 // nuxt.config.ts
 export default defineNuxtConfig({
-    devtools: { enabled: true },
+  devtools: { enabled: true },
 })
 ```
 
@@ -250,14 +250,14 @@ console.timeEnd('API Request')
 ```typescript
 // Only log in development
 if (process.dev) {
-    console.log('Development debug info:', data)
+  console.log('Development debug info:', data)
 }
 
 // Custom debug function
 const debug = (message: string, data?: any) => {
-    if (process.env.NODE_ENV === 'development') {
-        console.log(`[DEBUG] ${message}`, data)
-    }
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[DEBUG] ${message}`, data)
+  }
 }
 ```
 
@@ -268,21 +268,21 @@ const debug = (message: string, data?: any) => {
 ```typescript
 // composables/useApi.ts
 export const useApi = () => {
-    const { $fetch } = useNuxtApp()
+  const { $fetch } = useNuxtApp()
 
-    const getUsers = async () => {
-        try {
-            console.log('Fetching users...')
-            const users = await $fetch('/api/users')
-            console.log('Users fetched:', users)
-            return users
-        } catch (error) {
-            console.error('Failed to fetch users:', error)
-            throw error
-        }
+  const getUsers = async () => {
+    try {
+      console.log('Fetching users...')
+      const users = await $fetch('/api/users')
+      console.log('Users fetched:', users)
+      return users
+    } catch (error) {
+      console.error('Failed to fetch users:', error)
+      throw error
     }
+  }
 
-    return { getUsers }
+  return { getUsers }
 }
 ```
 
@@ -291,26 +291,26 @@ export const useApi = () => {
 ```typescript
 // stores/user.ts
 export const useUserStore = defineStore('user', () => {
-    const users = ref([])
-    const loading = ref(false)
+  const users = ref([])
+  const loading = ref(false)
 
-    const fetchUsers = async () => {
-        console.log('Store: Starting user fetch')
-        loading.value = true
+  const fetchUsers = async () => {
+    console.log('Store: Starting user fetch')
+    loading.value = true
 
-        try {
-            const { getUsers } = useApi()
-            users.value = await getUsers()
-            console.log('Store: Users loaded:', users.value.length)
-        } catch (error) {
-            console.error('Store: Failed to fetch users:', error)
-        } finally {
-            loading.value = false
-            console.log('Store: Fetch completed, loading:', loading.value)
-        }
+    try {
+      const { getUsers } = useApi()
+      users.value = await getUsers()
+      console.log('Store: Users loaded:', users.value.length)
+    } catch (error) {
+      console.error('Store: Failed to fetch users:', error)
+    } finally {
+      loading.value = false
+      console.log('Store: Fetch completed, loading:', loading.value)
     }
+  }
 
-    return { users, loading, fetchUsers }
+  return { users, loading, fetchUsers }
 })
 ```
 
@@ -321,25 +321,25 @@ export const useUserStore = defineStore('user', () => {
 ```vue
 <script setup lang="ts">
 const props = defineProps<{
-    userId: string
+  userId: string
 }>()
 
 // Debug props changes
 watch(
-    () => props.userId,
-    (newId, oldId) => {
-        console.log('UserId changed:', { from: oldId, to: newId })
-    },
+  () => props.userId,
+  (newId, oldId) => {
+    console.log('UserId changed:', { from: oldId, to: newId })
+  },
 )
 
 // Debug component mounting
 onMounted(() => {
-    console.log('Component mounted with props:', props)
+  console.log('Component mounted with props:', props)
 })
 
 // Debug component updates
 onUpdated(() => {
-    console.log('Component updated')
+  console.log('Component updated')
 })
 </script>
 ```
@@ -353,15 +353,15 @@ const isLoading = ref(false)
 
 // Watch reactive changes
 watch(
-    user,
-    (newUser, oldUser) => {
-        console.log('User changed:', { old: oldUser, new: newUser })
-    },
-    { deep: true },
+  user,
+  (newUser, oldUser) => {
+    console.log('User changed:', { old: oldUser, new: newUser })
+  },
+  { deep: true },
 )
 
 watch(isLoading, (loading) => {
-    console.log('Loading state:', loading)
+  console.log('Loading state:', loading)
 })
 </script>
 ```
@@ -373,22 +373,22 @@ watch(isLoading, (loading) => {
 ```typescript
 // Create debug wrapper for $fetch
 const debugFetch = async (url: string, options?: any) => {
-    console.log('🚀 API Request:', { url, options })
+  console.log('🚀 API Request:', { url, options })
 
-    try {
-        const response = await $fetch(url, options)
-        console.log('✅ API Response:', { url, response })
-        return response
-    } catch (error) {
-        console.error('❌ API Error:', { url, error })
-        throw error
-    }
+  try {
+    const response = await $fetch(url, options)
+    console.log('✅ API Response:', { url, response })
+    return response
+  } catch (error) {
+    console.error('❌ API Error:', { url, error })
+    throw error
+  }
 }
 
 // Use in composables
 export const useApi = () => {
-    const getUsers = () => debugFetch('/api/users')
-    return { getUsers }
+  const getUsers = () => debugFetch('/api/users')
+  return { getUsers }
 }
 ```
 
@@ -399,17 +399,17 @@ export const useApi = () => {
 ```typescript
 // plugins/error-handler.client.ts
 export default defineNuxtPlugin(() => {
-    // Handle Vue errors
-    const vueApp = useNuxtApp().vueApp
-    vueApp.config.errorHandler = (error, context) => {
-        console.error('Vue Error:', { error, context })
-        // Send to error reporting service
-    }
+  // Handle Vue errors
+  const vueApp = useNuxtApp().vueApp
+  vueApp.config.errorHandler = (error, context) => {
+    console.error('Vue Error:', { error, context })
+    // Send to error reporting service
+  }
 
-    // Handle unhandled promise rejections
-    window.addEventListener('unhandledrejection', (event) => {
-        console.error('Unhandled Promise Rejection:', event.reason)
-    })
+  // Handle unhandled promise rejections
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled Promise Rejection:', event.reason)
+  })
 })
 ```
 
@@ -633,21 +633,21 @@ class UserService
 ```typescript
 // plugins/performance.client.ts
 export default defineNuxtPlugin(() => {
-    if (process.client) {
-        // Monitor Largest Contentful Paint
-        new PerformanceObserver((entryList) => {
-            for (const entry of entryList.getEntries()) {
-                console.log('LCP:', entry.startTime)
-            }
-        }).observe({ entryTypes: ['largest-contentful-paint'] })
+  if (process.client) {
+    // Monitor Largest Contentful Paint
+    new PerformanceObserver((entryList) => {
+      for (const entry of entryList.getEntries()) {
+        console.log('LCP:', entry.startTime)
+      }
+    }).observe({ entryTypes: ['largest-contentful-paint'] })
 
-        // Monitor Cumulative Layout Shift
-        new PerformanceObserver((entryList) => {
-            for (const entry of entryList.getEntries()) {
-                console.log('CLS:', entry.value)
-            }
-        }).observe({ entryTypes: ['layout-shift'] })
-    }
+    // Monitor Cumulative Layout Shift
+    new PerformanceObserver((entryList) => {
+      for (const entry of entryList.getEntries()) {
+        console.log('CLS:', entry.value)
+      }
+    }).observe({ entryTypes: ['layout-shift'] })
+  }
 })
 ```
 
@@ -660,18 +660,18 @@ export default defineNuxtPlugin(() => {
 ```json
 // .vscode/launch.json
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Listen for Xdebug",
-            "type": "php",
-            "request": "launch",
-            "port": 9003,
-            "pathMappings": {
-                "/var/www/html": "${workspaceFolder}/api"
-            }
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Listen for Xdebug",
+      "type": "php",
+      "request": "launch",
+      "port": 9003,
+      "pathMappings": {
+        "/var/www/html": "${workspaceFolder}/api"
+      }
+    }
+  ]
 }
 ```
 

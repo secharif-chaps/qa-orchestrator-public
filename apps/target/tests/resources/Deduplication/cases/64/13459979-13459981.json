@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 52,
-    "master": {
-        "id": "legacy-64-master-13459979",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85137947870&origin=inward",
-        "title": "Utilization of thermal effect induced by AC-DBD plasma generation for aircraft icing mitigation",
-        "content": "<html><body>An explorative investigation was performed to demonstrate the feasibility of utilizing thermal effect induced by Dielectric-Barrier-Discharge (DBD) plasma generation for aircraft icing mitigation. The experimental study was performed in an Icing Research Tunnel available at Iowa State University (i.e., ISU-IRT). A NACA0012 airfoil/wing model embedded with DBD plasma actuators was installed in ISU-IRT under typical glaze/rime icing conditions pertinent to aircraft inflight icing phenomena. While a high-speed imaging system was used to record the dynamic ice accretion process over the airfoil surface for the test cases with and without plasma generation, an infrared (IR) thermal imaging system was utilized to map the corresponding temperature distributions to quantify the unsteady heat transfer and phase changing process over the airfoil surface. For the typical glaze ice condition, the thermal effect induced by DBD plasma generation was demonstrated to be able to prevent ice accretion over the airfoil surface during the entire ice accretion experiment. The measured quantitative surface temperature distributions were correlated with the acquired images of the dynamic ice accretion and water runback processes to elucidate the underlying physics. <br/><br/><br/>Authors: Zhou W., Liu Y., Hu H., Meng X.. <br/><br/>Affiliations: Iowa State University, Northwestern Polytechnical University. <br/><br/>Publication: AIAA Aerospace Sciences Meeting, 2018, 2018. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13459981",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85137946159&origin=inward",
-        "title": "An experimental investigation on the thermal effects of NS-DBD and AC-DBD plasma actuators for aircraft icing mitigation",
-        "content": "<html><body>Ice accretion on airframe surfaces occurs as aircraft come across supercooled water droplets in the cloud, which was found to greatly influence the flight performance and safety. In the present study, the thermal effect induced by DBD plasma actuation was experimentally investigated in order to explore its potential as an alternative strategy to current anti-/de-icing methods for aircraft icing mitigation. A series of experiments were conducted in the Iowa State University Icing Research Tunnel (ISU-IRT) with a NACA0012 airfoil/wing model embedded with DBD plasma actuators. During the experiments, in addition to recording the dynamic ice accretion process by using a high-speed imaging system, the quantitative surface temperature measurements were also obtained using an Infra-Red (IR) thermal imaging system. The thermal effects induced by conventional AC-DBD and nanosecond pulsed DBD (i.e., ns-DBD) plasma actuators were compared under the same power input and icing test conditions. The dynamic icing process was also investigated with the ns-DBD plasma actuation under different pulse repetition frequencies. It was found that the anti-/de-icing performance of ns-DBD plasma actuation would improve with increasing pulse repetition frequency. <br/><br/><br/>Authors: Kolbakir C., Liu Y., Hu H., Starikovskiy A.Y., Miles R.. <br/><br/>Affiliations: Iowa State University, Princeton University. <br/><br/>Publication: AIAA Aerospace Sciences Meeting, 2018, 2018. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "unique",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "unique",
-        "note": "Different studies with distinct authors and experimental focuses, though in same venue and topic area"
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "agreement_unique",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 52,
+  "master": {
+    "id": "legacy-64-master-13459979",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85137947870&origin=inward",
+    "title": "Utilization of thermal effect induced by AC-DBD plasma generation for aircraft icing mitigation",
+    "content": "<html><body>An explorative investigation was performed to demonstrate the feasibility of utilizing thermal effect induced by Dielectric-Barrier-Discharge (DBD) plasma generation for aircraft icing mitigation. The experimental study was performed in an Icing Research Tunnel available at Iowa State University (i.e., ISU-IRT). A NACA0012 airfoil/wing model embedded with DBD plasma actuators was installed in ISU-IRT under typical glaze/rime icing conditions pertinent to aircraft inflight icing phenomena. While a high-speed imaging system was used to record the dynamic ice accretion process over the airfoil surface for the test cases with and without plasma generation, an infrared (IR) thermal imaging system was utilized to map the corresponding temperature distributions to quantify the unsteady heat transfer and phase changing process over the airfoil surface. For the typical glaze ice condition, the thermal effect induced by DBD plasma generation was demonstrated to be able to prevent ice accretion over the airfoil surface during the entire ice accretion experiment. The measured quantitative surface temperature distributions were correlated with the acquired images of the dynamic ice accretion and water runback processes to elucidate the underlying physics. <br/><br/><br/>Authors: Zhou W., Liu Y., Hu H., Meng X.. <br/><br/>Affiliations: Iowa State University, Northwestern Polytechnical University. <br/><br/>Publication: AIAA Aerospace Sciences Meeting, 2018, 2018. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13459981",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85137946159&origin=inward",
+    "title": "An experimental investigation on the thermal effects of NS-DBD and AC-DBD plasma actuators for aircraft icing mitigation",
+    "content": "<html><body>Ice accretion on airframe surfaces occurs as aircraft come across supercooled water droplets in the cloud, which was found to greatly influence the flight performance and safety. In the present study, the thermal effect induced by DBD plasma actuation was experimentally investigated in order to explore its potential as an alternative strategy to current anti-/de-icing methods for aircraft icing mitigation. A series of experiments were conducted in the Iowa State University Icing Research Tunnel (ISU-IRT) with a NACA0012 airfoil/wing model embedded with DBD plasma actuators. During the experiments, in addition to recording the dynamic ice accretion process by using a high-speed imaging system, the quantitative surface temperature measurements were also obtained using an Infra-Red (IR) thermal imaging system. The thermal effects induced by conventional AC-DBD and nanosecond pulsed DBD (i.e., ns-DBD) plasma actuators were compared under the same power input and icing test conditions. The dynamic icing process was also investigated with the ns-DBD plasma actuation under different pulse repetition frequencies. It was found that the anti-/de-icing performance of ns-DBD plasma actuation would improve with increasing pulse repetition frequency. <br/><br/><br/>Authors: Kolbakir C., Liu Y., Hu H., Starikovskiy A.Y., Miles R.. <br/><br/>Affiliations: Iowa State University, Princeton University. <br/><br/>Publication: AIAA Aerospace Sciences Meeting, 2018, 2018. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "unique",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "unique",
+    "note": "Different studies with distinct authors and experimental focuses, though in same venue and topic area"
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "agreement_unique",
+  "content_source": "hbase_full"
 }

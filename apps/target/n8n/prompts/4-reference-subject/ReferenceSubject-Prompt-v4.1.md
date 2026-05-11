@@ -296,13 +296,13 @@ ELSE:
 
 ```json
 {
-    "referenceSubject": {
-        "human": {
-            "fr": "string (markdown, French, empty sections show placeholder)",
-            "en": "string (markdown, English, empty sections show placeholder)"
-        },
-        "llm": "string (markdown, English only, full scoring criteria)"
-    }
+  "referenceSubject": {
+    "human": {
+      "fr": "string (markdown, French, empty sections show placeholder)",
+      "en": "string (markdown, English, empty sections show placeholder)"
+    },
+    "llm": "string (markdown, English only, full scoring criteria)"
+  }
 }
 ```
 

@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 54,
-    "master": {
-        "id": "legacy-64-master-13279610",
-        "url": "https://www.deia.eus/economia/2022/06/17/termina-acuerdo-reunion-acordar-servicios/1230365.html?utm_source=rss",
-        "title": "Ryanair y los sindicatos no llegan a un acuerdo en los servicios mínimos",
-        "content": "<html><head><title>Termina sin acuerdo la reunión para acordar los servicios mínimos en la huelga de Ryanair</title></head><body><div>\n<img src=\"https://fotos00.deia.eus/mmp/2022/06/17/690x278/ryanair.jpg\"/>\n<p>\nRyanair prepara una huelga para los días 24, 25, 26 y 30 de junio y 1 y 2 de julio.\nEP\n</p>\n\n\n\n</div>\n<p>La reunión entre los sindicatos USO, SITCPLA y la dirección de la aerolínea Ryanair para acordar servicios mínimos ante la <a href=\"https://www.deia.eus/economia/2022/06/16/ryanair-sindicatos-llegan-acuerdo-mantienen/1229974.html\">huelga convocada en la aerolínea</a> para los próximos <strong>24, 25, 26 y 30 de junio </strong>y 1 y 2 de julio en las diez bases de la aerolínea en España ha finalizado sin acuerdo.</p> <p>Los sindicatos aseguran que la compañía ha solicitado que se consideren servicios mínimos el 100% de los vuelos programados para las seis jornadas de huelga, lo que en su opinión &quot;vaciaría de contenido el derecho a huelga&quot;.</p> <p>Los sindicatos USO y SITCPLA habían solicitado <strong>servicios mínimos para el 50% de los vuelos insulares,</strong> y el 25%, para los peninsulares.</p> <p>&quot;La empresa no ha aceptado la propuesta sindical y se ha negado, igualmente, a liberar a los miembros del comité de huelga; no quieren facilitar la información sobre los vuelos que quieren considerar servicios mínimos <strong>ni sobre las tripulaciones designadas para esos vuelos</strong>&quot;, denuncian desde los sindicatos.</p> <p>El siguiente paso incorpora a las negociaciones al Ministerio de Transportes, Movilidad y Agenda Urbana. El lunes han sido citados los sindicatos convocantes por Aviación Civil para establecer los servicios mínimos y vuelos protegidos.</p> <p>Los sindicatos confían en que, en esta ocasión, &quot;los servicios mínimos no sean abusivos, como decretó la justicia en anteriores convocatorias&quot;, y que permitan que los tripulantes de Ryanair puedan ejercer su derecho a huelga.</p>\n</body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13286148",
-        "url": "https://www.noticiasdenavarra.com/economia/2022/06/17/ryanair-sindicatos-llegan-acuerdo-servicios-5265296.html",
-        "title": "Ryanair y los sindicatos no llegan a un acuerdo en los servicios mínimos",
-        "content": "<html><head><title>Ryanair y los sindicatos no llegan a un acuerdo en los servicios mínimos</title></head><body><p>\n        La reunión entre los sindicatos USO, SITCPLA y la dirección de la aerolínea Ryanair para acordar servicios mínimos ante la <a href=\"https://www.noticiasdenavarra.com/economia/2022/06/16/ryanair-sindicatos-llegan-acuerdo-mantienen/1272608.html\">huelga convocada en la aerolínea</a> para los próximos <strong>24, 25, 26 y 30 de junio </strong>y 1 y 2 de julio en las diez bases de la aerolínea en España ha finalizado sin acuerdo.\n</p><div>\n        \n                            \n\n\n<p>\n        Los sindicatos aseguran que la compañía ha solicitado que se consideren servicios mínimos el 100% de los vuelos programados para las seis jornadas de huelga, lo que en su opinión &quot;vaciaría de contenido el derecho a huelga&quot;.\n</p>        \n        \n        \n                                \n        \n        \n        \n                            \n\n\n<p>\n        Los sindicatos USO y SITCPLA habían solicitado <strong>servicios mínimos para el 50% de los vuelos insulares,</strong> y el 25%, para los peninsulares.\n</p>        \n                    \n                    \n        \n                                \n        \n        \n        \n                            \n\n\n<p>\n        &quot;La empresa no ha aceptado la propuesta sindical y se ha negado, igualmente, a liberar a los miembros del comité de huelga; no quieren facilitar la información sobre los vuelos que quieren considerar servicios mínimos <strong>ni sobre las tripulaciones designadas para esos vuelos</strong>&quot;, denuncian desde los sindicatos.\n</p>        \n        \n        \n                                \n        \n        \n        \n                            \n\n\n<p>\n        El siguiente paso incorpora a las negociaciones al Ministerio de Transportes, Movilidad y Agenda Urbana. El lunes han sido citados los sindicatos convocantes por Aviación Civil para establecer los servicios mínimos y vuelos protegidos.\n</p>        \n        \n        \n                                \n        \n        \n        \n                            \n\n\n<p>\n        Los sindicatos confían en que, en esta ocasión, &quot;los servicios mínimos no sean abusivos, como decretó la justicia en anteriores convocatorias&quot;, y que permitan que los tripulantes de Ryanair puedan ejercer su derecho a huelga.\n</p>        \n        \n        \n    \n            </div></body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "identical"
-    },
-    "llm_judgement": {
-        "verdict": "near_duplicate",
-        "note": "Same news event and nearly identical text but published on different sites as separate syndicated articles"
-    },
-    "pinned": {
-        "outcome": "near_duplicate",
-        "stage": "min_hash_lsh",
-        "similarity": 0.8515625
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 54,
+  "master": {
+    "id": "legacy-64-master-13279610",
+    "url": "https://www.deia.eus/economia/2022/06/17/termina-acuerdo-reunion-acordar-servicios/1230365.html?utm_source=rss",
+    "title": "Ryanair y los sindicatos no llegan a un acuerdo en los servicios mínimos",
+    "content": "<html><head><title>Termina sin acuerdo la reunión para acordar los servicios mínimos en la huelga de Ryanair</title></head><body><div>\n<img src=\"https://fotos00.deia.eus/mmp/2022/06/17/690x278/ryanair.jpg\"/>\n<p>\nRyanair prepara una huelga para los días 24, 25, 26 y 30 de junio y 1 y 2 de julio.\nEP\n</p>\n\n\n\n</div>\n<p>La reunión entre los sindicatos USO, SITCPLA y la dirección de la aerolínea Ryanair para acordar servicios mínimos ante la <a href=\"https://www.deia.eus/economia/2022/06/16/ryanair-sindicatos-llegan-acuerdo-mantienen/1229974.html\">huelga convocada en la aerolínea</a> para los próximos <strong>24, 25, 26 y 30 de junio </strong>y 1 y 2 de julio en las diez bases de la aerolínea en España ha finalizado sin acuerdo.</p> <p>Los sindicatos aseguran que la compañía ha solicitado que se consideren servicios mínimos el 100% de los vuelos programados para las seis jornadas de huelga, lo que en su opinión &quot;vaciaría de contenido el derecho a huelga&quot;.</p> <p>Los sindicatos USO y SITCPLA habían solicitado <strong>servicios mínimos para el 50% de los vuelos insulares,</strong> y el 25%, para los peninsulares.</p> <p>&quot;La empresa no ha aceptado la propuesta sindical y se ha negado, igualmente, a liberar a los miembros del comité de huelga; no quieren facilitar la información sobre los vuelos que quieren considerar servicios mínimos <strong>ni sobre las tripulaciones designadas para esos vuelos</strong>&quot;, denuncian desde los sindicatos.</p> <p>El siguiente paso incorpora a las negociaciones al Ministerio de Transportes, Movilidad y Agenda Urbana. El lunes han sido citados los sindicatos convocantes por Aviación Civil para establecer los servicios mínimos y vuelos protegidos.</p> <p>Los sindicatos confían en que, en esta ocasión, &quot;los servicios mínimos no sean abusivos, como decretó la justicia en anteriores convocatorias&quot;, y que permitan que los tripulantes de Ryanair puedan ejercer su derecho a huelga.</p>\n</body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13286148",
+    "url": "https://www.noticiasdenavarra.com/economia/2022/06/17/ryanair-sindicatos-llegan-acuerdo-servicios-5265296.html",
+    "title": "Ryanair y los sindicatos no llegan a un acuerdo en los servicios mínimos",
+    "content": "<html><head><title>Ryanair y los sindicatos no llegan a un acuerdo en los servicios mínimos</title></head><body><p>\n        La reunión entre los sindicatos USO, SITCPLA y la dirección de la aerolínea Ryanair para acordar servicios mínimos ante la <a href=\"https://www.noticiasdenavarra.com/economia/2022/06/16/ryanair-sindicatos-llegan-acuerdo-mantienen/1272608.html\">huelga convocada en la aerolínea</a> para los próximos <strong>24, 25, 26 y 30 de junio </strong>y 1 y 2 de julio en las diez bases de la aerolínea en España ha finalizado sin acuerdo.\n</p><div>\n        \n                            \n\n\n<p>\n        Los sindicatos aseguran que la compañía ha solicitado que se consideren servicios mínimos el 100% de los vuelos programados para las seis jornadas de huelga, lo que en su opinión &quot;vaciaría de contenido el derecho a huelga&quot;.\n</p>        \n        \n        \n                                \n        \n        \n        \n                            \n\n\n<p>\n        Los sindicatos USO y SITCPLA habían solicitado <strong>servicios mínimos para el 50% de los vuelos insulares,</strong> y el 25%, para los peninsulares.\n</p>        \n                    \n                    \n        \n                                \n        \n        \n        \n                            \n\n\n<p>\n        &quot;La empresa no ha aceptado la propuesta sindical y se ha negado, igualmente, a liberar a los miembros del comité de huelga; no quieren facilitar la información sobre los vuelos que quieren considerar servicios mínimos <strong>ni sobre las tripulaciones designadas para esos vuelos</strong>&quot;, denuncian desde los sindicatos.\n</p>        \n        \n        \n                                \n        \n        \n        \n                            \n\n\n<p>\n        El siguiente paso incorpora a las negociaciones al Ministerio de Transportes, Movilidad y Agenda Urbana. El lunes han sido citados los sindicatos convocantes por Aviación Civil para establecer los servicios mínimos y vuelos protegidos.\n</p>        \n        \n        \n                                \n        \n        \n        \n                            \n\n\n<p>\n        Los sindicatos confían en que, en esta ocasión, &quot;los servicios mínimos no sean abusivos, como decretó la justicia en anteriores convocatorias&quot;, y que permitan que los tripulantes de Ryanair puedan ejercer su derecho a huelga.\n</p>        \n        \n        \n    \n            </div></body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "near_duplicate",
+    "note": "Same news event and nearly identical text but published on different sites as separate syndicated articles"
+  },
+  "pinned": {
+    "outcome": "near_duplicate",
+    "stage": "min_hash_lsh",
+    "similarity": 0.8515625
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

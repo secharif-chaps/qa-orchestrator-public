@@ -66,35 +66,35 @@ Login with credentials from `.env`:
 1. **Click "New Workflow"** in N8N UI
 
 2. **Add Trigger Node**
-    - Search for "RabbitMQ Trigger"
-    - Name it: `Trigger_RabbitMQ`
-    - Configure:
-        - Host: `rabbitmq`
-        - Queue: `test_queue`
-        - Exchange: `default`
+   - Search for "RabbitMQ Trigger"
+   - Name it: `Trigger_RabbitMQ`
+   - Configure:
+     - Host: `rabbitmq`
+     - Queue: `test_queue`
+     - Exchange: `default`
 
 3. **Add HTTP Request Node**
-    - Search for "HTTP Request"
-    - Name it: `HTTP_API_GetFolder`
-    - Configure:
-        - Method: `GET`
-        - URL: `https://api/api/folders/{{ $json.folderId }}`
+   - Search for "HTTP Request"
+   - Name it: `HTTP_API_GetFolder`
+   - Configure:
+     - Method: `GET`
+     - URL: `https://api/api/folders/{{ $json.folderId }}`
 
 4. **Add Set Node**
-    - Search for "Set"
-    - Name it: `Output_Final`
-    - Configure output fields
+   - Search for "Set"
+   - Name it: `Output_Final`
+   - Configure output fields
 
 5. **Connect Nodes**
-    - Drag from `Trigger_RabbitMQ` to `HTTP_API_GetFolder`
-    - Drag from `HTTP_API_GetFolder` to `Output_Final`
+   - Drag from `Trigger_RabbitMQ` to `HTTP_API_GetFolder`
+   - Drag from `HTTP_API_GetFolder` to `Output_Final`
 
 6. **Save Workflow**
-    - Click "Save" (top right)
-    - Name it: `Test Workflow - RabbitMQ to API`
+   - Click "Save" (top right)
+   - Name it: `Test Workflow - RabbitMQ to API`
 
 7. **Activate Workflow**
-    - Toggle "Active" switch (top right)
+   - Toggle "Active" switch (top right)
 
 ### Test Your Workflow
 

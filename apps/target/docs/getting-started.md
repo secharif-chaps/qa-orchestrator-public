@@ -9,9 +9,9 @@ Before starting, ensure you have the following installed on your system:
 ### Required Software
 
 - **Docker Desktop** (latest stable version)
-    - Windows: [Download Docker Desktop](https://docs.docker.com/desktop/windows/install/)
-    - macOS: [Download Docker Desktop](https://docs.docker.com/desktop/mac/install/)
-    - Linux: [Install Docker Engine](https://docs.docker.com/engine/install/)
+  - Windows: [Download Docker Desktop](https://docs.docker.com/desktop/windows/install/)
+  - macOS: [Download Docker Desktop](https://docs.docker.com/desktop/mac/install/)
+  - Linux: [Install Docker Engine](https://docs.docker.com/engine/install/)
 - **Git** (version 2.9 or higher)
 - **Node.js** (version 18 or higher) - for local development tools
 - **Taskfile** (recommended) - [Installation guide](https://taskfile.dev/installation/)
@@ -87,11 +87,11 @@ Edit your hosts file and add the following line:
 These domain names are fully customizable. If you wish to use different values:
 
 1. Update the corresponding environment variables in your `.env` file:
-    - `SERVER_NAME` - Main application domain
-    - `TRUSTED_HOSTS` - Comma-separated list of trusted hosts
-    - `KEYCLOAK_SERVER_NAME` - Keycloak authentication domain
-    - `N8N_SERVER_NAME` - N8N workflows domain
-    - `OPENSEARCH_SERVER_NAME` - OpenSearch Dashboards analytics domain
+   - `SERVER_NAME` - Main application domain
+   - `TRUSTED_HOSTS` - Comma-separated list of trusted hosts
+   - `KEYCLOAK_SERVER_NAME` - Keycloak authentication domain
+   - `N8N_SERVER_NAME` - N8N workflows domain
+   - `OPENSEARCH_SERVER_NAME` - OpenSearch Dashboards analytics domain
 
 2. Regenerate your SSL certificates to match the new domains (see [SSL Certificate Generation](#-ssl-certificate-generation))
 
@@ -113,16 +113,16 @@ If you're on macOS, you need to modify the `.env` file:
 
 1. **Comment out the COMPOSE_BAKE line** to disable this Linux-specific feature:
 
-    ```env
-    # COMPOSE_BAKE=true
-    ```
+   ```env
+   # COMPOSE_BAKE=true
+   ```
 
 2. **Uncomment the following lines** for macOS compatibility:
-    ```env
-    COMPOSE_FILE=compose.yaml:compose.override.yaml:compose.mac.yaml
-    APT_OPTION=--no-install-recommends
-    PLATFORM=macOS
-    ```
+   ```env
+   COMPOSE_FILE=compose.yaml:compose.override.yaml:compose.mac.yaml
+   APT_OPTION=--no-install-recommends
+   PLATFORM=macOS
+   ```
 
 ### 2. API Configuration (for Symfony Backend)
 
@@ -384,16 +384,16 @@ Once all services are running, access the application:
 
 - **Dev documentation**: https://basil.local/_dev/docs
 - **Keycloak Admin**: https://auth.basil.local/admin
-    - Username: `basil`
-    - Password: `Basil300425!`
-    - See [Keycloak Guide](keycloak.md) for detailed authentication info
+  - Username: `basil`
+  - Password: `Basil300425!`
+  - See [Keycloak Guide](keycloak.md) for detailed authentication info
 - **N8N Workflows**: https://n8n.basil.local
 - **Mailpit (Email Testing)**: http://localhost:8025
 - **OpenSearch Dashboards (Logs/Analytics)**: https://opensearch.basil.local
-    - **Note**: Access requires auto-generated token service
+  - **Note**: Access requires auto-generated token service
 - **RabbitMQ Management**: http://localhost:15672
-    - Username: `guest`
-    - Password: `guest`
+  - Username: `guest`
+  - Password: `guest`
 
 ### Initial Setup
 
@@ -405,9 +405,9 @@ docker compose exec api php bin/console doctrine:fixtures:load --no-interaction
 ```
 
 2. **Test Authentication**:
-    - Visit https://basil.local
-    - Click "Sign In"
-    - Use created admin credentials
+   - Visit https://basil.local
+   - Click "Sign In"
+   - Use created admin credentials
 
 ## 🧪 Verify Installation
 
@@ -563,27 +563,27 @@ docker compose exec pwa sh
 Once your development environment is running:
 
 1. **Read the Documentation**:
-    - [Development Guide](development-guide.md)
-    - [Testing Guide](testing.md)
-    - [Frontend Components](frontend/components.md)
-    - [API Documentation](https://basil.local/api/docs)
+   - [Development Guide](development-guide.md)
+   - [Testing Guide](testing.md)
+   - [Frontend Components](frontend/components.md)
+   - [API Documentation](https://basil.local/api/docs)
 
 2. **Explore the Codebase**:
-    - Backend: `api/src/`
-    - Frontend: `pwa/`
-    - Tests: `api/tests/`, `pwa/**/__tests__/`, `e2e/tests/`
+   - Backend: `api/src/`
+   - Frontend: `pwa/`
+   - Tests: `api/tests/`, `pwa/**/__tests__/`, `e2e/tests/`
 
 3. **Start Developing**:
-    - Create a new feature branch
-    - Make your changes
-    - Run tests: `task api:test` or `task pwa:test`
-    - Lint and format code: `task lint`
-    - Commit with conventional commits
-    - Push and create a pull request
+   - Create a new feature branch
+   - Make your changes
+   - Run tests: `task api:test` or `task pwa:test`
+   - Lint and format code: `task lint`
+   - Commit with conventional commits
+   - Push and create a pull request
 
 4. **Learn the Tools**:
-    - [PhpStorm Setup](tools/phpstorm-setup.md)
-    - [Xdebug Configuration](tools/xdebug.md)
-    - [Debugging Guide](debugging.md)
+   - [PhpStorm Setup](tools/phpstorm-setup.md)
+   - [Xdebug Configuration](tools/xdebug.md)
+   - [Debugging Guide](debugging.md)
 
 Welcome to Basil development! 🌿

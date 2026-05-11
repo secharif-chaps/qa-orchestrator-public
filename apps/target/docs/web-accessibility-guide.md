@@ -31,31 +31,28 @@ The RGAA (General Framework for Accessibility Improvement) is the French standar
 ```typescript
 // composables/useAccessibility.ts
 export const useAccessibility = () => {
-    const announceToScreenReader = (
-        message: string,
-        priority: 'polite' | 'assertive' = 'polite',
-    ) => {
-        const announcement = document.createElement('div')
-        announcement.setAttribute('aria-live', priority)
-        announcement.setAttribute('aria-atomic', 'true')
-        announcement.className = 'sr-only'
-        announcement.textContent = message
+  const announceToScreenReader = (message: string, priority: 'polite' | 'assertive' = 'polite') => {
+    const announcement = document.createElement('div')
+    announcement.setAttribute('aria-live', priority)
+    announcement.setAttribute('aria-atomic', 'true')
+    announcement.className = 'sr-only'
+    announcement.textContent = message
 
-        document.body.appendChild(announcement)
-        setTimeout(() => document.body.removeChild(announcement), 1000)
-    }
+    document.body.appendChild(announcement)
+    setTimeout(() => document.body.removeChild(announcement), 1000)
+  }
 
-    const trapFocus = (element: HTMLElement) => {
-        const focusableElements = element.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-        )
-        // Focus trapping implementation
-    }
+  const trapFocus = (element: HTMLElement) => {
+    const focusableElements = element.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    )
+    // Focus trapping implementation
+  }
 
-    return {
-        announceToScreenReader,
-        trapFocus,
-    }
+  return {
+    announceToScreenReader,
+    trapFocus,
+  }
 }
 ```
 
@@ -93,24 +90,24 @@ Images must provide appropriate alternatives for screen readers and be properly 
 
 ```vue
 <template>
-    <!-- ✅ Good: Descriptive alt text -->
-    <img
-        src="/chart.png"
-        alt="Sales increased by 25% from January to March 2024"
-        class="chart-image"
-    />
+  <!-- ✅ Good: Descriptive alt text -->
+  <img
+    src="/chart.png"
+    alt="Sales increased by 25% from January to March 2024"
+    class="chart-image"
+  />
 
-    <!-- ✅ Complex images with detailed description -->
-    <figure>
-        <img
-            src="/complex-chart.png"
-            alt="Quarterly revenue breakdown by department"
-            aria-describedby="chart-description"
-        />
-        <figcaption id="chart-description">
-            Q1 2024 revenue: Engineering $2.5M, Sales $1.8M, Marketing $0.7M
-        </figcaption>
-    </figure>
+  <!-- ✅ Complex images with detailed description -->
+  <figure>
+    <img
+      src="/complex-chart.png"
+      alt="Quarterly revenue breakdown by department"
+      aria-describedby="chart-description"
+    />
+    <figcaption id="chart-description">
+      Q1 2024 revenue: Engineering $2.5M, Sales $1.8M, Marketing $0.7M
+    </figcaption>
+  </figure>
 </template>
 ```
 
@@ -118,11 +115,11 @@ Images must provide appropriate alternatives for screen readers and be properly 
 
 ```vue
 <template>
-    <!-- ✅ Good: Empty alt for decorative images -->
-    <img src="/decoration.png" alt="" role="presentation" />
+  <!-- ✅ Good: Empty alt for decorative images -->
+  <img src="/decoration.png" alt="" role="presentation" />
 
-    <!-- ✅ Better: Use CSS for decorative images -->
-    <div class="hero-section" style="background-image: url('/hero-bg.jpg')" />
+  <!-- ✅ Better: Use CSS for decorative images -->
+  <div class="hero-section" style="background-image: url('/hero-bg.jpg')" />
 </template>
 ```
 
@@ -130,16 +127,16 @@ Images must provide appropriate alternatives for screen readers and be properly 
 
 ```vue
 <template>
-    <!-- ✅ Icons with text labels -->
-    <button type="button" class="btn-primary">
-        <Icon name="download" aria-hidden="true" />
-        Download Report
-    </button>
+  <!-- ✅ Icons with text labels -->
+  <button type="button" class="btn-primary">
+    <Icon name="download" aria-hidden="true" />
+    Download Report
+  </button>
 
-    <!-- ✅ Icon-only buttons -->
-    <button type="button" aria-label="Close dialog" class="btn-icon">
-        <Icon name="close" aria-hidden="true" />
-    </button>
+  <!-- ✅ Icon-only buttons -->
+  <button type="button" aria-label="Close dialog" class="btn-icon">
+    <Icon name="close" aria-hidden="true" />
+  </button>
 </template>
 ```
 
@@ -159,22 +156,22 @@ Frames and iframes must be properly titled and accessible.
 
 ```vue
 <template>
-    <!-- ✅ Good: Descriptive frame title -->
-    <iframe
-        src="https://www.youtube.com/embed/videoID"
-        title="Product demonstration: Creating a new user account"
-        width="560"
-        height="315"
-        frameborder="0"
-    />
+  <!-- ✅ Good: Descriptive frame title -->
+  <iframe
+    src="https://www.youtube.com/embed/videoID"
+    title="Product demonstration: Creating a new user account"
+    width="560"
+    height="315"
+    frameborder="0"
+  />
 
-    <!-- ✅ Interactive frame with focus management -->
-    <iframe
-        src="/embedded-form.html"
-        title="Contact form for support requests"
-        :tabindex="isFormVisible ? 0 : -1"
-        @load="onFrameLoad"
-    />
+  <!-- ✅ Interactive frame with focus management -->
+  <iframe
+    src="/embedded-form.html"
+    title="Contact form for support requests"
+    :tabindex="isFormVisible ? 0 : -1"
+    @load="onFrameLoad"
+  />
 </template>
 ```
 
@@ -195,21 +192,21 @@ Color usage must ensure sufficient contrast and not convey information through c
 ```scss
 // RGAA requires minimum contrast ratios
 .text-normal {
-    // Minimum 4.5:1 for normal text
-    color: #2d3748; // Dark gray
-    background-color: #ffffff; // White - 12.6:1 ratio ✅
+  // Minimum 4.5:1 for normal text
+  color: #2d3748; // Dark gray
+  background-color: #ffffff; // White - 12.6:1 ratio ✅
 }
 
 .text-large {
-    // Minimum 3:1 for large text (18px+ or 14px+ bold)
-    color: #4a5568; // Medium gray
-    background-color: #f7fafc; // Light gray - 7.8:1 ratio ✅
+  // Minimum 3:1 for large text (18px+ or 14px+ bold)
+  color: #4a5568; // Medium gray
+  background-color: #f7fafc; // Light gray - 7.8:1 ratio ✅
 }
 
 .interactive-elements {
-    // Minimum 3:1 for UI components
-    border: 2px solid #3182ce; // Blue border
-    background-color: #ffffff; // 4.5:1 ratio ✅
+  // Minimum 3:1 for UI components
+  border: 2px solid #3182ce; // Blue border
+  background-color: #ffffff; // 4.5:1 ratio ✅
 }
 ```
 
@@ -217,40 +214,40 @@ Color usage must ensure sufficient contrast and not convey information through c
 
 ```vue
 <template>
-    <!-- ❌ Bad: Information conveyed only by color -->
-    <span class="text-red">Error</span>
-    <span class="text-green">Success</span>
+  <!-- ❌ Bad: Information conveyed only by color -->
+  <span class="text-red">Error</span>
+  <span class="text-green">Success</span>
 
-    <!-- ✅ Good: Color + icons + text -->
-    <span class="status status--error">
-        <Icon name="alert-circle" aria-hidden="true" />
-        Error: Invalid email format
-    </span>
-    <span class="status status--success">
-        <Icon name="check-circle" aria-hidden="true" />
-        Success: Account created
-    </span>
+  <!-- ✅ Good: Color + icons + text -->
+  <span class="status status--error">
+    <Icon name="alert-circle" aria-hidden="true" />
+    Error: Invalid email format
+  </span>
+  <span class="status status--success">
+    <Icon name="check-circle" aria-hidden="true" />
+    Success: Account created
+  </span>
 </template>
 
 <style scoped>
 .status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
 }
 
 .status--error {
-    color: #742a2a;
-    background-color: #fed7d7;
-    border: 1px solid #fc8181;
+  color: #742a2a;
+  background-color: #fed7d7;
+  border: 1px solid #fc8181;
 }
 
 .status--success {
-    color: #22543d;
-    background-color: #c6f6d5;
-    border: 1px solid #68d391;
+  color: #22543d;
+  background-color: #c6f6d5;
+  border: 1px solid #68d391;
 }
 </style>
 ```
@@ -273,37 +270,31 @@ Audio and video content must be accessible with proper alternatives.
 
 ```vue
 <template>
-    <!-- ✅ Accessible video player -->
-    <video controls preload="metadata" :aria-label="videoTitle" class="responsive-video">
-        <source src="/video.mp4" type="video/mp4" />
-        <source src="/video.webm" type="video/webm" />
+  <!-- ✅ Accessible video player -->
+  <video controls preload="metadata" :aria-label="videoTitle" class="responsive-video">
+    <source src="/video.mp4" type="video/mp4" />
+    <source src="/video.webm" type="video/webm" />
 
-        <!-- Captions for accessibility -->
-        <track
-            kind="captions"
-            src="/captions-en.vtt"
-            srclang="en"
-            label="English captions"
-            default
-        />
-        <track kind="captions" src="/captions-fr.vtt" srclang="fr" label="French captions" />
+    <!-- Captions for accessibility -->
+    <track kind="captions" src="/captions-en.vtt" srclang="en" label="English captions" default />
+    <track kind="captions" src="/captions-fr.vtt" srclang="fr" label="French captions" />
 
-        <!-- Fallback for unsupported browsers -->
-        <p>
-            Your browser doesn't support video.
-            <a href="/video.mp4" download>Download the video</a>
-        </p>
-    </video>
+    <!-- Fallback for unsupported browsers -->
+    <p>
+      Your browser doesn't support video.
+      <a href="/video.mp4" download>Download the video</a>
+    </p>
+  </video>
 
-    <!-- Transcript link -->
-    <div class="video-transcript">
-        <button @click="toggleTranscript" :aria-expanded="showTranscript">
-            {{ showTranscript ? 'Hide' : 'Show' }} Transcript
-        </button>
-        <div v-if="showTranscript" class="transcript-content">
-            <!-- Transcript content -->
-        </div>
+  <!-- Transcript link -->
+  <div class="video-transcript">
+    <button @click="toggleTranscript" :aria-expanded="showTranscript">
+      {{ showTranscript ? 'Hide' : 'Show' }} Transcript
+    </button>
+    <div v-if="showTranscript" class="transcript-content">
+      <!-- Transcript content -->
     </div>
+  </div>
 </template>
 ```
 
@@ -311,24 +302,24 @@ Audio and video content must be accessible with proper alternatives.
 
 ```vue
 <template>
-    <!-- ✅ Accessible audio player -->
-    <audio controls preload="metadata" :aria-label="audioTitle">
-        <source src="/audio.mp3" type="audio/mpeg" />
-        <source src="/audio.ogg" type="audio/ogg" />
+  <!-- ✅ Accessible audio player -->
+  <audio controls preload="metadata" :aria-label="audioTitle">
+    <source src="/audio.mp3" type="audio/mpeg" />
+    <source src="/audio.ogg" type="audio/ogg" />
 
-        <p>
-            Your browser doesn't support audio.
-            <a href="/audio.mp3" download>Download the audio</a>
-        </p>
-    </audio>
+    <p>
+      Your browser doesn't support audio.
+      <a href="/audio.mp3" download>Download the audio</a>
+    </p>
+  </audio>
 
-    <!-- Transcript for audio-only content -->
-    <details class="audio-transcript">
-        <summary>Audio Transcript</summary>
-        <div class="transcript-content">
-            <!-- Full transcript text -->
-        </div>
-    </details>
+  <!-- Transcript for audio-only content -->
+  <details class="audio-transcript">
+    <summary>Audio Transcript</summary>
+    <div class="transcript-content">
+      <!-- Full transcript text -->
+    </div>
+  </details>
 </template>
 ```
 
@@ -350,31 +341,31 @@ Data tables must have proper structure and headers for screen reader navigation.
 
 ```vue
 <template>
-    <!-- ✅ Properly structured data table -->
-    <table class="data-table">
-        <caption>
-            Quarterly Sales Report 2024
-        </caption>
-        <thead>
-            <tr>
-                <th scope="col">Quarter</th>
-                <th scope="col">Revenue</th>
-                <th scope="col">Growth</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">Q1 2024</th>
-                <td>$2.5M</td>
-                <td>+15%</td>
-            </tr>
-            <tr>
-                <th scope="row">Q2 2024</th>
-                <td>$3.1M</td>
-                <td>+24%</td>
-            </tr>
-        </tbody>
-    </table>
+  <!-- ✅ Properly structured data table -->
+  <table class="data-table">
+    <caption>
+      Quarterly Sales Report 2024
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">Quarter</th>
+        <th scope="col">Revenue</th>
+        <th scope="col">Growth</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Q1 2024</th>
+        <td>$2.5M</td>
+        <td>+15%</td>
+      </tr>
+      <tr>
+        <th scope="row">Q2 2024</th>
+        <td>$3.1M</td>
+        <td>+24%</td>
+      </tr>
+    </tbody>
+  </table>
 </template>
 ```
 
@@ -382,34 +373,34 @@ Data tables must have proper structure and headers for screen reader navigation.
 
 ```vue
 <template>
-    <!-- ✅ Complex table with multiple header levels -->
-    <table class="complex-table">
-        <caption>
-            Employee Performance by Department and Quarter
-        </caption>
-        <thead>
-            <tr>
-                <th scope="col" rowspan="2">Employee</th>
-                <th scope="colgroup" colspan="2">Q1 2024</th>
-                <th scope="colgroup" colspan="2">Q2 2024</th>
-            </tr>
-            <tr>
-                <th scope="col">Sales</th>
-                <th scope="col">Rating</th>
-                <th scope="col">Sales</th>
-                <th scope="col">Rating</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">John Smith</th>
-                <td headers="q1-sales">$125K</td>
-                <td headers="q1-rating">4.2</td>
-                <td headers="q2-sales">$142K</td>
-                <td headers="q2-rating">4.5</td>
-            </tr>
-        </tbody>
-    </table>
+  <!-- ✅ Complex table with multiple header levels -->
+  <table class="complex-table">
+    <caption>
+      Employee Performance by Department and Quarter
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col" rowspan="2">Employee</th>
+        <th scope="colgroup" colspan="2">Q1 2024</th>
+        <th scope="colgroup" colspan="2">Q2 2024</th>
+      </tr>
+      <tr>
+        <th scope="col">Sales</th>
+        <th scope="col">Rating</th>
+        <th scope="col">Sales</th>
+        <th scope="col">Rating</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">John Smith</th>
+        <td headers="q1-sales">$125K</td>
+        <td headers="q1-rating">4.2</td>
+        <td headers="q2-sales">$142K</td>
+        <td headers="q2-rating">4.5</td>
+      </tr>
+    </tbody>
+  </table>
 </template>
 ```
 
@@ -431,27 +422,27 @@ Links must be clearly identified and provide meaningful context.
 
 ```vue
 <template>
-    <!-- ❌ Bad: Vague link text -->
-    <a href="/report.pdf">Click here</a>
-    <a href="/products">Read more</a>
+  <!-- ❌ Bad: Vague link text -->
+  <a href="/report.pdf">Click here</a>
+  <a href="/products">Read more</a>
 
-    <!-- ✅ Good: Descriptive link text -->
-    <a href="/report.pdf">Download Q1 2024 Financial Report (PDF, 2.3MB)</a>
-    <a href="/products">View our product catalog</a>
+  <!-- ✅ Good: Descriptive link text -->
+  <a href="/report.pdf">Download Q1 2024 Financial Report (PDF, 2.3MB)</a>
+  <a href="/products">View our product catalog</a>
 
-    <!-- ✅ Context for screen readers -->
-    <a href="/user/123/edit" aria-label="Edit profile for John Smith"> Edit Profile </a>
+  <!-- ✅ Context for screen readers -->
+  <a href="/user/123/edit" aria-label="Edit profile for John Smith"> Edit Profile </a>
 
-    <!-- ✅ External links with indication -->
-    <a
-        href="https://external-site.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Visit external documentation (opens in new tab)"
-    >
-        External Documentation
-        <Icon name="external-link" aria-hidden="true" />
-    </a>
+  <!-- ✅ External links with indication -->
+  <a
+    href="https://external-site.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Visit external documentation (opens in new tab)"
+  >
+    External Documentation
+    <Icon name="external-link" aria-hidden="true" />
+  </a>
 </template>
 ```
 
@@ -459,39 +450,39 @@ Links must be clearly identified and provide meaningful context.
 
 ```scss
 .link {
-    color: #3182ce;
-    text-decoration: underline;
+  color: #3182ce;
+  text-decoration: underline;
 
-    &:hover {
-        color: #2c5282;
-        text-decoration: none;
-    }
+  &:hover {
+    color: #2c5282;
+    text-decoration: none;
+  }
 
-    &:focus {
-        outline: 2px solid #3182ce;
-        outline-offset: 2px;
-        border-radius: 2px;
-    }
+  &:focus {
+    outline: 2px solid #3182ce;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 
-    &:visited {
-        color: #553c9a;
-    }
+  &:visited {
+    color: #553c9a;
+  }
 }
 
 // Skip links for keyboard navigation
 .skip-link {
-    position: absolute;
-    top: -40px;
-    left: 6px;
-    background: #000;
-    color: #fff;
-    padding: 8px;
-    z-index: 9999;
-    text-decoration: none;
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  z-index: 9999;
+  text-decoration: none;
 
-    &:focus {
-        top: 6px;
-    }
+  &:focus {
+    top: 6px;
+  }
 }
 ```
 
@@ -514,28 +505,26 @@ JavaScript interactions must be accessible and keyboard-navigable.
 
 ```vue
 <template>
-    <!-- ✅ Accessible modal implementation -->
-    <div v-if="isOpen" class="modal-overlay" @click="closeModal" @keydown.esc="closeModal">
-        <div
-            ref="modalRef"
-            role="dialog"
-            aria-modal="true"
-            :aria-labelledby="titleId"
-            :aria-describedby="descId"
-            class="modal-content"
-            @click.stop
-        >
-            <h2 :id="titleId">{{ title }}</h2>
-            <p :id="descId">{{ description }}</p>
+  <!-- ✅ Accessible modal implementation -->
+  <div v-if="isOpen" class="modal-overlay" @click="closeModal" @keydown.esc="closeModal">
+    <div
+      ref="modalRef"
+      role="dialog"
+      aria-modal="true"
+      :aria-labelledby="titleId"
+      :aria-describedby="descId"
+      class="modal-content"
+      @click.stop
+    >
+      <h2 :id="titleId">{{ title }}</h2>
+      <p :id="descId">{{ description }}</p>
 
-            <div class="modal-actions">
-                <button @click="confirmAction" class="btn-primary">Confirm</button>
-                <button ref="closeButtonRef" @click="closeModal" class="btn-secondary">
-                    Cancel
-                </button>
-            </div>
-        </div>
+      <div class="modal-actions">
+        <button @click="confirmAction" class="btn-primary">Confirm</button>
+        <button ref="closeButtonRef" @click="closeModal" class="btn-secondary">Cancel</button>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -546,15 +535,15 @@ const previousActiveElement = ref<HTMLElement>()
 const { trapFocus } = useAccessibility()
 
 watch(isOpen, (newValue) => {
-    if (newValue) {
-        previousActiveElement.value = document.activeElement as HTMLElement
-        nextTick(() => {
-            modalRef.value?.focus()
-            trapFocus(modalRef.value!)
-        })
-    } else {
-        previousActiveElement.value?.focus()
-    }
+  if (newValue) {
+    previousActiveElement.value = document.activeElement as HTMLElement
+    nextTick(() => {
+      modalRef.value?.focus()
+      trapFocus(modalRef.value!)
+    })
+  } else {
+    previousActiveElement.value?.focus()
+  }
 })
 </script>
 ```
@@ -563,43 +552,43 @@ watch(isOpen, (newValue) => {
 
 ```vue
 <template>
-    <!-- ✅ Accessible dropdown menu -->
-    <div class="dropdown" ref="dropdownRef">
-        <button
-            :aria-expanded="isOpen"
-            aria-haspopup="true"
-            :aria-controls="menuId"
-            @click="toggleMenu"
-            @keydown.down.prevent="openMenu"
-            @keydown.up.prevent="openMenu"
-            class="dropdown-trigger"
-        >
-            {{ selectedOption }}
-            <Icon name="chevron-down" aria-hidden="true" />
-        </button>
+  <!-- ✅ Accessible dropdown menu -->
+  <div class="dropdown" ref="dropdownRef">
+    <button
+      :aria-expanded="isOpen"
+      aria-haspopup="true"
+      :aria-controls="menuId"
+      @click="toggleMenu"
+      @keydown.down.prevent="openMenu"
+      @keydown.up.prevent="openMenu"
+      class="dropdown-trigger"
+    >
+      {{ selectedOption }}
+      <Icon name="chevron-down" aria-hidden="true" />
+    </button>
 
-        <ul
-            v-if="isOpen"
-            :id="menuId"
-            role="menu"
-            class="dropdown-menu"
-            @keydown.esc="closeMenu"
-            @keydown.down.prevent="focusNext"
-            @keydown.up.prevent="focusPrevious"
-        >
-            <li
-                v-for="(option, index) in options"
-                :key="option.value"
-                role="menuitem"
-                :tabindex="focusedIndex === index ? 0 : -1"
-                @click="selectOption(option)"
-                @keydown.enter.prevent="selectOption(option)"
-                @keydown.space.prevent="selectOption(option)"
-            >
-                {{ option.label }}
-            </li>
-        </ul>
-    </div>
+    <ul
+      v-if="isOpen"
+      :id="menuId"
+      role="menu"
+      class="dropdown-menu"
+      @keydown.esc="closeMenu"
+      @keydown.down.prevent="focusNext"
+      @keydown.up.prevent="focusPrevious"
+    >
+      <li
+        v-for="(option, index) in options"
+        :key="option.value"
+        role="menuitem"
+        :tabindex="focusedIndex === index ? 0 : -1"
+        @click="selectOption(option)"
+        @keydown.enter.prevent="selectOption(option)"
+        @keydown.space.prevent="selectOption(option)"
+      >
+        {{ option.label }}
+      </li>
+    </ul>
+  </div>
 </template>
 ```
 
@@ -622,34 +611,34 @@ Essential page elements must be present and properly structured.
 
 ```vue
 <template>
-    <!-- ✅ Proper HTML5 document structure -->
-    <html lang="en">
-        <head>
-            <meta charset="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <title>{{ pageTitle }} - Basil Application</title>
-        </head>
-        <body>
-            <!-- Skip navigation links -->
-            <a href="#main-content" class="skip-link">Skip to main content</a>
-            <a href="#navigation" class="skip-link">Skip to navigation</a>
+  <!-- ✅ Proper HTML5 document structure -->
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>{{ pageTitle }} - Basil Application</title>
+    </head>
+    <body>
+      <!-- Skip navigation links -->
+      <a href="#main-content" class="skip-link">Skip to main content</a>
+      <a href="#navigation" class="skip-link">Skip to navigation</a>
 
-            <!-- Main page structure -->
-            <header role="banner">
-                <nav id="navigation" role="navigation" aria-label="Main navigation">
-                    <!-- Navigation content -->
-                </nav>
-            </header>
+      <!-- Main page structure -->
+      <header role="banner">
+        <nav id="navigation" role="navigation" aria-label="Main navigation">
+          <!-- Navigation content -->
+        </nav>
+      </header>
 
-            <main id="main-content" role="main">
-                <!-- Page content -->
-            </main>
+      <main id="main-content" role="main">
+        <!-- Page content -->
+      </main>
 
-            <footer role="contentinfo">
-                <!-- Footer content -->
-            </footer>
-        </body>
-    </html>
+      <footer role="contentinfo">
+        <!-- Footer content -->
+      </footer>
+    </body>
+  </html>
 </template>
 ```
 
@@ -657,16 +646,16 @@ Essential page elements must be present and properly structured.
 
 ```vue
 <template>
-    <!-- ✅ Document language -->
-    <html :lang="currentLocale">
-        <!-- Page content -->
+  <!-- ✅ Document language -->
+  <html :lang="currentLocale">
+    <!-- Page content -->
 
-        <!-- ✅ Language changes within content -->
-        <p>
-            Welcome to our application.
-            <span lang="fr">Bienvenue dans notre application.</span>
-        </p>
-    </html>
+    <!-- ✅ Language changes within content -->
+    <p>
+      Welcome to our application.
+      <span lang="fr">Bienvenue dans notre application.</span>
+    </p>
+  </html>
 </template>
 ```
 
@@ -687,29 +676,29 @@ Content must be logically structured with proper headings and landmarks.
 
 ```vue
 <template>
-    <!-- ✅ Logical heading structure -->
-    <main>
-        <h1>User Management Dashboard</h1>
+  <!-- ✅ Logical heading structure -->
+  <main>
+    <h1>User Management Dashboard</h1>
 
-        <section>
-            <h2>Active Users</h2>
-            <div>
-                <h3>Recently Logged In</h3>
-                <!-- User list -->
+    <section>
+      <h2>Active Users</h2>
+      <div>
+        <h3>Recently Logged In</h3>
+        <!-- User list -->
 
-                <h3>Frequent Users</h3>
-                <!-- User list -->
-            </div>
-        </section>
+        <h3>Frequent Users</h3>
+        <!-- User list -->
+      </div>
+    </section>
 
-        <section>
-            <h2>User Statistics</h2>
-            <div>
-                <h3>Monthly Growth</h3>
-                <!-- Statistics content -->
-            </div>
-        </section>
-    </main>
+    <section>
+      <h2>User Statistics</h2>
+      <div>
+        <h3>Monthly Growth</h3>
+        <!-- Statistics content -->
+      </div>
+    </section>
+  </main>
 </template>
 ```
 
@@ -717,36 +706,36 @@ Content must be logically structured with proper headings and landmarks.
 
 ```vue
 <template>
-    <!-- ✅ Semantic landmarks -->
-    <div class="app-layout">
-        <header role="banner">
-            <nav role="navigation" aria-label="Main navigation">
-                <!-- Primary navigation -->
-            </nav>
-        </header>
+  <!-- ✅ Semantic landmarks -->
+  <div class="app-layout">
+    <header role="banner">
+      <nav role="navigation" aria-label="Main navigation">
+        <!-- Primary navigation -->
+      </nav>
+    </header>
 
-        <aside role="complementary" aria-label="Sidebar">
-            <!-- Secondary content -->
-        </aside>
+    <aside role="complementary" aria-label="Sidebar">
+      <!-- Secondary content -->
+    </aside>
 
-        <main role="main">
-            <h1>Page Title</h1>
+    <main role="main">
+      <h1>Page Title</h1>
 
-            <section aria-labelledby="content-heading">
-                <h2 id="content-heading">Main Content</h2>
-                <!-- Content -->
-            </section>
+      <section aria-labelledby="content-heading">
+        <h2 id="content-heading">Main Content</h2>
+        <!-- Content -->
+      </section>
 
-            <section aria-labelledby="related-heading">
-                <h2 id="related-heading">Related Information</h2>
-                <!-- Related content -->
-            </section>
-        </main>
+      <section aria-labelledby="related-heading">
+        <h2 id="related-heading">Related Information</h2>
+        <!-- Related content -->
+      </section>
+    </main>
 
-        <footer role="contentinfo">
-            <!-- Footer content -->
-        </footer>
-    </div>
+    <footer role="contentinfo">
+      <!-- Footer content -->
+    </footer>
+  </div>
 </template>
 ```
 
@@ -769,40 +758,40 @@ Visual presentation must not interfere with accessibility and information clarit
 ```scss
 // ✅ Flexible layout supporting 200% zoom
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
 
-    // Flexible grid that adapts to zoom
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
+  // Flexible grid that adapts to zoom
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
 }
 
 // ✅ Relative units for scalability
 .text-content {
-    font-size: 1rem; // 16px base
-    line-height: 1.5;
+  font-size: 1rem; // 16px base
+  line-height: 1.5;
 
-    h2 {
-        font-size: 1.5rem; // 24px
-        margin-bottom: 1rem;
-    }
+  h2 {
+    font-size: 1.5rem; // 24px
+    margin-bottom: 1rem;
+  }
 
-    h3 {
-        font-size: 1.25rem; // 20px
-        margin-bottom: 0.75rem;
-    }
+  h3 {
+    font-size: 1.25rem; // 20px
+    margin-bottom: 0.75rem;
+  }
 }
 
 // ✅ Avoid horizontal scrolling
 .scrollable-content {
-    overflow-x: auto;
-    max-width: 100%;
+  overflow-x: auto;
+  max-width: 100%;
 
-    table {
-        min-width: 600px; // Minimum readable width
-    }
+  table {
+    min-width: 600px; // Minimum readable width
+  }
 }
 ```
 
@@ -810,31 +799,31 @@ Visual presentation must not interfere with accessibility and information clarit
 
 ```vue
 <template>
-    <!-- ✅ Screen reader only content -->
-    <span class="sr-only">Additional context for screen readers</span>
+  <!-- ✅ Screen reader only content -->
+  <span class="sr-only">Additional context for screen readers</span>
 
-    <!-- ✅ Properly hidden decorative content -->
-    <div aria-hidden="true">
-        <Icon name="decoration" />
-    </div>
+  <!-- ✅ Properly hidden decorative content -->
+  <div aria-hidden="true">
+    <Icon name="decoration" />
+  </div>
 
-    <!-- ✅ Conditionally hidden content -->
-    <div v-if="showDetails" :aria-hidden="!showDetails">
-        <p>Additional details...</p>
-    </div>
+  <!-- ✅ Conditionally hidden content -->
+  <div v-if="showDetails" :aria-hidden="!showDetails">
+    <p>Additional details...</p>
+  </div>
 </template>
 
 <style>
 .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>
 ```
@@ -857,85 +846,80 @@ Forms must be fully accessible with proper labels, validation, and error handlin
 
 ```vue
 <template>
-    <!-- ✅ Accessible form with proper structure -->
-    <form @submit.prevent="handleSubmit" novalidate>
-        <fieldset>
-            <legend>User Information</legend>
+  <!-- ✅ Accessible form with proper structure -->
+  <form @submit.prevent="handleSubmit" novalidate>
+    <fieldset>
+      <legend>User Information</legend>
 
-            <!-- ✅ Required field with proper labeling -->
-            <div class="form-group">
-                <label for="email" class="form-label">
-                    Email Address
-                    <span aria-label="required">*</span>
-                </label>
-                <input
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="form-input"
-                    :class="{ error: errors.email }"
-                    :aria-invalid="!!errors.email"
-                    :aria-describedby="errors.email ? 'email-error' : 'email-help'"
-                    autocomplete="email"
-                    required
-                />
-                <div id="email-help" class="form-help">
-                    We'll use this to contact you about your account
-                </div>
-                <div v-if="errors.email" id="email-error" class="form-error" role="alert">
-                    {{ errors.email }}
-                </div>
-            </div>
-
-            <!-- ✅ Radio button group -->
-            <fieldset class="form-group">
-                <legend>Account Type</legend>
-                <div class="radio-group">
-                    <div class="radio-option">
-                        <input
-                            id="account-personal"
-                            v-model="form.accountType"
-                            type="radio"
-                            value="personal"
-                            name="accountType"
-                        />
-                        <label for="account-personal">Personal</label>
-                    </div>
-                    <div class="radio-option">
-                        <input
-                            id="account-business"
-                            v-model="form.accountType"
-                            type="radio"
-                            value="business"
-                            name="accountType"
-                        />
-                        <label for="account-business">Business</label>
-                    </div>
-                </div>
-            </fieldset>
-
-            <!-- ✅ Checkbox with proper association -->
-            <div class="form-group">
-                <input
-                    id="newsletter"
-                    v-model="form.newsletter"
-                    type="checkbox"
-                    class="form-checkbox"
-                />
-                <label for="newsletter" class="checkbox-label">
-                    Subscribe to our newsletter for updates and tips
-                </label>
-            </div>
-        </fieldset>
-
-        <!-- ✅ Form actions -->
-        <div class="form-actions">
-            <button type="submit" class="btn-primary" :disabled="isSubmitting">
-                {{ isSubmitting ? 'Creating Account...' : 'Create Account' }}
-            </button>
-            <button type="button" @click="resetForm" class="btn-secondary">Reset Form</button>
+      <!-- ✅ Required field with proper labeling -->
+      <div class="form-group">
+        <label for="email" class="form-label">
+          Email Address
+          <span aria-label="required">*</span>
+        </label>
+        <input
+          id="email"
+          v-model="form.email"
+          type="email"
+          class="form-input"
+          :class="{ error: errors.email }"
+          :aria-invalid="!!errors.email"
+          :aria-describedby="errors.email ? 'email-error' : 'email-help'"
+          autocomplete="email"
+          required
+        />
+        <div id="email-help" class="form-help">
+          We'll use this to contact you about your account
         </div>
-    </form>
+        <div v-if="errors.email" id="email-error" class="form-error" role="alert">
+          {{ errors.email }}
+        </div>
+      </div>
+
+      <!-- ✅ Radio button group -->
+      <fieldset class="form-group">
+        <legend>Account Type</legend>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input
+              id="account-personal"
+              v-model="form.accountType"
+              type="radio"
+              value="personal"
+              name="accountType"
+            />
+            <label for="account-personal">Personal</label>
+          </div>
+          <div class="radio-option">
+            <input
+              id="account-business"
+              v-model="form.accountType"
+              type="radio"
+              value="business"
+              name="accountType"
+            />
+            <label for="account-business">Business</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- ✅ Checkbox with proper association -->
+      <div class="form-group">
+        <input id="newsletter" v-model="form.newsletter" type="checkbox" class="form-checkbox" />
+        <label for="newsletter" class="checkbox-label">
+          Subscribe to our newsletter for updates and tips
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- ✅ Form actions -->
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" :disabled="isSubmitting">
+        {{ isSubmitting ? 'Creating Account...' : 'Create Account' }}
+      </button>
+      <button type="button" @click="resetForm" class="btn-secondary">Reset Form</button>
+    </div>
+  </form>
 </template>
 ```
 
@@ -944,61 +928,61 @@ Forms must be fully accessible with proper labels, validation, and error handlin
 ```vue
 <script setup lang="ts">
 const form = reactive({
-    email: '',
-    accountType: '',
-    newsletter: false,
+  email: '',
+  accountType: '',
+  newsletter: false,
 })
 
 const errors = reactive({
-    email: '',
-    accountType: '',
+  email: '',
+  accountType: '',
 })
 
 const { announceToScreenReader } = useAccessibility()
 
 // Real-time validation
 watch(
-    () => form.email,
-    (newEmail) => {
-        if (newEmail && !isValidEmail(newEmail)) {
-            errors.email = 'Please enter a valid email address'
-        } else {
-            errors.email = ''
-        }
-    },
+  () => form.email,
+  (newEmail) => {
+    if (newEmail && !isValidEmail(newEmail)) {
+      errors.email = 'Please enter a valid email address'
+    } else {
+      errors.email = ''
+    }
+  },
 )
 
 const handleSubmit = async () => {
-    // Validate form
-    const formErrors = validateForm(form)
+  // Validate form
+  const formErrors = validateForm(form)
 
-    if (Object.keys(formErrors).length > 0) {
-        Object.assign(errors, formErrors)
+  if (Object.keys(formErrors).length > 0) {
+    Object.assign(errors, formErrors)
 
-        // Announce errors to screen readers
-        const errorCount = Object.keys(formErrors).length
-        announceToScreenReader(
-            `Form has ${errorCount} error${errorCount > 1 ? 's' : ''}. Please review and correct.`,
-            'assertive',
-        )
+    // Announce errors to screen readers
+    const errorCount = Object.keys(formErrors).length
+    announceToScreenReader(
+      `Form has ${errorCount} error${errorCount > 1 ? 's' : ''}. Please review and correct.`,
+      'assertive',
+    )
 
-        // Focus first error field
-        const firstErrorField = document.querySelector('[aria-invalid="true"]') as HTMLElement
-        firstErrorField?.focus()
+    // Focus first error field
+    const firstErrorField = document.querySelector('[aria-invalid="true"]') as HTMLElement
+    firstErrorField?.focus()
 
-        return
-    }
+    return
+  }
 
-    // Submit form
-    try {
-        isSubmitting.value = true
-        await submitForm(form)
-        announceToScreenReader('Account created successfully!', 'polite')
-    } catch (error) {
-        announceToScreenReader('Error creating account. Please try again.', 'assertive')
-    } finally {
-        isSubmitting.value = false
-    }
+  // Submit form
+  try {
+    isSubmitting.value = true
+    await submitForm(form)
+    announceToScreenReader('Account created successfully!', 'polite')
+  } catch (error) {
+    announceToScreenReader('Error creating account. Please try again.', 'assertive')
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
 ```
@@ -1023,45 +1007,43 @@ Navigation must be consistent, accessible, and provide multiple ways to find con
 
 ```vue
 <template>
-    <!-- ✅ Accessible main navigation -->
-    <nav role="navigation" aria-label="Main navigation">
-        <ul class="nav-list">
-            <li class="nav-item">
-                <NuxtLink
-                    to="/"
-                    class="nav-link"
-                    :class="{ active: $route.path === '/' }"
-                    :aria-current="$route.path === '/' ? 'page' : undefined"
-                >
-                    Home
-                </NuxtLink>
-            </li>
-            <li class="nav-item">
-                <button
-                    class="nav-link nav-dropdown-trigger"
-                    :aria-expanded="showProductsMenu"
-                    aria-haspopup="true"
-                    :aria-controls="productsMenuId"
-                    @click="toggleProductsMenu"
-                >
-                    Products
-                    <Icon name="chevron-down" aria-hidden="true" />
-                </button>
+  <!-- ✅ Accessible main navigation -->
+  <nav role="navigation" aria-label="Main navigation">
+    <ul class="nav-list">
+      <li class="nav-item">
+        <NuxtLink
+          to="/"
+          class="nav-link"
+          :class="{ active: $route.path === '/' }"
+          :aria-current="$route.path === '/' ? 'page' : undefined"
+        >
+          Home
+        </NuxtLink>
+      </li>
+      <li class="nav-item">
+        <button
+          class="nav-link nav-dropdown-trigger"
+          :aria-expanded="showProductsMenu"
+          aria-haspopup="true"
+          :aria-controls="productsMenuId"
+          @click="toggleProductsMenu"
+        >
+          Products
+          <Icon name="chevron-down" aria-hidden="true" />
+        </button>
 
-                <!-- ✅ Dropdown submenu -->
-                <ul v-if="showProductsMenu" :id="productsMenuId" class="nav-submenu" role="menu">
-                    <li role="menuitem">
-                        <NuxtLink to="/products/web" class="nav-sublink">
-                            Web Applications
-                        </NuxtLink>
-                    </li>
-                    <li role="menuitem">
-                        <NuxtLink to="/products/mobile" class="nav-sublink"> Mobile Apps </NuxtLink>
-                    </li>
-                </ul>
-            </li>
+        <!-- ✅ Dropdown submenu -->
+        <ul v-if="showProductsMenu" :id="productsMenuId" class="nav-submenu" role="menu">
+          <li role="menuitem">
+            <NuxtLink to="/products/web" class="nav-sublink"> Web Applications </NuxtLink>
+          </li>
+          <li role="menuitem">
+            <NuxtLink to="/products/mobile" class="nav-sublink"> Mobile Apps </NuxtLink>
+          </li>
         </ul>
-    </nav>
+      </li>
+    </ul>
+  </nav>
 </template>
 ```
 
@@ -1069,25 +1051,25 @@ Navigation must be consistent, accessible, and provide multiple ways to find con
 
 ```vue
 <template>
-    <!-- ✅ Accessible breadcrumb navigation -->
-    <nav aria-label="Breadcrumb" class="breadcrumb">
-        <ol class="breadcrumb-list">
-            <li class="breadcrumb-item">
-                <NuxtLink to="/" class="breadcrumb-link">
-                    <Icon name="home" aria-hidden="true" />
-                    Home
-                </NuxtLink>
-            </li>
-            <li class="breadcrumb-item">
-                <Icon name="chevron-right" aria-hidden="true" class="breadcrumb-separator" />
-                <NuxtLink to="/products" class="breadcrumb-link"> Products </NuxtLink>
-            </li>
-            <li class="breadcrumb-item">
-                <Icon name="chevron-right" aria-hidden="true" class="breadcrumb-separator" />
-                <span aria-current="page" class="breadcrumb-current"> Web Applications </span>
-            </li>
-        </ol>
-    </nav>
+  <!-- ✅ Accessible breadcrumb navigation -->
+  <nav aria-label="Breadcrumb" class="breadcrumb">
+    <ol class="breadcrumb-list">
+      <li class="breadcrumb-item">
+        <NuxtLink to="/" class="breadcrumb-link">
+          <Icon name="home" aria-hidden="true" />
+          Home
+        </NuxtLink>
+      </li>
+      <li class="breadcrumb-item">
+        <Icon name="chevron-right" aria-hidden="true" class="breadcrumb-separator" />
+        <NuxtLink to="/products" class="breadcrumb-link"> Products </NuxtLink>
+      </li>
+      <li class="breadcrumb-item">
+        <Icon name="chevron-right" aria-hidden="true" class="breadcrumb-separator" />
+        <span aria-current="page" class="breadcrumb-current"> Web Applications </span>
+      </li>
+    </ol>
+  </nav>
 </template>
 ```
 
@@ -1095,49 +1077,49 @@ Navigation must be consistent, accessible, and provide multiple ways to find con
 
 ```vue
 <template>
-    <!-- ✅ Accessible search -->
-    <form role="search" @submit.prevent="handleSearch" class="search-form">
-        <label for="search-input" class="search-label"> Search </label>
-        <div class="search-input-group">
-            <input
-                id="search-input"
-                v-model="searchQuery"
-                type="search"
-                class="search-input"
-                placeholder="Search products, docs, help..."
-                :aria-expanded="showSuggestions"
-                :aria-haspopup="showSuggestions"
-                :aria-owns="suggestionsList"
-                autocomplete="off"
-                @input="handleSearchInput"
-                @keydown.down.prevent="focusNextSuggestion"
-                @keydown.up.prevent="focusPreviousSuggestion"
-                @keydown.esc="closeSuggestions"
-            />
-            <button type="submit" class="search-button" aria-label="Search">
-                <Icon name="search" aria-hidden="true" />
-            </button>
-        </div>
+  <!-- ✅ Accessible search -->
+  <form role="search" @submit.prevent="handleSearch" class="search-form">
+    <label for="search-input" class="search-label"> Search </label>
+    <div class="search-input-group">
+      <input
+        id="search-input"
+        v-model="searchQuery"
+        type="search"
+        class="search-input"
+        placeholder="Search products, docs, help..."
+        :aria-expanded="showSuggestions"
+        :aria-haspopup="showSuggestions"
+        :aria-owns="suggestionsList"
+        autocomplete="off"
+        @input="handleSearchInput"
+        @keydown.down.prevent="focusNextSuggestion"
+        @keydown.up.prevent="focusPreviousSuggestion"
+        @keydown.esc="closeSuggestions"
+      />
+      <button type="submit" class="search-button" aria-label="Search">
+        <Icon name="search" aria-hidden="true" />
+      </button>
+    </div>
 
-        <!-- ✅ Search suggestions -->
-        <ul
-            v-if="showSuggestions && suggestions.length"
-            :id="suggestionsList"
-            role="listbox"
-            class="search-suggestions"
-        >
-            <li
-                v-for="(suggestion, index) in suggestions"
-                :key="suggestion.id"
-                role="option"
-                :aria-selected="focusedSuggestion === index"
-                class="suggestion-item"
-                @click="selectSuggestion(suggestion)"
-            >
-                {{ suggestion.title }}
-            </li>
-        </ul>
-    </form>
+    <!-- ✅ Search suggestions -->
+    <ul
+      v-if="showSuggestions && suggestions.length"
+      :id="suggestionsList"
+      role="listbox"
+      class="search-suggestions"
+    >
+      <li
+        v-for="(suggestion, index) in suggestions"
+        :key="suggestion.id"
+        role="option"
+        :aria-selected="focusedSuggestion === index"
+        class="suggestion-item"
+        @click="selectSuggestion(suggestion)"
+      >
+        {{ suggestion.title }}
+      </li>
+    </ul>
+  </form>
 </template>
 ```
 
@@ -1160,28 +1142,26 @@ Content must be accessible and not interfere with assistive technologies.
 
 ```vue
 <template>
-    <!-- ✅ Accessible document links -->
-    <div class="document-list">
-        <h3>Available Documents</h3>
-        <ul>
-            <li class="document-item">
-                <a href="/documents/user-guide.pdf" class="document-link" download>
-                    User Guide
-                    <span class="document-meta"> (PDF, 2.3 MB, 45 pages) </span>
-                </a>
-                <p class="document-description">
-                    Complete guide for using all application features
-                </p>
-            </li>
-            <li class="document-item">
-                <a href="/documents/api-reference.docx" class="document-link" download>
-                    API Reference
-                    <span class="document-meta"> (DOCX, 1.1 MB) </span>
-                </a>
-                <p class="document-description">Technical documentation for developers</p>
-            </li>
-        </ul>
-    </div>
+  <!-- ✅ Accessible document links -->
+  <div class="document-list">
+    <h3>Available Documents</h3>
+    <ul>
+      <li class="document-item">
+        <a href="/documents/user-guide.pdf" class="document-link" download>
+          User Guide
+          <span class="document-meta"> (PDF, 2.3 MB, 45 pages) </span>
+        </a>
+        <p class="document-description">Complete guide for using all application features</p>
+      </li>
+      <li class="document-item">
+        <a href="/documents/api-reference.docx" class="document-link" download>
+          API Reference
+          <span class="document-meta"> (DOCX, 1.1 MB) </span>
+        </a>
+        <p class="document-description">Technical documentation for developers</p>
+      </li>
+    </ul>
+  </div>
 </template>
 ```
 
@@ -1194,25 +1174,22 @@ const { announceToScreenReader } = useAccessibility()
 
 // Announce automatic updates
 const refreshData = async () => {
-    try {
-        const newData = await fetchLatestData()
-        data.value = newData
-        announceToScreenReader('Data has been updated', 'polite')
-    } catch (error) {
-        announceToScreenReader('Failed to update data', 'assertive')
-    }
+  try {
+    const newData = await fetchLatestData()
+    data.value = newData
+    announceToScreenReader('Data has been updated', 'polite')
+  } catch (error) {
+    announceToScreenReader('Failed to update data', 'assertive')
+  }
 }
 
 // Handle redirects with user notification
 const redirectWithNotice = (url: string, delay = 5000) => {
-    announceToScreenReader(
-        `You will be redirected to ${url} in ${delay / 1000} seconds`,
-        'assertive',
-    )
+  announceToScreenReader(`You will be redirected to ${url} in ${delay / 1000} seconds`, 'assertive')
 
-    setTimeout(() => {
-        navigateTo(url)
-    }, delay)
+  setTimeout(() => {
+    navigateTo(url)
+  }, delay)
 }
 </script>
 ```
@@ -1232,10 +1209,10 @@ const redirectWithNotice = (url: string, delay = 5000) => {
 ```typescript
 // vitest.config.ts - Add accessibility testing
 export default defineConfig({
-    test: {
-        // ... other config
-        setupFiles: ['./test/setup.ts'],
-    },
+  test: {
+    // ... other config
+    setupFiles: ['./test/setup.ts'],
+  },
 })
 
 // test/setup.ts
@@ -1253,16 +1230,16 @@ import MyComponent from '@/components/MyComponent.vue'
 expect.extend(toHaveNoViolations)
 
 describe('MyComponent Accessibility', () => {
-    it('should not have accessibility violations', async () => {
-        const { container } = render(MyComponent, {
-            props: {
-                /* test props */
-            },
-        })
-
-        const results = await axe(container)
-        expect(results).toHaveNoViolations()
+  it('should not have accessibility violations', async () => {
+    const { container } = render(MyComponent, {
+      props: {
+        /* test props */
+      },
     })
+
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
+  })
 })
 ```
 
@@ -1327,14 +1304,14 @@ npx axe-cli http://localhost:3000 --tags wcag21aa
 ```json
 // package.json
 {
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
-    },
-    "lint-staged": {
-        "*.{vue,js,ts}": ["eslint --fix", "accessibility-check"]
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
     }
+  },
+  "lint-staged": {
+    "*.{vue,js,ts}": ["eslint --fix", "accessibility-check"]
+  }
 }
 ```
 

@@ -30,23 +30,27 @@ The application follows a Domain-Driven Design approach with the following compo
 ### Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/mint-back.git
 cd mint-back
 ```
 
 2. Create a virtual environment:
+
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
 3. Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
 4. Configure environment variables in `.env` file:
+
 ```
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/mint_db
 DIFY_URL=http://your-dify-instance/v1
@@ -54,11 +58,13 @@ DIFY_API_KEY=your-api-key
 ```
 
 5. Run database migrations:
+
 ```bash
 alembic upgrade head
 ```
 
 6. Start the application:
+
 ```bash
 uvicorn app.main:app --reload
 ```
@@ -107,4 +113,4 @@ pytest
 
 ## License
 
-This project is licensed under the MIT License. 
+This project is licensed under the MIT License.

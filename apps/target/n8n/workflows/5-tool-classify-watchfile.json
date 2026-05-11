@@ -19,10 +19,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
-      "position": [
-        -1920,
-        -560
-      ],
+      "position": [-1920, -560],
       "id": "6d2220ee-61bb-4c22-a54a-a0f7358c29c0",
       "name": "LLM_Agent_ClassifyWatchFile",
       "retryOnFail": true,
@@ -54,10 +51,7 @@
       },
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1.1,
-      "position": [
-        -1344,
-        -656
-      ],
+      "position": [-1344, -656],
       "id": "c935fdfd-8b37-4d2d-bce6-c3bbdfc3f091",
       "name": "RabbitMQ_Publish_ClassificationResult",
       "credentials": {
@@ -92,10 +86,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -1912,
-        -336
-      ],
+      "position": [-1912, -336],
       "id": "6f8ade86-ea4b-42b0-942f-938d4f2a3370",
       "name": "LLM_Model_Primary",
       "credentials": {
@@ -145,10 +136,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        -2368,
-        -464
-      ],
+      "position": [-2368, -464],
       "id": "b15b04ef-241f-4dcd-8c39-df36c91acb27",
       "name": "Workflow_Trigger_ClassifyWatchFile"
     },
@@ -177,10 +165,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -1784,
-        -336
-      ],
+      "position": [-1784, -336],
       "id": "a26b9fb3-64fb-44b5-81dc-3260d2f9e8f7",
       "name": "LLM_Model_Fallback",
       "credentials": {
@@ -215,10 +200,7 @@
       },
       "type": "n8n-nodes-base.executionData",
       "typeVersion": 1.1,
-      "position": [
-        -2368,
-        -656
-      ],
+      "position": [-2368, -656],
       "id": "1957ae6b-ea63-47fa-bf13-061738bb4ef4",
       "name": "ExecutionData_Store_TestMetadata"
     },
@@ -230,10 +212,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -2592,
-        -656
-      ],
+      "position": [-2592, -656],
       "id": "07a55e27-0e40-4bd7-a397-351a3d5ae9c3",
       "name": "Set_Format_TestInput"
     },
@@ -243,10 +222,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -2144,
-        -560
-      ],
+      "position": [-2144, -560],
       "id": "035564cb-b1d2-46a5-9986-0f200decdb23",
       "name": "Code_Initialize_WatchFileData"
     },
@@ -258,10 +234,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -1344,
-        -464
-      ],
+      "position": [-1344, -464],
       "id": "8e70541a-9932-4803-8528-369e4714f17b",
       "name": "Feedback_AgentAIError"
     },
@@ -273,10 +246,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -896,
-        -656
-      ],
+      "position": [-896, -656],
       "id": "b961d3cc-6a5b-4630-8b9e-722f09ab56ee",
       "name": "Feedback_AgentSuccess",
       "notes": "@n8n-validate-ignore FEEDBACK_NO_TRANSLATION\n\nError message generated at runtime."
@@ -291,10 +261,7 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [
-        -2816,
-        -656
-      ],
+      "position": [-2816, -656],
       "id": "40d8375f-cde3-4d0d-b402-f1af6d403519",
       "name": "Webhook_Trigger_TestInput",
       "webhookId": "8d067253-7b62-4224-a148-02864821934a"
@@ -377,10 +344,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -1568,
-        -464
-      ],
+      "position": [-1568, -464],
       "id": "6469067b-3fa4-451d-92ed-6b7dc5c2e0fc",
       "name": "Workflow_SystemMessage_Error"
     },
@@ -462,10 +426,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -1120,
-        -656
-      ],
+      "position": [-1120, -656],
       "id": "d3f23f94-0a7d-45fd-8435-0d390662af05",
       "name": "Workflow_SystemMessage_Success"
     },
@@ -475,10 +436,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -1568,
-        -656
-      ],
+      "position": [-1568, -656],
       "id": "e7b77a42-627b-4870-b5bf-141f82914460",
       "name": "Code_Parse_Output"
     }
