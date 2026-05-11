@@ -606,7 +606,7 @@ class TestTestConnection:
 
     @pytest.mark.asyncio
     async def test_connection_does_not_consume_tokens(self, db_session, dispatch_service_with_tokens, token_client):
-        """Test connections are free (0 credits per ADR-0016)."""
+        """Test connections are free (0 credits per ADR-0020)."""
         with patch("app.services.dispatch_service.get_adapter") as mock_get_adapter:
             mock_get_adapter.return_value = _mock_adapter(success=True)
 

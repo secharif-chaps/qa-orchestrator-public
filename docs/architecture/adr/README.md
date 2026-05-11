@@ -38,6 +38,8 @@ All ADRs follow a consistent format. See [template.md](./template.md) for the st
 | [ADR-0017](./0017-promptfoo-llm-evaluation.md)                 | Promptfoo for LLM Prompt Evaluation            | Proposed | backend, ai, testing, evaluation, promptfoo                           |
 | [ADR-0018](./0018-role-and-permission-model.md)                | Role and Permission Model                      | Accepted | security, keycloak, rbac, permissions, multi-tenancy                  |
 | [ADR-0019](./0019-security-audit-trail.md)                     | Security Audit Trail                           | Proposed | security, audit, compliance, iso27001, observability                  |
+| [ADR-0020](./0020-stream-module-architecture.md)               | Stream Module Architecture                     | Proposed | backend, architecture, stream, distribution                           |
+| [ADR-0021](./0021-stream-newsletter-channel.md)                | Stream Newsletter Channel                      | Proposed | backend, frontend, stream, newsletter, email, mjml, np6               |
 
 ## Status Definitions
 
