@@ -42,6 +42,10 @@ parameters:
     social_media:x:search: 'apidojo/tweet-scraper'
     social_media:x:hashtag: 'apidojo/tweet-scraper'
     social_media:tiktok: 'clockworks/tiktok-scraper'
+    video:youtube:channel: 'streamers/youtube-scraper'
+    video:youtube:playlist: 'streamers/youtube-scraper'
+    video:youtube:search: 'streamers/youtube-scraper'
+    video:youtube:comments: 'streamers/youtube-comments-scraper'
     news:newsapi: 'lhotanova/google-news-scraper'
     news:newsapi:headlines: 'lhotanova/google-news-scraper'
     website: 'apify/website-content-crawler'
@@ -118,6 +122,35 @@ parameters:
           useApifyProxy: true
       required_fields: ['profiles']
 
+    # YouTube Scraper — channels & playlists (url-based)
+    # video:youtube:search uses searchQueries instead of startUrls
+    streamers/youtube-scraper:
+      name: 'YouTube Scraper'
+      source_types: ['video:youtube:channel', 'video:youtube:playlist', 'video:youtube:search']
+      max_total_charge_usd: '5.00'   # ~$5.00/1K videos (pay-per-result pricing)
+      defaults:
+        startUrls:
+          - '{{source.url}}'
+        searchQueries:               # used when source has a query instead of a URL (video:youtube:search)
+          - '{{source.query}}'
+        maxResults: '{{config.maxResults|default:50}}'
+        proxyConfiguration:
+          useApifyProxy: true
+      required_fields: []            # url OR query is sufficient — actor accepts either
+
+    # YouTube Comments Scraper (video:youtube:comments)
+    streamers/youtube-comments-scraper:
+      name: 'YouTube Comments Scraper'
+      source_types: ['video:youtube:comments']
+      max_total_charge_usd: '1.00'   # pay-per-usage — à calibrer selon le volume réel
+      defaults:
+        videoUrls:
+          - '{{source.url}}'
+        maxComments: '{{config.maxComments|default:100}}'
+        proxyConfiguration:
+          useApifyProxy: true
+      required_fields: ['videoUrls']
+
   app.collect_task.jwt_secret: '%env(string:COLLECT_TASK_JWT_SECRET)%'
 
   app.collect.provider_routing.default: '%env(string:COLLECT_DEFAULT_PROVIDER)%'
@@ -140,6 +173,10 @@ parameters:
     # Manual single-URL / pasted-content ingestion goes through the inline
     # web provider (HtmlFetcher + HtmlMetadataExtractor + DocumentBuilder).
     manual: 'web'
+    video:youtube:channel: 'apify'
+    video:youtube:playlist: 'apify'
+    video:youtube:search: 'apify'
+    video:youtube:comments: 'apify'
 
   app.bakus.callback_type: '%env(string:BAKUS_CALLBACK_TYPE)%'
   app.bakus.callback_url: '%env(string:BAKUS_CALLBACK_URL)%'

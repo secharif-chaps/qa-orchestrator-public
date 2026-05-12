@@ -276,6 +276,16 @@ services:
       timeout: 10s
       retries: 5
 
+  # localtunnel — exposes nginx:80 on a public URL so Apify can callback locally.
+  # URL changes each restart (use task target:tunnel:sync after restart).
+  # Workflow: task up → task target:tunnel:sync → APIFY_WEBHOOK_URL auto-updated in .env.local
+  localtunnel:
+    image: node:20-alpine
+    profiles: [target]
+    restart: on-failure
+    command: sh -c "npx --yes localtunnel@2.4.1 --port 80 --local-host nginx 2>&1"
+    depends_on: [nginx]
+
   # Valkey — expose port for local debugging
   target-valkey:
     profiles: [target]
