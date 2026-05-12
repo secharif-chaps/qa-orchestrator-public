@@ -26,7 +26,9 @@ tasks:
         echo "✓ Updated .env.local"
         echo "Tunnel URL   : $URL"
         echo "Webhook URL  : $WEBHOOK_URL"
-        echo "⚠  Run 'task up' (not 'task restart') to reload without changing the tunnel URL"
+        echo "🔄 Restarting target runner..."
+        docker compose -f infra/compose.yaml -f infra/compose.local.yaml restart target
+        echo "✓ Target runner restarted"
 
   tunnel:status:
     desc: 'Show current localtunnel URL'
