@@ -1,8 +1,18 @@
-# ADR-2026-006: Document Deduplication Strategy
+# ADR-0028: Document Deduplication Strategy
 
-| Status   | Date       | Author                    |
-| -------- | ---------- | ------------------------- |
-| Accepted | 2026-01-11 | Frédéric Fayard-Le Barzic |
+> Migrated from basil ADR-2026-006
+
+## Status
+
+**Status:** Accepted
+
+**Date:** 2026-01-11
+
+**Decision Makers:** Frédéric Fayard-Le Barzic
+
+**Tags:** backend, deduplication, document-processing, fingerprinting, simhash, performance
+
+---
 
 ## Context
 
@@ -64,14 +74,14 @@ An **n-gram** is a contiguous sequence of `n` items from a text. Items can be ch
 
 **Character n-grams** (n=3, "trigrams"):
 
-```
+```text
 Text: "hello"
 3-grams: ["hel", "ell", "llo"]
 ```
 
 **Word n-grams** (n=2, "bigrams"):
 
-```
+```text
 Text: "the quick brown fox"
 2-grams: ["the quick", "quick brown", "brown fox"]
 ```
@@ -86,7 +96,7 @@ A **shingle** is a word-level n-gram used for document similarity. Typically, 3-
 
 **Example** (k=3, 3-word shingles):
 
-```
+```text
 Text: "the quick brown fox jumps"
 Shingles: ["the quick brown", "quick brown fox", "brown fox jumps"]
 ```
@@ -109,7 +119,7 @@ similar in content.
 
 **Jaccard similarity** measures the overlap between two sets:
 
-```
+```text
 J(A, B) = |A ∩ B| / |A ∪ B|
 ```
 
@@ -120,7 +130,7 @@ Where:
 
 **Example**:
 
-```
+```text
 Document A shingles: {"the quick brown", "quick brown fox", "brown fox jumps"}
 Document B shingles: {"the quick brown", "quick brown fox", "brown fox runs"}
 
@@ -145,7 +155,7 @@ Jaccard = 2/4 = 0.50 (50% similar)
 **Key insight**: If we apply a random hash function to all shingles and take the minimum hash value, the probability
 that two documents have the same minimum equals their Jaccard similarity.
 
-```
+```text
 P(min(h(A)) = min(h(B))) = J(A, B)
 ```
 
@@ -157,7 +167,7 @@ P(min(h(A)) = min(h(B))) = J(A, B)
 
 **Signature comparison**:
 
-```
+```text
 Document A signature: [42, 17, 89, 31, ...]  (128 values)
 Document B signature: [42, 17, 56, 31, ...]  (128 values)
 
@@ -181,7 +191,7 @@ Matching positions: 3 out of 4 shown → estimate J(A,B) ≈ 0.75
 
 **Banding technique**:
 
-```
+```text
 Signature: 128 hash values
 Bands: 32 bands × 4 rows each
 
@@ -226,7 +236,7 @@ With b=32 bands, r=4 rows:
 
 **Example** (simplified with 8 bits):
 
-```
+```text
 Shingle "the quick" → hash: 10110010
 Shingle "quick brown" → hash: 10100011
 Shingle "brown fox" → hash: 11110000
@@ -247,7 +257,7 @@ differ in few bits.
 
 **Hamming distance** counts the number of positions where two bit strings differ.
 
-```
+```text
 Hash A: 11110101
 Hash B: 11100101
          ^
@@ -275,7 +285,7 @@ Hamming distance = 1 (one bit differs)
 Each stage detects a specific class of duplicates that the previous stages **cannot** catch. The pipeline is ordered
 from cheapest to most expensive, and **short-circuits** as soon as a match is found.
 
-```
+```text
 Stage 0: Canonical URL ──► match? ──► STOP (duplicate found)
          │ no match
          ▼
@@ -321,7 +331,7 @@ SHA256 is a **cryptographic hash** designed so that any change to the input prod
 (avalanche effect). This is desirable for security (tamper detection) but counterproductive for near-duplicate
 detection:
 
-```
+```text
 Original:     "The president announced new measures today"
 SHA256:       a3f2c7...
 
@@ -336,7 +346,7 @@ MinHash:      Jaccard ≈ 0.92      ← correctly detects high overlap
 SimHash compresses the entire document into a single 64-bit fingerprint. This works well for detecting near-identical
 documents, but its resolution degrades as changes grow:
 
-```
+```text
 Original article (500 words)
 Same article + 50 words added by editor (10% change)
 
@@ -352,7 +362,7 @@ about individual shingle overlaps, making it more accurate for moderate differen
 MinHash alone gives accurate Jaccard estimation, but comparing a new document against **all** existing documents
 is O(N) — unacceptable at scale:
 
-```
+```text
 50M documents × 128 integers × comparison = infeasible
 
 With LSH (32 bands × 4 rows):
@@ -402,7 +412,7 @@ fingerprinting, saving the cost of normalization, shingle extraction, and hash c
 
 ## Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                     DOCUMENT DEDUPLICATION PIPELINE                         │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -827,7 +837,7 @@ character classes handle their alphabets correctly.
 For CJK text, fall back to **character n-grams** instead of word n-grams. Character n-grams don't require word
 boundaries and work across all scripts:
 
-```
+```text
 Word shingles (French):     "le président français" → ["le président français"]
 Character 4-grams (Japanese): "東京都は日本" → ["東京都は", "京都は日", "都は日本"]
 ```
@@ -1545,7 +1555,7 @@ Every incoming document ends in exactly one of these outcomes:
 
 ### Step-by-Step Flow
 
-```
+```text
  INCOMING DOCUMENT
         │
         ▼
@@ -1645,7 +1655,7 @@ Le seuil de 95% (Hamming ≤ 3) pour la frontière reject/flag est configurable 
 
 #### Example A — AFP Wire Article (caught at Stage 0)
 
-```
+```text
 Document entrant:
   URL:       https://lefigaro.fr/flash-actu/2026/01/15/europe-trade-deal
   HTML:      <link rel="canonical" href="https://afp.com/article/europe-trade-deal-2026">
@@ -1660,7 +1670,7 @@ Pipeline:
 
 #### Example B — Same Article Re-crawled (caught at Stage 1)
 
-```
+```text
 Document entrant:
   URL:       https://reuters.com/article/climate-2026 (déjà indexé il y a 2h)
   HTML:      pas de <link rel="canonical">
@@ -1676,7 +1686,7 @@ Pipeline:
 
 #### Example C — Article with Typo Fix (caught at Stage 2)
 
-```
+```text
 Document entrant:
   URL:       https://bbc.com/news/tech-ai-regulation-v2
   Contenu:   "The European Commission proposed new AI regulations..."
@@ -1693,7 +1703,7 @@ Pipeline:
 
 #### Example D — Content Farm Rewrite (caught at Stage 3)
 
-```
+```text
 Document entrant:
   URL:       https://newsaggregator.xyz/ai-regulations-europe
   Contenu:   Article original Reuters partiellement réécrit,
@@ -1711,7 +1721,7 @@ Pipeline:
 
 #### Example E — Genuinely Unique Article
 
-```
+```text
 Document entrant:
   URL:       https://techcrunch.com/2026/01/15/new-startup-funding
   Contenu:   Article original sur une levée de fonds
@@ -1768,7 +1778,7 @@ not a separate index. Marginal storage increase per document.
 
 ## Directory Structure
 
-```
+```text
 api/src/
 ├── Domain/
 │   └── Deduplication/
@@ -1800,6 +1810,12 @@ api/src/
             ├── DocumentFingerprintService.php
             └── DuplicateDetector.php
 ```
+
+---
+
+## Options Considered
+
+_Not documented in original ADR._
 
 ---
 
@@ -1837,18 +1853,18 @@ api/src/
 
 ## Implementation Plan
 
-| Step | Description                                      | Effort  |
-| ---- | ------------------------------------------------ | ------- |
-| 1    | CanonicalUrlExtractor + enrichment processor     | 1 day   |
-| 2    | OpenSearch canonical_url field + dedup query     | 0.5 day |
-| 3    | Add ext-gmp to Docker PHP image                  | 0.5 day |
-| 4    | Core algorithms (normalizer, generators)         | 2 days  |
-| 5    | OpenSearch fingerprint mapping + repository      | 1 day   |
-| 6    | DuplicateDetector service (stages 0-3)           | 1 day   |
-| 7    | Integration with quality pipeline (ADR-2026-005) | 1 day   |
-| 8    | Valkey cache layer (optional)                    | 1 day   |
-| 9    | Calibration on sample dataset                    | 2 days  |
-| 10   | Load testing at target scale                     | 1 day   |
+| Step | Description                                  | Effort  |
+| ---- | -------------------------------------------- | ------- |
+| 1    | CanonicalUrlExtractor + enrichment processor | 1 day   |
+| 2    | OpenSearch canonical_url field + dedup query | 0.5 day |
+| 3    | Add ext-gmp to Docker PHP image              | 0.5 day |
+| 4    | Core algorithms (normalizer, generators)     | 2 days  |
+| 5    | OpenSearch fingerprint mapping + repository  | 1 day   |
+| 6    | DuplicateDetector service (stages 0-3)       | 1 day   |
+| 7    | Integration with quality pipeline (ADR-0027) | 1 day   |
+| 8    | Valkey cache layer (optional)                | 1 day   |
+| 9    | Calibration on sample dataset                | 2 days  |
+| 10   | Load testing at target scale                 | 1 day   |
 
 **Quick win**: Steps 1-2 (canonical URL dedup) can be deployed independently before content fingerprinting,
 providing immediate value for the most common duplicate case.
@@ -1857,5 +1873,5 @@ providing immediate value for the most common duplicate case.
 
 ## Related ADRs
 
-- **ADR-2026-003**: Document Quality Pipeline Architecture
-- **ADR-2026-005**: Document Quality Filters Phase 2 (DuplicateFilter integration)
+- **ADR-0025**: Document Quality Pipeline Architecture
+- **ADR-0027**: Document Quality Filters Phase 2 (DuplicateFilter integration)

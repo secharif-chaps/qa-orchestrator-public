@@ -1,12 +1,22 @@
-# ADR-2026-011: Split Document Pipeline into Pre-Save and Post-Save Phases
+# ADR-0035: Split Document Pipeline into Pre-Save and Post-Save Phases
 
-| Status   | Date       | Author                    |
-| -------- | ---------- | ------------------------- |
-| Accepted | 2026-04-28 | Frédéric Fayard-Le Barzic |
+> Migrated from basil ADR-2026-011 (document-pipeline-pre-post-save-split)
+
+## Status
+
+**Status:** Accepted
+
+**Date:** 2026-04-28
+
+**Decision Makers:** Frédéric Fayard-Le Barzic
+
+**Tags:** backend, pipeline, document-processing, enrichment, deduplication, refactor
+
+---
 
 ## Context
 
-ADR-2026-003 introduced a single `DocumentProcessingPipeline` that ran _after_ `documentGateway->save()` and produced a `QualityReport`. ADR-2026-006 (deduplication) added the need for **enrichment** (canonical URL, fingerprints) and **exact-match deduplication** to happen _before_ save — otherwise the document is indexed without its enrichments and a duplicate is persisted unnecessarily.
+ADR-0025 introduced a single `DocumentProcessingPipeline` that ran _after_ `documentGateway->save()` and produced a `QualityReport`. ADR-0028 (deduplication) added the need for **enrichment** (canonical URL, fingerprints) and **exact-match deduplication** to happen _before_ save — otherwise the document is indexed without its enrichments and a duplicate is persisted unnecessarily.
 
 The original design also coupled three concerns inside one orchestration:
 
@@ -49,7 +59,7 @@ The unified ingestion message is renamed to make its role explicit. Both the man
 
 ### 4. Namespace layout
 
-```
+```text
 Domain/Document/Pipeline/                  — orchestration, neutral
   DocumentPipelineInterface.php
   DocumentProcessorInterface.php
@@ -71,6 +81,10 @@ Infrastructure/Document/Pipeline/
     Deduplication/ — pre-save (Stage 0) and post-save (Stage 1+)
     Scoring/       — post-save (5 existing processors live here)
 ```
+
+## Options Considered
+
+_Not documented in original ADR._
 
 ## Consequences
 
@@ -95,6 +109,6 @@ Infrastructure/Document/Pipeline/
 
 ## Related ADRs
 
-- ADR-2026-003 — Document Processing Pipeline Architecture (this ADR is an evolution).
-- ADR-2026-006 — Document Deduplication Strategy (Stage 0 storage relies on the pre-save phase introduced here).
-- ADR-2026-009 — Provider-Agnostic Post-Collection Processing (the `IngestDocumentAction` unification was foreshadowed here).
+- ADR-0025 — Document Processing Pipeline Architecture (this ADR is an evolution).
+- ADR-0028 — Document Deduplication Strategy (Stage 0 storage relies on the pre-save phase introduced here).
+- ADR-0031 — Provider-Agnostic Post-Collection Processing (the `IngestDocumentAction` unification was foreshadowed here).

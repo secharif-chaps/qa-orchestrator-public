@@ -659,21 +659,23 @@ The migration is sequenced into phases that can be broken down into user stories
 
 **Dependencies:** This ADR accepted
 
-Renumber the 11 Basil ADRs into the ChapsMind sequence (0017–0027):
+Renumber the Basil ADRs into the ChapsMind sequence. The originally planned range (0017–0027) was already partially occupied by ADRs created after this strategy was drafted (0017 promptfoo, 0018 role/permission, 0019 security audit trail), and the subsequently planned 0020–0032 range was also overrun by 0020 (stream module — the renumbered orphan duplicate of this ADR's number), 0021 (stream newsletter) and 0022 (uv package manager). The migration was therefore performed starting at 0023. Two additional basil ADRs (2026-011 split, 2026-012 apify) created after this ADR was written were included in the migration as well — for a total of 13 ADRs occupying slots 0023–0035.
 
-| New ID | Old ID   | Title                                        |
-| ------ | -------- | -------------------------------------------- |
-| 0017   | 2025-001 | Mercure Scalable Topics and Tokens           |
-| 0018   | 2025-002 | Multi-Tenant Architecture                    |
-| 0019   | 2026-003 | Document Processing Pipeline Architecture    |
-| 0020   | 2026-004 | Document Quality Scoring Processors Phase 1  |
-| 0021   | 2026-005 | Document Quality Scoring Processors Phase 2  |
-| 0022   | 2026-006 | Document Deduplication Strategy              |
-| 0023   | 2026-007 | Migration Target to ChapsMind                |
-| 0024   | 2026-008 | Multi-Provider Collection Architecture       |
-| 0025   | 2026-009 | Provider-Agnostic Post-Collection Processing |
-| 0026   | 2026-010 | Migration Backend Target API vers ChapsMind  |
-| 0027   | 2026-011 | Elasticsearch to OpenSearch Migration        |
+| New ID | Old ID                                           | Title                                                      |
+| ------ | ------------------------------------------------ | ---------------------------------------------------------- |
+| 0023   | 2025-001                                         | Mercure Scalable Topics and Tokens                         |
+| 0024   | 2025-002                                         | Multi-Tenant Architecture                                  |
+| 0025   | 2026-003                                         | Document Processing Pipeline Architecture                  |
+| 0026   | 2026-004                                         | Document Quality Scoring Processors Phase 1                |
+| 0027   | 2026-005                                         | Document Quality Scoring Processors Phase 2                |
+| 0028   | 2026-006                                         | Document Deduplication Strategy                            |
+| 0029   | 2026-007                                         | Migration from Nuxt 4 to Vue 3                             |
+| 0030   | 2026-008                                         | Multi-Provider Collection Architecture                     |
+| 0031   | 2026-009                                         | Provider-Agnostic Post-Collection Processing               |
+| 0032   | 2026-010                                         | Migration Backend Target API to ChapsMind                  |
+| 0033   | 2026-011 (elasticsearch-to-opensearch-migration) | Elasticsearch to OpenSearch Migration                      |
+| 0034   | 2026-012                                         | Implementation of Apify Provider for Data Collection       |
+| 0035   | 2026-011 (document-pipeline-pre-post-save-split) | Split Document Pipeline into Pre-Save and Post-Save Phases |
 
 For each ADR:
 
