@@ -25,7 +25,13 @@ exclude = [
   "^mailto:",
   "^tel:",
   # Slack Block Kit Builder requires authentication; URL is real but returns 403 unauthenticated
-  "^https?://app\\.slack\\.com/"
+  "^https?://app\\.slack\\.com/",
+  # Medium / Substack-style blogs aggressively block non-browser User-Agents (returns 403);
+  # the URLs are real but unreachable from CI runners
+  "^https?://([a-z0-9-]+\\.)*medium\\.com/",
+  # Internal GitLab — most paths require authentication (401 from CI runners
+  # that don't carry a token); the URLs are real but unreachable headlessly
+  "^https?://git\\.mediaspeech\\.com/"
 ]
 
 exclude_path = [

@@ -79,6 +79,13 @@ class Stream(Base):
     # Event type filter (list of subscribed event types)
     subscribed_events = Column(JSONB, nullable=False, default=list)
 
+    # NP6 action id — populated lazily by NP6EmailProvider on the first
+    # dispatch. Nullable because non-newsletter streams (Teams, Slack,
+    # Webhook) never reach NP6. See ADR-0020 §"Mapping Newsletter Concepts
+    # to NP6 Primitives" (amended 2026-05-04). No `np6_segment_id`: the
+    # validated workflow addresses recipients directly by unicity.
+    np6_action_id = Column(String, nullable=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 

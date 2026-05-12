@@ -31,7 +31,7 @@ The **uv** project (Astral, creators of Ruff) became stable in 2024 and offers a
 
 An explicit TODO already exists in `apps/global-service/Dockerfile`:
 
-```
+```bash
 # TODO: Consider migrating to uv for faster builds (10-100x faster than Poetry)
 ```
 
@@ -267,7 +267,7 @@ docker run --rm --entrypoint sh global-service-uv-test -c "
 
 Expected output:
 
-```
+```bash
 poetry not found
 /bin/uv
 uv x.x.x (x86_64-unknown-linux-musl)
