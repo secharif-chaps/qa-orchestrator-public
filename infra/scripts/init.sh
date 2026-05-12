@@ -14,11 +14,68 @@
 
 set -euo pipefail
 
+# ─── Helpers ─────────────────────────────────────────
+
+# Returns the TCP ports published by the local compose stack, one per line.
+# Tries `docker compose config` first (profile-aware, requires .env loaded).
+# Falls back to a static grep on the compose files when .env is not yet
+# available — which is the case for the worktree guard below.
+get_stack_ports() {
+  local ports
+  ports=$(docker compose config 2>/dev/null | sed -n 's/.*published: "\([0-9]*\)".*/\1/p' | sort -u)
+  if [ -z "$ports" ]; then
+    # Static fallback: parse short-form "host:container" mappings from compose
+    # files. Used by the worktree guard, which runs before .env is created.
+    ports=$(grep -hoE '"[0-9]+:[0-9]+"' infra/compose.yaml infra/compose.local.yaml 2>/dev/null \
+      | tr -d '"' | cut -d: -f1 | sort -u)
+  fi
+  echo "$ports"
+}
+
+# ─── 0. Worktree detection ───────────────────────────
+
+GIT_DIR=$(git rev-parse --git-dir 2>/dev/null || echo ".git")
+GIT_COMMON=$(git rev-parse --git-common-dir 2>/dev/null || echo ".git")
+IS_WORKTREE=false
+MAIN_WT=""
+if [ "$(cd "$GIT_DIR" 2>/dev/null && pwd -P)" != "$(cd "$GIT_COMMON" 2>/dev/null && pwd -P)" ]; then
+  IS_WORKTREE=true
+  # First entry in worktree list is always the original (main) checkout.
+  # Use sub() to preserve paths containing spaces (awk $2 would truncate).
+  MAIN_WT=$(git worktree list --porcelain | awk '/^worktree/{sub(/^worktree /, ""); print; exit}')
+  echo "ℹ️  Running inside a git worktree"
+
+  # Guard: require the stack to be down before initializing a worktree.
+  # Each worktree needs its own stack (different source mounts) — two stacks
+  # can't share the same published ports. Developer must explicitly down the
+  # active stack first.
+  BUSY_PORT=""
+  for port in $(get_stack_ports); do
+    if docker ps -q --filter "publish=$port" | grep -q .; then
+      BUSY_PORT="$port"
+      break
+    fi
+  done
+  if [ -n "$BUSY_PORT" ]; then
+    echo ""
+    echo "❌ A stack is already running (port $BUSY_PORT bound)."
+    echo "   Stop it first from the active workspace:"
+    echo "     task down"
+    echo "   Then re-run: task init"
+    exit 1
+  fi
+fi
+
 # ─── 1. Create .env ──────────────────────────────────
 
 if [ ! -f .env ]; then
-  cp .env.example .env
-  echo "✅ Created .env from .env.example"
+  if [ "$IS_WORKTREE" = "true" ] && [ -n "$MAIN_WT" ] && [ -f "$MAIN_WT/.env" ]; then
+    cp "$MAIN_WT/.env" .env
+    echo "✅ Copied .env from main worktree"
+  else
+    cp .env.example .env
+    echo "✅ Created .env from .env.example"
+  fi
 else
   echo "ℹ️  .env already exists, skipping copy"
 fi
@@ -105,10 +162,34 @@ bash infra/scripts/setup-yarnrc.sh
 
 echo ""
 echo "📦 Installing dev tools (husky, lint-staged, commitlint)..."
-docker run --rm -w /app \
-  -v "$(pwd):/app" \
-  node:24 \
-  sh -c "git config --global --add safe.directory /app && corepack enable && yarn install"
+if [ "$IS_WORKTREE" = "true" ]; then
+  # Docker can't follow the .git pointer file outside the mounted path, so
+  # husky's prepare script fails silently and .husky/_ is never created.
+  # Install with HUSKY=0 then copy the bootstrap from the main worktree.
+  docker run --rm -w /app \
+    -v "$(pwd):/app" \
+    -e HUSKY=0 \
+    node:24 \
+    sh -c "corepack enable && yarn install"
+  if [ -d "$MAIN_WT/.husky/_" ] && [ ! -f ".husky/_/h" ]; then
+    # Copy contents (src/.) into a known dest dir so we never re-nest as
+    # .husky/_/_ (which is what `cp -r src dest` does when dest exists).
+    if [ -d .husky/_ ]; then
+      echo "⚠️  Existing '.husky/_' will be merged with main worktree's hooks"
+      echo "   (stale files may remain — delete '.husky/_' to fully refresh)."
+    fi
+    mkdir -p .husky/_ && cp -r "$MAIN_WT/.husky/_/." .husky/_/
+    echo "✅ Git hooks initialized"
+  elif [ ! -d "$MAIN_WT/.husky/_" ]; then
+    echo "⚠️  Main worktree '.husky/_' missing — git hooks won't run in this worktree."
+    echo "   Run 'task init' from $MAIN_WT first to bootstrap them, then re-run here."
+  fi
+else
+  docker run --rm -w /app \
+    -v "$(pwd):/app" \
+    node:24 \
+    sh -c "git config --global --add safe.directory /app && corepack enable && yarn install"
+fi
 
 echo ""
 echo "📦 Installing frontend dependencies..."
@@ -127,7 +208,7 @@ if docker compose ps -q 2>/dev/null | grep -q .; then
 fi
 
 BUSY_PORTS=""
-for port in $(docker compose config 2>/dev/null | sed -n 's/.*published: "\([0-9]*\)".*/\1/p' | sort -u); do
+for port in $(get_stack_ports); do
   if lsof -iTCP:"$port" -sTCP:LISTEN -P -n >/dev/null 2>&1; then
     PROCESS=$(lsof -iTCP:"$port" -sTCP:LISTEN -P -n 2>/dev/null | tail -1 | awk '{print $1}')
     BUSY_PORTS="${BUSY_PORTS}  → port ${port} (${PROCESS:-unknown})\n"

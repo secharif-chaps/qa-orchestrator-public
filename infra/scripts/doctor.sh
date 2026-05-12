@@ -118,6 +118,19 @@ echo ""
 echo "🔍 Checking project configuration..."
 echo ""
 
+# Worktree context — mirrors the detection done by init.sh so doctor reports
+# accurately when run from a worktree (different .env source, different hooks
+# bootstrap requirement).
+GIT_DIR=$(git rev-parse --git-dir 2>/dev/null || echo ".git")
+GIT_COMMON=$(git rev-parse --git-common-dir 2>/dev/null || echo ".git")
+IS_WORKTREE=false
+MAIN_WT=""
+if [ "$(cd "$GIT_DIR" 2>/dev/null && pwd -P)" != "$(cd "$GIT_COMMON" 2>/dev/null && pwd -P)" ]; then
+  IS_WORKTREE=true
+  MAIN_WT=$(git worktree list --porcelain | awk '/^worktree/{sub(/^worktree /, ""); print; exit}')
+  ok "Running inside a git worktree (main: $MAIN_WT)"
+fi
+
 # .env
 if [ -f .env ]; then
   ok ".env file exists"
@@ -127,6 +140,8 @@ if [ -f .env ]; then
     warn "${CHANGEME_COUNT} variable(s) still set to 'changeme' in .env"
     echo "$CHANGEME_VARS" | while read -r var; do echo "     → $var"; done
   fi
+elif [ "$IS_WORKTREE" = "true" ] && [ -n "$MAIN_WT" ] && [ -f "$MAIN_WT/.env" ]; then
+  warn ".env missing — 'task init' will copy it from main worktree"
 else
   warn ".env missing — will be created by 'task init'"
 fi
@@ -141,7 +156,13 @@ fi
 # Git hooks
 HOOKS_PATH=$(git config core.hooksPath 2>/dev/null || true)
 if [ -f .husky/pre-commit ] && echo "$HOOKS_PATH" | grep -q "\.husky"; then
-  ok "Git pre-commit hook installed"
+  # In a worktree, the husky wrapper directory `.husky/_` must also exist or
+  # hooks are silently no-op (bootstrap copied by init.sh from the main worktree).
+  if [ "$IS_WORKTREE" = "true" ] && [ ! -f .husky/_/h ]; then
+    warn "Git hooks won't fire in this worktree — '.husky/_/h' missing (run 'task init')"
+  else
+    ok "Git pre-commit hook installed"
+  fi
 else
   warn "Git pre-commit hook not installed — run 'yarn install' from repo root"
 fi
