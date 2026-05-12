@@ -145,10 +145,10 @@ From the user request and watchFile context, identify:
 
 ```json
 {
-    "referenceSubject": {
-        "fr": "string (markdown, all sections in French)",
-        "en": "string (markdown, all sections in English)"
-    }
+  "referenceSubject": {
+    "fr": "string (markdown, all sections in French)",
+    "en": "string (markdown, all sections in English)"
+  }
 }
 ```
 
@@ -197,12 +197,12 @@ Surveillance de l'AI Act européen.
 
 ```json
 [
-    { "label": "Commission Européenne", "explanation_fr": "Régulateur principal de l'AI Act" },
-    { "label": "NIST", "explanation_fr": "Référence pour comparaison avec standards US" },
-    {
-        "label": "OpenAI",
-        "explanation_fr": "Acteur majeur IA à surveiller pour pratiques de conformité"
-    }
+  { "label": "Commission Européenne", "explanation_fr": "Régulateur principal de l'AI Act" },
+  { "label": "NIST", "explanation_fr": "Référence pour comparaison avec standards US" },
+  {
+    "label": "OpenAI",
+    "explanation_fr": "Acteur majeur IA à surveiller pour pratiques de conformité"
+  }
 ]
 ```
 
@@ -251,11 +251,11 @@ Conformité pour logiciels IA.
 
 ```json
 [
-    {
-        "name": "Journal Officiel de l'UE",
-        "relevance_fr": "Textes officiels de l'AI Act et amendements"
-    },
-    { "name": "Federal Register", "relevance_fr": "Réglementation américaine pour comparaison" }
+  {
+    "name": "Journal Officiel de l'UE",
+    "relevance_fr": "Textes officiels de l'AI Act et amendements"
+  },
+  { "name": "Federal Register", "relevance_fr": "Réglementation américaine pour comparaison" }
 ]
 ```
 

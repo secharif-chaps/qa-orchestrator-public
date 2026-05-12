@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13770107",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150422733&origin=inward",
-        "title": "Erosion Characteristics of Ceramic Particulate and Whisker Reinforced Aluminum Composites",
-        "content": "<html><body>Advanced composite materials are one of the key enabling technologies for achieving the planned revolutionary improvements in the next generation of aero gas turbine engines-. For example the thrust to weight ratio of advanced military engines is targeted to double (to 20:1) within the next 10 to 15 years. A number of families- of advanced composites are-being developed, and metal matrix composites is- one significant member of these. These can be- either ceramic fiber or ceramic particulate/whiskers embedded in matrixes of aluminum, titanium or superalloys. Silicon carbide particulate/ whisker reinforced aluminum has been under consideration for the cold section of front end- engine components such as compressor blades, compressor stator vanes and casings. One potentially serious problem anticipated in using these composites for such application is its behavior in particulate erosion, as may happen in sandy environments and runways. This paper describes the test program undertaken to study this problem, and discusses the results obtained. It was found that the erosion rate of such composites can be considerably higher than that of non-reinforced aluminum alloys. Further, the characteristic erosion behavior is modified significantly. Also identified were new mechanisms of material removal coming into play. These are also discussed. <br/><br/><br/>Authors: Gupta S.. <br/><br/>Affiliations: Rolls-Royce Inc. <br/><br/>Publication: ASME 1992 International Gas Turbine and Aeroengine Congress and Exposition, GT 1992, 1992. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13770181",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150422733&origin=inward",
-        "title": "Erosion Characteristics of Ceramic Particulate and Whisker Reinforced Aluminum Composites",
-        "content": "<html><body>Advanced composite materials are one of the key enabling technologies for achieving the planned revolutionary improvements in the next generation of aero gas turbine engines-. For example the thrust to weight ratio of advanced military engines is targeted to double (to 20:1) within the next 10 to 15 years. A number of families- of advanced composites are-being developed, and metal matrix composites is- one significant member of these. These can be- either ceramic fiber or ceramic particulate/whiskers embedded in matrixes of aluminum, titanium or superalloys. Silicon carbide particulate/ whisker reinforced aluminum has been under consideration for the cold section of front end- engine components such as compressor blades, compressor stator vanes and casings. One potentially serious problem anticipated in using these composites for such application is its behavior in particulate erosion, as may happen in sandy environments and runways. This paper describes the test program undertaken to study this problem, and discusses the results obtained. It was found that the erosion rate of such composites can be considerably higher than that of non-reinforced aluminum alloys. Further, the characteristic erosion behavior is modified significantly. Also identified were new mechanisms of material removal coming into play. These are also discussed. <br/><br/><br/>Authors: Gupta S.. <br/><br/>Affiliations: Rolls-Royce Inc. <br/><br/>Publication: ASME 1992 International Gas Turbine and Aeroengine Congress and Exposition, GT 1992, 1992. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "partial_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, and identical article text including metadata indicate a literal recrawl of the same record"
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13770107",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150422733&origin=inward",
+    "title": "Erosion Characteristics of Ceramic Particulate and Whisker Reinforced Aluminum Composites",
+    "content": "<html><body>Advanced composite materials are one of the key enabling technologies for achieving the planned revolutionary improvements in the next generation of aero gas turbine engines-. For example the thrust to weight ratio of advanced military engines is targeted to double (to 20:1) within the next 10 to 15 years. A number of families- of advanced composites are-being developed, and metal matrix composites is- one significant member of these. These can be- either ceramic fiber or ceramic particulate/whiskers embedded in matrixes of aluminum, titanium or superalloys. Silicon carbide particulate/ whisker reinforced aluminum has been under consideration for the cold section of front end- engine components such as compressor blades, compressor stator vanes and casings. One potentially serious problem anticipated in using these composites for such application is its behavior in particulate erosion, as may happen in sandy environments and runways. This paper describes the test program undertaken to study this problem, and discusses the results obtained. It was found that the erosion rate of such composites can be considerably higher than that of non-reinforced aluminum alloys. Further, the characteristic erosion behavior is modified significantly. Also identified were new mechanisms of material removal coming into play. These are also discussed. <br/><br/><br/>Authors: Gupta S.. <br/><br/>Affiliations: Rolls-Royce Inc. <br/><br/>Publication: ASME 1992 International Gas Turbine and Aeroengine Congress and Exposition, GT 1992, 1992. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13770181",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150422733&origin=inward",
+    "title": "Erosion Characteristics of Ceramic Particulate and Whisker Reinforced Aluminum Composites",
+    "content": "<html><body>Advanced composite materials are one of the key enabling technologies for achieving the planned revolutionary improvements in the next generation of aero gas turbine engines-. For example the thrust to weight ratio of advanced military engines is targeted to double (to 20:1) within the next 10 to 15 years. A number of families- of advanced composites are-being developed, and metal matrix composites is- one significant member of these. These can be- either ceramic fiber or ceramic particulate/whiskers embedded in matrixes of aluminum, titanium or superalloys. Silicon carbide particulate/ whisker reinforced aluminum has been under consideration for the cold section of front end- engine components such as compressor blades, compressor stator vanes and casings. One potentially serious problem anticipated in using these composites for such application is its behavior in particulate erosion, as may happen in sandy environments and runways. This paper describes the test program undertaken to study this problem, and discusses the results obtained. It was found that the erosion rate of such composites can be considerably higher than that of non-reinforced aluminum alloys. Further, the characteristic erosion behavior is modified significantly. Also identified were new mechanisms of material removal coming into play. These are also discussed. <br/><br/><br/>Authors: Gupta S.. <br/><br/>Affiliations: Rolls-Royce Inc. <br/><br/>Publication: ASME 1992 International Gas Turbine and Aeroengine Congress and Exposition, GT 1992, 1992. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "partial_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, and identical article text including metadata indicate a literal recrawl of the same record"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

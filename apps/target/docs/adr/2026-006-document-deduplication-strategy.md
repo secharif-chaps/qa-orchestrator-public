@@ -220,8 +220,8 @@ With b=32 bands, r=4 rows:
 2. For each shingle in the document:
    a. Compute a traditional hash (64 bits)
    b. For each bit position i:
-    - If bit i is 1: V[i] += 1
-    - If bit i is 0: V[i] -= 1
+   - If bit i is 1: V[i] += 1
+   - If bit i is 0: V[i] -= 1
 3. Final hash: bit i = 1 if V[i] > 0, else 0
 
 **Example** (simplified with 8 bits):
@@ -626,14 +626,14 @@ final readonly class CanonicalUrlEnrichmentProcessor implements DocumentProcesso
 
 ```json
 {
-    "mappings": {
-        "properties": {
-            "canonical_url": {
-                "type": "keyword",
-                "doc_values": true
-            }
-        }
+  "mappings": {
+    "properties": {
+      "canonical_url": {
+        "type": "keyword",
+        "doc_values": true
+      }
     }
+  }
 }
 ```
 
@@ -685,9 +685,9 @@ public function findByCanonicalUrl(
 ```yaml
 # Required PHP extensions
 php:
-    extensions:
-        - gmp # GNU Multiple Precision - required for 64-bit SimHash operations
-        - intl # For proper Unicode text normalization
+  extensions:
+    - gmp # GNU Multiple Precision - required for 64-bit SimHash operations
+    - intl # For proper Unicode text normalization
 ```
 
 **Why GMP?**
@@ -701,10 +701,10 @@ php:
 ```yaml
 # Version compatibility
 development:
-    elasticsearch: '9.x'
+  elasticsearch: '9.x'
 
 production:
-    opensearch: '2.x' # Fork of ES 7.10, API compatible
+  opensearch: '2.x' # Fork of ES 7.10, API compatible
 
 
 # Code must use:
@@ -1262,37 +1262,37 @@ final readonly class LshBandGenerator
 
 ```json
 {
-    "mappings": {
+  "mappings": {
+    "properties": {
+      "fingerprint": {
         "properties": {
-            "fingerprint": {
-                "properties": {
-                    "content_hash": {
-                        "type": "keyword",
-                        "doc_values": true
-                    },
-                    "sim_hash": {
-                        "type": "keyword",
-                        "doc_values": true
-                    },
-                    "min_hash_signature": {
-                        "type": "integer",
-                        "index": false,
-                        "doc_values": true
-                    },
-                    "lsh_bands": {
-                        "type": "keyword",
-                        "doc_values": true
-                    },
-                    "word_count": {
-                        "type": "integer"
-                    },
-                    "computed_at": {
-                        "type": "date"
-                    }
-                }
-            }
+          "content_hash": {
+            "type": "keyword",
+            "doc_values": true
+          },
+          "sim_hash": {
+            "type": "keyword",
+            "doc_values": true
+          },
+          "min_hash_signature": {
+            "type": "integer",
+            "index": false,
+            "doc_values": true
+          },
+          "lsh_bands": {
+            "type": "keyword",
+            "doc_values": true
+          },
+          "word_count": {
+            "type": "integer"
+          },
+          "computed_at": {
+            "type": "date"
+          }
         }
+      }
     }
+  }
 }
 ```
 

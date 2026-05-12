@@ -43,10 +43,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
-      "position": [
-        576,
-        -80
-      ],
+      "position": [576, -80],
       "id": "1e4df102-88d5-4244-8c6d-b9da93cf31bb",
       "name": "Webhook_HTTP_Request",
       "retryOnFail": true,
@@ -70,10 +67,7 @@
       },
       "type": "n8n-nodes-base.crypto",
       "typeVersion": 1,
-      "position": [
-        288,
-        48
-      ],
+      "position": [288, 48],
       "id": "694d2ff3-0984-4ca2-ace7-08372ca0b57f",
       "name": "Webhook_Crypto_Signature",
       "onError": "continueErrorOutput"
@@ -100,10 +94,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        64,
-        48
-      ],
+      "position": [64, 48],
       "id": "042be8d7-6aea-4aa1-b7a5-4cc2bcd4d6ea",
       "name": "Workflow_Trigger_Webhook"
     },
@@ -115,20 +106,14 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        576,
-        144
-      ],
+      "position": [576, 144],
       "id": "15965513-28cf-4a45-9f51-bb86077ed425",
       "name": "Feedback_CryptoError"
     }
   ],
   "connections": {
     "Webhook_HTTP_Request": {
-      "main": [
-        [],
-        []
-      ]
+      "main": [[], []]
     },
     "Webhook_Crypto_Signature": {
       "main": [

@@ -95,10 +95,10 @@ From the user request and watchFile context, identify:
 
 ```json
 {
-    "referenceSubject": {
-        "fr": "string (markdown, all sections in French)",
-        "en": "string (markdown, all sections in English)"
-    }
+  "referenceSubject": {
+    "fr": "string (markdown, all sections in French)",
+    "en": "string (markdown, all sections in English)"
+  }
 }
 ```
 
@@ -169,9 +169,9 @@ Surveillance de l'évolution de l'AI Act européen.
 
 ```json
 [
-    { "label": "Commission Européenne", "explanation_fr": "Régulateur principal de l'AI Act" },
-    { "label": "NIST", "explanation_fr": "Référence pour comparaison avec standards US" },
-    { "label": "OpenAI", "explanation_fr": "Acteur majeur IA à surveiller" }
+  { "label": "Commission Européenne", "explanation_fr": "Régulateur principal de l'AI Act" },
+  { "label": "NIST", "explanation_fr": "Référence pour comparaison avec standards US" },
+  { "label": "OpenAI", "explanation_fr": "Acteur majeur IA à surveiller" }
 ]
 ```
 
@@ -220,8 +220,8 @@ Conformité pour logiciels IA.
 
 ```json
 [
-    { "name": "Journal Officiel de l'UE", "relevance_fr": "Textes officiels de l'AI Act" },
-    { "name": "Federal Register", "relevance_fr": "Réglementation américaine" }
+  { "name": "Journal Officiel de l'UE", "relevance_fr": "Textes officiels de l'AI Act" },
+  { "name": "Federal Register", "relevance_fr": "Réglementation américaine" }
 ]
 ```
 
@@ -269,9 +269,9 @@ Surveillance de l'AI Act.
 
 ```json
 [
-    { "label": "Commission Européenne", "explanation_fr": "Régulateur principal de l'AI Act" },
-    { "label": "OpenAI", "explanation_fr": "Leader IA générative" },
-    { "label": "Anthropic", "explanation_fr": "Concurrent direct, approche safety" }
+  { "label": "Commission Européenne", "explanation_fr": "Régulateur principal de l'AI Act" },
+  { "label": "OpenAI", "explanation_fr": "Leader IA générative" },
+  { "label": "Anthropic", "explanation_fr": "Concurrent direct, approche safety" }
 ]
 ```
 

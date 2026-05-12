@@ -49,8 +49,8 @@ The system uses Symfony Messenger for asynchronous communication:
 ```yaml
 # config/packages/messenger.yaml
 routing:
-    'App\Application\Agent\TriggerAgent': agent_commands
-    'App\Application\Document\UpdateDocumentSummaryAction': agent_responses
+  'App\Application\Agent\TriggerAgent': agent_commands
+  'App\Application\Document\UpdateDocumentSummaryAction': agent_responses
 ```
 
 ## N8N Workflow
@@ -69,11 +69,11 @@ The N8N workflow (`docker/n8n/workflows/generate-document-summary.json`):
 
 ```json
 {
-    "documentId": "doc-123",
-    "summary": {
-        "fr": "Résumé français généré",
-        "en": "Generated English summary"
-    }
+  "documentId": "doc-123",
+  "summary": {
+    "fr": "Résumé français généré",
+    "en": "Generated English summary"
+  }
 }
 ```
 
@@ -81,8 +81,8 @@ The N8N workflow (`docker/n8n/workflows/generate-document-summary.json`):
 
 ```json
 {
-    "documentId": "doc-123",
-    "summaryError": "Erreur lors de la génération du résumé"
+  "documentId": "doc-123",
+  "summaryError": "Erreur lors de la génération du résumé"
 }
 ```
 

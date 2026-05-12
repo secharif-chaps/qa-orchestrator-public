@@ -1,36 +1,36 @@
 {
-    "account_id": 204,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-204-master-8970056",
-        "url": "https://ridl.io/en/donate/",
-        "title": "Donate – Riddle Russia",
-        "content": "<html><head><title>Donate – Riddle Russia</title></head><body><div>\n        <p>It is getting more and more difficult for independent analysis to survive in today’s conditions. We at Riddle remain committed to keeping all our texts freely available. So paywall subscriptions are not an option. Nor do we take money that may compromise the independence of our editorial policy. That said, the market for «safe» grants is constantly shrinking. So we feel forced to ask our readers for help. Your support will enable us to keep on doing what we believe in, without fear or favour;</p>\n<p><strong>How will we spend your donations?</strong></p>\n<p>Your donation will go directly towards commissioning more articles from our experts, while helping to fund more work from our translators and editorial activity. With your help, we hope to become a full-fledged think tank, which not only produces reports and analysis, but also conducts events — both online and in person — that contribute to the formation and development of a new generation of independent experts on Russia.</p>\n<p>We would be grateful for any support! If you make a monthly donation, we can budget for a longer period and do more long-term research. Thank you!</p>\n      </div></body></html>"
-    },
-    "candidate": {
-        "id": "legacy-204-dup-8970203",
-        "url": "https://ridl.io/en/donate/",
-        "title": "Donate – Riddle Russia",
-        "content": "<html><head><title>Donate – Riddle Russia</title></head><body><div>\n        <p>It is getting more and more difficult for independent analysis to survive in today’s conditions. We at Riddle remain committed to keeping all our texts freely available. So paywall subscriptions are not an option. Nor do we take money that may compromise the independence of our editorial policy. That said, the market for «safe» grants is constantly shrinking. So we feel forced to ask our readers for help. Your support will enable us to keep on doing what we believe in, without fear or favour;</p>\n<p><strong>How will we spend your donations?</strong></p>\n<p>Your donation will go directly towards commissioning more articles from our experts, while helping to fund more work from our translators and editorial activity. With your help, we hope to become a full-fledged think tank, which not only produces reports and analysis, but also conducts events — both online and in person — that contribute to the formation and development of a new generation of independent experts on Russia.</p>\n<p>We would be grateful for any support! If you make a monthly donation, we can budget for a longer period and do more long-term research. Thank you!</p>\n      </div></body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "identical"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL and identical donation page content indicating a recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 204,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-204-master-8970056",
+    "url": "https://ridl.io/en/donate/",
+    "title": "Donate – Riddle Russia",
+    "content": "<html><head><title>Donate – Riddle Russia</title></head><body><div>\n        <p>It is getting more and more difficult for independent analysis to survive in today’s conditions. We at Riddle remain committed to keeping all our texts freely available. So paywall subscriptions are not an option. Nor do we take money that may compromise the independence of our editorial policy. That said, the market for «safe» grants is constantly shrinking. So we feel forced to ask our readers for help. Your support will enable us to keep on doing what we believe in, without fear or favour;</p>\n<p><strong>How will we spend your donations?</strong></p>\n<p>Your donation will go directly towards commissioning more articles from our experts, while helping to fund more work from our translators and editorial activity. With your help, we hope to become a full-fledged think tank, which not only produces reports and analysis, but also conducts events — both online and in person — that contribute to the formation and development of a new generation of independent experts on Russia.</p>\n<p>We would be grateful for any support! If you make a monthly donation, we can budget for a longer period and do more long-term research. Thank you!</p>\n      </div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-204-dup-8970203",
+    "url": "https://ridl.io/en/donate/",
+    "title": "Donate – Riddle Russia",
+    "content": "<html><head><title>Donate – Riddle Russia</title></head><body><div>\n        <p>It is getting more and more difficult for independent analysis to survive in today’s conditions. We at Riddle remain committed to keeping all our texts freely available. So paywall subscriptions are not an option. Nor do we take money that may compromise the independence of our editorial policy. That said, the market for «safe» grants is constantly shrinking. So we feel forced to ask our readers for help. Your support will enable us to keep on doing what we believe in, without fear or favour;</p>\n<p><strong>How will we spend your donations?</strong></p>\n<p>Your donation will go directly towards commissioning more articles from our experts, while helping to fund more work from our translators and editorial activity. With your help, we hope to become a full-fledged think tank, which not only produces reports and analysis, but also conducts events — both online and in person — that contribute to the formation and development of a new generation of independent experts on Russia.</p>\n<p>We would be grateful for any support! If you make a monthly donation, we can budget for a longer period and do more long-term research. Thank you!</p>\n      </div></body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL and identical donation page content indicating a recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

@@ -208,11 +208,11 @@ Object fields are the default when you don't specify a type for complex data str
 // This query will match documents where ANY user has name="John" AND age=25
 // Even if these values come from different user objects
 {
-    "query": {
-        "bool": {
-            "must": [{ "term": { "user.name": "John" } }, { "term": { "user.age": 25 } }]
-        }
+  "query": {
+    "bool": {
+      "must": [{ "term": { "user.name": "John" } }, { "term": { "user.age": 25 } }]
     }
+  }
 }
 ```
 
@@ -246,16 +246,16 @@ Nested fields preserve the object structure and treat each nested object as a se
 ```json
 // This query will ONLY match documents where the SAME user object has name="John" AND age=25
 {
-    "query": {
-        "nested": {
-            "path": "users",
-            "query": {
-                "bool": {
-                    "must": [{ "term": { "users.name": "John" } }, { "term": { "users.age": 25 } }]
-                }
-            }
+  "query": {
+    "nested": {
+      "path": "users",
+      "query": {
+        "bool": {
+          "must": [{ "term": { "users.name": "John" } }, { "term": { "users.age": 25 } }]
         }
+      }
     }
+  }
 }
 ```
 

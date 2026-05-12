@@ -1,36 +1,36 @@
 {
-    "account_id": 204,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 66,
-    "master": {
-        "id": "legacy-204-master-8970785",
-        "url": "https://morningstaronline.co.uk/article/w/saudi-bombing-destroys-yemeni-telecommunications-tower",
-        "title": "Saudi bombing destroys Yemeni telecommunications tower",
-        "content": "<html><head><title>Saudi bombing destroys Yemeni telecommunications tower</title></head><body><div>\n    <p>SAUDI war planes destroyed a telecommunications building in the Yemeni capital Sanaa today as the Saudi-led coalition continued to target the country’s infrastructure.</p>\n<p>The Yemen International Telecommunications Co (TeleYemen) building in the al-Thawra district was destroyed in two missile strikes that also damaged a nearby structure.</p>\n<p>It comes less than three weeks after similar air strikes cut off the internet and international telecommunications in the capital, which has been in the hands of the Houthi movement since 2015, when a popular uprising ousted the Saudi-backed government of president Abed Rabbo Mansour Hadi.</p>\n<p>Since then the coalition has been waging a war of aggression that has cost numerous civilian lives and driven the country to the brink of starvation.</p>\n<p>Yemen’s Supreme Political Council said the reactionary Gulf kingdom has created a blackout in order to “commit more crimes away from the media,” but Saudi Arabia insisted it targeted a drone-control site.</p>\n<p>“The Houthis are using the Ministry of Telecommunications &amp; Information Technology for hostile operations,” a coalition statement said, claiming to be responding to drone strikes on Saudi Arabia’s Abha airport last Thursday in which 12 people were injured.</p>\n<p>The Houthis issued a call for peace today, insisting that Riyadh is engaged in a war it cannot win.</p>\n<p>Houthi spokesman Mohammed Abdulsalam said: “On the threshold of the [war’s] eighth year, [the Saudi-led coalition members] should realise that there is no choice but to incline towards peace.”</p>\n<p>A United Nations report published in November gave a projected toll of 377,000 lives by the end of 2021, and last month the UN’s special envoy and its humanitiarian co-ordinator warned that January would “almost certainly” be a record-shattering month for civilian casualties, with air strikes and missile attacks having hit hospitals, telecoms infrastructure, airports, a water facility, a school and a prison. </p>\n<p>In December, the World Food Programme warned that it was running out of funds to continue to provide food assistance to 13 million people in the country.</p>\n<p>Riyadh has been accused of war crimes, yet maintains the support of Western countries including Britain, France and the United States.</p>\n<p>Earlier this month US President Joe Biden reaffirmed his support to Saudi Arabia in a phone call with King Salman bin Abdulaziz.</p>\n<p>The Pentagon confirmed the sale of $650 million (£478m) of air-to-air missiles and a helicopter maintenance deal worth $500 million (£360m) despite Mr Biden claiming last year that arms sales to Saudi Arabia would end. </p>\n  </div></body></html>"
-    },
-    "candidate": {
-        "id": "legacy-204-dup-8970791",
-        "url": "https://en.mehrnews.com/news/183892/Saudi-led-coalition-bomb-Yemen-s-Telecommunications-Ministry",
-        "title": "Saudi-led coalition bomb Yemen's Telecommunications Ministry",
-        "content": "<html><head><title>Saudi-led coalition bomb Yemen&apos;s Telecommunications Ministry</title></head><body><div>\n \n \n  <p>Yemen&apos;s al-Masirah television announced Monday morning that the Saudi-led coalition fighter jets had bombed the country&apos;s capital of Sanaa. </p> \n  <p>According to the report, the coalition fighter jets twice targeted the building of the Ministry of Telecommunications &amp; Information Technology. </p> \n  <p>Al-Masirah did not provide further details about the attack.</p> \n  <p>According to the latest reports, the Saudi coalition violated the ceasefire agreement in Al-Hudaidah 233 times in the last 24 hours.</p> \n  <p>Saudi fighter jets also bombed the Harz area in the northwestern Yemeni province of Hajjah 10 times. Saada province has also been targeted several times by Saudi coalition airstrikes.</p> \n  <p>Saudi Arabia, along with the United Arab Emirates (UAE) and with the green light of the United States and Western countries, carried out comprehensive attacks on Yemen since March 26, 2015, to prevent Ansarullah of Yemen from coming to power in the country.</p> \n  <p>Officials of the Yemeni National Salvation Government have repeatedly stressed that the Yemeni army and popular committees will continue to respond to the aggression as long as the Saudi coalition does not stop the war against Yemen and end the siege.</p> \n  <p>Tens of thousands of Yemenis have been injured and martyred in Saudi-led strikes, with the vast majority of them are civilians.</p> \n  <p>The coalition has been also imposing a blockade on the impoverished country’s ports and airports as a part of his aggression which is aimed at restoring power to fugitive former president Abdrabbuh Mansour Hadi.</p> \n  <p>Meanwhile, Yemen is home to the world’s largest humanitarian crisis, with at least 7 million people on the brink of famine and hundreds of thousands suffering from cholera.</p> \n  <p>ZZ/5424557</p> \n \n\n            </div></body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "split",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "near_duplicate",
-        "note": "Both report the same Saudi-led airstrike on Yemen’s telecommunications ministry/building in Sanaa but are independently written articles from different outlets."
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "our_misses",
-    "content_source": "hbase_full"
+  "account_id": 204,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 66,
+  "master": {
+    "id": "legacy-204-master-8970785",
+    "url": "https://morningstaronline.co.uk/article/w/saudi-bombing-destroys-yemeni-telecommunications-tower",
+    "title": "Saudi bombing destroys Yemeni telecommunications tower",
+    "content": "<html><head><title>Saudi bombing destroys Yemeni telecommunications tower</title></head><body><div>\n    <p>SAUDI war planes destroyed a telecommunications building in the Yemeni capital Sanaa today as the Saudi-led coalition continued to target the country’s infrastructure.</p>\n<p>The Yemen International Telecommunications Co (TeleYemen) building in the al-Thawra district was destroyed in two missile strikes that also damaged a nearby structure.</p>\n<p>It comes less than three weeks after similar air strikes cut off the internet and international telecommunications in the capital, which has been in the hands of the Houthi movement since 2015, when a popular uprising ousted the Saudi-backed government of president Abed Rabbo Mansour Hadi.</p>\n<p>Since then the coalition has been waging a war of aggression that has cost numerous civilian lives and driven the country to the brink of starvation.</p>\n<p>Yemen’s Supreme Political Council said the reactionary Gulf kingdom has created a blackout in order to “commit more crimes away from the media,” but Saudi Arabia insisted it targeted a drone-control site.</p>\n<p>“The Houthis are using the Ministry of Telecommunications &amp; Information Technology for hostile operations,” a coalition statement said, claiming to be responding to drone strikes on Saudi Arabia’s Abha airport last Thursday in which 12 people were injured.</p>\n<p>The Houthis issued a call for peace today, insisting that Riyadh is engaged in a war it cannot win.</p>\n<p>Houthi spokesman Mohammed Abdulsalam said: “On the threshold of the [war’s] eighth year, [the Saudi-led coalition members] should realise that there is no choice but to incline towards peace.”</p>\n<p>A United Nations report published in November gave a projected toll of 377,000 lives by the end of 2021, and last month the UN’s special envoy and its humanitiarian co-ordinator warned that January would “almost certainly” be a record-shattering month for civilian casualties, with air strikes and missile attacks having hit hospitals, telecoms infrastructure, airports, a water facility, a school and a prison. </p>\n<p>In December, the World Food Programme warned that it was running out of funds to continue to provide food assistance to 13 million people in the country.</p>\n<p>Riyadh has been accused of war crimes, yet maintains the support of Western countries including Britain, France and the United States.</p>\n<p>Earlier this month US President Joe Biden reaffirmed his support to Saudi Arabia in a phone call with King Salman bin Abdulaziz.</p>\n<p>The Pentagon confirmed the sale of $650 million (£478m) of air-to-air missiles and a helicopter maintenance deal worth $500 million (£360m) despite Mr Biden claiming last year that arms sales to Saudi Arabia would end. </p>\n  </div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-204-dup-8970791",
+    "url": "https://en.mehrnews.com/news/183892/Saudi-led-coalition-bomb-Yemen-s-Telecommunications-Ministry",
+    "title": "Saudi-led coalition bomb Yemen's Telecommunications Ministry",
+    "content": "<html><head><title>Saudi-led coalition bomb Yemen&apos;s Telecommunications Ministry</title></head><body><div>\n \n \n  <p>Yemen&apos;s al-Masirah television announced Monday morning that the Saudi-led coalition fighter jets had bombed the country&apos;s capital of Sanaa. </p> \n  <p>According to the report, the coalition fighter jets twice targeted the building of the Ministry of Telecommunications &amp; Information Technology. </p> \n  <p>Al-Masirah did not provide further details about the attack.</p> \n  <p>According to the latest reports, the Saudi coalition violated the ceasefire agreement in Al-Hudaidah 233 times in the last 24 hours.</p> \n  <p>Saudi fighter jets also bombed the Harz area in the northwestern Yemeni province of Hajjah 10 times. Saada province has also been targeted several times by Saudi coalition airstrikes.</p> \n  <p>Saudi Arabia, along with the United Arab Emirates (UAE) and with the green light of the United States and Western countries, carried out comprehensive attacks on Yemen since March 26, 2015, to prevent Ansarullah of Yemen from coming to power in the country.</p> \n  <p>Officials of the Yemeni National Salvation Government have repeatedly stressed that the Yemeni army and popular committees will continue to respond to the aggression as long as the Saudi coalition does not stop the war against Yemen and end the siege.</p> \n  <p>Tens of thousands of Yemenis have been injured and martyred in Saudi-led strikes, with the vast majority of them are civilians.</p> \n  <p>The coalition has been also imposing a blockade on the impoverished country’s ports and airports as a part of his aggression which is aimed at restoring power to fugitive former president Abdrabbuh Mansour Hadi.</p> \n  <p>Meanwhile, Yemen is home to the world’s largest humanitarian crisis, with at least 7 million people on the brink of famine and hundreds of thousands suffering from cholera.</p> \n  <p>ZZ/5424557</p> \n \n\n            </div></body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "split",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "near_duplicate",
+    "note": "Both report the same Saudi-led airstrike on Yemen’s telecommunications ministry/building in Sanaa but are independently written articles from different outlets."
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "our_misses",
+  "content_source": "hbase_full"
 }

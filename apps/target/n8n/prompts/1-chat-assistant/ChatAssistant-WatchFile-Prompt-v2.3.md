@@ -59,9 +59,9 @@ Understanding what matters most for a functional WatchFile:
 - DO NOT wait for "complete" information before acting
 - Add elements as they come, refine later
 - Use the specific tool for each element type:
-    - Actor names → `Tool_WatchFile_BuilderActor`
-    - Sources → `Tool_WatchFile_BuilderSource`
-    - Subject refinement → `Tool_WatchFile_BuilderReferenceSubject`
+  - Actor names → `Tool_WatchFile_BuilderActor`
+  - Sources → `Tool_WatchFile_BuilderSource`
+  - Subject refinement → `Tool_WatchFile_BuilderReferenceSubject`
 
 ### Rule 4: PROGRESSIVE COLLECTION (SOURCES-FIRST)
 
@@ -318,15 +318,15 @@ _[Call Tool_WatchFile_BuilderReferenceSubject - sources are in, major update]_
 
 ```json
 {
-    "name": "Source name - min 2 characters",
-    "description_fr": "French description of what this source provides",
-    "description_en": "English description of what this source provides",
-    "type": "Source type: rss_feed | website | blog | social_media:x:user | social_media:linkedin:company | youtube_channel | official_journal | etc.",
-    "url": "Source URL - required",
-    "primaryDomain": "Main domain for icon display (e.g., 'eur-lex.europa.eu')",
-    "query": "Optional search filter to apply",
-    "relevance_fr": "French explanation of WHY this source is valuable for THIS monitoring",
-    "relevance_en": "English explanation of WHY this source is valuable for THIS monitoring"
+  "name": "Source name - min 2 characters",
+  "description_fr": "French description of what this source provides",
+  "description_en": "English description of what this source provides",
+  "type": "Source type: rss_feed | website | blog | social_media:x:user | social_media:linkedin:company | youtube_channel | official_journal | etc.",
+  "url": "Source URL - required",
+  "primaryDomain": "Main domain for icon display (e.g., 'eur-lex.europa.eu')",
+  "query": "Optional search filter to apply",
+  "relevance_fr": "French explanation of WHY this source is valuable for THIS monitoring",
+  "relevance_en": "English explanation of WHY this source is valuable for THIS monitoring"
 }
 ```
 
@@ -334,15 +334,15 @@ _[Call Tool_WatchFile_BuilderReferenceSubject - sources are in, major update]_
 
 ```json
 {
-    "name": "Journal Officiel de l'UE",
-    "description_fr": "Publication officielle des textes juridiques de l'Union Européenne",
-    "description_en": "Official publication of European Union legal texts",
-    "type": "official_journal",
-    "url": "https://eur-lex.europa.eu/",
-    "primaryDomain": "eur-lex.europa.eu",
-    "query": "artificial intelligence OR AI Act",
-    "relevance_fr": "Source primaire pour les textes officiels de l'AI Act et ses amendements",
-    "relevance_en": "Primary source for official AI Act texts and amendments"
+  "name": "Journal Officiel de l'UE",
+  "description_fr": "Publication officielle des textes juridiques de l'Union Européenne",
+  "description_en": "Official publication of European Union legal texts",
+  "type": "official_journal",
+  "url": "https://eur-lex.europa.eu/",
+  "primaryDomain": "eur-lex.europa.eu",
+  "query": "artificial intelligence OR AI Act",
+  "relevance_fr": "Source primaire pour les textes officiels de l'AI Act et ses amendements",
+  "relevance_en": "Primary source for official AI Act texts and amendments"
 }
 ```
 
@@ -361,11 +361,11 @@ _[Call Tool_WatchFile_BuilderReferenceSubject - sources are in, major update]_
 
 ```json
 {
-    "label": "Actor name - min 2 characters",
-    "primaryDomain": "Main website domain (e.g., 'ec.europa.eu') or null",
-    "score": "Importance score 0-100 for THIS watchfile",
-    "explanation_fr": "French explanation of WHY this actor matters for THIS monitoring",
-    "explanation_en": "English explanation of WHY this actor matters for THIS monitoring"
+  "label": "Actor name - min 2 characters",
+  "primaryDomain": "Main website domain (e.g., 'ec.europa.eu') or null",
+  "score": "Importance score 0-100 for THIS watchfile",
+  "explanation_fr": "French explanation of WHY this actor matters for THIS monitoring",
+  "explanation_en": "English explanation of WHY this actor matters for THIS monitoring"
 }
 ```
 
@@ -384,7 +384,7 @@ _[Call Tool_WatchFile_BuilderReferenceSubject - sources are in, major update]_
 
 ```json
 {
-    "referenceSubject": "Natural language query capturing monitoring essence. Include: topic, objective, key sources context, actors if available."
+  "referenceSubject": "Natural language query capturing monitoring essence. Include: topic, objective, key sources context, actors if available."
 }
 ```
 

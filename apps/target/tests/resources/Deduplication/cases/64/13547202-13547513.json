@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13547202",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141349747&origin=inward",
-        "title": "BREAKING 70% NET ELECTRIC COMBINED CYCLE EFFICIENCY WITH CMC GAS TURBINE BLADES",
-        "content": "<html><body>This work focuses on the optimal cycle design criteria for heavy duty gas turbines employing CMC blades. A combined cycle model with detailed description of the cooled gas turbine is used to determine the optimal Turbine Inlet Temperature and pressure ratio for two values of maximum allowed CMC wall temperatures (1300, 1500 °C). Results indicate that the maximum efficiency of the combined cycle is achieved with pressure ratio above 60, posing the need of adopting two shafts for the gas turbine and high temperature materials for the high-pressure compressor. Net electric efficiency above 70% (LHV basis) can be approached with CMC blade wall temperatures of 1300 °C (TIT = 2000 °C) and efficiency values approaching 72% with CMC blade wall temperatures of 1500 °C and TIT of 2200 °C. Compared to current H-class gas turbines, the simple cycle efficiency increases by about 10 percentage points (> 53% vs. 43% LHV basis) and the net specific work/net power output by 66%-110% depending on the pressure ratio and TIT. The most critical challenge to achieve such performance appears to be the temperature gradient across the blade wall and the temperature capability (maximum surface temperature and temperature gradient) of the blade coatings. <br/><br/><br/>Authors: Martelli E., Girardi M., Chiesa P.. <br/><br/>Affiliations: Politecnico di Milano. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13547513",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141349747&origin=inward",
-        "title": "BREAKING 70% NET ELECTRIC COMBINED CYCLE EFFICIENCY WITH CMC GAS TURBINE BLADES",
-        "content": "<html><body>This work focuses on the optimal cycle design criteria for heavy duty gas turbines employing CMC blades. A combined cycle model with detailed description of the cooled gas turbine is used to determine the optimal Turbine Inlet Temperature and pressure ratio for two values of maximum allowed CMC wall temperatures (1300, 1500 °C). Results indicate that the maximum efficiency of the combined cycle is achieved with pressure ratio above 60, posing the need of adopting two shafts for the gas turbine and high temperature materials for the high-pressure compressor. Net electric efficiency above 70% (LHV basis) can be approached with CMC blade wall temperatures of 1300 °C (TIT = 2000 °C) and efficiency values approaching 72% with CMC blade wall temperatures of 1500 °C and TIT of 2200 °C. Compared to current H-class gas turbines, the simple cycle efficiency increases by about 10 percentage points (> 53% vs. 43% LHV basis) and the net specific work/net power output by 66%-110% depending on the pressure ratio and TIT. The most critical challenge to achieve such performance appears to be the temperature gradient across the blade wall and the temperature capability (maximum surface temperature and temperature gradient) of the blade coatings. <br/><br/><br/>Authors: Martelli E., Girardi M., Chiesa P.. <br/><br/>Affiliations: Politecnico di Milano. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "identical"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13547202",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141349747&origin=inward",
+    "title": "BREAKING 70% NET ELECTRIC COMBINED CYCLE EFFICIENCY WITH CMC GAS TURBINE BLADES",
+    "content": "<html><body>This work focuses on the optimal cycle design criteria for heavy duty gas turbines employing CMC blades. A combined cycle model with detailed description of the cooled gas turbine is used to determine the optimal Turbine Inlet Temperature and pressure ratio for two values of maximum allowed CMC wall temperatures (1300, 1500 °C). Results indicate that the maximum efficiency of the combined cycle is achieved with pressure ratio above 60, posing the need of adopting two shafts for the gas turbine and high temperature materials for the high-pressure compressor. Net electric efficiency above 70% (LHV basis) can be approached with CMC blade wall temperatures of 1300 °C (TIT = 2000 °C) and efficiency values approaching 72% with CMC blade wall temperatures of 1500 °C and TIT of 2200 °C. Compared to current H-class gas turbines, the simple cycle efficiency increases by about 10 percentage points (> 53% vs. 43% LHV basis) and the net specific work/net power output by 66%-110% depending on the pressure ratio and TIT. The most critical challenge to achieve such performance appears to be the temperature gradient across the blade wall and the temperature capability (maximum surface temperature and temperature gradient) of the blade coatings. <br/><br/><br/>Authors: Martelli E., Girardi M., Chiesa P.. <br/><br/>Affiliations: Politecnico di Milano. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13547513",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141349747&origin=inward",
+    "title": "BREAKING 70% NET ELECTRIC COMBINED CYCLE EFFICIENCY WITH CMC GAS TURBINE BLADES",
+    "content": "<html><body>This work focuses on the optimal cycle design criteria for heavy duty gas turbines employing CMC blades. A combined cycle model with detailed description of the cooled gas turbine is used to determine the optimal Turbine Inlet Temperature and pressure ratio for two values of maximum allowed CMC wall temperatures (1300, 1500 °C). Results indicate that the maximum efficiency of the combined cycle is achieved with pressure ratio above 60, posing the need of adopting two shafts for the gas turbine and high temperature materials for the high-pressure compressor. Net electric efficiency above 70% (LHV basis) can be approached with CMC blade wall temperatures of 1300 °C (TIT = 2000 °C) and efficiency values approaching 72% with CMC blade wall temperatures of 1500 °C and TIT of 2200 °C. Compared to current H-class gas turbines, the simple cycle efficiency increases by about 10 percentage points (> 53% vs. 43% LHV basis) and the net specific work/net power output by 66%-110% depending on the pressure ratio and TIT. The most critical challenge to achieve such performance appears to be the temperature gradient across the blade wall and the temperature capability (maximum surface temperature and temperature gradient) of the blade coatings. <br/><br/><br/>Authors: Martelli E., Girardi M., Chiesa P.. <br/><br/>Affiliations: Politecnico di Milano. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

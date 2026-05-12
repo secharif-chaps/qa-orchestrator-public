@@ -172,17 +172,17 @@ Assign relevance score **< 20** if ANY of these apply:
 
 ```json
 {
-    "relevanceScore": 92,
-    "scoringBreakdown": {
-        "entityMatching": 30,
-        "intentAlignment": 38,
-        "informationQuality": 18,
-        "contextualFit": 6
-    },
-    "justification": "Snippet directly names Tesla's main competitors (BYD, Volkswagen, Hyundai) with market share data, perfectly addressing the question. High quality information with quantitative backing.",
-    "keyEntitiesFound": ["BYD", "Volkswagen", "Hyundai", "Tesla", "EV market", "market share"],
-    "confidenceLevel": "High",
-    "recommendedAction": "include"
+  "relevanceScore": 92,
+  "scoringBreakdown": {
+    "entityMatching": 30,
+    "intentAlignment": 38,
+    "informationQuality": 18,
+    "contextualFit": 6
+  },
+  "justification": "Snippet directly names Tesla's main competitors (BYD, Volkswagen, Hyundai) with market share data, perfectly addressing the question. High quality information with quantitative backing.",
+  "keyEntitiesFound": ["BYD", "Volkswagen", "Hyundai", "Tesla", "EV market", "market share"],
+  "confidenceLevel": "High",
+  "recommendedAction": "include"
 }
 ```
 
@@ -194,9 +194,9 @@ Assign relevance score **< 20** if ANY of these apply:
 - **keyEntitiesFound**: List of relevant entities/concepts detected
 - **confidenceLevel**: `"High"` (80-100), `"Medium"` (50-79), `"Low"` (0-49)
 - **recommendedAction**:
-    - `"include"` (score ≥ 50)
-    - `"review"` (score 40-49)
-    - `"reject"` (score < 40)
+  - `"include"` (score ≥ 50)
+  - `"review"` (score 40-49)
+  - `"reject"` (score < 40)
 
 ---
 
@@ -208,13 +208,13 @@ Assign relevance score **< 20** if ANY of these apply:
 
 ```json
 {
-    "strategicQuestion": {
-        "questionEN": "Who are the top 5 competitors of Tesla in the global EV market?"
-    },
-    "searchResult": {
-        "title": "Tesla's Top EV Competitors in 2024",
-        "snippet": "BYD, Volkswagen, and Hyundai are emerging as Tesla's strongest competitors. BYD overtook Tesla in Q3 2024 with 431,603 units sold vs Tesla's 435,059. Other major players include Ford and GM in North America."
-    }
+  "strategicQuestion": {
+    "questionEN": "Who are the top 5 competitors of Tesla in the global EV market?"
+  },
+  "searchResult": {
+    "title": "Tesla's Top EV Competitors in 2024",
+    "snippet": "BYD, Volkswagen, and Hyundai are emerging as Tesla's strongest competitors. BYD overtook Tesla in Q3 2024 with 431,603 units sold vs Tesla's 435,059. Other major players include Ford and GM in North America."
+  }
 }
 ```
 
@@ -222,26 +222,26 @@ Assign relevance score **< 20** if ANY of these apply:
 
 ```json
 {
-    "relevanceScore": 92,
-    "scoringBreakdown": {
-        "entityMatching": 30,
-        "intentAlignment": 40,
-        "informationQuality": 20,
-        "contextualFit": 2
-    },
-    "justification": "Directly answers question by naming top competitors (BYD, Volkswagen, Hyundai, Ford, GM) with specific Q3 2024 sales data. Perfect entity match and intent alignment.",
-    "keyEntitiesFound": [
-        "BYD",
-        "Volkswagen",
-        "Hyundai",
-        "Ford",
-        "GM",
-        "Tesla",
-        "Q3 2024",
-        "sales data"
-    ],
-    "confidenceLevel": "High",
-    "recommendedAction": "include"
+  "relevanceScore": 92,
+  "scoringBreakdown": {
+    "entityMatching": 30,
+    "intentAlignment": 40,
+    "informationQuality": 20,
+    "contextualFit": 2
+  },
+  "justification": "Directly answers question by naming top competitors (BYD, Volkswagen, Hyundai, Ford, GM) with specific Q3 2024 sales data. Perfect entity match and intent alignment.",
+  "keyEntitiesFound": [
+    "BYD",
+    "Volkswagen",
+    "Hyundai",
+    "Ford",
+    "GM",
+    "Tesla",
+    "Q3 2024",
+    "sales data"
+  ],
+  "confidenceLevel": "High",
+  "recommendedAction": "include"
 }
 ```
 
@@ -251,13 +251,13 @@ Assign relevance score **< 20** if ANY of these apply:
 
 ```json
 {
-    "strategicQuestion": {
-        "questionEN": "Who are the top 5 competitors of Tesla in the global EV market?"
-    },
-    "searchResult": {
-        "title": "Electric Vehicle Market Landscape 2024",
-        "snippet": "The electric vehicle market is increasingly competitive with traditional automakers ramping up EV production. Market dynamics are shifting as new players enter the space and established brands pivot to electric."
-    }
+  "strategicQuestion": {
+    "questionEN": "Who are the top 5 competitors of Tesla in the global EV market?"
+  },
+  "searchResult": {
+    "title": "Electric Vehicle Market Landscape 2024",
+    "snippet": "The electric vehicle market is increasingly competitive with traditional automakers ramping up EV production. Market dynamics are shifting as new players enter the space and established brands pivot to electric."
+  }
 }
 ```
 
@@ -265,23 +265,17 @@ Assign relevance score **< 20** if ANY of these apply:
 
 ```json
 {
-    "relevanceScore": 68,
-    "scoringBreakdown": {
-        "entityMatching": 15,
-        "intentAlignment": 30,
-        "informationQuality": 15,
-        "contextualFit": 8
-    },
-    "justification": "Provides market context about EV competition but lacks specific competitor names. Related to the topic but doesn't directly answer the question.",
-    "keyEntitiesFound": [
-        "electric vehicle",
-        "market",
-        "competitive",
-        "automakers",
-        "EV production"
-    ],
-    "confidenceLevel": "Medium",
-    "recommendedAction": "include"
+  "relevanceScore": 68,
+  "scoringBreakdown": {
+    "entityMatching": 15,
+    "intentAlignment": 30,
+    "informationQuality": 15,
+    "contextualFit": 8
+  },
+  "justification": "Provides market context about EV competition but lacks specific competitor names. Related to the topic but doesn't directly answer the question.",
+  "keyEntitiesFound": ["electric vehicle", "market", "competitive", "automakers", "EV production"],
+  "confidenceLevel": "Medium",
+  "recommendedAction": "include"
 }
 ```
 
@@ -291,13 +285,13 @@ Assign relevance score **< 20** if ANY of these apply:
 
 ```json
 {
-    "strategicQuestion": {
-        "questionEN": "Who are the top 5 competitors of Tesla in the global EV market?"
-    },
-    "searchResult": {
-        "title": "Tesla Careers: Join Our Team",
-        "snippet": "Tesla is hiring engineers, designers, and production specialists to join our mission of accelerating the world's transition to sustainable energy. Apply now for open positions."
-    }
+  "strategicQuestion": {
+    "questionEN": "Who are the top 5 competitors of Tesla in the global EV market?"
+  },
+  "searchResult": {
+    "title": "Tesla Careers: Join Our Team",
+    "snippet": "Tesla is hiring engineers, designers, and production specialists to join our mission of accelerating the world's transition to sustainable energy. Apply now for open positions."
+  }
 }
 ```
 
@@ -305,17 +299,17 @@ Assign relevance score **< 20** if ANY of these apply:
 
 ```json
 {
-    "relevanceScore": 25,
-    "scoringBreakdown": {
-        "entityMatching": 5,
-        "intentAlignment": 5,
-        "informationQuality": 10,
-        "contextualFit": 5
-    },
-    "justification": "Completely unrelated to competitors analysis. Job posting with keyword match on 'Tesla' only. No informational value for the strategic question.",
-    "keyEntitiesFound": ["Tesla"],
-    "confidenceLevel": "Low",
-    "recommendedAction": "reject"
+  "relevanceScore": 25,
+  "scoringBreakdown": {
+    "entityMatching": 5,
+    "intentAlignment": 5,
+    "informationQuality": 10,
+    "contextualFit": 5
+  },
+  "justification": "Completely unrelated to competitors analysis. Job posting with keyword match on 'Tesla' only. No informational value for the strategic question.",
+  "keyEntitiesFound": ["Tesla"],
+  "confidenceLevel": "Low",
+  "recommendedAction": "reject"
 }
 ```
 
@@ -325,13 +319,13 @@ Assign relevance score **< 20** if ANY of these apply:
 
 ```json
 {
-    "strategicQuestion": {
-        "questionEN": "What are the recent innovations in solid-state battery technology?"
-    },
-    "searchResult": {
-        "title": "Battery Technology Evolution in Electric Vehicles",
-        "snippet": "Electric vehicles are seeing rapid advancements in battery technology. From lithium-ion improvements to next-generation chemistries, the race for better range and faster charging continues."
-    }
+  "strategicQuestion": {
+    "questionEN": "What are the recent innovations in solid-state battery technology?"
+  },
+  "searchResult": {
+    "title": "Battery Technology Evolution in Electric Vehicles",
+    "snippet": "Electric vehicles are seeing rapid advancements in battery technology. From lithium-ion improvements to next-generation chemistries, the race for better range and faster charging continues."
+  }
 }
 ```
 
@@ -339,22 +333,17 @@ Assign relevance score **< 20** if ANY of these apply:
 
 ```json
 {
-    "relevanceScore": 48,
-    "scoringBreakdown": {
-        "entityMatching": 12,
-        "intentAlignment": 20,
-        "informationQuality": 10,
-        "contextualFit": 6
-    },
-    "justification": "Mentions battery technology generally but doesn't specifically address solid-state innovations. Requires inference and lacks specificity on the exact technology asked about.",
-    "keyEntitiesFound": [
-        "battery technology",
-        "electric vehicles",
-        "lithium-ion",
-        "next-generation"
-    ],
-    "confidenceLevel": "Low",
-    "recommendedAction": "review"
+  "relevanceScore": 48,
+  "scoringBreakdown": {
+    "entityMatching": 12,
+    "intentAlignment": 20,
+    "informationQuality": 10,
+    "contextualFit": 6
+  },
+  "justification": "Mentions battery technology generally but doesn't specifically address solid-state innovations. Requires inference and lacks specificity on the exact technology asked about.",
+  "keyEntitiesFound": ["battery technology", "electric vehicles", "lithium-ion", "next-generation"],
+  "confidenceLevel": "Low",
+  "recommendedAction": "review"
 }
 ```
 

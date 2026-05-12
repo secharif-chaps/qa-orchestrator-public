@@ -349,13 +349,13 @@ ELSE:
 
 ```json
 {
-    "referenceSubject": {
-        "human": {
-            "fr": "string (markdown, French, all 6 sections present)",
-            "en": "string (markdown, English, all 6 sections present)"
-        },
-        "llm": "string (markdown, English only, full scoring criteria)"
-    }
+  "referenceSubject": {
+    "human": {
+      "fr": "string (markdown, French, all 6 sections present)",
+      "en": "string (markdown, English, all 6 sections present)"
+    },
+    "llm": "string (markdown, English only, full scoring criteria)"
+  }
 }
 ```
 
@@ -381,16 +381,16 @@ This field now contains a **structured object** with per-paragraph content and c
 
 ```json
 {
-    "paragraphs": {
-        "what": { "content": "...", "confidence": "low|medium|high" },
-        "why": { "content": "...", "confidence": "low|medium|high" },
-        "who": { "content": "...", "confidence": "low|medium|high" },
-        "where": { "content": "...", "confidence": "low|medium|high" },
-        "scope": { "content": "...", "confidence": "low|medium|high" },
-        "exclusions": { "content": "...", "confidence": "low|medium|high" }
-    },
-    "human": { "fr": "...", "en": "..." },
-    "llm": "..."
+  "paragraphs": {
+    "what": { "content": "...", "confidence": "low|medium|high" },
+    "why": { "content": "...", "confidence": "low|medium|high" },
+    "who": { "content": "...", "confidence": "low|medium|high" },
+    "where": { "content": "...", "confidence": "low|medium|high" },
+    "scope": { "content": "...", "confidence": "low|medium|high" },
+    "exclusions": { "content": "...", "confidence": "low|medium|high" }
+  },
+  "human": { "fr": "...", "en": "..." },
+  "llm": "..."
 }
 ```
 

@@ -20,37 +20,37 @@ Previously, `useSourcesStore` was responsible for fetching the list of sources a
 
 ```typescript
 export const useSourcesStore = defineStore('sources', () => {
-    const sources = ref<Source[]>([])
-    const totalItems = ref(0)
-    const error = ref<string | null>(null)
-    const page = ref(1)
-    const itemsPerPage = ref(10)
-    const isLoading = ref(false)
+  const sources = ref<Source[]>([])
+  const totalItems = ref(0)
+  const error = ref<string | null>(null)
+  const page = ref(1)
+  const itemsPerPage = ref(10)
+  const isLoading = ref(false)
 
-    async function fetchSources(watchFileId: string, newPage?: number, newItemsPerPage?: number) {
-        isLoading.value = true
-        error.value = null
-        // ...
-        try {
-            const response = await api.get(/* ... */)
-            sources.value = response.data.member
-            totalItems.value = response.data.totalItems
-        } catch (e) {
-            error.value = e
-        } finally {
-            isLoading.value = false
-        }
+  async function fetchSources(watchFileId: string, newPage?: number, newItemsPerPage?: number) {
+    isLoading.value = true
+    error.value = null
+    // ...
+    try {
+      const response = await api.get(/* ... */)
+      sources.value = response.data.member
+      totalItems.value = response.data.totalItems
+    } catch (e) {
+      error.value = e
+    } finally {
+      isLoading.value = false
     }
+  }
 
-    return {
-        sources,
-        totalItems,
-        isLoading,
-        error,
-        page,
-        itemsPerPage,
-        fetchSources,
-    }
+  return {
+    sources,
+    totalItems,
+    isLoading,
+    error,
+    page,
+    itemsPerPage,
+    fetchSources,
+  }
 })
 ```
 
@@ -68,21 +68,21 @@ const sourcesStore = useSourcesStore()
 const { sources, isLoading, error, totalItems, itemsPerPage, page } = storeToRefs(sourcesStore)
 
 const fetchSources = () => {
-    sourcesStore.fetchSources(props.watchFileId, page.value, itemsPerPage.value)
+  sourcesStore.fetchSources(props.watchFileId, page.value, itemsPerPage.value)
 }
 
 onMounted(() => {
-    fetchSources()
+  fetchSources()
 })
 
 watch(page, () => {
-    fetchSources()
+  fetchSources()
 })
 </script>
 
 <template>
-    <SectionListHeader @refresh="fetchSources" />
-    <!-- ... -->
+  <SectionListHeader @refresh="fetchSources" />
+  <!-- ... -->
 </template>
 ```
 
@@ -102,18 +102,18 @@ import type { JsonLdCollection } from '~/types/jsonld'
 import type { Source } from '~/types/source'
 
 export const getCollectionSource = async (
-    watchFileId: string,
-    params: { page?: number; itemsPerPage?: number },
+  watchFileId: string,
+  params: { page?: number; itemsPerPage?: number },
 ) => {
-    const response = await useApi().get<JsonLdCollection<Source>>(
-        `/watch_files/${watchFileId}/sources`,
-        { query: params },
-    )
+  const response = await useApi().get<JsonLdCollection<Source>>(
+    `/watch_files/${watchFileId}/sources`,
+    { query: params },
+  )
 
-    return {
-        items: response.data.member,
-        totalItems: response.data.totalItems,
-    }
+  return {
+    items: response.data.member,
+    totalItems: response.data.totalItems,
+  }
 }
 ```
 
@@ -128,21 +128,20 @@ import { getCollectionSource } from '@/api/sources'
 import { defineQueryOptions } from '@pinia/colada'
 
 export const SOURCES_QUERY_KEYS = {
-    root: ['sources'] as const,
-    withFilters: (filters: Record<string, any>) =>
-        [...SOURCES_QUERY_KEYS.root, { filters }] as const,
+  root: ['sources'] as const,
+  withFilters: (filters: Record<string, any>) => [...SOURCES_QUERY_KEYS.root, { filters }] as const,
 }
 
 export const getCollectionSourceQuery = defineQueryOptions(
-    (filters: { watchFileId: string; page?: number; itemsPerPage?: number }) => ({
-        key: SOURCES_QUERY_KEYS.withFilters(filters),
-        query: () =>
-            getCollectionSource(filters.watchFileId, {
-                page: filters.page,
-                itemsPerPage: filters.itemsPerPage,
-            }),
-        enabled: !!filters.watchFileId,
-    }),
+  (filters: { watchFileId: string; page?: number; itemsPerPage?: number }) => ({
+    key: SOURCES_QUERY_KEYS.withFilters(filters),
+    query: () =>
+      getCollectionSource(filters.watchFileId, {
+        page: filters.page,
+        itemsPerPage: filters.itemsPerPage,
+      }),
+    enabled: !!filters.watchFileId,
+  }),
 )
 ```
 
@@ -167,9 +166,9 @@ const sourcesStore = useSourcesStore()
 const { itemsPerPage, page } = storeToRefs(sourcesStore)
 
 const { data, isLoading, refetch, error } = useQuery(getCollectionSourceQuery, () => ({
-    watchFileId: props.watchFileId,
-    page: page.value,
-    itemsPerPage: itemsPerPage.value,
+  watchFileId: props.watchFileId,
+  page: page.value,
+  itemsPerPage: itemsPerPage.value,
 }))
 
 // Data is now derived from the query result
@@ -178,9 +177,9 @@ const totalItems = computed(() => data.value?.totalItems ?? 0)
 </script>
 
 <template>
-    <!-- The refresh event now calls the refetch function from useQuery -->
-    <SectionListHeader @refresh="refetch()" />
-    <!-- ... -->
+  <!-- The refresh event now calls the refetch function from useQuery -->
+  <SectionListHeader @refresh="refetch()" />
+  <!-- ... -->
 </template>
 ```
 
@@ -195,22 +194,22 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useSourcesStore = defineStore('sources', () => {
-    // State related to the server cache is removed.
-    // State for UI controls remains.
-    const page = ref(1)
-    const itemsPerPage = ref(10)
+  // State related to the server cache is removed.
+  // State for UI controls remains.
+  const page = ref(1)
+  const itemsPerPage = ref(10)
 
-    function reset() {
-        page.value = 1
-        itemsPerPage.value = 10
-    }
+  function reset() {
+    page.value = 1
+    itemsPerPage.value = 10
+  }
 
-    return {
-        // state
-        page,
-        itemsPerPage,
-        // methods
-        reset,
-    }
+  return {
+    // state
+    page,
+    itemsPerPage,
+    // methods
+    reset,
+  }
 })
 ```

@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13378419",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135219062&origin=inward",
-        "title": "Nonlinear Behavioral Modeling and Real-Time Simulation of Electric Propulsion System for the High-Fidelity X-in-the-Loop Applications",
-        "content": "<html><body>Electric propulsion system (EPS) is an important enabling technology for electrified transportation. The short time-to-market of such a system relies on real-time simulation-based efficient X-in-the-loop testing. To ensure high fidelity, the real-time simulation should include the detailed behavior as much as possible while complying with the constraints of the model computing time. Therefore, a nonlinear behavioral real-time modeling approach is proposed for the EPS in this paper, including the adaptive curve-fitting (ACF) based device-level power electronics model and the nonlinear flux-linkage based spatial harmonic (FLSH) PMSM model. The real-time models are designed and implemented on the NI FLEXRIO FPGA module. Ultra-low real-time simulation latencies are realized for the ACF power converter model and the FLSH PMSM model, which are 25 ns and 160 ns respectively. The simulation accuracies are consistent with the offline simulation tools. Moreover, the ACF model and FLSH model are used in the real-time simulation of a fuel cell electric vehicle (FCEV) EPS together with the generic fuel cell model, battery model, and vehicle dynamic motion model. The real-time simulation results prove the proposed EPS real-time model is an excellent candidate for real-time simulation applications. <br/><br/><br/>Authors: Bai H., Li Q., Luo H., Huangfu Y., Gao F.. <br/><br/>Affiliations: Xi'an University of Science and Technology, Université de Technologie de Belfort-Montbéliard, Northwestern Polytechnical University. <br/><br/>Publication: IEEE Transactions on Transportation Electrification, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13379269",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135219062&origin=inward",
-        "title": "Nonlinear Behavioral Modeling and Real-Time Simulation of Electric Propulsion System for the High-Fidelity X-in-the-Loop Applications",
-        "content": "<html><body>Electric propulsion system (EPS) is an important enabling technology for electrified transportation. The short time-to-market of such a system relies on real-time simulation-based efficient X-in-the-loop testing. To ensure high fidelity, the real-time simulation should include the detailed behavior as much as possible while complying with the constraints of the model computing time. Therefore, a nonlinear behavioral real-time modeling approach is proposed for the EPS in this paper, including the adaptive curve-fitting (ACF) based device-level power electronics model and the nonlinear flux-linkage based spatial harmonic (FLSH) PMSM model. The real-time models are designed and implemented on the NI FLEXRIO FPGA module. Ultra-low real-time simulation latencies are realized for the ACF power converter model and the FLSH PMSM model, which are 25 ns and 160 ns respectively. The simulation accuracies are consistent with the offline simulation tools. Moreover, the ACF model and FLSH model are used in the real-time simulation of a fuel cell electric vehicle (FCEV) EPS together with the generic fuel cell model, battery model, and vehicle dynamic motion model. The real-time simulation results prove the proposed EPS real-time model is an excellent candidate for real-time simulation applications. <br/><br/><br/>Authors: Bai H., Li Q., Luo H., Huangfu Y., Gao F.. <br/><br/>Affiliations: Xi'an University of Science and Technology, Université de Technologie de Belfort-Montbéliard, Northwestern Polytechnical University. <br/><br/>Publication: IEEE Transactions on Transportation Electrification, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13378419",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135219062&origin=inward",
+    "title": "Nonlinear Behavioral Modeling and Real-Time Simulation of Electric Propulsion System for the High-Fidelity X-in-the-Loop Applications",
+    "content": "<html><body>Electric propulsion system (EPS) is an important enabling technology for electrified transportation. The short time-to-market of such a system relies on real-time simulation-based efficient X-in-the-loop testing. To ensure high fidelity, the real-time simulation should include the detailed behavior as much as possible while complying with the constraints of the model computing time. Therefore, a nonlinear behavioral real-time modeling approach is proposed for the EPS in this paper, including the adaptive curve-fitting (ACF) based device-level power electronics model and the nonlinear flux-linkage based spatial harmonic (FLSH) PMSM model. The real-time models are designed and implemented on the NI FLEXRIO FPGA module. Ultra-low real-time simulation latencies are realized for the ACF power converter model and the FLSH PMSM model, which are 25 ns and 160 ns respectively. The simulation accuracies are consistent with the offline simulation tools. Moreover, the ACF model and FLSH model are used in the real-time simulation of a fuel cell electric vehicle (FCEV) EPS together with the generic fuel cell model, battery model, and vehicle dynamic motion model. The real-time simulation results prove the proposed EPS real-time model is an excellent candidate for real-time simulation applications. <br/><br/><br/>Authors: Bai H., Li Q., Luo H., Huangfu Y., Gao F.. <br/><br/>Affiliations: Xi'an University of Science and Technology, Université de Technologie de Belfort-Montbéliard, Northwestern Polytechnical University. <br/><br/>Publication: IEEE Transactions on Transportation Electrification, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13379269",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135219062&origin=inward",
+    "title": "Nonlinear Behavioral Modeling and Real-Time Simulation of Electric Propulsion System for the High-Fidelity X-in-the-Loop Applications",
+    "content": "<html><body>Electric propulsion system (EPS) is an important enabling technology for electrified transportation. The short time-to-market of such a system relies on real-time simulation-based efficient X-in-the-loop testing. To ensure high fidelity, the real-time simulation should include the detailed behavior as much as possible while complying with the constraints of the model computing time. Therefore, a nonlinear behavioral real-time modeling approach is proposed for the EPS in this paper, including the adaptive curve-fitting (ACF) based device-level power electronics model and the nonlinear flux-linkage based spatial harmonic (FLSH) PMSM model. The real-time models are designed and implemented on the NI FLEXRIO FPGA module. Ultra-low real-time simulation latencies are realized for the ACF power converter model and the FLSH PMSM model, which are 25 ns and 160 ns respectively. The simulation accuracies are consistent with the offline simulation tools. Moreover, the ACF model and FLSH model are used in the real-time simulation of a fuel cell electric vehicle (FCEV) EPS together with the generic fuel cell model, battery model, and vehicle dynamic motion model. The real-time simulation results prove the proposed EPS real-time model is an excellent candidate for real-time simulation applications. <br/><br/><br/>Authors: Bai H., Li Q., Luo H., Huangfu Y., Gao F.. <br/><br/>Affiliations: Xi'an University of Science and Technology, Université de Technologie de Belfort-Montbéliard, Northwestern Polytechnical University. <br/><br/>Publication: IEEE Transactions on Transportation Electrification, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

@@ -1,36 +1,36 @@
 {
-    "account_id": 204,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 51,
-    "master": {
-        "id": "legacy-204-master-8970787",
-        "url": "https://thearabweekly.com/saudi-coalition-hits-targets-yemen-capital-after-drone-attack",
-        "title": "Saudi coalition hits targets in Yemen capital after drone attack",
-        "content": "<html><head><title>Saudi coalition hits targets in Yemen capital after drone attack</title></head><body><div><p>RIYADH -</p>\n\n<p>The Saudi-led coalition fighting Iran-backed rebels in Yemen destroyed a communications system on Monday used for drone attacks and located near the telecoms ministry in Sana’a, it said in a statement.</p>\n\n<p>Riyadh intervened in the Yemeni civil war in 2015 to support the government against the Houthi militias, who control a large part of northern Yemen, including the capital Sana’a.</p>\n\n<p>“We have destroyed a communication system used to operate drone control stations,” the coalition was quoted as saying by the official Saudi news agency SPA.</p>\n\n<p>“The Houthis are using the ministry of telecommunications and information technology in Sana’a for hostile operations,” it added.</p>\n\n<p>A correspondent in Sana’a confirmed coalition air strikes had targeted several areas of the capital around the ministry.</p>\n\n<p>It was not immediately possible to determine if there were any casualties.</p>\n\n<p>It was the first time the coalition has targeted a civilian ministry, having so far only attacked the defence ministry.</p>\n\n<p>The coalition said the raids were in response to a drone attack Thursday on a Saudi airport near the border which left 12 injured by falling debris after the Saudi military blew up the “bomb-laden” projectile.</p>\n\n<p>The coalition had warned it would strike positions from which the Houthis launch drones in Sana’a and asked civilians to leave civilian areas used for military purposes.</p>\n\n<p>“The Houthis are using state ministries to launch hostile operations,” the coalition said.</p>\n\n<p>Yemen’s Houthis have frequently launched drone attacks at targets in the kingdom including airports and oil installations.</p>\n\n<p>The conflict has seen an escalation in recent months as the coalition has stepped up anti-Houthi offensives.</p>\n\n<p>Meanwhile, the militias have also increased attacks on Saudi Arabia and its fellow coalition member the United Arab Emirates.</p>\n\n<p>Yemen’s civil war broke out in 2014 when the Houthis seized Sana’a, prompting the Saudi-led coalition to intervene the following year to prop up the internationally-recognised government.</p>\n\n<p>Hundreds of thousands of people have been killed directly or indirectly in the conflict, while millions have been displaced in what the UN calls the world’s biggest humanitarian crisis.</p>\n\n\n</div></body></html>"
-    },
-    "candidate": {
-        "id": "legacy-204-dup-8970797",
-        "url": "https://www.thenationalnews.com/gulf-news/saudi-arabia/2022/02/14/saudi-led-coalition-hits-houthi-telecoms-system-in-yemens-sanaa/",
-        "title": "Saudi-led coalition hits Houthi telecoms system in Yemen’s Sanaa",
-        "content": "<html><head><title>Saudi-led coalition hits Houthi telecoms system in Yemen’s Sanaa</title></head><body><p>The <a href=\"https://www.thenationalnews.com/tags/saudi-arabia/\" target=\"_blank\">Saudi-led coalition</a> fighting in <a href=\"https://www.thenationalnews.com/tags/yemen/\" target=\"_blank\">Yemen </a>said on Monday that it had destroyed a Houthi telecommunication system used to control drones, after coalition forces asked civilians in Yemeni ministries in the capital Sanaa to vacate the area.</p><p>“We have destroyed a communication system used to operate drone control stations,” the coalition was quoted as saying by the Saudi Press Agency.</p><p>“The Houthis are using the Ministry of Telecommunications and Information Technology in Sanaa for hostile operations.”</p><div><p>READ MORE:</p><div><img src=\"https://thenational-the-national-prod.cdn.arcpublishing.com/resizer/fv-M106PP28CwG3ndNWRIlth03M=/377x0/filters:format(jpg):quality(70)/cloudfront-eu-central-1.images.arcpublishing.com/thenational/D4TDPHONLSGTGOKNGX22SC4LDM.jpg\"/></div></div><p>The strikes were aimed at a ground station for satellites in the vicinity of the telecommunication ministry in northern Sanaa, residents told <i>Reuters</i>.</p><p>The coalition said the latest operation took place as a response to a Houthi drone attack on Saudi Arabia&apos;s <a href=\"https://www.thenationalnews.com/gulf-news/saudi-arabia/2022/02/10/saudi-led-coalition-destroys-drone-launched-towards-abha-airport-4-injured/\" target=\"_blank\">Abha international airport</a>, which left 12 people wounded on Thursday.</p><p>The wounded, who have not been identified, include travellers and workers of various nationalities, said the Saudi-led military coalition. The coalition is supporting Yemen’s internationally recognised government against the Houthis.</p><p>Houthi attacks have become increasingly common, with air defence teams <a href=\"https://www.thenationalnews.com/uae/2022/01/18/houthi-terror-attack-what-drones-do-the-terrorists-have/\" target=\"_blank\">intercepting rockets and drones</a> on an almost daily basis.</p><p>The Houthis also often aim at Abha airport, which lies close to the Yemeni border in Saudi Arabia’s south. Most of their launches are intercepted but a few people have been killed and several wounded.</p><p>The Houthi drone and missile programme has, since the war began in 2015, become increasingly sophisticated. Experts and officials say the Yemeni rebels have been aided by Iran and its main proxy Hezbollah.</p><p>Updated: February 14th 2022, 5:21 AM</p></body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "split",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "near_duplicate",
-        "note": "Both articles report the same coalition strike on a Houthi telecoms/drone system in Sanaa after the Abha airport drone attack, but are independently written pieces from different outlets."
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "our_misses",
-    "content_source": "hbase_full"
+  "account_id": 204,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 51,
+  "master": {
+    "id": "legacy-204-master-8970787",
+    "url": "https://thearabweekly.com/saudi-coalition-hits-targets-yemen-capital-after-drone-attack",
+    "title": "Saudi coalition hits targets in Yemen capital after drone attack",
+    "content": "<html><head><title>Saudi coalition hits targets in Yemen capital after drone attack</title></head><body><div><p>RIYADH -</p>\n\n<p>The Saudi-led coalition fighting Iran-backed rebels in Yemen destroyed a communications system on Monday used for drone attacks and located near the telecoms ministry in Sana’a, it said in a statement.</p>\n\n<p>Riyadh intervened in the Yemeni civil war in 2015 to support the government against the Houthi militias, who control a large part of northern Yemen, including the capital Sana’a.</p>\n\n<p>“We have destroyed a communication system used to operate drone control stations,” the coalition was quoted as saying by the official Saudi news agency SPA.</p>\n\n<p>“The Houthis are using the ministry of telecommunications and information technology in Sana’a for hostile operations,” it added.</p>\n\n<p>A correspondent in Sana’a confirmed coalition air strikes had targeted several areas of the capital around the ministry.</p>\n\n<p>It was not immediately possible to determine if there were any casualties.</p>\n\n<p>It was the first time the coalition has targeted a civilian ministry, having so far only attacked the defence ministry.</p>\n\n<p>The coalition said the raids were in response to a drone attack Thursday on a Saudi airport near the border which left 12 injured by falling debris after the Saudi military blew up the “bomb-laden” projectile.</p>\n\n<p>The coalition had warned it would strike positions from which the Houthis launch drones in Sana’a and asked civilians to leave civilian areas used for military purposes.</p>\n\n<p>“The Houthis are using state ministries to launch hostile operations,” the coalition said.</p>\n\n<p>Yemen’s Houthis have frequently launched drone attacks at targets in the kingdom including airports and oil installations.</p>\n\n<p>The conflict has seen an escalation in recent months as the coalition has stepped up anti-Houthi offensives.</p>\n\n<p>Meanwhile, the militias have also increased attacks on Saudi Arabia and its fellow coalition member the United Arab Emirates.</p>\n\n<p>Yemen’s civil war broke out in 2014 when the Houthis seized Sana’a, prompting the Saudi-led coalition to intervene the following year to prop up the internationally-recognised government.</p>\n\n<p>Hundreds of thousands of people have been killed directly or indirectly in the conflict, while millions have been displaced in what the UN calls the world’s biggest humanitarian crisis.</p>\n\n\n</div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-204-dup-8970797",
+    "url": "https://www.thenationalnews.com/gulf-news/saudi-arabia/2022/02/14/saudi-led-coalition-hits-houthi-telecoms-system-in-yemens-sanaa/",
+    "title": "Saudi-led coalition hits Houthi telecoms system in Yemen’s Sanaa",
+    "content": "<html><head><title>Saudi-led coalition hits Houthi telecoms system in Yemen’s Sanaa</title></head><body><p>The <a href=\"https://www.thenationalnews.com/tags/saudi-arabia/\" target=\"_blank\">Saudi-led coalition</a> fighting in <a href=\"https://www.thenationalnews.com/tags/yemen/\" target=\"_blank\">Yemen </a>said on Monday that it had destroyed a Houthi telecommunication system used to control drones, after coalition forces asked civilians in Yemeni ministries in the capital Sanaa to vacate the area.</p><p>“We have destroyed a communication system used to operate drone control stations,” the coalition was quoted as saying by the Saudi Press Agency.</p><p>“The Houthis are using the Ministry of Telecommunications and Information Technology in Sanaa for hostile operations.”</p><div><p>READ MORE:</p><div><img src=\"https://thenational-the-national-prod.cdn.arcpublishing.com/resizer/fv-M106PP28CwG3ndNWRIlth03M=/377x0/filters:format(jpg):quality(70)/cloudfront-eu-central-1.images.arcpublishing.com/thenational/D4TDPHONLSGTGOKNGX22SC4LDM.jpg\"/></div></div><p>The strikes were aimed at a ground station for satellites in the vicinity of the telecommunication ministry in northern Sanaa, residents told <i>Reuters</i>.</p><p>The coalition said the latest operation took place as a response to a Houthi drone attack on Saudi Arabia&apos;s <a href=\"https://www.thenationalnews.com/gulf-news/saudi-arabia/2022/02/10/saudi-led-coalition-destroys-drone-launched-towards-abha-airport-4-injured/\" target=\"_blank\">Abha international airport</a>, which left 12 people wounded on Thursday.</p><p>The wounded, who have not been identified, include travellers and workers of various nationalities, said the Saudi-led military coalition. The coalition is supporting Yemen’s internationally recognised government against the Houthis.</p><p>Houthi attacks have become increasingly common, with air defence teams <a href=\"https://www.thenationalnews.com/uae/2022/01/18/houthi-terror-attack-what-drones-do-the-terrorists-have/\" target=\"_blank\">intercepting rockets and drones</a> on an almost daily basis.</p><p>The Houthis also often aim at Abha airport, which lies close to the Yemeni border in Saudi Arabia’s south. Most of their launches are intercepted but a few people have been killed and several wounded.</p><p>The Houthi drone and missile programme has, since the war began in 2015, become increasingly sophisticated. Experts and officials say the Yemeni rebels have been aided by Iran and its main proxy Hezbollah.</p><p>Updated: February 14th 2022, 5:21 AM</p></body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "split",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "near_duplicate",
+    "note": "Both articles report the same coalition strike on a Houthi telecoms/drone system in Sanaa after the Abha airport drone attack, but are independently written pieces from different outlets."
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "our_misses",
+  "content_source": "hbase_full"
 }

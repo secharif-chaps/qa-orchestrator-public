@@ -366,17 +366,17 @@ How can I help configure your monitoring?
 
 ```json
 {
-    "primaryType": "reputational",
-    "primarySubtype": "negative",
-    "confidenceScore": 85,
-    "topics": [
-        {
-            "label": "Topic EN",
-            "keywords": ["kw1", "kw2"],
-            "relevanceScore": 90,
-            "searchQueryTemplate": "{entity} keywords {{ $now.format('yyyy') }}"
-        }
-    ]
+  "primaryType": "reputational",
+  "primarySubtype": "negative",
+  "confidenceScore": 85,
+  "topics": [
+    {
+      "label": "Topic EN",
+      "keywords": ["kw1", "kw2"],
+      "relevanceScore": 90,
+      "searchQueryTemplate": "{entity} keywords {{ $now.format('yyyy') }}"
+    }
+  ]
 }
 ```
 
@@ -388,10 +388,10 @@ How can I help configure your monitoring?
 
 ```json
 {
-    "label": "Actor Name",
-    "type": "competitor|organization|person|regulator|research_lab|investor|partner|other",
-    "description": "Brief relevance description",
-    "score": 85
+  "label": "Actor Name",
+  "type": "competitor|organization|person|regulator|research_lab|investor|partner|other",
+  "description": "Brief relevance description",
+  "score": 85
 }
 ```
 
@@ -403,11 +403,11 @@ How can I help configure your monitoring?
 
 ```json
 {
-    "name": "Source Display Name",
-    "type": "website|linkedin|twitter|rss|blog|news|...",
-    "url": "https://verified-url.com",
-    "description": "What info this source provides",
-    "score": 85
+  "name": "Source Display Name",
+  "type": "website|linkedin|twitter|rss|blog|news|...",
+  "url": "https://verified-url.com",
+  "description": "What info this source provides",
+  "score": 85
 }
 ```
 

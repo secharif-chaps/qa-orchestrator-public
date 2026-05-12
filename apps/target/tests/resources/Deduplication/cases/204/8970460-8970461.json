@@ -1,36 +1,36 @@
 {
-    "account_id": 204,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 52,
-    "master": {
-        "id": "legacy-204-master-8970460",
-        "url": "http://twitter.com/obretix/status/1493233555153076231",
-        "title": "RT @NatashaHallDC: NEW: My report on challenges to #aid throughout #Syria is out. It's based on a year of research, including interviews w/…",
-        "content": "RT <a href=\"http://twitter.com/obretix\">@NatashaHallDC</a>: NEW: My report on challenges to <a href=\"http://twitter.com/search?q=aid\">#aid</a> throughout <a href=\"http://twitter.com/search?q=Syria\">#Syria</a> is out. It's based on a year of research, including interviews w/ 130 <a href=\"http://twitter.com/search?q=UN\">#UN</a> officials, aid workers, diplomats, analysts, &amp; a review of open-source docs, internal reports, evaluations <a href=\"https://www.csis.org/analysis/rescuing-aid-syria\">https://www.csis.org/analysis/rescuing-aid-syria</a> To sum up    ..."
-    },
-    "candidate": {
-        "id": "legacy-204-dup-8970461",
-        "url": "https://www.csis.org/analysis/rescuing-aid-syria",
-        "title": "Rescuing Aid in Syria",
-        "content": "<html><prebody></prebody><body><p>February 14, 2022</p><a href=\"https://csis-website-prod.s3.amazonaws.com/s3fs-public/publication/220214_Hall_Rescuing_Aid_Syria.pdf?hG4dKipxCaBNDRDaezmDvn2lHVmr8937\">Download the Report</a>  <br/>\n<br/><br/><br/>\nInternational aid to Syria is at an inflection point. More than 10 years into the Syrian conflict, the majority of Syria’s population is displaced and lacks adequate food. While Western donor governments have contributed nearly $2.5 billion a year in humanitarian aid, needs continue to rise. In addition, the Assad government has manipulated aid for over a decade, withholding aid to opponents and channeling it to allies. This interference has grown more entrenched, and other non-state actors are learning from its example. Donor governments and the aid community can and must break the rising pattern of abuse, but they need a more informed and collective approach. <br/>\n <br/>\nOperationalizing humanitarian principles and securing ceasefires would allow the aid community to close gaps in coverage and move toward making communities more resilient, helping stabilize the region. Failing to do so will exacerbate the deprivation and oppression that started the war, prolonging instability far into the future. This CSIS report delves into the challenges to aid provision throughout Syria and recommends a way to overcome them. It is based on interviews with over 130 UN officials, aid workers, negotiators, diplomats, and analysts working on the aid response, as well as a review of databases, open-source documents, and internal reports and evaluations.<br/><br/><em>This report was made possible by the German Federal Ministry for Economic Cooperation and Development, which provided support through the Deutsche Gesellschaft für Internationale Zusammenarbeit (GIZ) GmbH. The content of this report is the sole responsibility of the author.</em>      </body><postbody></postbody></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "unique",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "unique",
-        "note": "Master is a tweet promoting the report while candidate is the full CSIS report itself, not another article about the tweet."
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "agreement_unique",
-    "content_source": "hbase_full"
+  "account_id": 204,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 52,
+  "master": {
+    "id": "legacy-204-master-8970460",
+    "url": "http://twitter.com/obretix/status/1493233555153076231",
+    "title": "RT @NatashaHallDC: NEW: My report on challenges to #aid throughout #Syria is out. It's based on a year of research, including interviews w/…",
+    "content": "RT <a href=\"http://twitter.com/obretix\">@NatashaHallDC</a>: NEW: My report on challenges to <a href=\"http://twitter.com/search?q=aid\">#aid</a> throughout <a href=\"http://twitter.com/search?q=Syria\">#Syria</a> is out. It's based on a year of research, including interviews w/ 130 <a href=\"http://twitter.com/search?q=UN\">#UN</a> officials, aid workers, diplomats, analysts, &amp; a review of open-source docs, internal reports, evaluations <a href=\"https://www.csis.org/analysis/rescuing-aid-syria\">https://www.csis.org/analysis/rescuing-aid-syria</a> To sum up    ..."
+  },
+  "candidate": {
+    "id": "legacy-204-dup-8970461",
+    "url": "https://www.csis.org/analysis/rescuing-aid-syria",
+    "title": "Rescuing Aid in Syria",
+    "content": "<html><prebody></prebody><body><p>February 14, 2022</p><a href=\"https://csis-website-prod.s3.amazonaws.com/s3fs-public/publication/220214_Hall_Rescuing_Aid_Syria.pdf?hG4dKipxCaBNDRDaezmDvn2lHVmr8937\">Download the Report</a>  <br/>\n<br/><br/><br/>\nInternational aid to Syria is at an inflection point. More than 10 years into the Syrian conflict, the majority of Syria’s population is displaced and lacks adequate food. While Western donor governments have contributed nearly $2.5 billion a year in humanitarian aid, needs continue to rise. In addition, the Assad government has manipulated aid for over a decade, withholding aid to opponents and channeling it to allies. This interference has grown more entrenched, and other non-state actors are learning from its example. Donor governments and the aid community can and must break the rising pattern of abuse, but they need a more informed and collective approach. <br/>\n <br/>\nOperationalizing humanitarian principles and securing ceasefires would allow the aid community to close gaps in coverage and move toward making communities more resilient, helping stabilize the region. Failing to do so will exacerbate the deprivation and oppression that started the war, prolonging instability far into the future. This CSIS report delves into the challenges to aid provision throughout Syria and recommends a way to overcome them. It is based on interviews with over 130 UN officials, aid workers, negotiators, diplomats, and analysts working on the aid response, as well as a review of databases, open-source documents, and internal reports and evaluations.<br/><br/><em>This report was made possible by the German Federal Ministry for Economic Cooperation and Development, which provided support through the Deutsche Gesellschaft für Internationale Zusammenarbeit (GIZ) GmbH. The content of this report is the sole responsibility of the author.</em>      </body><postbody></postbody></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "unique",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "unique",
+    "note": "Master is a tweet promoting the report while candidate is the full CSIS report itself, not another article about the tweet."
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "agreement_unique",
+  "content_source": "hbase_full"
 }

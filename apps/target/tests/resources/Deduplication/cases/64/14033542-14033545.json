@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_EXACT",
-    "legacy_level": 110,
-    "master": {
-        "id": "legacy-64-master-14033542",
-        "url": "https://www.avweb.com/aviation-news/extra-unveils-330sx/",
-        "title": "Extra Unveils 330SX",
-        "content": "<html><head><title>Extra Unveils 330SX</title></head><body><div><div></div></div><div><div><div><figure><a href=\"https://s30121.pcdn.co/wp-content/uploads/2023/07/Extra-330SX.jpg.optimal.jpg\"><img src=\"https://s30121.pcdn.co/wp-content/uploads/2023/07/Extra-330SX-696x435.jpg.optimal.jpg\"/></a>Image: Extra Aircraft</figure></div></div><p>Extra Aircraft announced on Monday that it is adding a new aerobatic monoplane to its lineup with the introduction of the 330SX. The model, which is currently in testing, flew for the first time last week. An “evolution” of the company’s 330SC, the single-seat 330SX offers a wider cockpit, reduced fuselage length, redesigned cowling, increased control stick clearance and improved headroom compared to its predecessor.</p><div></div><p>“The evolution of the design of the Extra 330SX results in enhanced performance across the flight envelope and allows pilots to execute gyroscopic maneuvers more predictably and consistently,” Extra said. “The introduction of our high-performance aileron package delivers superior roll authority. … While centralizing and concentrating mass through fuselage design updates the aircraft benefits from a weight reduction as well while retaining the same flight envelope speeds, including a VNE of 220 KIAS.”</p><p>The 330SX features a steel fuselage paired with a carbon fiber empennage and wings. The model is powered by the Lycoming AEIO-580 engine and comes equipped with the Garmin G3X Touch flight display. Extra noted that it is currently taking orders for the 330SX and expects to begin deliveries in mid-2024 pending further flight testing and final EASA approval.</p></div><div><a href=\"https://www.avweb.com/author/koconnor/\"><img src=\"https://s30121.pcdn.co/wp-content/uploads/2019/04/p1cato44lii1s10mp8qg140f1eji6.jpg.optimal.jpg\"/></a><div><p>Kate O’Connor works as AVweb&apos;s Editor-in-Chief. She is a private pilot, certificated aircraft dispatcher, and graduate of Embry-Riddle Aeronautical University.</p></div></div><div><div><div><div><div></div></div></div></div></div> </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-14033545",
-        "url": "https://s30121.pcdn.co/aviation-news/extra-unveils-330sx/",
-        "title": "Extra Unveils 330SX",
-        "content": "<html><head><title>Extra Unveils 330SX</title></head><body><div><div></div></div><div><div><div><figure><a href=\"https://s30121.pcdn.co/wp-content/uploads/2023/07/Extra-330SX.jpg.optimal.jpg\"><img src=\"https://s30121.pcdn.co/wp-content/uploads/2023/07/Extra-330SX-696x435.jpg.optimal.jpg\"/></a>Image: Extra Aircraft</figure></div></div><p>Extra Aircraft announced on Monday that it is adding a new aerobatic monoplane to its lineup with the introduction of the 330SX. The model, which is currently in testing, flew for the first time last week. An “evolution” of the company’s 330SC, the single-seat 330SX offers a wider cockpit, reduced fuselage length, redesigned cowling, increased control stick clearance and improved headroom compared to its predecessor.</p><div></div><p>“The evolution of the design of the Extra 330SX results in enhanced performance across the flight envelope and allows pilots to execute gyroscopic maneuvers more predictably and consistently,” Extra said. “The introduction of our high-performance aileron package delivers superior roll authority. … While centralizing and concentrating mass through fuselage design updates the aircraft benefits from a weight reduction as well while retaining the same flight envelope speeds, including a VNE of 220 KIAS.”</p><p>The 330SX features a steel fuselage paired with a carbon fiber empennage and wings. The model is powered by the Lycoming AEIO-580 engine and comes equipped with the Garmin G3X Touch flight display. Extra noted that it is currently taking orders for the 330SX and expects to begin deliveries in mid-2024 pending further flight testing and final EASA approval.</p></div><div><a href=\"https://www.avweb.com/author/koconnor/\"><img src=\"https://s30121.pcdn.co/wp-content/uploads/2019/04/p1cato44lii1s10mp8qg140f1eji6.jpg.optimal.jpg\"/></a><div><p>Kate O’Connor works as AVweb&apos;s Editor-in-Chief. She is a private pilot, certificated aircraft dispatcher, and graduate of Embry-Riddle Aeronautical University.</p></div></div><div><div><div><div><div></div></div></div></div></div> </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "identical"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same AVweb article and content served from primary site and CDN mirror"
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "content_hash",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-64-master-14033542",
+    "url": "https://www.avweb.com/aviation-news/extra-unveils-330sx/",
+    "title": "Extra Unveils 330SX",
+    "content": "<html><head><title>Extra Unveils 330SX</title></head><body><div><div></div></div><div><div><div><figure><a href=\"https://s30121.pcdn.co/wp-content/uploads/2023/07/Extra-330SX.jpg.optimal.jpg\"><img src=\"https://s30121.pcdn.co/wp-content/uploads/2023/07/Extra-330SX-696x435.jpg.optimal.jpg\"/></a>Image: Extra Aircraft</figure></div></div><p>Extra Aircraft announced on Monday that it is adding a new aerobatic monoplane to its lineup with the introduction of the 330SX. The model, which is currently in testing, flew for the first time last week. An “evolution” of the company’s 330SC, the single-seat 330SX offers a wider cockpit, reduced fuselage length, redesigned cowling, increased control stick clearance and improved headroom compared to its predecessor.</p><div></div><p>“The evolution of the design of the Extra 330SX results in enhanced performance across the flight envelope and allows pilots to execute gyroscopic maneuvers more predictably and consistently,” Extra said. “The introduction of our high-performance aileron package delivers superior roll authority. … While centralizing and concentrating mass through fuselage design updates the aircraft benefits from a weight reduction as well while retaining the same flight envelope speeds, including a VNE of 220 KIAS.”</p><p>The 330SX features a steel fuselage paired with a carbon fiber empennage and wings. The model is powered by the Lycoming AEIO-580 engine and comes equipped with the Garmin G3X Touch flight display. Extra noted that it is currently taking orders for the 330SX and expects to begin deliveries in mid-2024 pending further flight testing and final EASA approval.</p></div><div><a href=\"https://www.avweb.com/author/koconnor/\"><img src=\"https://s30121.pcdn.co/wp-content/uploads/2019/04/p1cato44lii1s10mp8qg140f1eji6.jpg.optimal.jpg\"/></a><div><p>Kate O’Connor works as AVweb&apos;s Editor-in-Chief. She is a private pilot, certificated aircraft dispatcher, and graduate of Embry-Riddle Aeronautical University.</p></div></div><div><div><div><div><div></div></div></div></div></div> </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-14033545",
+    "url": "https://s30121.pcdn.co/aviation-news/extra-unveils-330sx/",
+    "title": "Extra Unveils 330SX",
+    "content": "<html><head><title>Extra Unveils 330SX</title></head><body><div><div></div></div><div><div><div><figure><a href=\"https://s30121.pcdn.co/wp-content/uploads/2023/07/Extra-330SX.jpg.optimal.jpg\"><img src=\"https://s30121.pcdn.co/wp-content/uploads/2023/07/Extra-330SX-696x435.jpg.optimal.jpg\"/></a>Image: Extra Aircraft</figure></div></div><p>Extra Aircraft announced on Monday that it is adding a new aerobatic monoplane to its lineup with the introduction of the 330SX. The model, which is currently in testing, flew for the first time last week. An “evolution” of the company’s 330SC, the single-seat 330SX offers a wider cockpit, reduced fuselage length, redesigned cowling, increased control stick clearance and improved headroom compared to its predecessor.</p><div></div><p>“The evolution of the design of the Extra 330SX results in enhanced performance across the flight envelope and allows pilots to execute gyroscopic maneuvers more predictably and consistently,” Extra said. “The introduction of our high-performance aileron package delivers superior roll authority. … While centralizing and concentrating mass through fuselage design updates the aircraft benefits from a weight reduction as well while retaining the same flight envelope speeds, including a VNE of 220 KIAS.”</p><p>The 330SX features a steel fuselage paired with a carbon fiber empennage and wings. The model is powered by the Lycoming AEIO-580 engine and comes equipped with the Garmin G3X Touch flight display. Extra noted that it is currently taking orders for the 330SX and expects to begin deliveries in mid-2024 pending further flight testing and final EASA approval.</p></div><div><a href=\"https://www.avweb.com/author/koconnor/\"><img src=\"https://s30121.pcdn.co/wp-content/uploads/2019/04/p1cato44lii1s10mp8qg140f1eji6.jpg.optimal.jpg\"/></a><div><p>Kate O’Connor works as AVweb&apos;s Editor-in-Chief. She is a private pilot, certificated aircraft dispatcher, and graduate of Embry-Riddle Aeronautical University.</p></div></div><div><div><div><div><div></div></div></div></div></div> </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same AVweb article and content served from primary site and CDN mirror"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "content_hash",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

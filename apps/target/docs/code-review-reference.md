@@ -35,7 +35,7 @@ private const DOCUMENT_QUOTA = 25;
 ```yaml
 # config/services.yaml
 parameters:
-    app.supported_locales: ['en', 'fr']
+  app.supported_locales: ['en', 'fr']
 ```
 
 ### Translation Keys
@@ -694,7 +694,7 @@ public function down(Schema $schema): void
 
 ```yaml
 app:
-    http_client_timeout: '%env(int:HTTP_TIMEOUT)%'
+  http_client_timeout: '%env(int:HTTP_TIMEOUT)%'
 ```
 
 ## User Interface & API Platform

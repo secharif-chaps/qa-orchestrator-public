@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13603999",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143709399&origin=inward",
-        "title": "Acoustic Mode Attenuation in Ducts (Using CFD) with Time-Domain Impedance Boundary Condition",
-        "content": "<html><body>In the framework of improving aircraft nacelle design to comply international regulation on aircraft noise, a time-domain impedance boundary condition (TDIBC) based on the oscillo-diffusive representation is implemented in an industrial computational fluid dynamics (CFD) solver under a characteristic formalism, in order to take into account acoustic liner attenuation. A validation of such TDIBC is carried out, first on a two-dimensional benchmark case, then on a more realistic three-dimensional cylindrical configuration, with focus on the acoustic modal content and its attenuation with and without flow. Unsteady Reynolds-averaged Navier–Stokes computations are performed, with the grazing flow being considered laminar. Good agreement is found between the CFD results and the references (computational aeroacoustics results and experiments), with differences in the order of ≈1 dB for most cases. The formulation chosen for the TDIBC proved to have no significant impact on numerical stability or computational time. <br/><br/><br/>Authors: Casadei L., Deniau H., Nodé-Langlois T., Piot E., Polacsek C.. <br/><br/>Affiliations: Université Paris-Saclay, Université Fédérale Toulouse Midi-Pyrénées, Airbus France. <br/><br/>Publication: AIAA Journal, 2022, pp.6763-6782. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13604437",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143709399&origin=inward",
-        "title": "Acoustic Mode Attenuation in Ducts (Using CFD) with Time-Domain Impedance Boundary Condition",
-        "content": "<html><body>In the framework of improving aircraft nacelle design to comply international regulation on aircraft noise, a time-domain impedance boundary condition (TDIBC) based on the oscillo-diffusive representation is implemented in an industrial computational fluid dynamics (CFD) solver under a characteristic formalism, in order to take into account acoustic liner attenuation. A validation of such TDIBC is carried out, first on a two-dimensional benchmark case, then on a more realistic three-dimensional cylindrical configuration, with focus on the acoustic modal content and its attenuation with and without flow. Unsteady Reynolds-averaged Navier–Stokes computations are performed, with the grazing flow being considered laminar. Good agreement is found between the CFD results and the references (computational aeroacoustics results and experiments), with differences in the order of ≈1 dB for most cases. The formulation chosen for the TDIBC proved to have no significant impact on numerical stability or computational time. <br/><br/><br/>Authors: Casadei L., Deniau H., Nodé-Langlois T., Piot E., Polacsek C.. <br/><br/>Affiliations: Université Paris-Saclay, Université Fédérale Toulouse Midi-Pyrénées, Airbus France. <br/><br/>Publication: AIAA Journal, 2022, pp.6763-6782. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "identical"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13603999",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143709399&origin=inward",
+    "title": "Acoustic Mode Attenuation in Ducts (Using CFD) with Time-Domain Impedance Boundary Condition",
+    "content": "<html><body>In the framework of improving aircraft nacelle design to comply international regulation on aircraft noise, a time-domain impedance boundary condition (TDIBC) based on the oscillo-diffusive representation is implemented in an industrial computational fluid dynamics (CFD) solver under a characteristic formalism, in order to take into account acoustic liner attenuation. A validation of such TDIBC is carried out, first on a two-dimensional benchmark case, then on a more realistic three-dimensional cylindrical configuration, with focus on the acoustic modal content and its attenuation with and without flow. Unsteady Reynolds-averaged Navier–Stokes computations are performed, with the grazing flow being considered laminar. Good agreement is found between the CFD results and the references (computational aeroacoustics results and experiments), with differences in the order of ≈1 dB for most cases. The formulation chosen for the TDIBC proved to have no significant impact on numerical stability or computational time. <br/><br/><br/>Authors: Casadei L., Deniau H., Nodé-Langlois T., Piot E., Polacsek C.. <br/><br/>Affiliations: Université Paris-Saclay, Université Fédérale Toulouse Midi-Pyrénées, Airbus France. <br/><br/>Publication: AIAA Journal, 2022, pp.6763-6782. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13604437",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143709399&origin=inward",
+    "title": "Acoustic Mode Attenuation in Ducts (Using CFD) with Time-Domain Impedance Boundary Condition",
+    "content": "<html><body>In the framework of improving aircraft nacelle design to comply international regulation on aircraft noise, a time-domain impedance boundary condition (TDIBC) based on the oscillo-diffusive representation is implemented in an industrial computational fluid dynamics (CFD) solver under a characteristic formalism, in order to take into account acoustic liner attenuation. A validation of such TDIBC is carried out, first on a two-dimensional benchmark case, then on a more realistic three-dimensional cylindrical configuration, with focus on the acoustic modal content and its attenuation with and without flow. Unsteady Reynolds-averaged Navier–Stokes computations are performed, with the grazing flow being considered laminar. Good agreement is found between the CFD results and the references (computational aeroacoustics results and experiments), with differences in the order of ≈1 dB for most cases. The formulation chosen for the TDIBC proved to have no significant impact on numerical stability or computational time. <br/><br/><br/>Authors: Casadei L., Deniau H., Nodé-Langlois T., Piot E., Polacsek C.. <br/><br/>Affiliations: Université Paris-Saclay, Université Fédérale Toulouse Midi-Pyrénées, Airbus France. <br/><br/>Publication: AIAA Journal, 2022, pp.6763-6782. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

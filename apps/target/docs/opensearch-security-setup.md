@@ -79,20 +79,20 @@ If OpenSearch Dashboards cannot connect to OpenSearch:
 
 1. Verify OpenSearch is running and healthy:
 
-    ```bash
-    docker compose ps opensearch
-    ```
+   ```bash
+   docker compose ps opensearch
+   ```
 
 2. Check OpenSearch logs:
 
-    ```bash
-    docker compose logs opensearch
-    ```
+   ```bash
+   docker compose logs opensearch
+   ```
 
 3. Verify the security configuration is correct:
-    ```bash
-    docker compose exec opensearch curl -k -u admin:password https://localhost:9200
-    ```
+   ```bash
+   docker compose exec opensearch curl -k -u admin:password https://localhost:9200
+   ```
 
 ### Certificate Issues
 

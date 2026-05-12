@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_EXACT",
-    "legacy_level": 110,
-    "master": {
-        "id": "legacy-64-master-13284786",
-        "url": "https://www.financialexpress.com/lifestyle/travel-tourism/united-airlines-to-start-daily-flights-from-bengaluru-to-san-francisco-by-end-of-2022/2566902/",
-        "title": "United Airlines to start daily flights from Bengaluru to San Francisco by end of 2022",
-        "content": "<html><head><title>United Airlines to start daily flights from Bengaluru to San Francisco by end of 2022</title></head><body><div><p>United Airlines is scheduled to begin daily flights from here to San Francisco in the last quarter of 2022, according to Kempegowda International Airport, Bengaluru.</p>\n\n\n<p>Australian national carrier Qantas will begin four weekly flights to Sydney from September 14, the airport said in a statement on Monday while giving an update on the international flight operations.</p>\n\n<p>Two weekly flights to Tel Aviv (Air India) and daily flights to Seattle (American Airlines) are also planned in the near future, it said.</p>\n\n<p>Additionally, new routes launched a few months before the outbreak of the pandemic have already been re-connected.</p>\n\n<p>Addis Ababa, (connected by Ethiopian Airlines), Amsterdam (by KLM), and Tokyo Narita (by Japan Airlines) have been reinstated from Bengaluru, it said.</p>\n\n\n<p>Japan Airlines will increase frequency to Tokyo Narita to thrice a week, effective August this year, and KLM plans to further increase frequency on the Bengaluru-Amsterdam route from the current three weekly frequencies to four-times-a-week beginning next month.</p>\n\n\n<p>The Kempegowda airport said it has witnessed robust growth in international flight operations, connecting 23 international destinations in May 2022 — the highest in south India.</p>\n\n\n<p>The airport witnessed 15 per cent higher international Air Traffic Movements (ATMs) per day between March and April this year while May alone saw 48 per cent growth in ATMs.</p>\n\n\n<p>Additionally, average daily international traffic increased to 9,300 passengers by the fourth week of May, compared to 6,500 in April and 5,500 in March, the statement added.</p></div></body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13284804",
-        "url": "https://www.businesstoday.in/industry/aviation/story/united-airlines-to-start-daily-flights-from-bengaluru-to-san-fransico-by-the-end-of-2022-338358-2022-06-20",
-        "title": "United Airlines to start daily flights from Bengaluru to San Fransico by the end of 2022. ",
-        "content": "<html><head><title>United Airlines to start daily flights from Bengaluru to San Fransico by the end of 2022. </title></head><body><div><p>United Airlines is scheduled to begin daily flights from here to San Francisco in the last quarter of 2022, according to Kempegowda International Airport, Bengaluru.</p>\n\n<p>Australian national carrier Qantas will begin four weekly flights to Sydney from September 14, the airport said in a statement on Monday while giving an update on the international flight operations.</p>\n\n<p>Two weekly flights to Tel Aviv (Air India) and daily flights to Seattle (American Airlines) are also planned in the near future, it said.</p>\n\n<p>Additionally, new routes launched a few months before the outbreak of the pandemic have already been re-connected.</p>\n\n<p>Addis Ababa, (connected by Ethiopian Airlines), Amsterdam (by KLM), and Tokyo Narita (by Japan Airlines) have been reinstated from Bengaluru, it said.</p>\n\n<p>Japan Airlines will increase frequency to Tokyo Narita to thrice a week, effective August this year, and KLM plans to further increase frequency on the Bengaluru-Amsterdam route from the current three weekly frequencies to four-times-a-week beginning next month.</p>\n\n<p>Kempegowda airport said it has witnessed robust growth in international flight operations, connecting 23 international destinations in May 2022 -- the highest in south India.</p>\n\n<p>The airport witnessed 15 per cent higher international Air Traffic Movements (ATMs) per day between March and April this year while May alone saw 48 per cent growth in ATMs.</p>\n\n<p>Additionally, average daily international traffic increased to 9,300 passengers by the fourth week of May, compared to 6,500 in April and 5,500 in March, the statement added.</p>\n\n\n\n\n</div></body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "identical"
-    },
-    "llm_judgement": {
-        "verdict": "near_duplicate",
-        "note": "Same news event and nearly identical wire text with only trivial wording differences, but published on different outlets as separate articles."
-    },
-    "pinned": {
-        "outcome": "near_duplicate",
-        "stage": "min_hash_lsh",
-        "similarity": 0.921875
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-64-master-13284786",
+    "url": "https://www.financialexpress.com/lifestyle/travel-tourism/united-airlines-to-start-daily-flights-from-bengaluru-to-san-francisco-by-end-of-2022/2566902/",
+    "title": "United Airlines to start daily flights from Bengaluru to San Francisco by end of 2022",
+    "content": "<html><head><title>United Airlines to start daily flights from Bengaluru to San Francisco by end of 2022</title></head><body><div><p>United Airlines is scheduled to begin daily flights from here to San Francisco in the last quarter of 2022, according to Kempegowda International Airport, Bengaluru.</p>\n\n\n<p>Australian national carrier Qantas will begin four weekly flights to Sydney from September 14, the airport said in a statement on Monday while giving an update on the international flight operations.</p>\n\n<p>Two weekly flights to Tel Aviv (Air India) and daily flights to Seattle (American Airlines) are also planned in the near future, it said.</p>\n\n<p>Additionally, new routes launched a few months before the outbreak of the pandemic have already been re-connected.</p>\n\n<p>Addis Ababa, (connected by Ethiopian Airlines), Amsterdam (by KLM), and Tokyo Narita (by Japan Airlines) have been reinstated from Bengaluru, it said.</p>\n\n\n<p>Japan Airlines will increase frequency to Tokyo Narita to thrice a week, effective August this year, and KLM plans to further increase frequency on the Bengaluru-Amsterdam route from the current three weekly frequencies to four-times-a-week beginning next month.</p>\n\n\n<p>The Kempegowda airport said it has witnessed robust growth in international flight operations, connecting 23 international destinations in May 2022 — the highest in south India.</p>\n\n\n<p>The airport witnessed 15 per cent higher international Air Traffic Movements (ATMs) per day between March and April this year while May alone saw 48 per cent growth in ATMs.</p>\n\n\n<p>Additionally, average daily international traffic increased to 9,300 passengers by the fourth week of May, compared to 6,500 in April and 5,500 in March, the statement added.</p></div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13284804",
+    "url": "https://www.businesstoday.in/industry/aviation/story/united-airlines-to-start-daily-flights-from-bengaluru-to-san-fransico-by-the-end-of-2022-338358-2022-06-20",
+    "title": "United Airlines to start daily flights from Bengaluru to San Fransico by the end of 2022. ",
+    "content": "<html><head><title>United Airlines to start daily flights from Bengaluru to San Fransico by the end of 2022. </title></head><body><div><p>United Airlines is scheduled to begin daily flights from here to San Francisco in the last quarter of 2022, according to Kempegowda International Airport, Bengaluru.</p>\n\n<p>Australian national carrier Qantas will begin four weekly flights to Sydney from September 14, the airport said in a statement on Monday while giving an update on the international flight operations.</p>\n\n<p>Two weekly flights to Tel Aviv (Air India) and daily flights to Seattle (American Airlines) are also planned in the near future, it said.</p>\n\n<p>Additionally, new routes launched a few months before the outbreak of the pandemic have already been re-connected.</p>\n\n<p>Addis Ababa, (connected by Ethiopian Airlines), Amsterdam (by KLM), and Tokyo Narita (by Japan Airlines) have been reinstated from Bengaluru, it said.</p>\n\n<p>Japan Airlines will increase frequency to Tokyo Narita to thrice a week, effective August this year, and KLM plans to further increase frequency on the Bengaluru-Amsterdam route from the current three weekly frequencies to four-times-a-week beginning next month.</p>\n\n<p>Kempegowda airport said it has witnessed robust growth in international flight operations, connecting 23 international destinations in May 2022 -- the highest in south India.</p>\n\n<p>The airport witnessed 15 per cent higher international Air Traffic Movements (ATMs) per day between March and April this year while May alone saw 48 per cent growth in ATMs.</p>\n\n<p>Additionally, average daily international traffic increased to 9,300 passengers by the fourth week of May, compared to 6,500 in April and 5,500 in March, the statement added.</p>\n\n\n\n\n</div></body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "near_duplicate",
+    "note": "Same news event and nearly identical wire text with only trivial wording differences, but published on different outlets as separate articles."
+  },
+  "pinned": {
+    "outcome": "near_duplicate",
+    "stage": "min_hash_lsh",
+    "similarity": 0.921875
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

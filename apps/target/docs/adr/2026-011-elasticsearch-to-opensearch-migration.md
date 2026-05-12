@@ -125,13 +125,13 @@ curl -L https://github.com/api-platform/core/compare/main...hotfix31:api-platfor
 
 ```json
 {
-    "extra": {
-        "patches": {
-            "api-platform/elasticsearch": {
-                "Add OpenSearch support (PR hotfix31)": "patches/api-platform-opensearch.diff"
-            }
-        }
+  "extra": {
+    "patches": {
+      "api-platform/elasticsearch": {
+        "Add OpenSearch support (PR hotfix31)": "patches/api-platform-opensearch.diff"
+      }
     }
+  }
 }
 ```
 
@@ -156,10 +156,10 @@ Composer will automatically apply the patch during installation. On failure (lin
 ```yaml
 # config/packages/api_platform.yaml
 api_platform:
-    elasticsearch:
-        enabled: true
-        client: opensearch # node added by the patch
-        hosts: ['%env(string:OPENSEARCH_URL)%']
+  elasticsearch:
+    enabled: true
+    client: opensearch # node added by the patch
+    hosts: ['%env(string:OPENSEARCH_URL)%']
 ```
 
 #### 1.7 Update the client alias in `elasticsearch.yaml`
@@ -169,10 +169,10 @@ The file `api/config/services/elasticsearch.yaml` defines an alias `Elastic\Elas
 ```yaml
 # api/config/services/elasticsearch.yaml
 services:
-    # ...
+  # ...
 
-    # Replace the Elasticsearch alias with OpenSearch
-    OpenSearch\Client: '@api_platform.elasticsearch.client'
+  # Replace the Elasticsearch alias with OpenSearch
+  OpenSearch\Client: '@api_platform.elasticsearch.client'
 ```
 
 Remove the old `Elastic\Elasticsearch\Client` alias if it is no longer used in the application code.
@@ -227,15 +227,15 @@ In `compose.yaml`, adapt the tag to the exact version supported by OVH:
 ```yaml
 # Before
 elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:9.1.3
+  image: docker.elastic.co/elasticsearch/elasticsearch:9.1.3
 
 # After (align the tag with the OVH version)
 opensearch:
-    image: opensearchproject/opensearch:2.x # replace 2.x with the exact OVH version
-    environment:
-        - discovery.type=single-node
-        - DISABLE_SECURITY_PLUGIN=true # for local dev
-        - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+  image: opensearchproject/opensearch:2.x # replace 2.x with the exact OVH version
+  environment:
+    - discovery.type=single-node
+    - DISABLE_SECURITY_PLUGIN=true # for local dev
+    - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
 ```
 
 #### 2.2 Environment Variables
@@ -254,22 +254,22 @@ Rename/add the variables:
 ```yaml
 # Before
 kibana:
-    image: docker.elastic.co/kibana/kibana:9.1.3
-    ports:
-        - '5601:5601'
-    environment:
-        - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  image: docker.elastic.co/kibana/kibana:9.1.3
+  ports:
+    - '5601:5601'
+  environment:
+    - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
 
 # After
 opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.x
-    ports:
-        - '5601:5601'
-    environment:
-        - OPENSEARCH_HOSTS=["http://opensearch:9200"]
-        - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true # for local dev
-    depends_on:
-        - opensearch
+  image: opensearchproject/opensearch-dashboards:2.x
+  ports:
+    - '5601:5601'
+  environment:
+    - OPENSEARCH_HOSTS=["http://opensearch:9200"]
+    - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true # for local dev
+  depends_on:
+    - opensearch
 ```
 
 Update the Caddy configuration (virtualhost rename):
@@ -494,11 +494,11 @@ final class OpenSearchItemProvider implements ProviderInterface
 # api/config/services/elasticsearch.yaml
 
 services:
-    App\Infrastructure\Elasticsearch\State\OpenSearchCollectionProvider:
-        decorates: 'api_platform.elasticsearch.state.collection_provider'
+  App\Infrastructure\Elasticsearch\State\OpenSearchCollectionProvider:
+    decorates: 'api_platform.elasticsearch.state.collection_provider'
 
-    App\Infrastructure\Elasticsearch\State\OpenSearchItemProvider:
-        decorates: 'api_platform.elasticsearch.state.item_provider'
+  App\Infrastructure\Elasticsearch\State\OpenSearchItemProvider:
+    decorates: 'api_platform.elasticsearch.state.item_provider'
 ```
 
 #### Compiler Pass to Inject the OpenSearch Client

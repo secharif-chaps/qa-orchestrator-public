@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13367151",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85134817917&origin=inward",
-        "title": "Effects of graphene dispersion in hot pressing UO2-graphene nanosheet ceramic matrix composites",
-        "content": "<html><body>The safe use of nuclear energy is crucial, especially after the Fukushima nuclear disaster. A novel uranium dioxide (UO2)-graphene nanosheet (GN) ceramic matrix composite fuel has been proposed as an accident tolerant fuel (ATF) with excellent thermal-mechanical properties. The UO2-GN pellet system is developed using mechanically mixed and hot pressing (HP) sintering, providing a new idea for the industrial production of UO2-GN pellets. Raman spectroscopy and scanning electron microscopy (SEM) show that most GN survives in composite pellets by HP sintering. Furthermore, we discovered various toughening mechanisms in the composite pellets for the first time. With the further increase of graphene content (1, 3, 5 wt%), the behavior of GN in the matrix changed from anchoring to wrapping. Among different sintering methods, HP sintering has excellent thermal performance. The thermal diffusivity of the composite pellets prepared by HP sintering (HPed) doped with 3 and 5 wt% is 1.300 and 1.423 mm2 s−1 at 973 K, increased by 5.43% and 15.41% compared with the pure pellets, respectively. Furthermore, the thermal conductivities of the HPed doped with 1, 3, and 5 wt% are 4.31, 5.00, and 6.06 W m−1 K−1 at 973 K, which were 3.61%, 20.20%, 45.67% higher than those of the pure pellets, respectively. These results highlight the immense possibilities of HP sintering in fabricating UO2-GN pellets to improve fuel performance. <br/><br/><br/>Authors: Wang Y., He Z., Yang J., Ye X., Yu C., Qiu S., Yao L., Zeng Q., Jia D., Wang Z., Li B., Pan X.. <br/><br/>Affiliations: Sichuan University, Nuclear Power Institute of China, Science and Technology on Surface Physics and Chemistry Laboratory. <br/><br/>Publication: Ceramics International, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13367285",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85134817917&origin=inward",
-        "title": "Effects of graphene dispersion in hot pressing UO2-graphene nanosheet ceramic matrix composites",
-        "content": "<html><body>The safe use of nuclear energy is crucial, especially after the Fukushima nuclear disaster. A novel uranium dioxide (UO2)-graphene nanosheet (GN) ceramic matrix composite fuel has been proposed as an accident tolerant fuel (ATF) with excellent thermal-mechanical properties. The UO2-GN pellet system is developed using mechanically mixed and hot pressing (HP) sintering, providing a new idea for the industrial production of UO2-GN pellets. Raman spectroscopy and scanning electron microscopy (SEM) show that most GN survives in composite pellets by HP sintering. Furthermore, we discovered various toughening mechanisms in the composite pellets for the first time. With the further increase of graphene content (1, 3, 5 wt%), the behavior of GN in the matrix changed from anchoring to wrapping. Among different sintering methods, HP sintering has excellent thermal performance. The thermal diffusivity of the composite pellets prepared by HP sintering (HPed) doped with 3 and 5 wt% is 1.300 and 1.423 mm2 s−1 at 973 K, increased by 5.43% and 15.41% compared with the pure pellets, respectively. Furthermore, the thermal conductivities of the HPed doped with 1, 3, and 5 wt% are 4.31, 5.00, and 6.06 W m−1 K−1 at 973 K, which were 3.61%, 20.20%, 45.67% higher than those of the pure pellets, respectively. These results highlight the immense possibilities of HP sintering in fabricating UO2-GN pellets to improve fuel performance. <br/><br/><br/>Authors: Wang Y., He Z., Yang J., Ye X., Yu C., Qiu S., Yao L., Zeng Q., Jia D., Wang Z., Li B., Pan X.. <br/><br/>Affiliations: Sichuan University, Nuclear Power Institute of China, Science and Technology on Surface Physics and Chemistry Laboratory. <br/><br/>Publication: Ceramics International, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13367151",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85134817917&origin=inward",
+    "title": "Effects of graphene dispersion in hot pressing UO2-graphene nanosheet ceramic matrix composites",
+    "content": "<html><body>The safe use of nuclear energy is crucial, especially after the Fukushima nuclear disaster. A novel uranium dioxide (UO2)-graphene nanosheet (GN) ceramic matrix composite fuel has been proposed as an accident tolerant fuel (ATF) with excellent thermal-mechanical properties. The UO2-GN pellet system is developed using mechanically mixed and hot pressing (HP) sintering, providing a new idea for the industrial production of UO2-GN pellets. Raman spectroscopy and scanning electron microscopy (SEM) show that most GN survives in composite pellets by HP sintering. Furthermore, we discovered various toughening mechanisms in the composite pellets for the first time. With the further increase of graphene content (1, 3, 5 wt%), the behavior of GN in the matrix changed from anchoring to wrapping. Among different sintering methods, HP sintering has excellent thermal performance. The thermal diffusivity of the composite pellets prepared by HP sintering (HPed) doped with 3 and 5 wt% is 1.300 and 1.423 mm2 s−1 at 973 K, increased by 5.43% and 15.41% compared with the pure pellets, respectively. Furthermore, the thermal conductivities of the HPed doped with 1, 3, and 5 wt% are 4.31, 5.00, and 6.06 W m−1 K−1 at 973 K, which were 3.61%, 20.20%, 45.67% higher than those of the pure pellets, respectively. These results highlight the immense possibilities of HP sintering in fabricating UO2-GN pellets to improve fuel performance. <br/><br/><br/>Authors: Wang Y., He Z., Yang J., Ye X., Yu C., Qiu S., Yao L., Zeng Q., Jia D., Wang Z., Li B., Pan X.. <br/><br/>Affiliations: Sichuan University, Nuclear Power Institute of China, Science and Technology on Surface Physics and Chemistry Laboratory. <br/><br/>Publication: Ceramics International, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13367285",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85134817917&origin=inward",
+    "title": "Effects of graphene dispersion in hot pressing UO2-graphene nanosheet ceramic matrix composites",
+    "content": "<html><body>The safe use of nuclear energy is crucial, especially after the Fukushima nuclear disaster. A novel uranium dioxide (UO2)-graphene nanosheet (GN) ceramic matrix composite fuel has been proposed as an accident tolerant fuel (ATF) with excellent thermal-mechanical properties. The UO2-GN pellet system is developed using mechanically mixed and hot pressing (HP) sintering, providing a new idea for the industrial production of UO2-GN pellets. Raman spectroscopy and scanning electron microscopy (SEM) show that most GN survives in composite pellets by HP sintering. Furthermore, we discovered various toughening mechanisms in the composite pellets for the first time. With the further increase of graphene content (1, 3, 5 wt%), the behavior of GN in the matrix changed from anchoring to wrapping. Among different sintering methods, HP sintering has excellent thermal performance. The thermal diffusivity of the composite pellets prepared by HP sintering (HPed) doped with 3 and 5 wt% is 1.300 and 1.423 mm2 s−1 at 973 K, increased by 5.43% and 15.41% compared with the pure pellets, respectively. Furthermore, the thermal conductivities of the HPed doped with 1, 3, and 5 wt% are 4.31, 5.00, and 6.06 W m−1 K−1 at 973 K, which were 3.61%, 20.20%, 45.67% higher than those of the pure pellets, respectively. These results highlight the immense possibilities of HP sintering in fabricating UO2-GN pellets to improve fuel performance. <br/><br/><br/>Authors: Wang Y., He Z., Yang J., Ye X., Yu C., Qiu S., Yao L., Zeng Q., Jia D., Wang Z., Li B., Pan X.. <br/><br/>Affiliations: Sichuan University, Nuclear Power Institute of China, Science and Technology on Surface Physics and Chemistry Laboratory. <br/><br/>Publication: Ceramics International, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13607772",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143986376&origin=inward",
-        "title": "Towards the design and optimisation of future compact aero-engines: intake/fancowl trade-off investigation",
-        "content": "<html><body>Purpose: Relative to in-service aero-engines, the bypass ratio of future civil architectures may increase further. If traditional design rules are applied to these new configurations and the housing components are scaled, then it is expected that the overall weight, nacelle drag and the effects of aircraft integration will increase. For this reason, the next generation of civil turbofan engines may use compact nacelles to maximise the benefits from the new engine cycles. The purpose of this paper is to present a multi-level design and optimisation process for future civil aero-engines. Design/methodology/approach: An initial set of multi-point, multi-objective optimisations for axisymmetric configurations are carried out to identify the trade-off between intake and fancowl bulk parameters of highlight radius and nacelle length on nacelle drag. Having identified the likely optimal part of the design space, a set of computationally expensive optimisations for three-dimensional non-axisymmetric configurations is performed. The process includes cruise- and windmilling-type operating conditions to ensure aerodynamic robustness of the downselected configurations. Findings: Relative to a conventional aero-engine nacelle, the developed process yielded a compact aero-engine configuration with mid-cruise drag reduction of approximately 1.6% of the nominal standard net thrust. Originality/value: The multi-point, multi-objective optimisation is carried out with a mixture of regression and classification functions to ensure aerodynamic robustness of the downselected configurations. The developed computational approach enables the optimisation of future civil aero-engine nacelles that target a reduction of the overall fuel consumption. <br/><br/><br/>Authors: Tejero F., MacManus D., Matesanz García J., Swarthout A., Sheaf C.. <br/><br/>Affiliations: Cranfield University, Rolls-Royce plc. <br/><br/>Publication: International Journal of Numerical Methods for Heat and Fluid Flow, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13608017",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143986376&origin=inward",
-        "title": "Towards the design and optimisation of future compact aero-engines: intake/fancowl trade-off investigation",
-        "content": "<html><body>Purpose: Relative to in-service aero-engines, the bypass ratio of future civil architectures may increase further. If traditional design rules are applied to these new configurations and the housing components are scaled, then it is expected that the overall weight, nacelle drag and the effects of aircraft integration will increase. For this reason, the next generation of civil turbofan engines may use compact nacelles to maximise the benefits from the new engine cycles. The purpose of this paper is to present a multi-level design and optimisation process for future civil aero-engines. Design/methodology/approach: An initial set of multi-point, multi-objective optimisations for axisymmetric configurations are carried out to identify the trade-off between intake and fancowl bulk parameters of highlight radius and nacelle length on nacelle drag. Having identified the likely optimal part of the design space, a set of computationally expensive optimisations for three-dimensional non-axisymmetric configurations is performed. The process includes cruise- and windmilling-type operating conditions to ensure aerodynamic robustness of the downselected configurations. Findings: Relative to a conventional aero-engine nacelle, the developed process yielded a compact aero-engine configuration with mid-cruise drag reduction of approximately 1.6% of the nominal standard net thrust. Originality/value: The multi-point, multi-objective optimisation is carried out with a mixture of regression and classification functions to ensure aerodynamic robustness of the downselected configurations. The developed computational approach enables the optimisation of future civil aero-engine nacelles that target a reduction of the overall fuel consumption. <br/><br/><br/>Authors: Tejero F., MacManus D., Matesanz García J., Swarthout A., Sheaf C.. <br/><br/>Affiliations: Cranfield University, Rolls-Royce plc. <br/><br/>Publication: International Journal of Numerical Methods for Heat and Fluid Flow, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13607772",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143986376&origin=inward",
+    "title": "Towards the design and optimisation of future compact aero-engines: intake/fancowl trade-off investigation",
+    "content": "<html><body>Purpose: Relative to in-service aero-engines, the bypass ratio of future civil architectures may increase further. If traditional design rules are applied to these new configurations and the housing components are scaled, then it is expected that the overall weight, nacelle drag and the effects of aircraft integration will increase. For this reason, the next generation of civil turbofan engines may use compact nacelles to maximise the benefits from the new engine cycles. The purpose of this paper is to present a multi-level design and optimisation process for future civil aero-engines. Design/methodology/approach: An initial set of multi-point, multi-objective optimisations for axisymmetric configurations are carried out to identify the trade-off between intake and fancowl bulk parameters of highlight radius and nacelle length on nacelle drag. Having identified the likely optimal part of the design space, a set of computationally expensive optimisations for three-dimensional non-axisymmetric configurations is performed. The process includes cruise- and windmilling-type operating conditions to ensure aerodynamic robustness of the downselected configurations. Findings: Relative to a conventional aero-engine nacelle, the developed process yielded a compact aero-engine configuration with mid-cruise drag reduction of approximately 1.6% of the nominal standard net thrust. Originality/value: The multi-point, multi-objective optimisation is carried out with a mixture of regression and classification functions to ensure aerodynamic robustness of the downselected configurations. The developed computational approach enables the optimisation of future civil aero-engine nacelles that target a reduction of the overall fuel consumption. <br/><br/><br/>Authors: Tejero F., MacManus D., Matesanz García J., Swarthout A., Sheaf C.. <br/><br/>Affiliations: Cranfield University, Rolls-Royce plc. <br/><br/>Publication: International Journal of Numerical Methods for Heat and Fluid Flow, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13608017",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85143986376&origin=inward",
+    "title": "Towards the design and optimisation of future compact aero-engines: intake/fancowl trade-off investigation",
+    "content": "<html><body>Purpose: Relative to in-service aero-engines, the bypass ratio of future civil architectures may increase further. If traditional design rules are applied to these new configurations and the housing components are scaled, then it is expected that the overall weight, nacelle drag and the effects of aircraft integration will increase. For this reason, the next generation of civil turbofan engines may use compact nacelles to maximise the benefits from the new engine cycles. The purpose of this paper is to present a multi-level design and optimisation process for future civil aero-engines. Design/methodology/approach: An initial set of multi-point, multi-objective optimisations for axisymmetric configurations are carried out to identify the trade-off between intake and fancowl bulk parameters of highlight radius and nacelle length on nacelle drag. Having identified the likely optimal part of the design space, a set of computationally expensive optimisations for three-dimensional non-axisymmetric configurations is performed. The process includes cruise- and windmilling-type operating conditions to ensure aerodynamic robustness of the downselected configurations. Findings: Relative to a conventional aero-engine nacelle, the developed process yielded a compact aero-engine configuration with mid-cruise drag reduction of approximately 1.6% of the nominal standard net thrust. Originality/value: The multi-point, multi-objective optimisation is carried out with a mixture of regression and classification functions to ensure aerodynamic robustness of the downselected configurations. The developed computational approach enables the optimisation of future civil aero-engine nacelles that target a reduction of the overall fuel consumption. <br/><br/><br/>Authors: Tejero F., MacManus D., Matesanz García J., Swarthout A., Sheaf C.. <br/><br/>Affiliations: Cranfield University, Rolls-Royce plc. <br/><br/>Publication: International Journal of Numerical Methods for Heat and Fluid Flow, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

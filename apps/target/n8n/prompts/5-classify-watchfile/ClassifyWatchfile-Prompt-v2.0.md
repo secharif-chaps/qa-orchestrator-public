@@ -104,12 +104,12 @@ Topics are **contextual themes** that:
 
 ```json
 {
-    "label": "Topic name in English",
-    "labelFR": "Topic name in French",
-    "keywords": ["keyword1", "keyword2", "keyword3"],
-    "keywordsFR": ["motclé1", "motclé2", "motclé3"],
-    "relevanceScore": 85,
-    "searchQueryTemplate": "template for web search queries"
+  "label": "Topic name in English",
+  "labelFR": "Topic name in French",
+  "keywords": ["keyword1", "keyword2", "keyword3"],
+  "keywordsFR": ["motclé1", "motclé2", "motclé3"],
+  "relevanceScore": 85,
+  "searchQueryTemplate": "template for web search queries"
 }
 ```
 
@@ -130,22 +130,22 @@ Generate topics around:
 
 ```json
 [
-    {
-        "label": "Ultra-Fast Fashion Players",
-        "labelFR": "Acteurs Ultra-Fast Fashion",
-        "keywords": ["Temu", "AliExpress", "fast fashion", "dropshipping"],
-        "keywordsFR": ["Temu", "AliExpress", "fast fashion", "livraison directe"],
-        "relevanceScore": 95,
-        "searchQueryTemplate": "{entity} ultra-fast fashion competitor market"
-    },
-    {
-        "label": "E-commerce Pricing Wars",
-        "labelFR": "Guerres de Prix E-commerce",
-        "keywords": ["pricing", "discount", "promotion", "price comparison"],
-        "keywordsFR": ["prix", "remise", "promotion", "comparaison prix"],
-        "relevanceScore": 85,
-        "searchQueryTemplate": "{entity} pricing strategy discount ecommerce"
-    }
+  {
+    "label": "Ultra-Fast Fashion Players",
+    "labelFR": "Acteurs Ultra-Fast Fashion",
+    "keywords": ["Temu", "AliExpress", "fast fashion", "dropshipping"],
+    "keywordsFR": ["Temu", "AliExpress", "fast fashion", "livraison directe"],
+    "relevanceScore": 95,
+    "searchQueryTemplate": "{entity} ultra-fast fashion competitor market"
+  },
+  {
+    "label": "E-commerce Pricing Wars",
+    "labelFR": "Guerres de Prix E-commerce",
+    "keywords": ["pricing", "discount", "promotion", "price comparison"],
+    "keywordsFR": ["prix", "remise", "promotion", "comparaison prix"],
+    "relevanceScore": 85,
+    "searchQueryTemplate": "{entity} pricing strategy discount ecommerce"
+  }
 ]
 ```
 
@@ -164,22 +164,22 @@ Generate topics around:
 
 ```json
 [
-    {
-        "label": "AI Act Implementation Timeline",
-        "labelFR": "Calendrier Application AI Act",
-        "keywords": ["effective date", "deadline", "transition period", "enforcement"],
-        "keywordsFR": ["entrée en vigueur", "échéance", "période transitoire", "application"],
-        "relevanceScore": 95,
-        "searchQueryTemplate": "AI Act {keyword} 2024 2025 timeline"
-    },
-    {
-        "label": "High-Risk AI Classification",
-        "labelFR": "Classification IA Haut Risque",
-        "keywords": ["high-risk", "prohibited", "classification", "assessment"],
-        "keywordsFR": ["haut risque", "interdit", "classification", "évaluation"],
-        "relevanceScore": 90,
-        "searchQueryTemplate": "AI Act high-risk systems classification requirements"
-    }
+  {
+    "label": "AI Act Implementation Timeline",
+    "labelFR": "Calendrier Application AI Act",
+    "keywords": ["effective date", "deadline", "transition period", "enforcement"],
+    "keywordsFR": ["entrée en vigueur", "échéance", "période transitoire", "application"],
+    "relevanceScore": 95,
+    "searchQueryTemplate": "AI Act {keyword} 2024 2025 timeline"
+  },
+  {
+    "label": "High-Risk AI Classification",
+    "labelFR": "Classification IA Haut Risque",
+    "keywords": ["high-risk", "prohibited", "classification", "assessment"],
+    "keywordsFR": ["haut risque", "interdit", "classification", "évaluation"],
+    "relevanceScore": 90,
+    "searchQueryTemplate": "AI Act high-risk systems classification requirements"
+  }
 ]
 ```
 
@@ -231,51 +231,46 @@ Generate topics around:
 
 ```json
 [
-    {
-        "label": "Labor Practice Controversies",
-        "labelFR": "Controverses Pratiques de Travail",
-        "keywords": ["sweatshop", "forced labor", "working conditions", "exploitation"],
-        "keywordsFR": [
-            "atelier clandestin",
-            "travail forcé",
-            "conditions de travail",
-            "exploitation"
-        ],
-        "relevanceScore": 95,
-        "searchQueryTemplate": "{entity} labor sweatshop controversy investigation"
-    },
-    {
-        "label": "Environmental Impact Criticism",
-        "labelFR": "Critiques Impact Environnemental",
-        "keywords": ["pollution", "waste", "sustainability", "greenwashing", "fast fashion impact"],
-        "keywordsFR": ["pollution", "déchets", "durabilité", "greenwashing", "impact fast fashion"],
-        "relevanceScore": 90,
-        "searchQueryTemplate": "{entity} environmental impact pollution criticism"
-    },
-    {
-        "label": "Consumer Safety Issues",
-        "labelFR": "Problèmes Sécurité Consommateur",
-        "keywords": ["toxic", "recall", "safety", "chemicals", "health risk"],
-        "keywordsFR": ["toxique", "rappel", "sécurité", "produits chimiques", "risque santé"],
-        "relevanceScore": 85,
-        "searchQueryTemplate": "{entity} product safety toxic chemicals recall"
-    },
-    {
-        "label": "Intellectual Property Disputes",
-        "labelFR": "Litiges Propriété Intellectuelle",
-        "keywords": ["copyright", "design theft", "lawsuit", "plagiarism"],
-        "keywordsFR": ["droits d'auteur", "vol design", "procès", "plagiat"],
-        "relevanceScore": 80,
-        "searchQueryTemplate": "{entity} copyright design theft lawsuit"
-    },
-    {
-        "label": "NGO Watchdog Reports",
-        "labelFR": "Rapports ONG Surveillance",
-        "keywords": ["NGO report", "investigation", "campaign", "advocacy"],
-        "keywordsFR": ["rapport ONG", "enquête", "campagne", "plaidoyer"],
-        "relevanceScore": 85,
-        "searchQueryTemplate": "{entity} NGO report investigation campaign"
-    }
+  {
+    "label": "Labor Practice Controversies",
+    "labelFR": "Controverses Pratiques de Travail",
+    "keywords": ["sweatshop", "forced labor", "working conditions", "exploitation"],
+    "keywordsFR": ["atelier clandestin", "travail forcé", "conditions de travail", "exploitation"],
+    "relevanceScore": 95,
+    "searchQueryTemplate": "{entity} labor sweatshop controversy investigation"
+  },
+  {
+    "label": "Environmental Impact Criticism",
+    "labelFR": "Critiques Impact Environnemental",
+    "keywords": ["pollution", "waste", "sustainability", "greenwashing", "fast fashion impact"],
+    "keywordsFR": ["pollution", "déchets", "durabilité", "greenwashing", "impact fast fashion"],
+    "relevanceScore": 90,
+    "searchQueryTemplate": "{entity} environmental impact pollution criticism"
+  },
+  {
+    "label": "Consumer Safety Issues",
+    "labelFR": "Problèmes Sécurité Consommateur",
+    "keywords": ["toxic", "recall", "safety", "chemicals", "health risk"],
+    "keywordsFR": ["toxique", "rappel", "sécurité", "produits chimiques", "risque santé"],
+    "relevanceScore": 85,
+    "searchQueryTemplate": "{entity} product safety toxic chemicals recall"
+  },
+  {
+    "label": "Intellectual Property Disputes",
+    "labelFR": "Litiges Propriété Intellectuelle",
+    "keywords": ["copyright", "design theft", "lawsuit", "plagiarism"],
+    "keywordsFR": ["droits d'auteur", "vol design", "procès", "plagiat"],
+    "relevanceScore": 80,
+    "searchQueryTemplate": "{entity} copyright design theft lawsuit"
+  },
+  {
+    "label": "NGO Watchdog Reports",
+    "labelFR": "Rapports ONG Surveillance",
+    "keywords": ["NGO report", "investigation", "campaign", "advocacy"],
+    "keywordsFR": ["rapport ONG", "enquête", "campagne", "plaidoyer"],
+    "relevanceScore": 85,
+    "searchQueryTemplate": "{entity} NGO report investigation campaign"
+  }
 ]
 ```
 
@@ -297,14 +292,14 @@ If strong evidence exists for multiple types (≥2 types with score ≥60):
 
 ```json
 {
-    "primaryType": "competitive",
-    "confidenceScore": 75,
-    "secondaryTypes": [
-        {
-            "type": "technological",
-            "score": 70
-        }
-    ]
+  "primaryType": "competitive",
+  "confidenceScore": 75,
+  "secondaryTypes": [
+    {
+      "type": "technological",
+      "score": 70
+    }
+  ]
 }
 ```
 

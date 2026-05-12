@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_EXACT",
-    "legacy_level": 110,
-    "master": {
-        "id": "legacy-64-master-13286524",
-        "url": "https://www.avitrader.com/2022/06/21/easyjet-first-airline-partner-for-iris-programme/",
-        "title": "easyJet first airline partner for Iris programme",
-        "content": "<html><body><img alt=\"\" class=\"aligncenter wp-post-image\" height=\"321\" loading=\"lazy\" sizes=\"(max-width: 570px) 100vw, 570px\" src=\"https://www.avitrader.com/wp-content/uploads/2022/06/Iris_Easyjet.jpg\" srcset=\"https://www.avitrader.com/wp-content/uploads/2022/06/Iris_Easyjet.jpg 1024w, https://www.avitrader.com/wp-content/uploads/2022/06/Iris_Easyjet-300x169.jpg 300w, https://www.avitrader.com/wp-content/uploads/2022/06/Iris_Easyjet-768x432.jpg 768w, https://www.avitrader.com/wp-content/uploads/2022/06/Iris_Easyjet-370x208.jpg 370w\" width=\"570\"/><p>easyJet is the first airline partner for Iris, a ground-breaking air traffic management programme that will act as an enabler to systems that shall minimise flight delays, save fuel and help reduce the environmental impact of air travel.</p><p>The programme is led by Inmarsat, a world leader in global, mobile satellite communications, in collaboration with the European Space Agency (ESA) and Airbus. Iris is a key component of modernising and digitalising the aviation industry and supports the Single European Sky’s ATM Research (SESAR) masterplan for next-generation air traffic management.</p><p>easyJet has recently announced its interim science-based carbon reduction target, a 35% carbon emissions intensity improvement by FY2035 on a FY2020 baseline, as part of the airline’s Race to Zero commitment to achieve net-zero carbon emissions by 2050. Ultimately, easyJet wants to achieve zero carbon emission flying, for example using hydrogen technology and is working with partners across the industry, including Airbus, GKN Aerospace, Cranfield Aerospace Solutions and Wright Electric, on several dedicated projects to accelerate the development of this technology.</p><p>Until zero carbon emission technologies are available, the airline remains absolutely focused on reducing its current carbon emissions as far as possible and programmes like Iris play an important role.</p><p>Iris not only helps the airline to continue to operate its aircraft as efficiently as possible to achieve further efficiency improvements, thus complementing existing initiatives such as adjusting single-engine taxiing on arrival and departure or using advanced weather information and flight efficiency partnerships with key stakeholders such as Airbus, Collins Aerospace, NATS and Eurocontrol.</p><p>The programme also supports airspace modernisation. This is crucial for the entire industry as it is the most achievable source of carbon reductions right now as more direct flight paths lead to shorter flying times. The Single European Sky has stated an ambition to deliver 10% carbon emissions savings from European aviation.</p></body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13287020",
-        "url": "https://aviationbenefits.org/newswire/2022/06/easyjet-first-airline-partner-for-iris-programme-to-further-reduce-aviation-s-carbon-emissions/",
-        "title": "easyJet first airline partner for Iris programme to further reduce aviation’s carbon emissions",
-        "content": "<html><head><title>easyJet first airline partner for Iris programme to further reduce aviation’s carbon emissions</title></head><body><div>\n                                <p>easyJet is the first airline partner for Iris, a ground-breaking air traffic management programme that will act as an enabler to systems that shall minimise flight delays, save fuel and help reduce the environmental impact of air travel.</p>\n<p>The programme is led by Inmarsat, the world leader in global, mobile satellite communications, in collaboration with the European Space Agency (ESA) and Airbus. Iris is a key component of modernising and digitalising the aviation industry and supports the Single European Sky’s ATM Research (SESAR) masterplan for next-generation air traffic management.</p>\n<p>easyJet has recently announced its interim science-based carbon reduction target, a 35% carbon emissions intensity improvement by FY2035 on a FY2020 baseline, as part of the airline’s Race to Zero commitment to achieve net-zero carbon emissions by 2050. Ultimately, easyJet wants to achieve zero carbon emission flying, for example using hydrogen technology, and is working with partners across the industry, including Airbus, GKN Aerospace, Cranfield Aerospace Solutions and Wright Electric, on several dedicated projects to accelerate the development of this technology.</p>\n<p>Until zero carbon emission technologies are available, the airline remains absolutely focused on reducing its current carbon emissions as far as possible, and programmes like Iris play an important role.</p>\n<p>Iris not only helps the airline to continue to operate its aircraft as efficiently as possible to achieve further efficiency improvements, thus complementing existing initiatives such as adjusting single-engine taxiing on arrival and departure or using advanced weather information and flight efficiency partnerships with key stakeholders such as Airbus, Collins Aerospace, NATS and Eurocontrol.</p>\n<p>The programme also supports airspace modernisation. This is crucial for the entire industry as it is the most achievable source of carbon reductions right now as more direct flight paths lead to shorter flying times. The Single European Sky has stated an ambition to deliver 10% carbon emissions savings from European aviation.</p>\n<p><strong>Hugh McConnellogue, Director of Airport Operations &amp; Navigation at easyJet said:</strong></p>\n<p><em>“Iris is paving the way for more efficient air traffic management, which is a crucial step forward for the aviation industry. The Iris programme brings multiple benefits, from helping us to achieve our environmental goals by further reducing our carbon emissions from flying, to providing a better experience for our passengers. We’re excited to be leading in this space, setting the standard for the aviation industry and hope to see more airlines follow suit.”</em></p>\n                            </div></body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "near_duplicate",
-        "note": "Same press-release text about easyJet joining the Iris programme with minor wording and length differences across two outlets."
-    },
-    "pinned": {
-        "outcome": "near_duplicate",
-        "stage": "min_hash_lsh",
-        "similarity": 0.7421875
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-64-master-13286524",
+    "url": "https://www.avitrader.com/2022/06/21/easyjet-first-airline-partner-for-iris-programme/",
+    "title": "easyJet first airline partner for Iris programme",
+    "content": "<html><body><img alt=\"\" class=\"aligncenter wp-post-image\" height=\"321\" loading=\"lazy\" sizes=\"(max-width: 570px) 100vw, 570px\" src=\"https://www.avitrader.com/wp-content/uploads/2022/06/Iris_Easyjet.jpg\" srcset=\"https://www.avitrader.com/wp-content/uploads/2022/06/Iris_Easyjet.jpg 1024w, https://www.avitrader.com/wp-content/uploads/2022/06/Iris_Easyjet-300x169.jpg 300w, https://www.avitrader.com/wp-content/uploads/2022/06/Iris_Easyjet-768x432.jpg 768w, https://www.avitrader.com/wp-content/uploads/2022/06/Iris_Easyjet-370x208.jpg 370w\" width=\"570\"/><p>easyJet is the first airline partner for Iris, a ground-breaking air traffic management programme that will act as an enabler to systems that shall minimise flight delays, save fuel and help reduce the environmental impact of air travel.</p><p>The programme is led by Inmarsat, a world leader in global, mobile satellite communications, in collaboration with the European Space Agency (ESA) and Airbus. Iris is a key component of modernising and digitalising the aviation industry and supports the Single European Sky’s ATM Research (SESAR) masterplan for next-generation air traffic management.</p><p>easyJet has recently announced its interim science-based carbon reduction target, a 35% carbon emissions intensity improvement by FY2035 on a FY2020 baseline, as part of the airline’s Race to Zero commitment to achieve net-zero carbon emissions by 2050. Ultimately, easyJet wants to achieve zero carbon emission flying, for example using hydrogen technology and is working with partners across the industry, including Airbus, GKN Aerospace, Cranfield Aerospace Solutions and Wright Electric, on several dedicated projects to accelerate the development of this technology.</p><p>Until zero carbon emission technologies are available, the airline remains absolutely focused on reducing its current carbon emissions as far as possible and programmes like Iris play an important role.</p><p>Iris not only helps the airline to continue to operate its aircraft as efficiently as possible to achieve further efficiency improvements, thus complementing existing initiatives such as adjusting single-engine taxiing on arrival and departure or using advanced weather information and flight efficiency partnerships with key stakeholders such as Airbus, Collins Aerospace, NATS and Eurocontrol.</p><p>The programme also supports airspace modernisation. This is crucial for the entire industry as it is the most achievable source of carbon reductions right now as more direct flight paths lead to shorter flying times. The Single European Sky has stated an ambition to deliver 10% carbon emissions savings from European aviation.</p></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13287020",
+    "url": "https://aviationbenefits.org/newswire/2022/06/easyjet-first-airline-partner-for-iris-programme-to-further-reduce-aviation-s-carbon-emissions/",
+    "title": "easyJet first airline partner for Iris programme to further reduce aviation’s carbon emissions",
+    "content": "<html><head><title>easyJet first airline partner for Iris programme to further reduce aviation’s carbon emissions</title></head><body><div>\n                                <p>easyJet is the first airline partner for Iris, a ground-breaking air traffic management programme that will act as an enabler to systems that shall minimise flight delays, save fuel and help reduce the environmental impact of air travel.</p>\n<p>The programme is led by Inmarsat, the world leader in global, mobile satellite communications, in collaboration with the European Space Agency (ESA) and Airbus. Iris is a key component of modernising and digitalising the aviation industry and supports the Single European Sky’s ATM Research (SESAR) masterplan for next-generation air traffic management.</p>\n<p>easyJet has recently announced its interim science-based carbon reduction target, a 35% carbon emissions intensity improvement by FY2035 on a FY2020 baseline, as part of the airline’s Race to Zero commitment to achieve net-zero carbon emissions by 2050. Ultimately, easyJet wants to achieve zero carbon emission flying, for example using hydrogen technology, and is working with partners across the industry, including Airbus, GKN Aerospace, Cranfield Aerospace Solutions and Wright Electric, on several dedicated projects to accelerate the development of this technology.</p>\n<p>Until zero carbon emission technologies are available, the airline remains absolutely focused on reducing its current carbon emissions as far as possible, and programmes like Iris play an important role.</p>\n<p>Iris not only helps the airline to continue to operate its aircraft as efficiently as possible to achieve further efficiency improvements, thus complementing existing initiatives such as adjusting single-engine taxiing on arrival and departure or using advanced weather information and flight efficiency partnerships with key stakeholders such as Airbus, Collins Aerospace, NATS and Eurocontrol.</p>\n<p>The programme also supports airspace modernisation. This is crucial for the entire industry as it is the most achievable source of carbon reductions right now as more direct flight paths lead to shorter flying times. The Single European Sky has stated an ambition to deliver 10% carbon emissions savings from European aviation.</p>\n<p><strong>Hugh McConnellogue, Director of Airport Operations &amp; Navigation at easyJet said:</strong></p>\n<p><em>“Iris is paving the way for more efficient air traffic management, which is a crucial step forward for the aviation industry. The Iris programme brings multiple benefits, from helping us to achieve our environmental goals by further reducing our carbon emissions from flying, to providing a better experience for our passengers. We’re excited to be leading in this space, setting the standard for the aviation industry and hope to see more airlines follow suit.”</em></p>\n                            </div></body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "near_duplicate",
+    "note": "Same press-release text about easyJet joining the Iris programme with minor wording and length differences across two outlets."
+  },
+  "pinned": {
+    "outcome": "near_duplicate",
+    "stage": "min_hash_lsh",
+    "similarity": 0.7421875
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

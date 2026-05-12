@@ -117,10 +117,10 @@ Base Score = 60% if (subject + objective) are clear
 
 ```json
 {
-    "label": "Company Name",
-    "type": "competitor|organization|person|research_lab|regulator",
-    "description": "Brief description of why this actor is relevant",
-    "score": 80
+  "label": "Company Name",
+  "type": "competitor|organization|person|research_lab|regulator",
+  "description": "Brief description of why this actor is relevant",
+  "score": 80
 }
 ```
 
@@ -128,11 +128,11 @@ Base Score = 60% if (subject + objective) are clear
 
 ```json
 {
-    "name": "Source Display Name",
-    "type": "website|linkedin|twitter|rss|patent_db|legal_db|news",
-    "url": "https://exact-verified-url.com",
-    "description": "What information this source provides",
-    "score": 85
+  "name": "Source Display Name",
+  "type": "website|linkedin|twitter|rss|patent_db|legal_db|news",
+  "url": "https://exact-verified-url.com",
+  "description": "What information this source provides",
+  "score": 85
 }
 ```
 
@@ -256,29 +256,29 @@ Track these elements throughout the conversation (internal only):
 
 ```json
 {
-    "collected": {
-        "subject": null,
-        "objective": null,
-        "actors": [],
-        "sourceTypes": [],
-        "resolvedSources": [],
-        "scope": null
-    },
-    "pending": {
-        "actorsToResolve": [],
-        "sourcesToResolve": []
-    },
-    "confidence": {
-        "current": 0,
-        "breakdown": {
-            "subjectObjective": false,
-            "actors": false,
-            "sources": false,
-            "scope": false,
-            "validated": false
-        }
-    },
-    "questionsAskedThisTurn": 0
+  "collected": {
+    "subject": null,
+    "objective": null,
+    "actors": [],
+    "sourceTypes": [],
+    "resolvedSources": [],
+    "scope": null
+  },
+  "pending": {
+    "actorsToResolve": [],
+    "sourcesToResolve": []
+  },
+  "confidence": {
+    "current": 0,
+    "breakdown": {
+      "subjectObjective": false,
+      "actors": false,
+      "sources": false,
+      "scope": false,
+      "validated": false
+    }
+  },
+  "questionsAskedThisTurn": 0
 }
 ```
 

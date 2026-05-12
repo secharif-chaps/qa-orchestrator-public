@@ -23,10 +23,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        -560,
-        -160
-      ],
+      "position": [-560, -160],
       "id": "a384f7e7-44f2-475d-8650-da1f5f5d254d",
       "name": "Workflow_Trigger_GenerateDocumentSummary"
     },
@@ -60,10 +57,7 @@
       },
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1.1,
-      "position": [
-        288,
-        -64
-      ],
+      "position": [288, -64],
       "id": "31714d1f-4e6d-4d1b-8eb9-97baa889be50",
       "name": "RabbitMQ_Publish_FailureStatus",
       "credentials": {
@@ -103,10 +97,7 @@
       },
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1.1,
-      "position": [
-        288,
-        -256
-      ],
+      "position": [288, -256],
       "id": "2f506992-f45a-42fc-9a1f-2c2dd1f73a1b",
       "name": "RabbitMQ_Publish_DocumentSummary",
       "credentials": {
@@ -141,10 +132,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -368,
-        64
-      ],
+      "position": [-368, 64],
       "id": "60cb642a-fd63-4192-9b10-1bcb704e3ca5",
       "name": "LLM_Model_Primary",
       "credentials": {
@@ -167,10 +155,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
-      "position": [
-        -304,
-        -160
-      ],
+      "position": [-304, -160],
       "id": "aac71b02-cab2-4d47-8742-c5dc5c1773b9",
       "name": "LLM_Agent_GenerateSummary",
       "retryOnFail": true,
@@ -199,10 +184,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        0,
-        272
-      ],
+      "position": [0, 272],
       "id": "669dfc6e-0b38-417a-a52c-43b50e3b4b0b",
       "name": "LLM_Model_Fallback",
       "credentials": {
@@ -220,10 +202,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.2,
-      "position": [
-        -80,
-        64
-      ],
+      "position": [-80, 64],
       "id": "30df64ab-4d72-4445-b681-8ac607548234",
       "name": "LLM_Parser_SummarySchema"
     },
@@ -252,10 +231,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -192,
-        64
-      ],
+      "position": [-192, 64],
       "id": "5d03620b-3586-4827-94ee-6ddbb6445ee2",
       "name": "LLM_Model_Secondary",
       "credentials": {

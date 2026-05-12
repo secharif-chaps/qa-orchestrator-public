@@ -81,40 +81,40 @@ Validates AI agent nodes (`@n8n/n8n-nodes-langchain.agent`) have robust error ha
 All agent nodes must have:
 
 1. **Fallback Model** (`needsFallback=true`)
-    - Ensures a backup LLM is used if primary fails
-    - Prevents workflow failures due to single model issues
+   - Ensures a backup LLM is used if primary fails
+   - Prevents workflow failures due to single model issues
 
 2. **Retry on Fail** (`retryOnFail=true`)
-    - Enables automatic retry for transient failures
-    - Improves workflow reliability
+   - Enables automatic retry for transient failures
+   - Improves workflow reliability
 
 3. **Max Iterations** (`maxIterations < 30`)
-    - Must be defined and less than 30
-    - Prevents infinite loops in agent reasoning
-    - Recommended: 5-15 iterations for most use cases
+   - Must be defined and less than 30
+   - Prevents infinite loops in agent reasoning
+   - Recommended: 5-15 iterations for most use cases
 
 4. **Error Output** (`onError="continueErrorOutput"`)
-    - Must be set to continue on error with error output
-    - Allows graceful error handling downstream
+   - Must be set to continue on error with error output
+   - Allows graceful error handling downstream
 
 5. **Error Output Connected**
-    - Error output (index 1) must be connected to another node
-    - Enables proper error handling and logging
+   - Error output (index 1) must be connected to another node
+   - Enables proper error handling and logging
 
 #### Example Configuration
 
 ```json
 {
-    "name": "Folder_Agent_GenerateSummary",
-    "type": "@n8n/n8n-nodes-langchain.agent",
-    "parameters": {
-        "needsFallback": true,
-        "options": {
-            "maxIterations": 10
-        }
-    },
-    "retryOnFail": true,
-    "onError": "continueErrorOutput"
+  "name": "Folder_Agent_GenerateSummary",
+  "type": "@n8n/n8n-nodes-langchain.agent",
+  "parameters": {
+    "needsFallback": true,
+    "options": {
+      "maxIterations": 10
+    }
+  },
+  "retryOnFail": true,
+  "onError": "continueErrorOutput"
 }
 ```
 
@@ -146,36 +146,36 @@ All feedback nodes must return JSON with these fields:
 
 ```json
 {
-    "success": true, // boolean - operation result
-    "message": "Operation completed", // string - translated message
-    "context": {
-        "execution": {
-            // execution context for debugging
-            "id": "$execution.id"
-        }
+  "success": true, // boolean - operation result
+  "message": "Operation completed", // string - translated message
+  "context": {
+    "execution": {
+      // execution context for debugging
+      "id": "$execution.id"
     }
+  }
 }
 ```
 
 #### Field Requirements
 
 1. **`success`** (boolean, CRITICAL)
-    - Indicates operation success or failure
-    - Must be present in all responses
+   - Indicates operation success or failure
+   - Must be present in all responses
 
 2. **`message`** (string, CRITICAL)
-    - Human-readable message
-    - Should be translated based on user language
-    - Pattern check: looks for `language === 'en'` or similar
+   - Human-readable message
+   - Should be translated based on user language
+   - Pattern check: looks for `language === 'en'` or similar
 
 3. **`context.execution`** (object, CRITICAL)
-    - Contains N8N execution ID for debugging
-    - Pattern: `$execution` variable
-    - Helps trace issues in production
+   - Contains N8N execution ID for debugging
+   - Pattern: `$execution` variable
+   - Helps trace issues in production
 
 4. **Translation** (WARNING)
-    - Messages should be translated based on language
-    - Checks for language conditionals in code
+   - Messages should be translated based on language
+   - Checks for language conditionals in code
 
 #### Example Configurations
 
@@ -183,12 +183,12 @@ All feedback nodes must return JSON with these fields:
 
 ```json
 {
-    "name": "Feedback_Success",
-    "type": "n8n-nodes-base.set",
-    "parameters": {
-        "mode": "raw",
-        "jsonOutput": "={{ {\n  success: true,\n  message: $('language') === 'en' ? 'Folder created successfully' : 'Dossier créé avec succès',\n  context: {\n    execution: $execution\n  }\n} }}"
-    }
+  "name": "Feedback_Success",
+  "type": "n8n-nodes-base.set",
+  "parameters": {
+    "mode": "raw",
+    "jsonOutput": "={{ {\n  success: true,\n  message: $('language') === 'en' ? 'Folder created successfully' : 'Dossier créé avec succès',\n  context: {\n    execution: $execution\n  }\n} }}"
+  }
 }
 ```
 
@@ -196,12 +196,12 @@ All feedback nodes must return JSON with these fields:
 
 ```json
 {
-    "name": "Feedback_Error",
-    "type": "n8n-nodes-base.set",
-    "parameters": {
-        "mode": "raw",
-        "jsonOutput": "={{ { data: $json } }}" // Missing success, message, context
-    }
+  "name": "Feedback_Error",
+  "type": "n8n-nodes-base.set",
+  "parameters": {
+    "mode": "raw",
+    "jsonOutput": "={{ { data: $json } }}" // Missing success, message, context
+  }
 }
 ```
 
@@ -246,11 +246,11 @@ All RabbitMQ nodes must:
 
 ```json
 {
-    "type": "n8n-nodes-base.rabbitmq",
-    "parameters": {
-        "queue": "agent_responses",
-        "message": "={{ ... }}"
-    }
+  "type": "n8n-nodes-base.rabbitmq",
+  "parameters": {
+    "queue": "agent_responses",
+    "message": "={{ ... }}"
+  }
 }
 ```
 
@@ -258,10 +258,10 @@ All RabbitMQ nodes must:
 
 ```json
 {
-    "type": "n8n-nodes-base.rabbitmqTrigger",
-    "parameters": {
-        "queue": "agent_commands"
-    }
+  "type": "n8n-nodes-base.rabbitmqTrigger",
+  "parameters": {
+    "queue": "agent_commands"
+  }
 }
 ```
 
@@ -271,18 +271,18 @@ Every RabbitMQ node **must** include a `type` header:
 
 ```json
 {
-    "parameters": {
-        "options": {
-            "headers": {
-                "header": [
-                    {
-                        "key": "type",
-                        "value": "App\\\\Message\\\\Folder\\\\FolderUpdatedMessage"
-                    }
-                ]
-            }
-        }
+  "parameters": {
+    "options": {
+      "headers": {
+        "header": [
+          {
+            "key": "type",
+            "value": "App\\\\Message\\\\Folder\\\\FolderUpdatedMessage"
+          }
+        ]
+      }
     }
+  }
 }
 ```
 
@@ -311,9 +311,9 @@ final readonly class FolderUpdatedMessage
 
 ```json
 {
-    "folderId": "={{ $json.folderId }}",
-    "userId": "={{ $json.userId }}",
-    "comment": "={{ $json.comment }}"
+  "folderId": "={{ $json.folderId }}",
+  "userId": "={{ $json.userId }}",
+  "comment": "={{ $json.comment }}"
 }
 ```
 
@@ -336,7 +336,7 @@ For specific chat action classes, the `message` field **must be translated** bas
 
 ```json
 {
-    "message": "={{ $('language') === 'en' ? 'Processing your request' : 'Traitement de votre demande' }}"
+  "message": "={{ $('language') === 'en' ? 'Processing your request' : 'Traitement de votre demande' }}"
 }
 ```
 
@@ -344,7 +344,7 @@ For specific chat action classes, the `message` field **must be translated** bas
 
 ```json
 {
-    "message": "Processing your request" // Not translated!
+  "message": "Processing your request" // Not translated!
 }
 ```
 
@@ -384,20 +384,20 @@ Ensures N8N nodes meet minimum version requirements for compatibility and featur
 All Agent, LLM, and Call Workflow Tool nodes must meet minimum version requirements:
 
 1. **Agent Nodes** (`@n8n/n8n-nodes-langchain.agent`)
-    - Must be version >= 3.0
-    - Version 3 includes critical bug fixes and improved error handling
+   - Must be version >= 3.0
+   - Version 3 includes critical bug fixes and improved error handling
 
 2. **LLM Nodes** (`@n8n/n8n-nodes-langchain.lmChatOpenAi`)
-    - Must be version >= 1.3
-    - Must have `responseApiEnabled=false` to ensure proper response formatting
+   - Must be version >= 1.3
+   - Must have `responseApiEnabled=false` to ensure proper response formatting
 
 3. **Call Workflow Tool Nodes** (`@n8n/n8n-nodes-langchain.toolWorkflow`)
-    - Must be version >= 2.2
-    - Version 2.2 includes improved workflow input handling and better error messages
+   - Must be version >= 2.2
+   - Version 2.2 includes improved workflow input handling and better error messages
 
 4. **Connected LLM Validation**
-    - LLM nodes connected to Agents are automatically validated
-    - Connection via `ai_languageModel` connection type
+   - LLM nodes connected to Agents are automatically validated
+   - Connection via `ai_languageModel` connection type
 
 #### Required Configuration
 
@@ -405,12 +405,12 @@ All Agent, LLM, and Call Workflow Tool nodes must meet minimum version requireme
 
 ```json
 {
-    "name": "Folder_Agent_GenerateSummary",
-    "type": "@n8n/n8n-nodes-langchain.agent",
-    "typeVersion": 3,
-    "parameters": {
-        "needsFallback": true
-    }
+  "name": "Folder_Agent_GenerateSummary",
+  "type": "@n8n/n8n-nodes-langchain.agent",
+  "typeVersion": 3,
+  "parameters": {
+    "needsFallback": true
+  }
 }
 ```
 
@@ -418,14 +418,14 @@ All Agent, LLM, and Call Workflow Tool nodes must meet minimum version requireme
 
 ```json
 {
-    "name": "LLM_Model_Primary",
-    "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-    "typeVersion": 1.3,
-    "parameters": {
-        "options": {
-            "responseApiEnabled": false
-        }
+  "name": "LLM_Model_Primary",
+  "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+  "typeVersion": 1.3,
+  "parameters": {
+    "options": {
+      "responseApiEnabled": false
     }
+  }
 }
 ```
 
@@ -433,13 +433,13 @@ All Agent, LLM, and Call Workflow Tool nodes must meet minimum version requireme
 
 ```json
 {
-    "name": "Tool_WatchFile_Classify",
-    "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-    "typeVersion": 2.2,
-    "parameters": {
-        "description": "Classify a watchfile into monitoring categories",
-        "workflowId": "5-tool-classify-watchfile"
-    }
+  "name": "Tool_WatchFile_Classify",
+  "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+  "typeVersion": 2.2,
+  "parameters": {
+    "description": "Classify a watchfile into monitoring categories",
+    "workflowId": "5-tool-classify-watchfile"
+  }
 }
 ```
 
@@ -636,23 +636,23 @@ The validator runs automatically in CI via the `n8n-workflow-validation` job:
 
 ```yaml
 n8n-workflow-validation:
-    stage: TestsAndSecurity
-    script:
-        - cd api
-        - php tests/N8N/validate-n8n-workflows.php \
-          --workflows-dir=../docker/n8n/workflows \
-          --format=junit \
-          --output=var/reports/n8n-workflow-validation.xml \
-          --coverage=var/reports/n8n-workflow-coverage.xml
-    artifacts:
-        reports:
-            junit: api/var/reports/n8n-workflow-validation.xml
-            coverage_report:
-                coverage_format: cobertura
-                path: api/var/reports/n8n-workflow-coverage.xml
-        when: always
-        expire_in: 1 week
-    allow_failure: false # CI fails if validation errors found
+  stage: TestsAndSecurity
+  script:
+    - cd api
+    - php tests/N8N/validate-n8n-workflows.php \
+      --workflows-dir=../docker/n8n/workflows \
+      --format=junit \
+      --output=var/reports/n8n-workflow-validation.xml \
+      --coverage=var/reports/n8n-workflow-coverage.xml
+  artifacts:
+    reports:
+      junit: api/var/reports/n8n-workflow-validation.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: api/var/reports/n8n-workflow-coverage.xml
+    when: always
+    expire_in: 1 week
+  allow_failure: false # CI fails if validation errors found
 ```
 
 ### CI Output

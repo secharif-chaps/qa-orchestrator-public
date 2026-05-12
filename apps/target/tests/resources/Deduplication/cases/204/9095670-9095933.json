@@ -1,36 +1,36 @@
 {
-    "account_id": 204,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 60,
-    "master": {
-        "id": "legacy-204-master-9095670",
-        "url": "",
-        "title": "FW: vip7304",
-        "content": "<html><body>\n<p></p><p></p><p><b>From:</b> EEAS EU INTCEN OPENSOURCES &lt;euintcen.opensources@eeas.europa.eu&gt;\n<br/><b>Sent:</b> 25 February 2022 00:17<br/><b>To:</b> EEAS OSI IAP CONTAINER &lt;OSI-IAP-CONTAINER@eeas.europa.eu&gt;<br/><b>Subject:</b> FW: vip7304</p>     <br/>\n    <br/>\n<p></p><p><b></b></p>    <br/>\n<hr align=\"center\" size=\"2\" width=\"98%\"/>    <br/>\n<p style=\"margin-bottom:12.0pt\"><b>From:</b>\n<a href=\"mailto:office@vipnews.rs\">office@vipnews.rs</a><br/><b>Sent:</b> Friday, February 25, 2022 12:16:48 AM (UTC+01:00) Brussels, Copenhagen, Madrid, Paris<br/><b>To:</b> <a href=\"mailto:Belgrade.office@coe.int\">Belgrade.office@coe.int</a>; EEAS EU INTCEN OPENSOURCES;\n<a href=\"mailto:mara.zivkov@mfa.no\">mara.zivkov@mfa.no</a>; <a href=\"mailto:office@iriran.rs\">\noffice@iriran.rs</a>; <a href=\"mailto:irima89@gmail.com\">irima89@gmail.com</a>; <a href=\"mailto:sodaifataei@yahoo.com\">\nsodaifataei@yahoo.com</a>; <a href=\"mailto:milijana.dukic@yahoo.com\">milijana.dukic@yahoo.com</a>;\n<a href=\"mailto:info.belgrade@mfa.no\">info.belgrade@mfa.no</a>; <a href=\"mailto:dfa.library@iveagh.gov.ie\">\ndfa.library@iveagh.gov.ie</a>; <a href=\"mailto:Fani.Farmaki@osce.org\">Fani.Farmaki@osce.org</a>;\n<a href=\"mailto:dragan.matic@osce.org\">dragan.matic@osce.org</a>; <a href=\"mailto:osce.mk7@unet.com.mk\">\nosce.mk7@unet.com.mk</a>; <a href=\"mailto:timrosie@msn.com\">timrosie@msn.com</a>;\n<a href=\"mailto:doslov-stankic@un.org\">doslov-stankic@un.org</a>; <a href=\"mailto:razdorozhny@un.org\">\nrazdorozhny@un.org</a>; <a href=\"mailto:outreachserbia@yahoo.com\">outreachserbia@yahoo.com</a><br/><b>Subject:</b> vip7304</p><p style=\"margin-bottom:12.0pt\"></p>      <br/>\n     <br/>\n   <br/>\n</body></html>"
-    },
-    "candidate": {
-        "id": "legacy-204-dup-9095933",
-        "url": "",
-        "title": "FW: vip7304",
-        "content": "<html><body>\n<p></p><p></p><p><b>From:</b> EEAS EU INTCEN OPENSOURCES &lt;euintcen.opensources@eeas.europa.eu&gt;\n<br/><b>Sent:</b> 25 February 2022 00:17<br/><b>To:</b> EEAS OSI IAP CONTAINER &lt;OSI-IAP-CONTAINER@eeas.europa.eu&gt;<br/><b>Subject:</b> FW: vip7304</p>     <br/>\n    <br/>\n<p></p><p><b></b></p>    <br/>\n<hr align=\"center\" size=\"2\" width=\"98%\"/>    <br/>\n<p style=\"margin-bottom:12.0pt\"><b>From:</b>\n<a href=\"mailto:office@vipnews.rs\">office@vipnews.rs</a><br/><b>Sent:</b> Friday, February 25, 2022 12:16:48 AM (UTC+01:00) Brussels, Copenhagen, Madrid, Paris<br/><b>To:</b> <a href=\"mailto:Belgrade.office@coe.int\">Belgrade.office@coe.int</a>; EEAS EU INTCEN OPENSOURCES;\n<a href=\"mailto:mara.zivkov@mfa.no\">mara.zivkov@mfa.no</a>; <a href=\"mailto:office@iriran.rs\">\noffice@iriran.rs</a>; <a href=\"mailto:irima89@gmail.com\">irima89@gmail.com</a>; <a href=\"mailto:sodaifataei@yahoo.com\">\nsodaifataei@yahoo.com</a>; <a href=\"mailto:milijana.dukic@yahoo.com\">milijana.dukic@yahoo.com</a>;\n<a href=\"mailto:info.belgrade@mfa.no\">info.belgrade@mfa.no</a>; <a href=\"mailto:dfa.library@iveagh.gov.ie\">\ndfa.library@iveagh.gov.ie</a>; <a href=\"mailto:Fani.Farmaki@osce.org\">Fani.Farmaki@osce.org</a>;\n<a href=\"mailto:dragan.matic@osce.org\">dragan.matic@osce.org</a>; <a href=\"mailto:osce.mk7@unet.com.mk\">\nosce.mk7@unet.com.mk</a>; <a href=\"mailto:timrosie@msn.com\">timrosie@msn.com</a>;\n<a href=\"mailto:doslov-stankic@un.org\">doslov-stankic@un.org</a>; <a href=\"mailto:razdorozhny@un.org\">\nrazdorozhny@un.org</a>; <a href=\"mailto:outreachserbia@yahoo.com\">outreachserbia@yahoo.com</a><br/><b>Subject:</b> vip7304</p><p style=\"margin-bottom:12.0pt\"></p>      <br/>\n     <br/>\n   <br/>\n</body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Email forward content and metadata are identical in master and candidate"
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "content_hash",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 204,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 60,
+  "master": {
+    "id": "legacy-204-master-9095670",
+    "url": "",
+    "title": "FW: vip7304",
+    "content": "<html><body>\n<p></p><p></p><p><b>From:</b> EEAS EU INTCEN OPENSOURCES &lt;euintcen.opensources@eeas.europa.eu&gt;\n<br/><b>Sent:</b> 25 February 2022 00:17<br/><b>To:</b> EEAS OSI IAP CONTAINER &lt;OSI-IAP-CONTAINER@eeas.europa.eu&gt;<br/><b>Subject:</b> FW: vip7304</p>     <br/>\n    <br/>\n<p></p><p><b></b></p>    <br/>\n<hr align=\"center\" size=\"2\" width=\"98%\"/>    <br/>\n<p style=\"margin-bottom:12.0pt\"><b>From:</b>\n<a href=\"mailto:office@vipnews.rs\">office@vipnews.rs</a><br/><b>Sent:</b> Friday, February 25, 2022 12:16:48 AM (UTC+01:00) Brussels, Copenhagen, Madrid, Paris<br/><b>To:</b> <a href=\"mailto:Belgrade.office@coe.int\">Belgrade.office@coe.int</a>; EEAS EU INTCEN OPENSOURCES;\n<a href=\"mailto:mara.zivkov@mfa.no\">mara.zivkov@mfa.no</a>; <a href=\"mailto:office@iriran.rs\">\noffice@iriran.rs</a>; <a href=\"mailto:irima89@gmail.com\">irima89@gmail.com</a>; <a href=\"mailto:sodaifataei@yahoo.com\">\nsodaifataei@yahoo.com</a>; <a href=\"mailto:milijana.dukic@yahoo.com\">milijana.dukic@yahoo.com</a>;\n<a href=\"mailto:info.belgrade@mfa.no\">info.belgrade@mfa.no</a>; <a href=\"mailto:dfa.library@iveagh.gov.ie\">\ndfa.library@iveagh.gov.ie</a>; <a href=\"mailto:Fani.Farmaki@osce.org\">Fani.Farmaki@osce.org</a>;\n<a href=\"mailto:dragan.matic@osce.org\">dragan.matic@osce.org</a>; <a href=\"mailto:osce.mk7@unet.com.mk\">\nosce.mk7@unet.com.mk</a>; <a href=\"mailto:timrosie@msn.com\">timrosie@msn.com</a>;\n<a href=\"mailto:doslov-stankic@un.org\">doslov-stankic@un.org</a>; <a href=\"mailto:razdorozhny@un.org\">\nrazdorozhny@un.org</a>; <a href=\"mailto:outreachserbia@yahoo.com\">outreachserbia@yahoo.com</a><br/><b>Subject:</b> vip7304</p><p style=\"margin-bottom:12.0pt\"></p>      <br/>\n     <br/>\n   <br/>\n</body></html>"
+  },
+  "candidate": {
+    "id": "legacy-204-dup-9095933",
+    "url": "",
+    "title": "FW: vip7304",
+    "content": "<html><body>\n<p></p><p></p><p><b>From:</b> EEAS EU INTCEN OPENSOURCES &lt;euintcen.opensources@eeas.europa.eu&gt;\n<br/><b>Sent:</b> 25 February 2022 00:17<br/><b>To:</b> EEAS OSI IAP CONTAINER &lt;OSI-IAP-CONTAINER@eeas.europa.eu&gt;<br/><b>Subject:</b> FW: vip7304</p>     <br/>\n    <br/>\n<p></p><p><b></b></p>    <br/>\n<hr align=\"center\" size=\"2\" width=\"98%\"/>    <br/>\n<p style=\"margin-bottom:12.0pt\"><b>From:</b>\n<a href=\"mailto:office@vipnews.rs\">office@vipnews.rs</a><br/><b>Sent:</b> Friday, February 25, 2022 12:16:48 AM (UTC+01:00) Brussels, Copenhagen, Madrid, Paris<br/><b>To:</b> <a href=\"mailto:Belgrade.office@coe.int\">Belgrade.office@coe.int</a>; EEAS EU INTCEN OPENSOURCES;\n<a href=\"mailto:mara.zivkov@mfa.no\">mara.zivkov@mfa.no</a>; <a href=\"mailto:office@iriran.rs\">\noffice@iriran.rs</a>; <a href=\"mailto:irima89@gmail.com\">irima89@gmail.com</a>; <a href=\"mailto:sodaifataei@yahoo.com\">\nsodaifataei@yahoo.com</a>; <a href=\"mailto:milijana.dukic@yahoo.com\">milijana.dukic@yahoo.com</a>;\n<a href=\"mailto:info.belgrade@mfa.no\">info.belgrade@mfa.no</a>; <a href=\"mailto:dfa.library@iveagh.gov.ie\">\ndfa.library@iveagh.gov.ie</a>; <a href=\"mailto:Fani.Farmaki@osce.org\">Fani.Farmaki@osce.org</a>;\n<a href=\"mailto:dragan.matic@osce.org\">dragan.matic@osce.org</a>; <a href=\"mailto:osce.mk7@unet.com.mk\">\nosce.mk7@unet.com.mk</a>; <a href=\"mailto:timrosie@msn.com\">timrosie@msn.com</a>;\n<a href=\"mailto:doslov-stankic@un.org\">doslov-stankic@un.org</a>; <a href=\"mailto:razdorozhny@un.org\">\nrazdorozhny@un.org</a>; <a href=\"mailto:outreachserbia@yahoo.com\">outreachserbia@yahoo.com</a><br/><b>Subject:</b> vip7304</p><p style=\"margin-bottom:12.0pt\"></p>      <br/>\n     <br/>\n   <br/>\n</body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Email forward content and metadata are identical in master and candidate"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "content_hash",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

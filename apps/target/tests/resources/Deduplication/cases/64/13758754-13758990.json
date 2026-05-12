@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13758754",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85149769165&origin=inward",
-        "title": "Thermal control of coke furnace by data-driven approach",
-        "content": "<html><body>To achieve efficient and stable coke furnace operation, we developed an operation guidance system to reduce the variance of net coking time (NCT). A control algorithm that predicts the future NCT by locally weighted regression using the individual chamber database and adjusts the fuel gas flow rate was constructed. After a simulation validation using a newly developed one-dimensional transient model, the operation guidance system based on the developed control algorithm was implemented in a real plant. As a result, the root mean square (RMS) of the control error of NCT was reduced by 0.12 h, and the combustion chamber temperature was reduced by 28.8°C. The developed operation guidance system contributed to the reduction of fuel consumption and CO2 emission of the coke furnace. <br/><br/><br/>Authors: Hashimoto Y., Kase H.. <br/><br/>Affiliations: JFE Steel Corporation. <br/><br/>Publication: Digital Chemical Engineering, March 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13758990",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85149769165&origin=inward",
-        "title": "Thermal control of coke furnace by data-driven approach",
-        "content": "<html><body>To achieve efficient and stable coke furnace operation, we developed an operation guidance system to reduce the variance of net coking time (NCT). A control algorithm that predicts the future NCT by locally weighted regression using the individual chamber database and adjusts the fuel gas flow rate was constructed. After a simulation validation using a newly developed one-dimensional transient model, the operation guidance system based on the developed control algorithm was implemented in a real plant. As a result, the root mean square (RMS) of the control error of NCT was reduced by 0.12 h, and the combustion chamber temperature was reduced by 28.8°C. The developed operation guidance system contributed to the reduction of fuel consumption and CO2 emission of the coke furnace. <br/><br/><br/>Authors: Hashimoto Y., Kase H.. <br/><br/>Affiliations: JFE Steel Corporation. <br/><br/>Publication: Digital Chemical Engineering, March 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13758754",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85149769165&origin=inward",
+    "title": "Thermal control of coke furnace by data-driven approach",
+    "content": "<html><body>To achieve efficient and stable coke furnace operation, we developed an operation guidance system to reduce the variance of net coking time (NCT). A control algorithm that predicts the future NCT by locally weighted regression using the individual chamber database and adjusts the fuel gas flow rate was constructed. After a simulation validation using a newly developed one-dimensional transient model, the operation guidance system based on the developed control algorithm was implemented in a real plant. As a result, the root mean square (RMS) of the control error of NCT was reduced by 0.12 h, and the combustion chamber temperature was reduced by 28.8°C. The developed operation guidance system contributed to the reduction of fuel consumption and CO2 emission of the coke furnace. <br/><br/><br/>Authors: Hashimoto Y., Kase H.. <br/><br/>Affiliations: JFE Steel Corporation. <br/><br/>Publication: Digital Chemical Engineering, March 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13758990",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85149769165&origin=inward",
+    "title": "Thermal control of coke furnace by data-driven approach",
+    "content": "<html><body>To achieve efficient and stable coke furnace operation, we developed an operation guidance system to reduce the variance of net coking time (NCT). A control algorithm that predicts the future NCT by locally weighted regression using the individual chamber database and adjusts the fuel gas flow rate was constructed. After a simulation validation using a newly developed one-dimensional transient model, the operation guidance system based on the developed control algorithm was implemented in a real plant. As a result, the root mean square (RMS) of the control error of NCT was reduced by 0.12 h, and the combustion chamber temperature was reduced by 28.8°C. The developed operation guidance system contributed to the reduction of fuel consumption and CO2 emission of the coke furnace. <br/><br/><br/>Authors: Hashimoto Y., Kase H.. <br/><br/>Affiliations: JFE Steel Corporation. <br/><br/>Publication: Digital Chemical Engineering, March 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

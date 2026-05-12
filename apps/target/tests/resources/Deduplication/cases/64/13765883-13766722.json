@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13765883",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150202008&origin=inward",
-        "title": "CERAMIC STATIONARY GAS TURBINE DEVELOPMENT PROGRAM - SECOND ANNUAL SUMMARY",
-        "content": "<html><body>A program is being performed under the sponsorship of the United States Department of Energy, Office of Industrial Technologies, to improve the performance of stationary gas turbines in cogeneration through the selective replacement of hot section components with ceramic parts. Solar Turbines Incorporated leads a team that includes major U.S. and offshore suppliers of ceramic components, recognized test laboratories and a cogeneration enduser to develop and demonstrate ceramic insertion in a stationary gas turbine with the objectives of more efficient engine operation, resulting in significant fuel savings, increased output power, and reduced emissions. The engine selected for the program, the Centaur 50 is being retrofitted with first stage ceramic blades, first stage ceramic nozzles, and a ceramic combustor liner. The engine hot section is being redesigned to accommodate the ceramic parts to the existing metallic support structure. Detailed design of the ceramic components and of the interfacing metallic support structure has been completed. Two blade designs with different attachments and a nozzle design with a modified airfoil geometry have been developed. Three combustor liner designs are being evaluated based on monolithic tiles or rings, or integral cylinders of continuous fiber-reinforced ceramic matrix composites (CFCC). Fabrication of first generation prototype blades and nozzles is in progress. Fabrication of subscale combustor hardware has been completed. Materials property data are being gathered in support of the ceramic component design and life prediction. Fast fracture and dynamic fatigue testing were performed for the candidate blade and nozzle materials. Creep and oxidation testing is in progress. Nondestructive methodologies are being applied to test specimens, simulated components, subscale hardware and prototype components. A Centaur 50 engine was procured and has been modified for ceramic component testing in a full-size engine configuration. <br/><br/><br/>Authors: van Roode M., Brentnall W.D., Norton P.F., Edwards B.D.. <br/><br/>Affiliations: Solar Turbines Incorporated. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 1995. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13766722",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150202008&origin=inward",
-        "title": "CERAMIC STATIONARY GAS TURBINE DEVELOPMENT PROGRAM - SECOND ANNUAL SUMMARY",
-        "content": "<html><body>A program is being performed under the sponsorship of the United States Department of Energy, Office of Industrial Technologies, to improve the performance of stationary gas turbines in cogeneration through the selective replacement of hot section components with ceramic parts. Solar Turbines Incorporated leads a team that includes major U.S. and offshore suppliers of ceramic components, recognized test laboratories and a cogeneration enduser to develop and demonstrate ceramic insertion in a stationary gas turbine with the objectives of more efficient engine operation, resulting in significant fuel savings, increased output power, and reduced emissions. The engine selected for the program, the Centaur 50 is being retrofitted with first stage ceramic blades, first stage ceramic nozzles, and a ceramic combustor liner. The engine hot section is being redesigned to accommodate the ceramic parts to the existing metallic support structure. Detailed design of the ceramic components and of the interfacing metallic support structure has been completed. Two blade designs with different attachments and a nozzle design with a modified airfoil geometry have been developed. Three combustor liner designs are being evaluated based on monolithic tiles or rings, or integral cylinders of continuous fiber-reinforced ceramic matrix composites (CFCC). Fabrication of first generation prototype blades and nozzles is in progress. Fabrication of subscale combustor hardware has been completed. Materials property data are being gathered in support of the ceramic component design and life prediction. Fast fracture and dynamic fatigue testing were performed for the candidate blade and nozzle materials. Creep and oxidation testing is in progress. Nondestructive methodologies are being applied to test specimens, simulated components, subscale hardware and prototype components. A Centaur 50 engine was procured and has been modified for ceramic component testing in a full-size engine configuration. <br/><br/><br/>Authors: van Roode M., Brentnall W.D., Norton P.F., Edwards B.D.. <br/><br/>Affiliations: Solar Turbines Incorporated. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 1995. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical article text indicate a literal recrawl of the same record"
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13765883",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150202008&origin=inward",
+    "title": "CERAMIC STATIONARY GAS TURBINE DEVELOPMENT PROGRAM - SECOND ANNUAL SUMMARY",
+    "content": "<html><body>A program is being performed under the sponsorship of the United States Department of Energy, Office of Industrial Technologies, to improve the performance of stationary gas turbines in cogeneration through the selective replacement of hot section components with ceramic parts. Solar Turbines Incorporated leads a team that includes major U.S. and offshore suppliers of ceramic components, recognized test laboratories and a cogeneration enduser to develop and demonstrate ceramic insertion in a stationary gas turbine with the objectives of more efficient engine operation, resulting in significant fuel savings, increased output power, and reduced emissions. The engine selected for the program, the Centaur 50 is being retrofitted with first stage ceramic blades, first stage ceramic nozzles, and a ceramic combustor liner. The engine hot section is being redesigned to accommodate the ceramic parts to the existing metallic support structure. Detailed design of the ceramic components and of the interfacing metallic support structure has been completed. Two blade designs with different attachments and a nozzle design with a modified airfoil geometry have been developed. Three combustor liner designs are being evaluated based on monolithic tiles or rings, or integral cylinders of continuous fiber-reinforced ceramic matrix composites (CFCC). Fabrication of first generation prototype blades and nozzles is in progress. Fabrication of subscale combustor hardware has been completed. Materials property data are being gathered in support of the ceramic component design and life prediction. Fast fracture and dynamic fatigue testing were performed for the candidate blade and nozzle materials. Creep and oxidation testing is in progress. Nondestructive methodologies are being applied to test specimens, simulated components, subscale hardware and prototype components. A Centaur 50 engine was procured and has been modified for ceramic component testing in a full-size engine configuration. <br/><br/><br/>Authors: van Roode M., Brentnall W.D., Norton P.F., Edwards B.D.. <br/><br/>Affiliations: Solar Turbines Incorporated. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 1995. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13766722",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150202008&origin=inward",
+    "title": "CERAMIC STATIONARY GAS TURBINE DEVELOPMENT PROGRAM - SECOND ANNUAL SUMMARY",
+    "content": "<html><body>A program is being performed under the sponsorship of the United States Department of Energy, Office of Industrial Technologies, to improve the performance of stationary gas turbines in cogeneration through the selective replacement of hot section components with ceramic parts. Solar Turbines Incorporated leads a team that includes major U.S. and offshore suppliers of ceramic components, recognized test laboratories and a cogeneration enduser to develop and demonstrate ceramic insertion in a stationary gas turbine with the objectives of more efficient engine operation, resulting in significant fuel savings, increased output power, and reduced emissions. The engine selected for the program, the Centaur 50 is being retrofitted with first stage ceramic blades, first stage ceramic nozzles, and a ceramic combustor liner. The engine hot section is being redesigned to accommodate the ceramic parts to the existing metallic support structure. Detailed design of the ceramic components and of the interfacing metallic support structure has been completed. Two blade designs with different attachments and a nozzle design with a modified airfoil geometry have been developed. Three combustor liner designs are being evaluated based on monolithic tiles or rings, or integral cylinders of continuous fiber-reinforced ceramic matrix composites (CFCC). Fabrication of first generation prototype blades and nozzles is in progress. Fabrication of subscale combustor hardware has been completed. Materials property data are being gathered in support of the ceramic component design and life prediction. Fast fracture and dynamic fatigue testing were performed for the candidate blade and nozzle materials. Creep and oxidation testing is in progress. Nondestructive methodologies are being applied to test specimens, simulated components, subscale hardware and prototype components. A Centaur 50 engine was procured and has been modified for ceramic component testing in a full-size engine configuration. <br/><br/><br/>Authors: van Roode M., Brentnall W.D., Norton P.F., Edwards B.D.. <br/><br/>Affiliations: Solar Turbines Incorporated. <br/><br/>Publication: Proceedings of the ASME Turbo Expo, 1995. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical article text indicate a literal recrawl of the same record"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

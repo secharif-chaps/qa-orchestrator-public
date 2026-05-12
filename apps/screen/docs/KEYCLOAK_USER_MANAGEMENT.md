@@ -20,14 +20,17 @@ The organization user management system integrates with Keycloak Organizations t
 ## API Endpoints
 
 ### Base Route
+
 All endpoints use the base route: `/api/organizations/{organizationId}/users`
 
 ### 1. List Organization Users
+
 **GET** `/api/organizations/{organizationId}/users`
 
 Retrieves a paginated list of users in the organization from Keycloak.
 
 **Query Parameters:**
+
 - `page` (int, default: 1) - Page number (1-based)
 - `limit` (int, default: 20, max: 100) - Items per page
 - `search` (string) - Search term for name, email, or username
@@ -36,6 +39,7 @@ Retrieves a paginated list of users in the organization from Keycloak.
 - `order` (string) - Sort order: asc, desc (default: desc)
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -61,11 +65,13 @@ Retrieves a paginated list of users in the organization from Keycloak.
 ```
 
 ### 2. Get User Details
+
 **GET** `/api/organizations/{organizationId}/users/{userId}`
 
 Retrieves detailed information about a specific user in the organization.
 
 **Response:**
+
 ```json
 {
   "id": 12345678,
@@ -81,11 +87,13 @@ Retrieves detailed information about a specific user in the organization.
 ```
 
 ### 3. Create User
+
 **POST** `/api/organizations/{organizationId}/users`
 
 Creates a new user in Keycloak and adds them to the specified organization.
 
 **Request Body:**
+
 ```json
 {
   "email": "newuser@example.com",
@@ -97,6 +105,7 @@ Creates a new user in Keycloak and adds them to the specified organization.
 ```
 
 **Response:**
+
 ```json
 {
   "id": 87654321,
@@ -113,17 +122,20 @@ Creates a new user in Keycloak and adds them to the specified organization.
 ```
 
 **Notes:**
+
 - A temporary password is automatically generated
 - User will be required to change password on first login
 - Email is automatically verified (emailVerified: true)
 - User is added to the organization in Keycloak
 
 ### 4. Update User
+
 **PUT** `/api/organizations/{organizationId}/users/{userId}`
 
 Updates user profile information and permissions.
 
 **Request Body:**
+
 ```json
 {
   "email": "updated@example.com",
@@ -135,6 +147,7 @@ Updates user profile information and permissions.
 ```
 
 **Response:**
+
 ```json
 {
   "id": 12345678,
@@ -150,6 +163,7 @@ Updates user profile information and permissions.
 ```
 
 **Notes:**
+
 - Username cannot be changed
 - Permissions are synced with Keycloak realm roles
 - Email updates are reflected in Keycloak immediately
@@ -157,10 +171,12 @@ Updates user profile information and permissions.
 ## Authentication & Authorization
 
 All endpoints require:
+
 1. Valid JWT authentication token
 2. `organization.write` role in the token
 
 Example header:
+
 ```
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6...
 ```
@@ -186,6 +202,7 @@ The API returns standard HTTP status codes with detailed error messages:
 - **500 Internal Server Error** - Server or Keycloak connection issues
 
 Example error response:
+
 ```json
 {
   "detail": "Username already exists in Keycloak"
@@ -211,23 +228,27 @@ KEYCLOAK_ADMIN_PASSWORD=admin-password
 ## Security Features
 
 ### Password Generation
+
 - Minimum 12 characters by default
 - Contains uppercase, lowercase, digits, and special characters
 - Cryptographically secure random generation
 - Forces password reset on first login (temporary: true)
 
 ### Email Verification
+
 - All users created with emailVerified: true
 - No email server required for user creation
 - Email changes reflected immediately in Keycloak
 
 ### Input Validation
+
 - Email format validation
 - Username format validation (alphanumeric + hyphens, underscores, dots)
 - Field length limits
 - SQL injection prevention (though not applicable - using Keycloak API)
 
 ### Access Control
+
 - Role-based access control via Keycloak
 - Organization-specific user isolation
 - JWT-only permission model (no database checks)
@@ -318,6 +339,7 @@ python3 get_token.py team_manager teammanager123
 ## Monitoring and Logging
 
 The system includes comprehensive logging for:
+
 - User creation/update/deletion events
 - Keycloak API calls and responses
 - Authentication failures
@@ -325,6 +347,7 @@ The system includes comprehensive logging for:
 - Organization access checks
 
 Check application logs for troubleshooting:
+
 ```bash
 # Example log entries
 INFO: Creating user in Keycloak: testuser (test@example.com)
@@ -390,6 +413,7 @@ curl -H "Authorization: Bearer $ADMIN_TOKEN" \
 This system replaces the old workspace user management that used database tables (`workspace_members`, `user_workspace_permissions`).
 
 **Key Differences:**
+
 - ✅ No database tables for users or membership
 - ✅ All data comes from Keycloak Organizations
 - ✅ Permissions are realm roles, not database records
@@ -397,6 +421,7 @@ This system replaces the old workspace user management that used database tables
 - ✅ Organization membership managed in Keycloak
 
 **Advantages:**
+
 - Single source of truth (Keycloak)
 - Better security (centralized identity management)
 - Easier to scale (no database joins for permissions)

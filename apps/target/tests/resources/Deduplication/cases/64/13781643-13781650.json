@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 59,
-    "master": {
-        "id": "legacy-64-master-13781643",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150736234&origin=inward",
-        "title": "Preparation and Antioxidant Behavior of Silicon Carbide Ceramic Composites",
-        "content": "<html><body>Silicon carbide ceramic composites were prepared by using hot pressing sintering. Phase composition and microstructure of the ceramics were characterized by using X-ray diffractometer (XRD) and scanning electron microscopy (SEM) respectively. Mechanical properties and oxidation mechanism of the sintered bodies were studied. The mechanical strength was enhanced gradually with increasing content of TiC. Optimal mechanical properties were achieved in the composite with 9 wt.%, with a fracture toughness of 5.07 MPa·m1/2, a bending strength of 552 MPa and relative density of 99.3%. The toughening mechanism is mainly crack deflection and pinning effect, because the TiC particles are dispersed in the SiC matrix. A relatively compact protective oxide-layer was formed on surface of the ceramics, which protected the matrix under the condition of static oxidation in air at 1200 ℃ for 2 h. <br/><br/><br/>Authors: Li S.. <br/><br/>Affiliations: Ltd.. <br/><br/>Publication: Journal of Ceramics, 2021, pp.1018-1025. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13781650",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150739573&origin=inward",
-        "title": "Wet Oxidation Behavior of 3D SiCf/SiBCN Composites",
-        "content": "<html><body>3D SiCf/SiBCN ceramic matrix composites were prepared through precursor infiltration and pyrolysis (PIP), whose oxidation behaviors in water-oxygen coupling environment (800-1200 ℃) were studied. SEM and XRD were used to characterize microstructure and phase composition of the composites before and after oxidation, while EDS was used to analyze the main elements on the surface of the composites after oxidation. It was found that the bending strength of the composites was largely degraded with a retention of only 33.56%, after wet oxygen oxidation at 800 ℃. However, the bending strength retention rates after oxidation at 1000 ℃ and 1200 ℃ were higher than 50%. This is attributed to the formation of a viscous SiO2 oxide layer as the composites was oxidized at 1000 ℃ and 1200 ℃ for 50 h, which protected the fibers in the composites. Surface oxygen scanning results indicated that the self-healing oxide layer in the composites was mainly formed due to the oxidation of the SiBCN matrix during the oxidation process. <br/><br/><br/>Authors: Wei Z., Peng Y., Xu H., Kang Z., Wang M., Li A., Li Z.. <br/><br/>Affiliations: Shanghai University, Ltd.. <br/><br/>Publication: Journal of Ceramics, 2021, pp.430-437. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "unique",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "unique",
-        "note": "Different research articles on distinct SiC-based composites with different methods, authors, and page ranges in the same journal issue."
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "agreement_unique",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 59,
+  "master": {
+    "id": "legacy-64-master-13781643",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150736234&origin=inward",
+    "title": "Preparation and Antioxidant Behavior of Silicon Carbide Ceramic Composites",
+    "content": "<html><body>Silicon carbide ceramic composites were prepared by using hot pressing sintering. Phase composition and microstructure of the ceramics were characterized by using X-ray diffractometer (XRD) and scanning electron microscopy (SEM) respectively. Mechanical properties and oxidation mechanism of the sintered bodies were studied. The mechanical strength was enhanced gradually with increasing content of TiC. Optimal mechanical properties were achieved in the composite with 9 wt.%, with a fracture toughness of 5.07 MPa·m1/2, a bending strength of 552 MPa and relative density of 99.3%. The toughening mechanism is mainly crack deflection and pinning effect, because the TiC particles are dispersed in the SiC matrix. A relatively compact protective oxide-layer was formed on surface of the ceramics, which protected the matrix under the condition of static oxidation in air at 1200 ℃ for 2 h. <br/><br/><br/>Authors: Li S.. <br/><br/>Affiliations: Ltd.. <br/><br/>Publication: Journal of Ceramics, 2021, pp.1018-1025. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13781650",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150739573&origin=inward",
+    "title": "Wet Oxidation Behavior of 3D SiCf/SiBCN Composites",
+    "content": "<html><body>3D SiCf/SiBCN ceramic matrix composites were prepared through precursor infiltration and pyrolysis (PIP), whose oxidation behaviors in water-oxygen coupling environment (800-1200 ℃) were studied. SEM and XRD were used to characterize microstructure and phase composition of the composites before and after oxidation, while EDS was used to analyze the main elements on the surface of the composites after oxidation. It was found that the bending strength of the composites was largely degraded with a retention of only 33.56%, after wet oxygen oxidation at 800 ℃. However, the bending strength retention rates after oxidation at 1000 ℃ and 1200 ℃ were higher than 50%. This is attributed to the formation of a viscous SiO2 oxide layer as the composites was oxidized at 1000 ℃ and 1200 ℃ for 50 h, which protected the fibers in the composites. Surface oxygen scanning results indicated that the self-healing oxide layer in the composites was mainly formed due to the oxidation of the SiBCN matrix during the oxidation process. <br/><br/><br/>Authors: Wei Z., Peng Y., Xu H., Kang Z., Wang M., Li A., Li Z.. <br/><br/>Affiliations: Shanghai University, Ltd.. <br/><br/>Publication: Journal of Ceramics, 2021, pp.430-437. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "unique",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "unique",
+    "note": "Different research articles on distinct SiC-based composites with different methods, authors, and page ranges in the same journal issue."
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "agreement_unique",
+  "content_source": "hbase_full"
 }

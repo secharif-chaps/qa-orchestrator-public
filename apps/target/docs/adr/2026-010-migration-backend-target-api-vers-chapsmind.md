@@ -253,11 +253,11 @@ Addition to the root file:
 ```yaml
 # chapsmind/.gitlab-ci.yml (addition)
 include:
-    - local: apps/front/.gitlab-ci.yml
-    - local: apps/back/.gitlab-ci.yml
-    - local: apps/global-service/.gitlab-ci.yml
-    - local: apps/target/.gitlab-ci.yml # ← NEW
-    - local: infra/.gitlab-ci.yml
+  - local: apps/front/.gitlab-ci.yml
+  - local: apps/back/.gitlab-ci.yml
+  - local: apps/global-service/.gitlab-ci.yml
+  - local: apps/target/.gitlab-ci.yml # ← NEW
+  - local: infra/.gitlab-ci.yml
 ```
 
 Target API CI file:
@@ -267,59 +267,59 @@ Target API CI file:
 # Maintained by the Target team, isolated from the rest
 
 .target-changes: &target-changes
-    changes:
-        - apps/target/**/*
+  changes:
+    - apps/target/**/*
 
 target:lint:
-    stage: lint
-    image: $CI_REGISTRY_IMAGE/ci-images/php-target:latest
-    rules:
-        - <<: *target-changes
-    script:
-        - cd apps/target && composer install --no-scripts
-        - vendor/bin/ecs check
-        - vendor/bin/phpstan analyse --level=9
+  stage: lint
+  image: $CI_REGISTRY_IMAGE/ci-images/php-target:latest
+  rules:
+    - <<: *target-changes
+  script:
+    - cd apps/target && composer install --no-scripts
+    - vendor/bin/ecs check
+    - vendor/bin/phpstan analyse --level=9
 
 target:test:
-    stage: test
-    image: $CI_REGISTRY_IMAGE/ci-images/php-target:latest
-    services:
-        - postgres:17
-        - elasticsearch:9.1.0
-        - valkey/valkey:8
-    rules:
-        - <<: *target-changes
-    script:
-        - cd apps/target && composer install
-        - php vendor/bin/phpunit
+  stage: test
+  image: $CI_REGISTRY_IMAGE/ci-images/php-target:latest
+  services:
+    - postgres:17
+    - elasticsearch:9.1.0
+    - valkey/valkey:8
+  rules:
+    - <<: *target-changes
+  script:
+    - cd apps/target && composer install
+    - php vendor/bin/phpunit
 
 target:security:
-    stage: test
-    rules:
-        - <<: *target-changes
-    script:
-        - cd apps/target && composer audit
-        - trivy image --severity CRITICAL,HIGH $TARGET_IMAGE
+  stage: test
+  rules:
+    - <<: *target-changes
+  script:
+    - cd apps/target && composer audit
+    - trivy image --severity CRITICAL,HIGH $TARGET_IMAGE
 
 target:build:
-    stage: build
-    rules:
-        - <<: *target-changes
-    image: docker:29-cli
-    script:
-        - docker build -t $CI_REGISTRY_IMAGE/target:$CI_COMMIT_SHORT_SHA apps/target/
-        - docker push $CI_REGISTRY_IMAGE/target:$CI_COMMIT_SHORT_SHA
+  stage: build
+  rules:
+    - <<: *target-changes
+  image: docker:29-cli
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE/target:$CI_COMMIT_SHORT_SHA apps/target/
+    - docker push $CI_REGISTRY_IMAGE/target:$CI_COMMIT_SHORT_SHA
 
 target:deploy:integration:
-    stage: deploy:integration
-    rules:
-        - if: $CI_COMMIT_BRANCH == "main"
-          <<: *target-changes
-    environment:
-        name: integration
-    script:
-        - docker tag $CI_REGISTRY_IMAGE/target:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/target:integration
-        - docker push $CI_REGISTRY_IMAGE/target:integration
+  stage: deploy:integration
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      <<: *target-changes
+  environment:
+    name: integration
+  script:
+    - docker tag $CI_REGISTRY_IMAGE/target:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/target:integration
+    - docker push $CI_REGISTRY_IMAGE/target:integration
 ```
 
 ### Consequences
@@ -564,15 +564,15 @@ The Symfony firewall will be adjusted:
 
 ```yaml
 security:
-    firewalls:
-        webhook:
-            pattern: ^/api/webhook
-            stateless: true
-            custom_authenticator: 'App\Infrastructure\User\Security\WebhookTokenAuthenticator'
-        internal:
-            pattern: ^/api
-            stateless: true
-            custom_authenticator: 'App\Infrastructure\User\Security\InternalJwtAuthenticator'
+  firewalls:
+    webhook:
+      pattern: ^/api/webhook
+      stateless: true
+      custom_authenticator: 'App\Infrastructure\User\Security\WebhookTokenAuthenticator'
+    internal:
+      pattern: ^/api
+      stateless: true
+      custom_authenticator: 'App\Infrastructure\User\Security\InternalJwtAuthenticator'
 ```
 
 The `main` firewall (OIDC userinfo) will be **replaced** by `internal` since all requests will go through the Global Service. Direct OIDC mode will no longer be needed.
@@ -742,34 +742,34 @@ Additional Docker services:
 ```yaml
 # infra/docker-compose.yml (excerpt)
 target-elasticsearch:
-    image: elasticsearch:9.1.0
-    environment:
-        - discovery.type=single-node
-        - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    volumes:
-        - target_es_data:/usr/share/elasticsearch/data
-    networks:
-        - mint-network
-    profiles: ['target']
+  image: elasticsearch:9.1.0
+  environment:
+    - discovery.type=single-node
+    - ES_JAVA_OPTS=-Xms512m -Xmx512m
+  volumes:
+    - target_es_data:/usr/share/elasticsearch/data
+  networks:
+    - mint-network
+  profiles: ['target']
 
 target-valkey:
-    image: valkey/valkey:8-alpine
-    volumes:
-        - target_valkey_data:/data
-    networks:
-        - mint-network
-    profiles: ['target']
+  image: valkey/valkey:8-alpine
+  volumes:
+    - target_valkey_data:/data
+  networks:
+    - mint-network
+  profiles: ['target']
 
 target-n8n:
-    image: n8nio/n8n:latest
-    environment:
-        - WEBHOOK_URL=http://target:8002
-        - N8N_PORT=5679
-    volumes:
-        - target_n8n_data:/home/node/.n8n
-    networks:
-        - mint-network
-    profiles: ['target']
+  image: n8nio/n8n:latest
+  environment:
+    - WEBHOOK_URL=http://target:8002
+    - N8N_PORT=5679
+  volumes:
+    - target_n8n_data:/home/node/.n8n
+  networks:
+    - mint-network
+  profiles: ['target']
 ```
 
 The existing RabbitMQ will be **shared** with Target (queues separated by naming convention: `target_async_priority_high`, `target_agent_commands`, etc.).
@@ -936,15 +936,15 @@ The existing `WebhookTokenAuthenticator` is kept without modification. Configura
 ```yaml
 # target security.yaml (unchanged)
 security:
-    firewalls:
-        webhook:
-            pattern: ^/api/webhook
-            stateless: true
-            custom_authenticator: 'App\Infrastructure\User\Security\WebhookTokenAuthenticator'
-        internal:
-            pattern: ^/api
-            stateless: true
-            custom_authenticator: 'App\Infrastructure\User\Security\InternalJwtAuthenticator'
+  firewalls:
+    webhook:
+      pattern: ^/api/webhook
+      stateless: true
+      custom_authenticator: 'App\Infrastructure\User\Security\WebhookTokenAuthenticator'
+    internal:
+      pattern: ^/api
+      stateless: true
+      custom_authenticator: 'App\Infrastructure\User\Security\InternalJwtAuthenticator'
 ```
 
 Justification: ADR-0009 stipulates that only **frontend traffic** goes through the Global Service. Internal machine-to-machine communication on the Docker network can legitimately bypass the gateway.
@@ -1226,15 +1226,15 @@ The frontend uses a single base URL:
 
 ```yaml
 target-caddy:
-    image: dunglas/mercure:latest # or custom FrankenPHP image
-    environment:
-        MERCURE_PUBLISHER_JWT_KEY: ${TARGET_MERCURE_JWT_SECRET}
-        MERCURE_SUBSCRIBER_JWT_KEY: ${TARGET_MERCURE_JWT_SECRET}
-        MERCURE_PUBLISHER_JWT_ALG: HS256
-        MERCURE_SUBSCRIBER_JWT_ALG: HS256
-    networks:
-        - mint-network
-    profiles: ['target']
+  image: dunglas/mercure:latest # or custom FrankenPHP image
+  environment:
+    MERCURE_PUBLISHER_JWT_KEY: ${TARGET_MERCURE_JWT_SECRET}
+    MERCURE_SUBSCRIBER_JWT_KEY: ${TARGET_MERCURE_JWT_SECRET}
+    MERCURE_PUBLISHER_JWT_ALG: HS256
+    MERCURE_SUBSCRIBER_JWT_ALG: HS256
+  networks:
+    - mint-network
+  profiles: ['target']
 ```
 
 ### Consequences
@@ -1385,26 +1385,26 @@ CI jobs will use:
 # target/.gitlab-ci.yml (excerpt)
 
 .php-job:
-    image: registry.git.mediaspeech.com/mint/ci-images/php-target:latest
-    before_script:
-        - composer install --no-interaction --prefer-dist
+  image: registry.git.mediaspeech.com/mint/ci-images/php-target:latest
+  before_script:
+    - composer install --no-interaction --prefer-dist
 
 phpstan:
-    extends: .php-job
-    stage: coding_standards
-    script:
-        - php -d memory_limit=2G vendor/bin/phpstan analyse
+  extends: .php-job
+  stage: coding_standards
+  script:
+    - php -d memory_limit=2G vendor/bin/phpstan analyse
 
 tests:integration:
-    extends: .php-job
-    services:
-        - postgres:17-alpine
-        - elasticsearch:9.1.0
-        - valkey/valkey:8-alpine
-    variables:
-        DATABASE_URL: postgresql://postgres:postgres@postgres:5432/target_test_db
-        ELASTICSEARCH_URL: http://elasticsearch:9200
-        REDIS_URL: redis://valkey:6379
+  extends: .php-job
+  services:
+    - postgres:17-alpine
+    - elasticsearch:9.1.0
+    - valkey/valkey:8-alpine
+  variables:
+    DATABASE_URL: postgresql://postgres:postgres@postgres:5432/target_test_db
+    ELASTICSEARCH_URL: http://elasticsearch:9200
+    REDIS_URL: redis://valkey:6379
 ```
 
 ### Consequences
@@ -1500,10 +1500,10 @@ API Platform configuration in `target`:
 ```yaml
 # api/config/packages/api_platform.yaml
 api_platform:
-    title: 'Target API'
-    version: '1.0.0'
-    # The prefix will be /api because target sees its requests without the /target prefix
-    # The Global Service strips /api/target → /api before forwarding
+  title: 'Target API'
+  version: '1.0.0'
+  # The prefix will be /api because target sees its requests without the /target prefix
+  # The Global Service strips /api/target → /api before forwarding
 ```
 
 The OpenAPI response will be available:
@@ -1742,65 +1742,65 @@ chapsmind/
 
 1. **Docker Compose**: the `n8n` and `n8n-import` services are in the monorepo compose with the `target` profile. Volumes point to `apps/target/n8n/`.
 
-    ```yaml
-    # compose.yaml (excerpt)
-    n8n-import:
-        profiles: ['target']
-        volumes:
-            - ./apps/target/n8n/workflows:/workflows:ro
-            - ./apps/target/n8n/credentials:/credentials:ro
-    ```
+   ```yaml
+   # compose.yaml (excerpt)
+   n8n-import:
+     profiles: ['target']
+     volumes:
+       - ./apps/target/n8n/workflows:/workflows:ro
+       - ./apps/target/n8n/credentials:/credentials:ro
+   ```
 
 2. **CI/CD**: no additional CI file. N8N jobs are in `apps/target/.gitlab-ci.yml` (already included in the monorepo, cf. Decision 2). The existing `rules:changes` (`apps/target/**/*`) already covers N8N modifications:
 
-    ```yaml
-    # apps/target/.gitlab-ci.yml (addition to existing jobs)
-    target:n8n-validate:
-      stage: lint
-      image: $CI_REGISTRY_IMAGE/ci-images/php-target:latest
-      rules:
-        - <<: *target-changes    # apps/target/**/* — also covers n8n/
-      script:
-        - cd apps/target
-        - composer install --no-scripts
-        - php tests/N8N/validate-n8n-workflows.php --workflows-dir=n8n/workflows
+   ```yaml
+   # apps/target/.gitlab-ci.yml (addition to existing jobs)
+   target:n8n-validate:
+     stage: lint
+     image: $CI_REGISTRY_IMAGE/ci-images/php-target:latest
+     rules:
+       - <<: *target-changes    # apps/target/**/* — also covers n8n/
+     script:
+       - cd apps/target
+       - composer install --no-scripts
+       - php tests/N8N/validate-n8n-workflows.php --workflows-dir=n8n/workflows
 
-    target:n8n-test-datasets:
-      stage: test
-      image: node:22-slim
-      rules:
-        - changes:
-            - apps/target/n8n/**/*
-      script:
-        - cd apps/target/n8n/tests && npm install
-        - node validate-datasets.js
-    ```
+   target:n8n-test-datasets:
+     stage: test
+     image: node:22-slim
+     rules:
+       - changes:
+           - apps/target/n8n/**/*
+     script:
+       - cd apps/target/n8n/tests && npm install
+       - node validate-datasets.js
+   ```
 
 3. **Taskfile**: the N8N Taskfile is included in the monorepo root Taskfile:
 
-    ```yaml
-    # chapsmind/Taskfile.yaml (addition)
-    includes:
-        n8n:
-            taskfile: apps/target/n8n/Taskfile.yaml
-            dir: apps/target/n8n
-    ```
+   ```yaml
+   # chapsmind/Taskfile.yaml (addition)
+   includes:
+     n8n:
+       taskfile: apps/target/n8n/Taskfile.yaml
+       dir: apps/target/n8n
+   ```
 
 4. **Credentials**: encrypted N8N credentials (`N8N_ENCRYPTION_KEY`) are shared via GitLab CI variables or SOPS.
 
 5. **Environment variables**: `N8N_BASE_URL`, `N8N_API_KEY`, `N8N_API_KEY_FILE` are defined in the compose `.env`, scoped to the `target` profile.
 
 6. **Databases**: N8N uses **two dedicated PostgreSQL databases** on the same PG instance as `target_db` (cf. Decision 5):
-    - **`n8n_db`**: internal N8N data (workflows, credentials, executions) + **LLM memory storage for conversations** via the `memoryPostgresChat` node (tables auto-managed by LangChain, indexed by `conversationId`, 10-message context window)
-    - **`agent_memory`**: database prepared for future agent memory use (not currently used)
+   - **`n8n_db`**: internal N8N data (workflows, credentials, executions) + **LLM memory storage for conversations** via the `memoryPostgresChat` node (tables auto-managed by LangChain, indexed by `conversationId`, 10-message context window)
+   - **`agent_memory`**: database prepared for future agent memory use (not currently used)
 
-    **Caution during migration**: `n8n_db` contains the AI context history for conversations. This is not a simple cache — the last 10 messages of each conversation are stored there and serve as LLM memory. Losing this data would degrade AI response quality for ongoing conversations.
+   **Caution during migration**: `n8n_db` contains the AI context history for conversations. This is not a simple cache — the last 10 messages of each conversation are stored there and serve as LLM memory. Losing this data would degrade AI response quality for ongoing conversations.
 
-    The dual storage is intentional:
-    - `n8n_db` → LLM memory (context window for N8N workflows)
-    - `target_db` → `conversation`, `message`, `message_content` tables (complete history for the API and user display)
+   The dual storage is intentional:
+   - `n8n_db` → LLM memory (context window for N8N workflows)
+   - `target_db` → `conversation`, `message`, `message_content` tables (complete history for the API and user display)
 
-    The `initdb.d/n8n.sh` and `initdb.d/agent_memory.sh` scripts are in `apps/target/n8n/docker/`.
+   The `initdb.d/n8n.sh` and `initdb.d/agent_memory.sh` scripts are in `apps/target/n8n/docker/`.
 
 7. **RabbitMQ**: N8N queues (`agent_commands`, `agent_responses`) coexist with other module queues in the shared RabbitMQ. Queue names are already uniquely prefixed (cf. Decision 6 — `target_*` convention for async queues).
 
@@ -1998,9 +1998,9 @@ The **Strangler Fig pattern** is already adopted by ChapsMind for the Python mon
 - [ ] Add the `include` line in the monorepo root `.gitlab-ci.yml`
 - [ ] Create the `php-target` CI image in the `ci-images` repo (FrankenPHP 8.4 + extensions + CI tools)
 - [ ] Adapt CI jobs:
-    - Keep: ECS, PHPStan 9, PHPUnit, Trivy, SAST, Secret Detection, OpenAPI export, N8N validation
-    - Adapt: Docker registry, staging URLs, `rules:changes` to `apps/target/**/*`
-    - Remove: PWA jobs, Docs MkDocs jobs, Renovate (to be configured at monorepo level)
+  - Keep: ECS, PHPStan 9, PHPUnit, Trivy, SAST, Secret Detection, OpenAPI export, N8N validation
+  - Adapt: Docker registry, staging URLs, `rules:changes` to `apps/target/**/*`
+  - Remove: PWA jobs, Docs MkDocs jobs, Renovate (to be configured at monorepo level)
 - [ ] Configure GitLab CI services for integration tests (PG 17, ES 9.1, Valkey 8)
 - [ ] Validate that ChapsMind runners support GitLab CI `services:` (PG, ES, Valkey)
 - [ ] Publish the Target Docker image to the registry
@@ -2040,13 +2040,13 @@ The **Strangler Fig pattern** is already adopted by ChapsMind for the Python mon
 - [ ] Configure `TARGET_SERVICE_URL=http://target:8002` in the Global Service
 - [ ] Implement the module check for `ModuleName.TARGET`
 - [ ] Configure SSE/Mercure routing in the Global Service:
-    - Authentication exception for `/.well-known/mercure` (self-sufficient Mercure JWT)
-    - Transparent proxy to `target-caddy:80` with streaming (`proxy_buffering off`)
+  - Authentication exception for `/.well-known/mercure` (self-sufficient Mercure JWT)
+  - Transparent proxy to `target-caddy:80` with streaming (`proxy_buffering off`)
 - [ ] Configure OpenAPI documentation (verify base path after `/target` stripping)
 - [ ] End-to-end integration tests:
-    - API: frontend → Nginx → Global Service → target → response
-    - SSE: frontend → Nginx → target-caddy → EventSource receives events
-    - Docs: `https://chapsmind.local/api/target/docs` shows Swagger UI
+  - API: frontend → Nginx → Global Service → target → response
+  - SSE: frontend → Nginx → target-caddy → EventSource receives events
+  - Docs: `https://chapsmind.local/api/target/docs` shows Swagger UI
 
 **Exit criteria**:
 
@@ -2190,25 +2190,25 @@ The **Strangler Fig pattern** is already adopted by ChapsMind for the Python mon
 The following topics were identified during the 2026-02-25 brainstorming as **out of scope** for this ADR but **blocking or structuring** for production go-live:
 
 1. **ADR-2025-002: Multi-Tenant Architecture** (existing, needs full revision)
-    - `organisation_id` discriminant on all entities
-    - DB strategy (bucket concept)
-    - OpenSearch strategy (one index per client?)
-    - Zero risk of cross-client data exposure
-    - Performance impact
-    - See: `docs/adr/2025-002-multi-tenant-architecture.md`
+   - `organisation_id` discriminant on all entities
+   - DB strategy (bucket concept)
+   - OpenSearch strategy (one index per client?)
+   - Zero risk of cross-client data exposure
+   - Performance impact
+   - See: `docs/adr/2025-002-multi-tenant-architecture.md`
 
 2. **ADR to create: Elasticsearch → OpenSearch migration**
-    - Prerequisite for multi-tenant (mandatory OpenSearch routing)
-    - Must be addressed before multi-tenant
-    - OVH managed OpenSearch migration
+   - Prerequisite for multi-tenant (mandatory OpenSearch routing)
+   - Must be addressed before multi-tenant
+   - OVH managed OpenSearch migration
 
 3. **ADR to create: Target permissions aligned with ChapsMind**
-    - Alignment of the Target permissions system with ChapsMind
+   - Alignment of the Target permissions system with ChapsMind
 
 4. **ADR to create: ChapsMind centralized technical documentation**
-    - Involves all teams (Target, Screen, Platform)
-    - Approach: per-module docs, lightweight centralization for display
+   - Involves all teams (Target, Screen, Platform)
+   - Approach: per-module docs, lightweight centralization for display
 
 5. **Operational action: PostgreSQL 16 → 17 migration**
-    - The ChapsMind env is on PG 16, Target requires PG 17
-    - Unify to PG 17 without data loss
+   - The ChapsMind env is on PG 16, Target requires PG 17
+   - Unify to PG 17 without data loss

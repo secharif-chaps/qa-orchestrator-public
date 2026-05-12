@@ -72,27 +72,27 @@ The test framework needs an API key to trigger workflows:
 
 1. **Access N8N UI:**
 
-    ```
-    https://n8n.basil.local
-    ```
+   ```
+   https://n8n.basil.local
+   ```
 
 2. **Navigate to Settings:**
-    - Click your profile (bottom left)
-    - Go to **Settings** → **API**
+   - Click your profile (bottom left)
+   - Go to **Settings** → **API**
 
 3. **Create API Key:**
-    - Click **"Create an API key"**
-    - Name it: `Test Runner`
-    - Copy the generated key
+   - Click **"Create an API key"**
+   - Name it: `Test Runner`
+   - Copy the generated key
 
 4. **Add to Environment:**
 
-    Edit your `.env` file:
+   Edit your `.env` file:
 
-    ```bash
-    # N8N Testing
-    N8N_API_KEY=n8napi_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    ```
+   ```bash
+   # N8N Testing
+   N8N_API_KEY=n8napi_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   ```
 
 ### 6. Restart N8N Again
 
@@ -201,11 +201,11 @@ docker compose exec n8n npm --prefix /tests list
 1. **Review the error** - Most are legitimate configuration issues
 2. **Use skip tags** if needed (see [Validation Documentation](./workflow-validation.md#skipping-validation)):
 
-    ```
-    @n8n-validate-ignore <error_type>
-    ```
+   ```
+   @n8n-validate-ignore <error_type>
+   ```
 
-    Add this to the node's **Notes** field.
+   Add this to the node's **Notes** field.
 
 3. **Fix the issue** - Follow validation error messages
 
@@ -265,8 +265,8 @@ The `devtools` service uses Docker Compose profiles:
 
 ```yaml
 devtools:
-    profiles:
-        - devtools
+  profiles:
+    - devtools
 ```
 
 Always use `--profile devtools` when working with validation:

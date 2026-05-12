@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13308043",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85132643408&origin=inward",
-        "title": "Performance evaluation of multilayered ceramic composite armors: New design and advanced predictive method",
-        "content": "<html><body>Novel body armors are designed to protect against ballistic threats in the most vulnerable organs within the thorax and abdomen. Decreasing the armor weight without affecting its total integrity after the impact is one of the most challenging tasks. In this study, we combine advanced numerical simulations and experimental tests to investigate the ballistic performance of multilayered armor systems (MAS) consisting of laminated alumina (Al2O3) ceramic plates with multi-curve form and a hybrid composite backing. The ballistic trauma absorption and ceramic fracturing morphology are considered evaluation criteria. The investigation provides enough data on the measured trauma and the results are compared to advanced monolithic ceramics. The ballistic tests showed that bonding three or two ceramic plates with polymeric interlayer decreases considerably the eroded ceramic mass in comparison to monolithic ceramic tiles. Furthermore, the layup of two thin Al2O3 tiles with frontal confinement gives the same trauma-weight index as monolithic silicon carbide and reaction-bonded boron carbide plates. The combination of K129 and KM2 aramid weave fabrics decreases the composite backing weight by 33% and increases its ballistic performance in comparison to homogeneous aramid fabrics. Numerical simulations that involve the use of solid Lagrange and adaptive solid/smooth particles hydrodynamics (SPH) numerical approaches with detailed 3D models of the bullet and the MAS are presented in this work. Based on the statistical analysis, a better prediction of the back face deformation and bullet residual length is obtained by the adaptive solid/SPH method, which is found more suitable for the simulation of multilayered armor impact scenarios. <br/><br/><br/>Authors: Tria D.E., Kouadria A., Małachowski J., Bouteghrine Y., Manaa A.. <br/><br/>Affiliations: Ecole Militaire Polytechnique, Wojskowa Akademia Techniczna. <br/><br/>Publication: Proceedings of the Institution of Mechanical Engineers, Part L: Journal of Materials: Design and Applications, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13308116",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85132643408&origin=inward",
-        "title": "Performance evaluation of multilayered ceramic composite armors: New design and advanced predictive method",
-        "content": "<html><body>Novel body armors are designed to protect against ballistic threats in the most vulnerable organs within the thorax and abdomen. Decreasing the armor weight without affecting its total integrity after the impact is one of the most challenging tasks. In this study, we combine advanced numerical simulations and experimental tests to investigate the ballistic performance of multilayered armor systems (MAS) consisting of laminated alumina (Al2O3) ceramic plates with multi-curve form and a hybrid composite backing. The ballistic trauma absorption and ceramic fracturing morphology are considered evaluation criteria. The investigation provides enough data on the measured trauma and the results are compared to advanced monolithic ceramics. The ballistic tests showed that bonding three or two ceramic plates with polymeric interlayer decreases considerably the eroded ceramic mass in comparison to monolithic ceramic tiles. Furthermore, the layup of two thin Al2O3 tiles with frontal confinement gives the same trauma-weight index as monolithic silicon carbide and reaction-bonded boron carbide plates. The combination of K129 and KM2 aramid weave fabrics decreases the composite backing weight by 33% and increases its ballistic performance in comparison to homogeneous aramid fabrics. Numerical simulations that involve the use of solid Lagrange and adaptive solid/smooth particles hydrodynamics (SPH) numerical approaches with detailed 3D models of the bullet and the MAS are presented in this work. Based on the statistical analysis, a better prediction of the back face deformation and bullet residual length is obtained by the adaptive solid/SPH method, which is found more suitable for the simulation of multilayered armor impact scenarios. <br/><br/><br/>Authors: Tria D.E., Kouadria A., Małachowski J., Bouteghrine Y., Manaa A.. <br/><br/>Affiliations: Ecole Militaire Polytechnique, Wojskowa Akademia Techniczna. <br/><br/>Publication: Proceedings of the Institution of Mechanical Engineers, Part L: Journal of Materials: Design and Applications, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "identical"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13308043",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85132643408&origin=inward",
+    "title": "Performance evaluation of multilayered ceramic composite armors: New design and advanced predictive method",
+    "content": "<html><body>Novel body armors are designed to protect against ballistic threats in the most vulnerable organs within the thorax and abdomen. Decreasing the armor weight without affecting its total integrity after the impact is one of the most challenging tasks. In this study, we combine advanced numerical simulations and experimental tests to investigate the ballistic performance of multilayered armor systems (MAS) consisting of laminated alumina (Al2O3) ceramic plates with multi-curve form and a hybrid composite backing. The ballistic trauma absorption and ceramic fracturing morphology are considered evaluation criteria. The investigation provides enough data on the measured trauma and the results are compared to advanced monolithic ceramics. The ballistic tests showed that bonding three or two ceramic plates with polymeric interlayer decreases considerably the eroded ceramic mass in comparison to monolithic ceramic tiles. Furthermore, the layup of two thin Al2O3 tiles with frontal confinement gives the same trauma-weight index as monolithic silicon carbide and reaction-bonded boron carbide plates. The combination of K129 and KM2 aramid weave fabrics decreases the composite backing weight by 33% and increases its ballistic performance in comparison to homogeneous aramid fabrics. Numerical simulations that involve the use of solid Lagrange and adaptive solid/smooth particles hydrodynamics (SPH) numerical approaches with detailed 3D models of the bullet and the MAS are presented in this work. Based on the statistical analysis, a better prediction of the back face deformation and bullet residual length is obtained by the adaptive solid/SPH method, which is found more suitable for the simulation of multilayered armor impact scenarios. <br/><br/><br/>Authors: Tria D.E., Kouadria A., Małachowski J., Bouteghrine Y., Manaa A.. <br/><br/>Affiliations: Ecole Militaire Polytechnique, Wojskowa Akademia Techniczna. <br/><br/>Publication: Proceedings of the Institution of Mechanical Engineers, Part L: Journal of Materials: Design and Applications, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13308116",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85132643408&origin=inward",
+    "title": "Performance evaluation of multilayered ceramic composite armors: New design and advanced predictive method",
+    "content": "<html><body>Novel body armors are designed to protect against ballistic threats in the most vulnerable organs within the thorax and abdomen. Decreasing the armor weight without affecting its total integrity after the impact is one of the most challenging tasks. In this study, we combine advanced numerical simulations and experimental tests to investigate the ballistic performance of multilayered armor systems (MAS) consisting of laminated alumina (Al2O3) ceramic plates with multi-curve form and a hybrid composite backing. The ballistic trauma absorption and ceramic fracturing morphology are considered evaluation criteria. The investigation provides enough data on the measured trauma and the results are compared to advanced monolithic ceramics. The ballistic tests showed that bonding three or two ceramic plates with polymeric interlayer decreases considerably the eroded ceramic mass in comparison to monolithic ceramic tiles. Furthermore, the layup of two thin Al2O3 tiles with frontal confinement gives the same trauma-weight index as monolithic silicon carbide and reaction-bonded boron carbide plates. The combination of K129 and KM2 aramid weave fabrics decreases the composite backing weight by 33% and increases its ballistic performance in comparison to homogeneous aramid fabrics. Numerical simulations that involve the use of solid Lagrange and adaptive solid/smooth particles hydrodynamics (SPH) numerical approaches with detailed 3D models of the bullet and the MAS are presented in this work. Based on the statistical analysis, a better prediction of the back face deformation and bullet residual length is obtained by the adaptive solid/SPH method, which is found more suitable for the simulation of multilayered armor impact scenarios. <br/><br/><br/>Authors: Tria D.E., Kouadria A., Małachowski J., Bouteghrine Y., Manaa A.. <br/><br/>Affiliations: Ecole Militaire Polytechnique, Wojskowa Akademia Techniczna. <br/><br/>Publication: Proceedings of the Institution of Mechanical Engineers, Part L: Journal of Materials: Design and Applications, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

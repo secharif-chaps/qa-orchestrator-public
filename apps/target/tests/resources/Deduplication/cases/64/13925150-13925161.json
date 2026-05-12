@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 65,
-    "master": {
-        "id": "legacy-64-master-13925150",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85160525840&origin=inward",
-        "title": "Surface modification of silicon carbide at atomic and close-to-atomic scale by femtosecond laser",
-        "content": "<html><body>Hexagonal silicon carbide exhibits great potential in various applications due to the excellent physical and chemical properties. However, the nature of hard and brittle makes it difficult to processing especially at atomic scale. In this study, the irradiation of femtosecond laser pulse on 4H-SiC (0001) Si-face is studied using both the experiments and the simulations of hybrid molecular dynamics (MD) and two temperature model (TTM). The removal and amorphous of material induced by single laser pulse are investigated with different fluences, and the influence of energy absorption depths is discussed. An ablation crater with 4 nm depth and sub-diffraction limited size is detected, implying the importance of multi-photon ionization. This study provides an atomic view on the interaction of laser with silicon carbide, illustrating that pulsed laser with shorter wavelength is more suitable for propelling atomic and close-to-atomic scale manufacturing (ACSM). <br/><br/><br/>Authors: An H., Wang J., Fang F.. <br/><br/>Affiliations: Tianjin University, University College Dublin. <br/><br/>Publication: nanoMan 2022 and AETS 2022 - 2022 8th International Conference on Nanomanufacturing and 4th AET Symposium on ACSM and Digital Manufacturing, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13925161",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85160540866&origin=inward",
-        "title": "nanoMan 2022 and AETS 2022 - 2022 8th International Conference on Nanomanufacturing and 4th AET Symposium on ACSM and Digital Manufacturing",
-        "content": "<html><body>The proceedings contain 44 papers. The topics discussed include: surface modification of silicon carbide at atomic and close-to-atomic scale by femtosecond laser; nanomanipulation of carbon nanotubes using fiber probe-based near-field optical tweezers; effect of cutting direction on nanomachining of copper when using a three-sided pyramidal AFM tip; 3D thermodynamic optimal design of superhydrophobic surfaces using periodic microstructures; an improved photometric stereo method for the online defect detection of gearbox covers; investigation of the material removal process in fluid line-jet polishing by CFD simulation; a computationally efficient machine learning strategy for automatic identification of process and product fingerprints for smart manufacturing systems; graphene photodetector integrated with waveguide Bragg grating; robust design for the precision forming of metallic bipolar plates of proton exchange membrane fuel cell; optimal bias voltage of substrate for formable nanocrystalline niobium precoatings of metallic bipolar plates; and experiment and simulation study on the demolding process of injection-molded microfluidic chips for heavy metal detection. <br/><br/><br/>Authors: . <br/><br/>Affiliations: . <br/><br/>Publication: nanoMan 2022 and AETS 2022 - 2022 8th International Conference on Nanomanufacturing and 4th AET Symposium on ACSM and Digital Manufacturing, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "unique",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "unique",
-        "note": "Master is a specific conference paper on femtosecond laser processing of SiC, while candidate is the proceedings overview listing many papers including the master as one item."
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "agreement_unique",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 65,
+  "master": {
+    "id": "legacy-64-master-13925150",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85160525840&origin=inward",
+    "title": "Surface modification of silicon carbide at atomic and close-to-atomic scale by femtosecond laser",
+    "content": "<html><body>Hexagonal silicon carbide exhibits great potential in various applications due to the excellent physical and chemical properties. However, the nature of hard and brittle makes it difficult to processing especially at atomic scale. In this study, the irradiation of femtosecond laser pulse on 4H-SiC (0001) Si-face is studied using both the experiments and the simulations of hybrid molecular dynamics (MD) and two temperature model (TTM). The removal and amorphous of material induced by single laser pulse are investigated with different fluences, and the influence of energy absorption depths is discussed. An ablation crater with 4 nm depth and sub-diffraction limited size is detected, implying the importance of multi-photon ionization. This study provides an atomic view on the interaction of laser with silicon carbide, illustrating that pulsed laser with shorter wavelength is more suitable for propelling atomic and close-to-atomic scale manufacturing (ACSM). <br/><br/><br/>Authors: An H., Wang J., Fang F.. <br/><br/>Affiliations: Tianjin University, University College Dublin. <br/><br/>Publication: nanoMan 2022 and AETS 2022 - 2022 8th International Conference on Nanomanufacturing and 4th AET Symposium on ACSM and Digital Manufacturing, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13925161",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85160540866&origin=inward",
+    "title": "nanoMan 2022 and AETS 2022 - 2022 8th International Conference on Nanomanufacturing and 4th AET Symposium on ACSM and Digital Manufacturing",
+    "content": "<html><body>The proceedings contain 44 papers. The topics discussed include: surface modification of silicon carbide at atomic and close-to-atomic scale by femtosecond laser; nanomanipulation of carbon nanotubes using fiber probe-based near-field optical tweezers; effect of cutting direction on nanomachining of copper when using a three-sided pyramidal AFM tip; 3D thermodynamic optimal design of superhydrophobic surfaces using periodic microstructures; an improved photometric stereo method for the online defect detection of gearbox covers; investigation of the material removal process in fluid line-jet polishing by CFD simulation; a computationally efficient machine learning strategy for automatic identification of process and product fingerprints for smart manufacturing systems; graphene photodetector integrated with waveguide Bragg grating; robust design for the precision forming of metallic bipolar plates of proton exchange membrane fuel cell; optimal bias voltage of substrate for formable nanocrystalline niobium precoatings of metallic bipolar plates; and experiment and simulation study on the demolding process of injection-molded microfluidic chips for heavy metal detection. <br/><br/><br/>Authors: . <br/><br/>Affiliations: . <br/><br/>Publication: nanoMan 2022 and AETS 2022 - 2022 8th International Conference on Nanomanufacturing and 4th AET Symposium on ACSM and Digital Manufacturing, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "unique",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "unique",
+    "note": "Master is a specific conference paper on femtosecond laser processing of SiC, while candidate is the proceedings overview listing many papers including the master as one item."
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "agreement_unique",
+  "content_source": "hbase_full"
 }

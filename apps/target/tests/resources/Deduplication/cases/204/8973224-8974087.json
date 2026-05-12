@@ -1,36 +1,36 @@
 {
-    "account_id": 204,
-    "legacy_outcome": "NEAR_EXACT",
-    "legacy_level": 110,
-    "master": {
-        "id": "legacy-204-master-8973224",
-        "url": "https://www.mil.gov.ua/en/news/2022/02/14/oleksii-reznikov-had-phone-conversation-with-minister-of-defence-of-republic-of-belarus-viktor-khrenin/",
-        "title": "Oleksii Reznikov had phone conversation with Minister of Defence of Republic of Belarus Viktor Khrenin",
-        "content": "<html><head><title>Oleksii Reznikov had phone conversation with Minister of Defence of Republic of Belarus Viktor Khrenin</title></head><body>2022-02-14 14:00:00 |<b> ID: 66442 </b>\n\t\t<div>\n\t\t\t\n\t\t\t\n\t\t\t <p>On February 14, a phone conversation took place between Minister of Defence of Ukraine Oleksii Reznikov and Minister of Defence of Republic of Belarus Viktor Khrenin.</p>\n<p>The Ministers discussed an issue of implementation of measures to increase trust and transparency during the exercises near state border, and also exclusion of potential incidents and mutual exchange of information about emergency situations.</p>\n<p>The Minister of Defence of Ukraine informed his Belarusian colleague on command and staff exercises “Zametil – 2022” and stressed their defensive nature.</p>\n<p>To strengthen mutual trust a visit of the defence attaché of the Republic of Belarus in Ukraine to the “Zametil – 2022” exercises has been arranged, as well as a visit of Ukrainian defence attaché in Belarus to Russia-Belarus military exercises “Allied Resolve – 2022”.</p>\n<p>The Ministers agreed to keep in contact to develop neighbourly relations in the defence sphere.</p>\n<p>“I am grateful to my colleague Viktor Khrenin for the frank conversation. I have stressed many times that the relation between Ukrainians and Belarusians are unique. We have warm feelings. Any threats or provocations towards Belarus from Ukraine are out of the question, they are impossible. Viktor Khrenin also assured me of no threats for Ukraine from the territory of Belarus. We discussed things on the agenda and defined algorithms for further co-operation. I conceive this as a positive signal and the first step to fruitful co-operation,’ said Minister of Defence of Ukraine Oleksii Reznikov.        </p>\n\t\t\t\n<hr/>\n\t\t\t\n\n\t\t</div></body></html>"
-    },
-    "candidate": {
-        "id": "legacy-204-dup-8974087",
-        "url": "https://www.kmu.gov.ua/en/news/oleksij-reznikov-proviv-telefonnu-rozmovu-z-ministrom-oboroni-respubliki-bilorus-viktorom-hreninim",
-        "title": "Oleksii Reznikov had phone conversation with Minister of Defence of Republic of Belarus Viktor Khrenin",
-        "content": "<html><prebody></prebody><body><p>On February 14, a phone conversation took place between Minister of Defence of Ukraine Oleksii Reznikov and Minister of Defence of Republic of Belarus Viktor Khrenin.</p><p>The Ministers discussed an issue of implementation of measures to increase trust and transparency during the exercises near state border, and also exclusion of potential incidents and mutual exchange of information about emergency situations.</p> <p>The Minister of Defence of Ukraine informed his Belarusian colleague on command and staff exercises “Zametil – 2022” and stressed their defensive nature.</p> <p>To strengthen mutual trust a visit of the defence attaché of the Republic of Belarus in Ukraine to the “Zametil – 2022” exercises has been arranged, as well as a visit of Ukrainian defence attaché in Belarus to Russia-Belarus military exercises “Allied Resolve – 2022”.</p> <p>The Ministers agreed to keep in contact to develop neighbourly relations in the defence sphere.</p> <p>“I am grateful to my colleague Viktor Khrenin for the frank conversation. I have stressed many times that the relation between Ukrainians and Belarusians are unique. We have warm feelings. Any threats or provocations towards Belarus from Ukraine are out of the question, they are impossible. Viktor Khrenin also assured me of no threats for Ukraine from the territory of Belarus. We discussed things on the agenda and defined algorithms for further co-operation. I conceive this as a positive signal and the first step to fruitful co-operation,” said Minister of Defence of Ukraine Oleksii Reznikov.   </p>  <br/>\n</body><postbody></postbody></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "partial_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Identical press release text about the same phone conversation, only minor formatting differences"
-    },
-    "pinned": {
-        "outcome": "near_duplicate",
-        "stage": "min_hash_lsh",
-        "similarity": 0.9296875
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 204,
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-204-master-8973224",
+    "url": "https://www.mil.gov.ua/en/news/2022/02/14/oleksii-reznikov-had-phone-conversation-with-minister-of-defence-of-republic-of-belarus-viktor-khrenin/",
+    "title": "Oleksii Reznikov had phone conversation with Minister of Defence of Republic of Belarus Viktor Khrenin",
+    "content": "<html><head><title>Oleksii Reznikov had phone conversation with Minister of Defence of Republic of Belarus Viktor Khrenin</title></head><body>2022-02-14 14:00:00 |<b> ID: 66442 </b>\n\t\t<div>\n\t\t\t\n\t\t\t\n\t\t\t <p>On February 14, a phone conversation took place between Minister of Defence of Ukraine Oleksii Reznikov and Minister of Defence of Republic of Belarus Viktor Khrenin.</p>\n<p>The Ministers discussed an issue of implementation of measures to increase trust and transparency during the exercises near state border, and also exclusion of potential incidents and mutual exchange of information about emergency situations.</p>\n<p>The Minister of Defence of Ukraine informed his Belarusian colleague on command and staff exercises “Zametil – 2022” and stressed their defensive nature.</p>\n<p>To strengthen mutual trust a visit of the defence attaché of the Republic of Belarus in Ukraine to the “Zametil – 2022” exercises has been arranged, as well as a visit of Ukrainian defence attaché in Belarus to Russia-Belarus military exercises “Allied Resolve – 2022”.</p>\n<p>The Ministers agreed to keep in contact to develop neighbourly relations in the defence sphere.</p>\n<p>“I am grateful to my colleague Viktor Khrenin for the frank conversation. I have stressed many times that the relation between Ukrainians and Belarusians are unique. We have warm feelings. Any threats or provocations towards Belarus from Ukraine are out of the question, they are impossible. Viktor Khrenin also assured me of no threats for Ukraine from the territory of Belarus. We discussed things on the agenda and defined algorithms for further co-operation. I conceive this as a positive signal and the first step to fruitful co-operation,’ said Minister of Defence of Ukraine Oleksii Reznikov.        </p>\n\t\t\t\n<hr/>\n\t\t\t\n\n\t\t</div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-204-dup-8974087",
+    "url": "https://www.kmu.gov.ua/en/news/oleksij-reznikov-proviv-telefonnu-rozmovu-z-ministrom-oboroni-respubliki-bilorus-viktorom-hreninim",
+    "title": "Oleksii Reznikov had phone conversation with Minister of Defence of Republic of Belarus Viktor Khrenin",
+    "content": "<html><prebody></prebody><body><p>On February 14, a phone conversation took place between Minister of Defence of Ukraine Oleksii Reznikov and Minister of Defence of Republic of Belarus Viktor Khrenin.</p><p>The Ministers discussed an issue of implementation of measures to increase trust and transparency during the exercises near state border, and also exclusion of potential incidents and mutual exchange of information about emergency situations.</p> <p>The Minister of Defence of Ukraine informed his Belarusian colleague on command and staff exercises “Zametil – 2022” and stressed their defensive nature.</p> <p>To strengthen mutual trust a visit of the defence attaché of the Republic of Belarus in Ukraine to the “Zametil – 2022” exercises has been arranged, as well as a visit of Ukrainian defence attaché in Belarus to Russia-Belarus military exercises “Allied Resolve – 2022”.</p> <p>The Ministers agreed to keep in contact to develop neighbourly relations in the defence sphere.</p> <p>“I am grateful to my colleague Viktor Khrenin for the frank conversation. I have stressed many times that the relation between Ukrainians and Belarusians are unique. We have warm feelings. Any threats or provocations towards Belarus from Ukraine are out of the question, they are impossible. Viktor Khrenin also assured me of no threats for Ukraine from the territory of Belarus. We discussed things on the agenda and defined algorithms for further co-operation. I conceive this as a positive signal and the first step to fruitful co-operation,” said Minister of Defence of Ukraine Oleksii Reznikov.   </p>  <br/>\n</body><postbody></postbody></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "partial_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Identical press release text about the same phone conversation, only minor formatting differences"
+  },
+  "pinned": {
+    "outcome": "near_duplicate",
+    "stage": "min_hash_lsh",
+    "similarity": 0.9296875
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

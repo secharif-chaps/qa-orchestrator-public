@@ -640,20 +640,20 @@ What would you like to monitor?
 
 ```json
 {
-    "primaryType": "reputational",
-    "primarySubtype": "negative",
-    "confidenceScore": 85,
-    "classification": {
-        "topics": [
-            {
-                "label": "Topic EN",
-                "keywords": ["kw1", "kw2"],
-                "relevanceScore": 90,
-                "searchQueryTemplate": "{entity} keywords {{ $now.format('yyyy') }}",
-                "tier": 1
-            }
-        ]
-    }
+  "primaryType": "reputational",
+  "primarySubtype": "negative",
+  "confidenceScore": 85,
+  "classification": {
+    "topics": [
+      {
+        "label": "Topic EN",
+        "keywords": ["kw1", "kw2"],
+        "relevanceScore": 90,
+        "searchQueryTemplate": "{entity} keywords {{ $now.format('yyyy') }}",
+        "tier": 1
+      }
+    ]
+  }
 }
 ```
 
@@ -675,10 +675,10 @@ What would you like to monitor?
 
 ```json
 {
-    "label": "Actor Name",
-    "type": "<use Actor Types from context>",
-    "description": "Brief relevance description",
-    "score": 85
+  "label": "Actor Name",
+  "type": "<use Actor Types from context>",
+  "description": "Brief relevance description",
+  "score": 85
 }
 ```
 
@@ -705,11 +705,11 @@ What would you like to monitor?
 
 ```json
 {
-    "name": "Source Display Name",
-    "type": "<use Source Types from context>",
-    "url": "https://specific-section-url.com/category",
-    "description": "What info this source provides",
-    "score": 85
+  "name": "Source Display Name",
+  "type": "<use Source Types from context>",
+  "url": "https://specific-section-url.com/category",
+  "description": "What info this source provides",
+  "score": 85
 }
 ```
 

@@ -9,11 +9,13 @@ This directory contains Alembic database migrations for the MINT backend applica
 The project migrated from custom sequential numbering to Alembic's standard hash-based naming:
 
 **Legacy Sequential Format** (migrations 001-003):
+
 - `001_new_initial_migration.py`
 - `002_create_user_preferences_table.py`
 - `003_add_data_collection_task.py`
 
 **Current Standard Format** (from migration d6d3b27e531e onwards):
+
 - `d6d3b27e531e_add_task_dependencies_and_blocked_status.py`
 - Uses Alembic's auto-generated revision hash
 - Format: `{revision_hash}_{description}.py`
@@ -92,6 +94,7 @@ Existing migrations (both sequential and hash-based) should **never be renamed**
 ## Troubleshooting
 
 ### "Target database is not up to date"
+
 ```bash
 # Check which migrations are pending
 docker compose -f docker-compose.dev.yml exec backend alembic current
@@ -102,10 +105,13 @@ docker compose -f docker-compose.dev.yml exec backend alembic upgrade head
 ```
 
 ### "Can't locate revision identified by"
+
 This means a migration file was deleted or renamed. Check git history to restore the missing migration.
 
 ### "Multiple head revisions are present"
+
 Two migrations were created in parallel. Merge them with:
+
 ```bash
 docker compose -f docker-compose.dev.yml exec backend alembic merge heads -m "merge parallel migrations"
 ```

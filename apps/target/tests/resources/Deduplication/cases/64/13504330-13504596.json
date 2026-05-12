@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13504330",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139907748&origin=inward",
-        "title": "Effect of Curvilinear and Inverted Aircraft Spoiler Deflection Angle on Aerodynamic Wing Performances",
-        "content": "<html><body>This work is a numerical investigation of the effect of curvilinear and Inverted Aircraft Spoiler Deflection Angle (IASDA) on NACA 0012 airfoil wing performances for lateral flight control and landing air brake. In this paper, the commercial code CFX is used to investigate the aerodynamic characteristics. The calculations have been performed using steady and uncompressible Reynolds-Averaged Navier-Stokes (RANS) equations. The airfoil has been exposed to a free stream velocity with Reynolds number of 0.36×106 . First, a baseline test is conducted for various turbulence models at angle of attack ranging from 0° to 15°. Then a study is carried out using the two-equation k-ω Shear Stress Transport (SST) turbulent model for two geometrical spoiler designs at angle of attack from 0° to 10°. In the first design, airfoil is fitted with rectangular spoiler at various deflection angles (20°; 40°; 140° and 160°). In the second one, airfoil is fitted with curvilinear spoiler at deflection angle of 40° based on the former case to keep the same spoiler surface area. Analysis of CL and CD shows a significant enhancement of wing performance both of curvilinear and inverted aircraft spoiler deflection angle by increasing drag at least by 30%, which is important for flight control. In addition, it has been noticed that the use of IASDA is more suitable for pure airbrake speed, so drag coefficient increases by 38.45% compared to conventional deflection. Therefore there is a slight decrease in lift coefficient of 0.97%. <br/><br/><br/>Authors: Mahboub A., Bouzit M., Ghenaim A.. <br/><br/>Affiliations: Université des Sciences et de la Technologie d’Oran Mohamed-Boudiaf, INSA Strasbourg. <br/><br/>Publication: International Review of Aerospace Engineering, 2022, pp.151-161. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13504596",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139907748&origin=inward",
-        "title": "Effect of Curvilinear and Inverted Aircraft Spoiler Deflection Angle on Aerodynamic Wing Performances",
-        "content": "<html><body>This work is a numerical investigation of the effect of curvilinear and Inverted Aircraft Spoiler Deflection Angle (IASDA) on NACA 0012 airfoil wing performances for lateral flight control and landing air brake. In this paper, the commercial code CFX is used to investigate the aerodynamic characteristics. The calculations have been performed using steady and uncompressible Reynolds-Averaged Navier-Stokes (RANS) equations. The airfoil has been exposed to a free stream velocity with Reynolds number of 0.36×106 . First, a baseline test is conducted for various turbulence models at angle of attack ranging from 0° to 15°. Then a study is carried out using the two-equation k-ω Shear Stress Transport (SST) turbulent model for two geometrical spoiler designs at angle of attack from 0° to 10°. In the first design, airfoil is fitted with rectangular spoiler at various deflection angles (20°; 40°; 140° and 160°). In the second one, airfoil is fitted with curvilinear spoiler at deflection angle of 40° based on the former case to keep the same spoiler surface area. Analysis of CL and CD shows a significant enhancement of wing performance both of curvilinear and inverted aircraft spoiler deflection angle by increasing drag at least by 30%, which is important for flight control. In addition, it has been noticed that the use of IASDA is more suitable for pure airbrake speed, so drag coefficient increases by 38.45% compared to conventional deflection. Therefore there is a slight decrease in lift coefficient of 0.97%. <br/><br/><br/>Authors: Mahboub A., Bouzit M., Ghenaim A.. <br/><br/>Affiliations: Université des Sciences et de la Technologie d’Oran Mohamed-Boudiaf, INSA Strasbourg. <br/><br/>Publication: International Review of Aerospace Engineering, 2022, pp.151-161. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "identical"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13504330",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139907748&origin=inward",
+    "title": "Effect of Curvilinear and Inverted Aircraft Spoiler Deflection Angle on Aerodynamic Wing Performances",
+    "content": "<html><body>This work is a numerical investigation of the effect of curvilinear and Inverted Aircraft Spoiler Deflection Angle (IASDA) on NACA 0012 airfoil wing performances for lateral flight control and landing air brake. In this paper, the commercial code CFX is used to investigate the aerodynamic characteristics. The calculations have been performed using steady and uncompressible Reynolds-Averaged Navier-Stokes (RANS) equations. The airfoil has been exposed to a free stream velocity with Reynolds number of 0.36×106 . First, a baseline test is conducted for various turbulence models at angle of attack ranging from 0° to 15°. Then a study is carried out using the two-equation k-ω Shear Stress Transport (SST) turbulent model for two geometrical spoiler designs at angle of attack from 0° to 10°. In the first design, airfoil is fitted with rectangular spoiler at various deflection angles (20°; 40°; 140° and 160°). In the second one, airfoil is fitted with curvilinear spoiler at deflection angle of 40° based on the former case to keep the same spoiler surface area. Analysis of CL and CD shows a significant enhancement of wing performance both of curvilinear and inverted aircraft spoiler deflection angle by increasing drag at least by 30%, which is important for flight control. In addition, it has been noticed that the use of IASDA is more suitable for pure airbrake speed, so drag coefficient increases by 38.45% compared to conventional deflection. Therefore there is a slight decrease in lift coefficient of 0.97%. <br/><br/><br/>Authors: Mahboub A., Bouzit M., Ghenaim A.. <br/><br/>Affiliations: Université des Sciences et de la Technologie d’Oran Mohamed-Boudiaf, INSA Strasbourg. <br/><br/>Publication: International Review of Aerospace Engineering, 2022, pp.151-161. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13504596",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139907748&origin=inward",
+    "title": "Effect of Curvilinear and Inverted Aircraft Spoiler Deflection Angle on Aerodynamic Wing Performances",
+    "content": "<html><body>This work is a numerical investigation of the effect of curvilinear and Inverted Aircraft Spoiler Deflection Angle (IASDA) on NACA 0012 airfoil wing performances for lateral flight control and landing air brake. In this paper, the commercial code CFX is used to investigate the aerodynamic characteristics. The calculations have been performed using steady and uncompressible Reynolds-Averaged Navier-Stokes (RANS) equations. The airfoil has been exposed to a free stream velocity with Reynolds number of 0.36×106 . First, a baseline test is conducted for various turbulence models at angle of attack ranging from 0° to 15°. Then a study is carried out using the two-equation k-ω Shear Stress Transport (SST) turbulent model for two geometrical spoiler designs at angle of attack from 0° to 10°. In the first design, airfoil is fitted with rectangular spoiler at various deflection angles (20°; 40°; 140° and 160°). In the second one, airfoil is fitted with curvilinear spoiler at deflection angle of 40° based on the former case to keep the same spoiler surface area. Analysis of CL and CD shows a significant enhancement of wing performance both of curvilinear and inverted aircraft spoiler deflection angle by increasing drag at least by 30%, which is important for flight control. In addition, it has been noticed that the use of IASDA is more suitable for pure airbrake speed, so drag coefficient increases by 38.45% compared to conventional deflection. Therefore there is a slight decrease in lift coefficient of 0.97%. <br/><br/><br/>Authors: Mahboub A., Bouzit M., Ghenaim A.. <br/><br/>Affiliations: Université des Sciences et de la Technologie d’Oran Mohamed-Boudiaf, INSA Strasbourg. <br/><br/>Publication: International Review of Aerospace Engineering, 2022, pp.151-161. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

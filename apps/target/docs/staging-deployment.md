@@ -10,8 +10,8 @@ The staging deployment system automatically creates isolated staging environment
 
 1. **Trigger**: When a merge request is created, the GitLab CI/CD pipeline automatically triggers the staging deployment
 2. **Subdomain Generation**: The system generates a unique subdomain based on:
-    - JIRA ticket number (extracted from branch name like `tar-123`)
-    - Merge request ID (fallback: `mr-{id}`)
+   - JIRA ticket number (extracted from branch name like `tar-123`)
+   - Merge request ID (fallback: `mr-{id}`)
 3. **Environment URL**: `https://{subdomain}.staging.target.localnet`
 
 ### Architecture
@@ -79,10 +79,10 @@ The `staging-deploy` job in GitLab CI:
 1. **Authentication**: Logs into Docker registry
 2. **Certificate Setup**: Copy CA certificates for SSL from GitLab CI/CD configuration variables (https://git.mediaspeech.com/basil/basil/-/settings/ci_cd)
 3. **Configuration Generation**:
-    - Extracts JIRA ticket from branch name
-    - Generates unique subdomain
-    - Creates environment variables
-    - Configures Keycloak realm
+   - Extracts JIRA ticket from branch name
+   - Generates unique subdomain
+   - Creates environment variables
+   - Configures Keycloak realm
 4. **Artifact Creation**: Prepares deployment package
 
 ### 2. Service Deployment

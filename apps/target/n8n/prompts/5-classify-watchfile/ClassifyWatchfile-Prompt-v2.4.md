@@ -91,11 +91,11 @@ Topics are **the primary mechanism for actor discovery.** Each topic generates w
 
 ```json
 {
-    "label": "Topic Name EN",
-    "keywords": ["keyword1", "keyword2", "keyword3"],
-    "relevanceScore": 85,
-    "searchQueryTemplate": "template for {entity} searches {{ $now.format('yyyy') }}",
-    "tier": 1
+  "label": "Topic Name EN",
+  "keywords": ["keyword1", "keyword2", "keyword3"],
+  "relevanceScore": 85,
+  "searchQueryTemplate": "template for {entity} searches {{ $now.format('yyyy') }}",
+  "tier": 1
 }
 ```
 
@@ -114,83 +114,83 @@ Topics are **the primary mechanism for actor discovery.** Each topic generates w
 
 ```json
 [
-    {
-        "label": "Labor Practice Controversies",
-        "keywords": ["sweatshop", "forced labor", "working conditions"],
-        "relevanceScore": 95,
-        "searchQueryTemplate": "{entity} labor sweatshop controversy investigation {{ $now.format('yyyy') }}",
-        "tier": 1
-    },
-    {
-        "label": "Environmental Impact Criticism",
-        "keywords": ["pollution", "waste", "greenwashing", "fast fashion impact"],
-        "relevanceScore": 90,
-        "searchQueryTemplate": "{entity} environmental impact pollution criticism {{ $now.format('yyyy') }}",
-        "tier": 1
-    },
-    {
-        "label": "Consumer Safety Issues",
-        "keywords": ["toxic", "recall", "chemicals", "health risk"],
-        "relevanceScore": 85,
-        "searchQueryTemplate": "{entity} product safety toxic chemicals recall {{ $now.format('yyyy') }}",
-        "tier": 1
-    },
-    {
-        "label": "IP Disputes",
-        "keywords": ["copyright", "design theft", "lawsuit", "plagiarism"],
-        "relevanceScore": 80,
-        "searchQueryTemplate": "{entity} copyright design theft lawsuit {{ $now.format('yyyy') }}",
-        "tier": 1
-    },
-    {
-        "label": "NGO Watchdog Reports",
-        "keywords": ["NGO report", "investigation", "campaign"],
-        "relevanceScore": 90,
-        "searchQueryTemplate": "{entity} NGO report investigation campaign {{ $now.format('yyyy') }}",
-        "tier": 2
-    },
-    {
-        "label": "ESG Rating Agencies",
-        "keywords": ["ESG rating", "sustainability score"],
-        "relevanceScore": 80,
-        "searchQueryTemplate": "{entity} ESG rating sustainability score {{ $now.format('yyyy') }}",
-        "tier": 2
-    },
-    {
-        "label": "Fashion Industry Critics",
-        "keywords": ["fashion critic", "ethical fashion", "watchdog"],
-        "relevanceScore": 75,
-        "searchQueryTemplate": "fast fashion critic ethical fashion advocate {{ $now.format('yyyy') }}",
-        "tier": 2
-    },
-    {
-        "label": "Consumer Protection Bodies",
-        "keywords": ["consumer protection", "product safety authority"],
-        "relevanceScore": 75,
-        "searchQueryTemplate": "{entity} consumer protection authority investigation {{ $now.format('yyyy') }}",
-        "tier": 2
-    },
-    {
-        "label": "Investigative Journalists",
-        "keywords": ["investigation", "documentary", "exposé"],
-        "relevanceScore": 85,
-        "searchQueryTemplate": "{entity} investigation documentary journalist {{ $now.format('yyyy') }}",
-        "tier": 3
-    },
-    {
-        "label": "Academic Researchers",
-        "keywords": ["research", "study", "supply chain"],
-        "relevanceScore": 70,
-        "searchQueryTemplate": "fast fashion supply chain research academic study {{ $now.format('yyyy') }}",
-        "tier": 3
-    },
-    {
-        "label": "Regulatory Scrutiny",
-        "keywords": ["customs", "import ban", "regulatory investigation"],
-        "relevanceScore": 80,
-        "searchQueryTemplate": "{entity} customs investigation import ban regulatory {{ $now.format('yyyy') }}",
-        "tier": 3
-    }
+  {
+    "label": "Labor Practice Controversies",
+    "keywords": ["sweatshop", "forced labor", "working conditions"],
+    "relevanceScore": 95,
+    "searchQueryTemplate": "{entity} labor sweatshop controversy investigation {{ $now.format('yyyy') }}",
+    "tier": 1
+  },
+  {
+    "label": "Environmental Impact Criticism",
+    "keywords": ["pollution", "waste", "greenwashing", "fast fashion impact"],
+    "relevanceScore": 90,
+    "searchQueryTemplate": "{entity} environmental impact pollution criticism {{ $now.format('yyyy') }}",
+    "tier": 1
+  },
+  {
+    "label": "Consumer Safety Issues",
+    "keywords": ["toxic", "recall", "chemicals", "health risk"],
+    "relevanceScore": 85,
+    "searchQueryTemplate": "{entity} product safety toxic chemicals recall {{ $now.format('yyyy') }}",
+    "tier": 1
+  },
+  {
+    "label": "IP Disputes",
+    "keywords": ["copyright", "design theft", "lawsuit", "plagiarism"],
+    "relevanceScore": 80,
+    "searchQueryTemplate": "{entity} copyright design theft lawsuit {{ $now.format('yyyy') }}",
+    "tier": 1
+  },
+  {
+    "label": "NGO Watchdog Reports",
+    "keywords": ["NGO report", "investigation", "campaign"],
+    "relevanceScore": 90,
+    "searchQueryTemplate": "{entity} NGO report investigation campaign {{ $now.format('yyyy') }}",
+    "tier": 2
+  },
+  {
+    "label": "ESG Rating Agencies",
+    "keywords": ["ESG rating", "sustainability score"],
+    "relevanceScore": 80,
+    "searchQueryTemplate": "{entity} ESG rating sustainability score {{ $now.format('yyyy') }}",
+    "tier": 2
+  },
+  {
+    "label": "Fashion Industry Critics",
+    "keywords": ["fashion critic", "ethical fashion", "watchdog"],
+    "relevanceScore": 75,
+    "searchQueryTemplate": "fast fashion critic ethical fashion advocate {{ $now.format('yyyy') }}",
+    "tier": 2
+  },
+  {
+    "label": "Consumer Protection Bodies",
+    "keywords": ["consumer protection", "product safety authority"],
+    "relevanceScore": 75,
+    "searchQueryTemplate": "{entity} consumer protection authority investigation {{ $now.format('yyyy') }}",
+    "tier": 2
+  },
+  {
+    "label": "Investigative Journalists",
+    "keywords": ["investigation", "documentary", "exposé"],
+    "relevanceScore": 85,
+    "searchQueryTemplate": "{entity} investigation documentary journalist {{ $now.format('yyyy') }}",
+    "tier": 3
+  },
+  {
+    "label": "Academic Researchers",
+    "keywords": ["research", "study", "supply chain"],
+    "relevanceScore": 70,
+    "searchQueryTemplate": "fast fashion supply chain research academic study {{ $now.format('yyyy') }}",
+    "tier": 3
+  },
+  {
+    "label": "Regulatory Scrutiny",
+    "keywords": ["customs", "import ban", "regulatory investigation"],
+    "relevanceScore": 80,
+    "searchQueryTemplate": "{entity} customs investigation import ban regulatory {{ $now.format('yyyy') }}",
+    "tier": 3
+  }
 ]
 ```
 
@@ -209,61 +209,61 @@ Topics are **the primary mechanism for actor discovery.** Each topic generates w
 
 ```json
 {
-    "primaryType": "reputational",
-    "primarySubtype": "negative",
-    "confidenceScore": 85,
-    "justification": {
-        "en": "Why this type was chosen.",
-        "fr": "Pourquoi ce type a été choisi."
-    },
-    "secondaryTypes": [
-        {
-            "type": "regulatory",
-            "subtype": null,
-            "score": 65,
-            "justification": { "en": "...", "fr": "..." }
-        }
-    ],
-    "topics": [
-        {
-            "label": "Topic Name EN",
-            "keywords": ["keyword1", "keyword2"],
-            "relevanceScore": 95,
-            "searchQueryTemplate": "template {entity} {{ $now.format('yyyy') }}",
-            "tier": 1
-        }
-    ],
-    "analysis": {
-        "detectedKeywords": ["extracted", "from", "conversation"],
-        "detectedEntities": ["Entity1", "Entity2"],
-        "userObjective": "In conversation language",
-        "geographicScope": "Europe"
-    },
-    "suggestions": {
-        "actors": [
-            {
-                "name": "Actor Name",
-                "type": "organization",
-                "relevance": "In conversation language",
-                "score": 90
-            }
-        ],
-        "sources": [
-            {
-                "name": "Source Name",
-                "url": "https://specific-path/...",
-                "type": "website",
-                "relevance": "In conversation language",
-                "score": 85
-            }
-        ],
-        "searchQueries": ["Search query {{ $now.format('yyyy') }}"]
-    },
-    "deepSearchReadiness": {
-        "ready": true,
-        "reason": { "en": "...", "fr": "..." },
-        "suggestedSearchQueries": ["query {{ $now.format('yyyy') }}"]
+  "primaryType": "reputational",
+  "primarySubtype": "negative",
+  "confidenceScore": 85,
+  "justification": {
+    "en": "Why this type was chosen.",
+    "fr": "Pourquoi ce type a été choisi."
+  },
+  "secondaryTypes": [
+    {
+      "type": "regulatory",
+      "subtype": null,
+      "score": 65,
+      "justification": { "en": "...", "fr": "..." }
     }
+  ],
+  "topics": [
+    {
+      "label": "Topic Name EN",
+      "keywords": ["keyword1", "keyword2"],
+      "relevanceScore": 95,
+      "searchQueryTemplate": "template {entity} {{ $now.format('yyyy') }}",
+      "tier": 1
+    }
+  ],
+  "analysis": {
+    "detectedKeywords": ["extracted", "from", "conversation"],
+    "detectedEntities": ["Entity1", "Entity2"],
+    "userObjective": "In conversation language",
+    "geographicScope": "Europe"
+  },
+  "suggestions": {
+    "actors": [
+      {
+        "name": "Actor Name",
+        "type": "organization",
+        "relevance": "In conversation language",
+        "score": 90
+      }
+    ],
+    "sources": [
+      {
+        "name": "Source Name",
+        "url": "https://specific-path/...",
+        "type": "website",
+        "relevance": "In conversation language",
+        "score": 85
+      }
+    ],
+    "searchQueries": ["Search query {{ $now.format('yyyy') }}"]
+  },
+  "deepSearchReadiness": {
+    "ready": true,
+    "reason": { "en": "...", "fr": "..." },
+    "suggestedSearchQueries": ["query {{ $now.format('yyyy') }}"]
+  }
 }
 ```
 

@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 66,
-    "master": {
-        "id": "legacy-64-master-13372076",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135091237&origin=inward",
-        "title": "Design, Manufacture and Testing of a Thrust Reverser Unit Wind Tunnel Model",
-        "content": "<html><body>The paper describes the model design and manufacturing activities shared by ARA and RUAG in the context of the Thrust Reverser Unit flow Visualisation Project (TRUflow). The scaled wind-tunnel model is intended to reproduce the flow field within and around a turbofan engine either with thrust reverser unit stowed or deployed. At the core of the design is a hydraulic motor specifically developed by RUAG for this application. Performance data and testing details are given. ARA was in charge of the other components of the model, including the fan, the outlet guide vanes (OGV), the blocker door and the thrust reverser cascades. Details of design decisions are discussed and the necessary calibration and actual wind tunnel test campaign are described. <br/><br/><br/>Authors: Preece A.K., Bdeiwi H., Leach M., Steiling D., Jax T., Aschwanden P.. <br/><br/>Affiliations: Aircraft Research Association Limited, RUAG Schweiz AG. <br/><br/>Publication: AIAA AVIATION 2022 Forum, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13372082",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135079534&origin=inward",
-        "title": "The Thrust Reverser Unit flow Visualisation Project (TRUflow)",
-        "content": "<html><body>For the purpose of efficiency, future transport aircraft are likely to require shorter, more compact bypass ratio turbofans. Issues will arise due to the difficulty in fitting thrust reverser units within the shorter nacelles and so the TRUflow Project is attempting to develop methods to investigate, simulate and predict the re-ingested flows fields around a thrust reverser unit fitted to such a nacelle. Static demonstrator and wind-tunnel models have been designed and manufactured for the purpose of testing novel optical methods and to allow development of CFD simulations. Successful static demonstrator and wind-tunnel tests were held in the Summer/Autumn of 2021. Ambitions are also held for the development of a variable fidelity model and a resulting surrogate model for the Thrust Reverser Unit (TRU) which will greater aid the understanding of such complex flow fields with a view to improving Turbofan-TRU integration. <br/><br/><br/>Authors: Preece A., Bdeiwi H., Ciarella A.. <br/><br/>Affiliations: Blue Bear Systems Research Ltd, Aircraft Research Association Limited. <br/><br/>Publication: AIAA AVIATION 2022 Forum, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "unique",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "unique",
-        "note": "Two distinct AIAA 2022 papers on the TRUflow project with different titles, authors, focus, and content"
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "agreement_unique",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 66,
+  "master": {
+    "id": "legacy-64-master-13372076",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135091237&origin=inward",
+    "title": "Design, Manufacture and Testing of a Thrust Reverser Unit Wind Tunnel Model",
+    "content": "<html><body>The paper describes the model design and manufacturing activities shared by ARA and RUAG in the context of the Thrust Reverser Unit flow Visualisation Project (TRUflow). The scaled wind-tunnel model is intended to reproduce the flow field within and around a turbofan engine either with thrust reverser unit stowed or deployed. At the core of the design is a hydraulic motor specifically developed by RUAG for this application. Performance data and testing details are given. ARA was in charge of the other components of the model, including the fan, the outlet guide vanes (OGV), the blocker door and the thrust reverser cascades. Details of design decisions are discussed and the necessary calibration and actual wind tunnel test campaign are described. <br/><br/><br/>Authors: Preece A.K., Bdeiwi H., Leach M., Steiling D., Jax T., Aschwanden P.. <br/><br/>Affiliations: Aircraft Research Association Limited, RUAG Schweiz AG. <br/><br/>Publication: AIAA AVIATION 2022 Forum, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13372082",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135079534&origin=inward",
+    "title": "The Thrust Reverser Unit flow Visualisation Project (TRUflow)",
+    "content": "<html><body>For the purpose of efficiency, future transport aircraft are likely to require shorter, more compact bypass ratio turbofans. Issues will arise due to the difficulty in fitting thrust reverser units within the shorter nacelles and so the TRUflow Project is attempting to develop methods to investigate, simulate and predict the re-ingested flows fields around a thrust reverser unit fitted to such a nacelle. Static demonstrator and wind-tunnel models have been designed and manufactured for the purpose of testing novel optical methods and to allow development of CFD simulations. Successful static demonstrator and wind-tunnel tests were held in the Summer/Autumn of 2021. Ambitions are also held for the development of a variable fidelity model and a resulting surrogate model for the Thrust Reverser Unit (TRU) which will greater aid the understanding of such complex flow fields with a view to improving Turbofan-TRU integration. <br/><br/><br/>Authors: Preece A., Bdeiwi H., Ciarella A.. <br/><br/>Affiliations: Blue Bear Systems Research Ltd, Aircraft Research Association Limited. <br/><br/>Publication: AIAA AVIATION 2022 Forum, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "unique",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "unique",
+    "note": "Two distinct AIAA 2022 papers on the TRUflow project with different titles, authors, focus, and content"
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "agreement_unique",
+  "content_source": "hbase_full"
 }

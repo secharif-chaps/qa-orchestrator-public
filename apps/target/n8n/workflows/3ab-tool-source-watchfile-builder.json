@@ -72,10 +72,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        48,
-        128
-      ],
+      "position": [48, 128],
       "id": "956ec0eb-4a42-4841-927a-f9dc434446e5",
       "name": "Workflow_Trigger_BuildWatchFile",
       "alwaysOutputData": true,
@@ -121,10 +118,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        496,
-        224
-      ],
+      "position": [496, 224],
       "id": "7aea5da6-fe01-4793-bf52-ce2d0f71164f",
       "name": "Feedback_ValidationError",
       "notes": "@n8n-validate-ignore FEEDBACK_WRONG_MODE"
@@ -254,10 +248,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        720,
-        32
-      ],
+      "position": [720, 32],
       "id": "ce800e59-772e-4198-a8f7-7578362b3068",
       "name": "Subworkflow_Execute_WatchFileBuilder",
       "notes": "@n8n-validate-ignore EXECUTE_WORKFLOW_MISSING_REQUIRED_INPUT"
@@ -350,10 +341,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        272,
-        128
-      ],
+      "position": [272, 128],
       "id": "39462da5-d1dd-4264-83c1-e5281961504c",
       "name": "Condition_Validate_SourceErrorData"
     },
@@ -366,10 +354,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        496,
-        32
-      ],
+      "position": [496, 32],
       "id": "5243c182-d7dc-4a9f-9101-6cb89863ba2d",
       "name": "Set_Format_SourceData"
     }

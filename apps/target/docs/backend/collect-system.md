@@ -369,51 +369,51 @@ The `config/services/collect_provider.yaml` file defines the correspondence betw
 
 ```yaml
 app.bakus.collector_mapping:
-    # Bakus Collector -> Supported Basil source types
+  # Bakus Collector -> Supported Basil source types
 
-    # Web pages
-    get_pages.site.sbx:
-        - 'rss_feed'
-        - 'website'
-        - 'blog'
+  # Web pages
+  get_pages.site.sbx:
+    - 'rss_feed'
+    - 'website'
+    - 'blog'
 
-    # Documents
-    search_documents.questel.sbx:
-        - 'document:questel:search'
+  # Documents
+  search_documents.questel.sbx:
+    - 'document:questel:search'
 
-    # Geolocated events
-    get_zone_events.geoconfirmed.sbx:
-        - 'event:geoconfirmed:zone'
+  # Geolocated events
+  get_zone_events.geoconfirmed.sbx:
+    - 'event:geoconfirmed:zone'
 
-    # YouTube
-    get_video_comments.youtube.sbx:
-        - 'video:youtube:comments'
-    get_videos_from_channel.youtube.sbx:
-        - 'video:youtube:channel'
-    get_videos_from_playlist.youtube.sbx:
-        - 'video:youtube:playlist'
-    search_videos.youtube.sbx:
-        - 'video:youtube:search'
+  # YouTube
+  get_video_comments.youtube.sbx:
+    - 'video:youtube:comments'
+  get_videos_from_channel.youtube.sbx:
+    - 'video:youtube:channel'
+  get_videos_from_playlist.youtube.sbx:
+    - 'video:youtube:playlist'
+  search_videos.youtube.sbx:
+    - 'video:youtube:search'
 
-    # Odysee
-    get_videos.odysee.sbx:
-        - 'video:odysee'
+  # Odysee
+  get_videos.odysee.sbx:
+    - 'video:odysee'
 
-    # Reddit
-    get_posts_from_sr.reddit.sbx:
-        - 'post:reddit:subreddit'
-    get_posts_from_user.reddit.sbx:
-        - 'post:reddit:user'
+  # Reddit
+  get_posts_from_sr.reddit.sbx:
+    - 'post:reddit:subreddit'
+  get_posts_from_user.reddit.sbx:
+    - 'post:reddit:user'
 
-    # Domains
-    company_name.nrd_search.psql.blackmorf:
-        - 'domain:company_name'
-    content_str.new_domain_names_nrd.psql.blackmorf:
-        - 'domain:search'
-    content_str.domain_name_details.psql.blackmorf:
-        - 'domain:search'
-    content_str.certstream_fqdns_and_domains_recent.psql.blackmorf:
-        - 'domain:search'
+  # Domains
+  company_name.nrd_search.psql.blackmorf:
+    - 'domain:company_name'
+  content_str.new_domain_names_nrd.psql.blackmorf:
+    - 'domain:search'
+  content_str.domain_name_details.psql.blackmorf:
+    - 'domain:search'
+  content_str.certstream_fqdns_and_domains_recent.psql.blackmorf:
+    - 'domain:search'
 ```
 
 ### Mapping process
@@ -488,14 +488,14 @@ When creating a Bakus request, parameters are resolved according to this priorit
 ```yaml
 # config/services/collect_provider.yaml
 app.bakus.collector_default_parameters:
-    # RSS Bakus
-    rss.bakus:
-        recursive_request_content: true # Fetch full content
+  # RSS Bakus
+  rss.bakus:
+    recursive_request_content: true # Fetch full content
 
-    # Deep web scraping
-    get_pages.site.sbx:
-        depth: 1 # Scraping depth
-        attachments: separated # Attachment handling
+  # Deep web scraping
+  get_pages.site.sbx:
+    depth: 1 # Scraping depth
+    attachments: separated # Attachment handling
 ```
 
 ### Resolution logic

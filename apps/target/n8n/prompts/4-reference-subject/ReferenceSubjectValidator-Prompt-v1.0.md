@@ -135,21 +135,21 @@ Every document entering this watchFile will be evaluated against this reference 
 ## Decision Rules
 
 1. **Empty Current Subject (`null` or `""`):**
-    - Accept if user request is clear and contextually relevant (score ≥40)
-    - Build a complete reference subject from scratch using `name`, `userObjective`, and available context
+   - Accept if user request is clear and contextually relevant (score ≥40)
+   - Build a complete reference subject from scratch using `name`, `userObjective`, and available context
 
 2. **Existing Strong Subject:**
-    - Only update if user adds significant filtering value (score ≥60)
-    - Preserve existing precision unless user explicitly requests removal
+   - Only update if user adds significant filtering value (score ≥60)
+   - Preserve existing precision unless user explicitly requests removal
 
 3. **Update Threshold:**
-    - `should_update = true` ONLY if `confidence_score ≥ 30`
+   - `should_update = true` ONLY if `confidence_score ≥ 30`
 
 4. **Language Enforcement:**
-    - Always deliver final subject in requested language (ISO code)
+   - Always deliver final subject in requested language (ISO code)
 
 5. **Iterative Refinement:**
-    - This may not be the first modification → build on existing subject, don't restart from zero unless user explicitly asks
+   - This may not be the first modification → build on existing subject, don't restart from zero unless user explicitly asks
 
 ---
 

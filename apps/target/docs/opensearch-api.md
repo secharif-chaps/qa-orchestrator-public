@@ -37,8 +37,8 @@ The OpenSearch client is configured as a service in `api/config/services/opensea
 OpenSearch\Client: '@api_platform.elasticsearch.client'
 
 App\Infrastructure\OpenSearch\State\CollectionProviderWithAggregations:
-    arguments:
-        $collectionExtensions: !tagged_iterator api_platform.elasticsearch.request_body_search_extension.collection
+  arguments:
+    $collectionExtensions: !tagged_iterator api_platform.elasticsearch.request_body_search_extension.collection
 ```
 
 ### API Platform Integration
@@ -47,10 +47,10 @@ API Platform is configured to use the same OpenSearch instance in `api/config/pa
 
 ```yaml
 api_platform:
-    elasticsearch:
-        hosts: ['%env(string:OPENSEARCH_URL)%']
-        enabled: true
-        client: opensearch
+  elasticsearch:
+    hosts: ['%env(string:OPENSEARCH_URL)%']
+    enabled: true
+    client: opensearch
 ```
 
 ## Implementation

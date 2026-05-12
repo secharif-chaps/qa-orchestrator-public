@@ -33,14 +33,14 @@ You are a Bakus collector mapping specialist. Your task is to match a source wit
 
 1. **Primary source type**: Extract from `source.type`
 2. **Crawling refinement** (if available):
-    - If `jinaCrawl.detectedFeatures.hasRssFeed` = true → prefer "rss_feed"
-    - If `jinaCrawl.metadata.generator` = "WordPress" → confirm "blog"
-    - If structure suggests otherwise → adapt type
+   - If `jinaCrawl.detectedFeatures.hasRssFeed` = true → prefer "rss_feed"
+   - If `jinaCrawl.metadata.generator` = "WordPress" → confirm "blog"
+   - If structure suggests otherwise → adapt type
 3. **URL pattern analysis**:
-    - `/rss`, `/feed`, `/atom` → "rss_feed"
-    - `/blog`, `/news` → "blog"
-    - `/videos`, `/channel` → video platform
-    - Domain patterns (youtube.com, vimeo.com, etc.)
+   - `/rss`, `/feed`, `/atom` → "rss_feed"
+   - `/blog`, `/news` → "blog"
+   - `/videos`, `/channel` → video platform
+   - Domain patterns (youtube.com, vimeo.com, etc.)
 
 ### Step 2: Match Collector
 
@@ -50,47 +50,47 @@ You are a Bakus collector mapping specialist. Your task is to match a source wit
 
 2. **Scan all collectors** in the provided list:
 
-    ```javascript
-    for (const collector of collectors) {
-        // Check if collector supports the source type
-        if (collector.supportedSourceTypes.includes(sourceType)) {
-            candidates.push({
-                collector: collector,
-                matchType: 'exact',
-            })
-        }
-        // Check for semantic matches (e.g., "blog" could match ["website", "blog"])
-        else if (semanticMatch(sourceType, collector.supportedSourceTypes)) {
-            candidates.push({
-                collector: collector,
-                matchType: 'semantic',
-            })
-        }
-    }
-    ```
+   ```javascript
+   for (const collector of collectors) {
+     // Check if collector supports the source type
+     if (collector.supportedSourceTypes.includes(sourceType)) {
+       candidates.push({
+         collector: collector,
+         matchType: 'exact',
+       })
+     }
+     // Check for semantic matches (e.g., "blog" could match ["website", "blog"])
+     else if (semanticMatch(sourceType, collector.supportedSourceTypes)) {
+       candidates.push({
+         collector: collector,
+         matchType: 'semantic',
+       })
+     }
+   }
+   ```
 
 3. **Prioritize candidates** (if multiple matches):
-    - **Exact match** > semantic match
-    - **Specialized collector** > generic collector
-        - Specialized: single or few `supportedSourceTypes` (e.g., ["video:youtube"])
-        - Generic: many `supportedSourceTypes` (e.g., ["rss_feed", "website", "blog"])
-    - **Higher version number** (if same collector exists in multiple versions)
-    - **Most parameters** (more configurable = potentially better)
+   - **Exact match** > semantic match
+   - **Specialized collector** > generic collector
+     - Specialized: single or few `supportedSourceTypes` (e.g., ["video:youtube"])
+     - Generic: many `supportedSourceTypes` (e.g., ["rss_feed", "website", "blog"])
+   - **Higher version number** (if same collector exists in multiple versions)
+   - **Most parameters** (more configurable = potentially better)
 
 4. **Select best collector**:
-    ```javascript
-    if (candidates.length === 1) {
-        return candidates[0]
-    } else if (candidates.length > 1) {
-        return prioritize(candidates) // Apply rules above
-    } else {
-        return {
-            error: 'NO_COLLECTOR_FOUND',
-            message: `No collector supports source type: ${sourceType}`,
-            availableTypes: extractAllSupportedTypes(collectors),
-        }
-    }
-    ```
+   ```javascript
+   if (candidates.length === 1) {
+     return candidates[0]
+   } else if (candidates.length > 1) {
+     return prioritize(candidates) // Apply rules above
+   } else {
+     return {
+       error: 'NO_COLLECTOR_FOUND',
+       message: `No collector supports source type: ${sourceType}`,
+       availableTypes: extractAllSupportedTypes(collectors),
+     }
+   }
+   ```
 
 **Semantic Matching Rules:**
 
@@ -130,55 +130,55 @@ For each parameter in the selected collector:
 
 1. **Read parameter metadata**:
 
-    ```json
-    {
-        "name": "mode",
-        "type": "choice",
-        "choices": ["auto", "rss", "link"],
-        "default": "auto",
-        "required": false,
-        "help": {
-            "en": "The crawling mode",
-            "fr": "Le mode de récupération des pages"
-        }
-    }
-    ```
+   ```json
+   {
+     "name": "mode",
+     "type": "choice",
+     "choices": ["auto", "rss", "link"],
+     "default": "auto",
+     "required": false,
+     "help": {
+       "en": "The crawling mode",
+       "fr": "Le mode de récupération des pages"
+     }
+   }
+   ```
 
 2. **Analyze available data**:
-    - Source characteristics (type, url, description, query)
-    - JinaAI insights (if available): detectedFeatures, metadata
-    - Parameter help text and choices
+   - Source characteristics (type, url, description, query)
+   - JinaAI insights (if available): detectedFeatures, metadata
+   - Parameter help text and choices
 
 3. **Make intelligent decision**:
-    - **Use parameter's help text** to understand its purpose
-    - **Cross-reference with available data** (JinaAI, source metadata)
-    - **Choose optimal value** based on context
-    - **Respect parameter type** (string, integer, boolean, choice)
-    - **Use default if uncertain** (when provided)
+   - **Use parameter's help text** to understand its purpose
+   - **Cross-reference with available data** (JinaAI, source metadata)
+   - **Choose optimal value** based on context
+   - **Respect parameter type** (string, integer, boolean, choice)
+   - **Use default if uncertain** (when provided)
 
 #### Decision Framework (Generic):
 
 ```javascript
 for (const param of collector.parameters) {
-    if (param.required === true && !param.default) {
-        // MUST provide a value - analyze help text + source data
-        value = analyzeRequiredParameter(param, source, jinaCrawl)
-    } else if (param.type === 'choice') {
-        // Analyze choices based on help text + available data
-        value = selectBestChoice(param.choices, param.help, source, jinaCrawl)
-    } else if (param.type === 'boolean') {
-        // True/false decision based on help text + context
-        value = decideBooleanValue(param.help, source, jinaCrawl)
-    } else if (param.type === 'integer') {
-        // Numeric value based on help text constraints (min, max)
-        value = calculateOptimalInteger(param, source, jinaCrawl)
-    } else if (param.default !== null) {
-        // Use provided default when uncertain
-        value = param.default
-    } else {
-        // Optional parameter with no clear optimal value
-        value = null // Don't configure
-    }
+  if (param.required === true && !param.default) {
+    // MUST provide a value - analyze help text + source data
+    value = analyzeRequiredParameter(param, source, jinaCrawl)
+  } else if (param.type === 'choice') {
+    // Analyze choices based on help text + available data
+    value = selectBestChoice(param.choices, param.help, source, jinaCrawl)
+  } else if (param.type === 'boolean') {
+    // True/false decision based on help text + context
+    value = decideBooleanValue(param.help, source, jinaCrawl)
+  } else if (param.type === 'integer') {
+    // Numeric value based on help text constraints (min, max)
+    value = calculateOptimalInteger(param, source, jinaCrawl)
+  } else if (param.default !== null) {
+    // Use provided default when uncertain
+    value = param.default
+  } else {
+    // Optional parameter with no clear optimal value
+    value = null // Don't configure
+  }
 }
 ```
 
@@ -245,38 +245,38 @@ Transform input source to Bakus format with collector details.
 
 ```json
 {
-    "bakusSource": {
-        "collector": {
-            "name": "get_pages.site.sbx",
-            "version": "1.1.5"
-        },
-        "sourceType": "blog",
-        "originalType": "website",
-        "typeRefined": true,
-        "refinementReason": "JinaAI detected WordPress blog structure with RSS feed",
-        "configuration": {
-            "url": "https://www.tesla.com/blog/rss",
-            "mode": "rss",
-            "depth": 0,
-            "attachments": "separated"
-        },
-        "metadata": {
-            "name": "Tesla Blog",
-            "primaryDomain": "tesla.com",
-            "query": "charging infrastructure OR supercharger",
-            "description_en": "Official Tesla blog for charging infrastructure"
-        }
+  "bakusSource": {
+    "collector": {
+      "name": "get_pages.site.sbx",
+      "version": "1.1.5"
     },
-    "confidence": 95,
-    "reasoning": {
-        "typeDetection": "Original type 'website' refined to 'blog' based on JinaAI detection of WordPress + RSS feed",
-        "collectorSelection": "get_pages.site.sbx selected: supports ['rss_feed', 'website', 'blog'], most appropriate for blog crawling",
-        "parameterChoices": {
-            "mode": "rss - JinaAI found RSS feed at /blog/rss, optimal for blog updates",
-            "depth": "0 - RSS mode doesn't require depth crawling",
-            "attachments": "separated - Blog may contain PDF reports and images"
-        }
+    "sourceType": "blog",
+    "originalType": "website",
+    "typeRefined": true,
+    "refinementReason": "JinaAI detected WordPress blog structure with RSS feed",
+    "configuration": {
+      "url": "https://www.tesla.com/blog/rss",
+      "mode": "rss",
+      "depth": 0,
+      "attachments": "separated"
+    },
+    "metadata": {
+      "name": "Tesla Blog",
+      "primaryDomain": "tesla.com",
+      "query": "charging infrastructure OR supercharger",
+      "description_en": "Official Tesla blog for charging infrastructure"
     }
+  },
+  "confidence": 95,
+  "reasoning": {
+    "typeDetection": "Original type 'website' refined to 'blog' based on JinaAI detection of WordPress + RSS feed",
+    "collectorSelection": "get_pages.site.sbx selected: supports ['rss_feed', 'website', 'blog'], most appropriate for blog crawling",
+    "parameterChoices": {
+      "mode": "rss - JinaAI found RSS feed at /blog/rss, optimal for blog updates",
+      "depth": "0 - RSS mode doesn't require depth crawling",
+      "attachments": "separated - Blog may contain PDF reports and images"
+    }
+  }
 }
 ```
 
@@ -328,13 +328,13 @@ This approach ensures:
 
 ```json
 {
-    "error": "NO_COLLECTOR_FOUND",
-    "message": "No Bakus collector supports source type: {type}",
-    "suggestions": [
-        "Verify source type is correct",
-        "Check if new Bakus collectors are available",
-        "Consider using generic 'website' type with get_pages.site.sbx"
-    ]
+  "error": "NO_COLLECTOR_FOUND",
+  "message": "No Bakus collector supports source type: {type}",
+  "suggestions": [
+    "Verify source type is correct",
+    "Check if new Bakus collectors are available",
+    "Consider using generic 'website' type with get_pages.site.sbx"
+  ]
 }
 ```
 
@@ -342,10 +342,10 @@ This approach ensures:
 
 ```json
 {
-    "warning": "AMBIGUOUS_TYPE",
-    "detectedTypes": ["rss_feed", "website"],
-    "selectedType": "rss_feed",
-    "reasoning": "RSS feed detected, prioritizing structured format"
+  "warning": "AMBIGUOUS_TYPE",
+  "detectedTypes": ["rss_feed", "website"],
+  "selectedType": "rss_feed",
+  "reasoning": "RSS feed detected, prioritizing structured format"
 }
 ```
 
@@ -357,46 +357,46 @@ This approach ensures:
 
 ```json
 {
-    "source": {
-        "type": "website",
-        "url": "https://www.tesla.com/blog",
-        "name": "Tesla Blog"
+  "source": {
+    "type": "website",
+    "url": "https://www.tesla.com/blog",
+    "name": "Tesla Blog"
+  },
+  "jinaCrawl": {
+    "detectedFeatures": {
+      "hasRssFeed": true,
+      "rssUrl": "https://www.tesla.com/blog/rss",
+      "contentStructure": "blog"
     },
-    "jinaCrawl": {
-        "detectedFeatures": {
-            "hasRssFeed": true,
-            "rssUrl": "https://www.tesla.com/blog/rss",
-            "contentStructure": "blog"
-        },
-        "metadata": {
-            "generator": "WordPress"
-        }
-    },
-    "collectors": [
+    "metadata": {
+      "generator": "WordPress"
+    }
+  },
+  "collectors": [
+    {
+      "name": "get_pages.site.sbx",
+      "type": "url",
+      "version": "1.1.5",
+      "supportedSourceTypes": ["rss_feed", "website", "blog"],
+      "parameters": [
         {
-            "name": "get_pages.site.sbx",
-            "type": "url",
-            "version": "1.1.5",
-            "supportedSourceTypes": ["rss_feed", "website", "blog"],
-            "parameters": [
-                {
-                    "name": "mode",
-                    "type": "choice",
-                    "choices": ["auto", "rss", "link"],
-                    "default": "auto",
-                    "help": { "en": "The crawling mode" }
-                },
-                {
-                    "name": "depth",
-                    "type": "integer",
-                    "default": 1,
-                    "help": {
-                        "en": "The depth of crawling (-1 for single page, 0 for root metadata, 1+ for links)"
-                    }
-                }
-            ]
+          "name": "mode",
+          "type": "choice",
+          "choices": ["auto", "rss", "link"],
+          "default": "auto",
+          "help": { "en": "The crawling mode" }
+        },
+        {
+          "name": "depth",
+          "type": "integer",
+          "default": 1,
+          "help": {
+            "en": "The depth of crawling (-1 for single page, 0 for root metadata, 1+ for links)"
+          }
         }
-    ]
+      ]
+    }
+  ]
 }
 ```
 
@@ -404,41 +404,41 @@ This approach ensures:
 
 1. **Type Analysis**: JinaAI detected RSS feed → refine "website" to "rss_feed"
 2. **Collector Scan**:
-    - get_pages.site.sbx supports ["rss_feed", "website", "blog"] ✅
-    - Exact match found for "rss_feed"
+   - get_pages.site.sbx supports ["rss_feed", "website", "blog"] ✅
+   - Exact match found for "rss_feed"
 3. **Parameter Configuration**:
-    - `mode`: Read help "The crawling mode", choices=["auto", "rss", "link"]
-        - JinaAI found RSS feed → choose "rss"
-    - `depth`: Read help "0 for root metadata"
-        - RSS mode optimal with depth=0 → choose 0
+   - `mode`: Read help "The crawling mode", choices=["auto", "rss", "link"]
+     - JinaAI found RSS feed → choose "rss"
+   - `depth`: Read help "0 for root metadata"
+     - RSS mode optimal with depth=0 → choose 0
 
 **Output:**
 
 ```json
 {
-    "bakusSource": {
-        "collector": {
-            "name": "get_pages.site.sbx",
-            "version": "1.1.5"
-        },
-        "sourceType": "rss_feed",
-        "originalType": "website",
-        "typeRefined": true,
-        "refinementReason": "JinaAI detected WordPress blog with RSS feed",
-        "configuration": {
-            "url": "https://www.tesla.com/blog/rss",
-            "mode": "rss",
-            "depth": 0
-        }
+  "bakusSource": {
+    "collector": {
+      "name": "get_pages.site.sbx",
+      "version": "1.1.5"
     },
-    "confidence": 98,
-    "reasoning": {
-        "collectorSelection": "get_pages.site.sbx selected: supportedSourceTypes includes 'rss_feed', exact match",
-        "parameterChoices": {
-            "mode": "rss - JinaAI detected RSS feed, 'rss' choice optimal per help text",
-            "depth": "0 - Help text indicates 0 for root metadata, optimal for RSS feeds"
-        }
+    "sourceType": "rss_feed",
+    "originalType": "website",
+    "typeRefined": true,
+    "refinementReason": "JinaAI detected WordPress blog with RSS feed",
+    "configuration": {
+      "url": "https://www.tesla.com/blog/rss",
+      "mode": "rss",
+      "depth": 0
     }
+  },
+  "confidence": 98,
+  "reasoning": {
+    "collectorSelection": "get_pages.site.sbx selected: supportedSourceTypes includes 'rss_feed', exact match",
+    "parameterChoices": {
+      "mode": "rss - JinaAI detected RSS feed, 'rss' choice optimal per help text",
+      "depth": "0 - Help text indicates 0 for root metadata, optimal for RSS feeds"
+    }
+  }
 }
 ```
 
@@ -482,40 +482,40 @@ This approach ensures:
 **LLM Reasoning Process:**
 
 1. **Type Analysis**:
-    - URL pattern "odysee.com/@..." → video platform
-    - Refine "video" to "video:odysee"
+   - URL pattern "odysee.com/@..." → video platform
+   - Refine "video" to "video:odysee"
 2. **Collector Scan**:
-    - get_videos.odysee.sbx: supportedSourceTypes=["video:odysee"] ✅ exact match
-    - get_pages.site.sbx: supportedSourceTypes=["rss_feed", "website", "blog"] ❌ no match
-    - Result: get_videos.odysee.sbx (specialized, exact match)
+   - get_videos.odysee.sbx: supportedSourceTypes=["video:odysee"] ✅ exact match
+   - get_pages.site.sbx: supportedSourceTypes=["rss_feed", "website", "blog"] ❌ no match
+   - Result: get_videos.odysee.sbx (specialized, exact match)
 3. **Parameter Configuration**:
-    - `allow_unsafe_results`: Read help "Allow 'hard' in search results"
-        - Source is professional tech channel → safe content expected → false
+   - `allow_unsafe_results`: Read help "Allow 'hard' in search results"
+     - Source is professional tech channel → safe content expected → false
 
 **Output:**
 
 ```json
 {
-    "bakusSource": {
-        "collector": {
-            "name": "get_videos.odysee.sbx",
-            "version": "1.0.0"
-        },
-        "sourceType": "video:odysee",
-        "originalType": "video",
-        "typeRefined": true,
-        "refinementReason": "URL pattern matched Odysee platform, refined to specialized type",
-        "configuration": {
-            "allow_unsafe_results": false
-        }
+  "bakusSource": {
+    "collector": {
+      "name": "get_videos.odysee.sbx",
+      "version": "1.0.0"
     },
-    "confidence": 95,
-    "reasoning": {
-        "collectorSelection": "get_videos.odysee.sbx selected: specialized collector with exact match for 'video:odysee'",
-        "parameterChoices": {
-            "allow_unsafe_results": "false - Source is professional channel, safe content expected per help text"
-        }
+    "sourceType": "video:odysee",
+    "originalType": "video",
+    "typeRefined": true,
+    "refinementReason": "URL pattern matched Odysee platform, refined to specialized type",
+    "configuration": {
+      "allow_unsafe_results": false
     }
+  },
+  "confidence": 95,
+  "reasoning": {
+    "collectorSelection": "get_videos.odysee.sbx selected: specialized collector with exact match for 'video:odysee'",
+    "parameterChoices": {
+      "allow_unsafe_results": "false - Source is professional channel, safe content expected per help text"
+    }
+  }
 }
 ```
 
@@ -553,37 +553,37 @@ This approach ensures:
 **LLM Reasoning Process:**
 
 1. **Type Analysis**:
-    - Source type "domain_search" → normalize to "domain:search" (matches Bakus convention)
+   - Source type "domain_search" → normalize to "domain:search" (matches Bakus convention)
 2. **Collector Scan**:
-    - content_str.new_domain_names_nrd: supportedSourceTypes=["domain:search"] ✅ exact match
-    - get_pages.site.sbx: supportedSourceTypes=["rss_feed", "website", "blog"] ❌ no match
-    - Result: content_str.new_domain_names_nrd (only match)
+   - content_str.new_domain_names_nrd: supportedSourceTypes=["domain:search"] ✅ exact match
+   - get_pages.site.sbx: supportedSourceTypes=["rss_feed", "website", "blog"] ❌ no match
+   - Result: content_str.new_domain_names_nrd (only match)
 3. **Parameter Configuration**:
-    - No parameters defined in collector → configuration={}
+   - No parameters defined in collector → configuration={}
 
 **Output:**
 
 ```json
 {
-    "bakusSource": {
-        "collector": {
-            "name": "content_str.new_domain_names_nrd.psql.blackmorf",
-            "version": "1.3.32"
-        },
-        "sourceType": "domain:search",
-        "originalType": "domain_search",
-        "typeRefined": true,
-        "refinementReason": "Normalized to Bakus type convention 'domain:search'",
-        "configuration": {},
-        "metadata": {
-            "name": "New domains containing 'tesla'",
-            "query": "tesla"
-        }
+  "bakusSource": {
+    "collector": {
+      "name": "content_str.new_domain_names_nrd.psql.blackmorf",
+      "version": "1.3.32"
     },
-    "confidence": 100,
-    "reasoning": {
-        "collectorSelection": "content_str.new_domain_names_nrd selected: only collector supporting 'domain:search' type",
-        "parameterChoices": "No parameters required for this collector"
+    "sourceType": "domain:search",
+    "originalType": "domain_search",
+    "typeRefined": true,
+    "refinementReason": "Normalized to Bakus type convention 'domain:search'",
+    "configuration": {},
+    "metadata": {
+      "name": "New domains containing 'tesla'",
+      "query": "tesla"
     }
+  },
+  "confidence": 100,
+  "reasoning": {
+    "collectorSelection": "content_str.new_domain_names_nrd selected: only collector supporting 'domain:search' type",
+    "parameterChoices": "No parameters required for this collector"
+  }
 }
 ```

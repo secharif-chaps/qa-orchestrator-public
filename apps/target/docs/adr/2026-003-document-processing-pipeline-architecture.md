@@ -417,16 +417,16 @@ final class DocumentProcessingPipeline
 ```yaml
 # config/services.yaml
 services:
-    # Auto-register all processors with priority sorting
-    App\Infrastructure\DocumentQuality\Processor\:
-        resource: '../src/Infrastructure/DocumentQuality/Processor/'
-        tags: ['app.document_processor']
+  # Auto-register all processors with priority sorting
+  App\Infrastructure\DocumentQuality\Processor\:
+    resource: '../src/Infrastructure/DocumentQuality/Processor/'
+    tags: ['app.document_processor']
 
-    App\Application\DocumentQuality\DocumentProcessingPipeline:
-        arguments:
-            $processors: !tagged_iterator
-                tag: 'app.document_processor'
-                default_priority_method: 'priority'
+  App\Application\DocumentQuality\DocumentProcessingPipeline:
+    arguments:
+      $processors: !tagged_iterator
+        tag: 'app.document_processor'
+        default_priority_method: 'priority'
 ```
 
 #### Messenger Integration
@@ -476,21 +476,21 @@ final readonly class ProcessDocumentQualityHandler
 ```yaml
 # config/packages/messenger.yaml
 framework:
-    messenger:
-        transports:
+  messenger:
+    transports:
+      quality_processing:
+        dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+        options:
+          queues:
             quality_processing:
-                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-                options:
-                    queues:
-                        quality_processing:
-                            binding_keys: [quality]
-                retry_strategy:
-                    max_retries: 3
-                    delay: 1000
-                    multiplier: 2
+              binding_keys: [quality]
+        retry_strategy:
+          max_retries: 3
+          delay: 1000
+          multiplier: 2
 
-        routing:
-            'App\Application\DocumentQuality\Message\ProcessDocumentQuality': quality_processing
+    routing:
+      'App\Application\DocumentQuality\Message\ProcessDocumentQuality': quality_processing
 ```
 
 ### Directory Structure

@@ -142,29 +142,29 @@ Two tokens are involved. Target never sees the Keycloak JWT directly.
 
 ```json
 {
-    "sub": "user-uuid",
-    "email": "user@example.com",
-    "organization": {
-        "id": "org-uuid",
-        "name": "Acme Corp",
-        "attributes": {}
+  "sub": "user-uuid",
+  "email": "user@example.com",
+  "organization": {
+    "id": "org-uuid",
+    "name": "Acme Corp",
+    "attributes": {}
+  },
+  "org_memberships": [
+    {
+      "id": "org-1-uuid",
+      "name": "Acme Corp",
+      "roles": ["admin"]
     },
-    "org_memberships": [
-        {
-            "id": "org-1-uuid",
-            "name": "Acme Corp",
-            "roles": ["admin"]
-        },
-        {
-            "id": "org-2-uuid",
-            "name": "Beta Inc",
-            "roles": ["member"]
-        }
-    ],
-    "impersonator": {
-        "id": "admin-user-uuid",
-        "username": "admin@example.com"
+    {
+      "id": "org-2-uuid",
+      "name": "Beta Inc",
+      "roles": ["member"]
     }
+  ],
+  "impersonator": {
+    "id": "admin-user-uuid",
+    "username": "admin@example.com"
+  }
 }
 ```
 
@@ -172,29 +172,29 @@ Two tokens are involved. Target never sees the Keycloak JWT directly.
 
 ```json
 {
-    "sub": "user-uuid",
-    "username": "user@example.com",
-    "organization": {
-        "id": "org-uuid",
-        "name": "Acme Corp"
+  "sub": "user-uuid",
+  "username": "user@example.com",
+  "organization": {
+    "id": "org-uuid",
+    "name": "Acme Corp"
+  },
+  "org_memberships": [
+    {
+      "id": "org-1-uuid",
+      "name": "Acme Corp",
+      "roles": ["admin"]
     },
-    "org_memberships": [
-        {
-            "id": "org-1-uuid",
-            "name": "Acme Corp",
-            "roles": ["admin"]
-        },
-        {
-            "id": "org-2-uuid",
-            "name": "Beta Inc",
-            "roles": ["member"]
-        }
-    ],
-    "impersonator": {
-        "id": "admin-user-uuid",
-        "username": "admin@example.com"
-    },
-    "exp": 1741824000
+    {
+      "id": "org-2-uuid",
+      "name": "Beta Inc",
+      "roles": ["member"]
+    }
+  ],
+  "impersonator": {
+    "id": "admin-user-uuid",
+    "username": "admin@example.com"
+  },
+  "exp": 1741824000
 }
 ```
 
@@ -679,15 +679,15 @@ class ElasticsearchDocumentGateway implements DocumentGatewayInterface
 
 ```json
 {
-    "settings": {
-        "index": {
-            "number_of_shards": 5,
-            "number_of_replicas": 1,
-            "routing": {
-                "required": true
-            }
-        }
+  "settings": {
+    "index": {
+      "number_of_shards": 5,
+      "number_of_replicas": 1,
+      "routing": {
+        "required": true
+      }
     }
+  }
 }
 ```
 

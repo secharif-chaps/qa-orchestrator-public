@@ -64,35 +64,35 @@ GET /api/conversations/550e8400-e29b-41d4-a716-446655440000/messages?order[creat
 
 ```json
 {
-    "@context": "/api/contexts/Message",
-    "@id": "/api/conversations/{id}/messages",
-    "@type": "hydra:Collection",
-    "hydra:member": [
+  "@context": "/api/contexts/Message",
+  "@id": "/api/conversations/{id}/messages",
+  "@type": "hydra:Collection",
+  "hydra:member": [
+    {
+      "@id": "/api/messages/{messageId}",
+      "@type": "Message",
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "role": "user",
+      "contents": [
         {
-            "@id": "/api/messages/{messageId}",
-            "@type": "Message",
-            "id": "550e8400-e29b-41d4-a716-446655440000",
-            "role": "user",
-            "contents": [
-                {
-                    "@id": "/api/message-contents/{contentId}",
-                    "@type": "TextContent",
-                    "id": "660e8400-e29b-41d4-a716-446655440001",
-                    "type": "text",
-                    "content": "Hello, how are you?",
-                    "createdAt": "2024-01-15T10:30:00+00:00"
-                }
-            ],
-            "metadata": null,
-            "createdAt": "2024-01-15T10:30:00+00:00",
-            "createdBy": {
-                "@id": "/api/users/{userId}",
-                "@type": "User",
-                "id": "770e8400-e29b-41d4-a716-446655440002",
-                "email": "user@example.com"
-            }
+          "@id": "/api/message-contents/{contentId}",
+          "@type": "TextContent",
+          "id": "660e8400-e29b-41d4-a716-446655440001",
+          "type": "text",
+          "content": "Hello, how are you?",
+          "createdAt": "2024-01-15T10:30:00+00:00"
         }
-    ]
+      ],
+      "metadata": null,
+      "createdAt": "2024-01-15T10:30:00+00:00",
+      "createdBy": {
+        "@id": "/api/users/{userId}",
+        "@type": "User",
+        "id": "770e8400-e29b-41d4-a716-446655440002",
+        "email": "user@example.com"
+      }
+    }
+  ]
 }
 ```
 
@@ -172,10 +172,10 @@ Messages can contain multiple content objects of different types:
 
 ```json
 {
-    "id": "660e8400-e29b-41d4-a716-446655440001",
-    "type": "text",
-    "content": "Hello, how are you?",
-    "createdAt": "2024-01-15T10:30:00+00:00"
+  "id": "660e8400-e29b-41d4-a716-446655440001",
+  "type": "text",
+  "content": "Hello, how are you?",
+  "createdAt": "2024-01-15T10:30:00+00:00"
 }
 ```
 
@@ -183,13 +183,13 @@ Messages can contain multiple content objects of different types:
 
 ```json
 {
-    "id": "660e8400-e29b-41d4-a716-446655440002",
-    "type": "file",
-    "filename": "document.pdf",
-    "mimeType": "application/pdf",
-    "size": 1024000,
-    "path": "/uploads/documents/document.pdf",
-    "createdAt": "2024-01-15T10:30:00+00:00"
+  "id": "660e8400-e29b-41d4-a716-446655440002",
+  "type": "file",
+  "filename": "document.pdf",
+  "mimeType": "application/pdf",
+  "size": 1024000,
+  "path": "/uploads/documents/document.pdf",
+  "createdAt": "2024-01-15T10:30:00+00:00"
 }
 ```
 
@@ -197,14 +197,14 @@ Messages can contain multiple content objects of different types:
 
 ```json
 {
-    "id": "660e8400-e29b-41d4-a716-446655440003",
-    "type": "function_call",
-    "functionName": "search_web",
-    "parameters": {
-        "query": "latest news",
-        "count": 5
-    },
-    "createdAt": "2024-01-15T10:30:00+00:00"
+  "id": "660e8400-e29b-41d4-a716-446655440003",
+  "type": "function_call",
+  "functionName": "search_web",
+  "parameters": {
+    "query": "latest news",
+    "count": 5
+  },
+  "createdAt": "2024-01-15T10:30:00+00:00"
 }
 ```
 
@@ -212,18 +212,18 @@ Messages can contain multiple content objects of different types:
 
 ```json
 {
-    "id": "660e8400-e29b-41d4-a716-446655440004",
-    "type": "function_response",
-    "result": {
-        "results": [
-            {
-                "title": "Latest News Article",
-                "url": "https://example.com/news",
-                "snippet": "Breaking news..."
-            }
-        ]
-    },
-    "createdAt": "2024-01-15T10:30:00+00:00"
+  "id": "660e8400-e29b-41d4-a716-446655440004",
+  "type": "function_response",
+  "result": {
+    "results": [
+      {
+        "title": "Latest News Article",
+        "url": "https://example.com/news",
+        "snippet": "Breaking news..."
+      }
+    ]
+  },
+  "createdAt": "2024-01-15T10:30:00+00:00"
 }
 ```
 

@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_EXACT",
-    "legacy_level": 110,
-    "master": {
-        "id": "legacy-64-master-13284414",
-        "url": "http://twitter.com/investinvlc/status/1538916031862906880",
-        "title": "RT @AjuntamentVLC: ✈️#Aviatar, la plataforma digital de @LHTechnik, obri una nova seu a #València de la mà de l'oficina d'@investinvlc\n▶️En…",
-        "content": "RT <a href=\"http://twitter.com/investinvlc\">@AjuntamentVLC</a>: ✈️<a href=\"http://twitter.com/search?q=Aviatar\">#Aviatar</a>, la plataforma digital de <a href=\"http://twitter.com/LHTechnik\">@LHTechnik</a>, obri una nova seu a <a href=\"http://twitter.com/search?q=València\">#València</a> de la mà de l'oficina d'<a href=\"http://twitter.com/investinvlc\">@investinvlc</a>\n▶️En 5 mesos l'oficina ha tancat operacions que representen➕de 1,5 milions d'inversió a la ciutat i la creació de➕de 150 llocs de treball\n<a href=\"https://www.valencia.es/val/actualitat/-/content/aviatar-sede-en-val%C3%A8ncia\">https://www.valencia.es/val/actualitat/-/content/aviatar-sede-en-val%C3%A8ncia</a> <img src=\"http://pbs.twimg.com/media/FVtS7szXEAA9SLZ.jpg\" /><img src=\"http://pbs.twimg.com/media/FVtS7s8WQAAwQOb.jpg\" />"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13284418",
-        "url": "http://twitter.com/valenciactiva_/status/1538915250719936513",
-        "title": "RT @AjuntamentVLC: ✈️#Aviatar, la plataforma digital de @LHTechnik, obri una nova seu a #València de la mà de l'oficina d'@investinvlc\n▶️En…",
-        "content": "RT <a href=\"http://twitter.com/valenciactiva_\">@AjuntamentVLC</a>: ✈️<a href=\"http://twitter.com/search?q=Aviatar\">#Aviatar</a>, la plataforma digital de <a href=\"http://twitter.com/LHTechnik\">@LHTechnik</a>, obri una nova seu a <a href=\"http://twitter.com/search?q=València\">#València</a> de la mà de l'oficina d'<a href=\"http://twitter.com/investinvlc\">@investinvlc</a>\n▶️En 5 mesos l'oficina ha tancat operacions que representen➕de 1,5 milions d'inversió a la ciutat i la creació de➕de 150 llocs de treball\n<a href=\"https://www.valencia.es/val/actualitat/-/content/aviatar-sede-en-val%C3%A8ncia\">https://www.valencia.es/val/actualitat/-/content/aviatar-sede-en-val%C3%A8ncia</a> <img src=\"http://pbs.twimg.com/media/FVtS7szXEAA9SLZ.jpg\" /><img src=\"http://pbs.twimg.com/media/FVtS7s8WQAAwQOb.jpg\" />"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "identical"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same retweeted tweet content about Aviatar opening a new office in Valencia; only the retweeter handle differs."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "content_hash",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_EXACT",
+  "legacy_level": 110,
+  "master": {
+    "id": "legacy-64-master-13284414",
+    "url": "http://twitter.com/investinvlc/status/1538916031862906880",
+    "title": "RT @AjuntamentVLC: ✈️#Aviatar, la plataforma digital de @LHTechnik, obri una nova seu a #València de la mà de l'oficina d'@investinvlc\n▶️En…",
+    "content": "RT <a href=\"http://twitter.com/investinvlc\">@AjuntamentVLC</a>: ✈️<a href=\"http://twitter.com/search?q=Aviatar\">#Aviatar</a>, la plataforma digital de <a href=\"http://twitter.com/LHTechnik\">@LHTechnik</a>, obri una nova seu a <a href=\"http://twitter.com/search?q=València\">#València</a> de la mà de l'oficina d'<a href=\"http://twitter.com/investinvlc\">@investinvlc</a>\n▶️En 5 mesos l'oficina ha tancat operacions que representen➕de 1,5 milions d'inversió a la ciutat i la creació de➕de 150 llocs de treball\n<a href=\"https://www.valencia.es/val/actualitat/-/content/aviatar-sede-en-val%C3%A8ncia\">https://www.valencia.es/val/actualitat/-/content/aviatar-sede-en-val%C3%A8ncia</a> <img src=\"http://pbs.twimg.com/media/FVtS7szXEAA9SLZ.jpg\" /><img src=\"http://pbs.twimg.com/media/FVtS7s8WQAAwQOb.jpg\" />"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13284418",
+    "url": "http://twitter.com/valenciactiva_/status/1538915250719936513",
+    "title": "RT @AjuntamentVLC: ✈️#Aviatar, la plataforma digital de @LHTechnik, obri una nova seu a #València de la mà de l'oficina d'@investinvlc\n▶️En…",
+    "content": "RT <a href=\"http://twitter.com/valenciactiva_\">@AjuntamentVLC</a>: ✈️<a href=\"http://twitter.com/search?q=Aviatar\">#Aviatar</a>, la plataforma digital de <a href=\"http://twitter.com/LHTechnik\">@LHTechnik</a>, obri una nova seu a <a href=\"http://twitter.com/search?q=València\">#València</a> de la mà de l'oficina d'<a href=\"http://twitter.com/investinvlc\">@investinvlc</a>\n▶️En 5 mesos l'oficina ha tancat operacions que representen➕de 1,5 milions d'inversió a la ciutat i la creació de➕de 150 llocs de treball\n<a href=\"https://www.valencia.es/val/actualitat/-/content/aviatar-sede-en-val%C3%A8ncia\">https://www.valencia.es/val/actualitat/-/content/aviatar-sede-en-val%C3%A8ncia</a> <img src=\"http://pbs.twimg.com/media/FVtS7szXEAA9SLZ.jpg\" /><img src=\"http://pbs.twimg.com/media/FVtS7s8WQAAwQOb.jpg\" />"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same retweeted tweet content about Aviatar opening a new office in Valencia; only the retweeter handle differs."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "content_hash",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

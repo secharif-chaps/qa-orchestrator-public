@@ -194,13 +194,13 @@ Always validate LLM JSON responses:
 ```javascript
 // Parser_Validator_Structured node
 const schema = {
-    type: 'object',
-    properties: {
-        isRelevant: { type: 'boolean' },
-        confidence: { type: 'number', minimum: 0, maximum: 1 },
-        reasoning: { type: 'string' },
-    },
-    required: ['isRelevant', 'confidence', 'reasoning'],
+  type: 'object',
+  properties: {
+    isRelevant: { type: 'boolean' },
+    confidence: { type: 'number', minimum: 0, maximum: 1 },
+    reasoning: { type: 'string' },
+  },
+  required: ['isRelevant', 'confidence', 'reasoning'],
 }
 
 // Validate
@@ -208,7 +208,7 @@ const jsonschema = require('jsonschema')
 const result = jsonschema.validate($json, schema)
 
 if (!result.valid) {
-    throw new Error(`Invalid JSON: ${result.errors}`)
+  throw new Error(`Invalid JSON: ${result.errors}`)
 }
 
 return $json
@@ -227,7 +227,7 @@ const start = text.indexOf('{')
 const end = text.lastIndexOf('}') + 1
 
 if (start === -1 || end === 0) {
-    throw new Error('No JSON found in response')
+  throw new Error('No JSON found in response')
 }
 
 const jsonStr = text.substring(start, end)
@@ -255,9 +255,9 @@ HTTP_API_GetFolders
 
 ```javascript
 return $input.all().map((item) => ({
-    id: item.json.id,
-    name: item.json.name,
-    state: item.json.state,
+  id: item.json.id,
+  name: item.json.name,
+  state: item.json.state,
 }))
 ```
 
@@ -326,7 +326,7 @@ Always validate and sanitize external input:
 const allowedFolderIds = $json.folderId.match(/^\d+$/)
 
 if (!allowedFolderIds) {
-    throw new Error('Invalid folderId format')
+  throw new Error('Invalid folderId format')
 }
 
 // Prevent injection
@@ -365,13 +365,13 @@ Create test datasets that match production:
 ```json
 // Test data for Document Summary workflow
 {
-    "documentId": 123,
-    "content": "Lorem ipsum dolor sit amet... (500 words)",
-    "metadata": {
-        "type": "pdf",
-        "language": "en",
-        "pages": 10
-    }
+  "documentId": 123,
+  "content": "Lorem ipsum dolor sit amet... (500 words)",
+  "metadata": {
+    "type": "pdf",
+    "language": "en",
+    "pages": 10
+  }
 }
 ```
 
@@ -446,28 +446,28 @@ task n8n:test -- my-dataset.json --webhook-url http://127.0.0.1:5678/webhook/my-
 
 ```json
 {
-    "version": "1.0",
-    "metadata": {
-        "workflowId": "7uS3PqE9HezIqOd1",
-        "workflowName": "WatchFile Builder - Update reference subject",
-        "description": "Dataset description"
-    },
-    "testCases": [
-        {
-            "testCaseId": "TC-001",
-            "name": "First creation with empty WatchFile",
-            "expectedOutput": "success",
-            "input": {
-                "watchFile": {
-                    "id": "uuid",
-                    "name": "Market Intelligence",
-                    "referenceSubject": null
-                },
-                "language": "en",
-                "referenceSubject": "Monitor competitors..."
-            }
-        }
-    ]
+  "version": "1.0",
+  "metadata": {
+    "workflowId": "7uS3PqE9HezIqOd1",
+    "workflowName": "WatchFile Builder - Update reference subject",
+    "description": "Dataset description"
+  },
+  "testCases": [
+    {
+      "testCaseId": "TC-001",
+      "name": "First creation with empty WatchFile",
+      "expectedOutput": "success",
+      "input": {
+        "watchFile": {
+          "id": "uuid",
+          "name": "Market Intelligence",
+          "referenceSubject": null
+        },
+        "language": "en",
+        "referenceSubject": "Monitor competitors..."
+      }
+    }
+  ]
 }
 ```
 
@@ -492,21 +492,21 @@ N8N_BASE_URL=http://127.0.0.1:5678
 The test runner automatically tracks executions in N8N with two systems:
 
 1. **Automatic N8N Tagging** - Executions are tagged via API:
-    - `test:<runId>` - Links all tests from same run
-    - `dataset:<dataset-name>` - Dataset identifier
-    - `case:<testCaseId>` - Specific test case
+   - `test:<runId>` - Links all tests from same run
+   - `dataset:<dataset-name>` - Dataset identifier
+   - `case:<testCaseId>` - Specific test case
 
 2. **Metadata in Payload** - Sent to workflow:
 
-    ```json
-    {
-        "_testMetadata": {
-            "runId": "test-1731628345678-abc123",
-            "testCaseId": "TC-001",
-            "source": "n8n-test-runner"
-        }
-    }
-    ```
+   ```json
+   {
+     "_testMetadata": {
+       "runId": "test-1731628345678-abc123",
+       "testCaseId": "TC-001",
+       "source": "n8n-test-runner"
+     }
+   }
+   ```
 
 3. **Execution IDs in Reports** - Each test result includes the N8N execution ID
 
@@ -623,14 +623,14 @@ php api/bin/validate-n8n-rabbitmq-messages.php docker/n8n/workflows/my-workflow.
 
 ```json
 {
-    "headers": {
-        "header": [
-            {
-                "key": "type",
-                "value": "App\\Application\\Chat\\ModelMessageAction"
-            }
-        ]
-    }
+  "headers": {
+    "header": [
+      {
+        "key": "type",
+        "value": "App\\Application\\Chat\\ModelMessageAction"
+      }
+    ]
+  }
 }
 ```
 
@@ -638,7 +638,7 @@ php api/bin/validate-n8n-rabbitmq-messages.php docker/n8n/workflows/my-workflow.
 
 ```json
 {
-    "message": "={\"conversationId\": $json.id, \"message\": $json.content, \"messageId\": $json.messageId}}"
+  "message": "={\"conversationId\": $json.id, \"message\": $json.content, \"messageId\": $json.messageId}}"
 }
 ```
 
@@ -646,8 +646,8 @@ php api/bin/validate-n8n-rabbitmq-messages.php docker/n8n/workflows/my-workflow.
 
 ```json
 {
-    "key": "type",
-    "value": "={{ $('Edit Fields').item.json.messageType }}" // Can't validate!
+  "key": "type",
+  "value": "={{ $('Edit Fields').item.json.messageType }}" // Can't validate!
 }
 ```
 
@@ -773,13 +773,13 @@ There is a known issue in n8n (GitHub #13830) where setting `waitForSubWorkflow:
 
 ```json
 {
-    "type": "n8n-nodes-base.executeWorkflow",
-    "parameters": {
-        "options": {
-            "waitForSubWorkflow": true // ✅ REQUIRED - false causes execution issues
-        }
-    },
-    "onError": "continueErrorOutput"
+  "type": "n8n-nodes-base.executeWorkflow",
+  "parameters": {
+    "options": {
+      "waitForSubWorkflow": true // ✅ REQUIRED - false causes execution issues
+    }
+  },
+  "onError": "continueErrorOutput"
 }
 ```
 
@@ -931,8 +931,8 @@ Prevent cascading failures:
 const errorCount = await getErrorCount('llm_service')
 
 if (errorCount > 10) {
-    // Circuit open - fail fast
-    throw new Error('Circuit breaker open for LLM service')
+  // Circuit open - fail fast
+  throw new Error('Circuit breaker open for LLM service')
 }
 
 // Proceed with call

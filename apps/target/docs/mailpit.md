@@ -29,20 +29,20 @@ Mailpit is configured with the following default settings:
 The following services are configured to use Mailpit by default:
 
 1. **Symfony Mailer**
-    - Configuration: `MAILER_DSN=smtp://mailpit:1025`
-    - Used by the Symfony application for sending emails
+   - Configuration: `MAILER_DSN=smtp://mailpit:1025`
+   - Used by the Symfony application for sending emails
 
 2. **Keycloak**
-    - Host: `mailpit`
-    - Port: `1025`
-    - From: `noreply@basil.local`
-    - From Display Name: `Basil Keycloak`
+   - Host: `mailpit`
+   - Port: `1025`
+   - From: `noreply@basil.local`
+   - From Display Name: `Basil Keycloak`
 
 3. **n8n**
-    - Host: `mailpit`
-    - Port: `1025`
-    - SSL: `false`
-    - Sender: `${N8N_DEFAULT_EMAIL:-basil@chapsvision.com}` (configurable)
+   - Host: `mailpit`
+   - Port: `1025`
+   - SSL: `false`
+   - Sender: `${N8N_DEFAULT_EMAIL:-basil@chapsvision.com}` (configurable)
 
 ## Environment Variables
 

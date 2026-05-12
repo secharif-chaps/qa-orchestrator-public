@@ -1,36 +1,36 @@
 {
-    "account_id": 204,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-204-master-8970454",
-        "url": "https://www.wsj.com/articles/russian-buildup-near-ukraine-features-potent-weapons-systems-well-trained-troops-11644789065?mod=hp_lead_pos2",
-        "title": "Russian Buildup Near Ukraine Features Potent Weapons Systems, Well-Trained Troops",
-        "content": "<html><head><title>Russian Buildup Near Ukraine Features Potent Weapons Systems, Well-Trained Troops</title></head><body><div>\n         <p>Russia’s <a href=\"https://www.wsj.com/articles/russia-ukraine-putin-nato-11643121821?mod=article_inline\" target=\"_blank\">enormous military buildup</a> near Ukraine features some of its most potent weapon systems and provides the Kremlin with the means to attack Ukrainian forces from multiple directions, which likely would overstretch their defenses.</p>\n         <p>In its buildup, which <a href=\"https://www.wsj.com/articles/russia-presses-buildup-near-ukraine-as-diplomatic-prospects-narrow-11643464805?mod=article_inline\" target=\"_blank\">has quickened in recent weeks</a>, Russia has positioned forces on three sides of Ukraine: in Belarus, western Russia and Crimea and on naval vessels in the Black Sea. The forces include some of Russia’s best trained battalions, special forces and surface-to-surface missiles that could strike targets throughout Ukraine.</p>\n  </div></body></html>"
-    },
-    "candidate": {
-        "id": "legacy-204-dup-8971556",
-        "url": "https://www.wsj.com/articles/russian-buildup-near-ukraine-features-potent-weapons-systems-well-trained-troops-11644789065",
-        "title": "Russian Buildup Near Ukraine Features Potent Weapons Systems, Well-Trained Troops",
-        "content": "<html><head><title>Russian Buildup Near Ukraine Features Potent Weapons Systems, Well-Trained Troops</title></head><body><div>\n         <p>Russia’s <a href=\"https://www.wsj.com/articles/russia-ukraine-putin-nato-11643121821?mod=article_inline\" target=\"_blank\">enormous military buildup</a> near Ukraine features some of its most potent weapon systems and provides the Kremlin with the means to attack Ukrainian forces from multiple directions, which likely would overstretch their defenses.</p>\n         <p>In its buildup, which <a href=\"https://www.wsj.com/articles/russia-presses-buildup-near-ukraine-as-diplomatic-prospects-narrow-11643464805?mod=article_inline\" target=\"_blank\">has quickened in recent weeks</a>, Russia has positioned forces on three sides of Ukraine: in Belarus, western Russia and Crimea and on naval vessels in the Black Sea. The forces include some of Russia’s best trained battalions, special forces and surface-to-surface missiles that could strike targets throughout Ukraine.</p>\n  </div></body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "identical"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same WSJ article with identical URL path, title, and body content; one is just a URL variant with tracking params."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "content_hash",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 204,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-204-master-8970454",
+    "url": "https://www.wsj.com/articles/russian-buildup-near-ukraine-features-potent-weapons-systems-well-trained-troops-11644789065?mod=hp_lead_pos2",
+    "title": "Russian Buildup Near Ukraine Features Potent Weapons Systems, Well-Trained Troops",
+    "content": "<html><head><title>Russian Buildup Near Ukraine Features Potent Weapons Systems, Well-Trained Troops</title></head><body><div>\n         <p>Russia’s <a href=\"https://www.wsj.com/articles/russia-ukraine-putin-nato-11643121821?mod=article_inline\" target=\"_blank\">enormous military buildup</a> near Ukraine features some of its most potent weapon systems and provides the Kremlin with the means to attack Ukrainian forces from multiple directions, which likely would overstretch their defenses.</p>\n         <p>In its buildup, which <a href=\"https://www.wsj.com/articles/russia-presses-buildup-near-ukraine-as-diplomatic-prospects-narrow-11643464805?mod=article_inline\" target=\"_blank\">has quickened in recent weeks</a>, Russia has positioned forces on three sides of Ukraine: in Belarus, western Russia and Crimea and on naval vessels in the Black Sea. The forces include some of Russia’s best trained battalions, special forces and surface-to-surface missiles that could strike targets throughout Ukraine.</p>\n  </div></body></html>"
+  },
+  "candidate": {
+    "id": "legacy-204-dup-8971556",
+    "url": "https://www.wsj.com/articles/russian-buildup-near-ukraine-features-potent-weapons-systems-well-trained-troops-11644789065",
+    "title": "Russian Buildup Near Ukraine Features Potent Weapons Systems, Well-Trained Troops",
+    "content": "<html><head><title>Russian Buildup Near Ukraine Features Potent Weapons Systems, Well-Trained Troops</title></head><body><div>\n         <p>Russia’s <a href=\"https://www.wsj.com/articles/russia-ukraine-putin-nato-11643121821?mod=article_inline\" target=\"_blank\">enormous military buildup</a> near Ukraine features some of its most potent weapon systems and provides the Kremlin with the means to attack Ukrainian forces from multiple directions, which likely would overstretch their defenses.</p>\n         <p>In its buildup, which <a href=\"https://www.wsj.com/articles/russia-presses-buildup-near-ukraine-as-diplomatic-prospects-narrow-11643464805?mod=article_inline\" target=\"_blank\">has quickened in recent weeks</a>, Russia has positioned forces on three sides of Ukraine: in Belarus, western Russia and Crimea and on naval vessels in the Black Sea. The forces include some of Russia’s best trained battalions, special forces and surface-to-surface missiles that could strike targets throughout Ukraine.</p>\n  </div></body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "identical"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same WSJ article with identical URL path, title, and body content; one is just a URL variant with tracking params."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "content_hash",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

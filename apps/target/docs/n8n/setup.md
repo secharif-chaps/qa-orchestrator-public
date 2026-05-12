@@ -15,20 +15,20 @@ This document describes the integration of n8n workflow automation platform into
 Before starting n8n, you need to:
 
 1. Configure your environment:
-    - Copy the required variables from `.env.dist` to your `.env` file:
+   - Copy the required variables from `.env.dist` to your `.env` file:
 
-    ```bash
-    # n8n configuration (only N8N_SERVER_NAME is required in .env.dist)
-    N8N_SERVER_NAME=n8n.basil.local
+   ```bash
+   # n8n configuration (only N8N_SERVER_NAME is required in .env.dist)
+   N8N_SERVER_NAME=n8n.basil.local
 
-    # Optional - these have defaults but can be customized:
-    N8N_DEFAULT_EMAIL=basil@chapsvision.com
-    N8N_DEFAULT_PASSWORD=Basil300425!
-    N8N_DEFAULT_FIRSTNAME=Basil
-    N8N_DEFAULT_LASTNAME=Target
-    N8N_ENCRYPTION_KEY=!ChangeThisN8nEncryptionKey!
-    N8N_USER_MANAGEMENT_JWT_SECRET=!ChangeThisN8nUserManagementJWTSecretKey!
-    ```
+   # Optional - these have defaults but can be customized:
+   N8N_DEFAULT_EMAIL=basil@chapsvision.com
+   N8N_DEFAULT_PASSWORD=Basil300425!
+   N8N_DEFAULT_FIRSTNAME=Basil
+   N8N_DEFAULT_LASTNAME=Target
+   N8N_ENCRYPTION_KEY=!ChangeThisN8nEncryptionKey!
+   N8N_USER_MANAGEMENT_JWT_SECRET=!ChangeThisN8nUserManagementJWTSecretKey!
+   ```
 
 2. Add the following entry to your hosts file (`/etc/hosts` on Linux/Mac or `C:\Windows\System32\drivers\etc\hosts` on Windows):
 
@@ -37,25 +37,25 @@ Before starting n8n, you need to:
 ```
 
 3. Clean up existing certificates:
-    - Remove any existing certificate files for n8n in the `certs/` directory:
+   - Remove any existing certificate files for n8n in the `certs/` directory:
 
-    ```bash
-    rm certs/basil.local-*.pem
-    ```
+   ```bash
+   rm certs/basil.local-*.pem
+   ```
 
-    - Generate new certificates by following these steps:
+   - Generate new certificates by following these steps:
 
-    ```bash
-    # 1. Stop all services
-    docker compose down
-    # docker compose down -v might be needed
+   ```bash
+   # 1. Stop all services
+   docker compose down
+   # docker compose down -v might be needed
 
-    # 2. Run the certificate generation script
-    ./certs/self-signed-generator.sh
+   # 2. Run the certificate generation script
+   ./certs/self-signed-generator.sh
 
-    # 3. Start the services again
-    docker compose up
-    ```
+   # 3. Start the services again
+   docker compose up
+   ```
 
 ## Docker Compose Configuration
 
@@ -65,40 +65,40 @@ The n8n services are defined using a shared template `x-n8n` with the following 
 
 ```yaml
 x-n8n: &service-n8n
-    image: n8nio/n8n:latest
-    environment:
-        - N8N_HOST=${N8N_SERVER_NAME:-n8n.localhost}
-        - N8N_PORT=5678
-        - N8N_PROTOCOL=https
-        - WEBHOOK_URL=https://${N8N_SERVER_NAME:-n8n.localhost}/
-        - GENERIC_TIMEZONE=Europe/Paris
-        - N8N_METRICS=true
-        - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
-        - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-        - N8N_RUNNERS_ENABLED=true
-        - N8N_PROXY_HOPS=1
+  image: n8nio/n8n:latest
+  environment:
+    - N8N_HOST=${N8N_SERVER_NAME:-n8n.localhost}
+    - N8N_PORT=5678
+    - N8N_PROTOCOL=https
+    - WEBHOOK_URL=https://${N8N_SERVER_NAME:-n8n.localhost}/
+    - GENERIC_TIMEZONE=Europe/Paris
+    - N8N_METRICS=true
+    - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+    - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+    - N8N_RUNNERS_ENABLED=true
+    - N8N_PROXY_HOPS=1
 
-        # Security & isolation settings
-        - N8N_DIAGNOSTICS_ENABLED=false
-        - N8N_VERSION_NOTIFICATIONS_ENABLED=false
-        - N8N_TEMPLATES_ENABLED=false
+    # Security & isolation settings
+    - N8N_DIAGNOSTICS_ENABLED=false
+    - N8N_VERSION_NOTIFICATIONS_ENABLED=false
+    - N8N_TEMPLATES_ENABLED=false
 
-        # Database configuration
-        - DB_TYPE=postgresdb
-        - DB_POSTGRESDB_HOST=database
-        - DB_POSTGRESDB_DATABASE=${N8N_DB_NAME:-n8n_db}
-        - DB_POSTGRESDB_USER=${N8N_DB_USER:-n8n_user}
-        - DB_POSTGRESDB_PASSWORD=${N8N_DB_PASSWORD:-!ChangeMeN8nDbPass!}
+    # Database configuration
+    - DB_TYPE=postgresdb
+    - DB_POSTGRESDB_HOST=database
+    - DB_POSTGRESDB_DATABASE=${N8N_DB_NAME:-n8n_db}
+    - DB_POSTGRESDB_USER=${N8N_DB_USER:-n8n_user}
+    - DB_POSTGRESDB_PASSWORD=${N8N_DB_PASSWORD:-!ChangeMeN8nDbPass!}
 
-        # Security keys
-        - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-!ChangeThisN8nEncryptionKey!}
-        - N8N_USER_MANAGEMENT_JWT_SECRET=${N8N_USER_MANAGEMENT_JWT_SECRET:-!ChangeThisN8nUserManagementJWTSecretKey!}
+    # Security keys
+    - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-!ChangeThisN8nEncryptionKey!}
+    - N8N_USER_MANAGEMENT_JWT_SECRET=${N8N_USER_MANAGEMENT_JWT_SECRET:-!ChangeThisN8nUserManagementJWTSecretKey!}
 
-        # Default user configuration
-        - N8N_DEFAULT_EMAIL=${N8N_DEFAULT_EMAIL:-basil@chapsvision.com}
-        - N8N_DEFAULT_PASSWORD=${N8N_DEFAULT_PASSWORD:-Basil300425!}
-        - N8N_DEFAULT_FIRSTNAME=${N8N_DEFAULT_FIRSTNAME:-Basil}
-        - N8N_DEFAULT_LASTNAME=${N8N_DEFAULT_LASTNAME:-Target}
+    # Default user configuration
+    - N8N_DEFAULT_EMAIL=${N8N_DEFAULT_EMAIL:-basil@chapsvision.com}
+    - N8N_DEFAULT_PASSWORD=${N8N_DEFAULT_PASSWORD:-Basil300425!}
+    - N8N_DEFAULT_FIRSTNAME=${N8N_DEFAULT_FIRSTNAME:-Basil}
+    - N8N_DEFAULT_LASTNAME=${N8N_DEFAULT_LASTNAME:-Target}
 ```
 
 ### Services
@@ -114,18 +114,18 @@ The development environment adds additional configuration:
 
 ```yaml
 services:
-    n8n:
-        volumes:
-            - ./certs:/opt/custom-certificates:ro
-            - ./docker/n8n/entrypoint.sh:/basil-entrypoint.sh:ro
-        environment:
-            - N8N_SMTP_HOST=mailpit
-            - N8N_SMTP_PORT=1025
-            - N8N_SMTP_SSL=false
-            - N8N_SMTP_USER=
-            - N8N_SMTP_PASS=
-            - N8N_SMTP_SENDER=${N8N_DEFAULT_EMAIL:-basil@chapsvision.com}
-        entrypoint: ['/basil-entrypoint.sh']
+  n8n:
+    volumes:
+      - ./certs:/opt/custom-certificates:ro
+      - ./docker/n8n/entrypoint.sh:/basil-entrypoint.sh:ro
+    environment:
+      - N8N_SMTP_HOST=mailpit
+      - N8N_SMTP_PORT=1025
+      - N8N_SMTP_SSL=false
+      - N8N_SMTP_USER=
+      - N8N_SMTP_PASS=
+      - N8N_SMTP_SENDER=${N8N_DEFAULT_EMAIL:-basil@chapsvision.com}
+    entrypoint: ['/basil-entrypoint.sh']
 ```
 
 ## Automatic User Setup
@@ -195,20 +195,20 @@ docker compose up n8n-import
 **CRITICAL**: For staging environments to function properly, the credentials must also be synchronized with the GitLab CI/CD system:
 
 1. **Update GitLab CI Variable**: The same credentials content from Passbolt must be stored in the GitLab CI/CD variable `N8N_CREDENTIALS_FILE`
-    - Navigate to your GitLab project → Settings → CI/CD → Variables
-    - Update the `N8N_CREDENTIALS_FILE` variable with the exact same JSON content from Passbolt
-    - Ensure the variable is marked as "File" type and "Masked" for security
+   - Navigate to your GitLab project → Settings → CI/CD → Variables
+   - Update the `N8N_CREDENTIALS_FILE` variable with the exact same JSON content from Passbolt
+   - Ensure the variable is marked as "File" type and "Masked" for security
 
 2. **Automatic Staging Deployment**: During staging deployment, the CI pipeline automatically copies these credentials:
 
-    ```bash
-    cat "$N8N_CREDENTIALS_FILE" > deploy-artifact/docker/n8n/credentials/basil-credentials.json
-    ```
+   ```bash
+   cat "$N8N_CREDENTIALS_FILE" > deploy-artifact/docker/n8n/credentials/basil-credentials.json
+   ```
 
 3. **Synchronization Requirement**:
-    - **Both sources must be kept in sync**: Passbolt entry AND GitLab CI variable
-    - Any credential updates must be applied to BOTH locations
-    - Failure to synchronize will result in **non-functional n8n workflows in staging**
+   - **Both sources must be kept in sync**: Passbolt entry AND GitLab CI variable
+   - Any credential updates must be applied to BOTH locations
+   - Failure to synchronize will result in **non-functional n8n workflows in staging**
 
 **Warning**: If credentials are updated in Passbolt but not in the GitLab CI variable (or vice versa), staging deployments will have outdated or missing credentials, causing workflow failures.
 
@@ -225,35 +225,35 @@ The n8n platform communicates with the API through two main channels: RabbitMQ f
 The API sends commands to n8n via the `agent_commands` RabbitMQ queue:
 
 1. **Command Structure**: Commands are sent as `TriggerAgentAction` objects containing:
-    - `name`: The action name (e.g., "ExtractActorsFromWatchFile")
-    - `data`: Action-specific data payload
-    - `responseType`: Expected response type class
-    - `watchFileId`: Associated watchfile identifier
-    - `userId`: User identifier (optional)
-    - `triggeredAt`: Timestamp
+   - `name`: The action name (e.g., "ExtractActorsFromWatchFile")
+   - `data`: Action-specific data payload
+   - `responseType`: Expected response type class
+   - `watchFileId`: Associated watchfile identifier
+   - `userId`: User identifier (optional)
+   - `triggeredAt`: Timestamp
 
 2. **Message Format**: Messages are serialized as JSON and include Symfony Messenger stamps for routing context.
 
 3. **n8n Processing**: n8n workflows listen to the `agent_commands` queue and:
-    - Parse the incoming JSON message
-    - Extract command parameters (name, data, watchFileId, responseType)
-    - Filter by command name to trigger specific workflows
-    - Process the command using AI agents and external tools
-    - Generate structured responses
+   - Parse the incoming JSON message
+   - Extract command parameters (name, data, watchFileId, responseType)
+   - Filter by command name to trigger specific workflows
+   - Process the command using AI agents and external tools
+   - Generate structured responses
 
 #### n8n → API (Responses)
 
 n8n sends responses back to the API via the `agent_responses` RabbitMQ queue:
 
 1. **Response Structure**: Responses include:
-    - `data`: The processed result data
-    - `watchFileId`: Original watchfile identifier
-    - Headers: Message type and Symfony Messenger stamps for proper routing
+   - `data`: The processed result data
+   - `watchFileId`: Original watchfile identifier
+   - Headers: Message type and Symfony Messenger stamps for proper routing
 
 2. **Message Headers**: Responses include specific headers:
-    - `type`: The response type class name
-    - `X-Message-Stamp-Symfony\Component\Messenger\Stamp\BusNameStamp`: Bus routing information
-    - `X-Message-Stamp-Symfony\Component\Messenger\Stamp\RouterContextStamp`: Router context information
+   - `type`: The response type class name
+   - `X-Message-Stamp-Symfony\Component\Messenger\Stamp\BusNameStamp`: Bus routing information
+   - `X-Message-Stamp-Symfony\Component\Messenger\Stamp\RouterContextStamp`: Router context information
 
 ### Webhook Communication
 
@@ -319,7 +319,7 @@ The API's messenger configuration routes messages appropriately:
 
 ```yaml
 routing:
-    'App\Application\Agent\TriggerAgentAction': agent_commands
+  'App\Application\Agent\TriggerAgentAction': agent_commands
 ```
 
 #### Security Considerations
@@ -404,7 +404,7 @@ The main n8n service includes health checks:
 
 ```yaml
 healthcheck:
-    test: ['CMD', 'wget', '--spider', 'http://127.0.0.1:5678/healthz/readiness']
+  test: ['CMD', 'wget', '--spider', 'http://127.0.0.1:5678/healthz/readiness']
 ```
 
 This ensures the service is fully ready before other dependent services start.
@@ -415,7 +415,7 @@ n8n data is persisted using a Docker volume:
 
 ```yaml
 volumes:
-    n8n_data:
+  n8n_data:
 ```
 
 This ensures that workflows, user data, and configurations are preserved across container restarts.

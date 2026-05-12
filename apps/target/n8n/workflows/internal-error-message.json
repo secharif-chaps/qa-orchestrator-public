@@ -37,10 +37,7 @@
       },
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1.1,
-      "position": [
-        496,
-        -144
-      ],
+      "position": [496, -144],
       "id": "9dab479a-0f05-4f81-b08e-8bf3ba06093f",
       "name": "RabbitMQ_Publish_ChatMessage",
       "notesInFlow": false,
@@ -79,10 +76,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        224,
-        0
-      ],
+      "position": [224, 0],
       "id": "17ae6035-ee0b-4ebb-b446-d2938dff87dc",
       "name": "Condition_Check_ConversationContext",
       "onError": "continueRegularOutput"
@@ -94,10 +88,7 @@
         "color": 6
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        16,
-        -240
-      ],
+      "position": [16, -240],
       "typeVersion": 1,
       "id": "2a9675c2-b2f0-4085-ad6d-1c6764c4aee3",
       "name": "Sticky Note"
@@ -136,10 +127,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        0,
-        0
-      ],
+      "position": [0, 0],
       "id": "d47961f2-4a77-4973-bc1c-ea87d235cefe",
       "name": "Workflow_Trigger_InternalErrorMessage"
     }

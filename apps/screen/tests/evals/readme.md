@@ -62,11 +62,11 @@ task screen:evals:ci
 
 Each agent has exactly 3 test cases, each with a different threshold:
 
-| Tier | Threshold | Meaning |
-|------|-----------|---------|
-| **A** | `0.9` | Must always pass — CI fails if this regresses |
-| **B** | `0.7` | Should pass — tracked but does not block CI |
-| **C** | `0.0` | Advisory — hard case, never blocks CI |
+| Tier  | Threshold | Meaning                                       |
+| ----- | --------- | --------------------------------------------- |
+| **A** | `0.9`     | Must always pass — CI fails if this regresses |
+| **B** | `0.7`     | Should pass — tracked but does not block CI   |
+| **C** | `0.0`     | Advisory — hard case, never blocks CI         |
 
 Score formula: `is-json(w:1) + schema_valid(w:1) + llm_rubric(w:10)` → total 12 points.
 A wrong-but-valid-JSON answer scores `2/12 = 0.17` → fails at any threshold above 0.
@@ -178,6 +178,7 @@ evals/
 ## Adding a new agent eval
 
 1. **Add a loader** in `providers/loaders.py`:
+
    ```python
    def load_my_agent(context: dict) -> list[dict]:
        return [
@@ -187,6 +188,7 @@ evals/
    ```
 
 2. **Add schema validation** in `assertions/validate_schema.py` (if agent has no production schema):
+
    ```python
    class MyAgentOutput(BaseModel):
        field_a: str
@@ -196,30 +198,32 @@ evals/
    ```
 
 3. **Create the config** — copy any existing config and change 4 lines:
+
    ```sh
    cp configs/planner.yaml configs/my_agent.yaml
    # edit: description, load_my_agent, _agent_name, tests file, outputPath
    ```
 
 4. **Create the test file** `tests/tests_my_agent.yaml` with 3 cases:
+
    ```yaml
-   - description: "A: [Easy company] — must pass"
+   - description: 'A: [Easy company] — must pass'
      threshold: 0.9
      vars:
-       user_message: "..."
-       rubric: "Response should ..."
+       user_message: '...'
+       rubric: 'Response should ...'
 
-   - description: "B: [Medium company] — should pass"
+   - description: 'B: [Medium company] — should pass'
      threshold: 0.7
      vars:
-       user_message: "..."
-       rubric: "Response should ..."
+       user_message: '...'
+       rubric: 'Response should ...'
 
-   - description: "C: [Hard company] — advisory"
+   - description: 'C: [Hard company] — advisory'
      threshold: 0.0
      vars:
-       user_message: "..."
-       rubric: "Response should ..."
+       user_message: '...'
+       rubric: 'Response should ...'
    ```
 
 5. **Run it**:

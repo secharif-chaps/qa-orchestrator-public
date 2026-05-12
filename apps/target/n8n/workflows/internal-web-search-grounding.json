@@ -22,10 +22,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        -768,
-        -112
-      ],
+      "position": [-768, -112],
       "id": "84e7c77a-8e54-48a6-b8c2-b0ad83dfa0d7",
       "name": "Workflow_Trigger_Serper"
     },
@@ -51,10 +48,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
-      "position": [
-        128,
-        -208
-      ],
+      "position": [128, -208],
       "id": "645d19ac-730c-459b-a26a-9ccb35636782",
       "name": "HTTP_Request_SerperDotDev",
       "credentials": {
@@ -70,10 +64,7 @@
       },
       "type": "n8n-nodes-base.crypto",
       "typeVersion": 1,
-      "position": [
-        -544,
-        -112
-      ],
+      "position": [-544, -112],
       "id": "8a9aff22-1244-45c4-9062-ec524d9f0687",
       "name": "Crypto_Hash_Input"
     },
@@ -85,10 +76,7 @@
       },
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
-      "position": [
-        -320,
-        -112
-      ],
+      "position": [-320, -112],
       "id": "3637a1ec-daeb-4efb-aa95-0d0818611f24",
       "name": "Valkey_Get_Cache",
       "credentials": {
@@ -109,10 +97,7 @@
       },
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
-      "position": [
-        352,
-        -272
-      ],
+      "position": [352, -272],
       "id": "5bb368d8-66ad-4dc8-93a3-6a836dd21e04",
       "name": "Valkey_Set_Cache",
       "credentials": {
@@ -129,10 +114,7 @@
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
-      "position": [
-        576,
-        -208
-      ],
+      "position": [576, -208],
       "id": "bd4fec7c-74fa-494a-8ec8-b862c62fc89a",
       "name": "Merge_Return_SerperData"
     },
@@ -142,10 +124,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        128,
-        -16
-      ],
+      "position": [128, -16],
       "id": "a1670900-9f1d-4736-9f19-26416333fb27",
       "name": "Code_Parse_Cache"
     },
@@ -176,10 +155,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -96,
-        -112
-      ],
+      "position": [-96, -112],
       "id": "45f44400-0efc-44d8-906b-90283051601d",
       "name": "Check_Cache_Miss"
     }
@@ -246,9 +222,7 @@
       ]
     },
     "Code_Parse_Cache": {
-      "main": [
-        []
-      ]
+      "main": [[]]
     },
     "Check_Cache_Miss": {
       "main": [

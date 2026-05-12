@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 76,
-    "master": {
-        "id": "legacy-64-master-14065500",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85164925429&origin=inward",
-        "title": "33rd Congress of the International Council of the Aeronautical Sciences, ICAS 2022",
-        "content": "<html><body>The proceedings contain 24 papers. The special focus in this conference is on Aeronautical Sciences. The topics include: CONCEPT DESIGN OF A LOW BOOM SSBJ TO SATISFY SOCIAL ACCEPTANCE; RESEARCH ON THE SELECTION METHOD OF TYPICAL RCS BENCHMARK BASED ON AHP; TWO-PHASE NUMERICAL SIMULATION INVESTIGATION ON THE EFFECTS OF TURBULENCE MODEL AND OPERATING CONDITIONS ON THE CENTRIFUGAL NOZZLE PERFROMANCE; DEVELOPMENT AND VERIFICATION OF OSCILLATING BLADE GUST GENERATOR IN LOW-SPEED WIND TUNNEL; fatigue Crack Propagation in Additively Manufactured Polymer Parts; ELECTROMAGNETIC INTERFERENCE SHIELDING EFFECTIVENESS OF THE THIN CARBON NANOFIBERS/SILICON CARBIDE FABRICS COMPOSITES; some Experimental Results on Dynamic Aeroelasticity of Plates and Shells in Subsonic and Supersonic Flow.; DESIGN OF AERO-ENGINE FADEC POWER SUPPLY CONTROL SYSTEM BASED ON FORWARD DESIGN; DESIGN AND EFFICIENCY ANALYSIS OF EVTOL CONTRA-ROTATING PROPELER; EXPERIMENTAL STUDY OF FLAT BAFFLE INLET TOTAL-PRESSURE DISTORTION IN A THREE-STAGE FAN; EFFECT OF TAILCONE SHAPE ON HOT STREAK PHENOMENA AND INFRARED SIGNATURE OF SERPENTINE NOZZLE WITH AFT DECK; EXPERIMENTAL STUDY ON THE EFFECT OF INTERSTAGE BLEEDING ON THE PERFORMANCE OF FULL-SCALE MULTISTAGE AXIAL COMPRESSOR; MULTIPOINT AERODYNAMIC DESIGN OF A NACELLE FOR AN ELECTRIC FAN; study on the Application of Emulsified Fuel in small Jet Engines; HYDRO ENVIRONMENTAL AND ELECTRICAL ASSETS MAPPING TOOL USING SWARMS AND MACHINE LEARNING, UAV & USV; EFFECTS OF ANISOTROPIC THERMAL CONDUCTIVITY OF COMPOSITE SHIELD ON THE ELECTROTHERMAL ANTI-ICING SYSTEMS; kinetic Energy Recovery from a Landing Aircraft: Energy Analysis, Environmental and Economic Prospects; STRESSING SAFETY ASSESSMENT METHODS BY HIGHER LEVELS OF AUTOMATION. <br/><br/><br/>Authors: . <br/><br/>Affiliations: . <br/><br/>Publication: ICAS Proceedings, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-14065672",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85164920761&origin=inward",
-        "title": "EFFECT OF TAILCONE SHAPE ON HOT STREAK PHENOMENA AND INFRARED SIGNATURE OF SERPENTINE NOZZLE WITH AFT DECK",
-        "content": "<html><body>To reduce the infrared signature behind and below the aircraft, serpentine nozzles with aft deck are widely used in modern military aircraft. At the inlet of the nozzle, the core flow passing through the tailcone will generate the central vortex. The secondary flow caused by the central vortex will affect the temperature distribution of the flowfield within the serpentine nozzle, resulting in the hot streak on the nozzle wall, which has an adverse impact on the thermal protection of the nozzle. Therefore, this paper aims to numerically investigate the effect of tailcone shape on the hot streak phenomena and the infrared signature of the serpentine nozzle with aft deck. In this paper, serpentine nozzles with aft deck are designed based on curvature control regulation, and four tailcones with different shapes are designed by power curves. Computational Fluid Dynamics (CFD) simulations are conducted to obtain the temperature distribution of the nozzle, and Reverse Monte Carlo Method (RMCM) is applied to study the infrared signature of the nozzle in the 3μm-5μm band. The results show that, for the cases without engine swirl, the hot streak area on the nozzle wall and the infrared radiation intensity of the nozzle rise with the increase of the tailcone surface curvature, in which the infrared signature level at the positive azimuth angle in the vertical plane is greater than that at the negative azimuth angle; For the cases with engine swirl, the change of tailcone curvature has little effect on the hot streak, but the serpentine nozzle with large curvature tailcone has lower infrared radiation intensity. The research results can provide guidance for the thermal management and stealth design of the serpentine nozzle. <br/><br/><br/>Authors: Fan J., Yang Q., Du X., Yang H., He Y., Shi Y.. <br/><br/>Affiliations: Northwestern Polytechnical University. <br/><br/>Publication: ICAS Proceedings, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "unique",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "unique",
-        "note": "Master is a proceedings summary listing many papers, while candidate is a full individual paper from that proceedings."
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "agreement_unique",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 76,
+  "master": {
+    "id": "legacy-64-master-14065500",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85164925429&origin=inward",
+    "title": "33rd Congress of the International Council of the Aeronautical Sciences, ICAS 2022",
+    "content": "<html><body>The proceedings contain 24 papers. The special focus in this conference is on Aeronautical Sciences. The topics include: CONCEPT DESIGN OF A LOW BOOM SSBJ TO SATISFY SOCIAL ACCEPTANCE; RESEARCH ON THE SELECTION METHOD OF TYPICAL RCS BENCHMARK BASED ON AHP; TWO-PHASE NUMERICAL SIMULATION INVESTIGATION ON THE EFFECTS OF TURBULENCE MODEL AND OPERATING CONDITIONS ON THE CENTRIFUGAL NOZZLE PERFROMANCE; DEVELOPMENT AND VERIFICATION OF OSCILLATING BLADE GUST GENERATOR IN LOW-SPEED WIND TUNNEL; fatigue Crack Propagation in Additively Manufactured Polymer Parts; ELECTROMAGNETIC INTERFERENCE SHIELDING EFFECTIVENESS OF THE THIN CARBON NANOFIBERS/SILICON CARBIDE FABRICS COMPOSITES; some Experimental Results on Dynamic Aeroelasticity of Plates and Shells in Subsonic and Supersonic Flow.; DESIGN OF AERO-ENGINE FADEC POWER SUPPLY CONTROL SYSTEM BASED ON FORWARD DESIGN; DESIGN AND EFFICIENCY ANALYSIS OF EVTOL CONTRA-ROTATING PROPELER; EXPERIMENTAL STUDY OF FLAT BAFFLE INLET TOTAL-PRESSURE DISTORTION IN A THREE-STAGE FAN; EFFECT OF TAILCONE SHAPE ON HOT STREAK PHENOMENA AND INFRARED SIGNATURE OF SERPENTINE NOZZLE WITH AFT DECK; EXPERIMENTAL STUDY ON THE EFFECT OF INTERSTAGE BLEEDING ON THE PERFORMANCE OF FULL-SCALE MULTISTAGE AXIAL COMPRESSOR; MULTIPOINT AERODYNAMIC DESIGN OF A NACELLE FOR AN ELECTRIC FAN; study on the Application of Emulsified Fuel in small Jet Engines; HYDRO ENVIRONMENTAL AND ELECTRICAL ASSETS MAPPING TOOL USING SWARMS AND MACHINE LEARNING, UAV & USV; EFFECTS OF ANISOTROPIC THERMAL CONDUCTIVITY OF COMPOSITE SHIELD ON THE ELECTROTHERMAL ANTI-ICING SYSTEMS; kinetic Energy Recovery from a Landing Aircraft: Energy Analysis, Environmental and Economic Prospects; STRESSING SAFETY ASSESSMENT METHODS BY HIGHER LEVELS OF AUTOMATION. <br/><br/><br/>Authors: . <br/><br/>Affiliations: . <br/><br/>Publication: ICAS Proceedings, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-14065672",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85164920761&origin=inward",
+    "title": "EFFECT OF TAILCONE SHAPE ON HOT STREAK PHENOMENA AND INFRARED SIGNATURE OF SERPENTINE NOZZLE WITH AFT DECK",
+    "content": "<html><body>To reduce the infrared signature behind and below the aircraft, serpentine nozzles with aft deck are widely used in modern military aircraft. At the inlet of the nozzle, the core flow passing through the tailcone will generate the central vortex. The secondary flow caused by the central vortex will affect the temperature distribution of the flowfield within the serpentine nozzle, resulting in the hot streak on the nozzle wall, which has an adverse impact on the thermal protection of the nozzle. Therefore, this paper aims to numerically investigate the effect of tailcone shape on the hot streak phenomena and the infrared signature of the serpentine nozzle with aft deck. In this paper, serpentine nozzles with aft deck are designed based on curvature control regulation, and four tailcones with different shapes are designed by power curves. Computational Fluid Dynamics (CFD) simulations are conducted to obtain the temperature distribution of the nozzle, and Reverse Monte Carlo Method (RMCM) is applied to study the infrared signature of the nozzle in the 3μm-5μm band. The results show that, for the cases without engine swirl, the hot streak area on the nozzle wall and the infrared radiation intensity of the nozzle rise with the increase of the tailcone surface curvature, in which the infrared signature level at the positive azimuth angle in the vertical plane is greater than that at the negative azimuth angle; For the cases with engine swirl, the change of tailcone curvature has little effect on the hot streak, but the serpentine nozzle with large curvature tailcone has lower infrared radiation intensity. The research results can provide guidance for the thermal management and stealth design of the serpentine nozzle. <br/><br/><br/>Authors: Fan J., Yang Q., Du X., Yang H., He Y., Shi Y.. <br/><br/>Affiliations: Northwestern Polytechnical University. <br/><br/>Publication: ICAS Proceedings, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "unique",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "unique",
+    "note": "Master is a proceedings summary listing many papers, while candidate is a full individual paper from that proceedings."
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "agreement_unique",
+  "content_source": "hbase_full"
 }

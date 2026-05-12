@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-14138022",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85167599806&origin=inward",
-        "title": "Ferrofluid-based attitude control for small satellites",
-        "content": "<html><body>Traditional reaction control systems such as reaction wheels and control moment gyros are complex mechanical systems that are susceptible to wear and tear. In the past the failure of such systems has led to the degradation or end of several important missions. Alternative fluid-based systems that prevent wear of reaction wheels by replacing mechanical components with ferrofluid mechanisms are being designed. Ferrofluids are colloidal suspensions of magnetic nano-particles in a carrier liquid. They can be manipulated by magnetic fields, which enables the design of mechanisms free of moving solid surfaces such as pumps, valves, switches and many more. Such fluid-based systems offer longer lifetimes because of lesser wear and tear as well as potentially lower production costs. First prototypes for attitude control were able to move fluids in loops and thereby in principle generate torque without solid moving parts. However, the flow rates and accelerations of the fluids were as of yet insufficient to generate meaningful torque on a spacecraft. These prototypes will be further investigated as mechanic free pumping mechanisms, but for attitude control applications are a novel route that is explored. The new prototypes represent a cross between previous liquid rotor devices and more traditional reaction wheels. They consist of a solid rotor and stator similar to that of a typical synchronous electric motor. However, the rotor has no classical mechanical bearing. It is fully suspended on cushions of ferrofluid. The cushions are created by applying ferrofluid directly to the permanent magnet poles of the rotors. The magnetic field creates pressure inside the ferrofluid as it is attracted to the magnet. The cushions allow the rotor to spin with very low friction and prevents any solid to solid contact, preventing wear, while strong magnetic coupling is permitted. This paper will present first performance quantifications of prototype systems such as torques and maximum storable rotational momentum. KSat, the small satellite student association at the University of Stuttgart is currently working on two projects to test ferrofluid applications in space environments. In the mission FARGO a prototype of a ferrofluid bearing reaction wheel is tested alongside ferrofluid-based electrical and thermal switches in an experiment container onboard the International Space Station. The mission FerrAS will test two pump prototypes on a sounding rocket as part of the REXUS/BEXUS programme. <br/><br/><br/>Authors: Schäfer F., Ehresmann M., Zajonz S., Grossmann S., Guiterrez E., Heinz N., O'Donohue M., Korn C., Herdrich G., Gente J., Gkoutzos D., Levi D., Weikert S., Wiegand A.. <br/><br/>Affiliations: Universität Stuttgart, Astos Solutions GmbH. <br/><br/>Publication: Proceedings of the International Astronautical Congress, IAC, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-14138229",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85167599806&origin=inward",
-        "title": "Ferrofluid-based attitude control for small satellites",
-        "content": "<html><body>Traditional reaction control systems such as reaction wheels and control moment gyros are complex mechanical systems that are susceptible to wear and tear. In the past the failure of such systems has led to the degradation or end of several important missions. Alternative fluid-based systems that prevent wear of reaction wheels by replacing mechanical components with ferrofluid mechanisms are being designed. Ferrofluids are colloidal suspensions of magnetic nano-particles in a carrier liquid. They can be manipulated by magnetic fields, which enables the design of mechanisms free of moving solid surfaces such as pumps, valves, switches and many more. Such fluid-based systems offer longer lifetimes because of lesser wear and tear as well as potentially lower production costs. First prototypes for attitude control were able to move fluids in loops and thereby in principle generate torque without solid moving parts. However, the flow rates and accelerations of the fluids were as of yet insufficient to generate meaningful torque on a spacecraft. These prototypes will be further investigated as mechanic free pumping mechanisms, but for attitude control applications are a novel route that is explored. The new prototypes represent a cross between previous liquid rotor devices and more traditional reaction wheels. They consist of a solid rotor and stator similar to that of a typical synchronous electric motor. However, the rotor has no classical mechanical bearing. It is fully suspended on cushions of ferrofluid. The cushions are created by applying ferrofluid directly to the permanent magnet poles of the rotors. The magnetic field creates pressure inside the ferrofluid as it is attracted to the magnet. The cushions allow the rotor to spin with very low friction and prevents any solid to solid contact, preventing wear, while strong magnetic coupling is permitted. This paper will present first performance quantifications of prototype systems such as torques and maximum storable rotational momentum. KSat, the small satellite student association at the University of Stuttgart is currently working on two projects to test ferrofluid applications in space environments. In the mission FARGO a prototype of a ferrofluid bearing reaction wheel is tested alongside ferrofluid-based electrical and thermal switches in an experiment container onboard the International Space Station. The mission FerrAS will test two pump prototypes on a sounding rocket as part of the REXUS/BEXUS programme. <br/><br/><br/>Authors: Schäfer F., Ehresmann M., Zajonz S., Grossmann S., Guiterrez E., Heinz N., O'Donohue M., Korn C., Herdrich G., Gente J., Gkoutzos D., Levi D., Weikert S., Wiegand A.. <br/><br/>Affiliations: Universität Stuttgart, Astos Solutions GmbH. <br/><br/>Publication: Proceedings of the International Astronautical Congress, IAC, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-14138022",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85167599806&origin=inward",
+    "title": "Ferrofluid-based attitude control for small satellites",
+    "content": "<html><body>Traditional reaction control systems such as reaction wheels and control moment gyros are complex mechanical systems that are susceptible to wear and tear. In the past the failure of such systems has led to the degradation or end of several important missions. Alternative fluid-based systems that prevent wear of reaction wheels by replacing mechanical components with ferrofluid mechanisms are being designed. Ferrofluids are colloidal suspensions of magnetic nano-particles in a carrier liquid. They can be manipulated by magnetic fields, which enables the design of mechanisms free of moving solid surfaces such as pumps, valves, switches and many more. Such fluid-based systems offer longer lifetimes because of lesser wear and tear as well as potentially lower production costs. First prototypes for attitude control were able to move fluids in loops and thereby in principle generate torque without solid moving parts. However, the flow rates and accelerations of the fluids were as of yet insufficient to generate meaningful torque on a spacecraft. These prototypes will be further investigated as mechanic free pumping mechanisms, but for attitude control applications are a novel route that is explored. The new prototypes represent a cross between previous liquid rotor devices and more traditional reaction wheels. They consist of a solid rotor and stator similar to that of a typical synchronous electric motor. However, the rotor has no classical mechanical bearing. It is fully suspended on cushions of ferrofluid. The cushions are created by applying ferrofluid directly to the permanent magnet poles of the rotors. The magnetic field creates pressure inside the ferrofluid as it is attracted to the magnet. The cushions allow the rotor to spin with very low friction and prevents any solid to solid contact, preventing wear, while strong magnetic coupling is permitted. This paper will present first performance quantifications of prototype systems such as torques and maximum storable rotational momentum. KSat, the small satellite student association at the University of Stuttgart is currently working on two projects to test ferrofluid applications in space environments. In the mission FARGO a prototype of a ferrofluid bearing reaction wheel is tested alongside ferrofluid-based electrical and thermal switches in an experiment container onboard the International Space Station. The mission FerrAS will test two pump prototypes on a sounding rocket as part of the REXUS/BEXUS programme. <br/><br/><br/>Authors: Schäfer F., Ehresmann M., Zajonz S., Grossmann S., Guiterrez E., Heinz N., O'Donohue M., Korn C., Herdrich G., Gente J., Gkoutzos D., Levi D., Weikert S., Wiegand A.. <br/><br/>Affiliations: Universität Stuttgart, Astos Solutions GmbH. <br/><br/>Publication: Proceedings of the International Astronautical Congress, IAC, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-14138229",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85167599806&origin=inward",
+    "title": "Ferrofluid-based attitude control for small satellites",
+    "content": "<html><body>Traditional reaction control systems such as reaction wheels and control moment gyros are complex mechanical systems that are susceptible to wear and tear. In the past the failure of such systems has led to the degradation or end of several important missions. Alternative fluid-based systems that prevent wear of reaction wheels by replacing mechanical components with ferrofluid mechanisms are being designed. Ferrofluids are colloidal suspensions of magnetic nano-particles in a carrier liquid. They can be manipulated by magnetic fields, which enables the design of mechanisms free of moving solid surfaces such as pumps, valves, switches and many more. Such fluid-based systems offer longer lifetimes because of lesser wear and tear as well as potentially lower production costs. First prototypes for attitude control were able to move fluids in loops and thereby in principle generate torque without solid moving parts. However, the flow rates and accelerations of the fluids were as of yet insufficient to generate meaningful torque on a spacecraft. These prototypes will be further investigated as mechanic free pumping mechanisms, but for attitude control applications are a novel route that is explored. The new prototypes represent a cross between previous liquid rotor devices and more traditional reaction wheels. They consist of a solid rotor and stator similar to that of a typical synchronous electric motor. However, the rotor has no classical mechanical bearing. It is fully suspended on cushions of ferrofluid. The cushions are created by applying ferrofluid directly to the permanent magnet poles of the rotors. The magnetic field creates pressure inside the ferrofluid as it is attracted to the magnet. The cushions allow the rotor to spin with very low friction and prevents any solid to solid contact, preventing wear, while strong magnetic coupling is permitted. This paper will present first performance quantifications of prototype systems such as torques and maximum storable rotational momentum. KSat, the small satellite student association at the University of Stuttgart is currently working on two projects to test ferrofluid applications in space environments. In the mission FARGO a prototype of a ferrofluid bearing reaction wheel is tested alongside ferrofluid-based electrical and thermal switches in an experiment container onboard the International Space Station. The mission FerrAS will test two pump prototypes on a sounding rocket as part of the REXUS/BEXUS programme. <br/><br/><br/>Authors: Schäfer F., Ehresmann M., Zajonz S., Grossmann S., Guiterrez E., Heinz N., O'Donohue M., Korn C., Herdrich G., Gente J., Gkoutzos D., Levi D., Weikert S., Wiegand A.. <br/><br/>Affiliations: Universität Stuttgart, Astos Solutions GmbH. <br/><br/>Publication: Proceedings of the International Astronautical Congress, IAC, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

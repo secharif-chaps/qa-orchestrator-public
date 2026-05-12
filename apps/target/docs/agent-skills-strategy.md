@@ -381,12 +381,12 @@ No submodule, no CI job, no automation - skills rarely change and a manual copy 
 ```yaml
 # In each project (.gitlab-ci.yml)
 validate-skills:
-    stage: test
-    rules:
-        - changes:
-              - .claude/skills/**/*
-    script:
-        - npx skills-ref validate .claude/skills/
+  stage: test
+  rules:
+    - changes:
+        - .claude/skills/**/*
+  script:
+    - npx skills-ref validate .claude/skills/
 ```
 
 ---

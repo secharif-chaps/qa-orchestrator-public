@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 57,
-    "master": {
-        "id": "legacy-64-master-14064466",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85164925429&origin=inward",
-        "title": "33rd Congress of the International Council of the Aeronautical Sciences, ICAS 2022",
-        "content": "<html><body>The proceedings contain 24 papers. The special focus in this conference is on Aeronautical Sciences. The topics include: CONCEPT DESIGN OF A LOW BOOM SSBJ TO SATISFY SOCIAL ACCEPTANCE; RESEARCH ON THE SELECTION METHOD OF TYPICAL RCS BENCHMARK BASED ON AHP; TWO-PHASE NUMERICAL SIMULATION INVESTIGATION ON THE EFFECTS OF TURBULENCE MODEL AND OPERATING CONDITIONS ON THE CENTRIFUGAL NOZZLE PERFROMANCE; DEVELOPMENT AND VERIFICATION OF OSCILLATING BLADE GUST GENERATOR IN LOW-SPEED WIND TUNNEL; fatigue Crack Propagation in Additively Manufactured Polymer Parts; ELECTROMAGNETIC INTERFERENCE SHIELDING EFFECTIVENESS OF THE THIN CARBON NANOFIBERS/SILICON CARBIDE FABRICS COMPOSITES; some Experimental Results on Dynamic Aeroelasticity of Plates and Shells in Subsonic and Supersonic Flow.; DESIGN OF AERO-ENGINE FADEC POWER SUPPLY CONTROL SYSTEM BASED ON FORWARD DESIGN; DESIGN AND EFFICIENCY ANALYSIS OF EVTOL CONTRA-ROTATING PROPELER; EXPERIMENTAL STUDY OF FLAT BAFFLE INLET TOTAL-PRESSURE DISTORTION IN A THREE-STAGE FAN; EFFECT OF TAILCONE SHAPE ON HOT STREAK PHENOMENA AND INFRARED SIGNATURE OF SERPENTINE NOZZLE WITH AFT DECK; EXPERIMENTAL STUDY ON THE EFFECT OF INTERSTAGE BLEEDING ON THE PERFORMANCE OF FULL-SCALE MULTISTAGE AXIAL COMPRESSOR; MULTIPOINT AERODYNAMIC DESIGN OF A NACELLE FOR AN ELECTRIC FAN; study on the Application of Emulsified Fuel in small Jet Engines; HYDRO ENVIRONMENTAL AND ELECTRICAL ASSETS MAPPING TOOL USING SWARMS AND MACHINE LEARNING, UAV & USV; EFFECTS OF ANISOTROPIC THERMAL CONDUCTIVITY OF COMPOSITE SHIELD ON THE ELECTROTHERMAL ANTI-ICING SYSTEMS; kinetic Energy Recovery from a Landing Aircraft: Energy Analysis, Environmental and Economic Prospects; STRESSING SAFETY ASSESSMENT METHODS BY HIGHER LEVELS OF AUTOMATION. <br/><br/><br/>Authors: . <br/><br/>Affiliations: . <br/><br/>Publication: ICAS Proceedings, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-14064467",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85164909995&origin=inward",
-        "title": "ELECTROMAGNETIC INTERFERENCE SHIELDING EFFECTIVENESS OF THE THIN CARBON NANOFIBERS/SILICON CARBIDE FABRICS COMPOSITES",
-        "content": "<html><body>Slurry impregnation and chemical vapor deposition (CVD) method were used to prepare the thin carbon nanofibers/silicon carbide fabrics (CNFs/SiCf) composites. The microstructure, electrical conductivity, and electromagnetic interference (EMI) shielding effectiveness of CNF/SiCf under different reaction times were investigated in detail. It can be shown that the slurry impregnation method could evenly introduce the catalyst layer and realize the effective dispersion of the catalyst. By exploring the growth process of CVD, 15 min was the best reaction time which could realize the combination of high quality and high loading quantity of carbon nanofibers (CNFs). At this time, CNFs had the good graphitization degree and the diameter was around 25 nm. The results showed that the higher the mass fraction of CNFs was, the better electrical conductivity and EMI shielding property over the frequency range of 8.2-12.4 GHz (X-band) could be obtained with the reaction time extending. The thin CNFs/SiCf composites showed the excellent potential of EMI shielding material with highly absorbing performance. <br/><br/><br/>Authors: Jia X., Du H., Zhang L., Zhang X., Zhong Z.. <br/><br/>Affiliations: AVIC the First Aircraft Institute. <br/><br/>Publication: ICAS Proceedings, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "unique",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "unique",
-        "note": "Master is a conference proceedings overview listing many papers, while candidate is a full individual paper on EMI shielding composites from that proceedings."
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "agreement_unique",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 57,
+  "master": {
+    "id": "legacy-64-master-14064466",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85164925429&origin=inward",
+    "title": "33rd Congress of the International Council of the Aeronautical Sciences, ICAS 2022",
+    "content": "<html><body>The proceedings contain 24 papers. The special focus in this conference is on Aeronautical Sciences. The topics include: CONCEPT DESIGN OF A LOW BOOM SSBJ TO SATISFY SOCIAL ACCEPTANCE; RESEARCH ON THE SELECTION METHOD OF TYPICAL RCS BENCHMARK BASED ON AHP; TWO-PHASE NUMERICAL SIMULATION INVESTIGATION ON THE EFFECTS OF TURBULENCE MODEL AND OPERATING CONDITIONS ON THE CENTRIFUGAL NOZZLE PERFROMANCE; DEVELOPMENT AND VERIFICATION OF OSCILLATING BLADE GUST GENERATOR IN LOW-SPEED WIND TUNNEL; fatigue Crack Propagation in Additively Manufactured Polymer Parts; ELECTROMAGNETIC INTERFERENCE SHIELDING EFFECTIVENESS OF THE THIN CARBON NANOFIBERS/SILICON CARBIDE FABRICS COMPOSITES; some Experimental Results on Dynamic Aeroelasticity of Plates and Shells in Subsonic and Supersonic Flow.; DESIGN OF AERO-ENGINE FADEC POWER SUPPLY CONTROL SYSTEM BASED ON FORWARD DESIGN; DESIGN AND EFFICIENCY ANALYSIS OF EVTOL CONTRA-ROTATING PROPELER; EXPERIMENTAL STUDY OF FLAT BAFFLE INLET TOTAL-PRESSURE DISTORTION IN A THREE-STAGE FAN; EFFECT OF TAILCONE SHAPE ON HOT STREAK PHENOMENA AND INFRARED SIGNATURE OF SERPENTINE NOZZLE WITH AFT DECK; EXPERIMENTAL STUDY ON THE EFFECT OF INTERSTAGE BLEEDING ON THE PERFORMANCE OF FULL-SCALE MULTISTAGE AXIAL COMPRESSOR; MULTIPOINT AERODYNAMIC DESIGN OF A NACELLE FOR AN ELECTRIC FAN; study on the Application of Emulsified Fuel in small Jet Engines; HYDRO ENVIRONMENTAL AND ELECTRICAL ASSETS MAPPING TOOL USING SWARMS AND MACHINE LEARNING, UAV & USV; EFFECTS OF ANISOTROPIC THERMAL CONDUCTIVITY OF COMPOSITE SHIELD ON THE ELECTROTHERMAL ANTI-ICING SYSTEMS; kinetic Energy Recovery from a Landing Aircraft: Energy Analysis, Environmental and Economic Prospects; STRESSING SAFETY ASSESSMENT METHODS BY HIGHER LEVELS OF AUTOMATION. <br/><br/><br/>Authors: . <br/><br/>Affiliations: . <br/><br/>Publication: ICAS Proceedings, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-14064467",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85164909995&origin=inward",
+    "title": "ELECTROMAGNETIC INTERFERENCE SHIELDING EFFECTIVENESS OF THE THIN CARBON NANOFIBERS/SILICON CARBIDE FABRICS COMPOSITES",
+    "content": "<html><body>Slurry impregnation and chemical vapor deposition (CVD) method were used to prepare the thin carbon nanofibers/silicon carbide fabrics (CNFs/SiCf) composites. The microstructure, electrical conductivity, and electromagnetic interference (EMI) shielding effectiveness of CNF/SiCf under different reaction times were investigated in detail. It can be shown that the slurry impregnation method could evenly introduce the catalyst layer and realize the effective dispersion of the catalyst. By exploring the growth process of CVD, 15 min was the best reaction time which could realize the combination of high quality and high loading quantity of carbon nanofibers (CNFs). At this time, CNFs had the good graphitization degree and the diameter was around 25 nm. The results showed that the higher the mass fraction of CNFs was, the better electrical conductivity and EMI shielding property over the frequency range of 8.2-12.4 GHz (X-band) could be obtained with the reaction time extending. The thin CNFs/SiCf composites showed the excellent potential of EMI shielding material with highly absorbing performance. <br/><br/><br/>Authors: Jia X., Du H., Zhang L., Zhang X., Zhong Z.. <br/><br/>Affiliations: AVIC the First Aircraft Institute. <br/><br/>Publication: ICAS Proceedings, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "unique",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "unique",
+    "note": "Master is a conference proceedings overview listing many papers, while candidate is a full individual paper on EMI shielding composites from that proceedings."
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "agreement_unique",
+  "content_source": "hbase_full"
 }

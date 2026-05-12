@@ -302,16 +302,16 @@ _Internal reference — NEVER expose names to user._
 
 ```json
 {
-    "paragraphs": {
-        "what": { "content": "...", "confidence": "medium" },
-        "why": { "content": "...", "confidence": "high" },
-        "who": { "content": "...", "confidence": "low" },
-        "where": { "content": "...", "confidence": "medium" },
-        "scope": { "content": "...", "confidence": "low" },
-        "exclusions": { "content": "...", "confidence": "medium" }
-    },
-    "human": { "fr": "...", "en": "..." },
-    "llm": "..."
+  "paragraphs": {
+    "what": { "content": "...", "confidence": "medium" },
+    "why": { "content": "...", "confidence": "high" },
+    "who": { "content": "...", "confidence": "low" },
+    "where": { "content": "...", "confidence": "medium" },
+    "scope": { "content": "...", "confidence": "low" },
+    "exclusions": { "content": "...", "confidence": "medium" }
+  },
+  "human": { "fr": "...", "en": "..." },
+  "llm": "..."
 }
 ```
 

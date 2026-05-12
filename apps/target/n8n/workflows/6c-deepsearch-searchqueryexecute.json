@@ -32,10 +32,7 @@
       },
       "type": "n8n-nodes-base.executionData",
       "typeVersion": 1.1,
-      "position": [
-        -2048,
-        -112
-      ],
+      "position": [-2048, -112],
       "id": "1f4d54b4-f6d0-4d81-a886-14f4b0b4ef04",
       "name": "ExecutionData_Store_TestMetadata"
     },
@@ -47,10 +44,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -2272,
-        -112
-      ],
+      "position": [-2272, -112],
       "id": "19db754e-763a-4dab-91c8-8839b09941d9",
       "name": "Set_Format_TestInput"
     },
@@ -60,10 +54,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -1824,
-        32
-      ],
+      "position": [-1824, 32],
       "id": "06a9180f-a17e-4f80-b580-e23b4042d1a3",
       "name": "Code_Initialize_WatchFileData"
     },
@@ -77,10 +68,7 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [
-        -2496,
-        -112
-      ],
+      "position": [-2496, -112],
       "id": "6993baa2-a8e9-463c-9f2c-3460599fbb51",
       "name": "Webhook_Trigger_TestInput",
       "webhookId": "5830aa35-6f54-4c67-8966-f8a1da39f0ab",
@@ -121,10 +109,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        -2048,
-        112
-      ],
+      "position": [-2048, 112],
       "id": "8d48c419-cded-4ed5-8976-8af7f7b90219",
       "name": "Workflow_Trigger_DeepSearch"
     },
@@ -139,10 +124,7 @@
       },
       "type": "n8n-nodes-base.jinaAi",
       "typeVersion": 1,
-      "position": [
-        -1376,
-        32
-      ],
+      "position": [-1376, 32],
       "id": "962731dc-f7b1-4d7f-82e7-564f2b13d5a7",
       "name": "JinaAi_SearchQuery_Execute",
       "retryOnFail": true,
@@ -162,10 +144,7 @@
       },
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
-      "position": [
-        -1600,
-        32
-      ],
+      "position": [-1600, 32],
       "id": "9655a5fd-141a-43bc-828e-94fb0389aabd",
       "name": "Loop_Over_Items",
       "retryOnFail": false
@@ -236,10 +215,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -1152,
-        -384
-      ],
+      "position": [-1152, -384],
       "id": "ebf3c57a-fa37-415c-95fb-36617352bebb",
       "name": "Workflow_Execute_InternalWebhook",
       "onError": "continueRegularOutput"
@@ -252,10 +228,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -1152,
-        -192
-      ],
+      "position": [-1152, -192],
       "id": "af9cf192-a38e-471b-8f66-8e96985148c3",
       "name": "Feedback_SearchQueryExecuteError",
       "executeOnce": false
@@ -268,10 +241,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -704,
-        -288
-      ],
+      "position": [-704, -288],
       "id": "408f7343-31bb-407a-a106-6c6eeb4eccbf",
       "name": "Feedback_SearchResultSaveError",
       "executeOnce": false
@@ -304,10 +274,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -1376,
-        -288
-      ],
+      "position": [-1376, -288],
       "id": "f2b370b0-3846-4416-bdd3-e1e784e95fac",
       "name": "Condition_Check_ExecuteIsSuccess"
     },
@@ -358,10 +325,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -928,
-        -384
-      ],
+      "position": [-928, -384],
       "id": "a24a072a-acd7-4587-b82c-c34375539c57",
       "name": "Condition_Check_SaveIsSuccess"
     },
@@ -371,10 +335,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -1152,
-        112
-      ],
+      "position": [-1152, 112],
       "id": "37d67bad-99ff-4d66-ab94-76c7bf50934d",
       "name": "Code_SearchResult_FormatResult"
     },
@@ -384,10 +345,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -704,
-        -480
-      ],
+      "position": [-704, -480],
       "id": "a4f1f951-c8a7-4be3-92f7-97f845b81d35",
       "name": "Code_SearchResult_NormalizeDeduplicateURL"
     },
@@ -404,10 +362,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
-      "position": [
-        -448,
-        -480
-      ],
+      "position": [-448, -480],
       "id": "62520eec-033a-4af1-aefa-3446e8133113",
       "name": "LLM_SearchResults_RelevanceScorer",
       "retryOnFail": true,
@@ -421,10 +376,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
-      "position": [
-        -224,
-        -256
-      ],
+      "position": [-224, -256],
       "id": "03205e40-031a-43e8-b629-8af78e6ce48b",
       "name": "LLM_OutputParser_RelevanceScore"
     },
@@ -436,10 +388,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        144,
-        -384
-      ],
+      "position": [144, -384],
       "id": "0ce9f780-4f08-4bfb-88ad-b5918a26b2eb",
       "name": "Feedback_AgentAIError"
     },
@@ -449,10 +398,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        144,
-        -576
-      ],
+      "position": [144, -576],
       "id": "6c2bda83-3e8f-4942-bd56-3bbf78f7dc5d",
       "name": "Code_SearchResult_CalculateQualityScore"
     },
@@ -522,10 +468,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        368,
-        -576
-      ],
+      "position": [368, -576],
       "id": "c03bb573-04b2-47c7-896c-5cb3523f0cd4",
       "name": "Workflow_Execute_UpdateScoring",
       "onError": "continueRegularOutput"
@@ -538,10 +481,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        816,
-        -576
-      ],
+      "position": [816, -576],
       "id": "2e76ba6c-5b56-4bf8-9613-85392fe95218",
       "name": "Feedback_AgentSuccess",
       "executeOnce": false
@@ -552,10 +492,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        592,
-        -576
-      ],
+      "position": [592, -576],
       "id": "712a7eb4-da70-4dbf-8b56-dfac0a5b7199",
       "name": "Code_Group_SearchResults"
     },
@@ -584,10 +521,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -464,
-        -256
-      ],
+      "position": [-464, -256],
       "id": "b2bba664-9cb7-4686-affb-ea8baaf42732",
       "name": "LLM_Model_Primary",
       "credentials": {
@@ -622,10 +556,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -336,
-        -256
-      ],
+      "position": [-336, -256],
       "id": "4ffca074-04a7-4ca6-989b-bcb25003ebab",
       "name": "LLM_Model_Fallback",
       "credentials": {
@@ -654,10 +585,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
-      "position": [
-        -80,
-        32
-      ],
+      "position": [-80, 32],
       "id": "a72a8447-45ab-40ad-a2d4-c390991ba410",
       "name": "LLM_Model_ValidationParser",
       "credentials": {

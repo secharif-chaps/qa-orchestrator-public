@@ -930,12 +930,12 @@ docker compose exec api php bin/console doctrine:migrations:migrate --no-interac
 ```typescript
 // Before
 interface Entity {
-    id: number
+  id: number
 }
 
 // After
 interface Entity {
-    id: string // UUID string
+  id: string // UUID string
 }
 ```
 

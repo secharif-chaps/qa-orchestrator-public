@@ -49,9 +49,9 @@ RabbitMQ Trigger → Unserialize Data → Filter Conversation Monitor → Check 
 - **Contexte** : Historique des 5 derniers messages + titre actuel
 - **Prompt** : Génère un titre descriptif et professionnel
 - **Exemples** :
-    - "Competitive Intelligence: Tech Startup Landscape"
-    - "Market Trends: Renewable Energy Sector"
-    - "Technology Innovation: AI in Healthcare"
+  - "Competitive Intelligence: Tech Startup Landscape"
+  - "Market Trends: Renewable Energy Sector"
+  - "Technology Innovation: AI in Healthcare"
 
 ### 6. **Execute Rename Watchfile**
 
@@ -74,32 +74,32 @@ Simuler un message de conversation monitor pour tester le système.
 
 ```json
 {
-    "name": "N8nConversationMonitor",
-    "data": {
-        "messageCount": 4,
-        "conversationHistory": [
-            {
-                "role": "user",
-                "content": "Je veux surveiller les startups dans le secteur de l'IA"
-            },
-            {
-                "role": "assistant",
-                "content": "Je peux vous aider à configurer une veille sur les startups IA."
-            },
-            {
-                "role": "user",
-                "content": "Les entreprises qui développent des solutions de traitement du langage naturel"
-            },
-            {
-                "role": "assistant",
-                "content": "Parfait ! Je vais configurer une veille sur les startups spécialisées en NLP."
-            }
-        ],
-        "watchFileId": "test-watch-file-id",
-        "currentTitle": "Veille IA"
-    },
+  "name": "N8nConversationMonitor",
+  "data": {
+    "messageCount": 4,
+    "conversationHistory": [
+      {
+        "role": "user",
+        "content": "Je veux surveiller les startups dans le secteur de l'IA"
+      },
+      {
+        "role": "assistant",
+        "content": "Je peux vous aider à configurer une veille sur les startups IA."
+      },
+      {
+        "role": "user",
+        "content": "Les entreprises qui développent des solutions de traitement du langage naturel"
+      },
+      {
+        "role": "assistant",
+        "content": "Parfait ! Je vais configurer une veille sur les startups spécialisées en NLP."
+      }
+    ],
     "watchFileId": "test-watch-file-id",
-    "responseType": "conversation_monitor"
+    "currentTitle": "Veille IA"
+  },
+  "watchFileId": "test-watch-file-id",
+  "responseType": "conversation_monitor"
 }
 ```
 
@@ -187,16 +187,16 @@ Le workflow `direct-messageNew.json` envoie déjà des messages de monitoring :
 ### Problèmes Courants
 
 1. **Workflow ne se déclenche pas**
-    - Vérifier que `command_name == "N8nConversationMonitor"`
-    - Contrôler la queue `agent_commands`
+   - Vérifier que `command_name == "N8nConversationMonitor"`
+   - Contrôler la queue `agent_commands`
 
 2. **Génération de titre échoue**
-    - Vérifier les credentials OpenAI
-    - Contrôler le format des données de conversation
+   - Vérifier les credentials OpenAI
+   - Contrôler le format des données de conversation
 
 3. **Renommage ne s'exécute pas**
-    - Vérifier le workflow `Rename Watchfile automaticly`
-    - Contrôler les paramètres d'entrée
+   - Vérifier le workflow `Rename Watchfile automaticly`
+   - Contrôler les paramètres d'entrée
 
 ### Tests
 

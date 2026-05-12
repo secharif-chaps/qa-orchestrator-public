@@ -14,10 +14,7 @@
       },
       "type": "n8n-nodes-base.rabbitmqTrigger",
       "typeVersion": 1,
-      "position": [
-        -1472,
-        592
-      ],
+      "position": [-1472, 592],
       "id": "357e144a-e256-49b2-be71-a9d8dcc94bba",
       "name": "RabbitMQ_Trigger_AgentCommands",
       "credentials": {
@@ -49,10 +46,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -1248,
-        496
-      ],
+      "position": [-1248, 496],
       "id": "6c596272-12ae-4efc-a4b3-a27223af32ee",
       "name": "Set_Format_CommandData"
     },
@@ -86,10 +80,7 @@
       },
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1,
-      "position": [
-        -1136,
-        496
-      ],
+      "position": [-1136, 496],
       "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
       "name": "RabbitMQ_Publish_AcknowledgeExecution",
       "credentials": {
@@ -211,10 +202,7 @@
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
-      "position": [
-        -1024,
-        448
-      ],
+      "position": [-1024, 448],
       "id": "5716123e-bf0d-4808-bacc-e62261f6f113",
       "name": "Router_Switch_WorkflowType",
       "onError": "continueErrorOutput"
@@ -353,10 +341,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
-      "position": [
-        -800,
-        160
-      ],
+      "position": [-800, 160],
       "id": "c7012a1c-8a27-4fce-aacc-00f137386e0a",
       "name": "Workflow_Execute_ChatSessionMessage",
       "onError": "continueErrorOutput"
@@ -430,10 +415,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
-      "position": [
-        -800,
-        400
-      ],
+      "position": [-800, 400],
       "id": "34825f93-fcf2-4c16-b0c9-812ccd241a08",
       "name": "Workflow_Execute_GenerateDocumentSummary",
       "onError": "continueErrorOutput"
@@ -507,10 +489,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
-      "position": [
-        -800,
-        592
-      ],
+      "position": [-800, 592],
       "id": "3573b5d6-190d-4eae-8b33-d62e6a3fa409",
       "name": "Workflow_Execute_ValidateDocument",
       "onError": "continueErrorOutput"
@@ -628,10 +607,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
-      "position": [
-        -800,
-        832
-      ],
+      "position": [-800, 832],
       "id": "b034a744-4aaf-49f7-9f05-6fecde51d945",
       "name": "Workflow_Execute_ExtractEvents",
       "onError": "continueErrorOutput"
@@ -644,10 +620,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -352,
-        576
-      ],
+      "position": [-352, 576],
       "id": "38b40441-5cc2-4dc2-9bd6-44792621d7f7",
       "name": "Feedback_OrchestratorError"
     },
@@ -659,10 +632,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -576,
-        400
-      ],
+      "position": [-576, 400],
       "id": "42fb5e49-8a60-49a6-a09c-f2bcc61a7c4f",
       "name": "Feedback_OrchestratorSuccess"
     },
@@ -674,10 +644,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -1696,
-        400
-      ],
+      "position": [-1696, 400],
       "id": "08a15080-01a7-4112-9845-f8b2f06e6f0c",
       "name": "Set_Format_TestInput"
     },
@@ -706,10 +673,7 @@
       },
       "type": "n8n-nodes-base.executionData",
       "typeVersion": 1.1,
-      "position": [
-        -1472,
-        400
-      ],
+      "position": [-1472, 400],
       "id": "dab24d1b-ac57-4458-b4fb-6a0a40bb4633",
       "name": "ExecutionData_Store_TestMetadata"
     },
@@ -723,10 +687,7 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [
-        -1920,
-        400
-      ],
+      "position": [-1920, 400],
       "id": "5980d221-6cd4-4923-b9fc-dcdf4191477f",
       "name": "Webhook_Trigger_TestInput",
       "webhookId": "974118e7-db23-4a4c-aaad-d7d8e95d5fd8"
@@ -843,10 +804,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        -576,
-        576
-      ],
+      "position": [-576, 576],
       "id": "1d3a9e0b-7243-4afa-bd7a-4d369b8d6c41",
       "name": "Subworkflow_Call_ErrorMessage",
       "onError": "continueRegularOutput"

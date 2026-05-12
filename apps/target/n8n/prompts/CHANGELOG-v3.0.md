@@ -192,13 +192,13 @@ Cette refonte majeure du comportement de Chaps-e introduit :
 
 ```json
 {
-    "referenceSubject": {
-        "human": {
-            "fr": "## Sujet de surveillance\n...",
-            "en": "## Monitoring Subject\n..."
-        },
-        "llm": "# DOCUMENT RELEVANCE SCORING CRITERIA\n..."
-    }
+  "referenceSubject": {
+    "human": {
+      "fr": "## Sujet de surveillance\n...",
+      "en": "## Monitoring Subject\n..."
+    },
+    "llm": "# DOCUMENT RELEVANCE SCORING CRITERIA\n..."
+  }
 }
 ```
 
@@ -218,16 +218,16 @@ Cette refonte majeure du comportement de Chaps-e introduit :
 
 ```json
 {
-    "strategicQuestions": [
-        {
-            "questionEN": "...",
-            "questionFR": "...",
-            "mappedTopics": ["Topic 1"],
-            "discoveryTarget": "actors",
-            "priority": 95,
-            "searchQueries": ["query 1", "query 2"]
-        }
-    ]
+  "strategicQuestions": [
+    {
+      "questionEN": "...",
+      "questionFR": "...",
+      "mappedTopics": ["Topic 1"],
+      "discoveryTarget": "actors",
+      "priority": 95,
+      "searchQueries": ["query 1", "query 2"]
+    }
+  ]
 }
 ```
 

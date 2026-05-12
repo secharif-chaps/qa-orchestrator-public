@@ -102,11 +102,11 @@ Migrate all functionality to the existing Vue 3 codebase using `unplugin-vue-rou
 
 - Significant migration effort required
 - Need to replace Nuxt-specific features:
-    - `useRuntimeConfig()` → `import.meta.env` + `useConfig()` composable
-    - `definePageMeta()` → `definePage()` from unplugin-vue-router
-    - `useHead()` → `@vueuse/head` or `@unhead/vue`
-    - `defineNuxtPlugin()` → standard Vue plugins
-    - Auto-imports → explicit imports
+  - `useRuntimeConfig()` → `import.meta.env` + `useConfig()` composable
+  - `definePageMeta()` → `definePage()` from unplugin-vue-router
+  - `useHead()` → `@vueuse/head` or `@unhead/vue`
+  - `defineNuxtPlugin()` → standard Vue plugins
+  - Auto-imports → explicit imports
 - Authentication migration from Keycloak JS to oidc-client-ts
 - Need to adapt layout system (Target uses route-based layouts like `watch-file`, ChapsMind uses auth-based layouts
   only)
@@ -148,165 +148,165 @@ We will **migrate to pure Vue 3 with unplugin-vue-router** (Option B).
 integration.
 
 1. **ESLint Migration**
-    - Replace `@nuxt/eslint` with `@vue/eslint-config-typescript` + `@vue/eslint-config-prettier`
-    - Align rules with ChapsMind configuration (`eslint.config.ts`)
-    - Run linting on all Target code and fix errors
+   - Replace `@nuxt/eslint` with `@vue/eslint-config-typescript` + `@vue/eslint-config-prettier`
+   - Align rules with ChapsMind configuration (`eslint.config.ts`)
+   - Run linting on all Target code and fix errors
 
 2. **Prettier Alignment**
-    - Verify Prettier configurations are identical
-    - Reformat Target code if necessary
+   - Verify Prettier configurations are identical
+   - Reformat Target code if necessary
 
 3. **Stylelint Setup** (in ChapsMind)
-    - **Context**: Target uses Stylelint for CSS/SCSS/Vue style linting, but ChapsMind workspace does not currently have
-      Stylelint configured
-    - **Action**: Add Stylelint configuration to ChapsMind workspace to maintain code quality standards
-    - Install required dependencies:
-        - `stylelint: ^16.19.1`
-        - `stylelint-config-recommended`
-        - `stylelint-config-tailwindcss`
-        - `stylelint-config-recommended-vue` (for Vue SFC `<style>` blocks)
-        - `stylelint-prettier` (to integrate with Prettier)
-    - Create `.stylelintrc` configuration file aligned with Target's configuration:
-        ```json
-        {
-            "extends": [
-                "stylelint-config-recommended",
-                "stylelint-config-tailwindcss",
-                "stylelint-config-recommended-vue"
-            ],
-            "plugins": ["stylelint-prettier"],
-            "rules": {
-                "prettier/prettier": true
-            }
-        }
-        ```
-    - Add Stylelint scripts to `package.json`:
-        - `stylelint:fix`: Check and fix CSS/SCSS/Vue style issues
-        - `stylelint:check`: Check only (for CI)
-    - Integrate Stylelint into lint-staged configuration for `.vue`, `.css`, and `.scss` files
-    - **Note**: This ensures consistent CSS/SCSS code quality across both Target and ChapsMind modules
+   - **Context**: Target uses Stylelint for CSS/SCSS/Vue style linting, but ChapsMind workspace does not currently have
+     Stylelint configured
+   - **Action**: Add Stylelint configuration to ChapsMind workspace to maintain code quality standards
+   - Install required dependencies:
+     - `stylelint: ^16.19.1`
+     - `stylelint-config-recommended`
+     - `stylelint-config-tailwindcss`
+     - `stylelint-config-recommended-vue` (for Vue SFC `<style>` blocks)
+     - `stylelint-prettier` (to integrate with Prettier)
+   - Create `.stylelintrc` configuration file aligned with Target's configuration:
+     ```json
+     {
+       "extends": [
+         "stylelint-config-recommended",
+         "stylelint-config-tailwindcss",
+         "stylelint-config-recommended-vue"
+       ],
+       "plugins": ["stylelint-prettier"],
+       "rules": {
+         "prettier/prettier": true
+       }
+     }
+     ```
+   - Add Stylelint scripts to `package.json`:
+     - `stylelint:fix`: Check and fix CSS/SCSS/Vue style issues
+     - `stylelint:check`: Check only (for CI)
+   - Integrate Stylelint into lint-staged configuration for `.vue`, `.css`, and `.scss` files
+   - **Note**: This ensures consistent CSS/SCSS code quality across both Target and ChapsMind modules
 
 4. **Migration oidc-client → oidc-client-ts** (in ChapsMind)
-    - Update dependency from `oidc-client` to `oidc-client-ts`
-    - Adapt authentication code following
-      the [migration guide](https://github.com/authts/oidc-client-ts/blob/main/docs/migration.md)
-    - Key changes:
-        - `loadUserInfo` defaults to `false` instead of `true`
-        - Changes in `revokeTokens()` and `signoutPopupCallback()`
-    - Validate that authentication works correctly
+   - Update dependency from `oidc-client` to `oidc-client-ts`
+   - Adapt authentication code following
+     the [migration guide](https://github.com/authts/oidc-client-ts/blob/main/docs/migration.md)
+   - Key changes:
+     - `loadUserInfo` defaults to `false` instead of `true`
+     - Changes in `revokeTokens()` and `signoutPopupCallback()`
+   - Validate that authentication works correctly
 
 5. **Validation**
-    - Ensure Target code passes ChapsMind linters (ESLint, Prettier, Stylelint) without errors
-    - Ensure ChapsMind authentication works with oidc-client-ts
-    - Verify Stylelint runs correctly on ChapsMind codebase
+   - Ensure Target code passes ChapsMind linters (ESLint, Prettier, Stylelint) without errors
+   - Ensure ChapsMind authentication works with oidc-client-ts
+   - Verify Stylelint runs correctly on ChapsMind codebase
 
 ### Phase 1: Configuration and Dependencies
 
 1. **Environment Variables Migration**
-    - Replace `useRuntimeConfig()` with `import.meta.env` (Vite standard)
-    - Create `useConfig()` composable to maintain similar API
-    - Prefix all environment variables with `VITE_`
-    - Configure Target API endpoint: `VITE_TARGET_API_BASE_URL` (ChapsMind has its own independent configuration)
+   - Replace `useRuntimeConfig()` with `import.meta.env` (Vite standard)
+   - Create `useConfig()` composable to maintain similar API
+   - Prefix all environment variables with `VITE_`
+   - Configure Target API endpoint: `VITE_TARGET_API_BASE_URL` (ChapsMind has its own independent configuration)
 
 2. **Dependencies**
-    - Add missing dependencies: `@internationalized/date`, `dompurify`
-    - Remove dependencies not needed in target: `zod` (Target-specific, not used in ChapsMind)
-    - Update version mismatches: `@pinia/colada`, `@vueuse/core`, `marked`, etc.
-    - Update `reka-ui` from 2.0.2 to 2.4.1 (minor breaking change: `VisuallyHidden` prop naming only)
-    - Remove Nuxt-specific packages: `nuxt`, `@nuxtjs/i18n`, `@pinia/nuxt`
-    - Add `@vueuse/head` or `@unhead/vue` for meta tag management
+   - Add missing dependencies: `@internationalized/date`, `dompurify`
+   - Remove dependencies not needed in target: `zod` (Target-specific, not used in ChapsMind)
+   - Update version mismatches: `@pinia/colada`, `@vueuse/core`, `marked`, etc.
+   - Update `reka-ui` from 2.0.2 to 2.4.1 (minor breaking change: `VisuallyHidden` prop naming only)
+   - Remove Nuxt-specific packages: `nuxt`, `@nuxtjs/i18n`, `@pinia/nuxt`
+   - Add `@vueuse/head` or `@unhead/vue` for meta tag management
 
 3. **Folder Structure - Step 1: Isolation**
-    - Create a `/target` folder in `chapsmind-workspace/front/src/`
-    - Copy all content from `target/pwa/` (adapted) into `src/target/`
-    - Add Vite alias for `@target/*` → `src/target/*`
-    - Initial structure:
-        ```
-        chapsmind-workspace/front/src/
-        ├── target/           # Migrated Target code
-        │   ├── components/
-        │   ├── composables/
-        │   ├── pages/
-        │   ├── stores/
-        │   └── ...
-        ├── components/       # Existing ChapsMind code
-        ├── composables/
-        └── ...
-        ```
+   - Create a `/target` folder in `chapsmind-workspace/front/src/`
+   - Copy all content from `target/pwa/` (adapted) into `src/target/`
+   - Add Vite alias for `@target/*` → `src/target/*`
+   - Initial structure:
+     ```
+     chapsmind-workspace/front/src/
+     ├── target/           # Migrated Target code
+     │   ├── components/
+     │   ├── composables/
+     │   ├── pages/
+     │   ├── stores/
+     │   └── ...
+     ├── components/       # Existing ChapsMind code
+     ├── composables/
+     └── ...
+     ```
 
 ### Phase 2: Core Functionality Migration
 
 1. **Routing**
-    - Migrate pages from `definePageMeta()` to `<route lang="yaml">` blocks (unplugin-vue-router format)
-    - Convert route metadata including permissions to YAML format
-    - Adapt middleware to Vue Router navigation guards (ChapsMind already has permission checking in `router/index.ts`)
-    - **Layout handling**: Target uses route-based layouts (`watch-file` layout for WatchFile pages). ChapsMind only has
-      auth-based layout selection. Options:
-        - Extend ChapsMind's `App.vue` to support route-based layout selection via `to.meta.layout`
-        - Integrate layout components directly into pages that need them
+   - Migrate pages from `definePageMeta()` to `<route lang="yaml">` blocks (unplugin-vue-router format)
+   - Convert route metadata including permissions to YAML format
+   - Adapt middleware to Vue Router navigation guards (ChapsMind already has permission checking in `router/index.ts`)
+   - **Layout handling**: Target uses route-based layouts (`watch-file` layout for WatchFile pages). ChapsMind only has
+     auth-based layout selection. Options:
+     - Extend ChapsMind's `App.vue` to support route-based layout selection via `to.meta.layout`
+     - Integrate layout components directly into pages that need them
 
 2. **Authentication**
-    - Adapt Target's `useAuth()` composable to use OIDC UserManager
-    - Map Keycloak configuration to OIDC settings
-    - Handle token refresh and events via OIDC patterns
+   - Adapt Target's `useAuth()` composable to use OIDC UserManager
+   - Map Keycloak configuration to OIDC settings
+   - Handle token refresh and events via OIDC patterns
 
 3. **API Layer**
-    - ChapsMind has its own configuration and won't interfere with Target's
-    - Migrate existing API queries and mutations for Target
-    - Adapt `useAppFetch()` for Target API endpoint
-    - No need to create separate composables as ChapsMind configuration is independent
+   - ChapsMind has its own configuration and won't interfere with Target's
+   - Migrate existing API queries and mutations for Target
+   - Adapt `useAppFetch()` for Target API endpoint
+   - No need to create separate composables as ChapsMind configuration is independent
 
 ### Phase 3: Components and Features
 
 1. **Components Migration**
-    - Copy components to `src/target/components/` (see Phase 1.3 for structure)
-    - Replace `~/` imports with `@target/` alias
-    - Remove `#imports` occurrences (Nuxt auto-imports)
+   - Copy components to `src/target/components/` (see Phase 1.3 for structure)
+   - Replace `~/` imports with `@target/` alias
+   - Remove `#imports` occurrences (Nuxt auto-imports)
 
 2. **Plugins and Directives**
-    - Convert `defineNuxtPlugin()` to standard Vue plugin functions
-    - Create `v-sanitize-html` directive (replacing Nuxt plugin)
-    - Migrate auth and clarity plugins
+   - Convert `defineNuxtPlugin()` to standard Vue plugin functions
+   - Create `v-sanitize-html` directive (replacing Nuxt plugin)
+   - Migrate auth and clarity plugins
 
 3. **Meta Tags**
-    - Install and configure `@vueuse/head` or `@unhead/vue`
-    - Replace `useHead()` calls with library's `useHead()`
-    - Migrate `useLocaleHead()` functionality
+   - Install and configure `@vueuse/head` or `@unhead/vue`
+   - Replace `useHead()` calls with library's `useHead()`
+   - Migrate `useLocaleHead()` functionality
 
 ### Phase 4: Internationalization
 
 1. **i18n Configuration**
-    - Migrate `datetimeFormats` from Nuxt i18n config
-    - Adapt locale formats (`en`/`fr` vs `en-US`/`fr-FR`)
-    - Copy and merge translation files
-    - **Note**: ChapsMind workspace uses `.ts` files for translations, Target uses `.json` files. Both formats can
-      coexist initially during migration
+   - Migrate `datetimeFormats` from Nuxt i18n config
+   - Adapt locale formats (`en`/`fr` vs `en-US`/`fr-FR`)
+   - Copy and merge translation files
+   - **Note**: ChapsMind workspace uses `.ts` files for translations, Target uses `.json` files. Both formats can
+     coexist initially during migration
 
 2. **Future Improvements** (out of scope for initial migration)
-    - Align translation keys between modules (standardization)
-    - Implement lazy loading of translation files per module/route to optimize initial bundle:
-        ```typescript
-        // Example: load Target translations only on Target pages
-        async function loadTargetTranslations(locale: string) {
-            const messages = await import(`@target/i18n/${locale}.json`)
-            i18n.global.mergeLocaleMessage(locale, {
-                target: messages.default,
-            })
-        }
-        ```
+   - Align translation keys between modules (standardization)
+   - Implement lazy loading of translation files per module/route to optimize initial bundle:
+     ```typescript
+     // Example: load Target translations only on Target pages
+     async function loadTargetTranslations(locale: string) {
+       const messages = await import(`@target/i18n/${locale}.json`)
+       i18n.global.mergeLocaleMessage(locale, {
+         target: messages.default,
+       })
+     }
+     ```
 
 ### Phase 5: Testing and Validation
 
 1. **Test Infrastructure**
-    - Adapt test mocks (remove Nuxt-specific mocks)
-    - Update test utilities
-    - Verify all tests pass
+   - Adapt test mocks (remove Nuxt-specific mocks)
+   - Update test utilities
+   - Verify all tests pass
 
 2. **Manual Testing**
-    - Test critical user flows
-    - Verify authentication works
-    - Check API integrations
-    - Validate routing and navigation
+   - Test critical user flows
+   - Verify authentication works
+   - Check API integrations
+   - Validate routing and navigation
 
 ### Note on Code Style and Linters
 
@@ -336,12 +336,12 @@ const apiUrl = config.public.apiBaseUrl
 ```typescript
 // composables/useConfig.ts
 export function useConfig() {
-    return {
-        public: {
-            apiBaseUrl: import.meta.env.VITE_API_BASE_URL || '/api',
-            // ...
-        },
-    }
+  return {
+    public: {
+      apiBaseUrl: import.meta.env.VITE_API_BASE_URL || '/api',
+      // ...
+    },
+  }
 }
 
 // Usage
@@ -355,8 +355,8 @@ const apiUrl = config.public.apiBaseUrl
 
 ```typescript
 definePageMeta({
-    layout: 'watch-file',
-    name: RouteNames.WATCH_FILES,
+  layout: 'watch-file',
+  name: RouteNames.WATCH_FILES,
 })
 ```
 
@@ -376,9 +376,9 @@ Or using `definePage()`:
 import { definePage } from 'vue-router/auto'
 
 definePage({
-    meta: {
-        // custom metadata
-    },
+  meta: {
+    // custom metadata
+  },
 })
 ```
 
@@ -390,7 +390,7 @@ definePage({
 
 ```typescript
 useHead({
-    title: t('watch_files.title'),
+  title: t('watch_files.title'),
 })
 ```
 
@@ -400,7 +400,7 @@ useHead({
 import { useHead } from '@vueuse/head'
 
 useHead({
-    title: t('watch_files.title'),
+  title: t('watch_files.title'),
 })
 ```
 
@@ -410,9 +410,9 @@ useHead({
 
 ```typescript
 export default defineNuxtPlugin((nuxtApp) => {
-    nuxtApp.vueApp.directive('sanitize-html', {
-        /* ... */
-    })
+  nuxtApp.vueApp.directive('sanitize-html', {
+    /* ... */
+  })
 })
 ```
 
@@ -421,14 +421,14 @@ export default defineNuxtPlugin((nuxtApp) => {
 ```typescript
 // directives/sanitizeHtml.ts
 export function setupSanitizeHtmlDirective(app: App) {
-    app.directive('sanitize-html', {
-        beforeMount(el, binding) {
-            el.innerHTML = DOMPurify.sanitize(binding.value, sanitizeConfig)
-        },
-        updated(el, binding) {
-            el.innerHTML = DOMPurify.sanitize(binding.value, sanitizeConfig)
-        },
-    })
+  app.directive('sanitize-html', {
+    beforeMount(el, binding) {
+      el.innerHTML = DOMPurify.sanitize(binding.value, sanitizeConfig)
+    },
+    updated(el, binding) {
+      el.innerHTML = DOMPurify.sanitize(binding.value, sanitizeConfig)
+    },
+  })
 }
 ```
 
@@ -447,12 +447,12 @@ await keycloak.init({ onLoad: 'login-required' })
 ```typescript
 import { UserManager } from 'oidc-client-ts'
 const userManager = new UserManager({
-    authority: oidcBaseUrl,
-    client_id: clientId,
-    redirect_uri: window.location.origin + '/auth/callback',
-    // Note: loadUserInfo defaults to false in oidc-client-ts (was true in oidc-client)
-    loadUserInfo: true,
-    // ...
+  authority: oidcBaseUrl,
+  client_id: clientId,
+  redirect_uri: window.location.origin + '/auth/callback',
+  // Note: loadUserInfo defaults to false in oidc-client-ts (was true in oidc-client)
+  loadUserInfo: true,
+  // ...
 })
 await userManager.signinRedirect()
 ```
@@ -463,7 +463,7 @@ await userManager.signinRedirect()
 
 ```typescript
 definePageMeta({
-    middleware: ['auth', 'admin'],
+  middleware: ['auth', 'admin'],
 })
 ```
 
@@ -473,7 +473,7 @@ definePageMeta({
 <route lang="yaml">
 meta:
 permissions:
-    - admin.workflows
+  - admin.workflows
 </route>
 ```
 
@@ -528,22 +528,22 @@ If Target needs custom layouts per route, this system would need to be extended.
 The following items will be addressed after the initial migration:
 
 1. **Module reorganization**: Restructure shared folders into subdirectories by module:
-    ```
-    src/
-    ├── components/
-    │   ├── common/       # Shared components
-    │   ├── explore/      # ChapsMind (Explore) components
-    │   └── target/       # Target components
-    ├── composables/
-    │   ├── common/
-    │   ├── explore/
-    │   └── target/
-    ├── stores/
-    │   ├── common/
-    │   ├── explore/
-    │   └── target/
-    └── ...
-    ```
+   ```
+   src/
+   ├── components/
+   │   ├── common/       # Shared components
+   │   ├── explore/      # ChapsMind (Explore) components
+   │   └── target/       # Target components
+   ├── composables/
+   │   ├── common/
+   │   ├── explore/
+   │   └── target/
+   ├── stores/
+   │   ├── common/
+   │   ├── explore/
+   │   └── target/
+   └── ...
+   ```
 2. **i18n key alignment**: Standardize translation keys between modules (explore/target/common)
 3. **i18n lazy loading**: Load translation files per module based on navigation
 4. **i18n file format**: Long-term decision on `.ts` vs `.json` (both coexist during migration)

@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13486811",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139033033&origin=inward",
-        "title": "Rapid microwave sintering of centimetric zirconia: Scalability and electromagnetic-thermal-fluid-dynamic simulation",
-        "content": "<html><body>Microwave sintering is a method presenting the following advantages for flash sintering: contactless/volumetric heating, and the possibility to control the heating cycle of the microwave power. In this study, the transition from a typical 100 K/min to an ultra-rapid heating rate of 500 K/min is studied. The heating homogeneity of the typical hybrid configuration using silicon carbide susceptors is tested up to the stability limit of the system. We show that zirconia specimens as thick as 10 mm can be heated and sintered up to 500 K/min heating rate at which thermal cracks appear. However, the centimetric size of the specimens seems to favor coarsening implying an important remaining porosity in the end. A comprehensive simulation including microwave heating and convection has allowed the determination of the heating regime transition during the flash process and the quantification of each specimen's cooling fluxes. <br/><br/><br/>Authors: Manière C., Harnois C., Riquet G., Grippi T., Behar-Lafenetre S., Marinel S.. <br/><br/>Affiliations: CRISMAT - Laboratoire de Crystallographie et Sciences des Matériaux, Thales Alenia Space. <br/><br/>Publication: Journal of the American Ceramic Society, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13487042",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139033033&origin=inward",
-        "title": "Rapid microwave sintering of centimetric zirconia: Scalability and electromagnetic-thermal-fluid-dynamic simulation",
-        "content": "<html><body>Microwave sintering is a method presenting the following advantages for flash sintering: contactless/volumetric heating, and the possibility to control the heating cycle of the microwave power. In this study, the transition from a typical 100 K/min to an ultra-rapid heating rate of 500 K/min is studied. The heating homogeneity of the typical hybrid configuration using silicon carbide susceptors is tested up to the stability limit of the system. We show that zirconia specimens as thick as 10 mm can be heated and sintered up to 500 K/min heating rate at which thermal cracks appear. However, the centimetric size of the specimens seems to favor coarsening implying an important remaining porosity in the end. A comprehensive simulation including microwave heating and convection has allowed the determination of the heating regime transition during the flash process and the quantification of each specimen's cooling fluxes. <br/><br/><br/>Authors: Manière C., Harnois C., Riquet G., Grippi T., Behar-Lafenetre S., Marinel S.. <br/><br/>Affiliations: CRISMAT - Laboratoire de Crystallographie et Sciences des Matériaux, Thales Alenia Space. <br/><br/>Publication: Journal of the American Ceramic Society, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "partial_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13486811",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139033033&origin=inward",
+    "title": "Rapid microwave sintering of centimetric zirconia: Scalability and electromagnetic-thermal-fluid-dynamic simulation",
+    "content": "<html><body>Microwave sintering is a method presenting the following advantages for flash sintering: contactless/volumetric heating, and the possibility to control the heating cycle of the microwave power. In this study, the transition from a typical 100 K/min to an ultra-rapid heating rate of 500 K/min is studied. The heating homogeneity of the typical hybrid configuration using silicon carbide susceptors is tested up to the stability limit of the system. We show that zirconia specimens as thick as 10 mm can be heated and sintered up to 500 K/min heating rate at which thermal cracks appear. However, the centimetric size of the specimens seems to favor coarsening implying an important remaining porosity in the end. A comprehensive simulation including microwave heating and convection has allowed the determination of the heating regime transition during the flash process and the quantification of each specimen's cooling fluxes. <br/><br/><br/>Authors: Manière C., Harnois C., Riquet G., Grippi T., Behar-Lafenetre S., Marinel S.. <br/><br/>Affiliations: CRISMAT - Laboratoire de Crystallographie et Sciences des Matériaux, Thales Alenia Space. <br/><br/>Publication: Journal of the American Ceramic Society, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13487042",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139033033&origin=inward",
+    "title": "Rapid microwave sintering of centimetric zirconia: Scalability and electromagnetic-thermal-fluid-dynamic simulation",
+    "content": "<html><body>Microwave sintering is a method presenting the following advantages for flash sintering: contactless/volumetric heating, and the possibility to control the heating cycle of the microwave power. In this study, the transition from a typical 100 K/min to an ultra-rapid heating rate of 500 K/min is studied. The heating homogeneity of the typical hybrid configuration using silicon carbide susceptors is tested up to the stability limit of the system. We show that zirconia specimens as thick as 10 mm can be heated and sintered up to 500 K/min heating rate at which thermal cracks appear. However, the centimetric size of the specimens seems to favor coarsening implying an important remaining porosity in the end. A comprehensive simulation including microwave heating and convection has allowed the determination of the heating regime transition during the flash process and the quantification of each specimen's cooling fluxes. <br/><br/><br/>Authors: Manière C., Harnois C., Riquet G., Grippi T., Behar-Lafenetre S., Marinel S.. <br/><br/>Affiliations: CRISMAT - Laboratoire de Crystallographie et Sciences des Matériaux, Thales Alenia Space. <br/><br/>Publication: Journal of the American Ceramic Society, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "partial_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical abstract text indicate a literal recrawl of the same article."
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

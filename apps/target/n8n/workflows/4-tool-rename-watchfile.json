@@ -34,10 +34,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [
-        0,
-        32
-      ],
+      "position": [0, 32],
       "id": "17769403-1bde-4e98-9fee-6757c89d18d1",
       "name": "Workflow_Trigger_RenameWatchFile",
       "notesInFlow": false
@@ -68,10 +65,7 @@
       },
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1.1,
-      "position": [
-        448,
-        32
-      ],
+      "position": [448, 32],
       "id": "0eaacf8f-3bb0-4959-a171-0f97e3b26d5f",
       "name": "RabbitMQ_Publish_RenameWatchFile",
       "credentials": {
@@ -87,10 +81,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        224,
-        32
-      ],
+      "position": [224, 32],
       "id": "ace5ca00-7e3a-4f9f-96a3-cc83f731adf8",
       "name": "Code_Initialize_WatchFileData"
     },
@@ -102,10 +93,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        896,
-        32
-      ],
+      "position": [896, 32],
       "id": "5c358719-ad2f-432b-a56e-e9a95b2b0888",
       "name": "Feedback_Success"
     },
@@ -187,10 +175,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [
-        672,
-        32
-      ],
+      "position": [672, 32],
       "id": "582f83dc-4900-456d-b8cd-2cb16a71bd98",
       "name": "Workflow_SystemMessage_Renamed"
     }

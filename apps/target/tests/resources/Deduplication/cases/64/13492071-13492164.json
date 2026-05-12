@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13492071",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139521649&origin=inward",
-        "title": "Experimental Examination on Finishing Characteristics of Aluminum Pipes in Magnetic Abrasive Machining Using SiC Contained Glued Magnetic Abrasives",
-        "content": "<html><body>With the rapid development in the industry, applications of finished parts are increasing day by day. However, the surface finish of the parts fabricated by conventional processes could not readily meet the requirements of various applications. Therefore, post-processing is needed to further improve the surface quality. Magnetic abrasive machining uses a flexible magnetic abrasive brush to remove material from the workpiece surface at a controllable rate. This cutting tool sticks to the workpiece during finishing operation and exerts a small force on the surface. In magnetic abrasive machining, the cutting tool neither requires compensation nor dressing. In this paper, the internal finishing of aluminum pipes has been investigated in magnetic abrasive machining tests using silicon carbide-based glued magnetic abrasives. For evaluating the performance of these magnetic abrasives, experimental work according to the central composite design technique was carried out to finish the aluminum pipes. The results so obtained were analyzed to study the influence of process parameters like magnetic field strength, speed of workpiece, abrasive mesh size and quantity of magnetic abrasives on percentage improvement in surface finish and material removal rate. The analysis showed that magnetic field strength was the most effective parameter while finishing the aluminum pipe followed by the quantity of magnetic abrasives. The finishing at optimal condition resulted in a surface finish of 0.07 μm. Further, scanning electron microscopy of the surface before and after magnetic abrasive machining was taken to study the improvement in surface finish. <br/><br/><br/>Authors: Singh P., Singh L.. <br/><br/>Affiliations: Baba Banda Singh Bahadur Engineering College. <br/><br/>Publication: Trends in Sciences, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13492164",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139521649&origin=inward",
-        "title": "Experimental Examination on Finishing Characteristics of Aluminum Pipes in Magnetic Abrasive Machining Using SiC Contained Glued Magnetic Abrasives",
-        "content": "<html><body>With the rapid development in the industry, applications of finished parts are increasing day by day. However, the surface finish of the parts fabricated by conventional processes could not readily meet the requirements of various applications. Therefore, post-processing is needed to further improve the surface quality. Magnetic abrasive machining uses a flexible magnetic abrasive brush to remove material from the workpiece surface at a controllable rate. This cutting tool sticks to the workpiece during finishing operation and exerts a small force on the surface. In magnetic abrasive machining, the cutting tool neither requires compensation nor dressing. In this paper, the internal finishing of aluminum pipes has been investigated in magnetic abrasive machining tests using silicon carbide-based glued magnetic abrasives. For evaluating the performance of these magnetic abrasives, experimental work according to the central composite design technique was carried out to finish the aluminum pipes. The results so obtained were analyzed to study the influence of process parameters like magnetic field strength, speed of workpiece, abrasive mesh size and quantity of magnetic abrasives on percentage improvement in surface finish and material removal rate. The analysis showed that magnetic field strength was the most effective parameter while finishing the aluminum pipe followed by the quantity of magnetic abrasives. The finishing at optimal condition resulted in a surface finish of 0.07 μm. Further, scanning electron microscopy of the surface before and after magnetic abrasive machining was taken to study the improvement in surface finish. <br/><br/><br/>Authors: Singh P., Singh L.. <br/><br/>Affiliations: Baba Banda Singh Bahadur Engineering College. <br/><br/>Publication: Trends in Sciences, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, authors, and identical article text indicate a literal recrawl of the same record"
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13492071",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139521649&origin=inward",
+    "title": "Experimental Examination on Finishing Characteristics of Aluminum Pipes in Magnetic Abrasive Machining Using SiC Contained Glued Magnetic Abrasives",
+    "content": "<html><body>With the rapid development in the industry, applications of finished parts are increasing day by day. However, the surface finish of the parts fabricated by conventional processes could not readily meet the requirements of various applications. Therefore, post-processing is needed to further improve the surface quality. Magnetic abrasive machining uses a flexible magnetic abrasive brush to remove material from the workpiece surface at a controllable rate. This cutting tool sticks to the workpiece during finishing operation and exerts a small force on the surface. In magnetic abrasive machining, the cutting tool neither requires compensation nor dressing. In this paper, the internal finishing of aluminum pipes has been investigated in magnetic abrasive machining tests using silicon carbide-based glued magnetic abrasives. For evaluating the performance of these magnetic abrasives, experimental work according to the central composite design technique was carried out to finish the aluminum pipes. The results so obtained were analyzed to study the influence of process parameters like magnetic field strength, speed of workpiece, abrasive mesh size and quantity of magnetic abrasives on percentage improvement in surface finish and material removal rate. The analysis showed that magnetic field strength was the most effective parameter while finishing the aluminum pipe followed by the quantity of magnetic abrasives. The finishing at optimal condition resulted in a surface finish of 0.07 μm. Further, scanning electron microscopy of the surface before and after magnetic abrasive machining was taken to study the improvement in surface finish. <br/><br/><br/>Authors: Singh P., Singh L.. <br/><br/>Affiliations: Baba Banda Singh Bahadur Engineering College. <br/><br/>Publication: Trends in Sciences, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13492164",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85139521649&origin=inward",
+    "title": "Experimental Examination on Finishing Characteristics of Aluminum Pipes in Magnetic Abrasive Machining Using SiC Contained Glued Magnetic Abrasives",
+    "content": "<html><body>With the rapid development in the industry, applications of finished parts are increasing day by day. However, the surface finish of the parts fabricated by conventional processes could not readily meet the requirements of various applications. Therefore, post-processing is needed to further improve the surface quality. Magnetic abrasive machining uses a flexible magnetic abrasive brush to remove material from the workpiece surface at a controllable rate. This cutting tool sticks to the workpiece during finishing operation and exerts a small force on the surface. In magnetic abrasive machining, the cutting tool neither requires compensation nor dressing. In this paper, the internal finishing of aluminum pipes has been investigated in magnetic abrasive machining tests using silicon carbide-based glued magnetic abrasives. For evaluating the performance of these magnetic abrasives, experimental work according to the central composite design technique was carried out to finish the aluminum pipes. The results so obtained were analyzed to study the influence of process parameters like magnetic field strength, speed of workpiece, abrasive mesh size and quantity of magnetic abrasives on percentage improvement in surface finish and material removal rate. The analysis showed that magnetic field strength was the most effective parameter while finishing the aluminum pipe followed by the quantity of magnetic abrasives. The finishing at optimal condition resulted in a surface finish of 0.07 μm. Further, scanning electron microscopy of the surface before and after magnetic abrasive machining was taken to study the improvement in surface finish. <br/><br/><br/>Authors: Singh P., Singh L.. <br/><br/>Affiliations: Baba Banda Singh Bahadur Engineering College. <br/><br/>Publication: Trends in Sciences, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, authors, and identical article text indicate a literal recrawl of the same record"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 54,
-    "master": {
-        "id": "legacy-64-master-13541510",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141058002&origin=inward",
-        "title": "Self-crack-healing behavior in ceramic matrix composites",
-        "content": "<html><body>Self-crack-healing is one of the most valuable phenomena to overcome the decrease in reliability of ceramics caused by cracking. This is because self-healing is triggered by crack initiation and gives complete strength recovery through the passive oxidation of SiC. Thus, self-healing ceramics are candidates for high-temperature materials for gas turbine components, i.e., turbine blades and stator vanes. Nano-composite and multi-composite concepts for self-healing ceramics are described. The design concept is based on ‘damage management’ rather than ‘damage prevention’. The kinetics of self-crack-healing of ceramic/SiC composites including the effects of temperature and oxygen partial pressure is introduced. The time for crack-healing with low oxygen partial pressure can be estimated. Furthermore, the effects of oxygen partial pressure on self-healing under tensile stress are discussed. The design stress of ceramic turbine blades with self-crack-healing is considered. <br/><br/><br/>Authors: Osada T., Wataru N., Takahashi K., Ando K.. <br/><br/>Affiliations: Yokohama National University, National Institute for Materials Science. <br/><br/>Publication: Advances in Ceramic Matrix Composites, Second Edition, 1 January 2018, pp.515-544. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13541513",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141080817&origin=inward",
-        "title": "Advances in self-healing ceramic matrix composites",
-        "content": "<html><body>Self-healing is the capacity of a system to repair damage by itself so that cracks are sealed. For ceramic materials, especially ceramic matrix composites (CMCs), cracks can exist after processing or are created by a mechanical or thermal load. At high temperature in a moist oxidizing environment, cracks allow oxygen diffusion inside the bulk, provoking chemical degradation. To limit oxygen progression, an oxide glassy phase is used to fill cracks. This oxide is added as a protective coating or is formed by oxidation of non-oxide compounds in a protective coating or in the bulk. In the latter, the constituent undergoing oxidation acts as a chemical fuse against oxidation. Self-healing remains efficient if the oxide is chemically and thermally stable. <br/><br/><br/>Authors: Rebillat F.. <br/><br/>Affiliations: Université de Bordeaux. <br/><br/>Publication: Advances in Ceramic Matrix Composites, Second Edition, 1 January 2018, pp.475-514. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "unique",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "unique",
-        "note": "Different chapters in the same book with different authors, page ranges, and distinct article content"
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "agreement_unique",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 54,
+  "master": {
+    "id": "legacy-64-master-13541510",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141058002&origin=inward",
+    "title": "Self-crack-healing behavior in ceramic matrix composites",
+    "content": "<html><body>Self-crack-healing is one of the most valuable phenomena to overcome the decrease in reliability of ceramics caused by cracking. This is because self-healing is triggered by crack initiation and gives complete strength recovery through the passive oxidation of SiC. Thus, self-healing ceramics are candidates for high-temperature materials for gas turbine components, i.e., turbine blades and stator vanes. Nano-composite and multi-composite concepts for self-healing ceramics are described. The design concept is based on ‘damage management’ rather than ‘damage prevention’. The kinetics of self-crack-healing of ceramic/SiC composites including the effects of temperature and oxygen partial pressure is introduced. The time for crack-healing with low oxygen partial pressure can be estimated. Furthermore, the effects of oxygen partial pressure on self-healing under tensile stress are discussed. The design stress of ceramic turbine blades with self-crack-healing is considered. <br/><br/><br/>Authors: Osada T., Wataru N., Takahashi K., Ando K.. <br/><br/>Affiliations: Yokohama National University, National Institute for Materials Science. <br/><br/>Publication: Advances in Ceramic Matrix Composites, Second Edition, 1 January 2018, pp.515-544. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13541513",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85141080817&origin=inward",
+    "title": "Advances in self-healing ceramic matrix composites",
+    "content": "<html><body>Self-healing is the capacity of a system to repair damage by itself so that cracks are sealed. For ceramic materials, especially ceramic matrix composites (CMCs), cracks can exist after processing or are created by a mechanical or thermal load. At high temperature in a moist oxidizing environment, cracks allow oxygen diffusion inside the bulk, provoking chemical degradation. To limit oxygen progression, an oxide glassy phase is used to fill cracks. This oxide is added as a protective coating or is formed by oxidation of non-oxide compounds in a protective coating or in the bulk. In the latter, the constituent undergoing oxidation acts as a chemical fuse against oxidation. Self-healing remains efficient if the oxide is chemically and thermally stable. <br/><br/><br/>Authors: Rebillat F.. <br/><br/>Affiliations: Université de Bordeaux. <br/><br/>Publication: Advances in Ceramic Matrix Composites, Second Edition, 1 January 2018, pp.475-514. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "unique",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "unique",
+    "note": "Different chapters in the same book with different authors, page ranges, and distinct article content"
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "agreement_unique",
+  "content_source": "hbase_full"
 }

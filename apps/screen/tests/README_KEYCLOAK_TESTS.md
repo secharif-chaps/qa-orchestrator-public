@@ -9,6 +9,7 @@ This directory contains integration tests for fastapi-keycloak authentication.
 ## Test Coverage
 
 The integration tests verify:
+
 - ✅ Admin endpoints require `admin` role
 - ✅ Organization admin endpoints require `admin.organizations` role
 - ✅ Workflow admin endpoints require `admin.workflows` role
@@ -44,13 +45,16 @@ For these tests to run, the Keycloak `admin-cli` client must be properly configu
 Tests can run in two ways:
 
 **Option A: Docker Environment** (Recommended)
+
 ```bash
 docker compose -f docker-compose.dev.yml exec backend poetry run pytest tests/test_admin_keycloak_integration.py -v
 ```
 
 **Option B: Local Environment**
+
 - Requires Keycloak server accessible at configured KEYCLOAK_SERVER_URL
 - Requires proper admin-cli configuration (see above)
+
 ```bash
 poetry run pytest tests/test_admin_keycloak_integration.py -v
 ```
@@ -58,21 +62,25 @@ poetry run pytest tests/test_admin_keycloak_integration.py -v
 ## Running Tests
 
 ### Run all Keycloak integration tests:
+
 ```bash
 poetry run pytest tests/test_admin_keycloak_integration.py -v
 ```
 
 ### Run specific test class:
+
 ```bash
 poetry run pytest tests/test_admin_keycloak_integration.py::TestAdminEndpointsAccess -v
 ```
 
 ### Run specific test:
+
 ```bash
 poetry run pytest tests/test_admin_keycloak_integration.py::TestAdminEndpointsAccess::test_admin_get_companies_with_admin_role -v
 ```
 
 ### Run with coverage:
+
 ```bash
 poetry run pytest tests/test_admin_keycloak_integration.py --cov=app/api/endpoints/admin --cov-report=html
 ```
@@ -90,6 +98,7 @@ poetry run pytest tests/test_admin_keycloak_integration.py --cov=app/api/endpoin
 ### Mock Fixtures
 
 Tests use mock `OIDCUser` objects with different role combinations:
+
 - `mock_admin_user` - Has `admin` role
 - `mock_organization_admin_user` - Has `admin.organizations` role
 - `mock_workflow_admin_user` - Has `admin.workflows` role
@@ -109,6 +118,7 @@ Tests use mock `OIDCUser` objects with different role combinations:
 **Cause**: Keycloak server is not reachable
 
 **Solution**:
+
 - Ensure Keycloak is running
 - Check KEYCLOAK_SERVER_URL in your configuration
 - If running locally, ensure you can reach the Keycloak server

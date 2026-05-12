@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "DUPLICATE",
-    "legacy_level": 120,
-    "master": {
-        "id": "legacy-64-master-13770188",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150446247&origin=inward",
-        "title": "Ceramic Matrix Composite Applications in Advanced Liquid Fuel Rocket Engine Turbomachinery",
-        "content": "<html><body>Hot gas path components of current generation, liquid fuel rocket engine turbopumps (T/P) are exposed to severe thermal shock, extremely high heat fluxes, corrosive atmospheres and erosive flows. These conditions, combined with high operating stresses, are severely degradative to conventional materials. Advanced turbomachinery (T/M) applications will impose harsher demands on the turbine materials. These demands include higher turbine inlet temperature for improved performance and efficiency, lighter weight for improved thrust-to-weight ratio, and longer life for reduced maintenance of re-usable engines. Conventional materials are not expected to meet these demands, and fiber-reinforced ceramic matrix composites (FRCMC) have been identified as candidate materials for these applications. This paper summarizes rocket engine T/M needs, reviews the properties and capabilities of FRCMC, identifies candidate FRCMC materials and assesses their potential benefits, and summarizes the status of FRCMC component development with respect to advanced liquid fuel rocket engine T/M applications. <br/><br/><br/>Authors: Brockmeyer J.W.. <br/><br/>Affiliations: Rockwell International. <br/><br/>Publication: ASME 1992 International Gas Turbine and Aeroengine Congress and Exposition, GT 1992, 1992. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13770376",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150446247&origin=inward",
-        "title": "Ceramic Matrix Composite Applications in Advanced Liquid Fuel Rocket Engine Turbomachinery",
-        "content": "<html><body>Hot gas path components of current generation, liquid fuel rocket engine turbopumps (T/P) are exposed to severe thermal shock, extremely high heat fluxes, corrosive atmospheres and erosive flows. These conditions, combined with high operating stresses, are severely degradative to conventional materials. Advanced turbomachinery (T/M) applications will impose harsher demands on the turbine materials. These demands include higher turbine inlet temperature for improved performance and efficiency, lighter weight for improved thrust-to-weight ratio, and longer life for reduced maintenance of re-usable engines. Conventional materials are not expected to meet these demands, and fiber-reinforced ceramic matrix composites (FRCMC) have been identified as candidate materials for these applications. This paper summarizes rocket engine T/M needs, reviews the properties and capabilities of FRCMC, identifies candidate FRCMC materials and assesses their potential benefits, and summarizes the status of FRCMC component development with respect to advanced liquid fuel rocket engine T/M applications. <br/><br/><br/>Authors: Brockmeyer J.W.. <br/><br/>Affiliations: Rockwell International. <br/><br/>Publication: ASME 1992 International Gas Turbine and Aeroengine Congress and Exposition, GT 1992, 1992. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "match",
-        "jaccard_bucket": "minimal_overlap"
-    },
-    "llm_judgement": {
-        "verdict": "duplicate",
-        "note": "Same URL, title, and identical article text including metadata indicate a literal recrawl of the same record"
-    },
-    "pinned": {
-        "outcome": "duplicate",
-        "stage": "canonical_url",
-        "similarity": 1
-    },
-    "concordance_our_vs_llm": "agreement_match",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "DUPLICATE",
+  "legacy_level": 120,
+  "master": {
+    "id": "legacy-64-master-13770188",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150446247&origin=inward",
+    "title": "Ceramic Matrix Composite Applications in Advanced Liquid Fuel Rocket Engine Turbomachinery",
+    "content": "<html><body>Hot gas path components of current generation, liquid fuel rocket engine turbopumps (T/P) are exposed to severe thermal shock, extremely high heat fluxes, corrosive atmospheres and erosive flows. These conditions, combined with high operating stresses, are severely degradative to conventional materials. Advanced turbomachinery (T/M) applications will impose harsher demands on the turbine materials. These demands include higher turbine inlet temperature for improved performance and efficiency, lighter weight for improved thrust-to-weight ratio, and longer life for reduced maintenance of re-usable engines. Conventional materials are not expected to meet these demands, and fiber-reinforced ceramic matrix composites (FRCMC) have been identified as candidate materials for these applications. This paper summarizes rocket engine T/M needs, reviews the properties and capabilities of FRCMC, identifies candidate FRCMC materials and assesses their potential benefits, and summarizes the status of FRCMC component development with respect to advanced liquid fuel rocket engine T/M applications. <br/><br/><br/>Authors: Brockmeyer J.W.. <br/><br/>Affiliations: Rockwell International. <br/><br/>Publication: ASME 1992 International Gas Turbine and Aeroengine Congress and Exposition, GT 1992, 1992. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13770376",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150446247&origin=inward",
+    "title": "Ceramic Matrix Composite Applications in Advanced Liquid Fuel Rocket Engine Turbomachinery",
+    "content": "<html><body>Hot gas path components of current generation, liquid fuel rocket engine turbopumps (T/P) are exposed to severe thermal shock, extremely high heat fluxes, corrosive atmospheres and erosive flows. These conditions, combined with high operating stresses, are severely degradative to conventional materials. Advanced turbomachinery (T/M) applications will impose harsher demands on the turbine materials. These demands include higher turbine inlet temperature for improved performance and efficiency, lighter weight for improved thrust-to-weight ratio, and longer life for reduced maintenance of re-usable engines. Conventional materials are not expected to meet these demands, and fiber-reinforced ceramic matrix composites (FRCMC) have been identified as candidate materials for these applications. This paper summarizes rocket engine T/M needs, reviews the properties and capabilities of FRCMC, identifies candidate FRCMC materials and assesses their potential benefits, and summarizes the status of FRCMC component development with respect to advanced liquid fuel rocket engine T/M applications. <br/><br/><br/>Authors: Brockmeyer J.W.. <br/><br/>Affiliations: Rockwell International. <br/><br/>Publication: ASME 1992 International Gas Turbine and Aeroengine Congress and Exposition, GT 1992, 1992. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "match",
+    "jaccard_bucket": "minimal_overlap"
+  },
+  "llm_judgement": {
+    "verdict": "duplicate",
+    "note": "Same URL, title, and identical article text including metadata indicate a literal recrawl of the same record"
+  },
+  "pinned": {
+    "outcome": "duplicate",
+    "stage": "canonical_url",
+    "similarity": 1
+  },
+  "concordance_our_vs_llm": "agreement_match",
+  "content_source": "hbase_full"
 }

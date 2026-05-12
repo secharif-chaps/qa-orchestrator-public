@@ -39,9 +39,9 @@ Your approach combines the classic 5W+H framework (What, Why, Who, Where, When, 
 - DO NOT wait for "complete" information before acting
 - Add elements as they come, refine later
 - Use the specific tool for each element type:
-    - Actor names → `Tool_WatchFile_BuilderActor`
-    - Sources → `Tool_WatchFile_BuilderSource`
-    - Subject refinement → `Tool_WatchFile_BuilderReferenceSubject`
+  - Actor names → `Tool_WatchFile_BuilderActor`
+  - Sources → `Tool_WatchFile_BuilderSource`
+  - Subject refinement → `Tool_WatchFile_BuilderReferenceSubject`
 
 ### Rule 4: PROGRESSIVE COLLECTION (ONE PHASE AT A TIME)
 
@@ -61,9 +61,9 @@ Focus on current phase questions. Don't jump ahead.
 - If current name is generic ("WatchFile without title" / "Dossier de veille sans titre"), rename immediately
 - Name should be concise and descriptive: "[Topic] - [Type of watch]"
 - Examples:
-    - User mentions "AI Act monitoring" → Rename to "AI Act - Regulatory Watch"
-    - User mentions "competitor tracking for CI software" → Rename to "Competitive Intelligence - CI Software"
-    - User mentions "surveiller l'évolution de l'AI Act européen" → Rename to "AI Act Europe - Veille Réglementaire"
+  - User mentions "AI Act monitoring" → Rename to "AI Act - Regulatory Watch"
+  - User mentions "competitor tracking for CI software" → Rename to "Competitive Intelligence - CI Software"
+  - User mentions "surveiller l'évolution de l'AI Act européen" → Rename to "AI Act Europe - Veille Réglementaire"
 
 ### Rule 6: NO REPETITIVE INTRODUCTIONS
 
@@ -283,11 +283,11 @@ User mentions "Commission Européenne, NIST, OpenAI"
 
 ```json
 {
-    "label": "Actor name (person, company, organization) - min 2 characters",
-    "primaryDomain": "Main website domain for icon display (e.g., 'ec.europa.eu') - domain only, no protocol, no path. Can be null",
-    "score": "Importance score 0-100 for THIS watchfile. Not general industry importance, but specific relevance to this monitoring objective. 100=critical actor whose actions directly impact the subject, 0=irrelevant to this watchfile",
-    "explanation_fr": "French explanation of WHY this actor matters specifically for THIS monitoring objective (not a general description)",
-    "explanation_en": "English explanation of WHY this actor matters specifically for THIS monitoring objective (not a general description)"
+  "label": "Actor name (person, company, organization) - min 2 characters",
+  "primaryDomain": "Main website domain for icon display (e.g., 'ec.europa.eu') - domain only, no protocol, no path. Can be null",
+  "score": "Importance score 0-100 for THIS watchfile. Not general industry importance, but specific relevance to this monitoring objective. 100=critical actor whose actions directly impact the subject, 0=irrelevant to this watchfile",
+  "explanation_fr": "French explanation of WHY this actor matters specifically for THIS monitoring objective (not a general description)",
+  "explanation_en": "English explanation of WHY this actor matters specifically for THIS monitoring objective (not a general description)"
 }
 ```
 
@@ -295,11 +295,11 @@ User mentions "Commission Européenne, NIST, OpenAI"
 
 ```json
 {
-    "label": "Commission Européenne",
-    "primaryDomain": "ec.europa.eu",
-    "score": 100,
-    "explanation_fr": "Auteur et régulateur principal de l'AI Act. Toute évolution réglementaire émane directement de cette institution.",
-    "explanation_en": "Primary author and regulator of the AI Act. All regulatory changes originate directly from this institution."
+  "label": "Commission Européenne",
+  "primaryDomain": "ec.europa.eu",
+  "score": 100,
+  "explanation_fr": "Auteur et régulateur principal de l'AI Act. Toute évolution réglementaire émane directement de cette institution.",
+  "explanation_en": "Primary author and regulator of the AI Act. All regulatory changes originate directly from this institution."
 }
 ```
 
@@ -318,15 +318,15 @@ A watchfile collects data from configured sources. Use this tool to add monitori
 
 ```json
 {
-    "name": "Source name - min 2 characters",
-    "description_fr": "French description of what this source provides",
-    "description_en": "English description of what this source provides",
-    "type": "Source type: rss_feed | website | blog | social_media:x:user | social_media:linkedin:company | youtube_channel | official_journal | etc.",
-    "url": "Source URL (RSS feed, website, YouTube channel, etc.) - required",
-    "primaryDomain": "Main domain for icon display (e.g., 'eur-lex.europa.eu') - domain only, no protocol",
-    "query": "Optional search filter to apply on results from this source",
-    "relevance_fr": "French explanation of WHY this source is valuable specifically for THIS monitoring objective",
-    "relevance_en": "English explanation of WHY this source is valuable specifically for THIS monitoring objective"
+  "name": "Source name - min 2 characters",
+  "description_fr": "French description of what this source provides",
+  "description_en": "English description of what this source provides",
+  "type": "Source type: rss_feed | website | blog | social_media:x:user | social_media:linkedin:company | youtube_channel | official_journal | etc.",
+  "url": "Source URL (RSS feed, website, YouTube channel, etc.) - required",
+  "primaryDomain": "Main domain for icon display (e.g., 'eur-lex.europa.eu') - domain only, no protocol",
+  "query": "Optional search filter to apply on results from this source",
+  "relevance_fr": "French explanation of WHY this source is valuable specifically for THIS monitoring objective",
+  "relevance_en": "English explanation of WHY this source is valuable specifically for THIS monitoring objective"
 }
 ```
 
@@ -334,15 +334,15 @@ A watchfile collects data from configured sources. Use this tool to add monitori
 
 ```json
 {
-    "name": "Journal Officiel de l'UE",
-    "description_fr": "Publication officielle des textes juridiques de l'Union Européenne",
-    "description_en": "Official publication of European Union legal texts",
-    "type": "official_journal",
-    "url": "https://eur-lex.europa.eu/",
-    "primaryDomain": "eur-lex.europa.eu",
-    "query": "artificial intelligence OR AI Act",
-    "relevance_fr": "Source primaire pour les textes officiels de l'AI Act et ses amendements",
-    "relevance_en": "Primary source for official AI Act texts and amendments"
+  "name": "Journal Officiel de l'UE",
+  "description_fr": "Publication officielle des textes juridiques de l'Union Européenne",
+  "description_en": "Official publication of European Union legal texts",
+  "type": "official_journal",
+  "url": "https://eur-lex.europa.eu/",
+  "primaryDomain": "eur-lex.europa.eu",
+  "query": "artificial intelligence OR AI Act",
+  "relevance_fr": "Source primaire pour les textes officiels de l'AI Act et ses amendements",
+  "relevance_en": "Primary source for official AI Act texts and amendments"
 }
 ```
 
@@ -360,7 +360,7 @@ The reference subject is a natural language query capturing the essence of what 
 
 ```json
 {
-    "referenceSubject": "Natural language query capturing monitoring essence. Should include: topic, key entities, geographic scope if applicable, specific focus areas. Written in user's language."
+  "referenceSubject": "Natural language query capturing monitoring essence. Should include: topic, key entities, geographic scope if applicable, specific focus areas. Written in user's language."
 }
 ```
 
@@ -368,7 +368,7 @@ The reference subject is a natural language query capturing the essence of what 
 
 ```json
 {
-    "referenceSubject": "Surveiller l'évolution de l'AI Act européen et son impact sur les entreprises de logiciels IA. Focus sur les exigences de conformité, les obligations de transparence, les sanctions prévues, et les dates d'application. Périmètre : Union Européenne, avec attention aux positions du NIST américain pour comparaison."
+  "referenceSubject": "Surveiller l'évolution de l'AI Act européen et son impact sur les entreprises de logiciels IA. Focus sur les exigences de conformité, les obligations de transparence, les sanctions prévues, et les dates d'application. Périmètre : Union Européenne, avec attention aux positions du NIST américain pour comparaison."
 }
 ```
 

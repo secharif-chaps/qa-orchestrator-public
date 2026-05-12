@@ -1,36 +1,36 @@
 {
-    "account_id": 64,
-    "legacy_outcome": "NEAR_DUPLICATE",
-    "legacy_level": 60,
-    "master": {
-        "id": "legacy-64-master-13374220",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135061685&origin=inward",
-        "title": "Nonlinear Boundary-Layer Stability Analysis of a Swept, Natural-Laminar-Flow Airfoil",
-        "content": "<html><body>Under the auspices of the NASA University Leadership Initiative, an effort is underway to design a swept, slotted, natural-laminar-flow (SNLF) airfoil for transonic flight. In order to accomplish this, computational validation must be performed with experimental data. As part of a risk-reduction experiment, an analogous SNLF airfoil referred to as the X207.LS has been designed, built, and tested in the Klebanoff-Saric Wind Tunnel. The objective of this experiment is to excite relevant instability mechanisms that will be present in various flight configurations. The considered angle of attack is-5.5 degrees and sweep of 35 degrees to induce a favorable pressure gradient, exciting strong crossflow. For discrete roughness elements of a wavelength 12.7 mm and diameter 6.35 mm, computations with the nonlinear Parabolized Stability Equations (PSE) simulate the experimental measurements of a hot wire traversed across the wing at various streamwise stations. A heuristic approach is used to select the initial amplitudes of the fundamental stationary crossflow wavelength and the superharmonic amplitude, which agrees well with the observed measurements. Comparing results to the linear PSE, it is seen that the flowfield’s dynamics are, for a large extent of the chord, mainly determined by the linear superposition of the two wave-like disturbances, i.e., nonlinearities are rather weak in the measured flowfield at these conditions. <br/><br/><br/>Authors: Beyak E.S., Groot K.J., Feliciano J.G., Patel J.M., Riha A.K., Coder J.G., Reed H.L.. <br/><br/>Affiliations: Texas A&amp;M University, The University of Tennessee, Knoxville. <br/><br/>Publication: AIAA AVIATION 2022 Forum, 2022. </body></html>"
-    },
-    "candidate": {
-        "id": "legacy-64-dup-13374231",
-        "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135043824&origin=inward",
-        "title": "AIAA AVIATION 2022 Forum",
-        "content": "<html><body>The proceedings contain 962 papers. The special focus in this conference is on AIAA AVIATION. The topics include: An Investigation of the Bell X-2 and the Factors that led to its Fatal Accident; Vertical Tail Sizing and Power Split Optimization for the PEGASUS Concept Considering Certification Requirements; conceptual Design of a Hydrogen-Propelled Aircraft with Distributed Electric Propulsion; retrofit of hydrogen-powered helicopters: a sizing approach; full-Cycle Design and Analysis of the Switchblade Reconfigurable Unmanned Aerial System; Enabling Local Aerial Mobility (LAM): Design of an Ultralight Solar Distributed-Electric-Propulsion Short-Takeoff-and-Landing (STOL) Aircraft Recumbent-Electric-Bike Hybrid; HLPW4/GMGW3: Summary of Unstructured Fixed Mesh Generation Efforts for RANS Analyses; HLPW-4/GMGW-3: Mesh Adaptation for RANS Technology Focus Group Workshop Summary; Lessons Learned by the Fixed-Grid RANS TFG for HLPW-4 / GMGW-3; Comparative Evaluation of Numerical Factors for their Effect on Prediction of Aerodynamic Forces and Moments in CFD; Range Performance Flight Test of Small UAS with Winglets; airfoil Design Framework for Optimized Boundary-Layer Integral Parameters; aerodynamics of Seven Modes of Passive Flight; experimental Investigation of Aerodynamic Interactions of a Wing with Deployed Fowler Flap under Influence of a Propeller Slipstream; CFD Investigation of High-Lift Propeller Positions for a Distributed Propulsion System; FLOWUnsteady: An Interactional Aerodynamics Solver for Multirotor Aircraft and Wind Energy; a Tabu Search Algorithm for the Optimization of the Long Term Parking of Aircraft; A Future In-time Aviation Safety Management System (IASMS) Perspective for Commercial Air Carriers; a Fuzzy-based Site Selection Framework for Emergency Landings of Commercial Aircraft; numerical Investigation of Flow Over Periodic Hill. <br/><br/><br/>Authors: . <br/><br/>Affiliations: . <br/><br/>Publication: AIAA AVIATION 2022 Forum, 2022. </body></html>"
-    },
-    "measurements": {
-        "jaccard": null,
-        "hamming": null
-    },
-    "classification": {
-        "agreement": "unique",
-        "jaccard_bucket": "unrelated"
-    },
-    "llm_judgement": {
-        "verdict": "unique",
-        "note": "Master is a specific paper on nonlinear boundary-layer stability, candidate is a proceedings summary listing many different papers from the same forum."
-    },
-    "pinned": {
-        "outcome": "unique",
-        "stage": null,
-        "similarity": null
-    },
-    "concordance_our_vs_llm": "agreement_unique",
-    "content_source": "hbase_full"
+  "account_id": 64,
+  "legacy_outcome": "NEAR_DUPLICATE",
+  "legacy_level": 60,
+  "master": {
+    "id": "legacy-64-master-13374220",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135061685&origin=inward",
+    "title": "Nonlinear Boundary-Layer Stability Analysis of a Swept, Natural-Laminar-Flow Airfoil",
+    "content": "<html><body>Under the auspices of the NASA University Leadership Initiative, an effort is underway to design a swept, slotted, natural-laminar-flow (SNLF) airfoil for transonic flight. In order to accomplish this, computational validation must be performed with experimental data. As part of a risk-reduction experiment, an analogous SNLF airfoil referred to as the X207.LS has been designed, built, and tested in the Klebanoff-Saric Wind Tunnel. The objective of this experiment is to excite relevant instability mechanisms that will be present in various flight configurations. The considered angle of attack is-5.5 degrees and sweep of 35 degrees to induce a favorable pressure gradient, exciting strong crossflow. For discrete roughness elements of a wavelength 12.7 mm and diameter 6.35 mm, computations with the nonlinear Parabolized Stability Equations (PSE) simulate the experimental measurements of a hot wire traversed across the wing at various streamwise stations. A heuristic approach is used to select the initial amplitudes of the fundamental stationary crossflow wavelength and the superharmonic amplitude, which agrees well with the observed measurements. Comparing results to the linear PSE, it is seen that the flowfield’s dynamics are, for a large extent of the chord, mainly determined by the linear superposition of the two wave-like disturbances, i.e., nonlinearities are rather weak in the measured flowfield at these conditions. <br/><br/><br/>Authors: Beyak E.S., Groot K.J., Feliciano J.G., Patel J.M., Riha A.K., Coder J.G., Reed H.L.. <br/><br/>Affiliations: Texas A&amp;M University, The University of Tennessee, Knoxville. <br/><br/>Publication: AIAA AVIATION 2022 Forum, 2022. </body></html>"
+  },
+  "candidate": {
+    "id": "legacy-64-dup-13374231",
+    "url": "https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85135043824&origin=inward",
+    "title": "AIAA AVIATION 2022 Forum",
+    "content": "<html><body>The proceedings contain 962 papers. The special focus in this conference is on AIAA AVIATION. The topics include: An Investigation of the Bell X-2 and the Factors that led to its Fatal Accident; Vertical Tail Sizing and Power Split Optimization for the PEGASUS Concept Considering Certification Requirements; conceptual Design of a Hydrogen-Propelled Aircraft with Distributed Electric Propulsion; retrofit of hydrogen-powered helicopters: a sizing approach; full-Cycle Design and Analysis of the Switchblade Reconfigurable Unmanned Aerial System; Enabling Local Aerial Mobility (LAM): Design of an Ultralight Solar Distributed-Electric-Propulsion Short-Takeoff-and-Landing (STOL) Aircraft Recumbent-Electric-Bike Hybrid; HLPW4/GMGW3: Summary of Unstructured Fixed Mesh Generation Efforts for RANS Analyses; HLPW-4/GMGW-3: Mesh Adaptation for RANS Technology Focus Group Workshop Summary; Lessons Learned by the Fixed-Grid RANS TFG for HLPW-4 / GMGW-3; Comparative Evaluation of Numerical Factors for their Effect on Prediction of Aerodynamic Forces and Moments in CFD; Range Performance Flight Test of Small UAS with Winglets; airfoil Design Framework for Optimized Boundary-Layer Integral Parameters; aerodynamics of Seven Modes of Passive Flight; experimental Investigation of Aerodynamic Interactions of a Wing with Deployed Fowler Flap under Influence of a Propeller Slipstream; CFD Investigation of High-Lift Propeller Positions for a Distributed Propulsion System; FLOWUnsteady: An Interactional Aerodynamics Solver for Multirotor Aircraft and Wind Energy; a Tabu Search Algorithm for the Optimization of the Long Term Parking of Aircraft; A Future In-time Aviation Safety Management System (IASMS) Perspective for Commercial Air Carriers; a Fuzzy-based Site Selection Framework for Emergency Landings of Commercial Aircraft; numerical Investigation of Flow Over Periodic Hill. <br/><br/><br/>Authors: . <br/><br/>Affiliations: . <br/><br/>Publication: AIAA AVIATION 2022 Forum, 2022. </body></html>"
+  },
+  "measurements": {
+    "jaccard": null,
+    "hamming": null
+  },
+  "classification": {
+    "agreement": "unique",
+    "jaccard_bucket": "unrelated"
+  },
+  "llm_judgement": {
+    "verdict": "unique",
+    "note": "Master is a specific paper on nonlinear boundary-layer stability, candidate is a proceedings summary listing many different papers from the same forum."
+  },
+  "pinned": {
+    "outcome": "unique",
+    "stage": null,
+    "similarity": null
+  },
+  "concordance_our_vs_llm": "agreement_unique",
+  "content_source": "hbase_full"
 }
