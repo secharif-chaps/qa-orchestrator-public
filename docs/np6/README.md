@@ -43,7 +43,7 @@ Three sources, in order of reliability:
 1. **OpenAPI spec (source of truth)** — `https://documentation.np6.com/_bundle/api.yaml`
    - Raw YAML, greppable. Contains schemas, parameters, expected HTTP codes.
    - **Always consult first** before coding an endpoint. Do not rely on the rendered HTML doc, which omits the `securitySchemes` section and discriminated schemas.
-   - See [feedback memory: verify external API specs](#) — the first iteration of the NP6 integration was coded against the HTML doc, which forced a complete refactor after the audit.
+   - Lesson learned (feedback memory: verify external API specs) — the first iteration of the NP6 integration was coded against the HTML doc, which forced a complete refactor after the audit.
 
 2. **Rendered API doc (HTML)** — `https://documentation.np6.com/api`
    - More readable but incomplete on security and schemas.
@@ -70,7 +70,7 @@ On the ChapsMind side, the key lives in `NP6_API_KEY` (env var, never committed 
 
 ### Confirmed state machine
 
-```
+```text
               POST /actions                     POST /validation                POST /validation              POST /execution(s)
               (with content)                    {fortest:true,                  {fortest:false}               (sends the mail)
                   │                              testSegments:[id]}                  │                            │
@@ -98,7 +98,7 @@ On the ChapsMind side, the key lives in `NP6_API_KEY` (env var, never committed 
 | **100** | archived                                                 | read-only                                                                          |
 
 > **Key discovery (2026-05-04)**: 2-phase validation is **mandatory**. Calling only `{fortest:true, testSegments:[id]}` leaves the action in state 38 — `/execution` returns **409 with no body** in that state. A second `POST /validation {fortest:false}` is required to move state 38 → 50, and **only then** does sending work. Confirmed by NP6 (translated from French): "the test phase ran into an issue, so you're still pending validation".
-
+>
 > **Observed on tenant CHAP/02C**: 144 out of 214 actions are in state 50 — most have been properly prod-validated and have already been used.
 
 ### Recommended programmatic workflow
@@ -199,7 +199,7 @@ ChapsMind uses **mode 1 (no override)**: we configure everything in the action (
 >
 > ([source](https://np6.supporthero.io/article/show/167980-je-veux-surcharger-le-contenu-de-mon-email-declenche))
 
-**Practical implication**: our actions ship with `settings.templating.version = "4.1"` (our code does this by default). The exact substitution syntax (placeholders in the HTML for the per-recipient unsubscribe URL) remains **to be confirmed with NP6** — Open Question §10 of ADR-0021.
+**Practical implication**: our actions ship with `settings.templating.version = "4.1"` (our code does this by default). The exact substitution syntax (placeholders in the HTML for the per-recipient unsubscribe URL) remains **to be confirmed with NP6** — Open Question §10 of ADR-0020.
 
 ## HTTP codes: what we actually observed
 
@@ -222,7 +222,7 @@ NP6 returns codes that are sometimes misleading and ship with an empty body. Thi
 
 Env vars of the `stream` service (cf. `apps/stream/app/core/config.py`):
 
-```
+```bash
 NP6_BASE_URL=https://api-cm.np6.com
 NP6_API_KEY=<key provided by NP6>
 NP6_FROM_EMAIL=noreply@<subdomain>.chapsmind.com       # subdomain to be provisioned with NP6 ops
@@ -309,8 +309,8 @@ When observed behaviour does not match the spec, contact NP6 with an `x-request-
 ## Useful links
 
 - **Our integration**: `apps/stream/app/integrations/email/` (NP6Client + NP6EmailProvider)
-- **OpenAPI spec**: https://documentation.np6.com/_bundle/api.yaml
-- **HTML doc**: https://documentation.np6.com/api
-- **Help centre**: https://np6.supporthero.io
-- **API F.A.Q.**: https://np6.supporthero.io/container/show/vous-avez-des-questions-sur-les-api-cm
-- **ADR-0021**: [docs/architecture/adr/0021-stream-newsletter-channel.md](../architecture/adr/0021-stream-newsletter-channel.md)
+- **OpenAPI spec**: <https://documentation.np6.com/_bundle/api.yaml>
+- **HTML doc**: <https://documentation.np6.com/api>
+- **Help centre**: <https://np6.supporthero.io>
+- **API F.A.Q.**: <https://np6.supporthero.io/container/show/vous-avez-des-questions-sur-les-api-cm>
+- **ADR-0020**: [docs/architecture/adr/0021-stream-newsletter-channel.md](../architecture/adr/0021-stream-newsletter-channel.md)

@@ -89,7 +89,7 @@ Template authoring in Phase 1 is a **section picker + theme picker** — no visu
 
 ### Architecture overview
 
-```
+```text
              ┌─────────────────────────────────────────────────┐
              │                  Frontend SPA                   │
              │      (Newsletter form, Section picker,          │
@@ -136,7 +136,7 @@ Template authoring in Phase 1 is a **section picker + theme picker** — no visu
 
 ### Event-to-newsletter flow
 
-```
+```text
 Recurrence scheduler fires (ADR-0020 Phase 2)
         │
         ▼
@@ -371,7 +371,7 @@ The user-visible mental model is "one newsletter = one distribution list managed
 
 > **Live confirmation 2026-05-04** : on a passé du temps à comprendre pourquoi `/executions` retournait 409 sur action en state 38. NP6 a tracé l'erreur backend : **la phase de test a un sous-statut "completed/uncompleted"** que seule la phase prod (`{fortest:false}`) clôt. Sans la phase 2, l'action reste bloquée.
 
-```
+```text
 state 20 ──POST /validation──► state 38 ──POST /validation──► state 50 ──POST /executions──► sent
             {fortest: true,                 {fortest: false}                    │
              testSegments:                  (production                          │
@@ -407,7 +407,7 @@ Reuses the same flow with a single-recipient body: ensures action+validation, up
 
 NP6 exposes delivery events via a polling endpoint:
 
-```
+```text
 GET /actions/events?start=<unix_ms_or_ISO>&end=<unix_ms_or_ISO>&sort=asc
 X-Key: <NP6_API_KEY>
 ```
@@ -462,7 +462,7 @@ The obvious answer would be a separate email-gateway service (classic hexagonal 
 
 **Structure:**
 
-```
+```text
 apps/stream/app/integrations/email/
 ├── __init__.py
 ├── provider.py       # EmailProvider ABC — high-level newsletter contract
@@ -543,7 +543,7 @@ class NewsletterAdapter(BatchChannelAdapter):
 
 > ⚠️ `[VOIDED]` — Earlier drafts described a `POST /api/stream/email/webhook` endpoint with `X-NP6-Signature` HMAC verification. NP6 has no push-webhook surface; the endpoint and the signature scheme are removed. The text below is preserved for historical context only.
 >
-> ```
+> ```text
 > POST /api/stream/email/webhook       (public, verified by NP6 signature)
 > X-NP6-Signature: ...
 > → Stream's webhook endpoint calls email_provider.verify_webhook()
@@ -720,6 +720,7 @@ A future iteration may add a confirmation page offering "Se désabonner de toute
 Every newsletter dispatch must include:
 
 1. **Footer link** — rendered by the theme MJML, e.g.:
+
    ```mjml
    <mj-text font-size="11px" color="#999999" align="center">
      Vous recevez cet email parce que vous êtes abonné·e à la newsletter <em>{{ stream.name }}</em
@@ -727,12 +728,16 @@ Every newsletter dispatch must include:
      <a href="{{ unsubscribe_url }}">Se désabonner</a>
    </mj-text>
    ```
+
 2. **`List-Unsubscribe` header** (RFC 2369):
-   ```
+
+   ```text
    List-Unsubscribe: <https://chapsmind.fr/api/stream/email/unsubscribe?token=...>, <mailto:unsubscribe+TOKEN@chapsmind.fr>
    ```
+
 3. **`List-Unsubscribe-Post` header** (RFC 8058 one-click):
-   ```
+
+   ```text
    List-Unsubscribe-Post: List-Unsubscribe=One-Click
    ```
 
@@ -1064,7 +1069,7 @@ All keys added to every locale file (ADR-0014 enforcement).
 
 ### TypeScript types
 
-Extend the discriminated union in [apps/front/src/types/stream.ts](apps/front/src/types/stream.ts):
+Extend the discriminated union in `apps/front/src/types/stream.ts`:
 
 ```ts
 export interface NewsletterConfig {
@@ -1101,7 +1106,7 @@ Stream operations consume credits from the organization's global token balance (
 | Newsletter dispatch (per batch) | 15 credits + 1 credit/recipient | MJML render + NP6 fan-out cost                              |
 | Test send                       | 0 credits                       | Free for validation                                         |
 
-Credits are consumed **after** successful delivery (same pattern as existing adapters in [apps/stream/app/services/dispatch_service.py](apps/stream/app/services/dispatch_service.py)). Insufficient credits → `stream_deliveries.status = skipped`, no email sent.
+Credits are consumed **after** successful delivery (same pattern as existing adapters in `apps/stream/app/services/dispatch_service.py`). Insufficient credits → `stream_deliveries.status = skipped`, no email sent.
 
 Settings: `STREAM_COST_NEWSLETTER_BASE`, `STREAM_COST_NEWSLETTER_PER_RECIPIENT` env vars.
 
@@ -1197,7 +1202,7 @@ The following decisions are flagged for team discussion before or during impleme
 
 ### Open questions raised by the 2026-04-30 NP6 spec audit
 
-10. **Per-recipient unsubscribe URL substitution**: NP6's templating engine supports server-side substitution placeholders inside `content.html`, but the OpenAPI bundle doesn't expose the placeholder grammar. The plan assumes a syntax like `[[CONTACT_PROPERTY:unsubscribe_token]]` that resolves per recipient at execution time. **To confirm with NP6**: the exact substitution syntax, whether arbitrary `target` properties can hold our signed token, and whether the substitution runs _after_ delivery so a per-recipient signed URL is computable. If unsupported, fallback is N executions (one per recipient) with `content.html` overridden per-call — costlier but functional.
+1. **Per-recipient unsubscribe URL substitution**: NP6's templating engine supports server-side substitution placeholders inside `content.html`, but the OpenAPI bundle doesn't expose the placeholder grammar. The plan assumes a syntax like `[[CONTACT_PROPERTY:unsubscribe_token]]` that resolves per recipient at execution time. **To confirm with NP6**: the exact substitution syntax, whether arbitrary `target` properties can hold our signed token, and whether the substitution runs _after_ delivery so a per-recipient signed URL is computable. If unsupported, fallback is N executions (one per recipient) with `content.html` overridden per-call — costlier but functional.
 
 > Resolved post-audit (2026-04-30):
 >
@@ -1224,48 +1229,48 @@ The current `streams.status` enum (`draft`, `active`, `paused`, `archived`) and 
 
 This change is intentionally out of scope for the NP6 refonte branch stack (TAR-1626 → 1635) to keep the rebase blast radius bounded. It is filed as a follow-up ticket in the next epic refresh.
 
-10. **Token expiry duration for unsubscribe links**: 90 days proposed. Long enough for newsletters that linger in inboxes, short enough that secret rotation is meaningful. **Open** to feedback from compliance / legal.
+1. **Token expiry duration for unsubscribe links**: 90 days proposed. Long enough for newsletters that linger in inboxes, short enough that secret rotation is meaningful. **Open** to feedback from compliance / legal.
 
-11. **Audit log infrastructure**: `recipient_suppressions` mutations should be logged for RGPD audit. Stream doesn't have a generic audit log today. **Recommendation:** add a minimal `audit_log` table in Phase 1c scoped to suppression actions; broader audit logging is a separate ADR.
+2. **Audit log infrastructure**: `recipient_suppressions` mutations should be logged for RGPD audit. Stream doesn't have a generic audit log today. **Recommendation:** add a minimal `audit_log` table in Phase 1c scoped to suppression actions; broader audit logging is a separate ADR.
 
-12. **Unsubscribe page i18n**: the public landing page is rendered without user authentication, so we don't know the recipient's locale. **Recommendation:** read `Accept-Language` header with French fallback; or embed locale in the signed token (slight token-size increase). TBD in Phase 1c.
+3. **Unsubscribe page i18n**: the public landing page is rendered without user authentication, so we don't know the recipient's locale. **Recommendation:** read `Accept-Language` header with French fallback; or embed locale in the signed token (slight token-size increase). TBD in Phase 1c.
 
 ---
 
 ## Files to Modify
 
-| File                                                                                                                                    | Change                                                                                                                                                                                                                                                         |
-| --------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [apps/stream/app/adapters/base.py](apps/stream/app/adapters/base.py)                                                                    | Add `BatchChannelAdapter` sibling ABC                                                                                                                                                                                                                          |
-| [apps/stream/app/adapters/newsletter.py](apps/stream/app/adapters/newsletter.py)                                                        | **New** — `NewsletterAdapter` implementing `BatchChannelAdapter`                                                                                                                                                                                               |
-| [apps/stream/app/adapters/factory.py](apps/stream/app/adapters/factory.py)                                                              | Register `ChannelType.NEWSLETTER` → `NewsletterAdapter`                                                                                                                                                                                                        |
-| [apps/stream/app/models/stream.py](apps/stream/app/models/stream.py)                                                                    | Add `newsletter` to `ChannelType` enum                                                                                                                                                                                                                         |
-| [apps/stream/app/models/newsletter_theme.py](apps/stream/app/models/newsletter_theme.py)                                                | **New** — `NewsletterTheme` SQLAlchemy model                                                                                                                                                                                                                   |
-| [apps/stream/app/models/section_template.py](apps/stream/app/models/section_template.py)                                                | **New** — `SectionTemplate` SQLAlchemy model                                                                                                                                                                                                                   |
-| [apps/stream/app/models/recipient.py](apps/stream/app/models/recipient.py)                                                              | **New** — `StreamRecipient` SQLAlchemy model                                                                                                                                                                                                                   |
-| [apps/stream/app/models/suppression.py](apps/stream/app/models/suppression.py)                                                          | **New** — `RecipientSuppression` SQLAlchemy model                                                                                                                                                                                                              |
-| [apps/stream/app/schemas/stream.py](apps/stream/app/schemas/stream.py)                                                                  | Add `NewsletterConfig` Pydantic model; extend channel config union                                                                                                                                                                                             |
-| [apps/stream/app/schemas/newsletter.py](apps/stream/app/schemas/newsletter.py)                                                          | **New** — theme/section/recipient schemas                                                                                                                                                                                                                      |
-| [apps/stream/app/services/dispatch_service.py](apps/stream/app/services/dispatch_service.py)                                            | Route to `send_batch()` when adapter is `BatchChannelAdapter`                                                                                                                                                                                                  |
-| [apps/stream/app/services/newsletter_service.py](apps/stream/app/services/newsletter_service.py)                                        | **New** — MJML composition + render (uses sandboxed Jinja)                                                                                                                                                                                                     |
-| [apps/stream/app/services/suppression_service.py](apps/stream/app/services/suppression_service.py)                                      | **New** — suppression list lookups, insertions (from unsubscribe link, NP6 event poller, soft-bounce counter), token signing/verification                                                                                                                      |
-| [apps/stream/app/api/endpoints/newsletters.py](apps/stream/app/api/endpoints/newsletters.py)                                            | **New** — themes, sections, preview endpoints (preview accepts `section_template_id` only, never raw MJML)                                                                                                                                                     |
-| [apps/stream/app/api/endpoints/recipients.py](apps/stream/app/api/endpoints/recipients.py)                                              | **New** — recipients CRUD + CSV import                                                                                                                                                                                                                         |
-| [apps/stream/app/api/endpoints/unsubscribe.py](apps/stream/app/api/endpoints/unsubscribe.py)                                            | **New** — public `GET/POST /api/stream/email/unsubscribe`, `POST /resubscribe` (no JWT auth, signed-token auth)                                                                                                                                                |
-| [apps/stream/alembic/versions/](apps/stream/alembic/versions/)                                                                          | **New migration** — `newsletter_themes`, `section_templates`, `stream_recipients`, `recipient_suppressions` tables + `newsletter` enum value + seed data (3 themes + 1 default section per Screen event)                                                       |
-| [apps/stream/pyproject.toml](apps/stream/pyproject.toml)                                                                                | Add `mjml-python` dependency                                                                                                                                                                                                                                   |
-| `apps/stream/app/integrations/email/`                                                                                                   | **New module** — `provider.py` (ABC), `np6.py` (NP6 impl), `np6_client.py` (one method per NP6 endpoint), `schemas.py` (DTOs), `sandbox.py` (Jinja2 SandboxedEnvironment setup), `factory.py` (DI)                                                             |
-| `apps/stream/app/services/np6_event_poller.py`                                                                                          | **New** — APScheduler-driven poller that calls `GET /actions/events`, normalizes payloads, and writes hard-bounce/complaint suppressions + `stream_deliveries` updates (refonte: replaces the speculative webhook endpoint)                                    |
-| `apps/stream/tests/security/`                                                                                                           | **New** — SSTI test suite, preview schema test, unsubscribe token test, sender invariant test (CI-blocking)                                                                                                                                                    |
-| [apps/front/src/types/stream.ts](apps/front/src/types/stream.ts)                                                                        | Extend discriminated union with `NewsletterConfig`                                                                                                                                                                                                             |
-| [apps/front/src/api/newsletters.ts](apps/front/src/api/newsletters.ts)                                                                  | **New** — API functions for themes, sections, preview, recipients                                                                                                                                                                                              |
-| [apps/front/src/queries/newsletters.ts](apps/front/src/queries/newsletters.ts)                                                          | **New** — Pinia Colada queries                                                                                                                                                                                                                                 |
-| [apps/front/src/components/](apps/front/src/components/)                                                                                | **New components** — `NewsletterForm.vue`, `SectionPicker.vue`, `ThemePicker.vue`, `RecipientList.vue`, `NewsletterPreview.vue`, `SubjectTemplateInput.vue`                                                                                                    |
-| [apps/front/src/i18n/locales/fr-FR.json](apps/front/src/i18n/locales/fr-FR.json) / [en-US.json](apps/front/src/i18n/locales/en-US.json) | Add `stream.channels.newsletter.*` keys                                                                                                                                                                                                                        |
-| [infra/compose.yaml](infra/compose.yaml)                                                                                                | Add `NP6_BASE_URL`, `NP6_API_KEY`, `NP6_FROM_EMAIL`, optional `NP6_FROM_LABEL`, optional `STREAM_NP6_EVENT_POLL_INTERVAL_SECONDS` env vars to the existing `stream` service — no new Docker service. (`NP6_WEBHOOK_SECRET` removed in the 2026-04-30 refonte.) |
-| [infra/compose.local.yaml](infra/compose.local.yaml)                                                                                    | No changes (Stream service already defined; env vars picked up from `.env`)                                                                                                                                                                                    |
-| [docs/architecture/adr/README.md](docs/architecture/adr/README.md)                                                                      | Index this ADR (0018)                                                                                                                                                                                                                                          |
-| [docs/architecture/adr/0020-stream-module-architecture.md](docs/architecture/adr/0020-stream-module-architecture.md)                    | Add 0018 to "Related" section                                                                                                                                                                                                                                  |
+| File                                                       | Change                                                                                                                                                                                                                                                         |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/stream/app/adapters/base.py`                         | Add `BatchChannelAdapter` sibling ABC                                                                                                                                                                                                                          |
+| `apps/stream/app/adapters/newsletter.py`                   | **New** — `NewsletterAdapter` implementing `BatchChannelAdapter`                                                                                                                                                                                               |
+| `apps/stream/app/adapters/factory.py`                      | Register `ChannelType.NEWSLETTER` → `NewsletterAdapter`                                                                                                                                                                                                        |
+| `apps/stream/app/models/stream.py`                         | Add `newsletter` to `ChannelType` enum                                                                                                                                                                                                                         |
+| `apps/stream/app/models/newsletter_theme.py`               | **New** — `NewsletterTheme` SQLAlchemy model                                                                                                                                                                                                                   |
+| `apps/stream/app/models/section_template.py`               | **New** — `SectionTemplate` SQLAlchemy model                                                                                                                                                                                                                   |
+| `apps/stream/app/models/recipient.py`                      | **New** — `StreamRecipient` SQLAlchemy model                                                                                                                                                                                                                   |
+| `apps/stream/app/models/suppression.py`                    | **New** — `RecipientSuppression` SQLAlchemy model                                                                                                                                                                                                              |
+| `apps/stream/app/schemas/stream.py`                        | Add `NewsletterConfig` Pydantic model; extend channel config union                                                                                                                                                                                             |
+| `apps/stream/app/schemas/newsletter.py`                    | **New** — theme/section/recipient schemas                                                                                                                                                                                                                      |
+| `apps/stream/app/services/dispatch_service.py`             | Route to `send_batch()` when adapter is `BatchChannelAdapter`                                                                                                                                                                                                  |
+| `apps/stream/app/services/newsletter_service.py`           | **New** — MJML composition + render (uses sandboxed Jinja)                                                                                                                                                                                                     |
+| `apps/stream/app/services/suppression_service.py`          | **New** — suppression list lookups, insertions (from unsubscribe link, NP6 event poller, soft-bounce counter), token signing/verification                                                                                                                      |
+| `apps/stream/app/api/endpoints/newsletters.py`             | **New** — themes, sections, preview endpoints (preview accepts `section_template_id` only, never raw MJML)                                                                                                                                                     |
+| `apps/stream/app/api/endpoints/recipients.py`              | **New** — recipients CRUD + CSV import                                                                                                                                                                                                                         |
+| `apps/stream/app/api/endpoints/unsubscribe.py`             | **New** — public `GET/POST /api/stream/email/unsubscribe`, `POST /resubscribe` (no JWT auth, signed-token auth)                                                                                                                                                |
+| `apps/stream/alembic/versions/`                            | **New migration** — `newsletter_themes`, `section_templates`, `stream_recipients`, `recipient_suppressions` tables + `newsletter` enum value + seed data (3 themes + 1 default section per Screen event)                                                       |
+| `apps/stream/pyproject.toml`                               | Add `mjml-python` dependency                                                                                                                                                                                                                                   |
+| `apps/stream/app/integrations/email/`                      | **New module** — `provider.py` (ABC), `np6.py` (NP6 impl), `np6_client.py` (one method per NP6 endpoint), `schemas.py` (DTOs), `sandbox.py` (Jinja2 SandboxedEnvironment setup), `factory.py` (DI)                                                             |
+| `apps/stream/app/services/np6_event_poller.py`             | **New** — APScheduler-driven poller that calls `GET /actions/events`, normalizes payloads, and writes hard-bounce/complaint suppressions + `stream_deliveries` updates (refonte: replaces the speculative webhook endpoint)                                    |
+| `apps/stream/tests/security/`                              | **New** — SSTI test suite, preview schema test, unsubscribe token test, sender invariant test (CI-blocking)                                                                                                                                                    |
+| `apps/front/src/types/stream.ts`                           | Extend discriminated union with `NewsletterConfig`                                                                                                                                                                                                             |
+| `apps/front/src/api/newsletters.ts`                        | **New** — API functions for themes, sections, preview, recipients                                                                                                                                                                                              |
+| `apps/front/src/queries/newsletters.ts`                    | **New** — Pinia Colada queries                                                                                                                                                                                                                                 |
+| `apps/front/src/components/`                               | **New components** — `NewsletterForm.vue`, `SectionPicker.vue`, `ThemePicker.vue`, `RecipientList.vue`, `NewsletterPreview.vue`, `SubjectTemplateInput.vue`                                                                                                    |
+| `apps/front/src/i18n/locales/fr-FR.json` / `en-US.json`    | Add `stream.channels.newsletter.*` keys                                                                                                                                                                                                                        |
+| `infra/compose.yaml`                                       | Add `NP6_BASE_URL`, `NP6_API_KEY`, `NP6_FROM_EMAIL`, optional `NP6_FROM_LABEL`, optional `STREAM_NP6_EVENT_POLL_INTERVAL_SECONDS` env vars to the existing `stream` service — no new Docker service. (`NP6_WEBHOOK_SECRET` removed in the 2026-04-30 refonte.) |
+| `infra/compose.local.yaml`                                 | No changes (Stream service already defined; env vars picked up from `.env`)                                                                                                                                                                                    |
+| `docs/architecture/adr/README.md`                          | Index this ADR (0018)                                                                                                                                                                                                                                          |
+| `docs/architecture/adr/0020-stream-module-architecture.md` | Add 0018 to "Related" section                                                                                                                                                                                                                                  |
 
 ---
 
@@ -1298,7 +1303,7 @@ This change is intentionally out of scope for the NP6 refonte branch stack (TAR-
 - [Server-Side Template Injection (PortSwigger Web Security Academy)](https://portswigger.net/web-security/server-side-template-injection)
 - [RFC 2369 — `List-Unsubscribe` header](https://datatracker.ietf.org/doc/html/rfc2369)
 - [RFC 8058 — One-Click Unsubscribe](https://datatracker.ietf.org/doc/html/rfc8058)
-- [RGPD — droit d'opposition (CNIL)](https://www.cnil.fr/fr/comprendre-vos-droits/le-droit-dopposition)
+- [RGPD — droit d'opposition (CNIL)](https://www.cnil.fr/fr/le-droit-dopposition)
 - [SPF, DKIM, DMARC overview (Google Postmaster Tools)](https://support.google.com/mail/answer/81126)
 
 **Alternatives evaluated:**

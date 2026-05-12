@@ -28,3 +28,7 @@ tasks:
   shell:
     desc: Open bash shell in stream backend container
     cmd: "{{.COMPOSE}} exec stream bash"
+
+  send-test-email:
+    desc: 'Phase 1a smoke test (ADR-0020) — send a hardcoded HTML email through the active EmailProvider. Usage: task stream:send-test-email -- --to <email>'
+    cmd: "{{.COMPOSE}} exec stream python -m app.scripts.send_test_email {{.CLI_ARGS}}"
