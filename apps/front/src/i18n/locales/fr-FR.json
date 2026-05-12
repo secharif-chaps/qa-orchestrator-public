@@ -547,6 +547,8 @@
     "action": {
       "add": "Ajouter",
       "back": "Retour",
+      "backToFolders": "Retour aux dossiers",
+      "backToHome": "Retour à l'accueil",
       "loading": "Chargement en cours...",
       "remove": "Supprimer",
       "selectAll": "Tout sélectionner",
@@ -693,7 +695,6 @@
     "folder": {
       "actions": {
         "addToFavorites": "Ajouter aux favoris",
-        "back": "Retour aux dossiers",
         "collapse": "Replier",
         "expand": "Déplier",
         "new": "Nouveau",
@@ -936,7 +937,7 @@
         "broadcasts": "Diffusions",
         "items": "Éléments"
       },
-      "title": "{count, plural, =0 {Vos dossiers} one {Votre dossier} other {Tous vos dossiers (#)}}",
+      "title": "Dossiers",
       "tooltip": {
         "createdBy": "— Créé par {username} le {date} à {time}"
       },
@@ -1009,6 +1010,10 @@
         "systemUpdate": "Mise à Jour Système",
         "systemUpdateDesc": "Application mise à jour vers la version 2.1.0"
       }
+    },
+    "privacy": {
+      "private": "Privé",
+      "shared": "Partagé"
     },
     "publishedOn": "Publié le {date}",
     "quoted": "« {value} »",
@@ -2819,6 +2824,7 @@
       "actions": {
         "add_favorite": "Ajouter aux favoris",
         "archive_watch_file": "Archiver",
+        "back": "Retour aux dossiers de veille",
         "remove_favorite": "Retirer des favoris",
         "restore_watch_file": "Restaurer",
         "share": "Partager"

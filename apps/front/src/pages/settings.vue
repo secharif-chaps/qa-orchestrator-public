@@ -1,17 +1,15 @@
 <template>
   <div class="flex flex-col gap-6">
-    <!-- Header with Tab Navigation -->
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 class="text-2xl font-bold">{{ $t('settings.title') }}</h1>
-        <p class="text-neutral-black-font mt-1">{{ $t('settings.description') }}</p>
-      </div>
-
-      <!-- Navigation Tabs (only show when on a subpage) -->
-      <div v-if="isOnSubpage" class="flex items-center">
+    <PageHeader
+      :title="t('settings.title')"
+      :description="t('settings.description')"
+      :back-to="backTo"
+      :back-label="backLabel"
+    >
+      <template v-if="isOnSubpage" #actions>
         <Tab :tabs="tabOptions" />
-      </div>
-    </div>
+      </template>
+    </PageHeader>
 
     <!-- Main Content -->
     <div v-if="isOnSubpage">
@@ -59,6 +57,7 @@
 </template>
 
 <script setup lang="ts">
+import PageHeader from '@/components/ui/PageHeader.vue'
 import { useAuthStore } from '@/stores/auth'
 import { Tab } from '@owlint/feathers-vue'
 import { computed } from 'vue'
@@ -180,4 +179,11 @@ const isOnSubpage = computed(() => {
   const path = route.path
   return path !== '/settings' && path !== '/settings/'
 })
+
+const backTo = computed(() =>
+  isOnSubpage.value ? { name: '/settings' as const } : { name: '/(home)' as const },
+)
+const backLabel = computed(() =>
+  isOnSubpage.value ? t('common.action.back') : t('common.action.backToHome'),
+)
 </script>

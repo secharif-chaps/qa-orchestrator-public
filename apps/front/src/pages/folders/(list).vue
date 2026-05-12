@@ -1,11 +1,7 @@
 <template>
   <div class="min-h-screen">
     <div class="flex flex-col gap-4">
-      <FolderListHeader
-        v-model:filters-open="filtersOpen"
-        v-model:view-mode="viewMode"
-        :total-count="totalCount"
-      />
+      <FolderListHeader v-model:filters-open="filtersOpen" v-model:view-mode="viewMode" />
       <!-- Error Alert -->
       <Alert
         v-if="currentStatus === 'error'"

@@ -2,11 +2,10 @@
   <div>
     <div class="flex flex-col gap-6">
       <!-- Greeting Bar -->
-      <div>
-        <h1 class="text-2xl font-bold text-[#182021] dark:text-white">
-          {{ $t('dashboard.home.welcome.title', { name: userDisplayName }) }}
-        </h1>
-      </div>
+      <PageHeader
+        :title="$t('dashboard.home.welcome.title', { name: userDisplayName })"
+        :show-back="false"
+      />
 
       <!-- Chaps-e Insight Section -->
       <ChapseInsightCard :module-actions="moduleActions" @navigate="handleModuleNavigate" />
@@ -47,6 +46,7 @@ meta:
 <script setup lang="ts">
 import ChapseInsightCard from '@/components/home/ChapseInsightCard.vue'
 import type { ModuleAction } from '@/types/module'
+import PageHeader from '@/components/ui/PageHeader.vue'
 import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
 import RecentActivitiesList from '@/components/home/RecentActivitiesList.vue'
 import RecentProjectsList from '@/components/home/RecentProjectsList.vue'

@@ -547,6 +547,8 @@
     "action": {
       "add": "Add",
       "back": "Back",
+      "backToFolders": "Back to folders",
+      "backToHome": "Back to home",
       "loading": "Loading...",
       "remove": "Remove",
       "selectAll": "Select All",
@@ -693,7 +695,6 @@
     "folder": {
       "actions": {
         "addToFavorites": "Add to favorites",
-        "back": "Back to folders",
         "collapse": "Collapse",
         "expand": "Expand",
         "new": "New",
@@ -936,7 +937,7 @@
         "broadcasts": "Broadcasts",
         "items": "Items"
       },
-      "title": "{count, plural, =0 {Your folders} one {Your folder} other {All your folders (#)}}",
+      "title": "Folders",
       "tooltip": {
         "createdBy": "— Created by {username} on {date} at {time}"
       },
@@ -1009,6 +1010,10 @@
         "systemUpdate": "System Update",
         "systemUpdateDesc": "Application updated to version 2.1.0"
       }
+    },
+    "privacy": {
+      "private": "Private",
+      "shared": "Shared"
     },
     "publishedOn": "Published on {date}",
     "quoted": "\"{value}\"",
@@ -2819,6 +2824,7 @@
       "actions": {
         "add_favorite": "Add to favorites",
         "archive_watch_file": "Archive",
+        "back": "Back to watchfiles",
         "remove_favorite": "Remove from favorites",
         "restore_watch_file": "Restore",
         "share": "Share"

@@ -1,42 +1,33 @@
 <template>
   <div class="flex flex-col gap-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-bold">
-          {{ $t('admin.tasks.title') }}
-        </h1>
-        <p class="text-neutral-black-font mt-1">
-          {{ $t('admin.tasks.description') }}
-        </p>
-      </div>
-
-      <!-- Auto-refresh toggle -->
-      <div class="flex items-center gap-4">
-        <span class="text-neutral-black-font text-sm">
-          {{ lastRefreshText }}
-        </span>
-        <Button
-          :variant="autoRefreshEnabled ? 'primary' : 'secondary'"
-          size="sm"
-          icon="fa-sync-alt"
-          :loading="autoRefreshEnabled && isRefreshing"
-          :label="
-            autoRefreshEnabled
-              ? $t('admin.tasks.autoRefresh.on')
-              : $t('admin.tasks.autoRefresh.off')
-          "
-          @click="toggleAutoRefresh"
-        />
-        <Button
-          variant="secondary"
-          icon="fa-rotate-right"
-          :label="$t('admin.tasks.refresh')"
-          @click="refreshAll"
-          :loading="isRefreshing"
-        />
-      </div>
-    </div>
+    <PageHeader :title="$t('admin.tasks.title')" :description="$t('admin.tasks.description')">
+      <template #actions>
+        <div class="flex items-center gap-4">
+          <span class="text-neutral-black-font text-sm">
+            {{ lastRefreshText }}
+          </span>
+          <Button
+            :variant="autoRefreshEnabled ? 'primary' : 'secondary'"
+            size="sm"
+            icon="fa-sync-alt"
+            :loading="autoRefreshEnabled && isRefreshing"
+            :label="
+              autoRefreshEnabled
+                ? $t('admin.tasks.autoRefresh.on')
+                : $t('admin.tasks.autoRefresh.off')
+            "
+            @click="toggleAutoRefresh"
+          />
+          <Button
+            variant="secondary"
+            icon="fa-rotate-right"
+            :label="$t('admin.tasks.refresh')"
+            :loading="isRefreshing"
+            @click="refreshAll"
+          />
+        </div>
+      </template>
+    </PageHeader>
 
     <!-- Loading State -->
     <TasksPageSkeleton v-if="isLoading" />
@@ -589,6 +580,7 @@ import Card from '@/components/ui/Card.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownDivider from '@/components/ui/DropdownDivider.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
 import { useRestartAdminTasks } from '@/mutations/admin'
 import { adminOrganizationsQuery, adminTasksQuery } from '@/queries/admin'
 import type { AdminTaskResponse, AdminTasksFilters, BulkRestartResponse } from '@/types/admin'

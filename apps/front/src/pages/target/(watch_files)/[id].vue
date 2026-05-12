@@ -1,7 +1,7 @@
 <template>
   <div id="watchfile-layout" class="relative flex h-full flex-col gap-4 overflow-hidden">
     <!-- Watchfile Header - fixed at top, never scrolls -->
-    <div class="shrink-0 px-6 pt-4">
+    <div class="shrink-0">
       <WatchFileHeader :watch-file-id="watchFileId" />
     </div>
     <!-- Page-specific content - takes remaining space below header -->
