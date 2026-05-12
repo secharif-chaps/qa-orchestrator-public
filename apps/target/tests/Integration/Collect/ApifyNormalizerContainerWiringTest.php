@@ -15,6 +15,8 @@ use App\Domain\Source\Source;
 use App\Domain\Source\SourceType;
 use App\Domain\WatchFile\WatchFile;
 use App\Infrastructure\Collect\Apify\Normalizer\ApifyNormalizerResolver;
+use App\Infrastructure\Collect\Apify\Normalizer\FacebookAdNormalizer;
+use App\Infrastructure\Collect\Apify\Normalizer\FacebookPostNormalizer;
 use App\Infrastructure\Collect\Apify\Normalizer\GenericApifyNormalizer;
 use App\Infrastructure\Collect\Apify\Normalizer\GoogleNewsNormalizer;
 use App\Infrastructure\Collect\Apify\Normalizer\LinkedInProfileNormalizer;
@@ -97,6 +99,42 @@ class ApifyNormalizerContainerWiringTest extends KernelTestCase
             LinkedInProfileNormalizer::class,
             $normalizer,
             'Actor "curious_coder/linkedin-profile-scraper" must resolve to LinkedInProfileNormalizer',
+        );
+    }
+
+    public function testFacebookPostNormalizerIsTagged(): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+
+        /** @var ApifyNormalizerResolverInterface $resolver */
+        $resolver = $container->get(ApifyNormalizerResolverInterface::class);
+
+        $collectTask = $this->buildCollectTask('apify/facebook-posts-scraper:run123');
+        $normalizer = $resolver->resolveFor($collectTask);
+
+        $this->assertInstanceOf(
+            FacebookPostNormalizer::class,
+            $normalizer,
+            'Actor "apify/facebook-posts-scraper" must resolve to FacebookPostNormalizer',
+        );
+    }
+
+    public function testFacebookAdNormalizerIsTagged(): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+
+        /** @var ApifyNormalizerResolverInterface $resolver */
+        $resolver = $container->get(ApifyNormalizerResolverInterface::class);
+
+        $collectTask = $this->buildCollectTask('apify/facebook-ads-scraper:run123');
+        $normalizer = $resolver->resolveFor($collectTask);
+
+        $this->assertInstanceOf(
+            FacebookAdNormalizer::class,
+            $normalizer,
+            'Actor "apify/facebook-ads-scraper" must resolve to FacebookAdNormalizer',
         );
     }
 

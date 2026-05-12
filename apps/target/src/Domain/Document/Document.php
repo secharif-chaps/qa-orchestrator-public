@@ -758,6 +758,10 @@ class Document implements HasWatchFileInterface
     #[Groups(['document:save'])]
     private ?string $collectTaskId = null;
 
+    /** @var array<string, mixed> */
+    #[Groups(['document:save'])]
+    private array $metadata = [];
+
     #[Groups(['document:save'])]
     private ?float $contentRatio = null;
 
@@ -1401,6 +1405,24 @@ class Document implements HasWatchFileInterface
     public function setCollectTaskId(?string $collectTaskId): self
     {
         $this->collectTaskId = $collectTaskId;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getMetadata(): array
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * @param array<string, mixed> $metadata
+     */
+    public function setMetadata(array $metadata): self
+    {
+        $this->metadata = $metadata;
 
         return $this;
     }

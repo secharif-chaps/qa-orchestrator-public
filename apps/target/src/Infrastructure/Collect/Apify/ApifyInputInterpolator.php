@@ -38,7 +38,20 @@ readonly class ApifyInputInterpolator
     private function interpolateValue(mixed $value, Source $source, array $sourceConfig): mixed
     {
         if (\is_string($value)) {
-            return $this->interpolateString($value, $source, $sourceConfig);
+            $interpolated = $this->interpolateString($value, $source, $sourceConfig);
+
+            // When the whole value was a single template (e.g. '{{config.max_results|default:100}}'),
+            // cast the result to its native scalar type so Apify receives integers, not strings.
+            if (preg_match('/^\{\{[^}]+\}\}$/', $value)) {
+                if (ctype_digit($interpolated)) {
+                    return (int) $interpolated;
+                }
+                if (is_numeric($interpolated)) {
+                    return (float) $interpolated;
+                }
+            }
+
+            return $interpolated;
         }
 
         if (\is_array($value)) {
