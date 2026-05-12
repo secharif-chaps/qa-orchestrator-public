@@ -1,58 +1,52 @@
 <template>
-  <div class="min-h-screen">
-    <div>
-      <!-- Header -->
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold">
-          {{ $t('admin.dashboard.title') }}
-        </h1>
-        <p class="text-neutral-black-font mt-2">
-          {{ $t('admin.dashboard.description') }}
-        </p>
-      </div>
+  <div class="flex min-h-screen flex-col gap-6">
+    <!-- Header -->
+    <PageHeader
+      :title="$t('admin.dashboard.title')"
+      :description="$t('admin.dashboard.description')"
+    />
 
-      <!-- Admin Features Grid -->
-      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card
-          v-for="feature in visibleFeatures"
-          :key="feature.id"
-          ring="accent"
-          class="group ring-accent-400 cursor-pointer ring-0 ring-offset-white hover:shadow-none hover:ring-4 hover:ring-offset-2"
-          @click="feature.navigate()"
-        >
-          <div class="p-6">
-            <div class="mb-4 flex items-center">
-              <Badge class="shrink-0" variant="secondary" color="sage" :icon="feature.icon" />
-              <div class="ml-4">
-                <h3 class="text-lg font-semibold">
-                  {{ feature.title }}
-                </h3>
-                <Tag color="sage" size="sm" :label="feature.badgeLabel" />
-              </div>
-            </div>
-
-            <p class="text-neutral-black-font mb-4 text-sm">
-              {{ feature.description }}
-            </p>
-            <div class="transition-transform group-hover:translate-x-2">
-              <div class="text-accent-600 flex items-center text-sm font-medium">
-                <span>{{ feature.action }}</span>
-                <i class="fa fa-arrow-right ml-2"></i>
-              </div>
+    <!-- Admin Features Grid -->
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <Card
+        v-for="feature in visibleFeatures"
+        :key="feature.id"
+        ring="accent"
+        class="group ring-accent-400 cursor-pointer ring-0 ring-offset-white hover:shadow-none hover:ring-4 hover:ring-offset-2"
+        @click="feature.navigate()"
+      >
+        <div class="p-6">
+          <div class="mb-4 flex items-center">
+            <Badge class="shrink-0" variant="secondary" color="sage" :icon="feature.icon" />
+            <div class="ml-4">
+              <h3 class="text-lg font-semibold">
+                {{ feature.title }}
+              </h3>
+              <Tag color="sage" size="sm" :label="feature.badgeLabel" />
             </div>
           </div>
-        </Card>
-      </div>
 
-      <!-- Access Restricted Message -->
-      <div v-if="!hasAnyAdminAccess" class="mt-8">
-        <Alert
-          variant="warning"
-          :title="$t('admin.dashboard.limitedAccess.title')"
-          :description="$t('admin.dashboard.limitedAccess.message')"
-          icon="fa-lock"
-        />
-      </div>
+          <p class="text-neutral-black-font mb-4 text-sm">
+            {{ feature.description }}
+          </p>
+          <div class="transition-transform group-hover:translate-x-2">
+            <div class="text-accent-600 flex items-center text-sm font-medium">
+              <span>{{ feature.action }}</span>
+              <i class="fa fa-arrow-right ml-2"></i>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
+
+    <!-- Access Restricted Message -->
+    <div v-if="!hasAnyAdminAccess" class="mt-8">
+      <Alert
+        variant="warning"
+        :title="$t('admin.dashboard.limitedAccess.title')"
+        :description="$t('admin.dashboard.limitedAccess.message')"
+        icon="fa-lock"
+      />
     </div>
   </div>
 </template>
@@ -67,6 +61,7 @@ meta:
 
 <script setup lang="ts">
 import Card from '@/components/ui/Card.vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
 import { useAuthStore } from '@/stores/auth'
 import { Alert, Badge, Tag } from '@owlint/feathers-vue'
 import { computed } from 'vue'

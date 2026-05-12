@@ -1,15 +1,10 @@
 <template>
   <div class="flex flex-col gap-8">
-    <!-- Header Section -->
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 class="text-3xl font-bold">{{ $t('admin.usage.title') }}</h1>
-        <p class="text-neutral-black-font mt-1">
-          {{ $t('admin.usage.description') }}
-        </p>
-      </div>
-      <UsageTimeRangeToggle v-model="selectedRange" @update:dates="handleDatesUpdate" />
-    </div>
+    <PageHeader :title="t('admin.usage.title')" :description="t('admin.usage.description')">
+      <template #actions>
+        <UsageTimeRangeToggle v-model="selectedRange" @update:dates="handleDatesUpdate" />
+      </template>
+    </PageHeader>
 
     <!-- Error State -->
     <Alert
@@ -74,6 +69,7 @@ import UsageKpiGrid from '@/components/admin/usage/UsageKpiGrid.vue'
 import UsageLineChart from '@/components/admin/usage/UsageLineChart.vue'
 import UsageStackedBarChart from '@/components/admin/usage/UsageStackedBarChart.vue'
 import UsageTimeRangeToggle from '@/components/admin/usage/UsageTimeRangeToggle.vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
 import { usageStatsQuery } from '@/queries/admin-usage'
 import { Alert } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'

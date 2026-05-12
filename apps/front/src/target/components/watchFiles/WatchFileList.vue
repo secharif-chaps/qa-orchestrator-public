@@ -1,117 +1,122 @@
 <template>
   <div>
-    <div class="mb-6 flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <h1 class="text-2xl font-bold text-gray-900">
-          {{ $t('target.watchFiles.list.title') }}
-        </h1>
+    <PageHeader
+      :title="$t('target.watchFiles.list.title')"
+      :back-to="{ name: '/(home)' }"
+      :back-label="t('common.action.backToHome')"
+      class="mb-6"
+    >
+      <template #info>
         <RouterLink :to="{ name: RouteNames.WATCH_FILES_NEW }">
           <Button icon="fa-plus">
             {{ $t('target.watchFiles.new') }}
           </Button>
         </RouterLink>
-      </div>
-      <div class="relative flex items-center gap-2">
-        <Searchbar
-          id="watch-files-search"
-          v-model="searchQuery"
-          icon="fa-magnifying-glass"
-          :placeholder="$t('target.watchFiles.list.search_placeholder')"
-          class="w-64"
-        >
+      </template>
+
+      <template #actions>
+        <div class="relative flex items-center gap-2">
+          <Searchbar
+            id="watch-files-search"
+            v-model="searchQuery"
+            icon="fa-magnifying-glass"
+            :placeholder="$t('target.watchFiles.list.search_placeholder')"
+            class="w-64"
+          >
+            <Button
+              v-if="searchQuery"
+              variant="tertiary"
+              size="sm"
+              icon="fa-xmark"
+              :title="$t('common.search.clear')"
+              @click="searchQuery = ''"
+            />
+          </Searchbar>
           <Button
-            v-if="searchQuery"
-            variant="tertiary"
-            size="sm"
-            icon="fa-xmark"
-            :title="$t('common.search.clear')"
-            @click="searchQuery = ''"
+            ref="sortBtn"
+            icon="fa-filter"
+            :variant="showSortCard ? 'accent' : 'tertiary'"
+            @click="showSortCard = !showSortCard"
           />
-        </Searchbar>
-        <Button
-          ref="sortBtn"
-          icon="fa-filter"
-          :variant="showSortCard ? 'accent' : 'tertiary'"
-          @click="showSortCard = !showSortCard"
-        />
-        <div
-          v-if="showSortCard"
-          ref="sortCard"
-          class="shadow-1 rounded-2xs absolute top-full right-0 z-20 mt-2 flex w-max min-w-52 flex-col gap-2 border border-gray-100 bg-white"
-        >
-          <div>
-            <div class="text-sage-800 p-2 text-xs">
-              {{ $t('target.watchFiles.sort.sort_by') }}
-            </div>
-            <div class="flex flex-col items-start text-sm">
-              <div
-                v-for="column in columns.filter((c) => c.sortable)"
-                :key="column.key"
-                class="rounded-2xs flex w-full items-center p-2"
-                :class="sortBy === column.key ? 'bg-sage-200' : 'hover:bg-sage-100'"
-              >
-                <ORadio
-                  :id="`radio-sort-${column.key}`"
-                  v-model="sortBy"
-                  :value="column.key"
-                  @click="changeSort(column.key)"
+          <div
+            v-if="showSortCard"
+            ref="sortCard"
+            class="shadow-1 rounded-2xs absolute top-full right-0 z-20 mt-2 flex w-max min-w-52 flex-col gap-2 border border-gray-100 bg-white"
+          >
+            <div>
+              <div class="text-sage-800 p-2 text-xs">
+                {{ $t('target.watchFiles.sort.sort_by') }}
+              </div>
+              <div class="flex flex-col items-start text-sm">
+                <div
+                  v-for="column in columns.filter((c) => c.sortable)"
+                  :key="column.key"
+                  class="rounded-2xs flex w-full items-center p-2"
+                  :class="sortBy === column.key ? 'bg-sage-200' : 'hover:bg-sage-100'"
                 >
-                  <label class="ml-2" :for="`radio-sort-${column.key}`">
-                    <span class="flex items-center gap-2">
-                      <Icon
-                        v-if="sortBy === column.key"
-                        :icon="sortOrder === 'ASC' ? 'fa-arrow-up' : 'fa-arrow-down'"
-                        class="text-primary-500 text-base"
-                      />
-                      {{ column.sortLabel || column.label }}
-                    </span>
-                  </label>
-                </ORadio>
+                  <ORadio
+                    :id="`radio-sort-${column.key}`"
+                    v-model="sortBy"
+                    :value="column.key"
+                    @click="changeSort(column.key)"
+                  >
+                    <label class="ml-2" :for="`radio-sort-${column.key}`">
+                      <span class="flex items-center gap-2">
+                        <Icon
+                          v-if="sortBy === column.key"
+                          :icon="sortOrder === 'ASC' ? 'fa-arrow-up' : 'fa-arrow-down'"
+                          class="text-primary-500 text-base"
+                        />
+                        {{ column.sortLabel || column.label }}
+                      </span>
+                    </label>
+                  </ORadio>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="border-t border-gray-100">
-            <div class="text-sage-800 p-2 text-xs">
-              {{ $t('target.watchFiles.sort.filter') }}
-            </div>
-            <div class="flex flex-col items-start text-sm">
-              <div
-                class="rounded-2xs flex w-full items-center p-2"
-                :class="showFavorites ? 'bg-sage-200' : 'hover:bg-sage-100'"
-              >
-                <Checkbox
-                  id="checkbox-favorite-sort"
-                  v-model="showFavorites"
-                  value
-                  name="checkbox-sort"
-                >
-                  <label for="checkbox-favorite-sort" class="flex items-center gap-2 pl-2">
-                    <Icon icon="fa-star" class="text-gray-700" />
-                    <span>{{ $t('target.watchFiles.sort.favorites') }}</span>
-                  </label>
-                </Checkbox>
+            <div class="border-t border-gray-100">
+              <div class="text-sage-800 p-2 text-xs">
+                {{ $t('target.watchFiles.sort.filter') }}
               </div>
-              <div
-                class="rounded-2xs flex w-full items-center p-2"
-                :class="hideArchived ? 'bg-sage-200' : 'hover:bg-sage-100'"
-              >
-                <Checkbox
-                  id="checkbox-archived-sort"
-                  v-model="hideArchived"
-                  value
-                  name="checkbox-sort"
+              <div class="flex flex-col items-start text-sm">
+                <div
+                  class="rounded-2xs flex w-full items-center p-2"
+                  :class="showFavorites ? 'bg-sage-200' : 'hover:bg-sage-100'"
                 >
-                  <label for="checkbox-archived-sort" class="flex items-center gap-2 pl-2">
-                    <Icon icon="fa-box-archive" class="text-gray-700" />
-                    <span>{{ $t('target.watchFiles.sort.archived') }}</span>
-                  </label>
-                </Checkbox>
+                  <Checkbox
+                    id="checkbox-favorite-sort"
+                    v-model="showFavorites"
+                    value
+                    name="checkbox-sort"
+                  >
+                    <label for="checkbox-favorite-sort" class="flex items-center gap-2 pl-2">
+                      <Icon icon="fa-star" class="text-gray-700" />
+                      <span>{{ $t('target.watchFiles.sort.favorites') }}</span>
+                    </label>
+                  </Checkbox>
+                </div>
+                <div
+                  class="rounded-2xs flex w-full items-center p-2"
+                  :class="hideArchived ? 'bg-sage-200' : 'hover:bg-sage-100'"
+                >
+                  <Checkbox
+                    id="checkbox-archived-sort"
+                    v-model="hideArchived"
+                    value
+                    name="checkbox-sort"
+                  >
+                    <label for="checkbox-archived-sort" class="flex items-center gap-2 pl-2">
+                      <Icon icon="fa-box-archive" class="text-gray-700" />
+                      <span>{{ $t('target.watchFiles.sort.archived') }}</span>
+                    </label>
+                  </Checkbox>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </template>
+    </PageHeader>
     <div
       v-if="!isLoading && !watchFiles.length"
       class="flex flex-col items-center justify-center py-16"
@@ -232,6 +237,7 @@ import { useDateTime } from '@/composables/useDateTime'
 import { useToast } from '@/composables/useToast'
 import { RouteNames } from '@/target/types/route-names'
 import { Button, Checkbox, HeaderCell, Icon, ORadio, Searchbar, Table } from '@owlint/feathers-vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import type { PaginationMeta } from '@/types/pagination'
 import { useQuery } from '@pinia/colada'

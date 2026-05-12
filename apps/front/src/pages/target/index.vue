@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6">
+  <div>
     <WatchFileList />
   </div>
 </template>

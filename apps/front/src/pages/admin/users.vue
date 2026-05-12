@@ -1,33 +1,25 @@
 <template>
   <div class="flex flex-col gap-4">
-    <!-- Page Header -->
-
-    <div class="flex items-end justify-between">
-      <div class="flex-1">
-        <h1 class="mb-2 text-2xl font-bold">
-          {{ $t('admin.users.title') }}
-        </h1>
-        <p class="text-neutral-black-font">
-          {{ $t('admin.users.description') }}
-        </p>
-      </div>
-      <div class="flex gap-2">
-        <UserFilters
-          :search="queryParams.search ?? ''"
-          :sort="queryParams.sort"
-          :order="queryParams.order"
-          @update:search="handleSearchUpdate"
-          @update:sort="handleSortUpdate"
-          @update:order="handleOrderUpdate"
-        />
-        <Button
-          variant="secondary"
-          icon="fa fa-file-import"
-          :label="$t('admin.import.title')"
-          @click="router.push('/admin/users/import')"
-        />
-      </div>
-    </div>
+    <PageHeader :title="$t('admin.users.title')" :description="$t('admin.users.description')">
+      <template #actions>
+        <div class="flex gap-2">
+          <UserFilters
+            :search="queryParams.search ?? ''"
+            :sort="queryParams.sort"
+            :order="queryParams.order"
+            @update:search="handleSearchUpdate"
+            @update:sort="handleSortUpdate"
+            @update:order="handleOrderUpdate"
+          />
+          <Button
+            variant="secondary"
+            icon="fa fa-file-import"
+            :label="$t('admin.import.title')"
+            @click="router.push('/admin/users/import')"
+          />
+        </div>
+      </template>
+    </PageHeader>
 
     <!-- Error Alert -->
     <Alert
@@ -115,6 +107,7 @@ meta:
 import UserFilters from '@/components/admin/UserFilters.vue'
 import UsersTable from '@/components/admin/UsersTable.vue'
 import UsersTableSkeleton from '@/components/admin/UsersTableSkeleton.vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import { Alert, Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'

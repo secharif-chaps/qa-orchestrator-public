@@ -1,29 +1,15 @@
 <template>
-  <!-- Search and Actions Container: single row, wraps on small screens -->
-  <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-6">
-    <!-- Greeting Group: back arrow + folder name + "+ Nouveau" CTA -->
-    <div class="flex min-w-0 items-center gap-6">
-      <Button
-        variant="tertiary"
-        icon="fa-arrow-left"
-        :title="t('common.folder.actions.back')"
-        :aria-label="t('common.folder.actions.back')"
-        @click="$router.push('/folders')"
-      />
+  <PageHeader
+    :title="folder?.name || t('common.folder.loading')"
+    :back-to="{ name: '/folders/(list)' }"
+    :back-label="t('common.action.backToFolders')"
+  >
+    <template v-if="isSharedWithMe" #buttons>
+      <Tag :label="t('common.folder.shared.badge')" intent="info" size="sm" />
+      <Tag v-if="shareRoleLabel" :label="shareRoleLabel" variant="secondary" size="sm" />
+    </template>
 
-      <h1 class="truncate text-2xl font-bold">
-        {{ folder?.name || t('common.folder.loading') }}
-      </h1>
-
-      <Tag v-if="isSharedWithMe" :label="t('common.folder.shared.badge')" intent="info" size="sm" />
-      <Tag
-        v-if="isSharedWithMe && shareRoleLabel"
-        :label="shareRoleLabel"
-        variant="secondary"
-        size="sm"
-      />
-
-      <!-- "+ Nouveau" primary split CTA — light accent (pink/lavender) per Figma -->
+    <template #info>
       <Dropdown v-if="canCreateItems" align="left" width="xl">
         <template #trigger="{ isOpen }">
           <button
@@ -90,32 +76,34 @@
           </DropdownItem>
         </template>
       </Dropdown>
-    </div>
+    </template>
 
-    <!-- Actions Group: search + view-mode toggle -->
-    <div class="flex items-center gap-6">
-      <div class="w-[340px] max-w-full">
-        <Searchbar
-          id="folder-search-input"
-          v-model="searchTerm"
-          :placeholder="t('common.folder.search.placeholder')"
-        />
+    <template #actions>
+      <div class="flex items-center gap-6">
+        <div class="w-[340px] max-w-full">
+          <Searchbar
+            id="folder-search-input"
+            v-model="searchTerm"
+            :placeholder="t('common.folder.search.placeholder')"
+          />
+        </div>
+
+        <Toggle v-model="viewMode" :options="viewModeOptions" variant="pill" />
       </div>
-
-      <Toggle v-model="viewMode" :options="viewModeOptions" variant="pill" />
-    </div>
-  </div>
+    </template>
+  </PageHeader>
 </template>
 
 <script setup lang="ts">
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import { useScreenModule } from '@/composables/useScreenModule'
 import { useStreamModule } from '@/composables/useStreamModule'
 import { useStreamPermissions } from '@/composables/useStreamPermissions'
 import type { Folder } from '@/types/folder'
-import { Button, Icon, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
+import { Icon, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
 import { computed, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 

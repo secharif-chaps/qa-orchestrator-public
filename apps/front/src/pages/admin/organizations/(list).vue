@@ -1,16 +1,10 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Header -->
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-3xl font-bold">
-          {{ $t('admin.organizations.title') }}
-        </h1>
-        <p class="text-neutral-black-font mt-2">
-          {{ $t('admin.organizations.description') }}
-        </p>
-      </div>
-    </div>
+    <PageHeader
+      :title="$t('admin.organizations.title')"
+      :description="$t('admin.organizations.description')"
+    />
 
     <!-- Search -->
     <div class="flex items-center gap-4">
@@ -103,6 +97,7 @@ import { useQuery } from '@pinia/colada'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import PageHeader from '@/components/ui/PageHeader.vue'
 
 const { t } = useI18n()
 const router = useRouter()
