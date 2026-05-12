@@ -55,7 +55,7 @@ class N8nChatSession implements ChatSessionInterface
      *     userMessageContentText: string,
      *     userMessageId: string,
      *     conversationId: string,
-     *     conversationLanguage: string,
+     *     userLanguage: string,
      *     metadata: array{
      *         collectors_list: array<string, mixed>,
      *         source_types: list<string>,
@@ -105,7 +105,7 @@ class N8nChatSession implements ChatSessionInterface
             'userMessageContentText' => $messageContent->getContent(),
             'userMessageId' => $messageId,
             'conversationId' => $conversationId,
-            'conversationLanguage' => $conversation->getLanguage(),
+            'userLanguage' => $conversation->getLanguage(),
             'metadata' => [
                 'collectors_list' => $this->normalize($collectors, 'collector'),
                 'source_types' => $sourceTypes,
