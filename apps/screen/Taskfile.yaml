@@ -33,51 +33,92 @@ tasks:
   # Evals
   # ---------------------------------------------------------------------------
   #
-  # evals:local — single composable task, accepts named vars:
-  #   AGENT=profile                    run a single agent (default: all)
-  #   PROVIDERS=gpt-4o-mini-sweden     filter providers by id/label (default: all)
-  #   NO_CACHE=true                    disable LLM response cache (default: false)
+  # evals — run prompt regression tests for all agents or a single one.
+  #
+  # The loop is required: promptfoo merges configs when given multiple -c flags,
+  # which would incorrectly pair each agent's tests with all other loaders.
+  # Running each config independently preserves loader <-> test isolation.
+  #
+  # AGENT=<name>  run a single agent config (default: all)
+  # CLI_ARGS      pass any native promptfoo flag after --
   #
   # Examples:
-  #   task screen:evals:local                                        # all agents, all providers
-  #   task screen:evals:local AGENT=financial_classify               # single agent, regression check
-  #   task screen:evals:local AGENT=financial_classify NO_CACHE=true # fresh run, no cache
-  #   task screen:evals:local PROVIDERS=gemini-2.5-flash             # filter to one provider
+  #   task screen:evals                               # all agents
+  #   task screen:evals AGENT=profile                # single agent
+  #   task screen:evals -- --no-cache                # bypass LLM cache
+  #   task screen:evals -- --filter-providers gpt-4o-mini-sweden
+  #   task screen:evals AGENT=profile -- --no-cache  # combined
   #
-  # evals:ci   — CI gate preset (1 provider, no cache, fixed output names)
-  # evals:view — promptfoo UI with full run history
+  # evals:view — open promptfoo UI with full run history
 
-  evals:local:
-    desc: "Run promptfoo evals locally. AGENT=x NO_CACHE=true PROVIDERS=y"
-    dir: "{{.ROOT_DIR}}/apps/screen/tests/evals"
-    vars:
-      NO_CACHE: '{{.NO_CACHE | default "false"}}'
-      SHOW_PROGRESS: '{{.SHOW_PROGRESS | default "true"}}'
-      _CONFIGS: '{{if .AGENT}}configs/{{.AGENT}}.yaml{{else}}configs/*.yaml{{end}}'
-      _FLAGS: >-
-        {{if eq .NO_CACHE "true"}}--no-cache {{end}}
-        {{if eq .SHOW_PROGRESS "false"}}--no-progress-bar {{end}}
-        {{if .PROVIDERS}}--filter-providers {{.PROVIDERS}}{{end}}
+  evals:
+    desc: "Run promptfoo evals. AGENT=profile for single agent. Native flags after --."
     cmd: |
-      ts="{{.TIMESTAMP | default ""}}"
-      [ -z "$ts" ] && ts=$(date +%Y%m%d_%H%M%S)
-      for config in {{._CONFIGS}}; do
-        agent=$(basename "$config" .yaml)
-        PROMPTFOO_PYTHON=../../.venv/bin/python PYTHONPATH=../.. \
-        npx promptfoo eval -c "$config" --env-file {{.ROOT_DIR}}/.env \
-          --output "eval-results/${agent}_${ts}.json" {{._FLAGS}}
-      done
-
-  evals:ci:
-    desc: "CI gate — 1 provider, no cache, fixed output names for artifact collection"
-    cmds:
-      - task: evals:local
-        vars:
-          PROVIDERS: "gpt-4o-mini-sweden"
-          NO_CACHE: "true"
-          SHOW_PROGRESS: "false"
-          TIMESTAMP: "ci"
+      AGENT={{.AGENT}} \
+      bash {{.ROOT_DIR}}/apps/screen/tests/promptfoo/evals/run_evals.sh {{.CLI_ARGS}}
 
   evals:view:
     desc: "Open promptfoo UI — shows all historical runs from local database"
+    dir: "{{.ROOT_DIR}}/apps/screen/tests/promptfoo/evals"
     cmd: npx promptfoo view
+
+  # ---------------------------------------------------------------------------
+  # Red team
+  # ---------------------------------------------------------------------------
+  #
+  # redteam:generate — generate adversarial probes for one agent and commit them.
+  #                    Re-run when purpose, plugins, or numTests change.
+  #                    Output: tests/promptfoo/redteam/probes/<agent>.yaml
+  #
+  # redteam         — local convenience: generate probes + run scan in one shot.
+  #
+  # redteam:eval    — CI mode: run pre-generated committed probes via run_redteam.sh.
+  #                   Loops over all probes/ or a single AGENT. Use in scheduled CI jobs.
+  #
+  # redteam:report  — open vulnerability report in the browser
+  #
+  # AGENT=<name>  agent to scan; omit for redteam:eval to run all agents
+  # CLI_ARGS      pass any native promptfoo flag after --
+  #
+  # Examples:
+  #   task screen:redteam:generate AGENT=planner          # regenerate probes
+  #   task screen:redteam AGENT=planner                   # generate + run locally
+  #   task screen:redteam:eval AGENT=planner              # CI: single agent
+  #   task screen:redteam:eval                            # CI: all agents
+  #   task screen:redteam AGENT=planner -- --force        # force probe regeneration
+
+  redteam:generate:
+    desc: "Generate adversarial probes for one agent. AGENT=planner (required). Commit the output."
+    dir: "{{.ROOT_DIR}}/apps/screen/tests/promptfoo/redteam"
+    requires:
+      vars: [AGENT]
+    cmd: |
+      LLM_BASE_URL="${LLM_BASE_URL%/}" \
+      PROMPTFOO_DISABLE_REMOTE_GENERATION=1 \
+      npx --yes promptfoo@0.121.9 redteam generate \
+        -c configs/{{.AGENT}}.yaml \
+        --output probes/{{.AGENT}}.yaml {{.CLI_ARGS}}
+
+  redteam:
+    desc: "Generate + run red team scan locally. AGENT=planner (required). Native flags after --."
+    dir: "{{.ROOT_DIR}}/apps/screen/tests/promptfoo/redteam"
+    requires:
+      vars: [AGENT]
+    cmd: |
+      mkdir -p results
+      LLM_BASE_URL="${LLM_BASE_URL%/}" \
+      PROMPTFOO_DISABLE_REMOTE_GENERATION=1 \
+      npx --yes promptfoo@0.121.9 redteam run \
+        -c configs/{{.AGENT}}.yaml {{.CLI_ARGS}}
+
+  redteam:eval:
+    desc: "Run pre-generated probes, no generation. AGENT=planner (required). Use in CI."
+    dir: "{{.ROOT_DIR}}/apps/screen/tests/promptfoo/redteam"
+    cmd: |
+      AGENT={{.AGENT}} \
+      bash run_redteam.sh {{.CLI_ARGS}}
+
+  redteam:report:
+    desc: "Open red team vulnerability report in the browser"
+    dir: "{{.ROOT_DIR}}/apps/screen/tests/promptfoo/redteam"
+    cmd: npx promptfoo@0.121.9 redteam report

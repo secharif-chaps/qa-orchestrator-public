@@ -12,7 +12,9 @@
   threshold: 0.9
   vars:
     _agent_name: "profile"  # routes Pydantic schema validation in validate_schema.py
-    user_message: "Analyze company: Apple, website: apple.com"
+    user_message: |
+      Research the following company: Apple
+      Website: apple.com
     rubric: |
       Response correctly identifies Apple as an American multinational technology company.
       Must include: headquarters in Cupertino, California, founding year 1976,
@@ -23,7 +25,9 @@
   threshold: 0.7
   vars:
     _agent_name: "profile"
-    user_message: "Analyze company: ChapsVision, website: chapsvision.com"
+    user_message: |
+      Research the following company: ChapsVision
+      Website: chapsvision.com
     rubric: |
       Response identifies ChapsVision as a French software or technology company
       related to AI, ESG, or data analytics/monitoring, with at least some
@@ -34,7 +38,9 @@
   threshold: 0
   vars:
     _agent_name: "profile"
-    user_message: "Analyze company: Pennylane, website: pennylane.com"
+    user_message: |
+      Research the following company: Pennylane
+      Website: pennylane.com
     rubric: |
       Response identifies Pennylane as an accounting or fintech software company
       targeting SMBs or accountants in France, with relevant profile details.

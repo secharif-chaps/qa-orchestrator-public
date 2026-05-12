@@ -1,0 +1,16 @@
+# This file is loaded as the VALUE of `defaultTest:` in each agent config.
+# The root must be the defaultTest object directly — no wrapper key.
+options:
+  provider:
+    id: 'openai:chat:gpt-4o-mini-sweden'
+    config:
+      apiKey: '{{env.PROMPTFOO_LLM_API_KEY}}'
+      apiBaseUrl: '{{env.PROMPTFOO_LLM_BASE_URL}}'
+assert:
+  - type: is-json
+  - type: python
+    metric: structural
+    value: file://../assertions/validate_schema.py
+  - type: llm-rubric
+    metric: quality
+    value: '{{rubric}}'

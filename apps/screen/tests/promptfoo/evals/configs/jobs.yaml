@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "Screen — Jobs agent evaluation"
+
+providers: file://../../shared/providers.yaml
+
+prompts:
+  - id: file://../providers/loaders.py:load_jobs
+    label: "Jobs Agent"
+
+defaultTest: file://../../shared/base_test.yaml
+
+tests:
+  - ../tests/tests_jobs.yaml
+
+outputPath: ../results/results_jobs.json

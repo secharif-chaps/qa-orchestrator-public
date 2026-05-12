@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+- id: openai:chat:gpt-5.1-sweden
+  config:
+    apiKey: '{{env.PROMPTFOO_LLM_API_KEY}}'
+    apiBaseUrl: '{{env.PROMPTFOO_LLM_BASE_URL}}'
+    temperature: 0
+    response_format:
+      type: json_object
