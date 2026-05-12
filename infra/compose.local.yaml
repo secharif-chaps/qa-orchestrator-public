@@ -280,7 +280,7 @@ services:
   # URL changes each restart (use task target:tunnel:sync after restart).
   # Workflow: task up → task target:tunnel:sync → APIFY_WEBHOOK_URL auto-updated in .env.local
   localtunnel:
-    image: node:20-alpine
+    image: node:24-alpine
     profiles: [target]
     restart: on-failure
     command: sh -c "npx --yes localtunnel@2.4.1 --port 80 --local-host nginx 2>&1"
