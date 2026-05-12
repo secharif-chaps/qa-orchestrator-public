@@ -24,7 +24,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ValidationError, field_validator
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 from app.agents.schemas import AGENT_OUTPUT_SCHEMAS
 
@@ -66,6 +66,21 @@ class SanctionsOutput(BaseModel):
     items: list
 
 
+class _SourcedValue(BaseModel):
+    value: str
+    source: str
+
+
+class _CorporateEntity(BaseModel):
+    name: _SourcedValue
+    type: Literal["subsidiary", "affiliate", "branch", "regional_entity", "parent_company"]
+    country: _SourcedValue
+
+
+class CorporateStructureOutput(BaseModel):
+    entities: list[_CorporateEntity]
+
+
 # ---------------------------------------------------------------------------
 # Combined registry: eval-only + production schemas
 # ---------------------------------------------------------------------------
@@ -74,6 +89,7 @@ _SCHEMAS: dict[str, type[BaseModel]] = {
     "financial_classify": FinancialClassifyOutput,
     "planner": PlannerOutput,
     "sanctions": SanctionsOutput,
+    "corporate_structure": CorporateStructureOutput,
     **AGENT_OUTPUT_SCHEMAS,
 }
 

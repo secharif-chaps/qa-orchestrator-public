@@ -1,0 +1,42 @@
+# Team agent — A/B/C difficulty ladder.
+#
+# What this agent does: identifies leadership team with hierarchy —
+# first_name, last_name, position, linkedin_url, subordinates.
+#
+# Rubric goal: at least CEO or C-level leadership identified.
+
+- description: "team/A — Apple (Tim Cook well-documented CEO)"
+  threshold: 0.9
+  vars:
+    _agent_name: "team"
+    user_message: |
+      Research the following company: Apple
+      Website: apple.com
+    rubric: |
+      team list must contain at least 1 entry.
+      CEO or equivalent should be identified (Tim Cook or similar).
+      At least first_name and last_name must be non-null for the top entry.
+      position must reference CEO, Chief Executive, or equivalent.
+
+- description: "team/B — LVMH (Bernard Arnault known CEO)"
+  threshold: 0.7
+  vars:
+    _agent_name: "team"
+    user_message: |
+      Research the following company: LVMH
+      Website: lvmh.com
+    rubric: |
+      team list must contain at least 1 entry.
+      CEO or Chairman should be identified (Arnault or similar).
+      Partial team data is acceptable.
+
+- description: "team/C — Small company with limited leadership data"
+  threshold: 0
+  vars:
+    _agent_name: "team"
+    user_message: |
+      Research the following company: Pappers
+      Website: pappers.fr
+    rubric: |
+      Output is a valid TeamAgentOutput JSON.
+      team list may be sparse or empty for a small company.

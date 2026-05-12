@@ -1,0 +1,39 @@
+# Jobs agent — A/B/C difficulty ladder.
+#
+# What this agent does: finds job offers, hiring focus, and recruitment insights.
+#
+# Rubric goal: insights or at least one job offer found.
+
+- description: "jobs/A — Apple (major employer with thousands of open roles)"
+  threshold: 0.9
+  vars:
+    _agent_name: "jobs"
+    user_message: |
+      Research the following company: Apple
+      Website: apple.com
+    rubric: |
+      insights must be non-null and reference hiring, jobs, or career.
+      offers list should contain at least 1 entry OR insights_data should be non-null.
+      Job roles should reference technology, engineering, or design.
+
+- description: "jobs/B — Thales (French defense/aerospace company, active hiring)"
+  threshold: 0.7
+  vars:
+    _agent_name: "jobs"
+    user_message: |
+      Research the following company: Thales
+      Website: thalesgroup.com
+    rubric: |
+      insights or insights_data should reference defense, aerospace, engineering, or technology.
+      At least partial hiring data or insights populated.
+
+- description: "jobs/C — Small French company with limited job postings"
+  threshold: 0
+  vars:
+    _agent_name: "jobs"
+    user_message: |
+      Research the following company: Pappers
+      Website: pappers.fr
+    rubric: |
+      Output is a valid JobsAgentOutput JSON.
+      Any populated field is acceptable — sparse data expected.

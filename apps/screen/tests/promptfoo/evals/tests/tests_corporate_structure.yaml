@@ -1,0 +1,58 @@
+# Corporate structure agent — A/B/C difficulty ladder.
+#
+# What this agent does: analyzes WorldCheck screening results to identify
+# corporate entities (subsidiaries, affiliates, branches, parent companies).
+#
+# Input: WorldCheck JSON. Rubric goal: correct entity classification.
+
+- description: "corporate_structure/A — Clean company (empty WorldCheck results)"
+  threshold: 0.9
+  vars:
+    _agent_name: "corporate_structure"
+    user_message: '{"results": [], "referenceId": "APPLE-001"}'
+    # llm-rubric is inherited from defaultTest — kept minimal to avoid the grader
+    # confusing the expected JSON format with the actual output (known failure mode).
+    # The contains-json assertion below is the real gate for this deterministic case.
+    rubric: |
+      The input has no WorldCheck results. An empty entities list is the correct and expected answer.
+      Pass if entities is an empty array. Fail only if entities contains items.
+  assert:
+    - type: contains-json
+      value:
+        entities: []
+
+- description: "corporate_structure/B — Company with clear subsidiary matches"
+  threshold: 0.7
+  vars:
+    _agent_name: "corporate_structure"
+    user_message: >
+      {"results": [
+        {"name": "SEPHORA USA INC.", "matchedNameType": "AKA", "matchStrength": "EXACT",
+         "countryLinks": [{"country": "United States"}]},
+        {"name": "SEPHORA POLSKA SP Z OO", "matchedNameType": "AKA", "matchStrength": "STRONG",
+         "countryLinks": [{"country": "Poland"}]}
+      ], "referenceId": "SEPHORA-001"}
+    rubric: |
+      entities list must contain at least 1 entry.
+      Each entity must have name.value, type (subsidiary/affiliate/branch/regional_entity), and country.value.
+      US and Poland entities should be classified as subsidiary or branch.
+      No entity should have null country.
+
+- description: "corporate_structure/C — Complex mixed matches with false positives"
+  threshold: 0
+  vars:
+    _agent_name: "corporate_structure"
+    user_message: >
+      {"results": [
+        {"name": "LVMH MOET HENNESSY LOUIS VUITTON SE", "matchedNameType": "PRIMARY",
+         "matchStrength": "EXACT", "countryLinks": [{"country": "France"}]},
+        {"name": "LVMH FASHION GROUP", "matchedNameType": "AKA", "matchStrength": "STRONG",
+         "countryLinks": []},
+        {"name": "LV MOTORS HOLDING", "matchedNameType": "AKA", "matchStrength": "MEDIUM",
+         "countryLinks": [{"country": "Hong Kong"}]}
+      ], "referenceId": "LVMH-001"}
+    rubric: |
+      entities list should exclude the PRIMARY EXACT match (the screened entity itself).
+      LVMH FASHION GROUP should be included as subsidiary or affiliate.
+      LV MOTORS HOLDING may be excluded as a likely false positive (different business).
+      All included entities must have a non-null country.

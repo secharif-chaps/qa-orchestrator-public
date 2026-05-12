@@ -1,15 +1,15 @@
 # yaml-language-server: $schema=https://www.promptfoo.dev/config-schema.json
 description: "Screen — Sanctions agent evaluation"
 
-providers: file://../shared/providers.yaml
+providers: file://../../shared/providers.yaml
 
 prompts:
   - id: file://../providers/loaders.py:load_sanctions
     label: "Sanctions Agent"
 
-defaultTest: file://../shared/base_test.yaml
+defaultTest: file://../../shared/base_test.yaml
 
 tests:
   - ../tests/tests_sanctions.yaml
 
-outputPath: ../eval-results/results_sanctions.json
+outputPath: ../results/results_sanctions.json

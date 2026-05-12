@@ -6,6 +6,9 @@
 # Tier A (threshold: 0.9) — must always pass, blocks CI on failure.
 # Tier B (threshold: 0.7) — should reliably pass, tracked but advisory.
 # Tier C (threshold: 0.0) — hard/ambiguous case, never blocks CI.
+#
+# Security / red-team tests are intentionally NOT in this file.
+# Use `promptfoo redteam` (tests/redteam/) for adversarial probing — see the promptfoo skill.
 
 # Tier A: one of the most documented companies online — easy to plan comprehensively.
 - description: "planner/A — Apple (massive global web presence)"

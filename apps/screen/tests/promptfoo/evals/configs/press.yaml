@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "Screen — Press agent evaluation"
+
+providers: file://../../shared/providers.yaml
+
+prompts:
+  - id: file://../providers/loaders.py:load_press
+    label: "Press Agent"
+
+defaultTest: file://../../shared/base_test.yaml
+
+tests:
+  - ../tests/tests_press.yaml
+
+outputPath: ../results/results_press.json

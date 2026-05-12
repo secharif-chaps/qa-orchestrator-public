@@ -181,6 +181,79 @@ screen:bandit:
     expire_in: 7 days
   <<: *screen-changes
 
+# ─── Evals Stage (promptfoo LLM regression tests) ─────
+# Runs LLM prompt regression tests with promptfoo.
+screen:promptfoo:evals:
+
+  stage: test  # Runs after lint, in parallel with unit/integration tests
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci-node:latest
+  needs: [screen:lint]
+  allow_failure: true
+  interruptible: true
+  timeout: 20m
+
+  script:
+    - RUN_ID="sha-${CI_COMMIT_SHORT_SHA}" bash apps/screen/tests/promptfoo/evals/run_evals.sh --no-cache
+
+  # ── Trigger filter ────────────────────────────────────────────────────────
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never  # Scheduled pipelines handled separately (nightly eval job)
+    - if: $AGENT_ISSUE
+      when: never  # agent-os automation pipelines
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - apps/screen/app/agents/prompts/**/*
+        - apps/screen/tests/promptfoo/evals/**/*
+        - apps/screen/tests/promptfoo/shared/**/*
+    - if: $CI_COMMIT_BRANCH
+      changes:
+        - apps/screen/app/agents/prompts/**/*
+        - apps/screen/tests/promptfoo/evals/**/*
+        - apps/screen/tests/promptfoo/shared/**/*
+
+  artifacts:
+    paths:
+      - apps/screen/tests/promptfoo/evals/results/*.json
+    when: always
+    expire_in: 30 days
+
+# ─── Redteam Stage (promptfoo adversarial probing) ────
+# Replays committed adversarial probes (no generation). Advisory only.
+screen:promptfoo:redteam:
+
+  stage: test
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci-node:latest
+  needs: [screen:lint]
+  allow_failure: true
+  interruptible: true
+  timeout: 15m
+
+  script:
+    - RUN_ID="sha-${CI_COMMIT_SHORT_SHA}" bash apps/screen/tests/promptfoo/redteam/run_redteam.sh --no-cache
+
+  # ── Trigger filter ────────────────────────────────────────────────────────
+  # MR: auto on prompt/redteam changes so reviewers see the security report
+  # Branch push: manual-only — advisory job, too expensive to auto-run on every push
+  rules:
+    - if: $AGENT_ISSUE
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - apps/screen/app/agents/prompts/**/*
+        - apps/screen/tests/promptfoo/redteam/**/*
+        - apps/screen/tests/promptfoo/shared/providers.yaml
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+
+  artifacts:
+    paths:
+      - apps/screen/tests/promptfoo/redteam/results/*.json
+    when: always
+    expire_in: 30 days
+
 # ─── Publish (build + tag + push) ─────────────────────
 screen:publish:
   interruptible: false

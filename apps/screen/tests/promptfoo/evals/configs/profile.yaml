@@ -1,15 +1,15 @@
 # yaml-language-server: $schema=https://www.promptfoo.dev/config-schema.json
 description: "Screen — Profile agent evaluation"
 
-providers: file://../shared/providers.yaml
+providers: file://../../shared/providers.yaml
 
 prompts:
   - id: file://../providers/loaders.py:load_profile
     label: "Profile Agent"
 
-defaultTest: file://../shared/base_test.yaml
+defaultTest: file://../../shared/base_test.yaml
 
 tests:
   - ../tests/tests_profile.yaml
 
-outputPath: ../eval-results/results_profile.json
+outputPath: ../results/results_profile.json

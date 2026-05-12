@@ -1,0 +1,40 @@
+# Timeline agent — A/B/C difficulty ladder.
+#
+# What this agent does: builds a chronological history of key milestones,
+# founding events, acquisitions, partnerships, and major developments.
+#
+# Rubric goal: at least 2 events with dates identified.
+
+- description: "timeline/A — Apple (extensively documented history since 1976)"
+  threshold: 0.9
+  vars:
+    _agent_name: "timeline"
+    user_message: |
+      Research the following company: Apple
+      Website: apple.com
+    rubric: |
+      events list must contain at least 3 entries.
+      Each event must have a non-null date.value and title.value.
+      Events should span at least founding (1976), iPod/iPhone era, and recent years.
+
+- description: "timeline/B — Airbus (European aerospace with documented milestones)"
+  threshold: 0.7
+  vars:
+    _agent_name: "timeline"
+    user_message: |
+      Research the following company: Airbus
+      Website: airbus.com
+    rubric: |
+      events list must contain at least 2 entries with dates.
+      Events should reference founding, aircraft launches, or major contracts.
+
+- description: "timeline/C — Small company with limited documented history"
+  threshold: 0
+  vars:
+    _agent_name: "timeline"
+    user_message: |
+      Research the following company: Pappers
+      Website: pappers.fr
+    rubric: |
+      Output is a valid TimelineAgentOutput JSON.
+      At least 1 event attempted, even with sparse data.
