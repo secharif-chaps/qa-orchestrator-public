@@ -11,6 +11,39 @@ tasks:
     cmds:
       - bash infra/scripts/profile.sh add target
 
+  tunnel:sync:
+    desc: 'Extract localtunnel URL and update .env.local, then reload target services'
+    cmds:
+      - |
+        URL=$(docker compose -f infra/compose.yaml -f infra/compose.local.yaml logs localtunnel 2>/dev/null | grep -o 'https://[^ ]*\.loca\.lt' | tail -1)
+        if [ -z "$URL" ]; then
+          echo "⚠  localtunnel URL not found — try: task up"
+          exit 1
+        fi
+        WEBHOOK_URL="$URL/api/apify/webhook"
+        grep -q "^APIFY_WEBHOOK_URL=" .env.local 2>/dev/null || echo "APIFY_WEBHOOK_URL=" >> .env.local
+        sed -i'' "s|^APIFY_WEBHOOK_URL=.*|APIFY_WEBHOOK_URL=$WEBHOOK_URL|" .env.local
+        echo "✓ Updated .env.local"
+        echo "Tunnel URL   : $URL"
+        echo "Webhook URL  : $WEBHOOK_URL"
+        echo "⚠  Run 'task up' (not 'task restart') to reload without changing the tunnel URL"
+
+  tunnel:status:
+    desc: 'Show current localtunnel URL'
+    cmds:
+      - |
+        if docker compose -f infra/compose.yaml -f infra/compose.local.yaml ps localtunnel 2>/dev/null | grep -q "Up"; then
+          URL=$(docker compose -f infra/compose.yaml -f infra/compose.local.yaml logs localtunnel 2>/dev/null | grep -o 'https://[^ ]*\.loca\.lt' | tail -1)
+          if [ -z "$URL" ]; then
+            echo "⚠  localtunnel starting, URL not yet available..."
+          else
+            echo "Public URL  : $URL"
+            echo "Webhook URL : $URL/api/apify/webhook"
+          fi
+        else
+          echo "⚠  localtunnel is not running — try: task up"
+        fi
+
   # ─── Aggregate tasks ──────────────────────────────────
   lint:
     desc: 'Run all linters (ECS + PHPStan)'
