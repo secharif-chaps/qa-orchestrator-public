@@ -41,6 +41,11 @@ parameters:
     social_media:x:user: 'apidojo/tweet-scraper'
     social_media:x:search: 'apidojo/tweet-scraper'
     social_media:x:hashtag: 'apidojo/tweet-scraper'
+    social_media:facebook:page: 'apify/facebook-posts-scraper'
+    social_media:facebook:user: 'apify/facebook-posts-scraper'
+    social_media:facebook:group: 'apify/facebook-posts-scraper'
+    social_media:facebook:search: 'apify/facebook-posts-scraper'
+    social_media:facebook:ads: 'apify/facebook-ads-scraper'
     social_media:tiktok: 'clockworks/tiktok-scraper'
     video:youtube:channel: 'streamers/youtube-scraper'
     video:youtube:playlist: 'streamers/youtube-scraper'
@@ -150,6 +155,31 @@ parameters:
         proxyConfiguration:
           useApifyProxy: true
       required_fields: ['videoUrls']
+    # Facebook Posts Scraper (social_media:facebook:page, user, group, search)
+    apify/facebook-posts-scraper:
+      name: 'Facebook Posts Scraper'
+      source_types: ['social_media:facebook:page', 'social_media:facebook:user', 'social_media:facebook:group', 'social_media:facebook:search']
+      defaults:
+        startUrls:
+          - url: '{{source.url}}'
+        maxPosts: 100
+        proxyConfiguration:
+          useApifyProxy: true
+      required_fields: ['startUrls']
+
+    # Facebook Ads Scraper / Meta Ad Library (social_media:facebook:ads)
+    apify/facebook-ads-scraper:
+      name: 'Facebook Ads Scraper'
+      source_types: ['social_media:facebook:ads']
+      defaults:
+        searchTerms:
+          - '{{source.query}}'
+        maxResults: '{{config.max_results|default:100}}'
+        countries:
+          - '{{config.country|default:FR}}'
+        proxyConfiguration:
+          useApifyProxy: true
+      required_fields: ['searchTerms']
 
   app.collect_task.jwt_secret: '%env(string:COLLECT_TASK_JWT_SECRET)%'
 
@@ -165,6 +195,11 @@ parameters:
     social_media:x:user: 'apify'
     social_media:x:search: 'apify'
     social_media:x:hashtag: 'apify'
+    social_media:facebook:page: 'apify'
+    social_media:facebook:user: 'apify'
+    social_media:facebook:group: 'apify'
+    social_media:facebook:search: 'apify'
+    social_media:facebook:ads: 'apify'
     social_media:tiktok: 'apify'
     news:newsapi: 'apify'
     news:newsapi:headlines: 'apify'

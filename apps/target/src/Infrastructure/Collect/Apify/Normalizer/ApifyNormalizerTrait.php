@@ -69,6 +69,47 @@ trait ApifyNormalizerTrait
         return null;
     }
 
+    /**
+     * Extract a string value, accepting both plain strings and string arrays (joined with ", ").
+     * Handles fields like publisher_platforms which the Meta Ads Library API returns as an array.
+     *
+     * @param array<string, mixed> $item
+     * @param list<string>         $keys
+     */
+    private function extractStringOrArray(array $item, array $keys): ?string
+    {
+        foreach ($keys as $key) {
+            $val = $item[$key] ?? null;
+            if (\is_string($val) && '' !== $val) {
+                return $val;
+            }
+            if (\is_array($val) && [] !== $val) {
+                $parts = array_filter(array_map(static fn (mixed $v): string => \is_string($v) ? $v : '', $val));
+                $joined = implode(', ', $parts);
+
+                return '' !== $joined ? $joined : null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<string, mixed> $item
+     * @param list<string>         $keys
+     */
+    private function extractInt(array $item, array $keys): ?int
+    {
+        foreach ($keys as $key) {
+            $val = $item[$key] ?? null;
+            if (null !== $val && (\is_int($val) || (\is_string($val) && is_numeric($val)))) {
+                return (int) $val;
+            }
+        }
+
+        return null;
+    }
+
     private function parseDate(mixed $value): ?\DateTimeImmutable
     {
         if (!\is_string($value) || '' === $value) {

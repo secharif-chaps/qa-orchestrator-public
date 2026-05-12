@@ -11,6 +11,7 @@ use App\Domain\Collect\ApifyNormalizerResolverInterface;
 use App\Domain\Collect\CollectTask;
 use App\Domain\Collect\CollectTaskGatewayInterface;
 use App\Domain\Collect\CollectTaskResult;
+use App\Domain\Collect\CollectTaskStatus;
 use App\Domain\Collect\Exception\ApifyDatasetFetchException;
 use App\Domain\Collect\Exception\ApifyDatasetNotFoundException;
 use App\Domain\Collect\Exception\CollectException;
@@ -77,6 +78,11 @@ readonly class FetchApifyDatasetHandler
                 'provider_name' => 'apify',
             ]);
 
+            $oldStatus = $collectTask->getStatus();
+            if ($collectTask->getStatus()->canTransitionTo(CollectTaskStatus::RUNNING)) {
+                $collectTask->resume($this->eventDispatcher);
+            }
+
             $stats = $this->processDatasetItems($action->collectTaskId, $action->datasetId, $normalizer, $apifyActorId);
 
             $result = CollectTaskResult::success(
@@ -92,8 +98,6 @@ readonly class FetchApifyDatasetHandler
             );
 
             $collectTask->storeResult($result->toArray());
-
-            $oldStatus = $collectTask->getStatus();
             $collectTask->complete($this->eventDispatcher);
             $this->collectTaskGateway->save($collectTask);
 

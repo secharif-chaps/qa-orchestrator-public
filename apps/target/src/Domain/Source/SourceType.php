@@ -24,6 +24,7 @@ enum SourceType: string
     case SOCIAL_MEDIA_FACEBOOK_GROUP = 'social_media:facebook:group';
     case SOCIAL_MEDIA_FACEBOOK_USER = 'social_media:facebook:user';
     case SOCIAL_MEDIA_FACEBOOK_SEARCH = 'social_media:facebook:search';
+    case SOCIAL_MEDIA_FACEBOOK_ADS = 'social_media:facebook:ads';
 
     // LinkedIn
     case SOCIAL_MEDIA_LINKEDIN_COMPANY = 'social_media:linkedin:company';
