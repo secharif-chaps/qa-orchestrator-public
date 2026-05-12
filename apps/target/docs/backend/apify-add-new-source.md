@@ -2,7 +2,7 @@
 
 This guide describes the steps to integrate a new Apify actor into the collection pipeline. The goal is to stay within YAML + normalizer scope without touching core business logic.
 
-**Prerequisites**: Have read [ADR-2026-012](../adr/2026-012-apify-provider-implementation.md) and have access to an Apify account with test credits.
+**Prerequisites**: Have read [ADR-0034](../../../../docs/architecture/adr/0034-apify-provider-implementation.md) and have access to an Apify account with test credits.
 
 ---
 

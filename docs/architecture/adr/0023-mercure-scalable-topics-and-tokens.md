@@ -1,8 +1,18 @@
-# ADR-2025-001: Scalable Mercure Topics and Token Management
+# ADR-0023: Scalable Mercure Topics and Token Management
 
-| Status   | Date       | Author                    |
-| -------- | ---------- | ------------------------- |
-| Accepted | 2025-12-29 | Frédéric Fayard-Le Barzic |
+> Migrated from basil ADR-2025-001
+
+## Status
+
+**Status:** Accepted
+
+**Date:** 2025-12-29
+
+**Decision Makers:** Frédéric Fayard-Le Barzic
+
+**Tags:** backend, mercure, real-time, jwt, performance, scalability
+
+---
 
 ## Context
 
@@ -220,7 +230,7 @@ foreach ($authorizedUserIds as $userId) {
 
 By prefixing topics with user UUIDs, we create strong namespace isolation:
 
-```
+```text
 User A's JWT authorizes: /users/user-a-uuid/watch-files/{id}
 User B's JWT authorizes: /users/user-b-uuid/watch-files/{id}
 
@@ -481,7 +491,7 @@ function discoverMercure(response: Response): { hubUrl: string; topic: string } 
 
 ### 1. Topic Format
 
-```
+```text
 /users/{userId}/watch-files/{watchFileId}
 /users/{userId}/conversations/{conversationId}
 /users/{userId}/conversations/{conversationId}/messages
@@ -489,7 +499,7 @@ function discoverMercure(response: Response): { hubUrl: string; topic: string } 
 
 Example topics:
 
-```
+```text
 /users/550e8400-e29b-41d4-a716-446655440000/watch-files/7c9e6679-7425-40de-944b-e07fc1f90ae7
 /users/550e8400-e29b-41d4-a716-446655440000/conversations/a1b2c3d4-e5f6-7890-abcd-ef1234567890
 /users/550e8400-e29b-41d4-a716-446655440000/conversations/a1b2c3d4-e5f6-7890-abcd-ef1234567890/messages
@@ -1025,7 +1035,7 @@ pattern is a fallback if HTTP/2 constraints emerge.
 
 ### Successful Matches
 
-```
+```text
 JWT Subscribe Claim: /users/abc-123/watch-files/{id}
 
 Topic: /users/abc-123/watch-files/wf-456  → ✅ MATCH
@@ -1035,7 +1045,7 @@ Topic: /users/abc-123/watch-files/any-uuid → ✅ MATCH
 
 ### Rejected Matches
 
-```
+```text
 JWT Subscribe Claim: /users/abc-123/watch-files/{id}
 
 Topic: /users/xyz-999/watch-files/wf-456  → ❌ NO MATCH (different user)
@@ -1046,7 +1056,7 @@ Topic: /api/watch_files/wf-456            → ❌ NO MATCH (old format)
 
 ### Multiple Users Scenario
 
-```
+```text
 WatchFile "project-x" is shared between User A and User B
 
 Publication targets:

@@ -1,19 +1,29 @@
-# ADR-2026-005: Document Quality Scoring Processors Phase 2
+# ADR-0027: Document Quality Scoring Processors Phase 2
 
-| Status   | Date       | Author                    |
-| -------- | ---------- | ------------------------- |
-| Accepted | 2026-01-11 | Frédéric Fayard-Le Barzic |
+> Migrated from basil ADR-2026-005
+
+## Status
+
+**Status:** Accepted
+
+**Date:** 2026-01-11
+
+**Decision Makers:** Frédéric Fayard-Le Barzic
+
+**Tags:** backend, quality-scoring, document-processing, pipeline, processors, external-apis
+
+---
 
 ## Context
 
-ADR-2026-004 established Phase 1 processors using only data available at collection time. This ADR defines **Phase 2
+ADR-0026 established Phase 1 processors using only data available at collection time. This ADR defines **Phase 2
 processors** that require external data sources, API integrations, or pre-computed infrastructure.
 
 ### Phase 2 Goals
 
 1. **Source reputation**: Leverage external credibility databases (Kagi, MBFC, legacy validation)
 2. **Domain intelligence**: WHOIS/RDAP data for domain age and registration patterns
-3. **Duplicate detection**: Integration with deduplication system (see ADR-2026-006)
+3. **Duplicate detection**: Integration with deduplication system (see ADR-0028)
 4. **Social signals**: Optional integration with social proof indicators
 
 ### Dependencies
@@ -22,7 +32,7 @@ processors** that require external data sources, API integrations, or pre-comput
 | ------------------------- | -------------------------------------- | ------------------------------ |
 | SourceReputationProcessor | Kagi API, MBFC dataset, legacy DB sync | Data sync service, cache layer |
 | DomainAgeProcessor        | WHOIS/RDAP APIs                        | Rate-limited client, cache     |
-| DuplicateProcessor        | Fingerprint storage (ADR-2026-006)     | Redis/Elasticsearch            |
+| DuplicateProcessor        | Fingerprint storage (ADR-0028)         | Redis/Elasticsearch            |
 | SocialProofProcessor      | Social APIs (optional)                 | API clients, rate limiting     |
 
 ## Decision
@@ -422,7 +432,7 @@ final readonly class DomainInfo
 **Rationale**: Duplicate content indicates scraping, syndication, or content farming. Near-duplicates (>85% similarity)
 should be flagged. Exact duplicates should be early-rejected.
 
-**Integration**: Uses deduplication infrastructure from ADR-2026-006.
+**Integration**: Uses deduplication infrastructure from ADR-0028.
 
 ```php
 final readonly class DuplicateProcessor implements DocumentProcessorInterface
@@ -502,7 +512,7 @@ final readonly class DuplicateProcessor implements DocumentProcessorInterface
 }
 ```
 
-**Supporting Infrastructure** (from ADR-2026-006):
+**Supporting Infrastructure** (from ADR-0028):
 
 ```php
 interface DocumentFingerprintService
@@ -770,7 +780,7 @@ CREATE INDEX idx_domain_age_expires ON domain_age_cache (cache_expires_at);
 
 ## Directory Structure
 
-```
+```text
 api/src/
 ├── Domain/
 │   └── DocumentQuality/
@@ -798,6 +808,12 @@ api/src/
             ├── MbfcSyncCommand.php
             └── OpenPageRankSyncCommand.php
 ```
+
+---
+
+## Options Considered
+
+_Not documented in original ADR._
 
 ---
 
@@ -836,7 +852,7 @@ api/src/
 | 2    | SourceReputationProcessor + provider      | 2 days | Step 1            |
 | 3    | RDAP client + caching layer               | 2 days | -                 |
 | 4    | DomainAgeProcessor implementation         | 1 day  | Step 3            |
-| 5    | DuplicateProcessor (after ADR-2026-006)   | 1 day  | ADR-2026-006      |
+| 5    | DuplicateProcessor (after ADR-0028)       | 1 day  | ADR-0028          |
 | 6    | Integration tests with external mocks     | 2 days | Steps 1-5         |
 | 7    | SocialProofProcessor (optional, deferred) | 1 day  | Social API access |
 
@@ -844,6 +860,6 @@ api/src/
 
 ## Related ADRs
 
-- **ADR-2026-003**: Document Processing Pipeline Architecture
-- **ADR-2026-004**: Document Quality Scoring Processors Phase 1
-- **ADR-2026-006**: Document Deduplication Strategy (fingerprinting infrastructure)
+- **ADR-0025**: Document Processing Pipeline Architecture
+- **ADR-0026**: Document Quality Scoring Processors Phase 1
+- **ADR-0028**: Document Deduplication Strategy (fingerprinting infrastructure)

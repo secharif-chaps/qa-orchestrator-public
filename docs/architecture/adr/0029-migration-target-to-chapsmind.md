@@ -1,8 +1,18 @@
-# ADR-2026-007: Migration from Nuxt 4 to Vue 3 with unplugin-vue-router
+# ADR-0029: Migration from Nuxt 4 to Vue 3 with unplugin-vue-router
 
-| Status   | Date       | Author      |
-| -------- | ---------- | ----------- |
-| Accepted | 2026-01-15 | Lucas GAULT |
+> Migrated from basil ADR-2026-007
+
+## Status
+
+**Status:** Accepted
+
+**Date:** 2026-01-15
+
+**Decision Makers:** Lucas GAULT
+
+**Tags:** frontend, vue, nuxt, migration, routing, unplugin-vue-router
+
+---
 
 ## Context
 
@@ -167,6 +177,7 @@ integration.
      - `stylelint-config-recommended-vue` (for Vue SFC `<style>` blocks)
      - `stylelint-prettier` (to integrate with Prettier)
    - Create `.stylelintrc` configuration file aligned with Target's configuration:
+
      ```json
      {
        "extends": [
@@ -180,6 +191,7 @@ integration.
        }
      }
      ```
+
    - Add Stylelint scripts to `package.json`:
      - `stylelint:fix`: Check and fix CSS/SCSS/Vue style issues
      - `stylelint:check`: Check only (for CI)
@@ -221,7 +233,9 @@ integration.
    - Copy all content from `target/pwa/` (adapted) into `src/target/`
    - Add Vite alias for `@target/*` → `src/target/*`
    - Initial structure:
-     ```
+
+     ```text
+
      chapsmind-workspace/front/src/
      ├── target/           # Migrated Target code
      │   ├── components/
@@ -285,6 +299,7 @@ integration.
 2. **Future Improvements** (out of scope for initial migration)
    - Align translation keys between modules (standardization)
    - Implement lazy loading of translation files per module/route to optimize initial bundle:
+
      ```typescript
      // Example: load Target translations only on Target pages
      async function loadTargetTranslations(locale: string) {
@@ -528,7 +543,9 @@ If Target needs custom layouts per route, this system would need to be extended.
 The following items will be addressed after the initial migration:
 
 1. **Module reorganization**: Restructure shared folders into subdirectories by module:
-   ```
+
+   ```text
+
    src/
    ├── components/
    │   ├── common/       # Shared components
@@ -543,7 +560,9 @@ The following items will be addressed after the initial migration:
    │   ├── explore/
    │   └── target/
    └── ...
+
    ```
+
 2. **i18n key alignment**: Standardize translation keys between modules (explore/target/common)
 3. **i18n lazy loading**: Load translation files per module based on navigation
 4. **i18n file format**: Long-term decision on `.ts` vs `.json` (both coexist during migration)

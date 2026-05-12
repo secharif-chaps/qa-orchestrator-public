@@ -69,7 +69,7 @@ tests:
         value: 'Apple'
 ```
 
-> See the demo evaluation configuration at [`apps/screen/tests/evals/`](../../../apps/screen/tests/evals/).
+> See the demo evaluation configuration at [`apps/screen/tests/promptfoo/evals/`](../../../apps/screen/tests/promptfoo/evals/).
 
 ### Red Teaming: Prompt Injection via Company Names
 
@@ -134,7 +134,7 @@ The primary value of promptfoo is its integration into CI pipelines. When a merg
   - **Planner agent** (`app/agents/nodes/planner.py`) — website reconnaissance quality conditions the entire pipeline
   - **Synthesizer** (`app/agents/nodes/synthesizer.py`) — quality gate that decides retries is itself an evaluable LLM call
 - **Extensible to**: any LLM-dependent logic in the codebase
-- A demo evaluation configuration is available at `apps/screen/tests/evals/` for reference
+- A demo evaluation configuration is available at `apps/screen/tests/promptfoo/evals/` for reference
 
 ### What Gets Evaluated (LangGraph Context)
 
@@ -211,7 +211,7 @@ LangChain's hosted evaluation and observability platform.
 - [Promptfoo GitHub](https://github.com/promptfoo/promptfoo)
 - [ADR-0012 — LangGraph Agent System](./0012-langgraph-agent-system.md)
 - [ADR-0004 — Dify for AI Orchestration](./0004-dify-ai-orchestration.md)
-- Demo eval configuration: `apps/screen/tests/evals/`
+- Demo eval configuration: `apps/screen/tests/promptfoo/evals/`
 
 ## Tags
 

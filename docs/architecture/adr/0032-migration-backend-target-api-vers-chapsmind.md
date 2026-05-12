@@ -1,18 +1,24 @@
----
-status: draft
-date: 2026-02-24
-decision-makers: [ffayard]
-consulted: []
-informed: []
----
+# ADR-0032: Migrate the Basil Backend (Target API) to the ChapsMind Architecture
 
-# Migrate the Basil backend (Target API) to the ChapsMind architecture
+> Migrated from basil ADR-2026-010
+
+## Status
+
+**Status:** Proposed
+
+**Date:** 2026-02-24
+
+**Decision Makers:** Frédéric Fayard-Le Barzic
+
+**Tags:** backend, migration, target, chapsmind, global-service, monorepo, architecture
+
+---
 
 ## Context and problem
 
 The Basil project has a monolithic backend in **PHP 8.4 / Symfony 7.3 / API Platform 4.1** serving all strategic monitoring features (WatchFiles, Documents, Actors, Sources, AI Chat, Collect, DeepSearch). This backend operates autonomously with its own stack (PostgreSQL 17, Elasticsearch 9.1, Valkey 8, RabbitMQ 4, N8N, Mercure/Caddy, Keycloak 26).
 
-In parallel, the **ChapsMind** project is evolving towards a multi-module platform (Screen, Target, Explore, Translation) architected around a **Global Service** (API Gateway + shared services) compliant with ADR-0009. The Target frontend has already begun its migration (ADR-2026-007: Nuxt 4 → Vue 3 with unplugin-vue-router).
+In parallel, the **ChapsMind** project is evolving towards a multi-module platform (Screen, Target, Explore, Translation) architected around a **Global Service** (API Gateway + shared services) compliant with ADR-0009. The Target frontend has already begun its migration (ADR-0029: Nuxt 4 → Vue 3 with unplugin-vue-router).
 
 **The problem**: how to integrate the Basil backend as a `target` module in the ChapsMind ecosystem while preserving:
 
@@ -43,6 +49,8 @@ This document covers **17 architectural decisions** and a **5-phase migration pl
 ## Decisions
 
 This document groups 17 interdependent decisions. Each decision is detailed in its own section below.
+
+<!-- markdownlint-disable MD029 -->
 
 **Architecture and integration:**
 
@@ -76,6 +84,8 @@ This document groups 17 interdependent decisions. Each decision is detailed in i
 
 17. [Migrate the N8N ecosystem into the ChapsMind monorepo](#decision-17--migrate-the-n8n-ecosystem-into-the-chapsmind-monorepo)
 
+<!-- markdownlint-enable MD029 -->
+
 ---
 
 ## Decision 1 : Integrate Target API code into the ChapsMind monorepo
@@ -84,7 +94,7 @@ This document groups 17 interdependent decisions. Each decision is detailed in i
 
 The ChapsMind workspace is migrating to a **monorepo** architecture (ADR-0011). The former submodules (`front/`, `back/`, `global-service/`, `infra/`) are merged into a single repo with the `apps/` structure:
 
-```
+```text
 chapsmind/
 ├── apps/
 │   ├── front/               # Vue 3 SPA
@@ -169,7 +179,7 @@ git subtree add --prefix=apps/target /path/to/basil target-export
 
 Resulting structure:
 
-```
+```text
 chapsmind/
 ├── apps/
 │   ├── front/               # Vue 3 SPA
@@ -184,7 +194,7 @@ chapsmind/
 
 CODEOWNERS (addition):
 
-```
+```text
 # .gitlab/CODEOWNERS (addition)
 apps/target/             @chapsmind/team-target
 ```
@@ -666,7 +676,7 @@ GRANT ALL PRIVILEGES ON DATABASE target_db TO postgres;
 
 The Doctrine configuration in `target` will point to:
 
-```
+```text
 DATABASE_URL=postgresql://postgres:postgres@db:5432/target_db
 ```
 
@@ -850,7 +860,7 @@ A developer working only on Screen should not have to start Target services, and
 
 Profile organization:
 
-```
+```text
 No profile (always up) : nginx, frontend, global-service, keycloak, db, rabbitmq
 Profile "screen"       : backend, backend_celery_worker, backend_celery_flower
 Profile "target"       : target, target-elasticsearch, target-valkey, target-n8n, target-caddy
@@ -1071,7 +1081,7 @@ The Basil backend uses **Mercure** (SSE protocol based on HTTP) for real-time up
 
 Current architecture (standalone Basil):
 
-- User-scoped topics: `/users/{userId}/watch-files/{watchFileId}` (ADR-2025-001)
+- User-scoped topics: `/users/{userId}/watch-files/{watchFileId}` (ADR-0023)
 - JWT with URI Templates for constant token size
 - Debounce via Valkey (30s) to avoid bursts
 - HTTP/2 mandatory (Caddy HTTPS → automatic HTTP/2) to avoid browser connection pool exhaustion (6 conn/domain limit in HTTP/1.1)
@@ -1711,7 +1721,7 @@ The N8N integration in Basil is a mature and complex ecosystem that goes beyond 
 
 **Structure in the monorepo**:
 
-```
+```text
 chapsmind/
 └── apps/
     └── target/                              # Entire Target module
@@ -1903,7 +1913,7 @@ ChapsMind has no `basil-infra` equivalent. Deployment is done by pushing Docker 
 
 Planned structure:
 
-```
+```text
 chapsmind-infra/
 ├── .gitlab-ci.yml           # Deploy pipeline per client
 ├── .sops.yaml               # SOPS/Age config
@@ -2134,8 +2144,8 @@ The **Strangler Fig pattern** is already adopted by ChapsMind for the Python mon
 
 | #   | Subject                                       | Associated ADR                      | Impact on this migration                                                                                                                                                        | Responsible   |
 | --- | --------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| 1   | **Multi-tenant**                              | ADR-2025-002 (to be revised)        | Blocking for multi-client production. `organisation_id` discriminant everywhere, DB/OpenSearch isolation, performance. Must be addressed **before** ChapsMind go-to-production. | @jjo          |
-| 2   | **Elasticsearch → OpenSearch migration**      | Dedicated ADR to create             | Prerequisite for multi-tenant (OpenSearch routing). Must be addressed **before** multi-tenant.                                                                                  | @mpazat       |
+| 1   | **Multi-tenant**                              | ADR-0024 (to be revised)            | Blocking for multi-client production. `organisation_id` discriminant everywhere, DB/OpenSearch isolation, performance. Must be addressed **before** ChapsMind go-to-production. | @jjo          |
+| 2   | **Elasticsearch → OpenSearch migration**      | ADR-0033                            | Prerequisite for multi-tenant (OpenSearch routing). Must be addressed **before** multi-tenant.                                                                                  | @mpazat       |
 | 3   | **Target permissions aligned with ChapsMind** | To be defined                       | The Target permissions system must be aligned with ChapsMind's.                                                                                                                 | To be defined |
 | 4   | **Centralized technical documentation**       | Dedicated ADR to create (all teams) | Centralization strategy for documentation across all modules.                                                                                                                   | @alu          |
 | 5   | **PostgreSQL 16 → 17**                        | Operational action                  | The ChapsMind env is on PG 16, Target requires PG 17. Unify to PG 17 without data loss.                                                                                         | @adnane       |
@@ -2171,8 +2181,8 @@ The **Strangler Fig pattern** is already adopted by ChapsMind for the Python mon
 
 **Basil ADRs and configs:**
 
-- [ADR-2026-007: Target frontend migration → Vue 3](./2026-007-migration-target-to-chapsmind.md)
-- [ADR-2025-001: Mercure Scalable Topics and Tokens](./2025-001-mercure-scalable-topics-and-tokens.md)
+- [ADR-0029: Target frontend migration → Vue 3](./0029-migration-target-to-chapsmind.md)
+- [ADR-0023: Mercure Scalable Topics and Tokens](./0023-mercure-scalable-topics-and-tokens.md)
 - Basil API Security Config — `api/config/packages/security.yaml`
 - Basil CI/CD Pipeline — `.gitlab-ci.yml`
 - Basil API Dockerfile — `api/Dockerfile`
@@ -2189,18 +2199,19 @@ The **Strangler Fig pattern** is already adopted by ChapsMind for the Python mon
 
 The following topics were identified during the 2026-02-25 brainstorming as **out of scope** for this ADR but **blocking or structuring** for production go-live:
 
-1. **ADR-2025-002: Multi-Tenant Architecture** (existing, needs full revision)
+1. **ADR-0024: Multi-Tenant Architecture** (existing, needs full revision)
    - `organisation_id` discriminant on all entities
    - DB strategy (bucket concept)
    - OpenSearch strategy (one index per client?)
    - Zero risk of cross-client data exposure
    - Performance impact
-   - See: `docs/adr/2025-002-multi-tenant-architecture.md`
+   - See: `docs/architecture/adr/0024-multi-tenant-architecture.md`
 
-2. **ADR to create: Elasticsearch → OpenSearch migration**
+2. **ADR-0033: Elasticsearch → OpenSearch migration**
    - Prerequisite for multi-tenant (mandatory OpenSearch routing)
    - Must be addressed before multi-tenant
    - OVH managed OpenSearch migration
+   - See: `docs/architecture/adr/0033-elasticsearch-to-opensearch-migration.md`
 
 3. **ADR to create: Target permissions aligned with ChapsMind**
    - Alignment of the Target permissions system with ChapsMind

@@ -1,8 +1,18 @@
-# ADR-2026-011: Elasticsearch to OpenSearch Migration
+# ADR-0033: Elasticsearch to OpenSearch Migration
+
+> Migrated from basil ADR-2026-011 (elasticsearch-to-opensearch-migration)
 
 ## Status
 
-**Accepted** — Chosen approach: **composer patch from the upstream PR**
+**Status:** Accepted — chosen approach: composer patch from the upstream PR
+
+**Date:** 2026-03-01
+
+**Decision Makers:** Basil Engineering Team
+
+**Tags:** backend, opensearch, elasticsearch, migration, api-platform, infrastructure
+
+---
 
 ## Context
 
@@ -12,7 +22,7 @@ For licensing and infrastructure compatibility reasons (OVH, our hosting provide
 
 An **upstream PR is being prepared** on API Platform by one of our developers to add native OpenSearch support (not yet opened):
 
-- **Branch**: https://github.com/api-platform/core/compare/main...hotfix31:api-platform-core:feat/opensearch-support
+- **Branch**: <https://github.com/api-platform/core/compare/main...hotfix31:api-platform-core:feat/opensearch-support>
 
 ## Decision
 
@@ -21,6 +31,12 @@ An **upstream PR is being prepared** on API Platform by one of our developers to
 - Applies the exact PR code without manual reimplementation
 - Avoids introducing custom code (decorators, compiler pass) that would need maintenance
 - Makes post-merge cleanup trivial: remove the patch and update the package
+
+---
+
+## Options Considered
+
+The alternatives evaluated (decorator approach, full manual rewrite) are documented in [Appendix A: Explored Alternatives](#appendix-a-explored-alternatives) below.
 
 ---
 
@@ -216,7 +232,7 @@ The gateways (`DocumentElasticSearchGateway`, `WatchFileEventElasticsearchGatewa
 > **OVH Constraint**: OVH will be our production hosting provider. The OpenSearch version **must align with the versions supported by OVH Managed Databases for OpenSearch**.
 >
 > Check the OVH availability page before locking the version:
-> https://docs.ovh.com/fr/databases/opensearch/
+> <https://docs.ovh.com/fr/databases/opensearch/>
 >
 > At the time of writing, OVH supports OpenSearch **1.3** and **2.x**. Use the latest major version offered by OVH locally to ensure dev/prod parity.
 
@@ -274,7 +290,7 @@ opensearch-dashboards:
 
 Update the Caddy configuration (virtualhost rename):
 
-```
+```text
 opensearch.basil.local {
     reverse_proxy opensearch-dashboards:5601
 }

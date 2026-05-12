@@ -1,8 +1,18 @@
-# ADR-2026-003: Document Processing Pipeline Architecture
+# ADR-0025: Document Processing Pipeline Architecture
 
-| Status   | Date       | Author                    |
-| -------- | ---------- | ------------------------- |
-| Accepted | 2026-01-11 | Frédéric Fayard-Le Barzic |
+> Migrated from basil ADR-2026-003
+
+## Status
+
+**Status:** Accepted
+
+**Date:** 2026-01-11
+
+**Decision Makers:** Frédéric Fayard-Le Barzic
+
+**Tags:** backend, pipeline, document-processing, quality-scoring, enrichment, messenger
+
+---
 
 ## Context
 
@@ -21,13 +31,17 @@ current system processes all collected documents equally, leading to two problem
 
 4. **Scale concerns**: Target of 50M documents/year (~140k docs/day) makes noise reduction critical for cost control
 
-### Enrichment Problem (ADR-2026-008, ADR-2026-009)
+<!-- markdownlint-disable MD029 -->
+
+### Enrichment Problem (ADR-0030, ADR-0031)
 
 5. **Provider-dependent enrichment**: Bakus performs default post-processing (PDF text extraction, content refinement,
    title/excerpt enrichment) but other collection providers may not. Document quality varies by provider.
 
 6. **No internal enrichment capability**: Target has no post-collection enrichment pipeline for PDF extraction, title
    improvement, entity extraction, or translation — it relies entirely on Bakus for these capabilities.
+
+<!-- markdownlint-enable MD029 -->
 
 ### Requirements
 
@@ -117,7 +131,7 @@ Fan-out to parallel processor workers, fan-in to aggregator.
 
 ## Decision
 
-**Option B: Pipeline Pattern with Signal Accumulation**
+### Option B: Pipeline Pattern with Signal Accumulation
 
 The pipeline pattern supports both enrichment and scoring in a single, ordered execution model. Each processor uses
 `supports()` to decide whether it should run (enabling skip logic for provider-enriched documents) and `priority()`
@@ -125,7 +139,7 @@ to control execution order.
 
 ### Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    DOCUMENT PROCESSING PIPELINE                      │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -497,7 +511,7 @@ framework:
 
 Following Target's domain-centric organization:
 
-```
+```text
 api/src/
 ├── Domain/
 │   └── DocumentQuality/
@@ -600,16 +614,16 @@ CREATE INDEX idx_quality_report_computed_at ON quality_report (computed_at);
 | ----- | ------------------------------------------- | -------- |
 | 1     | Domain model + Pipeline + Messenger setup   | 3-4 days |
 | 2     | Database schema + Gateway implementation    | 2 days   |
-| 3     | Scoring processors (see ADR-2026-004)       | 3-4 days |
-| 4     | Enrichment processors (see ADR-2026-009)    | 3-4 days |
+| 3     | Scoring processors (see ADR-0026)           | 3-4 days |
+| 4     | Enrichment processors (see ADR-0031)        | 3-4 days |
 | 5     | WatchFile config UI integration             | 2-3 days |
 | 6     | Document list UI with quality badges/scores | 2-3 days |
 
 ## Related ADRs
 
-- **ADR-2026-004**: Document Quality Scoring Processors Phase 1 (concrete scoring implementations)
-- **ADR-2026-005**: Document Quality Scoring Processors Phase 2 (external data integrations)
-- **ADR-2026-008**: Multi-Provider Collection Architecture (provider contract and enrichment needs)
-- **ADR-2026-009**: Provider-Agnostic Post-Collection Processing (enrichment processor details, skip logic)
+- **ADR-0026**: Document Quality Scoring Processors Phase 1 (concrete scoring implementations)
+- **ADR-0027**: Document Quality Scoring Processors Phase 2 (external data integrations)
+- **ADR-0030**: Multi-Provider Collection Architecture (provider contract and enrichment needs)
+- **ADR-0031**: Provider-Agnostic Post-Collection Processing (enrichment processor details, skip logic)
 - **Future**: Legacy validation data integration for source trust scoring
 - **Future**: ML-based classification processors

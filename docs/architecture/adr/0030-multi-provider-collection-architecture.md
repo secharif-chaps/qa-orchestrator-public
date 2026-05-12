@@ -1,8 +1,18 @@
-# ADR-2026-008: Multi-Provider Collection Architecture
+# ADR-0030: Multi-Provider Collection Architecture
 
-| Status | Date       | Author                    |
-| ------ | ---------- | ------------------------- |
-| Draft  | 2026-02-06 | Frédéric Fayard-Le Barzic |
+> Migrated from basil ADR-2026-008
+
+## Status
+
+**Status:** Proposed
+
+**Date:** 2026-02-06
+
+**Decision Makers:** Frédéric Fayard-Le Barzic
+
+**Tags:** backend, collection, provider, architecture, vendor-independence
+
+---
 
 ## Context
 
@@ -12,7 +22,7 @@ evolves unfavorably, the entire collection pipeline stops.
 
 ### Current Architecture
 
-```
+```text
 Domain/Collect/
 ├── ProviderGatewayInterface.php          # 4 methods: createTask, cancelTask, getTaskStatus, getCollectors
 ├── CollectDataHandlerInterface.php       # Chain of Responsibility for event processing
@@ -86,7 +96,7 @@ Add `getDocumentContent()` to the Domain interface. Create a `ProviderRouter` th
 Keep `ProviderGatewayInterface` unchanged. Move Bakus handlers into the Bakus namespace. Each provider brings its own
 Gateway, StatusMapper, and handlers. A tagged service locator resolves providers at runtime.
 
-```
+```text
 Infrastructure/Collect/
 ├── ProviderGatewayLocator.php            # ServiceLocator resolves by providerName
 ├── Bakus/
@@ -184,7 +194,7 @@ Requires per-provider metrics from Level 1 in production.
 ### Level 3: Mid-Collection Failover (Deferred — highest risk)
 
 Re-collect from scratch on fallback after partial failure. **Hard prerequisites**: document deduplication
-(ADR-2026-006), `CollectStatus::RETRYING` state, per-task document counter.
+(ADR-0028), `CollectStatus::RETRYING` state, per-task document counter.
 
 ## Monitoring (Provider-Aware)
 
@@ -253,14 +263,14 @@ Core abstractions and observability. No functional change — Bakus remains the 
 
 ### Deferred (explicit prerequisites before activation)
 
-| Item                                                   | Prerequisite For                | Related ADR  |
-| ------------------------------------------------------ | ------------------------------- | ------------ |
-| Async `getDocumentContent()` (decouple from WebSocket) | Scaling to 50M docs/year        | —            |
-| Document deduplication by URL/hash                     | Level 3 failover                | ADR-2026-006 |
-| Error message sanitization for analysts                | 2nd provider in prod            | —            |
-| Circuit breaker (Level 2 fallback)                     | Production metrics from Level 1 | —            |
-| `CollectStatus::RETRYING` state                        | Level 3 failover                | —            |
-| Internal post-processing pipeline                      | Provider-agnostic enrichment    | ADR-2026-009 |
+| Item                                                   | Prerequisite For                | Related ADR |
+| ------------------------------------------------------ | ------------------------------- | ----------- |
+| Async `getDocumentContent()` (decouple from WebSocket) | Scaling to 50M docs/year        | —           |
+| Document deduplication by URL/hash                     | Level 3 failover                | ADR-0028    |
+| Error message sanitization for analysts                | 2nd provider in prod            | —           |
+| Circuit breaker (Level 2 fallback)                     | Production metrics from Level 1 | —           |
+| `CollectStatus::RETRYING` state                        | Level 3 failover                | —           |
+| Internal post-processing pipeline                      | Provider-agnostic enrichment    | ADR-0031    |
 
 ## Consequences
 
@@ -344,6 +354,6 @@ Symfony Messenger before scaling beyond current volumes. Tracked separately from
 ## References
 
 - [Symfony Tagged Service Locator](https://symfony.com/doc/current/service_container/service_subscribers_locators.html)
-- ADR-2026-003: Document Processing Pipeline Architecture
-- ADR-2026-006: Document Deduplication Strategy
-- ADR-2026-009: Provider-Agnostic Post-Collection Processing (companion ADR)
+- ADR-0025: Document Processing Pipeline Architecture
+- ADR-0028: Document Deduplication Strategy
+- ADR-0031: Provider-Agnostic Post-Collection Processing (companion ADR)

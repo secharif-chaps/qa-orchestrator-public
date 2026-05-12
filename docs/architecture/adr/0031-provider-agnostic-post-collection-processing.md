@@ -1,12 +1,22 @@
-# ADR-2026-009: Provider-Agnostic Post-Collection Processing
+# ADR-0031: Provider-Agnostic Post-Collection Processing
 
-| Status | Date       | Author                    |
-| ------ | ---------- | ------------------------- |
-| Draft  | 2026-02-06 | Frédéric Fayard-Le Barzic |
+> Migrated from basil ADR-2026-009
+
+## Status
+
+**Status:** Proposed
+
+**Date:** 2026-02-06
+
+**Decision Makers:** Frédéric Fayard-Le Barzic
+
+**Tags:** backend, collection, provider, post-processing, document-enrichment
+
+---
 
 ## Context
 
-Target is adopting a multi-provider collection architecture (ADR-2026-008). Bakus, the current sole provider,
+Target is adopting a multi-provider collection architecture (ADR-0030). Bakus, the current sole provider,
 performs **default post-processing** on collected documents: PDF text extraction, content refinement, title/excerpt
 enrichment, and CFC restriction classification. This happens automatically based on content type, independent of
 the `postprocess_modules` API parameter.
@@ -50,8 +60,8 @@ post-processing for quality, switching providers degrades the analyst experience
 
 - **Consistent document quality** regardless of collection provider
 - **Leverage existing enrichment** when a provider delivers it (no redundant processing)
-- **Reuse existing infrastructure**: LiteLLM for NLP, Processing Pipeline (ADR-2026-003) for scoring
-- **Do not block multi-provider adoption** (ADR-2026-008) on post-processing readiness
+- **Reuse existing infrastructure**: LiteLLM for NLP, Processing Pipeline (ADR-0025) for scoring
+- **Do not block multi-provider adoption** (ADR-0030) on post-processing readiness
 
 ## Considered Options
 
@@ -86,22 +96,22 @@ Only accept providers offering equivalent post-processing.
 2. **LiteLLM is already available.** Entity extraction and translation can use the same LLM infrastructure as the
    AI agent, strategic questions, and document AI validation.
 
-3. **The Processing Pipeline already exists (ADR-2026-003).** Post-processing steps fit naturally as
+3. **The Processing Pipeline already exists (ADR-0025).** Post-processing steps fit naturally as
    `DocumentProcessorInterface` implementations with `supports()` skip logic.
 
 4. **PDF extraction is commodity.** PHP libraries or extraction services handle this without a collection provider.
 
 ## Architecture
 
-Enrichment processors are implemented as `DocumentProcessorInterface` implementations (ADR-2026-003) with high priority
+Enrichment processors are implemented as `DocumentProcessorInterface` implementations (ADR-0025) with high priority
 (200+), ensuring they run **before** quality scoring processors (priority 50–100).
 
-```
+```text
 Document arrives from ANY provider
         ↓
 AddDocumentHandler (existing — merges raw/refined if both arrive)
         ↓
-Document Processing Pipeline (ADR-2026-003, async Messenger)
+Document Processing Pipeline (ADR-0025, async Messenger)
   ├── Phase 1: ENRICHMENT (priority 200+, this ADR)
   │   ├── PdfTextExtractionProcessor
   │   │   skip if: content is already readable text
@@ -114,7 +124,7 @@ Document Processing Pipeline (ADR-2026-003, async Messenger)
   │   └── TranslationProcessor (LLM, future)
   │       skip if: content language matches WatchFile language
   │
-  ├── Phase 2: QUALITY SCORING (priority 50-100, ADR-2026-004/005)
+  ├── Phase 2: QUALITY SCORING (priority 50-100, ADR-0026/ADR-0027)
   │   └── Signal accumulation processors
   │
   └── Phase 3: ROUTING DECISION
@@ -166,20 +176,20 @@ documents from other providers, all processors run. Same final quality for the a
 | CFC restriction     | Bakus (default)   | Bakus-only           | Not replicated (Bakus value-add)    |
 | Entity extraction   | Bakus (available) | Target internal      | LLM via LiteLLM                     |
 | Translation         | Bakus (available) | Target internal      | LLM via LiteLLM                     |
-| Quality scoring     | N/A               | Target internal      | ADR-2026-003                        |
+| Quality scoring     | N/A               | Target internal      | ADR-0025                            |
 | AI validation       | Target (existing) | Target (unchanged)   | `TriggerDocumentAiValidationAction` |
 
 ## Implementation Roadmap
 
-| #   | Action                                             | When                         | Size | Dependency                  |
-| --- | -------------------------------------------------- | ---------------------------- | ---- | --------------------------- |
-| 1   | Document minimal provider contract                 | Sprint 0 (with ADR-2026-008) | S    | ADR approval                |
-| 2   | PDF text extraction as Symfony service             | Sprint 1                     | M    | PHP library selection       |
-| 3   | Title/excerpt heuristic enrichment                 | Sprint 1                     | S    | —                           |
-| 4   | Integrate into Processing Pipeline (ADR-2026-003)  | Sprint 2                     | M    | Processing Pipeline Phase 1 |
-| 5   | Entity extraction via LLM (async Messenger)        | Sprint 2                     | M    | LiteLLM integration         |
-| 6   | Translation via LLM (async Messenger)              | Sprint 2                     | M    | LiteLLM integration         |
-| 7   | `supports()` skip logic for provider-enriched docs | Sprint 2                     | S    | Steps 2-6                   |
+| #   | Action                                             | When                     | Size | Dependency                  |
+| --- | -------------------------------------------------- | ------------------------ | ---- | --------------------------- |
+| 1   | Document minimal provider contract                 | Sprint 0 (with ADR-0030) | S    | ADR approval                |
+| 2   | PDF text extraction as Symfony service             | Sprint 1                 | M    | PHP library selection       |
+| 3   | Title/excerpt heuristic enrichment                 | Sprint 1                 | S    | —                           |
+| 4   | Integrate into Processing Pipeline (ADR-0025)      | Sprint 2                 | M    | Processing Pipeline Phase 1 |
+| 5   | Entity extraction via LLM (async Messenger)        | Sprint 2                 | M    | LiteLLM integration         |
+| 6   | Translation via LLM (async Messenger)              | Sprint 2                 | M    | LiteLLM integration         |
+| 7   | `supports()` skip logic for provider-enriched docs | Sprint 2                 | S    | Steps 2-6                   |
 
 ## Consequences
 
@@ -203,5 +213,5 @@ documents from other providers, all processors run. Same final quality for the a
 
 ## References
 
-- ADR-2026-003: Document Processing Pipeline Architecture
-- ADR-2026-008: Multi-Provider Collection Architecture (companion ADR)
+- ADR-0025: Document Processing Pipeline Architecture
+- ADR-0030: Multi-Provider Collection Architecture (companion ADR)

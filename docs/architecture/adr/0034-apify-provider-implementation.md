@@ -1,12 +1,22 @@
-# ADR-2026-012: Implementation of Apify Provider for Data Collection
+# ADR-0034: Implementation of Apify Provider for Data Collection
 
-| Status   | Date       | Author       |
-| -------- | ---------- | ------------ |
-| Accepted | 2026-04-27 | Hajar Briere |
+> Migrated from basil ADR-2026-012
+
+## Status
+
+**Status:** Accepted
+
+**Date:** 2026-04-27
+
+**Decision Makers:** Hajar Briere
+
+**Tags:** backend, collection, apify, provider, social-media, linkedin, instagram
+
+---
 
 ## Context
 
-ADR-2026-008 defined the multi-provider architecture (Option B — Per-Provider Handler Packages + Tagged Service Locator) and laid the groundwork for adding a second collection provider. Apify was selected as the first secondary provider, initially targeting LinkedIn, Instagram, Google News, and website sources.
+ADR-0030 defined the multi-provider architecture (Option B — Per-Provider Handler Packages + Tagged Service Locator) and laid the groundwork for adding a second collection provider. Apify was selected as the first secondary provider, initially targeting LinkedIn, Instagram, Google News, and website sources.
 
 ### Initial Scope (Phase 1)
 
@@ -26,7 +36,7 @@ Sources routed to Apify during initial implementation:
 
 ### What Worked Well
 
-The architecture defined in ADR-2026-008 delivered on its promises:
+The architecture defined in ADR-0030 delivered on its promises:
 
 - The `ProviderGatewayLocator` resolved Apify without modifying the domain layer.
 - The `SourceType → provider` routing via YAML enabled gradual activation source by source.
@@ -51,7 +61,7 @@ Apify uses a **webhook-based asynchronous model** fundamentally different from B
 
 `ApifyProviderGateway` implements `ProviderGatewayInterface`. The `createTask()` method submits the run to the Apify API and returns immediately without waiting for results. The `providerTaskId` encodes `{apifyActorId}:{runId}` to enable parsing when the webhook arrives.
 
-```
+```text
 CollectTask.providerTaskId = "apify/website-content-crawler:abc123run"
 ```
 
@@ -91,7 +101,7 @@ Variables in templates are resolved at runtime:
 
 The complete Apify collection flow:
 
-```
+```text
 ApifyProviderGateway::createTask()
     └── POST /v2/acts/{actorId}/runs   → Apify launches the run
             │
@@ -146,6 +156,12 @@ App\Infrastructure\Collect\Apify\ApifyProviderGateway:
 
 ---
 
+## Options Considered
+
+_Not documented in original ADR._
+
+---
+
 ## Consequences
 
 ### Positive
@@ -173,7 +189,7 @@ App\Infrastructure\Collect\Apify\ApifyProviderGateway:
 
 ### Documentation
 
-- **ADR-2026-012** (this file): Architecture and decision rationale.
+- **ADR-0034** (this file): Architecture and decision rationale.
 - **apify-add-new-source.md**: Step-by-step guide for adding a new Apify actor (8 steps, YAML-only after normalizer is written).
 - **apify-operations.md**: Operational guide for cost monitoring, troubleshooting, and log analysis.
 
@@ -187,7 +203,7 @@ App\Infrastructure\Collect\Apify\ApifyProviderGateway:
 
 ## References
 
-- ADR-2026-008: Multi-Provider Architecture
+- ADR-0030: Multi-Provider Architecture
 - `config/services/collect_provider.yaml`: Apify configuration
 - `src/Infrastructure/Collect/Apify/`: Apify implementation
 - `tests/Units/Infrastructure/Collect/Apify/Normalizer/`: Normalizer tests

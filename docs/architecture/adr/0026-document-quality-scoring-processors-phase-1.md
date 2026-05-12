@@ -1,12 +1,22 @@
-# ADR-2026-004: Document Quality Scoring Processors Phase 1
+# ADR-0026: Document Quality Scoring Processors Phase 1
 
-| Status   | Date       | Author                    |
-| -------- | ---------- | ------------------------- |
-| Accepted | 2026-01-11 | Frédéric Fayard-Le Barzic |
+> Migrated from basil ADR-2026-004
+
+## Status
+
+**Status:** Accepted
+
+**Date:** 2026-01-11
+
+**Decision Makers:** Frédéric Fayard-Le Barzic
+
+**Tags:** backend, quality-scoring, document-processing, pipeline, processors
+
+---
 
 ## Context
 
-ADR-2026-003 established the Document Quality Pipeline architecture with the Pipeline Pattern and signal accumulation.
+ADR-0025 established the Document Quality Pipeline architecture with the Pipeline Pattern and signal accumulation.
 This ADR defines the **first set of concrete scoring processors** to implement for Phase 1 deployment, targeting maximum
 noise reduction with minimal complexity.
 
@@ -47,7 +57,7 @@ Implement **8 scoring processors** in Phase 1, organized by priority tier:
 
 The final quality score is computed as the **minimum of category-level weighted averages**:
 
-```
+```text
 categoryScore[c] = Σ(signal[i].value × signal[i].weight) / Σ(signal[i].weight)
                    for all signals i in category c
 
@@ -1057,7 +1067,7 @@ The following processors were considered but deferred to Phase 2:
 
 ## Directory Structure
 
-```
+```text
 api/src/
 ├── Domain/
 │   └── DocumentQuality/
@@ -1090,6 +1100,12 @@ services:
     resource: '../src/Infrastructure/DocumentQuality/Processor/Scoring/'
     tags: ['app.document_processor']
 ```
+
+---
+
+## Options Considered
+
+_Not documented in original ADR._
 
 ---
 
@@ -1134,6 +1150,6 @@ services:
 
 ## Related ADRs
 
-- **ADR-2026-003**: Document Processing Pipeline Architecture
-- **ADR-2026-005**: Document Quality Scoring Processors Phase 2 (Source reputation, Domain age, Deduplication)
+- **ADR-0025**: Document Processing Pipeline Architecture
+- **ADR-0027**: Document Quality Scoring Processors Phase 2 (Source reputation, Domain age, Deduplication)
 - **Future**: Legacy validation data integration for source trust scoring

@@ -1,10 +1,16 @@
-# ADR-2025-002: Multi-Tenant Architecture for ChapsMind Integration
+# ADR-0024: Multi-Tenant Architecture for ChapsMind Integration
 
-| Status | Date       | Author                    |
-| ------ | ---------- | ------------------------- |
-| Draft  | 2025-12-29 | Frédéric Fayard-Le Barzic |
-| Draft  | 2026-02-09 | Jacques JOYEUX            |
-| Draft  | 2026-03-26 | Aurélien LAUF             |
+> Migrated from basil ADR-2025-002
+
+## Status
+
+**Status:** Proposed
+
+**Date:** 2026-03-26
+
+**Decision Makers:** Frédéric Fayard-Le Barzic, Jacques JOYEUX, Aurélien LAUF
+
+**Tags:** architecture, multi-tenancy, keycloak, jwt, security, organization
 
 ---
 
@@ -81,7 +87,7 @@ Reference: [Keycloak Organizations Announcement](https://www.keycloak.org/2024/0
 
 The diagram below shows the full journey from user login to Target receiving an Internal JWT. The key insight: **Target never talks to Keycloak directly** — the Global Service acts as a gateway, validates the Keycloak JWT, and issues a simpler Internal JWT that Target trusts.
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │  User Login                                                     │
 └──────────────────────────────┬──────────────────────────────────┘
@@ -217,7 +223,7 @@ Multi-tenancy requires adding an `Organisation` entity as the root of all tenant
 
 ### 3.1 Entity Diagram
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                         Organisation                            │
 ├─────────────────────────────────────────────────────────────────┤
@@ -751,7 +757,7 @@ KC_FEATURES=token-exchange,admin-fine-grained-authz
 
 ### 7.2 Token Exchange Flow
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │  Admin User (wants to impersonate)                              │
 │  Has: OrganisationRole::ADMIN in target organization            │
@@ -794,7 +800,7 @@ KC_FEATURES=token-exchange,admin-fine-grained-authz
 
 Add predefined mappers for impersonator info:
 
-```
+```text
 Clients → App → Client Scopes → Dedicated → Add Mapper → From Predefined
   → "Impersonator Username"
   → "Impersonator User Id"
@@ -1095,7 +1101,7 @@ $existingActor = $this->actorGateway->findByLabel($label, $organisation);
 ### 11.1 OpenSearch Shard Count
 
 > **Glossary — Shard:** An index is physically split into N independent fragments called shards, each stored on a node as a standalone Lucene index. When searching, OpenSearch queries all relevant shards in parallel and merges the results. More shards = more parallelism, but more memory and coordination overhead. General OpenSearch best practice: target **10–30 GB per shard** for search workloads.
-
+>
 > **⚠️ Provisional** — The shard count and sizing below depend on OVH limits that are currently unverified (see section 6.3). Do not finalize until the OVH support response is received.
 
 The index is currently configured with **5 shards** (section 6.2), but this value has not been validated against actual usage projections. Since the shard count cannot be changed after index creation, this decision must be made before Phase 3.
@@ -1223,6 +1229,12 @@ These volumes are structuring: if the OVH Public Cloud Databases limits turn out
 | Enable Token Exchange in Keycloak                                                                                                                                                                                                                                                          | DevOps            | P2                        |
 | Validate PostgreSQL RLS with OVH                                                                                                                                                                                                                                                           | DevOps            | P3                        |
 | Review and approve this ADR                                                                                                                                                                                                                                                                | Architecture      | Before impl               |
+
+---
+
+## Options Considered
+
+_Not documented in original ADR as a standalone section. Alternatives are discussed inline within individual decision sections (Keycloak Organizations vs. custom multi-tenancy, OpenSearch routing strategies, RLS vs. application-level filtering, etc.)._
 
 ---
 
