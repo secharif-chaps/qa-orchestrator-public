@@ -93,6 +93,18 @@ class QAEngine {
     return { text, model: agent.model, duration };
   }
 
+  // ── Stage Normalization ───────────────────────────────────────────────────
+
+  _normalizeStages(agents) {
+    // If agents[0] is a string, convert to stages (each agent = solo stage)
+    // If agents[0] is an array, return as-is (already in stage format)
+    if (agents.length === 0) return [];
+    if (typeof agents[0] === 'string') {
+      return agents.map(id => [id]);
+    }
+    return agents;
+  }
+
   // ── Workflow Execution ────────────────────────────────────────────────────
 
   async runWorkflow(workflowId, userMessage, options = {}) {
@@ -109,26 +121,44 @@ class QAEngine {
 
     const results = [];
     let chainContext = '';
-    const agentIds = workflow.agents || [];
+    const stages = this._normalizeStages(workflow.agents || []);
 
-    for (let i = 0; i < agentIds.length; i++) {
-      const agentId = agentIds[i];
-      this.emit('workflow:step', { step: i + 1, total: agentIds.length, agentId });
+    // Count total agents for progress reporting
+    const totalAgents = stages.reduce((sum, stage) => sum + stage.length, 0);
+    let stepCounter = 0;
 
-      const result = await this.runAgent(agentId, userMessage, chainContext);
-      results.push({ agentId, ...result });
+    for (const stage of stages) {
+      // Execute stage: solo agent or parallel agents
+      const stageResults = await Promise.all(
+        stage.map(async (agentId) => {
+          this.emit('workflow:step', { step: ++stepCounter, total: totalAgents, agentId });
 
-      if (this.sessionManager) {
-        this.sessionManager.logExecution(agentId, `Executed ${this.agents[agentId]?.name}`, result.text?.slice(0, 500));
+          const result = await this.runAgent(agentId, userMessage, chainContext);
+
+          if (this.sessionManager) {
+            this.sessionManager.logExecution(agentId, `Executed ${this.agents[agentId]?.name}`, result.text?.slice(0, 500));
+          }
+
+          // After gherkinWriter: import feature file into X-Ray if credentials available
+          if (agentId === 'gherkinWriter' && options.ticketKey) {
+            await this._importGherkinToXray(result.text, options.ticketKey);
+          }
+
+          return { agentId, ...result };
+        })
+      );
+
+      results.push(...stageResults);
+
+      // Emit parallel event if stage has multiple agents
+      if (stage.length > 1) {
+        this.emit('workflow:parallel', { agents: stage, step: stepCounter - stage.length + 1 });
       }
 
-      // After gherkinWriter: import feature file into X-Ray if credentials available
-      if (agentId === 'gherkinWriter' && options.ticketKey) {
-        await this._importGherkinToXray(result.text, options.ticketKey);
+      // Accumulate context from all agents in this stage for next stage
+      for (const r of stageResults) {
+        chainContext += `\n\n--- ${this.agents[r.agentId]?.name} output ---\n${r.text?.slice(0, 3000) || ''}`;
       }
-
-      // Pass last 3000 chars of output as context to next agent
-      chainContext += `\n\n--- ${this.agents[agentId]?.name} output ---\n${result.text?.slice(0, 3000) || ''}`;
     }
 
     // Save session for full QA workflow

@@ -461,8 +461,14 @@ const WORKFLOWS = {
   'qa-workflow': {
     id: 'qa-workflow',
     name: '⭐ Full QA Session',
-    agents: ['reviewer', 'testGenerator', 'automator', 'validator', 'sessionManager', 'gherkinWriter'],
-    description: 'Full QA cycle: review → test cases → Playwright → validation → Gherkin',
+    agents: [
+      ['reviewer'],
+      ['testGenerator'],
+      ['automator', 'gherkinWriter'],
+      ['validator'],
+      ['sessionManager'],
+    ],
+    description: 'Full QA cycle: review → test cases → (Playwright + Gherkin in parallel) → validation → summary',
     isMainWorkflow: true,
   },
   'scan-adapt': {

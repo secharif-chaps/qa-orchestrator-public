@@ -196,6 +196,11 @@ Options:
     console.log(`\n▸ Step ${data.step}/${data.total}: ${data.agentId}`);
   });
 
+  engine.on('workflow:parallel', (data) => {
+    const agentNames = data.agents.map(id => ALL_AGENTS.find(a => a.id === id)?.name || id).join(' + ');
+    console.log(`\n⚡ Running in parallel: ${agentNames}`);
+  });
+
   engine.on('gitlab:fetched', (data) => {
     console.log(`📦 GitLab: ${data.count} MRs fetched, ${data.detailed} detailed`);
   });
