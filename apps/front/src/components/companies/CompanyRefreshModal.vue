@@ -2,7 +2,7 @@
   <Modal
     v-model:display-modal="showRefreshModal"
     :title="t('screen.company.refresh.title')"
-    icon="fa fa-refresh"
+    icon="fa-refresh"
     size="md"
     color=""
   >
@@ -40,7 +40,7 @@
     <template #footer>
       <Button
         variant="primary"
-        icon="fa fa-refresh"
+        icon="fa-refresh"
         :label="t('screen.company.refresh.confirm.button')"
         :loading="isLoading"
         :disabled="isLoading || !hasEnoughTokens"

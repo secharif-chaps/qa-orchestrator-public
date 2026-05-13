@@ -140,7 +140,7 @@
           <Button
             variant="tertiary"
             size="sm"
-            icon="fa fa-eye"
+            icon="fa-eye"
             :title="$t('screen.cards.actions.view')"
             @click.stop="$emit('viewCompany', company.id)"
           />
@@ -148,7 +148,7 @@
             v-if="canDeleteCompany"
             variant="tertiary"
             size="sm"
-            icon="fa fa-trash"
+            icon="fa-trash"
             :title="$t('screen.cards.actions.delete')"
             @click.stop="$emit('deleteCompany', company)"
           />

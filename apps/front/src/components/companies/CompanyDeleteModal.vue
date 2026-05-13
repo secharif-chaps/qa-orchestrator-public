@@ -1,31 +1,20 @@
 <template>
-  <!-- Delete Confirmation Modal with backdrop blur -->
-  <div
-    v-if="showDeleteModal && companyToDelete"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+  <Modal
+    v-if="companyToDelete"
+    v-model:display-modal="showDeleteModal"
+    :title="$t('screen.company.delete.title')"
+    icon="fa-exclamation-triangle"
+    size="md"
+    color=""
   >
-    <div class="mx-4 w-full max-w-112 rounded-sm bg-white shadow-xl">
-      <!-- Header -->
-      <div class="border-primary-lighter-stroke border-b p-6">
-        <div class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-            <i class="fa fa-exclamation-triangle text-red-600"></i>
-          </div>
-          <div>
-            <h3 class="text-base text-lg font-semibold">
-              {{ $t('screen.company.delete.title') }}
-            </h3>
-            <p class="text-neutral-black-font text-sm">
-              {{ $t('screen.company.delete.subtitle') }}
-            </p>
-          </div>
-        </div>
-      </div>
+    <template #description>
+      <div class="flex flex-col gap-6">
+        <p class="text-neutral-black-font">
+          {{ $t('screen.company.delete.subtitle') }}
+        </p>
 
-      <!-- Content -->
-      <div class="p-6">
         <!-- Warning Message -->
-        <div class="mb-6 rounded-sm border border-red-200 bg-red-50 p-4">
+        <div class="rounded-sm border border-red-200 bg-red-50 p-4">
           <div class="flex items-start gap-3">
             <i class="fa fa-exclamation-triangle mt-0.5 text-red-500"></i>
             <div class="text-sm leading-relaxed text-red-700">
@@ -40,11 +29,11 @@
         </div>
 
         <!-- Company Details -->
-        <div class="bg-primary-lightest mb-6 rounded-sm p-4">
+        <div class="bg-primary-lightest rounded-sm p-4">
           <h4 class="mb-3 text-base font-medium">
             {{ $t('screen.company.delete.details') }}
           </h4>
-          <div class="space-y-2 text-sm">
+          <div class="flex flex-col gap-2 text-sm">
             <div class="flex justify-between">
               <span class="text-neutral-black-font">{{
                 $t('screen.company.detailsLabels.name')
@@ -61,7 +50,7 @@
               <span class="text-neutral-black-font">{{
                 $t('screen.company.detailsLabels.created')
               }}</span>
-              <span>{{ formatDate(companyToDelete.created_at) }}</span>
+              <span>{{ formatDate(companyToDelete.created_at, 'eventDate') }}</span>
             </div>
             <div
               v-if="companyToDelete.tasks && companyToDelete.tasks.length > 0"
@@ -79,11 +68,11 @@
         </div>
 
         <!-- Confirmation Input -->
-        <div class="mb-6">
-          <p class="text-neutral-black-font mb-3 text-sm">
+        <div class="flex flex-col gap-3">
+          <p class="text-neutral-black-font text-sm">
             {{ $t('screen.company.delete.confirm.message') }}
           </p>
-          <div class="space-y-2">
+          <div class="flex flex-col gap-2">
             <code class="bg-primary-lighter block rounded px-2 py-1 text-sm">{{
               companyToDelete.name
             }}</code>
@@ -96,29 +85,28 @@
           </div>
         </div>
       </div>
+    </template>
 
-      <!-- Footer -->
-      <div class="border-primary-lighter-stroke flex items-center justify-end gap-3 border-t p-6">
-        <Button variant="tertiary" :label="$t('common.cancel')" @click="handleClose" />
-        <Button
-          variant="accent"
-          icon="fa fa-trash"
-          :label="$t('screen.company.delete.confirm.button')"
-          :loading="isLoading"
-          :disabled="!isConfirmed || isLoading"
-          @click="handleDelete"
-        />
-      </div>
-    </div>
-  </div>
+    <template #footer>
+      <Button
+        variant="accent"
+        icon="fa-trash"
+        :label="$t('screen.company.delete.confirm.button')"
+        :loading="isLoading"
+        :disabled="!isConfirmed || isLoading"
+        @click="handleDelete"
+      />
+      <Button variant="tertiary" :label="$t('common.cancel')" @click="handleClose" />
+    </template>
+  </Modal>
 </template>
 
 <script setup lang="ts">
 import { useDateTime } from '@/composables/useDateTime'
 import { useDeleteCompany } from '@/mutations/companies'
 import type { Company } from '@/types/company'
-import { Button, Input } from '@owlint/feathers-vue'
-import { computed, ref } from 'vue'
+import { Button, Input, Modal } from '@owlint/feathers-vue'
+import { computed, ref, watch } from 'vue'
 
 const { formatDate } = useDateTime()
 
@@ -143,12 +131,15 @@ const isConfirmed = computed(() => {
   return confirmationText.value.trim() === props.companyToDelete?.name.trim()
 })
 
-// Use mutation for deleting with cache invalidation
+// Reset confirmation field whenever the modal closes so the next opening starts clean.
+watch(showDeleteModal, (open) => {
+  if (!open) confirmationText.value = ''
+})
+
 const { deleteCompany, isLoading } = useDeleteCompany()
 
 const handleClose = () => {
   showDeleteModal.value = false
-  confirmationText.value = ''
 }
 
 const handleDelete = async () => {
@@ -160,13 +151,9 @@ const handleDelete = async () => {
       companyName: props.companyToDelete.name,
     })
 
-    // Emit event for parent
     emit('delete-company')
-
-    // Close modal and reset
     handleClose()
   } catch (error) {
-    // Error toast is shown by the mutation's onError handler
     console.error('Error deleting company:', error)
   }
 }

@@ -51,31 +51,31 @@
         <StatCard
           :label="$t('admin.tasks.stats.totalTasks')"
           :value="stats?.total_tasks ?? 0"
-          icon="fa fa-tasks"
+          icon="fa-tasks"
           variant="slate"
         />
         <StatCard
           :label="$t('admin.tasks.stats.running')"
           :value="stats?.running ?? 0"
-          icon="fa fa-play-circle"
+          icon="fa-play-circle"
           variant="info"
         />
         <StatCard
           :label="$t('admin.tasks.stats.pending')"
           :value="stats?.pending ?? 0"
-          icon="fa fa-clock"
+          icon="fa-clock"
           variant="warning"
         />
         <StatCard
           :label="$t('admin.tasks.stats.failed')"
           :value="stats?.error ?? 0"
-          icon="fa fa-times-circle"
+          icon="fa-times-circle"
           variant="error"
         />
         <StatCard
           :label="$t('admin.tasks.stats.successRate')"
           :value="formatPercent(stats?.success_rate ?? 0)"
-          icon="fa fa-check-circle"
+          icon="fa-check-circle"
           variant="success"
           is-percentage
         />
@@ -429,7 +429,7 @@
       :display-modal="showRestartModal"
       :title="$t('admin.tasks.modal.title')"
       size="md"
-      icon="fa fa-redo"
+      icon="fa-redo"
       color="warning"
     >
       <template #description>
@@ -479,7 +479,7 @@
                 count: selectedStuckCount,
               })
             "
-            icon="fa fa-exclamation-triangle"
+            icon="fa-exclamation-triangle"
           />
 
           <!-- Restart result feedback -->
@@ -491,7 +491,7 @@
                 ? $t('admin.tasks.modal.result.initiated')
                 : $t('admin.tasks.modal.result.noTasks')
             "
-            icon="fa fa-info-circle"
+            icon="fa-info-circle"
           >
             <div class="space-y-1 text-sm">
               <p v-if="lastRestartResult.restarted.length > 0">

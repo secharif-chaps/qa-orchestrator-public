@@ -2,7 +2,7 @@
   <Modal
     v-model:display-modal="showArchiveModal"
     :title="t('screen.company.delete.title')"
-    icon="fa fa-trash"
+    icon="fa-trash"
     size="lg"
     color=""
   >
@@ -41,7 +41,7 @@
       <Button
         variant="primary"
         intent="danger"
-        icon="fa fa-trash"
+        icon="fa-trash"
         :label="t('screen.company.delete.confirm.button')"
         :loading="isLoading"
         :disabled="isLoading"

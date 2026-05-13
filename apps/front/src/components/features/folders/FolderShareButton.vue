@@ -2,7 +2,7 @@
   <div v-if="showButton">
     <Button
       variant="tertiary"
-      icon="fa fa-share-alt"
+      icon="fa-share-alt"
       :label="$t('common.folder.actions.share')"
       @click="showModal = true"
     />

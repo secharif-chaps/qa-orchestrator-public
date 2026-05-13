@@ -8,7 +8,7 @@
         variant="danger"
         :title="$t('common.folder.list.error.title')"
         :description="$t('common.folder.list.error.description')"
-        icon="fa fa-exclamation-triangle"
+        icon="fa-exclamation-triangle"
       />
 
       <!-- Loading State -->
@@ -158,7 +158,7 @@
         <Button
           v-if="!foldersStore.filterName && canCreateFolder"
           variant="primary"
-          icon="fa fa-plus"
+          icon="fa-plus"
           :label="$t('common.folder.create.button')"
           @click="goToCreate"
         />
@@ -173,20 +173,6 @@
 
     <!-- Filters Drawer -->
     <FolderFiltersDrawer v-model="filtersOpen" :total-count="totalCount" />
-
-    <!-- Delete Confirmation Modal -->
-    <FolderDeleteModal
-      v-model="showDeleteModal"
-      :folder-to-delete="folderToDelete"
-      @delete-folder="handleDeleteFolder"
-    />
-
-    <!-- Restore Confirmation Modal -->
-    <FolderRestoreModal
-      v-model="showRestoreModal"
-      :folder-to-restore="folderToRestore"
-      @restore-folder="handleRestoreFolder"
-    />
   </div>
 </template>
 
@@ -197,15 +183,15 @@ meta:
 </route>
 
 <script setup lang="ts">
-import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
 import FolderFiltersDrawer from '@/components/folders/FolderFiltersDrawer.vue'
 import FolderHierarchyRow from '@/components/folders/FolderHierarchyRow.vue'
 import FolderItem from '@/components/folders/FolderItem.vue'
 import FolderListHeader from '@/components/folders/FolderListHeader.vue'
 import FolderListSkeleton from '@/components/folders/FolderListSkeleton.vue'
-import FolderRestoreModal from '@/components/folders/FolderRestoreModal.vue'
 import Pagination from '@/components/ui/Pagination.vue'
+import { useConfirmModal } from '@/composables/useConfirmModal'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
+import { useDeleteFolder, useRestoreFolder } from '@/mutations/folders'
 import { foldersWithItemsQuery } from '@/queries/folders'
 import { useFoldersStore } from '@/stores/folders'
 import type { Folder } from '@/types/folder'
@@ -213,6 +199,7 @@ import { transformToPaginationMeta } from '@/utils/pagination'
 import { Alert, Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 const VIEW_MODE_STORAGE_KEY = 'folders-view-mode'
@@ -268,12 +255,12 @@ const foldersWithItems = computed<Folder[]>(() => folders.value)
 const paginationMeta = computed(() => transformToPaginationMeta(currentData.value?.pagination))
 const totalCount = computed(() => currentData.value?.pagination?.total ?? 0)
 
-const showDeleteModal = ref(false)
-const folderToDelete = ref<Folder | null>(null)
-const showRestoreModal = ref(false)
-const folderToRestore = ref<Folder | null>(null)
+const { showConfirmModal } = useConfirmModal()
+const { deleteFolder, isLoading: isDeletingFolder } = useDeleteFolder()
+const { restoreFolder, isLoading: isRestoringFolder } = useRestoreFolder()
+const { t: $t } = useI18n()
 
-const refetchCurrent = () => {
+const refreshFolders = () => {
   if (viewMode.value === 'grid') {
     refetch()
   } else {
@@ -281,22 +268,54 @@ const refetchCurrent = () => {
   }
 }
 
-const handleDeleteFolder = () => {
-  refetchCurrent()
-}
-
 const confirmDelete = (folder: Folder) => {
-  folderToDelete.value = folder
-  showDeleteModal.value = true
-}
-
-const handleRestoreFolder = () => {
-  refetchCurrent()
+  const itemsCount = folder.items?.length ?? folder.items_count ?? 0
+  showConfirmModal({
+    title: $t('common.folder.delete.title'),
+    titleIcon: 'fas fa-trash',
+    message: $t('common.folder.delete.message'),
+    confirmLabel: $t('common.folder.delete.confirm'),
+    cancelLabel: $t('common.folder.delete.cancel'),
+    confirmVariant: 'accent',
+    loading: isDeletingFolder,
+    infoSection: {
+      title: folder.name,
+      items: [$t('common.folder.itemCount', { count: itemsCount })],
+      icon: folder.icon || 'fas fa-folder',
+    },
+    warningSection:
+      itemsCount > 0
+        ? {
+            title: $t('common.folder.delete.warning.title'),
+            message: $t('common.folder.delete.warning.message'),
+          }
+        : undefined,
+    onConfirm: async () => {
+      await deleteFolder(folder.id)
+      refreshFolders()
+    },
+  })
 }
 
 const confirmRestore = (folder: Folder) => {
-  folderToRestore.value = folder
-  showRestoreModal.value = true
+  showConfirmModal({
+    title: $t('common.folder.restore.title'),
+    titleIcon: 'fa-undo',
+    message: $t('common.folder.restore.warning.message'),
+    confirmLabel: $t('common.folder.restore.confirm.button'),
+    loading: isRestoringFolder,
+    infoSection: {
+      title: $t('common.folder.restore.details'),
+      items: [$t('common.folder.nameLabel') + ' ' + folder.name],
+    },
+    onConfirm: async () => {
+      await restoreFolder({
+        folderId: folder.id.toString(),
+        folderName: folder.name,
+      })
+      refreshFolders()
+    },
+  })
 }
 
 const updatePerPage = (newSize: number) => {

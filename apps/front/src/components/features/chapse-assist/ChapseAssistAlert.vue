@@ -18,7 +18,7 @@
         <Button
           variant="secondary"
           size="sm"
-          icon="fa fa-magic"
+          icon="fa-magic"
           :label="actionLabel"
           @click="handleSetup"
         />

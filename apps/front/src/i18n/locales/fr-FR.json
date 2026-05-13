@@ -616,7 +616,6 @@
     "closeIcon": "×",
     "collectedOn": "Collecté le {date}",
     "comingSoon": "Bientôt disponible",
-    "confirm": "Confirmer",
     "copied": "Copié dans le presse-papier !",
     "countOfTotal": "{count}/{total}",
     "countSuffix": " ({count})",
@@ -727,7 +726,6 @@
         "cancel": "Annuler",
         "confirm": "Supprimer le dossier",
         "message": "Êtes-vous sûr de vouloir supprimer ce dossier ?",
-        "subtitle": "Cette action est irréversible",
         "title": "Supprimer le dossier",
         "warning": {
           "message": "Les éléments de ce dossier resteront dans votre espace mais ne seront plus regroupés.",
@@ -884,7 +882,6 @@
         },
         "details": "Détails du dossier",
         "error": "Échec de la restauration du dossier \"{name}\"",
-        "subtitle": "Le dossier sera déplacé vers la liste active.",
         "success": "Le dossier \"{name}\" a été restauré avec succès",
         "title": "Restaurer le dossier",
         "warning": {
@@ -1472,7 +1469,6 @@
         },
         "details": "Détails de l'entreprise",
         "error": "Échec de la restauration de l'entreprise \"{name}\". Veuillez réessayer.",
-        "subtitle": "L'entreprise sera restaurée dans la liste active",
         "success": "L'entreprise \"{name}\" a été restaurée avec succès",
         "title": "Restaurer l'entreprise",
         "warning": {

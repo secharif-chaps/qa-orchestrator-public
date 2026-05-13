@@ -1,124 +1,111 @@
 <template>
-  <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-white/20 backdrop-blur-sm"
-    @click.self="handleClose"
+  <Modal
+    :display-modal="true"
+    :title="$t('settings.user.resetPassword.title')"
+    icon="fa-key"
+    size="md"
+    color=""
+    @close="emit('close')"
   >
-    <div
-      class="border-primary-lighter-stroke mx-4 w-full max-w-112 rounded-md border bg-white p-6 shadow-2xl"
-    >
-      <!-- Header -->
-      <div class="mb-6 flex items-center justify-between">
-        <h3 class="text-base text-lg font-semibold">
-          {{ $t('settings.user.resetPassword.title') }}
-        </h3>
-        <Button variant="tertiary" icon="fa-times" @click="handleClose" />
+    <!-- Success State -->
+    <div v-if="isSuccess && newPassword" class="flex flex-col gap-6">
+      <Alert
+        variant="success"
+        icon="fa-check-circle"
+        :title="$t('settings.user.resetPassword.success')"
+        :description="$t('settings.user.resetPassword.successDescription')"
+      />
+
+      <!-- New Password Display -->
+      <div class="flex flex-col gap-2">
+        <div class="flex gap-2">
+          <Input
+            id="reset-new-password"
+            :model-value="newPassword"
+            :type="showPassword ? 'text' : 'password'"
+            :label="$t('settings.user.resetPassword.newPassword')"
+            :icon-right="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+            readonly
+            class="flex-1 font-mono"
+            @click-icon-right="showPassword = !showPassword"
+          />
+          <Button variant="secondary" icon="fa-copy" class="self-end" @click="copyPassword" />
+        </div>
+        <p v-if="copied" class="text-success text-xs">
+          <i class="fa fa-check mr-1"></i>
+          {{ $t('common.copied') }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Reset Form -->
+    <div v-else class="flex flex-col gap-4">
+      <p class="text-neutral-black-font text-sm">
+        {{ $t('settings.user.resetPassword.description') }}
+        <span class="font-semibold">{{ memberDisplayName }}</span>
+      </p>
+
+      <!-- Password Input -->
+      <Input
+        id="reset-password"
+        v-model="password"
+        :type="showPassword ? 'text' : 'password'"
+        :disabled="isLoading"
+        :label="`${$t('settings.user.resetPassword.temporaryPassword')} *`"
+        :placeholder="$t('settings.user.resetPassword.placeholder')"
+        :error="error || undefined"
+        :icon-right="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+        class="w-full"
+        @click-icon-right="showPassword = !showPassword"
+      />
+
+      <!-- Generate Password Button -->
+      <div>
+        <Button
+          variant="tertiary"
+          size="sm"
+          icon="fa-refresh"
+          :label="$t('settings.user.generatePassword')"
+          :disabled="isLoading"
+          @click="generatePassword"
+        />
       </div>
 
-      <!-- Success State -->
-      <template v-if="isSuccess && newPassword">
-        <Alert
-          variant="success"
-          class="mb-6"
-          icon="fa-check-circle"
-          :title="$t('settings.user.resetPassword.success')"
-          :description="$t('settings.user.resetPassword.successDescription')"
-        />
-
-        <!-- New Password Display -->
-        <div class="mb-6">
-          <div class="flex gap-2">
-            <Input
-              id="reset-new-password"
-              :model-value="newPassword"
-              type="password"
-              :label="$t('settings.user.resetPassword.newPassword')"
-              readonly
-              class="flex-1 font-mono"
-            />
-            <Button variant="secondary" icon="fa-copy" class="self-end" @click="copyPassword" />
-          </div>
-          <p v-if="copied" class="text-success mt-1 text-xs">
-            <i class="fa fa-check mr-1"></i>
-            {{ $t('common.copied') }}
-          </p>
-        </div>
-
-        <!-- Close Button -->
-        <div class="flex justify-end">
-          <Button variant="primary" :label="$t('common.close')" @click="handleClose" />
-        </div>
-      </template>
-
-      <!-- Reset Form -->
-      <template v-else>
-        <!-- User Info -->
-        <div class="mb-6">
-          <p class="text-neutral-black-font text-sm">
-            {{ $t('settings.user.resetPassword.description') }}
-            <span class="font-semibold">{{ memberDisplayName }}</span>
-          </p>
-        </div>
-
-        <!-- Password Input -->
-        <div class="mb-4">
-          <Input
-            id="reset-password"
-            v-model="password"
-            type="password"
-            :disabled="isLoading"
-            :label="`${$t('settings.user.resetPassword.temporaryPassword')} *`"
-            :placeholder="$t('settings.user.resetPassword.placeholder')"
-            :error="error || undefined"
-            class="w-full"
-          />
-        </div>
-
-        <!-- Generate Password Button -->
-        <div class="mb-6">
-          <Button
-            variant="tertiary"
-            size="sm"
-            icon="fa-rotate-right"
-            :label="$t('settings.user.generatePassword')"
-            :disabled="isLoading"
-            @click="generatePassword"
-          />
-        </div>
-
-        <!-- Info Alert -->
-        <Alert
-          variant="info"
-          class="mb-6"
-          icon="fa-info-circle"
-          :title="$t('settings.user.resetPassword.infoTitle')"
-          :description="$t('settings.user.resetPassword.infoDescription')"
-        />
-
-        <!-- Actions -->
-        <div class="flex justify-end gap-3">
-          <Button
-            variant="secondary"
-            :label="$t('common.cancel')"
-            :disabled="isLoading"
-            @click="handleClose"
-          />
-          <Button
-            variant="primary"
-            :label="$t('settings.user.resetPassword.button')"
-            :loading="isLoading"
-            :disabled="!password || isLoading"
-            @click="handleResetPassword"
-          />
-        </div>
-      </template>
+      <Alert
+        variant="info"
+        icon="fa-info-circle"
+        :title="$t('settings.user.resetPassword.infoTitle')"
+        :description="$t('settings.user.resetPassword.infoDescription')"
+      />
     </div>
-  </div>
+
+    <template #footer>
+      <template v-if="isSuccess && newPassword">
+        <Button variant="primary" :label="$t('common.close')" @click="handleClose" />
+      </template>
+      <template v-else>
+        <Button
+          variant="primary"
+          :label="$t('settings.user.resetPassword.button')"
+          :loading="isLoading"
+          :disabled="!password || isLoading"
+          @click="handleResetPassword"
+        />
+        <Button
+          variant="secondary"
+          :label="$t('common.cancel')"
+          :disabled="isLoading"
+          @click="handleClose"
+        />
+      </template>
+    </template>
+  </Modal>
 </template>
 
 <script setup lang="ts">
 import { useResetMemberPassword } from '@/mutations/team'
 import type { TeamMemberListItem } from '@/types/team'
-import { Alert, Button, Input } from '@owlint/feathers-vue'
+import { Alert, Button, Input, Modal } from '@owlint/feathers-vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -135,6 +122,7 @@ const emit = defineEmits<{
 // State
 const password = ref('')
 const newPassword = ref('')
+const showPassword = ref(false)
 const copied = ref(false)
 const error = ref('')
 const isSuccess = ref(false)
@@ -142,7 +130,6 @@ const isSuccess = ref(false)
 // Mutation
 const { resetPasswordAsync, isPending: isLoading } = useResetMemberPassword()
 
-// Computed
 const memberDisplayName = computed(() => {
   if (props.member.first_name && props.member.last_name) {
     return `${props.member.first_name} ${props.member.last_name}`
@@ -150,31 +137,26 @@ const memberDisplayName = computed(() => {
   return props.member.username
 })
 
-// Generate a random password that meets requirements
 function generatePassword() {
   const length = 12
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
   let generatedPassword = ''
 
-  // Ensure at least one of each type
   generatedPassword += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)]
   generatedPassword += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)]
   generatedPassword += '0123456789'[Math.floor(Math.random() * 10)]
   generatedPassword += '!@#$%^&*'[Math.floor(Math.random() * 8)]
 
-  // Fill the rest randomly
   for (let i = generatedPassword.length; i < length; i++) {
     generatedPassword += charset[Math.floor(Math.random() * charset.length)]
   }
 
-  // Shuffle the password
   password.value = generatedPassword
     .split('')
     .sort(() => 0.5 - Math.random())
     .join('')
 }
 
-// Validate password
 function validatePassword(): boolean {
   if (!password.value) {
     error.value = t('common.validation.password.required')
@@ -210,7 +192,6 @@ function validatePassword(): boolean {
   return true
 }
 
-// Handle reset password
 async function handleResetPassword() {
   if (!validatePassword()) return
 
@@ -220,7 +201,6 @@ async function handleResetPassword() {
       temporaryPassword: password.value,
     })
 
-    // Store the password for display and show success state
     newPassword.value = password.value
     isSuccess.value = true
   } catch (err: unknown) {
@@ -228,7 +208,6 @@ async function handleResetPassword() {
   }
 }
 
-// Copy password to clipboard
 async function copyPassword() {
   try {
     await navigator.clipboard.writeText(newPassword.value)
@@ -251,7 +230,6 @@ async function copyPassword() {
   }
 }
 
-// Handle close
 function handleClose() {
   emit('close')
 }

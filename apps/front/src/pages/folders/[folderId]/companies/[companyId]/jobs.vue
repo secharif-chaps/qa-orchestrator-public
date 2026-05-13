@@ -18,7 +18,7 @@
       <!-- Total Openings -->
       <Alert
         v-if="jobOffersInsights"
-        icon="fa fa-regular fa-suitcase"
+        icon="fa-regular fa-suitcase"
         :title="$t('screen.jobs.insights.totalOpenings')"
       >
         <template #aside>

@@ -2,7 +2,7 @@
   <Modal
     v-model:display-modal="showModal"
     :title="t('common.logout.title')"
-    icon="fa fa-arrow-right-from-bracket"
+    icon="fa-arrow-right-from-bracket"
     size="md"
     color=""
   >
@@ -20,7 +20,7 @@
       <Button
         variant="primary"
         intent="danger"
-        icon="fa fa-arrow-right-from-bracket"
+        icon="fa-arrow-right-from-bracket"
         :label="t('common.logout.confirm')"
         :loading="isLoading"
         :disabled="isLoading"

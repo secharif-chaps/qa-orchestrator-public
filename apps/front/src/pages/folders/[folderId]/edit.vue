@@ -83,7 +83,7 @@
                 <Button
                   variant="tertiary"
                   size="xs"
-                  icon="fa fa-times"
+                  icon="fa-times"
                   :aria-label="$t('common.action.remove')"
                   @click="removeTag(tag)"
                 />

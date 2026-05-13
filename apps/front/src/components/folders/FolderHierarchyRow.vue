@@ -45,7 +45,7 @@
               <Tag
                 v-else-if="hasShares"
                 intent="info"
-                icon="fa fa-share-nodes"
+                icon="fa-share-nodes"
                 :label="$t('common.folder.privacy.shared')"
                 size="xs"
                 class="rounded-full"

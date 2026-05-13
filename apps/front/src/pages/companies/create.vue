@@ -86,7 +86,7 @@
             v-model="selectedFolderOption"
             :options="folderSelectOptions"
             :placeholder="$t('screen.company.create.chooseFolderPlaceholder')"
-            :icon="selectedFolderOption?.icon || 'fa fa-folder'"
+            :icon="selectedFolderOption?.icon || 'fa-folder'"
           >
             <template #items>
               <template v-for="group in folderGroups" :key="group.label">
@@ -142,7 +142,7 @@
           <Button
             type="button"
             variant="tertiary"
-            icon="fa fa-upload"
+            icon="fa-upload"
             :label="$t('screen.csv.upload.button')"
             @click="goToCSVUpload"
             :disabled="!targetFolderId"
@@ -151,7 +151,7 @@
           <Button
             type="submit"
             variant="primary"
-            icon="fa fa-search"
+            icon="fa-search"
             :label="$t('screen.search.actions.launchSearch')"
             :loading="mutationLoading"
             :disabled="!canSubmit"

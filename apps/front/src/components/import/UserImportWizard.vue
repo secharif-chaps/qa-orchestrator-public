@@ -129,6 +129,7 @@
 import Stepper from '@/components/ui/Stepper.vue'
 import { useColumnMapper } from '@/composables/useColumnMapper'
 import { useImportUsers } from '@/mutations/user-import'
+import { isValidEmail } from '@/utils/validators'
 import { Button, Modal } from '@owlint/feathers-vue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -308,13 +309,6 @@ const canProceed = computed(() => {
       return true
   }
 })
-
-/**
- * Validate email format
- */
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-}
 
 /**
  * Handle file parsed

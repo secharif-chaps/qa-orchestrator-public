@@ -71,14 +71,14 @@
         <div class="flex items-center justify-between pt-4">
           <Button
             variant="tertiary"
-            icon="fa fa-upload"
+            icon="fa-upload"
             :label="$t('screen.csv.upload.button')"
             @click="goToCSVUpload"
           />
 
           <Button
             variant="primary"
-            icon="fa fa-search"
+            icon="fa-search"
             :label="$t('screen.search.actions.launchSearch')"
             :loading="mutationLoading"
             :disabled="mutationLoading || !isFormValid || !canPerformSearch"

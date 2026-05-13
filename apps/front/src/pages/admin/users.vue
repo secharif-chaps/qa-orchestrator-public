@@ -75,16 +75,6 @@
       @close="userToManagePermissions = null"
     />
 
-    <!-- Disable User Modal -->
-    <DisableUserModal
-      v-if="userToDisable"
-      :user-id="userToDisable.userId"
-      :username="userToDisable.username"
-      :is-loading="isDisabling"
-      @confirm="handleDisableUser"
-      @close="userToDisable = null"
-    />
-
     <!-- Reset Password Modal -->
     <ResetPasswordModal
       v-if="userToResetPassword"
@@ -109,12 +99,13 @@ import UsersTable from '@/components/admin/UsersTable.vue'
 import UsersTableSkeleton from '@/components/admin/UsersTableSkeleton.vue'
 import PageHeader from '@/components/ui/PageHeader.vue'
 import Pagination from '@/components/ui/Pagination.vue'
+import { useConfirmModal } from '@/composables/useConfirmModal'
 import { Alert, Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
-import DisableUserModal from '@/components/admin/DisableUserModal.vue'
 import ResetPasswordModal from '@/components/admin/ResetPasswordModal.vue'
 import RolePermissionsModal from '@/components/admin/RolePermissionsModal.vue'
 import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
@@ -130,6 +121,8 @@ import type { AdminUserListItem, AdminUserQueryParams } from '@/types/admin-user
 import { transformToPaginationMeta } from '@/utils/pagination'
 
 const router = useRouter()
+const { t } = useI18n()
+const { showConfirmModal } = useConfirmModal()
 
 // Query parameters state
 const queryParams = reactive<AdminUserQueryParams>({
@@ -174,7 +167,6 @@ interface ModalUserState {
 }
 const userToAssign = ref<ModalUserState | null>(null)
 const userToManagePermissions = ref<ModalUserState | null>(null)
-const userToDisable = ref<ModalUserState | null>(null)
 const userToResetPassword = ref<ModalUserState | null>(null)
 
 // Users data
@@ -249,11 +241,20 @@ const showPermissionsModal = (user: AdminUserListItem) => {
 }
 
 const showDisableModal = (user: AdminUserListItem) => {
-  userToDisable.value = {
-    userId: user.user_id,
-    username: user.username,
-    email: user.email,
-  }
+  showConfirmModal({
+    title: t('admin.disableUser.title'),
+    titleIcon: 'fa-user-slash',
+    message: t('admin.disableUser.confirmText', { username: user.username }),
+    confirmLabel: t('admin.disableUser.confirm'),
+    cancelLabel: t('admin.disableUser.cancel'),
+    confirmVariant: 'accent',
+    loading: isDisabling,
+    warningSection: {
+      title: t('admin.disableUser.actionTitle'),
+      message: t('admin.disableUser.actionDescription'),
+    },
+    onConfirm: () => disableUser({ userId: user.user_id }),
+  })
 }
 
 const showResetPasswordModal = (user: AdminUserListItem) => {
@@ -289,17 +290,6 @@ const handleUpdatePermissions = async (permissions: string[]) => {
     userToManagePermissions.value = null
   } catch (error) {
     console.error('Failed to update permissions:', error)
-  }
-}
-
-const handleDisableUser = async () => {
-  if (!userToDisable.value) return
-
-  try {
-    await disableUser({ userId: userToDisable.value.userId })
-    userToDisable.value = null
-  } catch (error) {
-    console.error('Failed to disable user:', error)
   }
 }
 

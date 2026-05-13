@@ -14,7 +14,7 @@
 
         <Button
           variant="tertiary"
-          icon="fa fa-plus"
+          icon="fa-plus"
           :label="$t('screen.company.create.button')"
           @click="$router.push('/search')"
         />

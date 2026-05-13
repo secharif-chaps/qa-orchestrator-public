@@ -20,7 +20,7 @@
 
       <!-- Error State -->
       <div v-else-if="error" class="flex flex-col items-center justify-center gap-3 px-4 py-8">
-        <Badge variant="secondary" icon="fa fa-exclamation-triangle" size="lg" />
+        <Badge variant="secondary" icon="fa-exclamation-triangle" size="lg" />
         <p class="text-sage-800 dark:text-sage-400 text-center text-sm">
           {{ $t('common.sidebar.notifications.errorLoading') }}
         </p>
@@ -47,7 +47,7 @@
 
       <!-- Empty State -->
       <div v-else class="flex flex-col items-center justify-center gap-4 px-4 py-12">
-        <Badge variant="secondary" icon="fa fa-bell" size="lg" />
+        <Badge variant="secondary" icon="fa-bell" size="lg" />
         <div class="text-center">
           <h3 class="text-sage-900 mb-2 text-sm font-medium">
             {{ $t('common.sidebar.notifications.noNotifications') }}
@@ -69,7 +69,7 @@
         variant="tertiary"
         size="sm"
         :label="$t('common.sidebar.notifications.viewAll')"
-        icon-right="fa fa-arrow-right"
+        icon-right="fa-arrow-right"
         @click="$router.push('/notifications')"
       />
     </div> -->

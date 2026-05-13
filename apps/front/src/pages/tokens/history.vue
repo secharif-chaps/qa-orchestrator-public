@@ -35,7 +35,7 @@
             "
             size="md"
             class="rounded-full"
-            :icon="totalTokens > 0 ? 'fa fa-check-circle' : 'fa fa-exclamation-circle'"
+            :icon="totalTokens > 0 ? 'fa-check-circle' : 'fa-exclamation-circle'"
           />
         </div>
       </div>
@@ -112,7 +112,7 @@
           <Button
             variant="tertiary"
             size="sm"
-            icon="fa fa-times"
+            icon="fa-times"
             :label="$t('settings.tokens.history.clearFilters')"
             @click="clearFilters"
           />

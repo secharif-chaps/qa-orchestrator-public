@@ -616,7 +616,6 @@
     "closeIcon": "×",
     "collectedOn": "Collected on {date}",
     "comingSoon": "Coming soon",
-    "confirm": "Confirm",
     "copied": "Copied to clipboard!",
     "countOfTotal": "{count}/{total}",
     "countSuffix": " ({count})",
@@ -727,7 +726,6 @@
         "cancel": "Cancel",
         "confirm": "Delete Folder",
         "message": "Are you sure you want to delete this folder?",
-        "subtitle": "This action cannot be undone",
         "title": "Delete Folder",
         "warning": {
           "message": "Items in this folder will remain in your workspace but will no longer be grouped.",
@@ -884,7 +882,6 @@
         },
         "details": "Folder Details",
         "error": "Failed to restore folder \"{name}\"",
-        "subtitle": "This will move the folder back to the active list.",
         "success": "Folder \"{name}\" has been restored successfully",
         "title": "Restore Folder",
         "warning": {
@@ -1472,7 +1469,6 @@
         },
         "details": "Company Details",
         "error": "Failed to restore company \"{name}\". Please try again.",
-        "subtitle": "This will restore the company to the active list",
         "success": "Company \"{name}\" has been restored successfully",
         "title": "Restore Company",
         "warning": {
