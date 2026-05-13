@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Scheduler;
 
 use App\Application\Agent\TimeoutStaleExecutionsAction;
+use App\Application\DocumentQuality\RefreshAdblockListsAction;
 use App\Application\WatchFile\Quota\CheckDocumentQuotaAction;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
@@ -30,6 +31,7 @@ class DefaultScheduleProvider implements ScheduleProviderInterface
                     new TimeoutStaleExecutionsAction()
                 )
             )
-            ->add(RecurringMessage::every('1 hour', new CheckDocumentQuotaAction()));
+            ->add(RecurringMessage::every('1 hour', new CheckDocumentQuotaAction()))
+            ->add(RecurringMessage::every('1 day', new RefreshAdblockListsAction()));
     }
 }
