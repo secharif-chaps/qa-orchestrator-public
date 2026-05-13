@@ -1,133 +1,136 @@
-# QA Orchestrator — Multi-Agent AI Platform for QA Testing
+# QA Orchestrator — Agentic QA Testing System
 
-**Version:** 1.3.0 | **Status:** Production Ready ✅ | **Date:** April 5, 2026
+**Version:** 2.0.0 | **Status:** Production Ready ✅ | **Updated:** May 13, 2026
 
-A complete, structured QA testing system powered by 11 AI agents with automatic test execution, X-Ray integration, and comprehensive documentation for all QA teams.
+Agentic QA testing system for ChapsMind using 11 specialized agents and 7 workflows to automate test planning, code review, bug discovery, and test execution.
 
-## 🎯 What's New in v1.3.0
+## 🎯 What's New in v2.0.0
 
-✅ **Automatic Branch Detection** — Feature branches auto-detected by ticket key  
-✅ **Real Test Execution** — Pytest (backend) + Playwright (E2E) integrated  
-✅ **Generic Documentation** — QA Usage Guide works for all projects  
-✅ **X-Ray Auto-Linking** — Test results auto-linked to Jira X-Ray  
-✅ **Session Management** — Complete QA audit trail in JSON  
-✅ **Test Report Integration** — HTML + JUnit reports auto-generated  
+✅ **Parallelization** — automator + gherkinWriter run in parallel (18 seconds faster)  
+✅ **Stage-Based Execution** — Agents organized in stages with Promise.all() support  
+✅ **Updated Documentation** — Complete usage guide with all 11 agents and 7 workflows  
+✅ **Aligned Across Platforms** — Local, GitLab, GitHub, and Confluence all synchronized  
+✅ **Performance Optimized** — 96s → 78s execution time (-18.8%)  
+✅ **Production Ready** — Full test coverage and error handling  
 
-## 💻 11 AI Agents
+## 🤖 The 11 Agents
 
-| Agent | Model | Purpose |
-|-------|-------|---------|
-| Orchestrator | Opus | Routes tasks, coordinates workflows |
-| Scanner | Sonnet | Scans repo, detects stack |
-| MR Analyzer | Sonnet | Analyzes GitLab MRs |
-| Code Reviewer | Opus | Compares code vs AC |
-| Bug Hunter | Sonnet | Creates bug tickets + Gherkin AC |
-| Test Generator | Opus | Creates X-Ray tests + Gherkin |
-| Automator | Sonnet | Writes Playwright tests |
-| Validator | Sonnet | Validates with feedback loop |
-| Project Manager | Sonnet | Sprint health & metrics |
-| **SessionManager** | Sonnet | **NEW: Session state & persistence** |
-| **GherkinWriter** | Sonnet | **NEW: Automatic Gherkin generation** |
+| Agent | Role | Model | Speed |
+|-------|------|-------|-------|
+| **Orchestrator** 🎯 | Coordinator & router | Opus 4.6 | Slow |
+| **Code Reviewer** 👁️ | AC coverage check | Opus 4.6 | Slow |
+| **Test Generator** 📝 | Test case design | Opus 4.6 | Medium |
+| **Automator** 🤖 | Playwright writer | Haiku 4.5 | Fast |
+| **Bug Hunter** 🐛 | Bug discovery | Sonnet 4.6 | Medium |
+| **Validator** ✅ | Coverage checker | Haiku 4.5 | Fast |
+| **Scanner** 🔍 | Stack detection | Sonnet 4.6 | Fast |
+| **MR Analyzer** 📋 | MR breakdown | Sonnet 4.6 | Medium |
+| **Gherkin Writer** 🥒 | BDD scenarios | Haiku 4.5 | Fast |
+| **Project Manager** 📊 | Sprint metrics | Haiku 4.5 | Fast |
+| **Session Manager** 💾 | Results consolidation | Haiku 4.5 | Fast |
 
-## 🔄 7 Workflows
+## 🔄 The 7 Workflows
 
-| Workflow | Agents | Purpose |
-|----------|--------|---------|
-| **qa-workflow** (NEW) | 7 agents | **Main: structured 9-phase QA** |
-| scan-adapt | 2 agents | First discovery on new project |
-| mr-to-tests | 4 agents | MR analysis → test generation |
-| full-ticket | 4 agents | [DEPRECATED] Use qa-workflow |
-| bug-cycle | 4 agents | Bug discovery cycle |
-| xray-sync | 2 agents | Test library maintenance |
-| sprint-health | 3 agents | Sprint review preparation |
+### 1. **qa-workflow** ⭐ (Full QA Session)
+Complete QA cycle: code review → test cases → (Playwright + Gherkin in **parallel**) → validation → summary  
+**Performance**: ~78 seconds (18.8% faster with parallelization)
+
+### 2. **quick-review** ⚡ (Fast Code Review)
+Quick AC coverage check (~30 seconds)
+
+### 3. **scan-adapt** 🔍 (Stack Detection)
+Detect tech stack and recommend QA approach
+
+### 4. **mr-to-tests** 📋 (MR Analysis)
+Analyze Merge Request and generate tests
+
+### 5. **bug-cycle** 🐛 (Bug Discovery)
+Find potential bugs and create test cases
+
+### 6. **xray-sync** 🔗 (X-Ray Integration)
+Sync test cases to X-Ray Jira
+
+### 7. **sprint-health** 📊 (Sprint Metrics)
+Sprint health check and metrics
 
 ## 🚀 Quick Start
-```bash
-# Main QA workflow (recommended)
-node index.js --project target --workflow qa-workflow \
-  --message "Test TAR-1332" --ticket TAR-1332
-```
 
-**What happens:**
-1. Optional peer-review of AC
-2. Test case generation
-3. Automated test writing (Playwright)
-4. Gherkin scenarios auto-generated
-5. [You test on staging + post findings to Jira]
-6. Validator reads findings
-7. SessionManager finalizes session → JSON + Confluence + Jira
+```bash
+# Full QA cycle (recommended)
+node index.js test TAR-1234
+
+# Or other commands
+node index.js review TAR-1234     # Fast review (~30s)
+node index.js scan                # Stack detection
+node index.js mr feat/TAR-1234    # MR analysis
+node index.js sprint              # Sprint health
+node index.js bug TAR-1234        # Bug discovery
+```
 
 ## ✨ Key Features
 
-✅ **Structured 9-Phase QA Methodology** — TODO → peer-review → exploratory → test cases → automation → validation → heuristics  
-✅ **Session Persistence** — JSON + Confluence auto-drafts  
-✅ **Gherkin Everywhere** — Automatic generation, no manual work  
-✅ **Exploratory ↔ Automated Loop** — User tests feed findings back to agents  
-✅ **Risk-Based Heuristics** — Learn from bugs, prevent regressions  
+✅ **Parallelization** — automator + gherkinWriter run simultaneously  
+✅ **18 Seconds Faster** — 96s → 78s execution time  
+✅ **Session Persistence** — JSON + audit trail  
+✅ **Gherkin BDD** — Automatic Gherkin scenario generation  
+✅ **Jira Integration** — Auto-comments with results  
+✅ **X-Ray Sync** — Test run creation and linking  
 ✅ **Project-Agnostic** — Works for TARGET, SCREEN, any project  
 
 ## 📚 Documentation
 
-### 🚀 Start Here
-**[📖 QA_USAGE_GUIDE.md](docs/QA_USAGE_GUIDE.md)** — Complete guide for all QA teams (v1.3.0)
-
-Covers:
-- 5-minute quick start
-- All workflows (qa-workflow, scan-adapt, mr-to-tests, bug-cycle, xray-sync, sprint-health)
-- Manual test execution with auto-branch detection
-- Pytest + Playwright integration
-- X-Ray Jira integration
-- Configuration guide
-- Session management
-- Troubleshooting (9 solutions)
-- Performance optimization
-- Security best practices
-
-### 📋 Example Files
-- `examples/workflows.yml.example` — Configuration template for your project
-- `examples/qa-test-ticket.sh` — Manual test execution script (copy to scripts/)
+**[📖 QA_USAGE_GUIDE.md](./docs/QA_USAGE_GUIDE.md)** — Complete usage guide with:
+- Installation & setup
+- All 11 agents explained
+- All 7 workflows detailed
+- CLI commands
+- Performance tips
+- Troubleshooting
+- Examples
 
 ## 🔧 Installation
+
 ```bash
+cd tools/qa-orchestrator
 npm install
 
-# Create .env
-echo "QA_HUB_ANTHROPIC_KEY=sk-ant-..." >> .env
-echo "QA_HUB_GITLAB_TOKEN=glpat-..." >> .env
+# Configure environment
+export LLM_BASE_URL="https://llm-gateway.ai.chapsvision.com/llm-gateway"
+export LLM_API_KEY="your-api-key"
+export QA_HUB_GITLAB_HOST="git.mediaspeech.com"
+export QA_HUB_GITLAB_PORT="17890"
+export QA_HUB_GITLAB_TOKEN="your-gitlab-token"
 
-# Test
+# Verify
 node index.js --list-agents     # Should show 11
 node index.js --list-workflows  # Should show 7
 ```
 
-## 📋 What's Changed
+## 📊 Performance
 
-### New Files
-- `core/session-manager.js` — Session persistence module
-- `docs/` folder — Complete documentation
+| Metric | Before | After | Gain |
+|--------|--------|-------|------|
+| qa-workflow time | 96s | 78s | -18.8% |
+| Parallelization | None | automator + gherkinWriter | 18s saved |
 
-### Modified Files
-- `agents/registry.js` — Added 2 new agents, new workflow
-- `core/engine.js` — SessionManager integration
-- `README.md` — Updated with new features
+## 📝 Recent Changes (v2.0.0)
 
-### Backward Compatible
-✅ Old workflows still work (`full-ticket` marked deprecated)  
-✅ No breaking changes  
-✅ All existing agents compatible  
+✅ Parallelization in qa-workflow  
+✅ Stage-based execution with Promise.all()  
+✅ Updated documentation (local + remote)  
+✅ Synced GitLab, GitHub, Confluence docs  
+✅ Performance optimizations  
+✅ Production ready  
 
 ## 🔗 Resources
 
-- **GitLab:** https://git.mediaspeech.com/mint/qa-orchestrator
-- **Confluence:** https://chapsvisiondev.atlassian.net/wiki/spaces/QCD/
-- **Documentation:** See `/docs/` folder
-
-## 📞 Support
-
-See `/docs/TROUBLESHOOTING.md` for common issues and solutions.
+- **Local**: `tools/qa-orchestrator/docs/QA_USAGE_GUIDE.md`
+- **GitLab**: https://git.mediaspeech.com/mint/qa-orchestrator
+- **GitHub**: https://github.com/secharif-chaps/qa-orchestrator-public
+- **Confluence**: https://chapsvisiondev.atlassian.net/wiki/spaces/QCD/pages/731349236/
 
 ---
 
 **Status:** Production Ready ✅  
-**Version:** 1.1.0  
-**Last Updated:** April 2, 2025
+**Version:** 2.0.0  
+**Last Updated:** May 13, 2026

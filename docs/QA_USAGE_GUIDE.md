@@ -1,638 +1,584 @@
-# QA Orchestrator Hub — Complete Usage Guide v1.3.0
+# QA Orchestrator — Complete Usage Guide
 
-**Version:** 1.3.0 | **Status:** Generic for all QA teams | **Date:** April 5, 2026
+**Version:** 2.0.0 | **Updated:** May 13, 2026 | **Status:** Production Ready
 
-A comprehensive guide to using the QA Orchestrator for automated test planning, execution, and validation across your projects.
+Agentic QA testing system for ChapsMind using 11 specialized agents and 7 workflows to automate test planning, code review, bug discovery, and test execution.
 
 ---
 
-## 🎯 Quick Start (5 Minutes)
+## 🚀 Installation
+
+### Prerequisites
+- Node.js 18+ 
+- Access to LLM Gateway (Claude API via LiteLLM)
+- GitLab token (optional, for MR analysis)
+
+### Setup
+
+```bash
+cd tools/qa-orchestrator
+
+# Install dependencies
+npm install
+
+# Create .env file
+cp .env.example .env
+
+# Configure environment
+export LLM_BASE_URL="https://llm-gateway.ai.chapsvision.com/llm-gateway"
+export LLM_API_KEY="your-api-key"
+export QA_HUB_GITLAB_HOST="git.mediaspeech.com"
+export QA_HUB_GITLAB_PORT="17890"
+export QA_HUB_GITLAB_TOKEN="your-gitlab-token"
+```
+
+### Verify Installation
+
+```bash
+node index.js --list-agents    # Show all 11 agents
+node index.js --list-workflows # Show all 7 workflows
+node index.js --help           # Show CLI help
+```
+
+---
+
+## 🎯 Quick Start (2 Minutes)
 
 ### Basic Command
 
 ```bash
-node testing/qa-orchestrator/run.js \
-  --project MON-PROJET \
+# Test a Jira ticket
+node index.js test TAR-1234
+
+# Review code only (fast, ~30s)
+node index.js review TAR-1234
+
+# Discover bugs
+node index.js bug TAR-1234
+
+# Sprint health check
+node index.js sprint
+
+# Analyze Merge Request
+node index.js mr feat/TAR-1234
+```
+
+All commands run from `tools/qa-orchestrator/` directory.
+
+---
+
+## 🤖 The 11 Agents
+
+### Core Agents (Heavy Lifting)
+
+#### 1. **Orchestrator** 🎯
+- **Role**: Coordinator and router
+- **Model**: Claude Opus 4.6
+- **Does**: Analyzes incoming requests, identifies QA work type, routes to right agents
+- **Input**: Ticket or task description
+- **Output**: Analysis, routing decision, blockers, go/no-go recommendation
+
+#### 2. **Code Reviewer** 👁️
+- **Role**: Code review against Acceptance Criteria
+- **Model**: Claude Opus 4.6 (uses MCP for codebase access)
+- **Does**: Checks if implementation matches AC, identifies gaps, flags security issues
+- **Input**: Code changes, ticket AC
+- **Output**: Coverage report, gaps found, recommendation (PASS/NEEDS_WORK/BLOCK)
+
+#### 3. **Test Generator** 📝
+- **Role**: Test case design
+- **Model**: Claude Opus 4.6 (uses MCP)
+- **Does**: Creates 20+ test cases covering AC, negative cases, edge cases, security
+- **Input**: AC list, implementation details
+- **Output**: Structured test plan with priority levels
+
+#### 4. **Automator** 🤖
+- **Role**: Playwright test writer
+- **Model**: Claude Haiku 4.5
+- **Does**: Writes executable Playwright TypeScript tests
+- **Input**: Test plan from Test Generator
+- **Output**: `.spec.ts` files ready to run
+
+#### 5. **Bug Hunter** 🐛
+- **Role**: Heuristic bug discovery
+- **Model**: Claude Sonnet 4.6 (uses MCP)
+- **Does**: Finds potential bugs using heuristics (boundaries, nulls, race conditions)
+- **Input**: Code changes, architecture
+- **Output**: Bug report with severity, steps to reproduce, test cases
+
+#### 6. **Validator** ✅
+- **Role**: QA completeness checker
+- **Model**: Claude Haiku 4.5 (uses MCP)
+- **Does**: Verifies all ACs have tests, checks Playwright syntax, calculates coverage %
+- **Input**: Outputs from reviewer, testGenerator, automator
+- **Output**: Coverage score, issues found, QA gate (PASS/FAIL)
+
+### Supporting Agents
+
+#### 7. **Scanner** 🔍
+- **Role**: Tech stack analyzer
+- **Model**: Claude Sonnet 4.6
+- **Does**: Detects project tech stack, existing tests, risk areas
+- **Input**: Changed files, project structure
+- **Output**: Stack report, test infrastructure detected, risk analysis
+
+#### 8. **MR Analyzer** 📋
+- **Role**: Merge Request breakdown
+- **Model**: Claude Sonnet 4.6
+- **Does**: Extracts changes from MR, identifies blast radius, implicit requirements
+- **Input**: MR details, diffs
+- **Output**: Change summary, impact analysis, QA focus areas
+
+#### 9. **Gherkin Writer** 🥒
+- **Role**: BDD scenario generator
+- **Model**: Claude Haiku 4.5
+- **Does**: Writes Gherkin Feature files for X-Ray Jira
+- **Input**: Test plan
+- **Output**: `.feature` files with Scenario + Scenario Outline
+
+#### 10. **Project Manager** 📊
+- **Role**: Sprint health and metrics
+- **Model**: Claude Haiku 4.5 (uses MCP)
+- **Does**: Calculates QA coverage, identifies bottlenecks, reports metrics
+- **Input**: Sprint data, ticket status
+- **Output**: Sprint health report, bottlenecks, recommendations
+
+#### 11. **Session Manager** 💾
+- **Role**: Results consolidation
+- **Model**: Claude Haiku 4.5 (uses MCP)
+- **Does**: Summarizes QA cycle, extracts metrics, creates Confluence draft
+- **Input**: Outputs from all agents
+- **Output**: Session summary, TODOs, next steps
+
+---
+
+## 🔄 The 7 Workflows
+
+### 1. **qa-workflow** ⭐ (Full QA Session)
+**Use when**: You want the complete QA cycle on a ticket
+
+```bash
+node index.js test TAR-1234
+# or
+node index.js --project target --workflow qa-workflow --ticket TAR-1234
+```
+
+**Agents Chain** (with parallelization):
+```
+Stage 1: reviewer
+     ↓
+Stage 2: testGenerator
+     ↓
+Stage 3: automator ⚡ gherkinWriter  (PARALLEL)
+     ↓
+Stage 4: validator
+     ↓
+Stage 5: sessionManager
+```
+
+**What happens**:
+1. Code Reviewer checks AC implementation
+2. Test Generator creates 20+ test cases
+3. **Automator & GherkinWriter run in parallel** (saves ~18s)
+4. Validator ensures full coverage
+5. Session Manager consolidates results
+
+**Output**:
+- Test plan in Jira
+- Playwright `.spec.ts` files
+- Gherkin Feature files
+- Confluence draft report
+- Session JSON in `qa-reports/TAR/`
+
+**Performance**: ~78 seconds (18.8% faster thanks to parallelization)
+
+---
+
+### 2. **quick-review** ⚡ (Fast Code Review)
+**Use when**: You just need a quick code vs AC check (~30 seconds)
+
+```bash
+node index.js review TAR-1234
+```
+
+**Agents**: reviewer only
+
+**Output**: Quick coverage report, gaps identified, go/no-go recommendation
+
+---
+
+### 3. **scan-adapt** 🔍 (Stack Detection)
+**Use when**: First-time setup on a new project
+
+```bash
+node index.js scan
+```
+
+**Agents**: scanner → projectManager
+
+**Output**: 
+- Detected tech stack (Vue 3, FastAPI, etc.)
+- Test infrastructure identified
+- Risk areas flagged
+- Recommendations
+
+---
+
+### 4. **mr-to-tests** 📋 (MR Analysis)
+**Use when**: Analyzing a Merge Request for test generation
+
+```bash
+node index.js mr feat/TAR-1234
+```
+
+**Agents**: mrAnalyzer → reviewer → testGenerator → automator
+
+**Output**:
+- What changed in the MR
+- Blast radius analysis
+- Test cases for those changes
+- Playwright scripts
+
+---
+
+### 5. **bug-cycle** 🐛 (Bug Discovery)
+**Use when**: Doing bug discovery on a feature
+
+```bash
+node index.js bug TAR-1234
+```
+
+**Agents**: bugHunter → testGenerator → automator → projectManager
+
+**Output**:
+- Potential bugs found (with severity)
+- Test cases to catch each bug
+- Playwright tests
+- Metrics on bug discovery
+
+---
+
+### 6. **xray-sync** 🔗 (X-Ray Integration)
+**Use when**: Syncing test cases to X-Ray Jira
+
+```bash
+node index.js --workflow xray-sync --ticket TAR-1234
+```
+
+**Agents**: testGenerator → gherkinWriter → projectManager
+
+**Output**:
+- Test cases ready for X-Ray
+- Gherkin scenarios
+- Auto-import to X-Ray if credentials available
+
+---
+
+### 7. **sprint-health** 📊 (Sprint Metrics)
+**Use when**: Preparing sprint review or health check
+
+```bash
+node index.js sprint
+```
+
+**Agents**: projectManager → mrAnalyzer → reviewer
+
+**Output**:
+- Sprint health score (0-100)
+- Test coverage %
+- Risk areas
+- Bottlenecks
+- Recommendations
+
+---
+
+## 📊 Agent Models & Capabilities
+
+| Agent | Model | MCP | Speed | Use Case |
+|-------|-------|-----|-------|----------|
+| Orchestrator | Opus 4.6 | No | Slow | Routing, analysis |
+| Code Reviewer | Opus 4.6 | ✅ | Slow | Deep code analysis |
+| Test Generator | Opus 4.6 | ✅ | Medium | Test design |
+| Automator | Haiku 4.5 | No | Fast | Playwright writing |
+| Bug Hunter | Sonnet 4.6 | ✅ | Medium | Bug discovery |
+| Validator | Haiku 4.5 | ✅ | Fast | Validation checks |
+| Scanner | Sonnet 4.6 | No | Fast | Stack detection |
+| MR Analyzer | Sonnet 4.6 | No | Medium | MR breakdown |
+| Gherkin Writer | Haiku 4.5 | No | Fast | Scenario writing |
+| Project Manager | Haiku 4.5 | ✅ | Fast | Metrics |
+| Session Manager | Haiku 4.5 | ✅ | Fast | Consolidation |
+
+**MCP** = Uses Model Context Protocol for codebase access
+
+---
+
+## 💻 CLI Commands
+
+### List Commands
+```bash
+node index.js --list-agents       # Show all agents
+node index.js --list-workflows    # Show all workflows
+node index.js --help              # Full help
+```
+
+### Short Commands (Recommended)
+```bash
+node index.js test TICKET         # Full QA cycle
+node index.js review TICKET       # Fast review (~30s)
+node index.js scan                # Stack detection
+node index.js mr MR-URL           # MR analysis
+node index.js sprint              # Sprint health
+node index.js bug TICKET          # Bug discovery
+```
+
+### Full Commands
+```bash
+node index.js \
+  --project target \
   --workflow qa-workflow \
-  --ticket MON-PROJET-1234 \
-  --message "Test new feature"
+  --ticket TAR-1234 \
+  --message "Test new dashboard"
 ```
 
-### What Happens
-
-1. **Code Review** — Agent reviews your implementation
-2. **Test Planning** — Generate comprehensive test cases
-3. **E2E Script Generation** — Create Playwright automation tests
-4. **Validation** — Validate test results
-5. **Session Management** — Store results in JSON
-6. **Gherkin Generation** — Auto-generate BDD scenarios
-7. **Test Execution** — Run actual test suites (Pytest + Playwright)
-
-Result: Test report linked to Jira + X-Ray test run created
-
----
-
-## 📋 Available Workflows
-
-### 1. **qa-workflow** (Recommended)
-**Use for:** Full QA cycle from code review to test execution
-
-```bash
-node testing/qa-orchestrator/run.js \
-  --project MON-PROJET \
-  --workflow qa-workflow \
-  --ticket MON-PROJET-1234
-```
-
-**Steps:**
-- Code reviewer validates implementation
-- Test generator creates test cases
-- Automator writes Playwright scripts
-- Validator reviews tests
-- SessionManager persists session
-- GherkinWriter auto-generates scenarios
-- Tests actually execute (Pytest + Playwright)
-
-**Output:**
-- Test plan in Jira comments
-- X-Ray test run created + linked
-- Session saved: `qa-sessions/MON-PROJET/MON-PROJET-1234-*.json`
-- Test execution logs: `test-execution-MON-PROJET-1234.log`
-
----
-
-### 2. **scan-adapt**
-**Use for:** First-time setup on a new project (code stack detection)
-
-```bash
-node testing/qa-orchestrator/run.js \
-  --project MON-PROJET \
-  --workflow scan-adapt \
-  --ticket MON-PROJET-9999
-```
-
-**Steps:**
-- Scanner detects project stack (frontend, backend, frameworks, dependencies)
-- Adapter configures QA for the detected stack
-
-**Output:**
-- Detected tech stack in session
-- Workflow configuration recommendations
-
----
-
-### 3. **mr-to-tests**
-**Use for:** Analyze merge requests and auto-generate tests
-
-```bash
-node testing/qa-orchestrator/run.js \
-  --project MON-PROJET \
-  --workflow mr-to-tests \
-  --message "Analyze MR !1234"
-```
-
-**Steps:**
-- MR Analyzer extracts changes from GitLab MR
-- Test Generator creates test cases for changed code
-- Automator writes Playwright scripts
-- Validator reviews tests
-
-**Output:**
-- Test cases tailored to MR changes
-- E2E test scripts
-
----
-
-### 4. **bug-cycle**
-**Use for:** Bug discovery and test case generation
-
-```bash
-node testing/qa-orchestrator/run.js \
-  --project MON-PROJET \
-  --workflow bug-cycle \
-  --ticket MON-PROJET-9876
-```
-
-**Steps:**
-- Bug Hunter analyzes the code
-- Test Generator creates test cases to cover the bug
-- Gherkin scenarios auto-generated
-- Validator ensures tests catch the bug
-
-**Output:**
-- Bug test cases
-- Gherkin scenarios for regression prevention
-
----
-
-### 5. **xray-sync**
-**Use for:** Maintain test library in X-Ray (Jira)
-
-```bash
-node testing/qa-orchestrator/run.js \
-  --project MON-PROJET \
-  --workflow xray-sync
-```
-
-**Steps:**
-- Scanner scans test files
-- X-Ray syncer updates test library
-
-**Output:**
-- Tests registered in X-Ray
-- Test library updated
-
----
-
-### 6. **sprint-health**
-**Use for:** Sprint review preparation (metrics, health check)
-
-```bash
-node testing/qa-orchestrator/run.js \
-  --project MON-PROJET \
-  --workflow sprint-health \
-  --message "Sprint 42 health"
-```
-
-**Steps:**
-- Project Manager analyzes sprint tickets
-- Health reporter generates metrics
-- Metrics stored in session
-
-**Output:**
-- Sprint health report
-- Risk assessment
-- Metrics for retrospective
-
----
-
-## 🔧 Manual Test Execution Script
-
-For manual QA testing with automatic branch detection and test execution:
-
-```bash
-./scripts/qa-test-ticket.sh MON-PROJET-1234 [PROJECT] [WORKFLOW]
-```
-
-### Parameters
-
-- `MON-PROJET-1234` — Jira ticket key (required)
-- `PROJECT` — Project name (optional, default: `screen`)
-- `WORKFLOW` — Workflow to execute (optional, default: `qa-workflow`)
-
-### What It Does
-
-1. **Fetches all branches** from git
-2. **Auto-detects feature branch** using patterns:
-   - `feat/MON-PROJET-1234`
-   - `feat/MON-PROJET-1234-*`
-   - `feature/MON-PROJET-1234*`
-3. **Switches to feature branch** if found
-4. **Launches QA Orchestrator** with the workflow
-5. **Executes actual tests:**
-   - Pytest (backend unit/integration tests)
-   - Playwright (E2E tests)
-6. **Generates reports:**
-   - Test execution logs
-   - Playwright HTML report
-   - X-Ray test results (auto-linked)
-7. **Returns to original branch**
-
-### Example
-
-```bash
-# Test TAR-1234 (ChapsMind example)
-./scripts/qa-test-ticket.sh TAR-1234
-
-# Test MON-PROJET-9999 on TARGET project
-./scripts/qa-test-ticket.sh MON-PROJET-9999 target
-
-# Test MON-PROJET-5555 with full-ticket workflow
-./scripts/qa-test-ticket.sh MON-PROJET-5555 screen full-ticket
-```
-
-### Output Files
-
-- `test-execution-MON-PROJET-1234.log` — Combined test logs
-- `testing/e2e/playwright-report/index.html` — HTML test report
-- `qa-sessions/PROJECT/MON-PROJET-1234-*.json` — Session data
-- Jira comments with test results + X-Ray link
-
----
-
-## ⚙️ Configuration
-
-### Project Configuration File
-
-Create `.gitlab/agent/workflows.yml` to map tickets to test files:
-
-```yaml
-# QA Orchestrator Workflow Configuration
-workflows:
-  qa-workflow:
-    steps:
-      - id: test-execution
-        description: Execute actual test suites
-        script: |
-          task project:test
-          cd testing/e2e
-          npx playwright test mon-projet-*.spec.ts --reporter=html
-          cd -
-
-test-files:
-  patterns:
-    - ticket: "MON-PROJET-1234"
-      pytest: "apps/project/tests/test_feature.py"
-      playwright: "testing/e2e/mon-projet-1234-feature.spec.ts"
-
-    - ticket: "MON-PROJET-*"
-      pytest: "apps/project/tests/test_*.py"
-      playwright: "testing/e2e/mon-projet-*.spec.ts"
-
-timeouts:
-  pytest: 300
-  playwright: 600
-
-reports:
-  pytest:
-    format: "junit"
-    output: "test-reports/pytest-${TICKET}.xml"
-  
-  playwright:
-    format: "html"
-    output: "testing/e2e/playwright-report/index.html"
-
-xray:
-  enabled: true
-  auto-link-tests: true
-  comment-on-original: true
-```
+### Projects
+- `target` (TAR project)
+- `screen` (SCR project)
 
 ### Environment Variables
-
 ```bash
-# .env file
-QA_HUB_ANTHROPIC_KEY=sk-ant-...           # Claude API key
-QA_HUB_GITLAB_TOKEN=glpat-...             # GitLab API token
-XRAY_ENABLED=true                         # Enable X-Ray integration
-XRAY_TICKET=MON-PROJET-5000               # X-Ray QA ticket
-LLM_PROVIDER=azure                        # or 'openai'
+LLM_BASE_URL          # LLM gateway URL
+LLM_API_KEY          # Claude API key
+LLM_MODEL            # Optional: override model
+QA_HUB_GITLAB_HOST   # git.mediaspeech.com
+QA_HUB_GITLAB_PORT   # 17890
+QA_HUB_GITLAB_TOKEN  # GitLab token
 ```
 
 ---
 
-## 🧪 Test Execution
+## 📁 Output Files
 
-### Pytest (Backend Tests)
-
-```bash
-# Run all tests for a project
-task project:test
-
-# Run specific test file
-task project:test -- "tests/test_feature.py" -v
-
-# With coverage report
-task project:test -- --cov=app tests/
+### Session Storage
+```
+qa-reports/
+  ├── TAR/
+  │   ├── TAR-1234-2026-05-13T10-47-03.json    # Session data
+  │   └── TAR-1234.feature                     # Gherkin Feature file
+  └── SCR/
+      └── SCR-100-...json
 ```
 
-**Coverage:**
-- Unit tests (AC validation)
-- Integration tests (API endpoints)
-- Database tests
-- Third-party service mocking
-
-### Playwright (E2E Tests)
-
-```bash
-# Run all E2E tests
-cd testing/e2e
-npx playwright test --reporter=html
-
-# Run specific test file
-npx playwright test mon-projet-1234.spec.ts
-
-# With detailed output
-npx playwright test --reporter=html --debug
-```
-
-**Coverage:**
-- User workflows
-- UI interactions
-- Data display
-- Error handling
-- Cross-browser testing
-
----
-
-## 🔗 X-Ray Integration
-
-### Automatic Test Run Creation
-
-After tests execute, QA Orchestrator automatically:
-
-1. **Creates X-Ray Test Run**
-   - Links to original ticket (MON-PROJET-1234)
-   - Imports Pytest results (JUnit XML)
-   - Imports Playwright results (HTML)
-
-2. **Auto-Links Test Results**
-   - Each test case linked to Acceptance Criteria
-   - Pass/fail status updated
-   - Execution time recorded
-
-3. **Comments on Jira**
-   - Links to X-Ray test run
-   - Summary: `✅ 45/45 passed`, `❌ 3 failed`
-   - Failed tests flagged for review
-
-### Manual X-Ray Creation
-
-If automatic linking fails:
-
-```bash
-# Use X-Ray Test Importer in Jira
-# 1. Go to Jira ticket MON-PROJET-1234
-# 2. Create → Test Run
-# 3. Import → Select test reports:
-#    - test-reports/pytest-MON-PROJET-1234.xml
-#    - testing/e2e/playwright-report/results.json
-```
-
----
-
-## 📊 Session Management
-
-### Session Structure
-
-Sessions store complete QA execution history:
-
+### Session JSON Structure
 ```json
 {
-  "session_id": "uuid-1234",
-  "ticket": "MON-PROJET-1234",
+  "sessionId": "uuid-1234",
+  "ticketKey": "TAR-1234",
+  "projectKey": "TAR",
+  "timestamp": "2026-05-13T10:47:03Z",
   "workflow": "qa-workflow",
-  "created_at": "2026-04-05T10:30:00Z",
-  "phases": [
+  "execution": [
     {
-      "phase": "code-review",
-      "agent": "CodeReviewer",
+      "agentId": "reviewer",
+      "agentName": "Code Reviewer",
       "status": "completed",
-      "findings": ["AC1 implemented correctly", "AC2 needs test"]
+      "output": "... (first 500 chars)"
     },
-    {
-      "phase": "test-planning",
-      "agent": "TestGenerator",
-      "status": "completed",
-      "test_cases": 45
-    },
-    {
-      "phase": "test-execution",
-      "status": "completed",
-      "pytest": {
-        "passed": 42,
-        "failed": 3,
-        "skipped": 0
-      },
-      "playwright": {
-        "passed": 8,
-        "failed": 0
-      }
-    }
+    // ... more agents
   ],
-  "xray_ticket": "MON-PROJET-5001",
-  "xray_link": "https://jira.domain.com/issues/MON-PROJET-5001"
+  "summary": {
+    "totalAgents": 6,
+    "passed": 6,
+    "failed": 0,
+    "duration": "78 seconds"
+  }
 }
 ```
 
-### Session Persistence
+### Jira Comments
+Results are automatically commented on the Jira ticket with:
+- Test plan
+- Coverage score
+- Recommendation (PASS/NEEDS_WORK/BLOCK)
+- Link to session file
 
-Sessions stored in:
-- **Location:** `qa-sessions/PROJECT/TICKET-TIMESTAMP.json`
-- **Archive:** Auto-uploaded to Confluence (draft)
-- **Retention:** 90 days (configurable)
+---
 
-### Session Retrieval
+## ⚡ Performance Tips
 
-```bash
-# List all sessions for a ticket
-ls -la qa-sessions/PROJECT/ | grep MON-PROJET-1234
+### Parallelization
+The `qa-workflow` now parallelizes `automator` and `gherkinWriter`:
+- **Old**: Sequential execution = 96s
+- **New**: automator + gherkinWriter in parallel = 78s
+- **Gain**: 18 seconds saved (-18.8%)
 
-# View session details
-cat qa-sessions/PROJECT/MON-PROJET-1234-2026-04-05.json | jq '.phases[] | {phase, status}'
+### Model Selection
+- Use **Opus 4.6** for deep analysis (code review, test design)
+- Use **Sonnet 4.6** for medium complexity (MR analysis, bug hunting)
+- Use **Haiku 4.5** for fast output (automation, validation)
 
-# Extract test results
-cat qa-sessions/PROJECT/MON-PROJET-1234-*.json | jq '.phases[] | select(.phase=="test-execution")'
-```
+### Caching
+- First run fetches context from codebase
+- Subsequent runs are faster (reuse cache)
+- Cache expires after 5 minutes
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Issue: Tests Not Executing
-
-**Symptom:** QA plan generated but no actual tests run
-
-**Cause:** `qa-workflow` might have skipped test-execution step
-
-**Solution:**
+### "Agent X not found"
 ```bash
-# Check .gitlab/agent/workflows.yml has test-execution step
-grep -A 5 "test-execution:" .gitlab/agent/workflows.yml
+# Verify agent is registered
+node index.js --list-agents | grep agentId
+```
 
-# If missing, add:
-- id: test-execution
-  description: Execute actual test suites
-  script: |
-    task project:test
-    cd testing/e2e && npx playwright test --reporter=html && cd -
+### "Unknown workflow: Y"
+```bash
+# Check workflow exists
+node index.js --list-workflows
+```
+
+### LLM timeout
+```bash
+# Increase timeout in core/engine.js callLLM()
+// max_tokens: options.maxTokens || 8192,
+```
+
+### Jira comment fails
+- Check JIRA_CLOUD_ID in config
+- Verify Jira ticket exists
+- Check permission to comment
+
+### MCP tools unavailable
+- Some agents need codebase context
+- MCP tools require git repo access
+- Check git credentials
+
+---
+
+## 📚 File Structure
+
+```
+tools/qa-orchestrator/
+├── index.js                    # CLI entry point
+├── agents/
+│   └── registry.js            # Agent definitions (11 agents)
+├── core/
+│   ├── engine.js              # Execution engine (stages + parallelization)
+│   ├── session-manager.js     # Session persistence
+│   ├── jira-client.js         # Jira integration
+│   ├── git-client.js          # Git operations
+│   └── xray-cli.js            # X-Ray test import
+├── config/
+│   └── projects.js            # Project definitions
+└── docs/
+    ├── QA_USAGE_GUIDE.md      # This file
+    └── API.md                 # API documentation
 ```
 
 ---
 
-### Issue: Feature Branch Not Found
+## 🔒 Security
 
-**Symptom:** "No feature branch found, using main" message
+### API Keys
+- Store in `.env` (never commit)
+- Use environment variables
+- Rotate periodically
 
-**Cause:** Branch name doesn't match patterns in script
+### Test Data
+- Never use production data
+- Use fixtures and mocks
+- Clean up after tests
 
-**Solution:**
-```bash
-# Check available branches
-git branch -r | grep -E "feat/MON-PROJET|feature/MON-PROJET"
-
-# If branch exists with different name, use it directly:
-git checkout your-custom-branch-name
-./scripts/qa-test-ticket.sh MON-PROJET-1234
-```
-
----
-
-### Issue: X-Ray Test Run Not Created
-
-**Symptom:** Jira comment shows test results but no X-Ray ticket
-
-**Cause:** X-Ray integration disabled or credentials missing
-
-**Solution:**
-```bash
-# Check X-Ray is enabled
-grep "xray:" .gitlab/agent/workflows.yml
-
-# Check X-Ray ticket is configured
-grep "XRAY_TICKET=" .env
-
-# If needed, enable X-Ray:
-echo "XRAY_ENABLED=true" >> .env
-echo "XRAY_TICKET=MON-PROJET-5000" >> .env
-```
+### Git Access
+- Use deploy keys for CI/CD
+- Limit token scopes
+- Revoke unused tokens
 
 ---
 
-### Issue: Playwright Tests Timeout
+## 📖 Examples
 
-**Symptom:** "Timeout waiting for selector" errors
-
-**Cause:** Page not fully loaded or selector changed
-
-**Solution:**
-```typescript
-// Increase timeout in test
-await page.waitForSelector('[data-testid="element"]', { timeout: 60000 });
-
-// Or wait for network idle
-await page.waitForLoadState('networkidle');
-
-// Check selector exists
-await expect(page.locator('[data-testid="element"]')).toBeVisible();
+### Example 1: Full QA Cycle
+```bash
+cd tools/qa-orchestrator
+node index.js test TAR-1234
 ```
+
+Output:
+1. Code Reviewer analyzes implementation
+2. Test Generator creates 25 test cases
+3. Automator writes Playwright tests in parallel with GherkinWriter
+4. Validator confirms 100% AC coverage
+5. SessionManager saves results
+6. Jira comment posted with results
 
 ---
 
-### Issue: Permission Denied on Script
-
-**Symptom:** "`./scripts/qa-test-ticket.sh: permission denied`"
-
-**Solution:**
+### Example 2: Bug Discovery
 ```bash
-# Make script executable
-chmod +x scripts/qa-test-ticket.sh
-
-# Then run
-./scripts/qa-test-ticket.sh MON-PROJET-1234
+node index.js bug TAR-5000
 ```
+
+Output:
+1. Bug Hunter identifies potential bugs (race conditions, null handling, etc.)
+2. Test Generator creates test cases for each bug
+3. Automator writes Playwright tests
+4. Project Manager reports metrics
 
 ---
 
-## 📈 Performance & Optimization
-
-### Parallel Test Execution
-
-Backend tests (Pytest) and frontend tests (Playwright) run sequentially by default. To run in parallel:
-
+### Example 3: MR Analysis
 ```bash
-# In .gitlab/agent/workflows.yml
-test-execution:
-  parallel:
-    - id: pytest
-      script: task project:test
-    - id: playwright
-      script: cd testing/e2e && npx playwright test --reporter=html && cd -
+node index.js mr feat/TAR-2000
 ```
 
-### Test Caching
-
-For faster test runs on repeated executions:
-
-```bash
-# Cache Playwright browsers
-npm ci --prefer-offline --no-audit
-
-# Run Playwright with state persistence
-npx playwright test --use-index
-```
-
-### Test Timeouts
-
-Adjust per your project:
-
-```yaml
-# .gitlab/agent/workflows.yml
-timeouts:
-  pytest: 600      # 10 minutes for all pytest
-  playwright: 900  # 15 minutes for all playwright
-```
+Output:
+1. MR Analyzer extracts files changed
+2. Code Reviewer checks against AC
+3. Test Generator creates tests
+4. Automator writes scripts
 
 ---
 
-## 🔒 Security & Best Practices
+## 🤝 Contributing
 
-### API Token Management
+To add a new agent:
+1. Define in `agents/registry.js`
+2. Add to workflow in WORKFLOWS
+3. Test with `node index.js --list-agents`
 
-**NEVER** commit API tokens:
-
-```bash
-# ✅ CORRECT: Store in environment
-export QA_HUB_ANTHROPIC_KEY="sk-ant-..."
-
-# ❌ WRONG: Hardcode in script
-API_KEY="sk-ant-xxx"
-```
-
-### Test Data Handling
-
-- **Use test fixtures** for consistent data
-- **Never test with production data**
-- **Clean up after tests** (databases, files)
-- **Mock external services** (APIs, third-party services)
-
-### CI/CD Safety
-
-- **Always run tests in feature branches** (never on main/master)
-- **Require code review** before test execution on main
-- **Archive test sessions** for audit trail
-- **Review failed test logs** before merging
+To add a new workflow:
+1. Define agents chain in WORKFLOWS
+2. Test with `node index.js --list-workflows`
+3. Test execution: `node index.js --workflow my-workflow --message "test"`
 
 ---
 
-## 📞 Support & Resources
+## 📞 Support
 
-### Common Questions
-
-**Q: Which workflow should I use?**
-A: Start with `qa-workflow` (full cycle). Use others for specific needs (bug-cycle, mr-to-tests, etc.)
-
-**Q: Can I run QA Orchestrator without Docker?**
-A: Not recommended. Docker ensures consistent environment. Use: `docker compose up -d && ./scripts/qa-test-ticket.sh MON-PROJET-1234`
-
-**Q: How are test results stored?**
-A: Sessions stored in `qa-sessions/` as JSON. Auto-linked to Jira + X-Ray test runs. Results persist for 90 days.
-
-**Q: What if I need custom test configuration?**
-A: Edit `.gitlab/agent/workflows.yml` and configure test file patterns, timeouts, and report formats.
+**Documentation**: See `/docs/` directory
+**Issues**: Check troubleshooting section above
+**Questions**: Reference the agents and workflows sections
 
 ---
 
 ## 📝 Changelog
 
+### v2.0.0 (May 13, 2026)
+- ✅ Added parallelization in qa-workflow (automator + gherkinWriter)
+- ✅ Updated for tools/qa-orchestrator directory structure
+- ✅ Documented all 11 agents with roles and models
+- ✅ Explained 7 workflows and when to use each
+- ✅ Added performance optimizations
+- ✅ Updated installation and setup
+
 ### v1.3.0 (April 5, 2026)
-- ✅ Auto-branch detection in qa-test-ticket.sh
-- ✅ Generic documentation for all QA teams
-- ✅ Test execution integration (Pytest + Playwright)
-- ✅ X-Ray auto-linking improvements
-- ✅ Session persistence refinements
-
-### v1.2.0 (March 15, 2026)
-- ✅ X-Ray integration
-- ✅ Jira auto-comments
-
-### v1.1.0 (April 2, 2026)
-- ✅ SessionManager agent
-- ✅ GherkinWriter agent
-- ✅ qa-workflow introduction
+- ✅ Initial QA Orchestrator Hub version
+- ✅ 11 agents + 7 workflows
+- ✅ Session management
 
 ---
 
-**Last Updated:** April 5, 2026  
-**Maintained By:** QA Orchestrator Team  
-**Support:** See troubleshooting section above
+**Last Updated**: May 13, 2026  
+**Maintained By**: QA Orchestrator Team  
+**Status**: Production Ready
