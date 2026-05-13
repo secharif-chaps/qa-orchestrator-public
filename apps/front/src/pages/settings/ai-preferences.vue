@@ -27,7 +27,7 @@
         </div>
         <Button
           variant="primary"
-          icon="fa fa-magic"
+          icon="fa-magic"
           :label="$t('settings.aiPreferences.settings.setUpButton')"
           @click="goToSetup"
         />
@@ -50,7 +50,7 @@
           :label="$t('settings.aiPreferences.setup.fields.role.label')"
           :placeholder="$t('settings.aiPreferences.setup.fields.role.placeholder')"
           :error="errors.role"
-          icon="fa fa-user-tie"
+          icon="fa-user-tie"
           required
         />
 
@@ -111,7 +111,7 @@
           variant="success"
           :title="$t('settings.aiPreferences.settings.success.title')"
           :description="successMessage"
-          icon="fa fa-check-circle"
+          icon="fa-check-circle"
         />
 
         <!-- Error Message -->
@@ -120,7 +120,7 @@
           variant="danger"
           :title="$t('settings.aiPreferences.settings.error.title')"
           :description="errorMessage"
-          icon="fa fa-exclamation-circle"
+          icon="fa-exclamation-circle"
         />
 
         <!-- Form Actions -->
@@ -130,7 +130,7 @@
             variant="primary"
             :label="$t('settings.aiPreferences.settings.actions.save')"
             :loading="isSaving"
-            icon="fa fa-check"
+            icon="fa-check"
           />
         </div>
       </form>

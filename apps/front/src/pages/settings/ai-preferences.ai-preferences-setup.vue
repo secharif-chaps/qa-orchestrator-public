@@ -179,7 +179,7 @@
             variant="primary"
             :label="$t('settings.aiPreferences.setup.actions.save')"
             :loading="isSaving"
-            icon="fa fa-check"
+            icon="fa-check"
           />
         </div>
       </form>

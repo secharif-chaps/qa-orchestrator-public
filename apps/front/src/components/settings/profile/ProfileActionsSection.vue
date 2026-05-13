@@ -4,14 +4,14 @@
       <div class="flex flex-wrap gap-4">
         <Button
           :label="$t('settings.profile.actions.refresh')"
-          icon="fa fa-refresh"
+          icon="fa-refresh"
           variant="primary"
           :loading="refreshing"
           @click="handleRefreshUser"
         />
         <Button
           :label="$t('settings.profile.actions.signOut')"
-          icon="fa fa-sign-out-alt"
+          icon="fa-sign-out-alt"
           variant="secondary"
           @click="handleSignOut"
         />

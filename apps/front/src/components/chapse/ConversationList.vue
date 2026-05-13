@@ -9,7 +9,7 @@
       </h3>
       <Button
         variant="tertiary"
-        icon="fa fa-plus"
+        icon="fa-plus"
         size="sm"
         :title="$t('screen.chapse.newConversation')"
         @click="$emit('new-conversation')"

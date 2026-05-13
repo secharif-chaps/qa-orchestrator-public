@@ -46,14 +46,14 @@
       <Alert
         v-if="filteredStreams.length === 0 && searchTerm"
         variant="info"
-        icon="fa fa-search"
+        icon="fa-search"
         :title="t('stream.list.noResults')"
       />
 
       <Alert
         v-else-if="filteredStreams.length === 0 && !searchTerm"
         variant="info"
-        icon="fa fa-paper-plane"
+        icon="fa-paper-plane"
         class="py-6"
         :title="t('stream.list.empty.title')"
         :description="t('stream.list.empty.description')"

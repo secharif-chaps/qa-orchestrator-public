@@ -10,7 +10,7 @@
           <Button
             variant="tertiary"
             :label="$t('screen.profile.sections.news.viewAll')"
-            icon="fa fa-arrow-right"
+            icon="fa-arrow-right"
             icon-position="right"
             size="sm"
           />

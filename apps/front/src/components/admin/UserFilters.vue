@@ -23,7 +23,7 @@
       <!-- Sort Dropdown -->
       <Dropdown align="right" width="md">
         <template #trigger>
-          <Button variant="secondary" icon="fa fa-sort" :label="sortLabel" />
+          <Button variant="secondary" icon="fa-sort" :label="sortLabel" />
         </template>
 
         <template #content="{ close }">

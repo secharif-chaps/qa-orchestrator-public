@@ -102,7 +102,7 @@
                   <Button
                     variant="tertiary"
                     size="sm"
-                    icon="fa fa-external-link-alt"
+                    icon="fa-external-link-alt"
                     :label="$t('common.folder.item.view')"
                     @click.stop="navigateToItem(item)"
                     :hidden="companyFilter === 'archived'"
@@ -111,7 +111,7 @@
                     v-if="item.type === 'company' && canMoveItems && companyFilter !== 'archived'"
                     variant="tertiary"
                     size="sm"
-                    icon="fa fa-exchange-alt"
+                    icon="fa-exchange-alt"
                     icon-only
                     :title="$t('common.folder.moveCompany.button')"
                     @click.stop="confirmMoveCompany(item)"
@@ -121,7 +121,7 @@
                     variant="tertiary"
                     color="danger"
                     size="sm"
-                    :icon="companyFilter === 'archived' ? 'fa fa-undo' : 'fa fa-archive'"
+                    :icon="companyFilter === 'archived' ? 'fa-undo' : 'fa-archive'"
                     icon-only
                     :title="
                       companyFilter === 'archived'
@@ -149,7 +149,7 @@
     <Alert
       v-else-if="searchTerm === '' && filteredItems && filteredItems.length === 0"
       variant="info"
-      icon="fa fa-folder-open"
+      icon="fa-folder-open"
       class="py-6"
       :title="$t('common.folder.empty.title')"
       :description="$t('common.folder.empty.description')"
@@ -159,7 +159,7 @@
     <Alert
       v-else-if="searchTerm !== ''"
       variant="info"
-      icon="fa fa-folder-open"
+      icon="fa-folder-open"
       class="py-6"
       :title="$t('common.folder.empty.noResults')"
       :description="$t('common.folder.empty.tryDifferentSearch')"
@@ -181,13 +181,6 @@
       @archive-company="handleArchiveCompany"
     />
 
-    <!-- Restore company Modal -->
-    <CompanyRestoreModal
-      v-model="showRestoreCompanyModal"
-      :company-to-restore="companyToArchive"
-      @restore-company="handleRestoreCompany"
-    />
-
     <!-- Move Company Modal -->
     <CompanyMoveModal
       v-model:display-modal="showMoveModal"
@@ -206,13 +199,14 @@ meta:
 
 <script setup lang="ts">
 import CompanyArchiveModal from '@/components/companies/CompanyArchiveModal.vue'
-import CompanyRestoreModal from '@/components/companies/CompanyRestoreModal.vue'
 import CompanyMoveModal from '@/components/folders/CompanyMoveModal.vue'
 import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
 import Logo from '@/components/ui/Logo.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { useConfirmModal } from '@/composables/useConfirmModal'
 import { useDateTime } from '@/composables/useDateTime'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
+import { useRestoreCompany } from '@/mutations/companies'
 import { useMoveCompanyToFolder } from '@/mutations/folders'
 import type { Company } from '@/types/company'
 import type { Folder, FolderItem } from '@/types/folder'
@@ -258,12 +252,13 @@ const { formatDate: formatDateTime } = useDateTime()
 const { canDeleteCompany } = useCompanyPermissions()
 
 const showArchiveCompanyModal = ref(false)
-const showRestoreCompanyModal = ref(false)
 const showMoveModal = ref(false)
 const companyToArchive = ref<Company | null>(null)
 const companyToMove = ref<FolderItem | null>(null)
 
 const { mutateAsync: moveCompany } = useMoveCompanyToFolder()
+const { restoreCompany, isLoading: isRestoringCompany } = useRestoreCompany()
+const { showConfirmModal } = useConfirmModal()
 
 // Folder permissions based on current folder
 const folderRef = computed(() => folder)
@@ -304,28 +299,48 @@ const confirmRemoveItem = (item: FolderItem) => {
 }
 
 const confirmArchiveCompany = (item: FolderItem) => {
-  if (item.type === 'company') {
-    companyToArchive.value = {
-      id: parseInt(item.id),
-      name: item.name,
-      website: item.website,
-      created_at: item.created_at,
-      owner_username: item.owner,
-    } as Company
-    if (companyFilter.value === 'archived') {
-      showRestoreCompanyModal.value = true
-    } else {
-      showArchiveCompanyModal.value = true
-    }
+  if (item.type !== 'company') return
+
+  const company = {
+    id: parseInt(item.id),
+    name: item.name,
+    website: item.website,
+    created_at: item.created_at,
+    owner_username: item.owner,
+  } as Company
+
+  if (companyFilter.value === 'archived') {
+    showConfirmModal({
+      title: t('screen.company.restore.title'),
+      titleIcon: 'fa-undo',
+      message: t('screen.company.restore.warning.message'),
+      confirmLabel: t('screen.company.restore.confirm.button'),
+      loading: isRestoringCompany,
+      infoSection: {
+        title: t('screen.company.restore.details'),
+        items: [
+          t('screen.company.detailsLabels.name') + ' ' + company.name,
+          ...(company.website
+            ? [t('screen.company.detailsLabels.website') + ' ' + company.website]
+            : []),
+        ],
+      },
+      onConfirm: async () => {
+        if (company.id == null) return
+        await restoreCompany({
+          companyId: company.id.toString(),
+          companyName: company.name,
+        })
+        emit('refetch')
+      },
+    })
+  } else {
+    companyToArchive.value = company
+    showArchiveCompanyModal.value = true
   }
 }
 
 const handleArchiveCompany = () => {
-  emit('refetch')
-  companyToArchive.value = null
-}
-
-const handleRestoreCompany = () => {
   emit('refetch')
   companyToArchive.value = null
 }

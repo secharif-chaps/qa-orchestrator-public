@@ -14,13 +14,13 @@
         <div class="flex gap-2">
           <Button
             variant="secondary"
-            icon="fa fa-file-import"
+            icon="fa-file-import"
             :label="$t('admin.import.title')"
             @click="navigateToImport"
           />
           <Button
             variant="primary"
-            icon="fa fa-user-plus"
+            icon="fa-user-plus"
             :label="$t('settings.user.create.button')"
             @click="showCreateUserModal = true"
           />
@@ -113,16 +113,6 @@
       @close="userToManagePermissions = null"
     />
 
-    <!-- Disable User Modal -->
-    <DisableUserModal
-      v-if="userToDisable"
-      :user-id="userToDisable.userId"
-      :username="userToDisable.username"
-      :is-loading="isDisabling"
-      @confirm="handleDisableUser"
-      @close="userToDisable = null"
-    />
-
     <!-- Reset Password Modal -->
     <ResetPasswordModal
       v-if="userToResetPassword"
@@ -134,13 +124,14 @@
 </template>
 
 <script setup lang="ts">
+import { useConfirmModal } from '@/composables/useConfirmModal'
 import { Alert, Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, inject, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 // Components
-import DisableUserModal from '@/components/admin/DisableUserModal.vue'
 import ResetPasswordModal from '@/components/admin/ResetPasswordModal.vue'
 import RolePermissionsModal from '@/components/admin/RolePermissionsModal.vue'
 import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
@@ -168,6 +159,8 @@ import type { OrganizationUserCreate } from '@/types/user'
 import { transformToPaginationMeta } from '@/utils/pagination'
 
 const router = useRouter()
+const { t } = useI18n()
+const { showConfirmModal } = useConfirmModal()
 
 // Inject organization ID and organization object from parent layout
 const organizationId = inject<ReturnType<typeof computed<string>>>('organizationId')
@@ -250,7 +243,6 @@ interface ModalUserState {
 const showCreateUserModal = ref(false)
 const userToAssign = ref<ModalUserState | null>(null)
 const userToManagePermissions = ref<ModalUserState | null>(null)
-const userToDisable = ref<ModalUserState | null>(null)
 const userToResetPassword = ref<ModalUserState | null>(null)
 
 // Pagination
@@ -280,7 +272,20 @@ const showPermissionsModal = (user: AdminUserListItem) => {
 }
 
 const showDisableModal = (user: AdminUserListItem) => {
-  userToDisable.value = { userId: user.user_id, username: user.username, email: user.email }
+  showConfirmModal({
+    title: t('admin.disableUser.title'),
+    titleIcon: 'fa-user-slash',
+    message: t('admin.disableUser.confirmText', { username: user.username }),
+    confirmLabel: t('admin.disableUser.confirm'),
+    cancelLabel: t('admin.disableUser.cancel'),
+    confirmVariant: 'accent',
+    loading: isDisabling,
+    warningSection: {
+      title: t('admin.disableUser.actionTitle'),
+      message: t('admin.disableUser.actionDescription'),
+    },
+    onConfirm: () => disableUser({ userId: user.user_id }),
+  })
 }
 
 const showResetPasswordModal = (user: AdminUserListItem) => {
@@ -318,17 +323,6 @@ const handleUpdatePermissions = async (permissions: string[]) => {
     userToManagePermissions.value = null
   } catch (err) {
     console.error('Failed to update permissions:', err)
-  }
-}
-
-const handleDisableUser = async () => {
-  if (!userToDisable.value) return
-
-  try {
-    await disableUser({ userId: userToDisable.value.userId })
-    userToDisable.value = null
-  } catch (err) {
-    console.error('Failed to disable user:', err)
   }
 }
 

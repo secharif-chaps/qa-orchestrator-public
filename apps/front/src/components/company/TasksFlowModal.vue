@@ -1,218 +1,191 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div
-        v-if="modelValue"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
-        @click.self="emit('update:modelValue', false)"
-      >
-        <div
-          class="rounded-card border-primary-lighter-stroke shadow-3 flex max-h-[90vh] w-full max-w-224 flex-col overflow-hidden border bg-white"
-        >
-          <!-- Header -->
-          <div class="border-primary-lighter-stroke flex items-center justify-between border-b p-6">
-            <div class="flex items-center gap-3">
-              <div class="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
-                <i class="fas fa-bug text-neutral-black-font"></i>
-              </div>
-              <div>
-                <h2 class="text-lg font-semibold">
-                  {{ t('screen.company.debug.workflowTitle') }}
-                </h2>
-                <p class="text-neutral-black-font text-sm">
-                  {{
-                    t('screen.company.tasks.completedCount', {
-                      completed: completedCount,
-                      total: totalTasks,
-                    })
-                  }}
-                </p>
-              </div>
-            </div>
-            <Button
-              variant="tertiary"
-              icon="fa fa-times"
-              icon-only
-              @click="emit('update:modelValue', false)"
-            />
+  <Modal
+    v-model:display-modal="modelValue"
+    :title="t('screen.company.debug.workflowTitle')"
+    icon="fas fa-bug"
+    size="5xl"
+    color=""
+  >
+    <template #description>
+      <div class="flex flex-col gap-6">
+        <p class="text-neutral-black-font">
+          {{
+            t('screen.company.tasks.completedCount', {
+              completed: completedCount,
+              total: totalTasks,
+            })
+          }}
+        </p>
+
+        <!-- Progress Overview -->
+        <div class="flex flex-col gap-3">
+          <!-- Segmented progress bar -->
+          <div class="bg-primary-lightest flex h-3 w-full overflow-hidden rounded-full">
+            <!-- Completed segment -->
+            <div
+              v-if="completedPercentage > 0"
+              class="bg-success-500 h-full transition-all duration-500 ease-out"
+              :style="{ width: `${completedPercentage}%` }"
+              :title="
+                t('screen.company.tasks.completed', {
+                  count: completedCount,
+                  percentage: Math.round(completedPercentage),
+                })
+              "
+            ></div>
+
+            <!-- Running segment -->
+            <div
+              v-if="runningPercentage > 0"
+              class="bg-warning-500 h-full transition-all duration-500 ease-out"
+              :style="{ width: `${runningPercentage}%` }"
+              :title="
+                t('screen.company.tasks.running', {
+                  count: runningCount,
+                  percentage: Math.round(runningPercentage),
+                })
+              "
+            ></div>
+
+            <!-- Error segment -->
+            <div
+              v-if="errorPercentage > 0"
+              class="bg-error-500 h-full transition-all duration-500 ease-out"
+              :style="{ width: `${errorPercentage}%` }"
+              :title="
+                t('screen.company.tasks.error', {
+                  count: errorCount,
+                  percentage: Math.round(errorPercentage),
+                })
+              "
+            ></div>
+
+            <!-- Pending segment -->
+            <div
+              v-if="pendingPercentage > 0"
+              class="bg-primary-lightest h-full transition-all duration-500 ease-out"
+              :style="{ width: `${pendingPercentage}%` }"
+              :title="
+                t('screen.company.tasks.pending', {
+                  count: pendingCount,
+                  percentage: Math.round(pendingPercentage),
+                })
+              "
+            ></div>
           </div>
 
-          <!-- Content -->
-          <div class="flex-1 overflow-y-auto p-6">
-            <!-- Progress Overview -->
-            <div class="mb-6">
-              <!-- Segmented progress bar -->
-              <div class="bg-primary-lightest flex h-3 w-full overflow-hidden rounded-full">
-                <!-- Completed segment -->
-                <div
-                  v-if="completedPercentage > 0"
-                  class="bg-success-500 h-full transition-all duration-500 ease-out"
-                  :style="{ width: `${completedPercentage}%` }"
-                  :title="
-                    t('screen.company.tasks.completed', {
-                      count: completedCount,
-                      percentage: Math.round(completedPercentage),
-                    })
-                  "
-                ></div>
-
-                <!-- Running segment -->
-                <div
-                  v-if="runningPercentage > 0"
-                  class="bg-warning-500 h-full transition-all duration-500 ease-out"
-                  :style="{ width: `${runningPercentage}%` }"
-                  :title="
-                    t('screen.company.tasks.running', {
-                      count: runningCount,
-                      percentage: Math.round(runningPercentage),
-                    })
-                  "
-                ></div>
-
-                <!-- Error segment -->
-                <div
-                  v-if="errorPercentage > 0"
-                  class="bg-error-500 h-full transition-all duration-500 ease-out"
-                  :style="{ width: `${errorPercentage}%` }"
-                  :title="
-                    t('screen.company.tasks.error', {
-                      count: errorCount,
-                      percentage: Math.round(errorPercentage),
-                    })
-                  "
-                ></div>
-
-                <!-- Pending segment -->
-                <div
-                  v-if="pendingPercentage > 0"
-                  class="bg-primary-lightest h-full transition-all duration-500 ease-out"
-                  :style="{ width: `${pendingPercentage}%` }"
-                  :title="
-                    t('screen.company.tasks.pending', {
-                      count: pendingCount,
-                      percentage: Math.round(pendingPercentage),
-                    })
-                  "
-                ></div>
-              </div>
-
-              <!-- Status summary -->
-              <div class="text-neutral-black-font mt-3 flex items-center justify-between text-xs">
-                <div class="flex items-center gap-4">
-                  <span class="flex items-center gap-1.5">
-                    <div class="bg-success-500 h-2 w-2 rounded-full"></div>
-                    {{ t('screen.company.tasks.completedShort', { count: completedCount }) }}
-                  </span>
-                  <span v-if="runningCount > 0" class="flex items-center gap-1.5">
-                    <div class="bg-warning-500 h-2 w-2 rounded-full"></div>
-                    {{ t('screen.company.tasks.runningShort', { count: runningCount }) }}
-                  </span>
-                  <span v-if="errorCount > 0" class="flex items-center gap-1.5">
-                    <div class="bg-error-500 h-2 w-2 rounded-full"></div>
-                    {{ t('screen.company.tasks.errorShort', { count: errorCount }) }}
-                  </span>
-                  <span v-if="pendingCount > 0" class="flex items-center gap-1.5">
-                    <div class="bg-secondary h-2 w-2 rounded-full"></div>
-                    {{ t('screen.company.tasks.pendingShort', { count: pendingCount }) }}
-                  </span>
-                </div>
-              </div>
+          <!-- Status summary -->
+          <div class="text-neutral-black-font flex items-center justify-between text-xs">
+            <div class="flex items-center gap-4">
+              <span class="flex items-center gap-1.5">
+                <div class="bg-success-500 h-2 w-2 rounded-full"></div>
+                {{ t('screen.company.tasks.completedShort', { count: completedCount }) }}
+              </span>
+              <span v-if="runningCount > 0" class="flex items-center gap-1.5">
+                <div class="bg-warning-500 h-2 w-2 rounded-full"></div>
+                {{ t('screen.company.tasks.runningShort', { count: runningCount }) }}
+              </span>
+              <span v-if="errorCount > 0" class="flex items-center gap-1.5">
+                <div class="bg-error-500 h-2 w-2 rounded-full"></div>
+                {{ t('screen.company.tasks.errorShort', { count: errorCount }) }}
+              </span>
+              <span v-if="pendingCount > 0" class="flex items-center gap-1.5">
+                <div class="bg-secondary h-2 w-2 rounded-full"></div>
+                {{ t('screen.company.tasks.pendingShort', { count: pendingCount }) }}
+              </span>
             </div>
+          </div>
+        </div>
 
-            <!-- Task List -->
-            <div class="space-y-3">
+        <!-- Task List -->
+        <div class="flex flex-col gap-3">
+          <div
+            v-for="task in taskList"
+            :key="task.type"
+            class="rounded-card flex items-center justify-between border p-4 transition-all duration-300"
+            :class="getTaskClass(task)"
+          >
+            <!-- Task Info -->
+            <div class="flex items-center gap-3">
               <div
-                v-for="task in taskList"
-                :key="task.type"
-                class="rounded-card flex items-center justify-between border p-4 transition-all duration-300"
-                :class="getTaskClass(task)"
+                class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full"
+                :class="getIconContainerClass(task.status)"
               >
-                <!-- Task Info -->
-                <div class="flex items-center gap-3">
-                  <div
-                    class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full"
-                    :class="getIconContainerClass(task.status)"
-                  >
-                    <Icon v-if="task.status === 'running'" icon="fa-spinner-third fa-spin" />
-                    <Icon v-else :icon="getTaskIcon(task.type)" />
-                  </div>
+                <Icon v-if="task.status === 'running'" icon="fa-spinner-third fa-spin" />
+                <Icon v-else :icon="getTaskIcon(task.type)" />
+              </div>
 
-                  <div class="min-w-0 flex-1">
-                    <div class="mb-1 flex items-center gap-2">
-                      <h3 class="text-sm font-semibold">{{ task.name }}</h3>
-                      <Tag
-                        :intent="getStatusIntent(task.status)"
-                        :label="getStatusLabel(task.status)"
-                        size="xs"
-                      />
-                    </div>
-                    <p class="text-neutral-black-font truncate text-xs">
-                      {{ task.description }}
-                    </p>
-
-                    <!-- Token information for admins -->
-                    <div
-                      v-if="hasAdminAccess && getTokenInfo(task.type)?.hasTokenData"
-                      class="text-neutral-black-font mt-2 flex items-center gap-3 text-xs"
-                    >
-                      <span v-if="getTokenInfo(task.type)?.inputTokens">
-                        <i class="fas fa-arrow-down text-info-500"></i>
-                        {{ formatTokens(getTokenInfo(task.type)?.inputTokens ?? null) }}
-                      </span>
-                      <span v-if="getTokenInfo(task.type)?.outputTokens">
-                        <i class="fas fa-arrow-up text-success-500"></i>
-                        {{ formatTokens(getTokenInfo(task.type)?.outputTokens ?? null) }}
-                      </span>
-                      <span v-if="getTokenInfo(task.type)?.totalCost" class="font-medium">
-                        <i class="fas fa-coins text-warning-500"></i>
-                        {{ formatCost(getTokenInfo(task.type)?.totalCost ?? null) }}
-                      </span>
-                    </div>
-
-                    <!-- Error message -->
-                    <div v-if="task.error && task.status === 'error'" class="mt-2">
-                      <span class="text-error-500 text-xs">{{ task.error }}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Task Actions -->
-                <div class="flex items-center gap-2">
-                  <!-- Restart button -->
-                  <Button
-                    v-if="canRestartTask(task)"
-                    variant="tertiary"
-                    size="sm"
-                    icon="fa fa-rotate-right"
-                    icon-only
-                    @click="restartTask(task.type)"
-                    :loading="isRestarting === task.type"
+              <div class="min-w-0 flex-1">
+                <div class="mb-1 flex items-center gap-2">
+                  <h3 class="text-sm font-semibold">{{ task.name }}</h3>
+                  <Tag
+                    :intent="getStatusIntent(task.status)"
+                    :label="getStatusLabel(task.status)"
+                    size="xs"
                   />
                 </div>
+                <p class="text-neutral-black-font truncate text-xs">
+                  {{ task.description }}
+                </p>
+
+                <!-- Token information for admins -->
+                <div
+                  v-if="hasAdminAccess && getTokenInfo(task.type)?.hasTokenData"
+                  class="text-neutral-black-font mt-2 flex items-center gap-3 text-xs"
+                >
+                  <span v-if="getTokenInfo(task.type)?.inputTokens">
+                    <i class="fas fa-arrow-down text-info-500"></i>
+                    {{ formatTokens(getTokenInfo(task.type)?.inputTokens ?? null) }}
+                  </span>
+                  <span v-if="getTokenInfo(task.type)?.outputTokens">
+                    <i class="fas fa-arrow-up text-success-500"></i>
+                    {{ formatTokens(getTokenInfo(task.type)?.outputTokens ?? null) }}
+                  </span>
+                  <span v-if="getTokenInfo(task.type)?.totalCost" class="font-medium">
+                    <i class="fas fa-coins text-warning-500"></i>
+                    {{ formatCost(getTokenInfo(task.type)?.totalCost ?? null) }}
+                  </span>
+                </div>
+
+                <!-- Error message -->
+                <div v-if="task.error && task.status === 'error'" class="mt-2">
+                  <span class="text-error-500 text-xs">{{ task.error }}</span>
+                </div>
               </div>
             </div>
 
-            <!-- Global Actions -->
-            <div v-if="hasErrorsOrPending" class="border-primary-lighter-stroke mt-6 pt-6">
-              <div class="flex items-center justify-between">
-                <div class="text-neutral-black-font text-sm">
-                  {{ t('screen.company.tasks.canBeRestarted') }}
-                </div>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  icon="fa fa-play"
-                  :label="t('screen.company.tasks.startAll')"
-                  @click="startAllPendingTasks"
-                  :loading="isStartingAll"
-                />
-              </div>
+            <!-- Task Actions -->
+            <div class="flex items-center gap-2">
+              <!-- Restart button -->
+              <Button
+                v-if="canRestartTask(task)"
+                variant="tertiary"
+                size="sm"
+                icon="fa-rotate-right"
+                icon-only
+                :loading="isRestarting === task.type"
+                @click="restartTask(task.type)"
+              />
             </div>
           </div>
         </div>
       </div>
-    </Transition>
-  </Teleport>
+    </template>
+
+    <template v-if="hasErrorsOrPending" #footer>
+      <span class="text-neutral-black-font flex-1 text-sm">
+        {{ t('screen.company.tasks.canBeRestarted') }}
+      </span>
+      <Button
+        variant="secondary"
+        size="sm"
+        icon="fa-play"
+        :label="t('screen.company.tasks.startAll')"
+        :loading="isStartingAll"
+        @click="startAllPendingTasks"
+      />
+    </template>
+  </Modal>
 </template>
 
 <script setup lang="ts">
@@ -222,7 +195,7 @@ import { companyTasksQuery } from '@/queries/tasks'
 import { useAuthStore } from '@/stores/auth'
 import type { TaskResponse, TaskStatus, TaskType } from '@/types/task'
 import { toast } from '@/utils/toast'
-import { Button, Icon, Tag } from '@owlint/feathers-vue'
+import { Button, Icon, Modal, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -236,18 +209,9 @@ interface TaskConfig {
   description: string
 }
 
-interface Props {
-  modelValue: boolean
-}
-
-defineProps<Props>()
-
-const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-}>()
+const modelValue = defineModel<boolean>({ required: true })
 
 const route = useRoute()
-// Use type assertion since route.params may have companyId on company routes
 const companyId = computed(() => {
   const params = route.params as Record<string, string | string[] | undefined>
   return (params.companyId as string) || ''
@@ -256,8 +220,7 @@ const companyId = computed(() => {
 const isRestarting = ref<TaskType | null>(null)
 const isStartingAll = ref(false)
 
-// Task data is now kept fresh via SSE (Server-Sent Events) in useTaskEvents composable
-// which invalidates the cache when tasks update. No polling needed.
+// Task data is kept fresh via SSE in useTaskEvents — no polling here.
 const { data: tasks } = useQuery(() =>
   companyTasksQuery({
     companyId: companyId.value,
@@ -267,12 +230,10 @@ const { data: tasks } = useQuery(() =>
 const { canCreateCompany } = useCompanyPermissions()
 const authStore = useAuthStore()
 
-// Check if user has admin permissions to view token data
 const hasAdminAccess = computed(() =>
   authStore.hasAnyPermission(['admin.organizations', 'admin.users', 'admin.all']),
 )
 
-// Helper functions for token formatting
 const formatTokens = (tokens: number | null): string => {
   if (tokens === null || tokens === undefined) return '—'
   return tokens.toLocaleString()
@@ -296,7 +257,6 @@ const getTokenInfo = (taskType: TaskType) => {
   }
 }
 
-// Task types list
 const taskTypes: TaskType[] = [
   'profile',
   'digital',
@@ -346,19 +306,16 @@ const taskConfigs: TaskConfig[] = taskTypes.map((type) => ({
 
 const { mutate: restart } = useRestartTask()
 
-// Helper function to get task status
 const getTaskStatus = (taskType: TaskType): TaskStatus | null => {
   const task = tasks.value?.find((t: TaskResponse) => t.type === taskType)
   return task?.status || null
 }
 
-// Helper function to get task error
 const getTaskError = (taskType: TaskType): string | null => {
   const task = tasks.value?.find((t: TaskResponse) => t.type === taskType)
   return task?.error || null
 }
 
-// Create combined task list with config and status
 const taskList = computed(() => {
   return taskConfigs.map((config) => ({
     ...config,
@@ -367,7 +324,6 @@ const taskList = computed(() => {
   }))
 })
 
-// Task status utilities
 const getTaskIcon = (taskType: TaskType): string => {
   const iconMap: Record<TaskType, string> = {
     profile: 'fas fa-user',
@@ -447,25 +403,20 @@ const getStatusLabel = (status: TaskStatus | null): string => {
   }
 }
 
-// Check if current user is a debug user or in dev mode
+// Debug users (and dev mode) can restart any task, including successful ones.
 const isDebugUser = computed(() => {
-  // Always allow in dev mode
   if (import.meta.env.DEV) return true
   const username = authStore.user?.profile?.preferred_username?.toLowerCase()
   return username === 'nmr' || username === 'suh' || username === 'nmr-cv'
 })
 
-// Task actions
 const canRestartTask = (task: { status: TaskStatus | null }): boolean => {
-  // Debug users can restart any task, including successful ones
   if (isDebugUser.value) {
     return task.status !== null
   }
-  // Regular users can only restart error or pending tasks
   return task.status === 'error' || task.status === 'pending'
 }
 
-// Computed stats
 const completedCount = computed(
   () => tasks.value?.filter((t) => t.status === 'succeeded').length || 0,
 )
@@ -490,7 +441,6 @@ const totalTasks = computed(() => taskConfigs.length)
 
 const hasErrorsOrPending = computed(() => errorCount.value > 0 || pendingCount.value > 0)
 
-// Percentage calculations for segmented progress bar
 const completedPercentage = computed(() =>
   totalTasks.value > 0 ? (completedCount.value / totalTasks.value) * 100 : 0,
 )
@@ -509,7 +459,7 @@ const pendingPercentage = computed(() =>
 
 const restartTask = async (taskType: TaskType) => {
   if (!canCreateCompany.value) {
-    console.warn('❌ No permission to restart tasks')
+    console.warn('No permission to restart tasks')
     return
   }
 
@@ -517,14 +467,10 @@ const restartTask = async (taskType: TaskType) => {
   try {
     const task = tasks.value?.find((t: TaskResponse) => t.type === taskType)
     if (task) {
-      console.log('🔄 Restarting task:', task.id, task.type)
       await restart(task.id)
-      console.log('✅ Task restarted successfully')
-    } else {
-      console.warn('⚠️ Task not found for type:', taskType)
     }
   } catch (error) {
-    console.error('❌ Error restarting task:', error)
+    console.error('Error restarting task:', error)
   } finally {
     isRestarting.value = null
   }
@@ -532,7 +478,7 @@ const restartTask = async (taskType: TaskType) => {
 
 const startAllPendingTasks = async () => {
   if (!canCreateCompany.value) {
-    console.warn('❌ No permission to start tasks')
+    console.warn('No permission to start tasks')
     return
   }
 
@@ -562,25 +508,3 @@ const startAllPendingTasks = async () => {
   }
 }
 </script>
-
-<style scoped>
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-active .bg-white,
-.modal-leave-active .bg-white {
-  transition: transform 0.3s ease;
-}
-
-.modal-enter-from .bg-white,
-.modal-leave-to .bg-white {
-  transform: scale(0.95);
-}
-</style>

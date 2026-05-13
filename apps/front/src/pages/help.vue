@@ -8,7 +8,7 @@
     <!-- No help content available -->
     <div v-if="!hasAnyHelpAccess" class="py-16 text-center">
       <div class="flex flex-col items-center gap-4 text-gray-500 dark:text-gray-400">
-        <Badge variant="secondary" color="sage" icon="fa fa-book" size="lg" />
+        <Badge variant="secondary" color="sage" icon="fa-book" size="lg" />
         <h3 class="text-xl font-medium">
           {{ $t('settings.help.noContent.title') }}
         </h3>
@@ -68,7 +68,7 @@
       <div class="lg:col-span-3">
         <div v-if="!selectedSection" class="py-16 text-center">
           <div class="flex flex-col items-center gap-4 text-gray-500 dark:text-gray-400">
-            <Badge variant="secondary" color="sage" icon="fa fa-hand-point-left" size="lg" />
+            <Badge variant="secondary" color="sage" icon="fa-hand-point-left" size="lg" />
             <h3 class="text-lg font-medium">
               {{ $t('settings.help.selectTopic.title') }}
             </h3>

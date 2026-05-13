@@ -30,7 +30,7 @@
         variant="danger"
         :title="$t('settings.security.sessions.error')"
         :message="error.message || $t('settings.security.sessions.errorDescription')"
-        icon="fa fa-exclamation-circle"
+        icon="fa-exclamation-circle"
       />
 
       <!-- Sessions List -->
@@ -68,7 +68,7 @@
             </div>
             <Button
               :label="$t('settings.security.sessions.signOutAll.title')"
-              icon="fa fa-sign-out-alt"
+              icon="fa-sign-out-alt"
               variant="secondary"
               color="danger"
               @click="handleSignOutAllDevices"

@@ -45,7 +45,7 @@
           :placeholder="$t('settings.featureFlags.discover.urlPlaceholder')"
           :error="urlError"
           :disabled="isSavingUrl"
-          icon="fa fa-external-link"
+          icon="fa-external-link"
           @blur="handleUrlBlur"
         />
         <p class="text-neutral-black-font text-xs">

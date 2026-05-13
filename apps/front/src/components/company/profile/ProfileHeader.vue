@@ -34,7 +34,7 @@
           <!-- Social Media Links -->
           <div class="flex items-center gap-2">
             <a v-if="company.website" :href="company.website" target="_blank">
-              <Button variant="tertiary" icon="fa fa-globe"> </Button>
+              <Button variant="tertiary" icon="fa-globe"> </Button>
             </a>
 
             <a

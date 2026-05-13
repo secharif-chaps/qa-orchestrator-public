@@ -46,7 +46,7 @@
       >
         <Button
           variant="tertiary"
-          icon="fa fa-eye"
+          icon="fa-eye"
           icon-only
           :title="$t('common.folder.item.actions.view')"
           @click.stop="handleClick"
@@ -54,7 +54,7 @@
         <Button
           v-if="item.type === 'company' && canMoveCompany"
           variant="tertiary"
-          icon="fa fa-exchange-alt"
+          icon="fa-exchange-alt"
           icon-only
           :title="$t('common.folder.moveCompany.button')"
           @click.stop="$emit('moveCompany', item)"
@@ -62,7 +62,7 @@
         <Button
           v-if="item.type === 'company' && canDeleteCompany"
           variant="tertiary"
-          :icon="isArchived ? 'fa fa-undo' : 'fa fa-trash'"
+          :icon="isArchived ? 'fa-undo' : 'fa-trash'"
           icon-only
           :title="
             isArchived ? $t('screen.company.restore.title') : $t('screen.company.delete.title')

@@ -121,7 +121,7 @@
                 <Button
                   variant="primary"
                   size="sm"
-                  icon="fa fa-plus"
+                  icon="fa-plus"
                   :label="$t('common.folder.share.add')"
                   :loading="isAddingShare"
                   @click="handleAddUser"
@@ -130,7 +130,7 @@
                 <Button
                   variant="tertiary"
                   size="sm"
-                  icon="fa fa-times"
+                  icon="fa-times"
                   icon-only
                   :title="$t('common.cancel')"
                   @click="clearSelectedUser"
@@ -196,7 +196,7 @@
                   variant="tertiary"
                   color="danger"
                   size="sm"
-                  icon="fa fa-trash"
+                  icon="fa-trash"
                   icon-only
                   :title="$t('common.folder.share.remove')"
                   :loading="removingShareUserId === share.user_id"

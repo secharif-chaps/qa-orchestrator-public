@@ -12,7 +12,7 @@
           variant="danger"
           :title="$t('common.folder.detail.error.title', 'Error')"
           :description="$t('common.folder.detail.error.description', 'Failed to load folder')"
-          icon="fa fa-exclamation-triangle"
+          icon="fa-exclamation-triangle"
         />
 
         <!-- Folder Content -->

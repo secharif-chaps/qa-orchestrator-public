@@ -3,7 +3,7 @@
     <template #trigger>
       <Button
         variant="tertiary"
-        icon="fa fa-language"
+        icon="fa-language"
         size="sm"
         :label="t('screen.company.translation.button')"
       />

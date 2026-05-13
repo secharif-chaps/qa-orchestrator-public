@@ -14,7 +14,7 @@
       <div class="flex items-center gap-2">
         <Button
           variant="tertiary"
-          icon="fa fa-refresh"
+          icon="fa-refresh"
           :loading="isRefreshing"
           :disabled="isRefreshing"
           :title="$t('settings.tokens.refresh')"
@@ -24,7 +24,7 @@
 
         <Button
           variant="secondary"
-          icon="fa fa-history"
+          icon="fa-history"
           :label="$t('settings.tokens.viewHistory')"
           @click="$router.push('/tokens/history')"
         />
@@ -137,7 +137,7 @@
             />
             <Button
               variant="primary"
-              icon="fa fa-plus"
+              icon="fa-plus"
               :label="$t('settings.tokens.add')"
               :loading="addTokensMutation.isLoading.value && pendingAmount === Number(customAmount)"
               :disabled="!canAddCustomAmount"

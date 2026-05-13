@@ -93,7 +93,7 @@
             variant="tertiary"
             size="sm"
             :label="$t('common.sidebar.tokens.viewHistory')"
-            icon-right="fa fa-arrow-right"
+            icon-right="fa-arrow-right"
             @click="$router.push('/tokens/history')"
           />
         </div>

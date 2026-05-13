@@ -52,7 +52,7 @@
           <Button
             v-if="canManageTeam && !item.is_current_user"
             variant="tertiary"
-            icon="fa fa-key"
+            icon="fa-key"
             :title="$t('settings.team.resetPassword')"
             @click="$emit('reset-password', item)"
           />

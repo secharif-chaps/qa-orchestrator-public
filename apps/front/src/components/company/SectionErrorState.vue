@@ -20,7 +20,7 @@
       <Button
         v-if="task"
         variant="primary"
-        :icon="countdown > 0 ? 'fa fa-hourglass-half' : 'fa fa-rotate-right'"
+        :icon="countdown > 0 ? 'fa-hourglass-half' : 'fa-rotate-right'"
         :label="
           countdown > 0
             ? t('screen.company.analysisCard.error.rateLimit.waitingLabel', { seconds: countdown })
@@ -43,7 +43,7 @@
       <Button
         v-if="task"
         variant="primary"
-        icon="fa fa-rotate-right"
+        icon="fa-rotate-right"
         :label="t('screen.company.analysisCard.error.retry')"
         :loading="isRestarting === task.type"
         @click="restartTask(task.type)"
@@ -61,7 +61,7 @@
       <Button
         v-if="task"
         variant="primary"
-        icon="fa fa-rotate-right"
+        icon="fa-rotate-right"
         :label="t('screen.company.analysisCard.error.retry')"
         :loading="isRestarting === task.type"
         @click="restartTask(task.type)"

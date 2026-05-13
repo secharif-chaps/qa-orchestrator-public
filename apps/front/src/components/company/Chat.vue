@@ -60,7 +60,7 @@
       />
       <Button
         variant="primary"
-        icon="fa fa-send"
+        icon="fa-send"
         icon-only
         size="sm"
         class="absolute right-2 bottom-4"

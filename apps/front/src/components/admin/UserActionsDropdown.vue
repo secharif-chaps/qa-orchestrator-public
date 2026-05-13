@@ -1,7 +1,7 @@
 <template>
   <Dropdown align="right" width="lg" :close-on-select="true">
     <template #trigger>
-      <Button variant="tertiary" size="sm" icon="fa fa-ellipsis-v" />
+      <Button variant="tertiary" size="sm" icon="fa-ellipsis-v" />
     </template>
 
     <template #content="{ close }">

@@ -31,7 +31,7 @@
             <Button
               v-if="showRefresh"
               variant="tertiary"
-              icon="fa fa-refresh"
+              icon="fa-refresh"
               size="sm"
               :loading="isRefreshing"
               :disabled="isRefreshing"

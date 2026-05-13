@@ -163,7 +163,7 @@
               v-if="canRestartTask(task)"
               variant="tertiary"
               size="sm"
-              icon="fa fa-rotate-right"
+              icon="fa-rotate-right"
               icon-only
               @click="restartTask(task.type)"
               :loading="isRestarting === task.type"
@@ -182,7 +182,7 @@
           <Button
             variant="secondary"
             size="sm"
-            icon="fa fa-play"
+            icon="fa-play"
             @click="startAllPendingTasks"
             :loading="isStartingAll"
           >

@@ -12,7 +12,7 @@
         variant="danger"
         :title="t('common.errors.unexpected')"
         :description="t('stream.toast.updateError')"
-        icon="fa fa-exclamation-triangle"
+        icon="fa-exclamation-triangle"
       />
 
       <!-- Content -->

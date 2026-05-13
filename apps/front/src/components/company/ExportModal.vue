@@ -56,7 +56,7 @@
       <Button
         variant="primary"
         :label="t('screen.company.export.modal.export')"
-        icon="fa fa-download"
+        icon="fa-download"
         @click="exportPPT"
       />
     </template>

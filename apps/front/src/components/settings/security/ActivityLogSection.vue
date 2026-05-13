@@ -28,7 +28,7 @@
         variant="danger"
         :title="$t('settings.security.activity.error')"
         :message="error.message || $t('settings.security.activity.errorDescription')"
-        icon="fa fa-exclamation-circle"
+        icon="fa-exclamation-circle"
       />
 
       <!-- Events List -->

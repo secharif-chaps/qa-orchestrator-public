@@ -88,7 +88,7 @@
               <Button
                 variant="tertiary"
                 color="danger"
-                icon="fa fa-times"
+                icon="fa-times"
                 :label="$t('screen.csv.upload.remove')"
                 @click="removeFile"
               />
@@ -153,7 +153,7 @@
             <Button
               variant="secondary"
               :label="$t('screen.csv.upload.validateData')"
-              icon="fa fa-check"
+              icon="fa-check"
               :loading="isValidating"
               :disabled="isValidating || parseResult.companies.length === 0"
               @click="validateCompanies"
@@ -276,7 +276,7 @@
         <div v-if="validationResult.valid_count > 0" class="flex items-center gap-4 pt-4">
           <Button
             variant="primary"
-            icon="fa fa-upload"
+            icon="fa-upload"
             :label="
               $t('screen.csv.upload.actions.importCompanies', {
                 count: validationResult.valid_count,
@@ -289,7 +289,7 @@
 
           <Button
             variant="secondary"
-            icon="fa fa-edit"
+            icon="fa-edit"
             :label="$t('screen.csv.upload.actions.fixAndReupload')"
             @click="resetUpload"
           />
@@ -344,14 +344,14 @@
         <div class="flex items-center gap-4 pt-4">
           <Button
             variant="primary"
-            icon="fa fa-folder"
+            icon="fa-folder"
             :label="$t('screen.csv.upload.actions.goToFolder')"
             @click="goToFolder"
           />
 
           <Button
             variant="secondary"
-            icon="fa fa-upload"
+            icon="fa-upload"
             :label="$t('screen.csv.upload.actions.uploadAnother')"
             @click="resetUpload"
           />
