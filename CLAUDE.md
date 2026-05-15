@@ -103,6 +103,36 @@ chapsmind/                              # THIS REPO - Monorepo
 
 ---
 
+## External Repositories
+
+### QA Orchestrator
+**Location:** `ssh://git@git.mediaspeech.com:17890/mint/qa-orchestrator.git`
+
+Enterprise agentic QA testing system with live validation, self-learning, and output verification.
+
+**Key Features (v3.0.0+):**
+- 🚀 **Live Validation** — Test running code at `http://localhost`, not just diffs
+- 🔒 **Verification Gate** — LLM validates each agent output (0-100 score) before chaining
+- 🧠 **Learning System** — Persist failures, inject failure patterns into future prompts
+- ⚙️ **Environment Manager** — Auto-start services + health polling
+- 📈 **15 Agents in 3 Tiers** — Daily Use, Live Validation, Advanced
+- 🔄 **4 Workflows** — qa-workflow, browser-validate, smart-select, release-analysis
+
+**Setup:**
+```bash
+git clone ssh://git@git.mediaspeech.com:17890/mint/qa-orchestrator.git
+cd qa-orchestrator
+npm install && cp .env.example .env
+node index.js --project target --workflow qa-workflow --message "Test TAR-1234"
+```
+
+**Documentation:**
+- README.md — Architecture + quick start
+- CONTEXT.md — 1400+ lines project reference
+- CHANGELOG.md — v3.0.0 release notes
+
+---
+
 # ChapsMind Frontend Application
 
 A modern Vue 3 application with TypeScript, Tailwind CSS v4, and comprehensive tooling for monitoring companies online.
