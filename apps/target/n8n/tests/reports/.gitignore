@@ -1,5 +1,0 @@
-# Ignore all test reports
-*
-
-# Except this file
-!.gitignore

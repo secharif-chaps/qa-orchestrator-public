@@ -1,1 +1,0 @@
-# gRPC tests package
