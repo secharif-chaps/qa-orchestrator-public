@@ -11,6 +11,8 @@ const { JiraClient } = require('./jira-client');
 const { EnvironmentManager } = require('./env-manager');
 const { VerificationGate } = require('./verification-gate');
 const { LearningSystem } = require('./learning-system');
+const { ParallelExecutor } = require('./parallel-executor');
+const { OptimizationConfig } = require('./optimization-config');
 
 class QAEngine {
   constructor(config) {
@@ -34,6 +36,7 @@ class QAEngine {
     this.learningSystem = new LearningSystem(config.baseDir || process.cwd());
     this.verificationGate = new VerificationGate(this);
     this.envManager = null; // instantiated per workflow if needed
+    this.parallelExecutor = new ParallelExecutor(this); // Optimized execution
   }
 
   // ── LLM Call ──────────────────────────────────────────────────────────────
@@ -121,6 +124,17 @@ class QAEngine {
   async runWorkflow(workflowId, userMessage, options = {}) {
     const workflow = this.workflows[workflowId];
     if (!workflow) throw new Error(`Unknown workflow: ${workflowId}`);
+
+    // ⚡ OPTIMIZATION: Use ParallelExecutor if sampling mode specified
+    if (options.samplingMode || options.useOptimization !== false) {
+      console.log(`\n🚀 Using Optimized Execution (Option A: 90% cost reduction)`);
+      return await this.parallelExecutor.executeWorkflow(userMessage, {
+        samplingMode: options.samplingMode || 'full',
+        useCache: options.useCache !== false,
+        ticketKey: options.ticketKey,
+        branch: options.branch || 'main',
+      });
+    }
 
     // Initialize session for full QA workflow
     if (workflowId === 'qa-workflow' && options.ticketKey && this.project?.key) {

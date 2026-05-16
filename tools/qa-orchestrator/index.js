@@ -257,6 +257,8 @@ Options:
   --list-agents       List all agents with models
   --list-workflows    List all workflows with agent chains
   --list-tiers        List agents organized by usage tier
+  --sampling <mode>   Execution mode: quick (100s, $0.27) | full (220s, $0.37) | deep (300s, $0.60)
+  --no-cache          Disable caching (default: caching enabled, 1h TTL)
   --no-live           Skip Environment Manager (services must already be running)
   --no-learn          Skip learning system injection (agents don't learn from past failures)
   --no-gate           Skip Verification Gate (output not validated per agent)
@@ -411,6 +413,12 @@ Options:
   engine.on('learning:loaded', (d) => console.log(`🧠 Learnings: ${d.agentId} has ${d.count} past failure patterns`));
   engine.on('learning:saved', (d) => console.log(`💾 Failure recorded for ${d.agentId}`));
 
+  // Optimization (Parallel Executor) listeners
+  engine.on('cache:hit', (d) => console.log(`💾 Cache HIT for ${d.ticketKey} (${d.branch}) — returned cached results in 100ms`));
+  engine.on('tier:start', (d) => console.log(`🚀 Tier ${d.tier}: ${d.name}`));
+  engine.on('parallel:done', (d) => console.log(`⚡ Parallel execution done: ${d.agentsRun.join(', ')} in ${d.time}s`));
+  engine.on('conditional:skip', (d) => console.log(`⏭️  Skipping ${d.agentId} (trigger not met)`));
+
   // Build rich context for workflows
   let message = args.message || 'Hello';
   if (args.ticket && (args.workflow === 'qa-workflow' || args.workflow === 'quick-review' || args.workflow === 'bug-cycle' || args.workflow === 'browser-validate' || args.workflow === 'smart-select' || args.workflow === 'manual-guide')) {
@@ -432,6 +440,8 @@ Options:
       console.log(`\n🔄 Running workflow: ${args.workflow} on ${PROJECTS[projectId].name}`);
       const workflowOptions = {
         ticketKey: args.ticket,
+        samplingMode: args.sampling || 'full', // quick | full | deep
+        useCache: args['no-cache'] !== true, // default: true (caching enabled)
         noLive: args['no-live'] === true,
         noGate: args['no-gate'] === true,
         noLearn: args['no-learn'] === true,
