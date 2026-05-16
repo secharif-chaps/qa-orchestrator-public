@@ -1,14 +1,24 @@
 {
-  "name": "chapsmind",
-  "private": true,
-  "scripts": {
-    "prepare": "husky"
+  "name": "qa-orchestrator",
+  "version": "1.0.0",
+  "description": "Multi-agent QA testing orchestrator — X-Ray, Jira, Confluence, GitLab, Playwright",
+  "main": "index.js",
+  "bin": {
+    "qa": "./index.js"
   },
-  "devDependencies": {
-    "husky": "^9.1.0",
-    "lint-staged": "^15.3.0",
-    "@commitlint/cli": "^19.6.0",
-    "@commitlint/config-conventional": "^19.6.0",
-    "markdownlint-cli2": "^0.18.1"
+  "scripts": {
+    "start": "node index.js",
+    "agents": "node index.js --list-agents",
+    "workflows": "node index.js --list-workflows",
+    "review": "node index.js --project target --agent reviewer --message",
+    "scan": "node index.js --project target --workflow scan-adapt --message 'Scan project'",
+    "sprint": "node index.js --project target --agent projectManager --message 'Sprint health report'",
+    "mrs": "node index.js --project target --workflow mr-to-tests --message 'Analyze latest MRs'"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
