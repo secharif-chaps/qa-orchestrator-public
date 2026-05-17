@@ -33,6 +33,7 @@ const { ALL_AGENTS, workflows, AGENT_TIERS } = require('./agents/registry');
 const { PROJECTS } = require('./config/projects');
 const { JiraClient } = require('./core/jira-client');
 const { GitClient } = require('./core/git-client');
+const { EnvironmentDetector } = require('./core/environment-detector');
 
 // ── Context builder ───────────────────────────────────────────────────────────
 
@@ -197,6 +198,54 @@ function createEngine(projectId) {
   return engine;
 }
 
+// ── Auto-Detection ───────────────────────────────────────────────────────────
+
+async function autoDetectEnvironment(noDetect = false) {
+  if (noDetect) {
+    console.log('\n⏭️  Auto-detection skipped (--no-detect flag)\n');
+    return null;
+  }
+
+  console.log('\n🔍 Auto-detecting environment...\n');
+
+  const detector = new EnvironmentDetector();
+  const detection = await detector.detectAll();
+
+  // Display detection results
+  console.log('📊 Detection Results:');
+  console.log(`  VCS: ${detection.vcs.detected ? `✅ ${detection.vcs.type}` : '❌ Not detected'}`);
+  if (detection.vcs.url) console.log(`       ${detection.vcs.url}`);
+
+  console.log(`  Test Framework: ${detection.testFramework.detected ? `✅ ${detection.testFramework.type}` : '❌ Not detected'}`);
+  if (detection.testFramework.tools.length > 0) {
+    console.log(`       Available: ${detection.testFramework.tools.join(', ')}`);
+  }
+
+  console.log(`  Issue Tracker: ${detection.issueTracker.detected ? `✅ ${detection.issueTracker.type}` : '⚠️  Not detected'}`);
+  if (detection.issueTracker.detected && !detection.issueTracker.hasCredentials) {
+    console.log(`       Credentials: Missing (set ${detection.issueTracker.type.toUpperCase()}_TOKEN)`);
+  }
+
+  console.log(`  CI/CD: ${detection.cicd.detected ? `✅ ${detection.cicd.type}` : '⚠️  Not detected'}`);
+  if (detection.cicd.configFile) console.log(`       Config: ${detection.cicd.configFile}`);
+
+  console.log(`  Environment: ${detection.environment.projectName}`);
+  console.log(`       Base URL: ${detection.environment.baseUrl}`);
+  if (detection.environment.testDirs.length > 0) {
+    console.log(`       Test dirs: ${detection.environment.testDirs.join(', ')}`);
+  }
+
+  // Validation
+  const validation = detector.validate(detection);
+  if (!validation.valid) {
+    console.log('\n⚠️  Validation Issues:');
+    validation.errors.forEach(e => console.log(`  ${e}`));
+  }
+
+  console.log('\n✅ Environment ready for testing\n');
+  return detection;
+}
+
 // ── CLI ──────────────────────────────────────────────────────────────────────
 
 async function cli() {
@@ -262,6 +311,7 @@ Options:
   --no-live           Skip Environment Manager (services must already be running)
   --no-learn          Skip learning system injection (agents don't learn from past failures)
   --no-gate           Skip Verification Gate (output not validated per agent)
+  --no-detect         Skip auto-detection of VCS, test framework, issue tracker, CI/CD
   --fail-fast         Stop immediately on first error (default: true)
   --help              Show this help
     `);
@@ -311,6 +361,9 @@ Options:
   }
 
   const projectId = args.project || 'target';
+
+  // Auto-detect environment (unless skipped)
+  const detection = await autoDetectEnvironment(args['no-detect']);
 
   // Validate environment before creating engine
   const validation = envLoader.validate();
