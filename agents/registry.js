@@ -1,6 +1,11 @@
 /**
- * Agent Registry — 11 Agents + 7 Workflows
- * Full system prompts for ChapsMind QA platform
+ * Agent Registry — 15 Agents + 12 Workflows
+ *
+ * Tier 1 (Daily Use): 4 agents — reviewer, testGenerator, testSelector, bugHunter
+ * Tier 2 (Live Validation): 4 agents — automator, browserValidator, gherkinWriter, manualValidator
+ * Tier 3 (Advanced): 7 agents — orchestrator, scanner, mrAnalyzer, releaseAnalyzer, validator, projectManager, sessionManager
+ *
+ * ⚠️ CUSTOMIZE: These prompts are examples for Vue 3 + FastAPI stacks. Update them for YOUR project.
  */
 
 const AGENTS = {
