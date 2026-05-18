@@ -179,7 +179,7 @@ class EnvLoader {
     return {
       api: this.loadedEnv.API_HEALTH_ENDPOINT || this.loadedEnv.API_HEALTH_URL || 'http://localhost/api/health/ready',
       frontend: this.loadedEnv.FRONTEND_URL || this.loadedEnv.APP_URL || 'http://localhost',
-      keycloak: this.loadedEnv.KEYCLOAK_HEALTH_ENDPOINT || 'http://localhost:8080/realms/chapsmind/.well-known/openid-configuration',
+      keycloak: this.loadedEnv.KEYCLOAK_HEALTH_ENDPOINT || 'http://localhost:8080/realms/your-realm/.well-known/openid-configuration',
     };
   }
 
