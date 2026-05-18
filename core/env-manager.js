@@ -9,7 +9,7 @@
  *
  * Usage:
  * - prepare() → test main branch (post-merge regression testing)
- * - prepare('TAR-1234') → test PR branch before merge (pre-merge validation)
+ * - prepare('MYKEY-1234') → test PR branch before merge (pre-merge validation)
  */
 
 const { execSync, spawn } = require('child_process');

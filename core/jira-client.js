@@ -8,7 +8,7 @@ const XRAY_API_URL  = 'https://xray.cloud.getxray.app/api/v2';
 
 class JiraClient {
   constructor(config = {}) {
-    this.baseUrl = config.baseUrl || process.env.JIRA_BASE_URL || 'https://chapsvisiondev.atlassian.net';
+    this.baseUrl = config.baseUrl || process.env.JIRA_BASE_URL || process.env.JIRA_HOST || 'https://your-jira-instance.atlassian.net';
     this.email = config.email || process.env.JIRA_EMAIL;
     this.token = config.token || process.env.JIRA_TOKEN;
     this.auth = Buffer.from(`${this.email}:${this.token}`).toString('base64');

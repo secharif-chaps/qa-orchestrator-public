@@ -82,21 +82,21 @@ function buildTestInventoryContext(project) {
   try {
     const localPath = project?.localPath || process.cwd();
 
-    // Scan E2E tests (canonical TAR-XXXX.spec.ts files)
+    // Scan E2E tests (canonical MYKEY-XXXX.spec.ts files)
     const e2eTests = execSync(
       `find ${localPath}/e2e -maxdepth 1 -name 'TAR-*.spec.ts' -o -name 'test-*.spec.ts' 2>/dev/null | sort`,
       { encoding: 'utf8' }
     ).trim().split('\n').filter(Boolean);
 
-    // Scan Vitest unit tests in apps/front
+    // Scan Vitest unit tests in your frontend
     const vitestTests = execSync(
-      `find ${localPath}/apps/front/src -name '*.test.ts' -o -name '*.spec.ts' 2>/dev/null | wc -l`,
+      `find ${localPath}/your frontend/src -name '*.test.ts' -o -name '*.spec.ts' 2>/dev/null | wc -l`,
       { encoding: 'utf8' }
     ).trim();
 
-    // Scan Pytest tests in apps/screen
+    // Scan Pytest tests in your backend
     const pytestTests = execSync(
-      `find ${localPath}/apps/screen/tests -name 'test_*.py' 2>/dev/null | sort`,
+      `find ${localPath}/your backend/tests -name 'test_*.py' 2>/dev/null | sort`,
       { encoding: 'utf8' }
     ).trim().split('\n').filter(Boolean);
 
@@ -109,11 +109,11 @@ function buildTestInventoryContext(project) {
         parts.push(`  ${i + 1}. ${basename}`);
       });
     } else {
-      parts.push(`No TAR-XXXX.spec.ts files found.`);
+      parts.push(`No MYKEY-XXXX.spec.ts files found.`);
     }
 
     parts.push(`\n### Unit Tests (Vitest)`);
-    parts.push(`Found ~${vitestTests} Vitest unit tests in apps/front/src/**/*.test.ts`);
+    parts.push(`Found ~${vitestTests} Vitest unit tests in your frontend/src/**/*.test.ts`);
 
     parts.push(`\n### Backend Tests (Pytest)`);
     if (pytestTests.length > 0) {
@@ -172,11 +172,11 @@ function buildReleaseContext(engine) {
 
 function createEngine(projectId) {
   const engine = new QAEngine({
-    llmBaseUrl: process.env.LLM_BASE_URL || 'https://llm-gateway.ai.chapsvision.com/llm-gateway',
+    llmBaseUrl: process.env.LLM_BASE_URL || 'https://api.openai.com/v1',
     llmApiKey: process.env.LLM_API_KEY,
-    gitlabHost: process.env.QA_HUB_GITLAB_HOST || 'git.mediaspeech.com',
-    gitlabPort: parseInt(process.env.QA_HUB_GITLAB_PORT || '17890'),
-    gitlabToken: process.env.QA_HUB_GITLAB_TOKEN,
+    gitlabHost: process.env.GITLAB_HOST || 'gitlab.com',
+    gitlabPort: parseInt(process.env.GITLAB_PORT || '443'),
+    gitlabToken: process.env.GITLAB_TOKEN,
   });
 
   // Register all agents

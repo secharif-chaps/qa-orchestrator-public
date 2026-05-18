@@ -41,7 +41,7 @@ module.exports = {
   // --- Jira Configuration ---
   jira: {
     host: 'your-jira-instance.atlassian.net',
-    projectKey: 'TAR', // Change to your project key
+    projectKey: 'MYKEY', // Change to your project key
     cloudId: process.env.JIRA_CLOUD_ID,
     apiToken: process.env.JIRA_API_TOKEN, // Never hardcode!
     apiVersion: 'cloud', // 'cloud' or 'server'
@@ -70,10 +70,10 @@ module.exports = {
 
   // --- GitLab Configuration ---
   gitlab: {
-    host: 'git.mediaspeech.com', // or github.com, bitbucket.org, etc.
-    projectId: 'target', // Project ID or path
-    token: process.env.QA_HUB_GITLAB_TOKEN,
-    port: 17890,
+    host: 'gitlab.com', // or github.com, bitbucket.org, etc.
+    projectId: 'myorg/myrepo', // Project ID or path
+    token: process.env.GITLAB_TOKEN,
+    port: 443,
   },
 
   // --- GitHub (as VCS) Configuration ---
@@ -126,8 +126,8 @@ module.exports = {
 
   // --- GitLab CI Configuration ---
   gitlabCI: {
-    host: 'git.mediaspeech.com',
-    token: process.env.QA_HUB_GITLAB_TOKEN,
+    host: 'gitlab.com',
+    token: process.env.GITLAB_TOKEN,
     projectId: 'target',
   },
 

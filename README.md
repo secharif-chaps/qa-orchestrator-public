@@ -78,13 +78,13 @@ That's it! The system automatically:
 
 ```bash
 # Full QA cycle
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 
 # Fast feedback during development  
-npx qa-orchestrator test TAR-1234 --sampling quick
+npx qa-orchestrator test MYKEY-1234 --sampling quick
 
 # Thorough analysis for releases
-npx qa-orchestrator test TAR-1234 --sampling deep
+npx qa-orchestrator test MYKEY-1234 --sampling deep
 
 # List all available agents
 npx qa-orchestrator --list-agents
@@ -212,11 +212,11 @@ Identical tests return cached results instantly (~100ms):
 
 ```bash
 # First run: Full analysis
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 # → 3 minutes, $0.37
 
 # Second run (same ticket/branch): Cache hit!
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 # → 100ms, $0.00 ⚡ FREE!
 ```
 
@@ -314,13 +314,13 @@ npx qa-orchestrator test TICKET-123 --sampling deep
 
 ```bash
 # Full QA cycle with all verifications
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 
 # Fast local testing (skip learning, caching)
-npx qa-orchestrator test TAR-1234 --sampling quick --no-learn --no-cache
+npx qa-orchestrator test MYKEY-1234 --sampling quick --no-learn --no-cache
 
 # Release validation (deep analysis, all agents)
-npx qa-orchestrator test TAR-1234 --sampling deep
+npx qa-orchestrator test MYKEY-1234 --sampling deep
 
 # View available agents
 npx qa-orchestrator --list-agents
@@ -399,7 +399,7 @@ Workflows are predefined chains of agents that work together:
 ### 1. **qa-workflow** — Full QA Cycle (Recommended)
 
 ```
-Input: Ticket (TAR-1234), Code Diff
+Input: Ticket (MYKEY-1234), Code Diff
     ↓
 Tier 1: dataValidator + automator + gherkinWriter + testSelector (10s, $0.007)
     ↓
@@ -540,8 +540,8 @@ LLM_API_KEY                 # Your LLM provider API key
 LLM_BASE_URL                # LLM gateway URL (optional)
 
 # Git Configuration (optional)
-QA_HUB_GITLAB_HOST          # GitLab instance hostname
-QA_HUB_GITLAB_TOKEN         # GitLab token
+GITLAB_HOST          # GitLab instance hostname
+GITLAB_TOKEN         # GitLab token
 
 # Application Configuration
 BASE_URL                    # Your app URL (default: http://localhost)
@@ -609,7 +609,7 @@ export JIRA_API_TOKEN="your-token"
 cd my-project  # GitHub repo with Playwright tests
 
 # Run
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 
 # Auto-detects:
 # ✅ GitHub

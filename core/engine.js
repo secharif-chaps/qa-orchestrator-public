@@ -17,11 +17,11 @@ const { OptimizationConfig } = require('./optimization-config');
 class QAEngine {
   constructor(config) {
     this.config = {
-      llmBaseUrl: config.llmBaseUrl || process.env.LLM_BASE_URL || 'https://llm-gateway.ai.chapsvision.com/llm-gateway',
+      llmBaseUrl: config.llmBaseUrl || process.env.LLM_BASE_URL || 'https://api.openai.com/v1',
       llmApiKey: config.llmApiKey || process.env.LLM_API_KEY,
-      gitlabHost: config.gitlabHost || process.env.QA_HUB_GITLAB_HOST || 'git.mediaspeech.com',
-      gitlabPort: config.gitlabPort || parseInt(process.env.QA_HUB_GITLAB_PORT || '17890'),
-      gitlabToken: config.gitlabToken || process.env.QA_HUB_GITLAB_TOKEN,
+      gitlabHost: config.gitlabHost || process.env.GITLAB_HOST || 'gitlab.com',
+      gitlabPort: config.gitlabPort || parseInt(process.env.GITLAB_PORT || '443'),
+      gitlabToken: config.gitlabToken || process.env.GITLAB_TOKEN,
       baseDir: config.baseDir || process.cwd(),
       ...config,
     };

@@ -66,7 +66,7 @@
 
 - **.env** pre-configured with:
   - LLM Gateway (gpt-5.1-sweden model)
-  - GitLab integration (git.mediaspeech.com)
+  - GitLab integration (gitlab.com)
   - Jira API + X-Ray Cloud credentials
 
 #### Backward Compatibility

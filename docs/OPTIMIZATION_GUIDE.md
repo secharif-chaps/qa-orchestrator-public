@@ -88,7 +88,7 @@ if (tier2Results.bugHunter.criticalCount > 0) {
 ### Mode 1: Quick QA (100 seconds, $0.27)
 **For rapid feedback during development**
 ```bash
-node index.js --project target --workflow qa-workflow --message "Test TAR-1234" --sampling quick
+node index.js --project target --workflow qa-workflow --message "Test MYKEY-1234" --sampling quick
 ```
 
 Runs: Tier 1 + Tier 2 only (no expensive Tier 3)
@@ -99,7 +99,7 @@ Runs: Tier 1 + Tier 2 only (no expensive Tier 3)
 ### Mode 2: Full QA (220 seconds, $0.37)
 **Default mode — recommended for most workflows**
 ```bash
-node index.js --project target --workflow qa-workflow --message "Test TAR-1234" --sampling full
+node index.js --project target --workflow qa-workflow --message "Test MYKEY-1234" --sampling full
 ```
 
 Runs: Tier 1 + Tier 2 + Tier 3 (conditional)
@@ -110,7 +110,7 @@ Runs: Tier 1 + Tier 2 + Tier 3 (conditional)
 ### Mode 3: Deep Analysis (300 seconds, $0.60)
 **For critical releases or complex changes**
 ```bash
-node index.js --project target --workflow qa-workflow --message "Test TAR-1234" --sampling deep
+node index.js --project target --workflow qa-workflow --message "Test MYKEY-1234" --sampling deep
 ```
 
 Runs: ALL agents (Tier 1 + 2 + 3, all conditional agents forced)
@@ -126,15 +126,15 @@ Runs: ALL agents (Tier 1 + 2 + 3, all conditional agents forced)
 
 ```javascript
 // First run: ~3 minutes, $0.27
-node index.js --project target --workflow qa-workflow --message "Test TAR-1234" --ticket TAR-1234
+node index.js --project target --workflow qa-workflow --message "Test MYKEY-1234" --ticket MYKEY-1234
 
 // Second run SAME TICKET/BRANCH: ~100ms, $0.00 ⚡
-node index.js --project target --workflow qa-workflow --message "Test TAR-1234" --ticket TAR-1234
+node index.js --project target --workflow qa-workflow --message "Test MYKEY-1234" --ticket MYKEY-1234
 ```
 
 **Output:**
 ```
-💾 Cache HIT for TAR-1234 (main)
+💾 Cache HIT for MYKEY-1234 (main)
 ✅ Returned cached results in 100ms
 ```
 
@@ -146,7 +146,7 @@ node index.js ... --no-cache
 **Cache location:**
 ```
 qa-sessions/cache/
-├── TAR-1234-main.json
+├── MYKEY-1234-main.json
 ├── TAR-1235-feat-example.json
 └── ...
 ```
@@ -276,10 +276,10 @@ const engine = new QAEngine(config);
 const executor = new ParallelExecutor(engine);
 
 // Run optimized workflow
-const results = await executor.executeWorkflow('Test TAR-1234', {
+const results = await executor.executeWorkflow('Test MYKEY-1234', {
   samplingMode: 'full',     // quick | full | deep
   useCache: true,           // Enable caching
-  ticketKey: 'TAR-1234',
+  ticketKey: 'MYKEY-1234',
   branch: 'main',
 });
 ```

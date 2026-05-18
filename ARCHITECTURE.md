@@ -197,7 +197,7 @@ module.exports = {
     host: 'git.example.com',
     projectId: 'mygroup/myproject',
     token: process.env.GITLAB_TOKEN,
-    port: 17890,
+    port: 443,
   },
   
   playwright: {
@@ -236,7 +236,7 @@ class MyCustomTestExecutor extends TestExecutorAdapter {
     const script = `
       import { test, expect } from '@my-framework/test';
       
-      test('TAR-1234 — User can login', async ({ page }) => {
+      test('MYKEY-1234 — User can login', async ({ page }) => {
         await page.goto('${url}/login');
         await page.fill('input[name="email"]', 'user@example.com');
         await page.fill('input[name="password"]', 'password123');
@@ -303,7 +303,7 @@ module.exports = {
 
 ```
 1. User runs:
-   $ node index.js --project myapp --workflow qa-workflow --ticket TAR-1234
+   $ node index.js --project myapp --workflow qa-workflow --ticket MYKEY-1234
 
 2. Engine loads adapters from config/integrations.js:
    issueTracker ← JiraAdapter
@@ -312,10 +312,10 @@ module.exports = {
    cicd ← GitLabCIAdapter
 
 3. Workflow executes:
-   a) issueTracker.getIssue('TAR-1234')
+   a) issueTracker.getIssue('MYKEY-1234')
       ↓ JiraAdapter calls Jira API
    
-   b) versionControl.findBranch('TAR-1234')
+   b) versionControl.findBranch('MYKEY-1234')
       ↓ GitLabAdapter queries GitLab for branch
    
    c) versionControl.getDiff('main', 5000)
@@ -330,7 +330,7 @@ module.exports = {
    f) testExecutor.executeTests(script)
       ↓ PlaywrightAdapter runs `npx playwright test`
    
-   g) issueTracker.createTestExecution('TAR-1234', results)
+   g) issueTracker.createTestExecution('MYKEY-1234', results)
       ↓ JiraAdapter creates test execution in Jira
 
 4. Results returned to user

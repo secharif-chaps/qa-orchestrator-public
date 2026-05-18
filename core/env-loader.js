@@ -146,8 +146,8 @@ class EnvLoader {
   validate() {
     const critical = ['LLM_API_KEY'];
     const optional = [
-      'QA_HUB_GITLAB_HOST',
-      'QA_HUB_GITLAB_TOKEN',
+      'GITLAB_HOST',
+      'GITLAB_TOKEN',
       'JIRA_BASE_URL',
       'JIRA_EMAIL',
       'JIRA_TOKEN',
@@ -212,9 +212,9 @@ class EnvLoader {
   getVCSConfig() {
     return {
       gitlab: {
-        host: this.loadedEnv.QA_HUB_GITLAB_HOST || this.loadedEnv.GITLAB_HOST,
-        port: parseInt(this.loadedEnv.QA_HUB_GITLAB_PORT || '22'),
-        token: this.loadedEnv.QA_HUB_GITLAB_TOKEN || this.loadedEnv.GITLAB_TOKEN,
+        host: this.loadedEnv.GITLAB_HOST || this.loadedEnv.GITLAB_HOST,
+        port: parseInt(this.loadedEnv.GITLAB_PORT || '22'),
+        token: this.loadedEnv.GITLAB_TOKEN || this.loadedEnv.GITLAB_TOKEN,
       },
       github: {
         token: this.loadedEnv.GITHUB_TOKEN,
@@ -254,7 +254,7 @@ class EnvLoader {
       projectRoot: this.projectRoot,
       qaRoot: this.qaRoot,
       llmSetup: this.loadedEnv.LLM_API_KEY ? '✅ Configured' : '❌ Missing LLM_API_KEY',
-      vcsSetup: this.loadedEnv.QA_HUB_GITLAB_TOKEN ? '✅ GitLab' :
+      vcsSetup: this.loadedEnv.GITLAB_TOKEN ? '✅ GitLab' :
                 this.loadedEnv.GITHUB_TOKEN ? '✅ GitHub' : '⚠️ No VCS configured',
       issueTrackerSetup: this.loadedEnv.JIRA_TOKEN ? '✅ Jira' :
                          this.loadedEnv.GITHUB_TOKEN ? '✅ GitHub Issues' : '⚠️ No issue tracker',

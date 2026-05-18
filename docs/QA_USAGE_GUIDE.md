@@ -2,7 +2,7 @@
 
 **Version:** 2.0.0 | **Updated:** May 13, 2026 | **Status:** Production Ready
 
-Agentic QA testing system for ChapsMind using 11 specialized agents and 7 workflows to automate test planning, code review, bug discovery, and test execution.
+Agentic QA testing system for your project using 11 specialized agents and 7 workflows to automate test planning, code review, bug discovery, and test execution.
 
 ---
 
@@ -25,11 +25,11 @@ npm install
 cp .env.example .env
 
 # Configure environment
-export LLM_BASE_URL="https://llm-gateway.ai.chapsvision.com/llm-gateway"
+export LLM_BASE_URL="https://api.openai.com/v1"
 export LLM_API_KEY="your-api-key"
-export QA_HUB_GITLAB_HOST="git.mediaspeech.com"
-export QA_HUB_GITLAB_PORT="17890"
-export QA_HUB_GITLAB_TOKEN="your-gitlab-token"
+export GITLAB_HOST="gitlab.com"
+export GITLAB_PORT="17890"
+export GITLAB_TOKEN="your-gitlab-token"
 ```
 
 ### Verify Installation
@@ -48,19 +48,19 @@ node index.js --help           # Show CLI help
 
 ```bash
 # Test a Jira ticket
-node index.js test TAR-1234
+node index.js test MYKEY-1234
 
 # Review code only (fast, ~30s)
-node index.js review TAR-1234
+node index.js review MYKEY-1234
 
 # Discover bugs
-node index.js bug TAR-1234
+node index.js bug MYKEY-1234
 
 # Sprint health check
 node index.js sprint
 
 # Analyze Merge Request
-node index.js mr feat/TAR-1234
+node index.js mr feat/MYKEY-1234
 ```
 
 All commands run from `tools/qa-orchestrator/` directory.
@@ -158,9 +158,9 @@ All commands run from `tools/qa-orchestrator/` directory.
 **Use when**: You want the complete QA cycle on a ticket
 
 ```bash
-node index.js test TAR-1234
+node index.js test MYKEY-1234
 # or
-node index.js --project target --workflow qa-workflow --ticket TAR-1234
+node index.js --project target --workflow qa-workflow --ticket MYKEY-1234
 ```
 
 **Agents Chain** (with parallelization):
@@ -198,7 +198,7 @@ Stage 5: sessionManager
 **Use when**: You just need a quick code vs AC check (~30 seconds)
 
 ```bash
-node index.js review TAR-1234
+node index.js review MYKEY-1234
 ```
 
 **Agents**: reviewer only
@@ -228,7 +228,7 @@ node index.js scan
 **Use when**: Analyzing a Merge Request for test generation
 
 ```bash
-node index.js mr feat/TAR-1234
+node index.js mr feat/MYKEY-1234
 ```
 
 **Agents**: mrAnalyzer → reviewer → testGenerator → automator
@@ -245,7 +245,7 @@ node index.js mr feat/TAR-1234
 **Use when**: Doing bug discovery on a feature
 
 ```bash
-node index.js bug TAR-1234
+node index.js bug MYKEY-1234
 ```
 
 **Agents**: bugHunter → testGenerator → automator → projectManager
@@ -262,7 +262,7 @@ node index.js bug TAR-1234
 **Use when**: Syncing test cases to X-Ray Jira
 
 ```bash
-node index.js --workflow xray-sync --ticket TAR-1234
+node index.js --workflow xray-sync --ticket MYKEY-1234
 ```
 
 **Agents**: testGenerator → gherkinWriter → projectManager
@@ -336,7 +336,7 @@ node index.js bug TICKET          # Bug discovery
 node index.js \
   --project target \
   --workflow qa-workflow \
-  --ticket TAR-1234 \
+  --ticket MYKEY-1234 \
   --message "Test new dashboard"
 ```
 
@@ -349,9 +349,9 @@ node index.js \
 LLM_BASE_URL          # LLM gateway URL
 LLM_API_KEY          # Claude API key
 LLM_MODEL            # Optional: override model
-QA_HUB_GITLAB_HOST   # git.mediaspeech.com
-QA_HUB_GITLAB_PORT   # 17890
-QA_HUB_GITLAB_TOKEN  # GitLab token
+GITLAB_HOST   # gitlab.com
+GITLAB_PORT   # 17890
+GITLAB_TOKEN  # GitLab token
 ```
 
 ---
@@ -362,8 +362,8 @@ QA_HUB_GITLAB_TOKEN  # GitLab token
 ```
 qa-reports/
   ├── TAR/
-  │   ├── TAR-1234-2026-05-13T10-47-03.json    # Session data
-  │   └── TAR-1234.feature                     # Gherkin Feature file
+  │   ├── MYKEY-1234-2026-05-13T10-47-03.json    # Session data
+  │   └── MYKEY-1234.feature                     # Gherkin Feature file
   └── SCR/
       └── SCR-100-...json
 ```
@@ -372,7 +372,7 @@ qa-reports/
 ```json
 {
   "sessionId": "uuid-1234",
-  "ticketKey": "TAR-1234",
+  "ticketKey": "MYKEY-1234",
   "projectKey": "TAR",
   "timestamp": "2026-05-13T10:47:03Z",
   "workflow": "qa-workflow",
@@ -501,7 +501,7 @@ tools/qa-orchestrator/
 ### Example 1: Full QA Cycle
 ```bash
 cd tools/qa-orchestrator
-node index.js test TAR-1234
+node index.js test MYKEY-1234
 ```
 
 Output:

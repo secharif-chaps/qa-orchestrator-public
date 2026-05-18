@@ -27,7 +27,7 @@ When given a ticket or task:
 Project context:
 - Stack: Vue 3, FastAPI (Python), SQLAlchemy, Keycloak, RabbitMQ, N8N, Dify, OpenSearch
 - Jira project: TAR (Target), SCR (Screen)
-- Branch naming: feat/TAR-XXXX, fix/TAR-XXXX
+- Branch naming: feat/MYKEY-XXXX, fix/MYKEY-XXXX
 - Testing: Pytest (backend), Playwright TypeScript (E2E), Vitest (frontend)
 
 Output format:
@@ -58,8 +58,8 @@ Given a list of changed files or a project structure, you:
 5. Identify high-risk areas (auth, data mutations, external API calls)
 
 your project stack reference:
-- Frontend: apps/front/ → Vue 3 + Vitest + Playwright
-- Backend: apps/screen/ → FastAPI + Pytest + SQLAlchemy
+- Frontend: your frontend/ → Vue 3 + Vitest + Playwright
+- Backend: your backend/ → FastAPI + Pytest + SQLAlchemy
 - Infra: infra/ → Docker Compose, Keycloak, RabbitMQ
 - AI: N8N workflows, Dify pipelines
 
@@ -483,10 +483,10 @@ You:
 4. Identify coverage gaps (changed code with NO existing test)
 5. Rank by relevance to the change
 
-ChapsMind test conventions:
+your project test conventions:
 - E2E: e2e/TAR-{ticket}.spec.ts or e2e/TAR-{ticket}-{feature}.spec.ts (Playwright)
-- Backend: apps/screen/tests/test_*.py (Pytest)
-- Frontend: apps/front/src/**/__tests__/*.test.ts (Vitest)
+- Backend: your backend/tests/test_*.py (Pytest)
+- Frontend: your frontend/src/**/__tests__/*.test.ts (Vitest)
 - Test IDs in X-Ray/Jira: TAR-{ticket}
 
 Output format:
@@ -501,10 +501,10 @@ Output format:
 #### Must Run (direct test of changed code)
 \`\`\`bash
 # Playwright
-npx playwright test e2e/TAR-XXXX.spec.ts
+npx playwright test e2e/MYKEY-XXXX.spec.ts
 
 # Pytest
-pytest apps/screen/tests/test_X.py::TestClass::test_method -v
+pytest your backend/tests/test_X.py::TestClass::test_method -v
 \`\`\`
 - [test path] — tests {changed function} directly
 
@@ -524,8 +524,8 @@ pytest apps/screen/tests/test_X.py::TestClass::test_method -v
 ### Run Command
 \`\`\`bash
 # Copy and paste to run selected tests
-npm run test:e2e -- e2e/TAR-1234.spec.ts
-pytest apps/screen/tests/test_service.py -v
+npm run test:e2e -- e2e/MYKEY-1234.spec.ts
+pytest your backend/tests/test_service.py -v
 \`\`\``,
   },
 
@@ -607,7 +607,7 @@ Output format:
     useMCP: false,
     prompt: `You are a Release Analyst specializing in cross-repository dependency detection for your project microservices.
 
-Given diffs from multiple repositories (apps/front, apps/screen, apps/global-service), you:
+Given diffs from multiple repositories (your frontend, your backend, apps/global-service), you:
 1. Identify API contract changes (endpoint signature, request/response schema)
 2. Detect breaking changes in shared types (Pydantic models, TypeScript interfaces)
 3. Flag DB migration conflicts (Alembic revisions that depend on specific app versions)
@@ -616,10 +616,10 @@ Given diffs from multiple repositories (apps/front, apps/screen, apps/global-ser
 6. Produce a safe deployment order and go/no-go recommendation
 
 cross-repo contracts:
-- apps/front (Vue 3) → HTTP → apps/global-service (API Gateway) → HTTP → apps/screen (FastAPI)
-- apps/screen publishes RabbitMQ events consumed by N8N workflows
+- your frontend (Vue 3) → HTTP → apps/global-service (API Gateway) → HTTP → your backend (FastAPI)
+- your backend publishes RabbitMQ events consumed by N8N workflows
 - All services authenticate via Keycloak (realm: your-realm)
-- DB migrations are in apps/screen/alembic; must be backward-compatible
+- DB migrations are in your backend/alembic; must be backward-compatible
 
 Output format:
 ## 🚀 Release Analysis
@@ -638,13 +638,13 @@ Output format:
   - Rollback risk: [easy/medium/hard]
 
 ### Safe Deployment Order
-1. apps/screen (migrations + API changes)
+1. your backend (migrations + API changes)
 2. apps/global-service (if using new screen API fields)
-3. apps/front (UI changes)
+3. your frontend (UI changes)
 
 ### Dependency Graph
 \`\`\`
-apps/front → global-service → screen
+your frontend → global-service → screen
              ↓ (uses endpoints)
              [list changed endpoints]
 \`\`\`
@@ -797,20 +797,20 @@ const AGENT_TIERS = {
     name: 'Tier 1 — Daily Use (80% of cases)',
     description: 'Fast, focused agents for rapid QA cycles. No external dependencies.',
     agents: [
-      { id: 'reviewer', model: 'Opus 4.6', icon: '👁️', use: 'qa review TAR-1234 (~30s)', description: 'Quick code vs AC check' },
-      { id: 'testGenerator', model: 'Opus 4.6', icon: '📝', use: 'qa test TAR-1234 (~2m)', description: 'Generate 20+ test cases from AC' },
-      { id: 'testSelector', model: 'Sonnet 4.6', icon: '🎯', use: 'qa select TAR-1234 (~1m)', description: 'Match existing tests to diff' },
-      { id: 'bugHunter', model: 'Sonnet 4.6', icon: '🐛', use: 'qa bug TAR-1234 (~2m)', description: 'Find edge cases & potential bugs' },
+      { id: 'reviewer', model: 'Opus 4.6', icon: '👁️', use: 'qa review MYKEY-1234 (~30s)', description: 'Quick code vs AC check' },
+      { id: 'testGenerator', model: 'Opus 4.6', icon: '📝', use: 'qa test MYKEY-1234 (~2m)', description: 'Generate 20+ test cases from AC' },
+      { id: 'testSelector', model: 'Sonnet 4.6', icon: '🎯', use: 'qa select MYKEY-1234 (~1m)', description: 'Match existing tests to diff' },
+      { id: 'bugHunter', model: 'Sonnet 4.6', icon: '🐛', use: 'qa bug MYKEY-1234 (~2m)', description: 'Find edge cases & potential bugs' },
     ],
   },
   tier2: {
     name: 'Tier 2 — Live Validation (15% of cases)',
     description: 'Real execution & feedback. Requires running environment.',
     agents: [
-      { id: 'automator', model: 'Haiku 4.5', icon: '🤖', use: 'qa test TAR-1234 (phase 3)', description: 'Generate Playwright tests' },
-      { id: 'browserValidator', model: 'Sonnet 4.6', icon: '🌐', use: 'BROWSER_VALIDATION_ENABLED=true qa validate TAR-1234', description: 'Execute Playwright in real browser' },
-      { id: 'gherkinWriter', model: 'Haiku 4.5', icon: '🥒', use: 'qa test TAR-1234 (phase 3)', description: 'BDD scenarios for X-Ray' },
-      { id: 'manualValidator', model: 'Haiku 4.5', icon: '👤', use: 'qa manual TAR-1234', description: 'Guide for manual tests (MFA, email)' },
+      { id: 'automator', model: 'Haiku 4.5', icon: '🤖', use: 'qa test MYKEY-1234 (phase 3)', description: 'Generate Playwright tests' },
+      { id: 'browserValidator', model: 'Sonnet 4.6', icon: '🌐', use: 'BROWSER_VALIDATION_ENABLED=true qa validate MYKEY-1234', description: 'Execute Playwright in real browser' },
+      { id: 'gherkinWriter', model: 'Haiku 4.5', icon: '🥒', use: 'qa test MYKEY-1234 (phase 3)', description: 'BDD scenarios for X-Ray' },
+      { id: 'manualValidator', model: 'Haiku 4.5', icon: '👤', use: 'qa manual MYKEY-1234', description: 'Guide for manual tests (MFA, email)' },
     ],
   },
   tier3: {
@@ -821,9 +821,9 @@ const AGENT_TIERS = {
       { id: 'scanner', model: 'Sonnet 4.6', icon: '🔍', use: 'qa scan', description: 'Tech stack detection' },
       { id: 'mrAnalyzer', model: 'Sonnet 4.6', icon: '📋', use: 'qa mr <MR-URL>', description: 'Merge Request breakdown' },
       { id: 'releaseAnalyzer', model: 'Opus 4.6', icon: '🚀', use: 'qa release', description: 'Cross-repo dependency analysis' },
-      { id: 'validator', model: 'Sonnet 4.6', icon: '✅', use: 'qa test TAR-1234 (phase 4)', description: 'QA completeness check' },
+      { id: 'validator', model: 'Sonnet 4.6', icon: '✅', use: 'qa test MYKEY-1234 (phase 4)', description: 'QA completeness check' },
       { id: 'projectManager', model: 'Haiku 4.5', icon: '📊', use: 'qa sprint', description: 'Sprint metrics & health' },
-      { id: 'sessionManager', model: 'Haiku 4.5', icon: '💾', use: 'qa test TAR-1234 (phase 5)', description: 'Results consolidation' },
+      { id: 'sessionManager', model: 'Haiku 4.5', icon: '💾', use: 'qa test MYKEY-1234 (phase 5)', description: 'Results consolidation' },
     ],
   },
 };

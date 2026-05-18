@@ -14,7 +14,7 @@ npm install
 export JIRA_API_TOKEN="your-token-here"
 
 # 3. Run — everything else auto-detects
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 ```
 
 That's it! The system automatically:
@@ -120,7 +120,7 @@ If running locally, the system checks for config files. You can manually set env
 ```bash
 # Force CI/CD detection for local testing
 export GITHUB_ACTIONS=true
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 ```
 
 ### 5. Environment Details
@@ -143,7 +143,7 @@ testDirs=["e2e", "tests", "cypress"]
 
 # Override with env var
 export BASE_URL="https://staging.acme.com"
-npx qa-orchestrator test TAR-1234 --base-url https://staging.acme.com
+npx qa-orchestrator test MYKEY-1234 --base-url https://staging.acme.com
 ```
 
 ## Common Scenarios
@@ -163,7 +163,7 @@ export JIRA_API_TOKEN="jira_token_here"
 npm install
 
 # Run
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 
 # Auto-detected:
 # ✅ VCS: GitHub
@@ -245,7 +245,7 @@ module.exports = {
 
 Then run with `--config` flag:
 ```bash
-npx qa-orchestrator test TAR-1234 --config config/integrations.js
+npx qa-orchestrator test MYKEY-1234 --config config/integrations.js
 ```
 
 ## Supported Combinations
@@ -285,7 +285,7 @@ export JIRA_API_TOKEN="your-token"
 
 # Or override in config/integrations.js
 # Or run with --no-track flag (test without issue tracker)
-npx qa-orchestrator test TAR-1234 --no-track
+npx qa-orchestrator test MYKEY-1234 --no-track
 ```
 
 ### "No test framework detected"
@@ -299,7 +299,7 @@ npm install --save-dev playwright
 
 # Or specify manually in config/integrations.js
 # Or use --framework flag
-npx qa-orchestrator test TAR-1234 --framework playwright
+npx qa-orchestrator test MYKEY-1234 --framework playwright
 ```
 
 ### "No git repository detected"
@@ -416,13 +416,13 @@ A: Yes! CI platforms set environment variables automatically. The system detects
 **Q: What if I want to skip auto-detection?**  
 A: Use `--no-detect` flag:
 ```bash
-npx qa-orchestrator test TAR-1234 --no-detect --config config/integrations.js
+npx qa-orchestrator test MYKEY-1234 --no-detect --config config/integrations.js
 ```
 
 **Q: Can I force a specific tool even if it's not detected?**  
 A: Yes, use `config/integrations.js` or pass `--framework`, `--tracker`, etc.:
 ```bash
-npx qa-orchestrator test TAR-1234 --framework cypress --tracker jira
+npx qa-orchestrator test MYKEY-1234 --framework cypress --tracker jira
 ```
 
 **Q: What if my project uses a tool not on the list?**  

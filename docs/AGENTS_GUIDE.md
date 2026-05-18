@@ -589,10 +589,10 @@ Skip agents you don't need:
 
 ```bash
 # Skip accessibility checks
-npx qa-orchestrator test TAR-1234 --disable-agents accessibilityAuditor
+npx qa-orchestrator test MYKEY-1234 --disable-agents accessibilityAuditor
 
 # Skip security analysis
-npx qa-orchestrator test TAR-1234 --disable-agents securityAnalyzer
+npx qa-orchestrator test MYKEY-1234 --disable-agents securityAnalyzer
 ```
 
 ---
@@ -730,7 +730,7 @@ const allAgents = [
 ### Using Your Agent
 
 ```bash
-npx qa-orchestrator test TAR-1234 --include-agents myCustom
+npx qa-orchestrator test MYKEY-1234 --include-agents myCustom
 ```
 
 ---
@@ -758,7 +758,7 @@ npx qa-orchestrator --agent-stats
 
 ```bash
 # Increase timeout for slow agents
-npx qa-orchestrator test TAR-1234 --timeout 60000
+npx qa-orchestrator test MYKEY-1234 --timeout 60000
 ```
 
 ### Agent results are poor
@@ -768,7 +768,7 @@ npx qa-orchestrator test TAR-1234 --timeout 60000
 npx qa-orchestrator --edit-agent bugHunter --prompt
 
 # Or use promptTuner to optimize automatically
-npx qa-orchestrator test TAR-1234 --optimize-agents
+npx qa-orchestrator test MYKEY-1234 --optimize-agents
 ```
 
 ### Agent not running
@@ -778,7 +778,7 @@ npx qa-orchestrator test TAR-1234 --optimize-agents
 npx qa-orchestrator --list-agents
 
 # Enable disabled agent
-npx qa-orchestrator test TAR-1234 --enable-agents browserValidator
+npx qa-orchestrator test MYKEY-1234 --enable-agents browserValidator
 ```
 
 ---

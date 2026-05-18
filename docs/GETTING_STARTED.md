@@ -128,7 +128,7 @@ npx qa-orchestrator --list-workflows
 npx qa-orchestrator test YOUR-TICKET-ID
 
 # Example
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 ```
 
 The system automatically:
@@ -172,7 +172,7 @@ The system automatically:
   ✅ Performance: Acceptable
   ✅ Test coverage: 92%
 
-📁 Full report saved to: qa-sessions/TAR-1234-2026-05-18.json
+📁 Full report saved to: qa-sessions/MYKEY-1234-2026-05-18.json
 ```
 
 ## Understanding the Results
@@ -212,16 +212,16 @@ QA Orchestrator produces a comprehensive report with:
 
 ```bash
 # Standard test (balanced approach)
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 
 # Fast feedback (during development)
-npx qa-orchestrator test TAR-1234 --sampling quick
+npx qa-orchestrator test MYKEY-1234 --sampling quick
 
 # Thorough analysis (before release)
-npx qa-orchestrator test TAR-1234 --sampling deep
+npx qa-orchestrator test MYKEY-1234 --sampling deep
 
 # Skip caching (always run fresh)
-npx qa-orchestrator test TAR-1234 --no-cache
+npx qa-orchestrator test MYKEY-1234 --no-cache
 
 # Show available agents
 npx qa-orchestrator --list-agents
@@ -244,7 +244,7 @@ Choose the right depth for your situation:
 - **When to use:** During active development, rapid iteration
 
 ```bash
-npx qa-orchestrator test TAR-1234 --sampling quick
+npx qa-orchestrator test MYKEY-1234 --sampling quick
 ```
 
 ### 🟡 FULL (220 seconds, $0.37) — DEFAULT
@@ -254,7 +254,7 @@ npx qa-orchestrator test TAR-1234 --sampling quick
 - **When to use:** Code review before merge
 
 ```bash
-npx qa-orchestrator test TAR-1234 --sampling full
+npx qa-orchestrator test MYKEY-1234 --sampling full
 ```
 
 ### 🔴 DEEP (300 seconds, $0.60)
@@ -264,7 +264,7 @@ npx qa-orchestrator test TAR-1234 --sampling full
 - **When to use:** Before deploying to production
 
 ```bash
-npx qa-orchestrator test TAR-1234 --sampling deep
+npx qa-orchestrator test MYKEY-1234 --sampling deep
 ```
 
 ## How Much Does It Cost?
@@ -292,11 +292,11 @@ Once you test a ticket, identical tests return results instantly:
 
 ```bash
 # First run (full analysis)
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 # → 3 minutes, $0.37
 
 # Second run (same code, same ticket)
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 # → 100ms, $0.00 ⚡ FREE!
 ```
 
@@ -378,7 +378,7 @@ export GITHUB_TOKEN="your-token"
 
 Then try again:
 ```bash
-npx qa-orchestrator test TAR-1234
+npx qa-orchestrator test MYKEY-1234
 ```
 
 ### "No test framework detected"
@@ -437,7 +437,7 @@ curl -H "Authorization: token $GITHUB_TOKEN" \
 
 ```bash
 # During development, you want fast feedback
-npx qa-orchestrator test TAR-1234 --sampling quick
+npx qa-orchestrator test MYKEY-1234 --sampling quick
 
 # Output in 100 seconds
 # - Does it break anything?
@@ -449,7 +449,7 @@ npx qa-orchestrator test TAR-1234 --sampling quick
 
 ```bash
 # Before merge, full QA validation
-npx qa-orchestrator test TAR-1234 --sampling full
+npx qa-orchestrator test MYKEY-1234 --sampling full
 
 # Output in 220 seconds
 # - Complete test suite
@@ -463,7 +463,7 @@ npx qa-orchestrator test TAR-1234 --sampling full
 
 ```bash
 # Before production deployment, thorough analysis
-npx qa-orchestrator test TAR-1234 --sampling deep
+npx qa-orchestrator test MYKEY-1234 --sampling deep
 
 # Output in 300 seconds
 # - All agents, all analysis
